@@ -35,7 +35,7 @@ def translate(
 
 
 def analyze(r_path: "str | Path") -> "ScriptMap":
-    """Analyze an R script and return its ScriptMap (architecture step 2, Stage 1)."""
-    raise NotImplementedError(
-        "analyze() requires Stage 1 (architecture step 2)"
-    )
+    """Analyze an R script and return its ScriptMap (§3)."""
+    from pathlib import Path
+    from .stage1 import analyze as _analyze
+    return _analyze(Path(r_path))

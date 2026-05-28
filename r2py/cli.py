@@ -6,8 +6,25 @@ import sys
 
 
 def cmd_analyze(args: argparse.Namespace) -> int:
+    from pathlib import Path
     from r2py import analyze
-    analyze(args.input)
+    from r2py.stage1.script_map import save, to_annotated_r
+
+    r_path = Path(args.input)
+    sm = analyze(r_path)
+
+    map_path = r_path.with_suffix(".map.json")
+    save(sm, map_path)
+
+    ann_path = r_path.with_suffix(".annotated.R")
+    ann_path.write_text(to_annotated_r(sm), encoding="utf-8")
+
+    if not getattr(args, "quiet", False):
+        print(f"ScriptMap   -> {map_path}")
+        print(f"Annotated R -> {ann_path}")
+        print(f"Entities: {len(sm.entities)}  "
+              f"Effects: {len(sm.effects)}  "
+              f"Coverage: {sm.coverage.fraction_analyzed:.0%}")
     return 0
 
 
@@ -43,7 +60,10 @@ def cmd_library(args: argparse.Namespace) -> int:
 
 
 def cmd_harvest(args: argparse.Namespace) -> int:
-    raise NotImplementedError("r2py harvest: stage0/harvest not yet implemented (step 1)")
+    from r2py.stage0.harvest.crawler import crawl
+    paths = crawl(args.repo_or_url)
+    print(f"Harvested {len(paths)} script(s)")
+    return 0
 
 
 def cmd_ablation(args: argparse.Namespace) -> int:
