@@ -1,0 +1,118 @@
+"""r2py CLI — §9.2"""
+from __future__ import annotations
+
+import argparse
+import sys
+
+
+def cmd_analyze(args: argparse.Namespace) -> int:
+    from r2py import analyze
+    analyze(args.input)
+    return 0
+
+
+def cmd_translate(args: argparse.Namespace) -> int:
+    from r2py import translate
+    result = translate(
+        r_path=args.input,
+        py_path=args.output,
+        max_iters=args.max_iters,
+        score_threshold=args.score_threshold,
+        beam_width=args.beam_width,
+        use_judge=args.use_judge,
+        learned_retrieval=args.learned_retrieval,
+        learned_policy=args.learned_policy,
+        data_compare=args.data_compare,
+        no_seeds=args.no_seeds,
+    )
+    print(f"Score: {result.final_score:.3f}  Iterations: {result.iterations}")
+    return 0
+
+
+def cmd_library(args: argparse.Namespace) -> int:
+    sub = args.library_command
+    if sub == "list":
+        raise NotImplementedError("r2py library list: Pattern Library not yet implemented (step 3)")
+    elif sub == "show":
+        raise NotImplementedError("r2py library show: Pattern Library not yet implemented (step 3)")
+    elif sub == "review":
+        raise NotImplementedError("r2py library review: epistemology not yet implemented (step 3)")
+    elif sub == "train-reranker":
+        raise NotImplementedError("r2py library train-reranker: D6 optional component (step 9)")
+    raise NotImplementedError(f"Unknown library command: {sub}")
+
+
+def cmd_harvest(args: argparse.Namespace) -> int:
+    raise NotImplementedError("r2py harvest: stage0/harvest not yet implemented (step 1)")
+
+
+def cmd_ablation(args: argparse.Namespace) -> int:
+    raise NotImplementedError("r2py ablation: scripts/run_ablation.py not yet implemented (step 8)")
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(prog="r2py", description="R-to-Python translator")
+    parser.add_argument("--quiet", action="store_true")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    # analyze
+    p_analyze = sub.add_parser("analyze", help="Analyze an R file and emit a ScriptMap (stage 1)")
+    p_analyze.add_argument("input", help="Input .R file")
+
+    # translate
+    p_translate = sub.add_parser("translate", help="Translate an R file to Python (full pipeline)")
+    p_translate.add_argument("input", help="Input .R file")
+    p_translate.add_argument("output", help="Output .py file")
+    p_translate.add_argument("--max-iters", type=int, default=8, dest="max_iters")
+    p_translate.add_argument("--score-threshold", type=float, default=0.85, dest="score_threshold")
+    p_translate.add_argument("--beam-width", type=int, default=4, dest="beam_width")
+    p_translate.add_argument("--use-judge", action="store_true", dest="use_judge",
+                             help="Enable LLM judge fallback (D4; off by default)")
+    p_translate.add_argument("--learned-retrieval", action="store_true", dest="learned_retrieval",
+                             help="Use learned retrieval reranker (D6; off by default)")
+    p_translate.add_argument("--learned-policy", action="store_true", dest="learned_policy",
+                             help="Use learned edit policy (D6; off by default)")
+    p_translate.add_argument("--data-compare", default="auto", dest="data_compare",
+                             choices=["auto", "exact", "embedding"])
+    p_translate.add_argument("--no-seeds", action="store_true", dest="no_seeds",
+                             help="Ignore seed:true patterns (transfer experiment §6.7)")
+
+    # library
+    p_lib = sub.add_parser("library", help="Pattern Library operations")
+    lib_sub = p_lib.add_subparsers(dest="library_command", required=True)
+    p_lib_list = lib_sub.add_parser("list", help="List patterns")
+    p_lib_list.add_argument("--package", default=None)
+    p_lib_list.add_argument("--confidence", default=None,
+                            choices=["confirmed", "tentative", "contradicted"])
+    p_lib_list.add_argument("--kind", default=None, choices=["mapping"],
+                            help="'mapping' shows the emergent equivalence registry (§6.7)")
+    p_lib_show = lib_sub.add_parser("show", help="Show a pattern")
+    p_lib_show.add_argument("pattern_id")
+    lib_sub.add_parser("review", help="Run epistemology pass")
+    p_reranker = lib_sub.add_parser("train-reranker", help="Train offline retrieval reranker (§12.6 A)")
+    p_reranker.add_argument("--min-episodes", type=int, default=500, dest="min_episodes")
+    p_reranker.add_argument("--out", default="work/models/reranker/")
+
+    # harvest
+    p_harvest = sub.add_parser("harvest", help="Harvest R examples from a repo or URL (stage 0)")
+    p_harvest.add_argument("repo_or_url")
+
+    # ablation
+    p_ablation = sub.add_parser("ablation", help="Run manual stratified ablation experiment (§12.4.1)")
+    p_ablation.add_argument("--slice", default="work/inputs/ablation_slice.txt")
+    p_ablation.add_argument("--compare", default="frozen-vs-learning",
+                            choices=["frozen-vs-learning", "heuristic-vs-learned"])
+
+    args = parser.parse_args()
+    dispatch = {
+        "analyze":   cmd_analyze,
+        "translate": cmd_translate,
+        "library":   cmd_library,
+        "harvest":   cmd_harvest,
+        "ablation":  cmd_ablation,
+    }
+    sys.exit(dispatch[args.command](args))
+
+
+if __name__ == "__main__":
+    main()
