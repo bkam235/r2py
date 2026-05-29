@@ -9,11 +9,12 @@ from datetime import date
 from typing import TYPE_CHECKING
 
 from .pattern import EvidenceEntry, Pattern
-from ..types import Edit, PatternId
+from ..types import Edit
 
 if TYPE_CHECKING:
     from .store import PatternStore
     from .index import PatternIndex
+    from ..types import PatternId
 
 
 def record_evidence(
@@ -39,7 +40,9 @@ def record_evidence(
     pat.last_review = date.today().isoformat()
     store.save(pat)
     _upsert_index(pat, index)
-    _run_epistemology(store, index)
+    # Evidence raises the demotion threshold (ceil(|evidence|/2)), so it can
+    # never trigger a demotion by itself.  Epistemology is only run after
+    # contradictions, where it may actually fire.
 
 
 def record_tie(

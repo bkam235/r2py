@@ -45,17 +45,19 @@ class PatternIndex:
     # ------------------------------------------------------------------ #
 
     def rebuild(self, store: "PatternStore") -> None:
-        """Regenerate the index from all patterns in the store."""
+        """Regenerate the index from all patterns in the store.
+
+        Each pattern is indexed under the wildcard key ``(package, "")``.
+        Exact-shape keys (``(package, ast_shape_hash)``) are only populated
+        via ``upsert_meta`` once a real shape hash is known (Stage 2 supplies
+        this at retrieval time).  Populating exact-shape keys during rebuild
+        would require guessing the hash from pattern metadata, which is not
+        available here.
+        """
         by_key: dict[str, list[PatternId]] = {}
         meta: dict[PatternId, dict] = {}
 
         for pid, pat in store.load_all().items():
-            key = _make_key(pat.package, pat.id)
-            by_key.setdefault(key, [])
-            if pid not in by_key[key]:
-                by_key[key].append(pid)
-
-            # Also index under package wildcard (empty shape hash)
             pkg_key = _make_key(pat.package, "")
             by_key.setdefault(pkg_key, [])
             if pid not in by_key[pkg_key]:

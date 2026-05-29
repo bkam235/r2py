@@ -337,12 +337,37 @@ class TestEpistemology:
         store.save(p1)
         store.save(p2)
         index.rebuild(store)
+        # Conflict detection requires a non-empty ast_shape_hash so it can
+        # distinguish patterns that target the same (package, AST shape).
+        # Without a shape hash, two patterns on the same package might cover
+        # entirely different R constructs and should not conflict.
+        index.upsert_meta("pkg.a", "pkg", "confirmed", 0, 0, False, ast_shape_hash="abc123")
+        index.upsert_meta("pkg.b", "pkg", "confirmed", 0, 0, False, ast_shape_hash="abc123")
         log = epistemology.review(store, index)
         r1 = store.get("pkg.a")
         r2 = store.get("pkg.b")
         assert r1.confidence == "tentative"
         assert r2.confidence == "tentative"
         assert any("conflict" in l or "demoted" in l for l in log)
+
+    def test_no_conflict_without_shape_hash(self, tmp_path):
+        """Two confirmed patterns on the same package must NOT conflict when
+        ast_shape_hash is empty — they may cover different R constructs."""
+        store = PatternStore(tmp_path)
+        index = PatternIndex(tmp_path)
+        p1 = _make_pattern("pkg.x", package="pkg", confidence="confirmed")
+        p1.guidance = "Use method X."
+        p2 = _make_pattern("pkg.y", package="pkg", confidence="confirmed")
+        p2.guidance = "Use method Y."
+        store.save(p1)
+        store.save(p2)
+        index.rebuild(store)  # ast_shape_hash stays "" for both
+        log = epistemology.review(store, index)
+        r1 = store.get("pkg.x")
+        r2 = store.get("pkg.y")
+        assert r1.confidence == "confirmed"
+        assert r2.confidence == "confirmed"
+        assert not any("demoted" in l for l in log)
 
     def test_stale_contradicted_archived(self, tmp_path):
         store = PatternStore(tmp_path)

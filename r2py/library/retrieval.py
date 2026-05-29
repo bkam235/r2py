@@ -1,6 +1,8 @@
 """Pattern retrieval: package-first, AST-shape second, token-similarity last (§6.4)."""
 from __future__ import annotations
 
+import hashlib
+from itertools import groupby
 from typing import TYPE_CHECKING
 
 from .pattern import Pattern
@@ -71,7 +73,6 @@ def retrieve(
 
     # Group by (pkg_tier, shape_sim) and within each group sort by tiebreak
     result: list[Pattern] = []
-    from itertools import groupby
     for _, group in groupby(candidates, key=score):
         group_list = sorted(group, key=tiebreak)
         result.extend(group_list)
@@ -88,7 +89,6 @@ def entity_ast_shape_hash(entity: object) -> str:
     kind_str = _entity_kind_str(entity)
     if not kind_str:
         return ""
-    import hashlib
     return hashlib.md5(kind_str.encode()).hexdigest()[:8]
 
 

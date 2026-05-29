@@ -6,7 +6,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from ..types import Edit, PatternId
+from ..types import Edit
 from .pattern import Pattern
 from .store import PatternStore
 from .index import PatternIndex

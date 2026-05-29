@@ -1,7 +1,7 @@
 """Confidence transitions and archival rules for the Pattern Library (§6.5)."""
 from __future__ import annotations
 
-import math
+from collections import defaultdict
 from datetime import date, timedelta
 from typing import TYPE_CHECKING
 
@@ -22,49 +22,56 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
     for pid, pat in list(patterns.items()):
         if pat.confidence == "contradicted":
             continue
-        threshold = math.ceil(len(pat.evidence) / 2) if pat.evidence else 1
+        threshold = pat.demotion_threshold()
         if len(pat.contradictions) >= threshold:
             new_conf = _DEMOTION_MAP[pat.confidence]
             pat.confidence = new_conf  # type: ignore[assignment]
             pat.last_review = date.today().isoformat()
             store.save(pat)
-            log.append(f"demoted {pid}: contradictions({len(pat.contradictions)}) >= threshold({threshold}) → {new_conf}")
+            log.append(
+                f"demoted {pid}: contradictions({len(pat.contradictions)})"
+                f" >= threshold({threshold}) → {new_conf}"
+            )
 
     # Reload after mutations
     patterns = store.load_all()
 
-    # Rule 2: conflict detection (two confirmed patterns on same package)
-    from collections import defaultdict
-    pkg_confirmed: dict[str, list[str]] = defaultdict(list)
+    # Rule 2: conflict detection — two `confirmed` patterns with the same
+    # (package, ast_shape_hash) and differing guidance.
+    # Only fires when ast_shape_hash is non-empty: patterns indexed under the
+    # wildcard ("") bucket cannot be compared for specificity, so we skip them
+    # to avoid false-positive demotions between patterns covering different
+    # R constructs in the same package.
+    pkg_shape_confirmed: dict[tuple[str, str], list[str]] = defaultdict(list)
     for pid, pat in patterns.items():
         if pat.confidence == "confirmed":
-            pkg_confirmed[pat.package].append(pid)
+            meta = index.get_meta(pid)
+            shape = meta.get("ast_shape_hash", "")
+            if shape:  # only group patterns with a real shape hash
+                pkg_shape_confirmed[(pat.package, shape)].append(pid)
 
-    for pkg, pids in pkg_confirmed.items():
+    for (pkg, shape), pids in pkg_shape_confirmed.items():
         if len(pids) < 2:
             continue
-        # Check for guidance conflicts (different guidance on same package — conservative)
         guidances = {pid: patterns[pid].guidance for pid in pids}
-        # We flag all pairs with diverging guidance (non-identical normalized text)
-        seen: set[str] = set()
         for pid_a in pids:
             for pid_b in pids:
                 if pid_a >= pid_b:
                     continue
-                pair = frozenset({pid_a, pid_b})
-                pair_key = "|".join(sorted(pair))
-                if pair_key in seen:
+                if _normalized(guidances[pid_a]) == _normalized(guidances[pid_b]):
                     continue
-                seen.add(pair_key)
-                if _normalized(guidances[pid_a]) != _normalized(guidances[pid_b]):
-                    for demote_id in (pid_a, pid_b):
-                        p = patterns[demote_id]
-                        if p.confidence == "confirmed":
-                            p.confidence = "tentative"  # type: ignore[assignment]
-                            p.last_review = date.today().isoformat()
-                            store.save(p)
-                            log.append(f"demoted {demote_id}: conflicting confirmed guidance with {pid_a if demote_id == pid_b else pid_b}")
-                    _write_conflict_note(store, pid_a, pid_b)
+                for demote_id in (pid_a, pid_b):
+                    p = patterns[demote_id]
+                    if p.confidence == "confirmed":
+                        p.confidence = "tentative"  # type: ignore[assignment]
+                        p.last_review = date.today().isoformat()
+                        store.save(p)
+                        other = pid_a if demote_id == pid_b else pid_b
+                        log.append(
+                            f"demoted {demote_id}: conflicting confirmed"
+                            f" guidance with {other}"
+                        )
+                _write_conflict_note(store, pid_a, pid_b)
 
     # Rule 3: archive stale contradicted patterns
     cutoff = date.today() - timedelta(days=_ARCHIVE_AFTER_DAYS)
@@ -75,7 +82,10 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
         review_date = _parse_date(pat.last_review or pat.created)
         if review_date and review_date < cutoff:
             index.remove(pid)
-            log.append(f"archived {pid}: contradicted and unchanged for >{_ARCHIVE_AFTER_DAYS} days")
+            log.append(
+                f"archived {pid}: contradicted and unchanged"
+                f" for >{_ARCHIVE_AFTER_DAYS} days"
+            )
 
     return log
 
@@ -93,7 +103,6 @@ def _parse_date(s: str) -> date | None:
 
 def _write_conflict_note(store: "PatternStore", pid_a: str, pid_b: str) -> None:
     from .pattern import Pattern
-    from datetime import date as _date
     note_id = f"conflict_{pid_a}_vs_{pid_b}"
     note = Pattern(
         id=note_id,
@@ -104,7 +113,7 @@ def _write_conflict_note(store: "PatternStore", pid_a: str, pid_b: str) -> None:
             f"Conflict detected between `{pid_a}` and `{pid_b}`. "
             "Both have been demoted to tentative. Human review required."
         ),
-        created=_date.today().isoformat(),
-        last_review=_date.today().isoformat(),
+        created=date.today().isoformat(),
+        last_review=date.today().isoformat(),
     )
     store.save(note)

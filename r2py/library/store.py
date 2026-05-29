@@ -15,16 +15,23 @@ class PatternStore:
         self._dir.mkdir(parents=True, exist_ok=True)
 
     def _path(self, pattern_id: PatternId) -> Path:
+        """Canonical save path: always a flat file directly under patterns/."""
         return self._dir / f"{pattern_id}.md"
 
     def save(self, pattern: Pattern) -> None:
         self._path(pattern.id).write_text(to_markdown(pattern), encoding="utf-8")
 
     def get(self, pattern_id: PatternId) -> Pattern | None:
+        # Try the canonical flat path first (fast).
         p = self._path(pattern_id)
-        if not p.exists():
+        if p.exists():
+            return from_markdown(p.read_text(encoding="utf-8"))
+        # Fall back to recursive search so files in subdirectories (e.g. seed
+        # collections) are still findable — matches the rglob in load_all().
+        matches = list(self._dir.rglob(f"{pattern_id}.md"))
+        if not matches:
             return None
-        return from_markdown(p.read_text(encoding="utf-8"))
+        return from_markdown(matches[0].read_text(encoding="utf-8"))
 
     def load_all(self) -> dict[PatternId, Pattern]:
         result: dict[PatternId, Pattern] = {}
