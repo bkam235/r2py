@@ -14,24 +14,38 @@ def translate(
     r_path: "str | Path",
     py_path: "str | Path",
     *,
+    library=None,                     # inject a PatternLibrary (or _FrozenLibrary); None → get_library()
     max_iters: int = 8,
     score_threshold: float = 0.85,
     beam_width: int = 4,
     use_judge: bool = False,          # D4: LLM judge off by default
-    learned_retrieval: bool = False,  # D6: learned reranker off by default
-    learned_policy: bool = False,     # D6: learned edit policy off by default
+    learned_retrieval: bool = False,  # D6: learned reranker off by default (ignored until step 9)
+    learned_policy: bool = False,     # D6: learned edit policy off by default (ignored until step 9)
     data_compare: str = "auto",       # "auto" | "exact" | "embedding"
     sandbox: str = "subprocess",
     no_seeds: bool = False,           # ignore seed:true patterns (§6.7 transfer experiment)
 ) -> "TranslateResult":
-    """Translate an R script to Python.
+    """Translate an R script to Python via the beam/strict-improvement loop (§4.1)."""
+    from pathlib import Path
+    from .stage1 import analyze as _analyze
+    from .library import get_library
+    from .loop import run_loop
 
-    Wired to the beam-search loop in step 7 of the implementation order,
-    after Stages 0–4 and the Pattern Library are built.
-    """
-    raise NotImplementedError(
-        "translate() requires Stages 0–4 and the beam-search loop (architecture step 7)"
+    if library is None:
+        library = get_library()
+
+    result = run_loop(
+        _analyze(Path(r_path)),
+        library,
+        max_iters=max_iters,
+        score_threshold=score_threshold,
+        beam_width=beam_width,
+        use_judge=use_judge,
+        data_compare=data_compare,
+        no_seeds=no_seeds,
     )
+    Path(py_path).write_text(result.python_source, encoding="utf-8")
+    return result
 
 
 def analyze(r_path: "str | Path") -> "ScriptMap":

@@ -2,13 +2,33 @@
 from __future__ import annotations
 
 from ..types import Candidate, Edit
+from .edit_types import apply_edit
+from .history import EditHistory
 
 
-def propose_edit(candidate: Candidate, library: object) -> Edit:
-    """Propose a typed edit for the weakest entity in the candidate."""
-    raise NotImplementedError("Stage 3 not yet implemented (architecture step 6)")
+def propose_edit(
+    candidate: Candidate,
+    library: object,
+    script_map: object = None,
+    history: EditHistory | None = None,
+    iteration: int = 0,
+) -> Edit:
+    """Propose a typed edit for the weakest entity in the candidate.
+
+    script_map and history are optional for backward compatibility with the §4.1
+    pseudocode signature (candidate, library); the loop (step 7) will pass them.
+    """
+    from .editor import propose_edit as _propose
+    return _propose(
+        candidate,
+        library,
+        script_map,
+        history if history is not None else EditHistory(),
+        iteration,
+    )
 
 
 def apply_edit(translation: str, edit: Edit) -> str:
     """Apply a typed edit to a Python source string, returning the modified source."""
-    raise NotImplementedError("Stage 3 not yet implemented (architecture step 6)")
+    from .edit_types import apply_edit as _apply
+    return _apply(translation, edit)

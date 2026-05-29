@@ -49,11 +49,42 @@ def cmd_translate(args: argparse.Namespace) -> int:
 def cmd_library(args: argparse.Namespace) -> int:
     sub = args.library_command
     if sub == "list":
-        raise NotImplementedError("r2py library list: Pattern Library not yet implemented (step 3)")
+        from r2py.library import get_library
+        lib = get_library()
+        patterns = list(lib.store.load_all().values())
+        if args.package:
+            patterns = [p for p in patterns if p.package == args.package]
+        if args.confidence:
+            patterns = [p for p in patterns if p.confidence == args.confidence]
+        if args.kind == "mapping":
+            patterns = [p for p in patterns if "→" in p.guidance]
+        for p in sorted(patterns, key=lambda x: (x.package or "", x.id)):
+            seed_flag = " [seed]" if p.seed else ""
+            print(f"{p.id:<45s} {p.confidence:<12s} {p.package or '(none)'}{seed_flag}")
+        print(f"\n{len(patterns)} pattern(s) shown.")
+        return 0
     elif sub == "show":
-        raise NotImplementedError("r2py library show: Pattern Library not yet implemented (step 3)")
+        from r2py.library import get_library
+        from r2py.library.pattern import to_markdown
+        lib = get_library()
+        p = lib.store.get(args.pattern_id)
+        if p is None:
+            print(f"Pattern '{args.pattern_id}' not found.", file=sys.stderr)
+            return 1
+        # Use buffer directly so non-ASCII characters (e.g. →) survive on
+        # Windows terminals without cp1252 encoding errors. Tests that capture
+        # this output must read sys.stdout.buffer, not sys.stdout.
+        sys.stdout.buffer.write(to_markdown(p).encode("utf-8") + b"\n")
+        return 0
     elif sub == "review":
-        raise NotImplementedError("r2py library review: epistemology not yet implemented (step 3)")
+        from r2py.library import get_library
+        from r2py.library.epistemology import review
+        lib = get_library()
+        log = review(lib.store, lib.index)
+        for line in log:
+            print(line)
+        print(f"Review complete: {len(log)} action(s).")
+        return 0
     elif sub == "train-reranker":
         raise NotImplementedError("r2py library train-reranker: D6 optional component (step 9)")
     raise NotImplementedError(f"Unknown library command: {sub}")
@@ -67,7 +98,18 @@ def cmd_harvest(args: argparse.Namespace) -> int:
 
 
 def cmd_ablation(args: argparse.Namespace) -> int:
-    raise NotImplementedError("r2py ablation: scripts/run_ablation.py not yet implemented (step 8)")
+    from r2py.ablation import run_ablation
+    summary = run_ablation(
+        slice_path=args.slice,
+        compare=args.compare,
+    )
+    print(
+        f"n={summary['n_scripts']}  "
+        f"mean_delta={summary['mean_delta']:+.3f}  "
+        f"p={summary['p_value']:.3f} ({summary['test']})  "
+        f"regressions={len(summary['regressions'])}"
+    )
+    return 0
 
 
 def main() -> None:
