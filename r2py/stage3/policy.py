@@ -28,6 +28,7 @@ def propose(
     history: "EditHistory",
     epsilon: float = 0.2,
     model: str = _llm._DEFAULT_MODEL,
+    _collector: object = None,
 ) -> Edit:
     """Propose a typed edit targeting the weakest entity in the candidate.
 
@@ -44,6 +45,11 @@ def propose(
     if not ordered:
         raise RuntimeError("no entities to edit: ScoreReport.by_entity is empty")
 
+    from ..library.bandit import BanditModel as _BanditModel
+    from ..library import bandit as _bandit
+    from ..types import EditKind
+    bandit_model = getattr(library, "_bandit_model", None)
+
     for eid in ordered:
         entity = _get_entity(script_map, eid)
         if entity is None:
@@ -55,6 +61,18 @@ def propose(
         patterns = library.retrieve(entity, k=3) if hasattr(library, "retrieve") else []
         exploit = bool(patterns) and random.random() > epsilon
 
+        # D6: if a trained bandit model is available, use it to choose the preferred
+        # edit kind and pass that hint to the prompt (bandit handles exploration itself).
+        bandit_hint: str | None = None
+        if isinstance(bandit_model, _BanditModel):
+            context = _bandit.extract_context(
+                entity_score,
+                getattr(getattr(entity, "kind", None), "value", ""),
+                getattr(entity, "package", None) or "",
+            )
+            all_arms = [e.value for e in EditKind]
+            bandit_hint = _bandit.choose_action(bandit_model, context, all_arms)
+
         messages = _prompt.build_edit_prompt(
             entity=entity,
             entity_score=entity_score,
@@ -63,6 +81,7 @@ def propose(
             patterns=patterns if exploit else [],
             history=history,
             exploit=exploit,
+            preferred_edit_kind=bandit_hint,
         )
 
         raw = _llm.call(messages, _prompt.STAGE3_SYSTEM_PROMPT, model=model)
@@ -78,6 +97,10 @@ def propose(
 
         # Use pattern_id from the LLM response; in exploit mode also accept the retrieved id.
         pid = d.get("pattern_id") or (patterns[0].id if exploit and patterns else None)
+
+        if _collector is not None and patterns:
+            _collector.episodes.append(_make_episode(entity, patterns, pid, exploit))
+
         try:
             attributed = attribute(edit, pid)
         except AttributionError:
@@ -117,3 +140,44 @@ def _get_entity(script_map: "ScriptMap", eid: str) -> object | None:
     """Return the Entity for eid, or None if script_map has no entities dict."""
     entities = getattr(script_map, "entities", {})
     return entities.get(eid)
+
+
+def _make_episode(entity: object, patterns: list, chosen_id: "str | None", exploit: bool) -> object:
+    """Build a RetrievalEpisode (outcome/score_delta stamped later by the loop)."""
+    from ..types import RetrievalEpisode, RetrievalEpisodeCandidate
+    from ..library.retrieval import _token_overlap, _entity_kind_str
+
+    package = getattr(entity, "package", None) or ""
+    entity_name = getattr(entity, "name", "") or ""
+    entity_kind = _entity_kind_str(entity)
+
+    candidates = []
+    for rank, pat in enumerate(patterns):
+        pkg_match = pat.package == package
+        ast_sim = _token_overlap(entity_kind, pat.id)
+        tok_sim = _token_overlap(entity_name, pat.guidance)
+        candidates.append(RetrievalEpisodeCandidate(
+            pattern_id=pat.id,
+            rank=rank,
+            package_match=pkg_match,
+            ast_shape_sim=ast_sim,
+            token_sim=tok_sim,
+            confidence=pat.confidence,
+            evidence_count=len(pat.evidence),
+            contradiction_count=len(pat.contradictions),
+            last_review=pat.last_review or "",
+        ))
+
+    return RetrievalEpisode(
+        query_entity_id=getattr(entity, "id", ""),
+        query_entity_kind=entity_kind,
+        query_package=package,
+        query_entity_name=entity_name,
+        candidates=candidates,
+        chosen_pattern_id=chosen_id,
+        exploit_mode=exploit,
+        outcome=None,
+        score_delta=None,
+        script_id="",
+        iteration=0,
+    )

@@ -54,6 +54,7 @@ def build_edit_prompt(
     patterns: list["Pattern"],
     history: "EditHistory",
     exploit: bool,
+    preferred_edit_kind: "str | None" = None,
 ) -> list[dict]:
     """Build the user-turn message for the edit-proposal LLM call."""
     parts: list[str] = []
@@ -108,6 +109,15 @@ def build_edit_prompt(
             "No pattern guidance is provided. Reason from the score breakdown and "
             "feedback to propose any typed edit that is likely to help. You must "
             "still propose a new pattern_id slug that names the rule you are applying."
+        )
+
+    # Bandit hint (D6, §12.6 B): suggest a preferred edit kind when a trained policy is active.
+    if preferred_edit_kind is not None:
+        parts.append("")
+        parts.append(f"### Suggested edit kind (learned policy): `{preferred_edit_kind}`")
+        parts.append(
+            "The learned edit policy suggests this edit kind is most likely to help. "
+            "Use it unless a pattern-guided or feedback-driven choice is clearly better."
         )
 
     # Already-tried edits to avoid

@@ -12,6 +12,7 @@ def propose_edit(
     script_map: object = None,
     history: EditHistory | None = None,
     iteration: int = 0,
+    _collector: object = None,
 ) -> Edit:
     """Propose a typed edit for the weakest entity in the candidate.
 
@@ -25,6 +26,7 @@ def propose_edit(
         script_map,
         history if history is not None else EditHistory(),
         iteration,
+        _collector=_collector,
     )
 
 

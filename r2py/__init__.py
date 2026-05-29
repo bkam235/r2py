@@ -14,16 +14,17 @@ def translate(
     r_path: "str | Path",
     py_path: "str | Path",
     *,
-    library=None,                     # inject a PatternLibrary (or _FrozenLibrary); None → get_library()
+    library=None,                    # inject a PatternLibrary (or _FrozenLibrary); None → get_library()
     max_iters: int = 8,
     score_threshold: float = 0.85,
     beam_width: int = 4,
-    use_judge: bool = False,          # D4: LLM judge off by default
-    learned_retrieval: bool = False,  # D6: learned reranker off by default (ignored until step 9)
-    learned_policy: bool = False,     # D6: learned edit policy off by default (ignored until step 9)
-    data_compare: str = "auto",       # "auto" | "exact" | "embedding"
+    use_judge: bool = False,         # D4: LLM judge off by default
+    learned_retrieval: bool = False, # D6: learned reranker (§12.6 A); off by default
+    learned_policy: bool = False,    # D6: learned edit policy (§12.6 B); off by default
+    data_compare: str = "auto",      # "auto" | "exact" | "embedding"
     sandbox: str = "subprocess",
-    no_seeds: bool = False,           # ignore seed:true patterns (§6.7 transfer experiment)
+    no_seeds: bool = False,          # ignore seed:true patterns (§6.7 transfer experiment)
+    output_dir: "str | Path | None" = None,  # if set, write edits.log.jsonl + library_diff.json
 ) -> "TranslateResult":
     """Translate an R script to Python via the beam/strict-improvement loop (§4.1)."""
     from pathlib import Path
@@ -43,6 +44,9 @@ def translate(
         use_judge=use_judge,
         data_compare=data_compare,
         no_seeds=no_seeds,
+        learned_retrieval=learned_retrieval,
+        learned_policy=learned_policy,
+        output_dir=Path(output_dir) if output_dir is not None else None,
     )
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     return result

@@ -25,6 +25,7 @@ def propose_edit(
     history: "EditHistory",
     iteration: int = 0,
     model: str = _llm._DEFAULT_MODEL,
+    _collector: object = None,
 ) -> "Edit":
     """Propose a typed edit to improve the candidate's score.
 
@@ -32,7 +33,8 @@ def propose_edit(
     exploitation as the loop matures.
     """
     epsilon = _epsilon(iteration)
-    return _policy.propose(candidate, script_map, library, history, epsilon, model)
+    return _policy.propose(candidate, script_map, library, history, epsilon, model,
+                           _collector=_collector)
 
 
 def _epsilon(iteration: int) -> float:

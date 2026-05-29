@@ -86,7 +86,19 @@ def cmd_library(args: argparse.Namespace) -> int:
         print(f"Review complete: {len(log)} action(s).")
         return 0
     elif sub == "train-reranker":
-        raise NotImplementedError("r2py library train-reranker: D6 optional component (step 9)")
+        from r2py.library.reranker import train as _train
+        rc = _train(
+            out_dir=args.out,
+            min_episodes=args.min_episodes,
+        )
+        return rc
+    elif sub == "train-policy":
+        from r2py.library.bandit import train as _train
+        rc = _train(
+            out_dir=args.out,
+            min_transitions=args.min_transitions,
+        )
+        return rc
     raise NotImplementedError(f"Unknown library command: {sub}")
 
 
@@ -154,6 +166,9 @@ def main() -> None:
     p_reranker = lib_sub.add_parser("train-reranker", help="Train offline retrieval reranker (§12.6 A)")
     p_reranker.add_argument("--min-episodes", type=int, default=500, dest="min_episodes")
     p_reranker.add_argument("--out", default="work/models/reranker/")
+    p_policy = lib_sub.add_parser("train-policy", help="Train offline contextual bandit edit policy (§12.6 B)")
+    p_policy.add_argument("--min-transitions", type=int, default=200, dest="min_transitions")
+    p_policy.add_argument("--out", default="work/models/policy/")
 
     # harvest
     p_harvest = sub.add_parser("harvest", help="Harvest R examples from a repo or URL (stage 0)")

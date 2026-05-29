@@ -5,10 +5,15 @@ accepts only strict improvements, preventing neutral drift and cycling.
 """
 from __future__ import annotations
 
+import dataclasses
 import hashlib
+import json
+from pathlib import Path
 from typing import TYPE_CHECKING
 
-from .types import Candidate, Proposal, TranslateResult
+from .types import (
+    Candidate, EpisodeCollector, PolicyTransition, Proposal, TranslateResult,
+)
 
 if TYPE_CHECKING:
     from .types import ScriptMap
@@ -38,6 +43,9 @@ def run_loop(
     use_judge: bool = False,
     data_compare: str = "auto",
     no_seeds: bool = False,
+    learned_retrieval: bool = False,
+    learned_policy: bool = False,
+    output_dir: "Path | None" = None,
     **verify_kwargs,
 ) -> TranslateResult:
     """Run the beam/strict-improvement loop (§4.1).
@@ -51,11 +59,19 @@ def run_loop(
         use_judge: Enable LLM judge fallback (D4, off by default).
         data_compare: "auto" | "exact" | "embedding" (§7.3.1).
         no_seeds: Ignore seed:true patterns (§6.7 transfer experiment).
+        learned_retrieval: Use learned retrieval reranker (D6, §12.6 A).
+        learned_policy: Use learned edit policy / contextual bandit (D6, §12.6 B).
+        output_dir: If set, write edits.log.jsonl and library_diff.json here.
         **verify_kwargs: Forwarded to stage4.verify() (e.g. rtol, atol, timeout_s).
     """
     from . import stage2, stage3, stage4
     from .stage3.history import EditHistory
     from .library.epistemology import review as _ep_review
+
+    # Configure optional learned components on the library instance (D6).
+    # Graceful: PatternLibrary accepts these as attributes; older stubs ignore them.
+    _set_attr(library, "learned_retrieval", learned_retrieval)
+    _set_attr(library, "learned_policy", learned_policy)
 
     script_id = hashlib.sha1(script_map.source.encode()).hexdigest()[:12]
 
@@ -77,6 +93,9 @@ def run_loop(
     # different translations produces different states; the tabu set catches
     # actual duplicates).
     histories: dict[str, EditHistory] = {}
+    # D6 data logging: collected throughout the run, written to output_dir at end.
+    all_episodes: list = []
+    all_transitions: list = []
 
     i = 0
     for i in range(max_iters):
@@ -85,17 +104,22 @@ def run_loop(
             break
 
         proposals: list[Proposal] = []
+        # Parallel lists — same index maps collector/transition to its proposal.
+        proposal_collectors: list[EpisodeCollector] = []
+        proposal_transitions: list["PolicyTransition | None"] = []
 
         for parent in beam:
             parent_history = histories.setdefault(
                 _state_hash(parent.translation), EditHistory()
             )
+            collector = EpisodeCollector()
             try:
                 edit = stage3.propose_edit(
                     parent, library,
                     script_map=script_map,
                     history=parent_history,
                     iteration=i,
+                    _collector=collector,
                 )
             except RuntimeError:
                 continue  # all entities exhausted for this parent
@@ -120,29 +144,77 @@ def run_loop(
             proposals.append(
                 Proposal(candidate_src, new_decomp.aggregate, new_decomp, edit, parent.score)
             )
+            proposal_collectors.append(collector)
+
+            # Build PolicyTransition directly (bandit data; no stage3 hook needed).
+            eid = edit.entity_ids[0] if edit.entity_ids else ""
+            es = parent.decomp.by_entity.get(eid)
+            tr: "PolicyTransition | None" = None
+            if es is not None:
+                entity = getattr(script_map, "entities", {}).get(eid)
+                exploit = collector.episodes[0].exploit_mode if collector.episodes else False
+                tr = PolicyTransition(
+                    entity_id=eid,
+                    entity_kind=getattr(getattr(entity, "kind", None), "value", ""),
+                    package=getattr(entity, "package", None) or "",
+                    type_match=es.type_match,
+                    control_flow_match=es.control_flow_match,
+                    data_output=es.data_output,
+                    variable_output=es.variable_output,
+                    callable_output=es.callable_output,
+                    side_effects=es.side_effects,
+                    edit_kind=edit.kind.value,
+                    exploit_mode=exploit,
+                    outcome=None,   # stamped below
+                    score_delta=None,
+                    script_id=script_id,
+                    iteration=i,
+                )
+            proposal_transitions.append(tr)
 
         if not proposals:
             break
 
         score_history.extend(p.new_decomp for p in proposals)
 
-        for p in proposals:
+        for idx, p in enumerate(proposals):
             if p.new_score > p.parent_score:
+                outcome = "accepted"
+                delta = p.new_score - p.parent_score
                 library.record_evidence(
                     p.edit,
-                    score_delta=p.new_score - p.parent_score,
+                    score_delta=delta,
                     script_id=script_id,
                 )
                 if p.edit.pattern_id:
                     evidence_added.append(p.edit.pattern_id)
             elif p.new_score == p.parent_score:
+                outcome = "tie"
+                delta = 0.0
                 library.record_tie(p.edit, script_id=script_id)
             else:
+                outcome = "rejected"
+                delta = p.new_score - p.parent_score
                 library.record_contradiction(
                     p.edit, observed=p.new_score, script_id=script_id,
                 )
                 if p.edit.pattern_id:
                     contradictions_added.append(p.edit.pattern_id)
+
+            # Stamp outcome onto retrieval episodes from this proposal.
+            for ep in proposal_collectors[idx].episodes:
+                ep.outcome = outcome
+                ep.score_delta = delta
+                ep.script_id = script_id
+                ep.iteration = i
+            all_episodes.extend(proposal_collectors[idx].episodes)
+
+            # Stamp and collect the matching PolicyTransition (parallel to proposals).
+            tr = proposal_transitions[idx]
+            if tr is not None:
+                tr.outcome = outcome
+                tr.score_delta = delta
+                all_transitions.append(tr)
 
         beam_min = min(c.score for c in beam)
         survivors = [
@@ -160,6 +232,16 @@ def run_loop(
         except Exception:
             pass
 
+    # Write per-run data files (§12.3) when an output_dir is provided.
+    if output_dir is not None:
+        _write_run_logs(
+            Path(output_dir),
+            all_episodes,
+            all_transitions,
+            evidence_added,
+            contradictions_added,
+        )
+
     best = max(beam, key=lambda c: c.score)
     return TranslateResult(
         python_source=best.translation,
@@ -168,4 +250,49 @@ def run_loop(
         score_history=score_history,
         pattern_evidence_added=list(dict.fromkeys(evidence_added)),
         pattern_contradictions_added=list(dict.fromkeys(contradictions_added)),
+    )
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _set_attr(obj: object, name: str, value: object) -> None:
+    """Set an attribute on obj when it exists; silently skip otherwise."""
+    try:
+        setattr(obj, name, value)
+    except (AttributeError, TypeError):
+        pass
+
+
+def _write_run_logs(
+    out_dir: Path,
+    episodes: list,
+    transitions: list,
+    evidence_added: list[str],
+    contradictions_added: list[str],
+) -> None:
+    """Write edits.log.jsonl and library_diff.json to out_dir (§12.3)."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # edits.log.jsonl — one JSON line per stamped RetrievalEpisode or PolicyTransition
+    log_path = out_dir / "edits.log.jsonl"
+    with log_path.open("w", encoding="utf-8") as fh:
+        for ep in episodes:
+            if ep.outcome is None:
+                continue
+            fh.write(json.dumps(dataclasses.asdict(ep)) + "\n")
+        for tr in transitions:
+            if tr.outcome is None:
+                continue
+            fh.write(json.dumps(dataclasses.asdict(tr)) + "\n")
+
+    # library_diff.json — patterns touched during this run
+    diff_path = out_dir / "library_diff.json"
+    diff_path.write_text(
+        json.dumps({
+            "evidence_added": list(dict.fromkeys(evidence_added)),
+            "contradictions_added": list(dict.fromkeys(contradictions_added)),
+        }, indent=2),
+        encoding="utf-8",
     )

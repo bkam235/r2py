@@ -185,6 +185,64 @@ class Proposal:
 
 
 # ---------------------------------------------------------------------------
+# §12.6 — Data logging types for optional learned components (D6)
+# ---------------------------------------------------------------------------
+
+@dataclass
+class RetrievalEpisodeCandidate:
+    pattern_id:         str
+    rank:               int
+    package_match:      bool
+    ast_shape_sim:      float
+    token_sim:          float
+    confidence:         str    # "confirmed" | "tentative"
+    evidence_count:     int
+    contradiction_count: int
+    last_review:        str    # ISO date or ""
+
+
+@dataclass
+class RetrievalEpisode:
+    query_entity_id:   str
+    query_entity_kind: str
+    query_package:     str
+    query_entity_name: str
+    candidates:        list[RetrievalEpisodeCandidate]
+    chosen_pattern_id: str | None
+    exploit_mode:      bool
+    outcome:           str | None   # "accepted"|"tie"|"rejected"; None until stamped by loop
+    score_delta:       float | None
+    script_id:         str
+    iteration:         int
+
+
+@dataclass
+class PolicyTransition:
+    entity_id:           str
+    entity_kind:         str
+    package:             str
+    type_match:          float
+    control_flow_match:  float
+    data_output:         float
+    variable_output:     float
+    callable_output:     float
+    side_effects:        float
+    edit_kind:           str        # EditKind.value
+    exploit_mode:        bool
+    outcome:             str | None # "accepted"|"tie"|"rejected"; None until stamped
+    score_delta:         float | None
+    script_id:           str
+    iteration:           int
+
+
+class EpisodeCollector:
+    """Passed optionally through stage3 to capture retrieval + policy metadata."""
+    def __init__(self) -> None:
+        self.episodes: list = []    # list[RetrievalEpisode]
+        self.transitions: list = [] # list[PolicyTransition]
+
+
+# ---------------------------------------------------------------------------
 # §3.3 — ScriptMap (minimal placeholder; stage1 fills out the full structure)
 # ---------------------------------------------------------------------------
 

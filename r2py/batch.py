@@ -84,6 +84,7 @@ def translate_batch(
                 beam_width=beam_width,
                 no_seeds=no_seeds,
                 data_compare=data_compare,
+                output_dir=run_dir,
             )
             row = {
                 "script_id": script_id,

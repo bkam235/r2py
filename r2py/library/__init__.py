@@ -24,6 +24,45 @@ class PatternLibrary:
         # Build index on first use if it is empty
         if not self.index.all_ids():
             self.index.rebuild(self.store)
+        # D6 optional learned components — set by run_loop() when enabled.
+        self._learned_retrieval: bool = False
+        self._learned_policy: bool = False
+        self._reranker_model: object = None   # loaded lazily on first retrieve()
+        self._bandit_model: object = None     # loaded lazily on first propose()
+        self._models_loaded: bool = False
+
+    # Property setters reset the lazy-load flag when flags change (fix #7).
+    @property
+    def learned_retrieval(self) -> bool:
+        return self._learned_retrieval
+
+    @learned_retrieval.setter
+    def learned_retrieval(self, value: bool) -> None:
+        if value != self._learned_retrieval:
+            self._models_loaded = False
+        self._learned_retrieval = value
+
+    @property
+    def learned_policy(self) -> bool:
+        return self._learned_policy
+
+    @learned_policy.setter
+    def learned_policy(self, value: bool) -> None:
+        if value != self._learned_policy:
+            self._models_loaded = False
+        self._learned_policy = value
+
+    def _ensure_models_loaded(self) -> None:
+        if self._models_loaded:
+            return
+        self._models_loaded = True
+        _models_dir = self._dir.parent / "models"
+        if self._learned_retrieval:
+            from . import reranker as _reranker
+            self._reranker_model = _reranker.load_model(_models_dir / "reranker")
+        if self._learned_policy:
+            from . import bandit as _bandit
+            self._bandit_model = _bandit.load_model(_models_dir / "policy")
 
     # ------------------------------------------------------------------ #
     # Read path (Stage 2)                                                  #
@@ -35,7 +74,14 @@ class PatternLibrary:
         k: int = 3,
         no_seeds: bool = False,
     ) -> list[Pattern]:
-        return _retrieval.retrieve(entity, k, self.store, self.index, no_seeds=no_seeds)
+        candidates = _retrieval.retrieve(entity, k, self.store, self.index,
+                                         no_seeds=no_seeds)
+        if self.learned_retrieval:
+            self._ensure_models_loaded()
+            if self._reranker_model is not None:
+                from . import reranker as _reranker
+                candidates = _reranker.rerank(entity, candidates, self._reranker_model)
+        return candidates
 
     # ------------------------------------------------------------------ #
     # Write path (Stage 4 / loop — routed through writer)                 #
