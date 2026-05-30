@@ -5,6 +5,7 @@ from ..types import (
     ComparatorResult,
     EffectClass,
     EntityId,
+    EntityKind,
     EntityScore,
 )
 
@@ -16,6 +17,39 @@ _SIDE_EFFECT_CLASSES = frozenset({
     EffectClass.ENV,
     EffectClass.WARNINGS,
 })
+
+
+def _kind_scores(
+    kind: EntityKind | None,
+    data_score: float,
+    stdout_score: float,
+    executed_ok: bool,
+    global_data_score: float,
+) -> tuple[float, float, float]:
+    """Return (type_match, control_flow_match, callable_output) for a given EntityKind.
+
+    Uses comparator results already in hand as proxies — no per-entity sandbox needed:
+
+    - LIBRARY_IMPORT: binary pass/fail on all three; callable_output N/A → 1.0.
+    - VARIABLE / CONSTANT: data score captures type gate; sequential → executed_ok
+      for control flow; not callable → 1.0.
+    - FUNCTION_DEF: stdout is the best proxy for whether the function's control flow
+      and output are correct across the script's calls; global data as callable proxy.
+    - FUNCTION_CALL: call result (data_score) is type + control flow + callable output.
+    - EXTERNAL_SYMBOL: treated like FUNCTION_DEF (external callable).
+    - Others (FORMULA, S4_CLASS, R6_CLASS, ENVIRONMENT): executed_ok proxy; not callable.
+    """
+    ok = float(executed_ok)
+    if kind == EntityKind.LIBRARY_IMPORT:
+        return ok, ok, 1.0
+    if kind in (EntityKind.VARIABLE, EntityKind.CONSTANT):
+        return data_score, ok, 1.0
+    if kind == EntityKind.FUNCTION_DEF:
+        return ok, stdout_score, global_data_score
+    if kind in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL):
+        return data_score, data_score, data_score
+    # FORMULA, S4_CLASS, R6_CLASS, ENVIRONMENT, or unknown
+    return ok, ok, 1.0
 
 
 def make_score_table(
@@ -39,6 +73,9 @@ def make_score_table(
     global_data_score = data_result.score if data_result else 0.0
     per_variable = data_result.per_variable if data_result else {}
 
+    stdout_result = comparator_results.get(EffectClass.STDOUT)
+    stdout_score = stdout_result.score if stdout_result else float(executed_ok)
+
     side_scores = [
         comparator_results[ec].score
         for ec in _SIDE_EFFECT_CLASSES
@@ -48,23 +85,25 @@ def make_score_table(
 
     table: dict[EntityId, EntityScore] = {}
     for entity_id, entity in entities.items():
-        # Try to assign a per-variable data score using the entity's name.
         entity_name = getattr(entity, "name", None)
         if entity_name and entity_name in per_variable:
             data_score = per_variable[entity_name]
         else:
             data_score = global_data_score
 
+        kind = getattr(entity, "kind", None)
+        type_match, control_flow_match, callable_output = _kind_scores(
+            kind, data_score, stdout_score, executed_ok, global_data_score,
+        )
+
         table[entity_id] = EntityScore(
             entity_id=entity_id,
             executed_ok=executed_ok,
-            # type_match / control_flow_match / callable_output: require per-entity
-            # Python execution tracing; deferred (§7.4 note).
-            type_match=0.0,
-            control_flow_match=0.0,
+            type_match=type_match,
+            control_flow_match=control_flow_match,
             data_output=data_score,
             variable_output=data_score,
-            callable_output=0.0,
+            callable_output=callable_output,
             side_effects=side_effects_score,
         )
     return table

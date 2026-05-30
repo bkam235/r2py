@@ -18,7 +18,7 @@ from r2py.stage4.judge import judge_entity
 from r2py.stage4.replay import capture_r_rng, ReplayLog
 from r2py.stage4.wiki_update import after_accepted_edit, after_tie, after_rejected_edit, maybe_review
 from r2py.types import (
-    EffectBundle, EffectClass, EntityScore, FeedbackItem, ScoreReport,
+    EffectBundle, EffectClass, EntityKind, EntityScore, FeedbackItem, ScoreReport,
     Edit, EditKind,
 )
 
@@ -404,6 +404,129 @@ class TestMakeScoreTable:
     def test_empty_entities(self):
         table = make_score_table({}, {})
         assert table == {}
+
+
+class TestKindScores:
+    """Kind-aware type_match / control_flow_match / callable_output (§7.4)."""
+
+    def _results(self, data=1.0, stdout=1.0):
+        from r2py.types import ComparatorResult
+        return {
+            EffectClass.DATA: ComparatorResult(EffectClass.DATA, data, "pass"),
+            EffectClass.STDOUT: ComparatorResult(EffectClass.STDOUT, stdout, "pass"),
+        }
+
+    def _entity(self, kind, name="x"):
+        class E:
+            pass
+        e = E()
+        e.kind = kind
+        e.name = name
+        return e
+
+    def test_library_import_all_ok(self):
+        entities = {"e1": self._entity(EntityKind.LIBRARY_IMPORT)}
+        table = make_score_table(entities, self._results(), py_exit_code=0)
+        es = table["e1"]
+        assert es.type_match == pytest.approx(1.0)
+        assert es.control_flow_match == pytest.approx(1.0)
+        assert es.callable_output == pytest.approx(1.0)
+
+    def test_library_import_failed_exec(self):
+        entities = {"e1": self._entity(EntityKind.LIBRARY_IMPORT)}
+        table = make_score_table(entities, self._results(), py_exit_code=1)
+        es = table["e1"]
+        assert es.type_match == pytest.approx(0.0)
+        assert es.control_flow_match == pytest.approx(0.0)
+        assert es.callable_output == pytest.approx(1.0)
+
+    def test_variable_uses_data_score_for_type(self):
+        from r2py.types import ComparatorResult
+        results = {
+            EffectClass.DATA: ComparatorResult(
+                EffectClass.DATA, 0.6, "fail", per_variable={"x": 0.6}
+            ),
+            EffectClass.STDOUT: ComparatorResult(EffectClass.STDOUT, 1.0, "pass"),
+        }
+        entities = {"e1": self._entity(EntityKind.VARIABLE, name="x")}
+        table = make_score_table(entities, results, py_exit_code=0)
+        es = table["e1"]
+        assert es.type_match == pytest.approx(0.6)
+        assert es.control_flow_match == pytest.approx(1.0)  # executed_ok
+        assert es.callable_output == pytest.approx(1.0)     # not callable
+
+    def test_constant_uses_data_score_for_type(self):
+        results = self._results(data=0.9)
+        entities = {"e1": self._entity(EntityKind.CONSTANT)}
+        table = make_score_table(entities, results, py_exit_code=0)
+        es = table["e1"]
+        assert es.type_match == pytest.approx(0.9)
+        assert es.callable_output == pytest.approx(1.0)
+
+    def test_function_def_uses_stdout_for_control_flow(self):
+        results = self._results(data=0.8, stdout=0.5)
+        entities = {"e1": self._entity(EntityKind.FUNCTION_DEF)}
+        table = make_score_table(entities, results, py_exit_code=0)
+        es = table["e1"]
+        assert es.type_match == pytest.approx(1.0)         # executed_ok
+        assert es.control_flow_match == pytest.approx(0.5) # stdout score
+        assert es.callable_output == pytest.approx(0.8)    # global data score
+
+    def test_function_call_all_from_data_score(self):
+        from r2py.types import ComparatorResult
+        results = {
+            EffectClass.DATA: ComparatorResult(
+                EffectClass.DATA, 0.7, "fail", per_variable={"result": 0.7}
+            ),
+            EffectClass.STDOUT: ComparatorResult(EffectClass.STDOUT, 1.0, "pass"),
+        }
+        entities = {"e1": self._entity(EntityKind.FUNCTION_CALL, name="result")}
+        table = make_score_table(entities, results, py_exit_code=0)
+        es = table["e1"]
+        assert es.type_match == pytest.approx(0.7)
+        assert es.control_flow_match == pytest.approx(0.7)
+        assert es.callable_output == pytest.approx(0.7)
+
+    def test_external_symbol_all_from_data_score(self):
+        results = self._results(data=0.55, stdout=0.9)
+        entities = {"e1": self._entity(EntityKind.EXTERNAL_SYMBOL)}
+        table = make_score_table(entities, results, py_exit_code=0)
+        es = table["e1"]
+        assert es.type_match == pytest.approx(0.55)
+        assert es.control_flow_match == pytest.approx(0.55)
+        assert es.callable_output == pytest.approx(0.55)
+
+    def test_formula_uses_executed_ok(self):
+        results = self._results()
+        entities = {"e1": self._entity(EntityKind.FORMULA)}
+        table = make_score_table(entities, results, py_exit_code=0)
+        es = table["e1"]
+        assert es.type_match == pytest.approx(1.0)
+        assert es.control_flow_match == pytest.approx(1.0)
+        assert es.callable_output == pytest.approx(1.0)
+
+    def test_no_kind_attr_falls_back_to_executed_ok(self):
+        """Fake entity with no kind attribute (pre-existing tests) still works."""
+        class E:
+            pass
+        e = E()
+        e.name = "y"
+        results = self._results()
+        table = make_score_table({"e1": e}, results, py_exit_code=0)
+        es = table["e1"]
+        assert es.type_match == pytest.approx(1.0)
+        assert es.callable_output == pytest.approx(1.0)
+
+    def test_no_stdout_comparator_falls_back_to_executed_ok(self):
+        from r2py.types import ComparatorResult
+        results = {
+            EffectClass.DATA: ComparatorResult(EffectClass.DATA, 0.8, "pass"),
+        }
+        entities = {"e1": self._entity(EntityKind.FUNCTION_DEF)}
+        table = make_score_table(entities, results, py_exit_code=0)
+        es = table["e1"]
+        # stdout_score falls back to float(executed_ok) = 1.0
+        assert es.control_flow_match == pytest.approx(1.0)
 
 
 # ---------------------------------------------------------------------------
