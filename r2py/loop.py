@@ -15,6 +15,7 @@ from .types import (
     Candidate, EpisodeCollector, EffectBundle, PolicyTransition, Proposal, TranslateResult,
 )
 from .stage0.effects import bundle as _bundle_mod
+from .stage2.llm import _DEFAULT_MODEL as _LLM_DEFAULT_MODEL
 
 if TYPE_CHECKING:
     from .types import ScriptMap
@@ -47,6 +48,7 @@ def run_loop(
     learned_retrieval: bool = False,
     learned_policy: bool = False,
     output_dir: "Path | None" = None,
+    model: str = _LLM_DEFAULT_MODEL,
     **verify_kwargs,
 ) -> TranslateResult:
     """Run the beam/strict-improvement loop (§4.1).
@@ -79,7 +81,7 @@ def run_loop(
     script_id = hashlib.sha1(script_map.source.encode()).hexdigest()[:12]
 
     # --- seed translation -------------------------------------------------- #
-    seed, entity_line_map = stage2.translate(script_map, library, no_seeds=no_seeds)
+    seed, entity_line_map = stage2.translate(script_map, library, no_seeds=no_seeds, model=model)
     _need_bundles = output_dir is not None
     seed_result = stage4.verify(
         script_map, seed,
@@ -136,6 +138,7 @@ def run_loop(
                     script_map=script_map,
                     history=parent_history,
                     iteration=i,
+                    model=model,
                     _collector=collector,
                 )
             except RuntimeError:

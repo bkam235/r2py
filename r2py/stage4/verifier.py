@@ -187,11 +187,12 @@ def verify(
         uncomparable.extend(entities.keys())
 
     # --- Aggregate score ---
-    # Per entity: average of data_output + side_effects (type/control not yet populated)
+    # Per entity: average of all six EntityScore fields (kind-aware proxies populated by decompose).
     entity_scores = list(score_table.values())
     if entity_scores:
         per_entity_avgs = [
-            (es.data_output + es.side_effects) / 2
+            (es.type_match + es.control_flow_match + es.data_output
+             + es.variable_output + es.callable_output + es.side_effects) / 6
             for es in entity_scores
         ]
         aggregate = sum(per_entity_avgs) / len(per_entity_avgs)

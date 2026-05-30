@@ -15,6 +15,7 @@ def translate(
     py_path: "str | Path",
     *,
     library=None,                    # inject a PatternLibrary (or _FrozenLibrary); None → get_library()
+    model: "str | None" = None,  # Anthropic model ID, or "ollama:<name>" for local Ollama; None → _DEFAULT_MODEL
     max_iters: int = 8,
     score_threshold: float = 0.85,
     beam_width: int = 4,
@@ -31,6 +32,9 @@ def translate(
     from .stage1 import analyze as _analyze
     from .library import get_library
     from .loop import run_loop
+    from .stage2.llm import _DEFAULT_MODEL
+    if model is None:
+        model = _DEFAULT_MODEL
 
     if library is None:
         library = get_library()
@@ -47,6 +51,7 @@ def translate(
         learned_retrieval=learned_retrieval,
         learned_policy=learned_policy,
         output_dir=Path(output_dir) if output_dir is not None else None,
+        model=model,
     )
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     return result

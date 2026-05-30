@@ -125,14 +125,11 @@ def _weak_first(candidate: "Candidate") -> list[str]:
 
 
 def _avg_score(es: EntityScore) -> float:
-    vals = [
-        es.type_match,
-        es.control_flow_match,
-        es.data_output,
-        es.variable_output,
-        es.callable_output,
-        es.side_effects,
-    ]
+    # Use only execution-outcome fields for edit priority. type_match, control_flow_match,
+    # and callable_output include kind-specific 1.0 constants for non-callable entities
+    # (e.g. LIBRARY_IMPORT always gets callable_output=1.0) which would inflate the
+    # apparent score of a failed entity and deprioritize it from editing.
+    vals = [es.data_output, es.variable_output, es.side_effects]
     return sum(vals) / len(vals)
 
 

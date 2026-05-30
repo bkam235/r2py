@@ -33,6 +33,7 @@ def cmd_translate(args: argparse.Namespace) -> int:
     result = translate(
         r_path=args.input,
         py_path=args.output,
+        model=args.model,
         max_iters=args.max_iters,
         score_threshold=args.score_threshold,
         beam_width=args.beam_width,
@@ -125,6 +126,7 @@ def cmd_ablation(args: argparse.Namespace) -> int:
 
 
 def main() -> None:
+    from r2py.stage2.llm import _DEFAULT_MODEL
     parser = argparse.ArgumentParser(prog="r2py", description="R-to-Python translator")
     parser.add_argument("--quiet", action="store_true")
     sub = parser.add_subparsers(dest="command", required=True)
@@ -137,6 +139,8 @@ def main() -> None:
     p_translate = sub.add_parser("translate", help="Translate an R file to Python (full pipeline)")
     p_translate.add_argument("input", help="Input .R file")
     p_translate.add_argument("output", help="Output .py file")
+    p_translate.add_argument("--model", default=_DEFAULT_MODEL,
+                             help="Model to use: Anthropic model ID or 'ollama:<name>' for local Ollama")
     p_translate.add_argument("--max-iters", type=int, default=8, dest="max_iters")
     p_translate.add_argument("--score-threshold", type=float, default=0.85, dest="score_threshold")
     p_translate.add_argument("--beam-width", type=int, default=4, dest="beam_width")

@@ -24,6 +24,7 @@ def translate_batch(
     scoring_table_csv: str | Path = "work/analysis/scoring_table.csv",
     *,
     recursive: bool = True,
+    model: str | None = None,
     max_iters: int = 8,
     score_threshold: float = 0.85,
     beam_width: int = 4,
@@ -38,6 +39,9 @@ def translate_batch(
       output_py, timestamp — or "error" on failure.
     """
     from r2py import translate as _translate
+    from r2py.stage2.llm import _DEFAULT_MODEL
+    if model is None:
+        model = _DEFAULT_MODEL
 
     input_dir = Path(input_dir)
     output_dir = Path(output_dir)
@@ -79,6 +83,7 @@ def translate_batch(
             result = _translate(
                 r_path=r_path,
                 py_path=py_path,
+                model=model,
                 max_iters=max_iters,
                 score_threshold=score_threshold,
                 beam_width=beam_width,
