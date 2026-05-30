@@ -41,7 +41,7 @@ def propose(
             "pass script_map to stage3.propose_edit() (§4.1 loop)"
         )
 
-    ordered = _weak_first(candidate)
+    ordered = _weak_first(candidate, script_map)
     if not ordered:
         raise RuntimeError("no entities to edit: ScoreReport.by_entity is empty")
 
@@ -50,7 +50,14 @@ def propose(
     from ..types import EditKind
     bandit_model = getattr(library, "_bandit_model", None)
 
+    # Max edits tried for any single entity before moving on (prevents cycling when
+    # the LLM generates slight param variations that all produce the same bad score).
+    _MAX_ATTEMPTS_PER_ENTITY = 3
+
     for eid in ordered:
+        if history.count_for_entity(eid) >= _MAX_ATTEMPTS_PER_ENTITY:
+            continue
+
         entity = _get_entity(script_map, eid)
         if entity is None:
             continue
@@ -109,6 +116,18 @@ def propose(
         if history.was_tried(attributed):
             continue
 
+        # Redirect edits that target a completely different entity than the one
+        # we asked the LLM to fix. Redirect rather than reject so the edit
+        # still gets applied — the LLM's mechanical params are usually correct,
+        # only the entity_ids field is wrong.
+        if attributed.entity_ids and eid not in attributed.entity_ids:
+            attributed = Edit(
+                kind=attributed.kind,
+                entity_ids=[eid],
+                params=attributed.params,
+                pattern_id=attributed.pattern_id,
+            )
+
         return attributed
 
     raise RuntimeError("no untried edits could be proposed for any entity")
@@ -118,10 +137,29 @@ def propose(
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _weak_first(candidate: "Candidate") -> list[str]:
-    """Return entity IDs sorted by ascending average score."""
+def _weak_first(candidate: "Candidate", script_map: object = None) -> list[str]:
+    """Return entity IDs sorted by ascending average score.
+
+    Tie-break: FUNCTION_CALL / EXTERNAL_SYMBOL entities before LIBRARY_IMPORT /
+    VARIABLE / CONSTANT — function calls are more likely to be causing execution
+    failures and profit more from editing than trivial imports or assignments.
+    """
+    from ..types import EntityKind
     scores = candidate.decomp.by_entity
-    return sorted(scores.keys(), key=lambda eid: _avg_score(scores[eid]))
+    entities = getattr(script_map, "entities", {}) if script_map is not None else {}
+
+    def _sort_key(eid: str) -> tuple:
+        es = scores[eid]
+        avg = _avg_score(es)
+        # Secondary key: 0 = callable entity (prefer editing), 1 = import/constant
+        entity = entities.get(eid)
+        kind_val = getattr(entity, "kind", None) if entity else None
+        is_callable = kind_val in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL,
+                                   EntityKind.FUNCTION_DEF)
+        priority = 0 if is_callable else 1
+        return (avg, priority)
+
+    return sorted(scores.keys(), key=_sort_key)
 
 
 def _avg_score(es: EntityScore) -> float:

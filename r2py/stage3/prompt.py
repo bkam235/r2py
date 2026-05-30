@@ -40,6 +40,7 @@ Valid kind values (use exactly these strings):
 Rules:
 - "pattern_id" is REQUIRED. Use an existing pattern slug (provided below) or propose
   a new short kebab-case slug that names the rule (e.g. "dplyr.filter-to-mask").
+- "entity_ids" MUST contain the ID shown after "## Target entity:" — do not target a different entity.
 - Target the specific entity that is scoring poorly; set entity_ids to its ID.
 - Make the smallest change that addresses the failure.
 - Output ONLY the JSON line. No prose before or after it.

@@ -31,6 +31,7 @@ def to_json(bundle: EffectBundle) -> dict:
         "uncapturable": bundle.uncapturable,
         "exit_code": bundle.exit_code,
         "run_time_s": bundle.run_time_s,
+        "preamble_lines": bundle.preamble_lines,
     }
 
 
@@ -50,6 +51,7 @@ def from_json(d: dict) -> EffectBundle:
         uncapturable=d.get("uncapturable", []),
         exit_code=d.get("exit_code", 0),
         run_time_s=d.get("run_time_s", 0.0),
+        preamble_lines=d.get("preamble_lines", 0),
     )
 
 

@@ -102,12 +102,14 @@ def _build_feedback(
     comparator_results: dict[EffectClass, ComparatorResult],
     entities: dict,
 ) -> list[FeedbackItem]:
-    """Convert comparator failures into FeedbackItems for Stage 3."""
+    """Convert comparator failures into FeedbackItems for Stage 3.
+
+    Feedback is attributed to ALL entities so Stage 3 can act on whichever
+    entity it targets, not just the first one in insertion order.
+    """
     items: list[FeedbackItem] = []
     for ec, result in comparator_results.items():
         if result.verdict in ("fail",) and result.explanation:
-            # One feedback item per failing effect class; entity attribution is
-            # whole-script for now (per-entity slicing deferred to Stage 2).
             for entity_id in entities:
                 items.append(FeedbackItem(
                     entity_id=entity_id,
@@ -115,7 +117,6 @@ def _build_feedback(
                     message=result.explanation,
                     score=result.score,
                 ))
-                break
     return items
 
 
@@ -169,6 +170,8 @@ def verify(
         entities, comparator_results,
         py_exit_code=py_bundle.exit_code,
         entity_line_map=entity_line_map,
+        py_stderr=py_bundle.stderr,
+        preamble_lines=py_bundle.preamble_lines,
     )
 
     # --- Differential fuzzing (optional) ---
@@ -179,6 +182,19 @@ def verify(
         feedback.extend(_fuzz.run_fuzz(script_map, candidate, config=fuzz_cfg, data_compare=data_compare))
 
     feedback.extend(_build_feedback(comparator_results, entities))
+
+    # RC2: surface crash traceback as feedback so Stage 3 knows what line failed
+    if py_bundle.exit_code != 0 and py_bundle.stderr:
+        crash_msg = py_bundle.stderr.strip()
+        if len(crash_msg) > 800:
+            crash_msg = "..." + crash_msg[-800:]
+        for entity_id in entities:
+            feedback.append(FeedbackItem(
+                entity_id=entity_id,
+                effect_class=EffectClass.SYNTAX,
+                message=f"Python crashed (exit {py_bundle.exit_code}): {crash_msg}",
+                score=0.0,
+            ))
 
     # --- Uncomparable entities ---
     uncomparable: list[EntityId] = []

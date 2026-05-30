@@ -33,6 +33,10 @@ class EditHistory:
         key = _edit_key(edit)
         return any(_edit_key(e) == key for e in self.tried)
 
+    def count_for_entity(self, entity_id: str) -> int:
+        """Count edits that targeted this entity (by entity_id membership)."""
+        return sum(1 for e in self.tried if entity_id in e.entity_ids)
+
     def clear(self) -> None:
         """Reset for a new translation script."""
         self.tried.clear()

@@ -75,11 +75,11 @@ class PySandbox:
         before_files = _files_effects.snapshot(workdir) if EffectClass.FILES in capture else {}
         home_snap = snapshot_home()
 
+        before_source = "\n".join(pre_parts) + "\n" + preamble + "\n"
+        _preamble_lines = before_source.count("\n")
+
         full_script = (
-            "\n".join(pre_parts)
-            + "\n"
-            + preamble
-            + "\n"
+            before_source
             + source
             + "\n"
             + epilogue
@@ -102,7 +102,7 @@ class PySandbox:
 
         check_escape(home_snap, workdir)
 
-        bundle = EffectBundle(exit_code=result.returncode, run_time_s=run_time)
+        bundle = EffectBundle(exit_code=result.returncode, run_time_s=run_time, preamble_lines=_preamble_lines)
 
         collected = _stdout_effects.collect(result.stdout, result.stderr)
         bundle.stdout = collected["stdout"]

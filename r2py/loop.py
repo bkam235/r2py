@@ -180,19 +180,28 @@ def run_loop(
     # D6 data logging: collected throughout the run, written to output_dir at end.
     all_episodes: list = []
     all_transitions: list = []
+    # Beam members whose entity edit-space is fully exhausted (all entities tried
+    # _MAX_ATTEMPTS_PER_ENTITY times with no viable untried edit). These are pruned
+    # from future iterations so the loop doesn't stall re-proposing for dead parents.
+    exhausted_parents: set[str] = set()
 
     i = 0
     for i in range(max_iters):
         best = max(beam, key=lambda c: c.score)
         if best.score >= score_threshold:
             break
+
+        active_beam = [p for p in beam if _state_hash(p.translation) not in exhausted_parents]
+        if not active_beam:
+            break
+
         _emit(progress, kind="iteration_start", iteration=i, score=best.score)
 
         proposals: list[Proposal] = []
         # Parallel lists — same index maps collector/transition to its proposal.
         proposal_collectors: list[EpisodeCollector] = []
         proposal_transitions: list["PolicyTransition | None"] = []
-        for parent in beam:
+        for parent in active_beam:
             parent_history = histories.setdefault(
                 _state_hash(parent.translation), EditHistory()
             )
@@ -207,6 +216,7 @@ def run_loop(
                     _collector=collector,
                 )
             except RuntimeError:
+                exhausted_parents.add(_state_hash(parent.translation))
                 continue  # all entities exhausted for this parent
 
             # Record before the tabu check so Stage 3 won't re-propose an edit
@@ -227,7 +237,6 @@ def run_loop(
                 new_decomp = _make_syntax_error_report(
                     getattr(script_map, "entities", {}), _syn_exc, _candidate_elmap,
                 )
-                _report_idx += 1
                 proposals.append(
                     Proposal(candidate_src, 0.0, new_decomp, edit, parent.score)
                 )

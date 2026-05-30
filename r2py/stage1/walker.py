@@ -184,10 +184,21 @@ def _visit_assignment(node: AstNode, op: str, ctx: _WalkContext) -> None:
         body = rhs.child_by_field("body")
         if body:
             _visit(body, ctx)
+    elif rhs.kind == "call":
+        # Call RHS: sub-calls are translated as part of their enclosing entity.
+        # Only scan for nested library/require imports.
+        args = rhs.child_by_field("arguments")
+        if args:
+            for child in args.named_children():
+                if child.kind == "argument":
+                    val = child.child_by_field("value")
+                    if val is not None and val.kind == "call" and _call_name(val) in ("library", "require"):
+                        _visit_library_call(val, _call_name(val), ctx)
+                elif child.kind == "call" and _call_name(child) in ("library", "require"):
+                    _visit_library_call(child, _call_name(child), ctx)
     else:
         # Recurse for braced_expression, if_statement, etc. — may contain
-        # nested named definitions. Call RHS is intentionally not recursed:
-        # sub-calls are translated as part of their enclosing assignment entity.
+        # nested named definitions.
         for child in rhs.named_children():
             _visit(child, ctx)
 
@@ -234,10 +245,15 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
     # Only detect library/require imports nested inside this call's arguments.
     # Generic sub-calls (c(), as.Date(), etc.) are NOT extracted as separate
     # entities — they are translated as part of their enclosing statement.
+    # tree-sitter-r wraps each argument in an "argument" node, so unwrap it.
     args = node.child_by_field("arguments")
     if args:
         for child in args.named_children():
-            if child.kind == "call" and _call_name(child) in ("library", "require"):
+            if child.kind == "argument":
+                val = child.child_by_field("value")
+                if val is not None and val.kind == "call" and _call_name(val) in ("library", "require"):
+                    _visit_library_call(val, _call_name(val), ctx)
+            elif child.kind == "call" and _call_name(child) in ("library", "require"):
                 _visit_library_call(child, _call_name(child), ctx)
 
 
@@ -284,6 +300,13 @@ def _visit_while(node: AstNode, ctx: _WalkContext) -> None:
 # ---------------------------------------------------------------------------
 # §3.7 R-semantic annotation pass
 # ---------------------------------------------------------------------------
+
+# Platform-specific functions whose behaviour differs on Windows vs POSIX.
+_PLATFORM_SPECIFIC_FUNCTIONS = frozenset({
+    "Sys.setlocale", "Sys.getlocale", "Sys.setenv", "Sys.getenv",
+    "with_locale", "local_locale", "with_envvar", "local_envvar",
+    "Sys.time", "proc.time", "system", "system2",
+})
 
 # Known NSE (non-standard evaluation) function names.
 _NSE_FUNCTIONS = frozenset({
@@ -364,6 +387,12 @@ def _annotate_r_semantics(entities: dict[EntityId, Entity], ast_root: AstNode) -
                 rhs_node = node.child_by_field("rhs")
                 if rhs_node and rhs_node.kind == "identifier":
                     _flag_enclosing(node, entities_by_line,"copy_on_modify")
+
+        # Platform-specific calls (locale, OS-level functions)
+        if kind == "call":
+            fn = _call_name(node)
+            if fn in _PLATFORM_SPECIFIC_FUNCTIONS:
+                _flag_enclosing(node, entities_by_line, "platform_specific")
 
         # S3/S4/R6 dispatch
         if kind == "call":

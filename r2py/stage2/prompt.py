@@ -208,7 +208,9 @@ def _extract_tag(text: str, tag: str) -> str | None:
 
 
 def _strip_fences(text: str) -> str:
-    m = re.search(r"```(?:python)?\n(.*?)```", text, re.DOTALL)
+    # Require the 'python' language label to avoid extracting R code or prose
+    # that happens to be inside a generic ``` fence.
+    m = re.search(r"```python\n(.*?)```", text, re.DOTALL)
     if m:
         return m.group(1)
     return text

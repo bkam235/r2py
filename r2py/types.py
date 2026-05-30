@@ -86,6 +86,7 @@ class EffectBundle:
     uncapturable: list[str]              = field(default_factory=list)
     exit_code:    int                    = 0
     run_time_s:   float                  = 0.0
+    preamble_lines: int                  = 0   # lines before source in _r2py_script.py (for crash attribution)
 
 
 # ---------------------------------------------------------------------------
