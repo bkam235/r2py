@@ -119,6 +119,11 @@ def _build_feedback(
     return items
 
 
+def get_r_bundle(script_map) -> EffectBundle:
+    """Return the aggregated R ground-truth EffectBundle for *script_map*."""
+    return _get_r_bundle(script_map)
+
+
 def verify(
     script_map,
     candidate: str,
@@ -132,7 +137,8 @@ def verify(
     workdir: Path | None = None,
     timeout_s: float = 60,
     entity_line_map: dict | None = None,
-) -> ScoreReport:
+    return_bundle: bool = False,
+) -> "ScoreReport | tuple[ScoreReport, EffectBundle]":
     """Score a candidate Python translation against the R ScriptMap.
 
     changed: entity_ids touched by the last edit; if provided, only those
@@ -196,10 +202,13 @@ def verify(
 
     by_effect = {ec: result.score for ec, result in comparator_results.items()}
 
-    return ScoreReport(
+    report = ScoreReport(
         aggregate=aggregate,
         by_entity=score_table,
         by_effect=by_effect,
         uncomparable=uncomparable,
         feedback=feedback,
     )
+    if return_bundle:
+        return report, py_bundle
+    return report

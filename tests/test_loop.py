@@ -539,6 +539,42 @@ class TestScoreHistory(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# entity_line_map is rebuilt from sentinel after apply_edit
+# ---------------------------------------------------------------------------
+
+class TestEntityLineMapRebuild(unittest.TestCase):
+    """After apply_edit shifts lines, verify() receives a non-empty entity_line_map."""
+
+    def test_entity_line_map_non_empty_after_edit(self):
+        lib = _mock_lib()
+        edit = _edit()
+        captured_kwargs: list[dict] = []
+
+        # Seed source with a sentinel comment so rebuild_entity_line_map finds it.
+        seed_src = "# r2py:entity:e1\nx = 1\n"
+        improved_src = "# r2py:entity:e1\nx = 2\n"
+
+        def fake_verify(sm, src, **kw):
+            captured_kwargs.append(kw)
+            n = len(captured_kwargs)
+            return _sr(0.5 if n == 1 else 0.8)
+
+        with patch(_S2, return_value=(seed_src, {})), \
+             patch(_S4, side_effect=fake_verify), \
+             patch(_S3_PROPOSE, return_value=edit), \
+             patch(_S3_APPLY, return_value=improved_src), \
+             patch(_EP, return_value=[]):
+            run_loop(SM, lib, max_iters=1, beam_width=1)
+
+        # Second verify call is for the edit proposal; its entity_line_map should
+        # be non-empty (rebuilt from the sentinel in improved_src).
+        assert len(captured_kwargs) >= 2
+        iter_map = captured_kwargs[1].get("entity_line_map", {})
+        assert isinstance(iter_map, dict)
+        assert len(iter_map) > 0, "entity_line_map should be non-empty when sentinel present"
+
+
+# ---------------------------------------------------------------------------
 # translate() — top-level API writes py_path to disk
 # ---------------------------------------------------------------------------
 

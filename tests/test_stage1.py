@@ -512,6 +512,52 @@ class TestBranchExtractor:
         branch_kinds = [node.kind for _, node, *_ in branch_list]
         assert "for_statement" in branch_kinds
 
+    def test_while_branch_marked_not_executed(self):
+        """while_statement body should be collected with was_executed=False."""
+        from r2py.stage1 import _collect_branch_nodes
+
+        source = "x <- 5\nwhile (x > 0) { x <- x - 1 }\n"
+        root = parse(source)
+        entities, _ = walk(root, "test.R")
+        branch_list = _collect_branch_nodes(root, entities)
+        while_branches = [entry for entry in branch_list if entry[0].startswith("while_branch")]
+        assert len(while_branches) == 1, "Expected exactly one while branch"
+        _id, _node, _parent, _cond, was_executed = while_branches[0]
+        assert was_executed is False, "while body should not be pre-marked as executed"
+
+    def test_while_condition_text_captured(self):
+        """Condition text for while branch should include 'while('."""
+        from r2py.stage1 import _collect_branch_nodes
+
+        source = "x <- 5\nwhile (x > 0) { x <- x - 1 }\n"
+        root = parse(source)
+        entities, _ = walk(root, "test.R")
+        branch_list = _collect_branch_nodes(root, entities)
+        while_branches = [e for e in branch_list if e[0].startswith("while_branch")]
+        _id, _node, _parent, condition_text, _exec = while_branches[0]
+        assert condition_text.startswith("while(")
+
+    def test_extract_branch_on_while_body(self):
+        """extract_branch handles while body node and restores free variables."""
+        from r2py.stage1.branch_extractor import extract_branch
+        from r2py.types import EffectBundle
+
+        source = "x <- 5\nwhile (x > 0) { x <- x - 1 }\n"
+        root = parse(source)
+        entities, _ = walk(root, "test.R")
+        while_node = None
+        for node in root.children:
+            if node.kind == "while_statement":
+                while_node = node
+                break
+        assert while_node is not None
+        body_node = while_node.child_by_field("body")
+        assert body_node is not None
+        parent_bundle = EffectBundle(data={"x": 5})
+        slice_src = extract_branch(body_node, entities, parent_bundle)
+        assert "x <- 5" in slice_src
+        assert "x - 1" in slice_src
+
 
 # ---------------------------------------------------------------------------
 # runner.py — _py_to_r helper

@@ -568,6 +568,34 @@ class TestVerifySmoke:
         report = verify(sm, "x = 1", changed=["entity_abc"])
         assert isinstance(report, ScoreReport)
 
+    def test_verify_return_bundle_false_returns_score_report(self):
+        from r2py.stage4 import verify
+        from r2py.types import ScriptMap
+
+        sm = ScriptMap(source="")
+        result = verify(sm, "pass", return_bundle=False)
+        assert isinstance(result, ScoreReport)
+
+    def test_verify_return_bundle_true_returns_tuple(self):
+        from r2py.stage4 import verify
+        from r2py.types import ScriptMap
+
+        sm = ScriptMap(source="")
+        result = verify(sm, "pass", return_bundle=True)
+        assert isinstance(result, tuple)
+        assert len(result) == 2
+        report, bundle = result
+        assert isinstance(report, ScoreReport)
+        assert isinstance(bundle, EffectBundle)
+
+    def test_get_r_bundle_returns_effect_bundle(self):
+        from r2py.stage4 import get_r_bundle
+        from r2py.types import ScriptMap
+
+        sm = ScriptMap(source="")
+        result = get_r_bundle(sm)
+        assert isinstance(result, EffectBundle)
+
 
 # ---------------------------------------------------------------------------
 # _build_feedback direct tests

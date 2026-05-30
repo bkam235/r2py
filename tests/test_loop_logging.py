@@ -10,8 +10,23 @@ import pytest
 
 from r2py.loop import run_loop
 from r2py.types import (
-    Candidate, Edit, EditKind, EntityScore, RetrievalEpisode, ScoreReport
+    Candidate, Edit, EditKind, EffectBundle, EntityScore, RetrievalEpisode, ScoreReport
 )
+
+
+def _make_verify_side_effect(*decomps):
+    """Return a side_effect callable that returns (ScoreReport, EffectBundle) when
+    return_bundle=True, else just the ScoreReport — matching the new verify() API."""
+    decomp_iter = iter(decomps)
+
+    def _side_effect(*args, return_bundle=False, **kwargs):
+        d = next(decomp_iter)
+        return (d, EffectBundle()) if return_bundle else d
+
+    return _side_effect
+
+
+_S4_GET_R_BUNDLE = "r2py.stage4.get_r_bundle"
 
 _S2 = "r2py.stage2.translate"
 _S3_PROPOSE = "r2py.stage3.propose_edit"
@@ -71,7 +86,8 @@ class TestLoopLogging:
 
         with (
             patch(_S2, return_value=(seed_src, {})),
-            patch(_S4, side_effect=[seed_decomp, improved_decomp]),
+            patch(_S4, side_effect=_make_verify_side_effect(seed_decomp, improved_decomp)),
+            patch(_S4_GET_R_BUNDLE, return_value=EffectBundle()),
             patch(_S3_PROPOSE, return_value=edit),
             patch(_S3_APPLY, return_value=improved_src),
             patch(_EP),
@@ -140,7 +156,8 @@ class TestLoopLogging:
 
         with (
             patch(_S2, return_value=(seed_src, {})),
-            patch(_S4, side_effect=[seed_decomp, worse_decomp]),
+            patch(_S4, side_effect=_make_verify_side_effect(seed_decomp, worse_decomp)),
+            patch(_S4_GET_R_BUNDLE, return_value=EffectBundle()),
             patch(_S3_PROPOSE, return_value=edit),
             patch(_S3_APPLY, return_value=worse_src),
             patch(_EP),
@@ -223,7 +240,8 @@ class TestRetrievalEpisodeLogging:
 
         with (
             patch(_S2, return_value=("x = 1", {})),
-            patch(_S4, side_effect=[seed_decomp, improved_decomp]),
+            patch(_S4, side_effect=_make_verify_side_effect(seed_decomp, improved_decomp)),
+            patch(_S4_GET_R_BUNDLE, return_value=EffectBundle()),
             patch(_S3_PROPOSE, side_effect=_fake_propose),
             patch(_S3_APPLY, return_value="x = 2"),
             patch(_EP),
@@ -237,3 +255,91 @@ class TestRetrievalEpisodeLogging:
         assert len(episodes) >= 1
         assert episodes[0]["outcome"] == "accepted"
         assert episodes[0]["chosen_pattern_id"] == "p1"
+
+
+# ---------------------------------------------------------------------------
+# Effect bundle file writing (§12.3)
+# ---------------------------------------------------------------------------
+
+class TestEffectBundleWriting:
+    def test_effect_bundle_r_written_when_output_dir_set(self, tmp_path):
+        script_map = _mock_script_map()
+        library = _mock_library()
+        seed_decomp = _mock_decomp(0.9)
+
+        with (
+            patch(_S2, return_value=("x = 1", {})),
+            patch(_S4, side_effect=_make_verify_side_effect(seed_decomp)),
+            patch(_S4_GET_R_BUNDLE, return_value=EffectBundle()),
+            patch(_EP),
+        ):
+            run_loop(script_map, library, max_iters=0, output_dir=tmp_path)
+
+        assert (tmp_path / "effect_bundle.r.json").exists()
+
+    def test_effect_bundle_py0_written_when_output_dir_set(self, tmp_path):
+        script_map = _mock_script_map()
+        library = _mock_library()
+        seed_decomp = _mock_decomp(0.9)
+
+        with (
+            patch(_S2, return_value=("x = 1", {})),
+            patch(_S4, side_effect=_make_verify_side_effect(seed_decomp)),
+            patch(_S4_GET_R_BUNDLE, return_value=EffectBundle()),
+            patch(_EP),
+        ):
+            run_loop(script_map, library, max_iters=0, output_dir=tmp_path)
+
+        assert (tmp_path / "effect_bundle.py.0.json").exists()
+
+    def test_effect_bundle_py_iter_written_per_iteration(self, tmp_path):
+        script_map = _mock_script_map()
+        library = _mock_library()
+        edit = _stub_edit()
+        seed_decomp = _mock_decomp(0.4)
+        improved_decomp = _mock_decomp(0.7)
+
+        with (
+            patch(_S2, return_value=("x = 1", {})),
+            patch(_S4, side_effect=_make_verify_side_effect(seed_decomp, improved_decomp)),
+            patch(_S4_GET_R_BUNDLE, return_value=EffectBundle()),
+            patch(_S3_PROPOSE, return_value=edit),
+            patch(_S3_APPLY, return_value="x = 2"),
+            patch(_EP),
+        ):
+            run_loop(script_map, library, max_iters=1, output_dir=tmp_path)
+
+        assert (tmp_path / "effect_bundle.py.0.json").exists()  # seed
+        assert (tmp_path / "effect_bundle.py.1.json").exists()  # iteration 1
+
+    def test_effect_bundle_files_are_valid_json(self, tmp_path):
+        script_map = _mock_script_map()
+        library = _mock_library()
+        seed_decomp = _mock_decomp(0.9)
+
+        with (
+            patch(_S2, return_value=("x = 1", {})),
+            patch(_S4, side_effect=_make_verify_side_effect(seed_decomp)),
+            patch(_S4_GET_R_BUNDLE, return_value=EffectBundle()),
+            patch(_EP),
+        ):
+            run_loop(script_map, library, max_iters=0, output_dir=tmp_path)
+
+        for fname in ["effect_bundle.r.json", "effect_bundle.py.0.json"]:
+            data = json.loads((tmp_path / fname).read_text())
+            assert "stdout" in data
+            assert "exit_code" in data
+
+    def test_no_bundle_files_without_output_dir(self, tmp_path):
+        script_map = _mock_script_map()
+        library = _mock_library()
+        seed_decomp = _mock_decomp(0.9)
+
+        with (
+            patch(_S2, return_value=("x = 1", {})),
+            patch(_S4, return_value=seed_decomp),
+            patch(_EP),
+        ):
+            run_loop(script_map, library, max_iters=0, output_dir=None)
+
+        assert not list(tmp_path.glob("effect_bundle*.json"))

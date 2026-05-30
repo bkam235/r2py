@@ -103,6 +103,6 @@ def translate(
         )
         if revised != python_source:
             python_source = revised
-            entity_line_map = {}   # invalidated by coherence edits
+            entity_line_map = _stitch.rebuild_entity_line_map(python_source)
 
     return python_source, entity_line_map

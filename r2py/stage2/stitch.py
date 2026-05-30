@@ -4,6 +4,8 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
+_SENTINEL_RE = re.compile(r"^# r2py:entity:(\S+)$")
+
 from .. import __version__ as _r2py_version
 
 if TYPE_CHECKING:
@@ -51,6 +53,7 @@ def compose(
         if body_lines:
             body_text = "\n".join(body_lines)
             body_text = _resolve_collisions(body_text, eid, defined_names)
+            body_text = f"# r2py:entity:{eid}\n" + body_text
             body_items.append((eid, body_text))
 
     # Deduplicate and sort imports
@@ -178,4 +181,41 @@ def _resolve_collisions(
     for old, new in renames.items():
         result = re.sub(rf"\b{re.escape(old)}\b", new, result)
         defined_names[new] = eid
+    return result
+
+
+def rebuild_entity_line_map(source: str) -> dict[str, tuple[int, int]]:
+    """Rebuild entity_line_map by scanning for sentinel comments in *source*.
+
+    compose() prepends ``# r2py:entity:<eid>`` to each entity block; this
+    function finds those sentinels and re-derives the (start, end) ranges after
+    any edits that shift line numbers (apply_edit, coherence.review, etc.).
+
+    Returns {} if no sentinels are present.
+    """
+    lines = source.splitlines()
+    sentinels: list[tuple[int, str]] = []  # (1-indexed line number, entity_id)
+    for i, line in enumerate(lines, start=1):
+        m = _SENTINEL_RE.match(line)
+        if m:
+            sentinels.append((i, m.group(1)))
+
+    if not sentinels:
+        return {}
+
+    result: dict[str, tuple[int, int]] = {}
+    total_lines = len(lines)
+    for idx, (sentinel_line, eid) in enumerate(sentinels):
+        start = sentinel_line  # sentinel is the first line of the entity range
+        if idx + 1 < len(sentinels):
+            next_sentinel_line = sentinels[idx + 1][0]
+            # end is the last non-blank line before the next sentinel
+            end = next_sentinel_line - 1
+            while end >= start and not lines[end - 1].strip():
+                end -= 1
+        else:
+            end = total_lines
+            while end >= start and not lines[end - 1].strip():
+                end -= 1
+        result[eid] = (start, end)
     return result

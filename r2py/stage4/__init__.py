@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from ..types import ScoreReport, ScriptMap
-from .verifier import verify as _verify
+from .verifier import verify as _verify, get_r_bundle
 
 
 def verify(
@@ -10,7 +10,7 @@ def verify(
     candidate: str,
     changed: "list[str] | None" = None,
     **kwargs,
-) -> ScoreReport:
+) -> "ScoreReport | tuple[ScoreReport, object]":
     """Score a candidate Python translation against the R ScriptMap.
 
     changed: entity_ids touched by the last edit; if provided, only those

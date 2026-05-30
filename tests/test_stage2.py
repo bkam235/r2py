@@ -277,6 +277,65 @@ class TestCompose(unittest.TestCase):
 
 
 # ---------------------------------------------------------------------------
+# T6b: sentinel comments and rebuild_entity_line_map
+# ---------------------------------------------------------------------------
+
+class TestSentinelAndRebuild(unittest.TestCase):
+
+    def setUp(self):
+        from r2py.stage2.stitch import compose, rebuild_entity_line_map
+        self.compose = compose
+        self.rebuild = rebuild_entity_line_map
+
+    def _sm(self, n: int = 2) -> ScriptMap:
+        entities = {f"e{i}": _make_entity(f"e{i}", name=f"v{i}") for i in range(n)}
+        return _make_script_map(entities)
+
+    def _compose2(self):
+        sm = self._sm(2)
+        return self.compose({"e0": "v0 = 1", "e1": "v1 = 2"}, {}, ["e0", "e1"], sm, "m")
+
+    def test_sentinel_comments_present(self):
+        src, _ = self._compose2()
+        self.assertIn("# r2py:entity:e0", src)
+        self.assertIn("# r2py:entity:e1", src)
+
+    def test_rebuild_entity_line_map_roundtrip(self):
+        src, original_map = self._compose2()
+        rebuilt = self.rebuild(src)
+        self.assertEqual(set(rebuilt.keys()), set(original_map.keys()))
+        for eid in original_map:
+            self.assertEqual(rebuilt[eid], original_map[eid],
+                             msg=f"Range mismatch for {eid}: {rebuilt[eid]} vs {original_map[eid]}")
+
+    def test_rebuild_after_insert_preamble(self):
+        from r2py.types import Edit, EditKind
+        from r2py.stage3.edit_types import apply_edit
+        src, original_map = self._compose2()
+        e = Edit(kind=EditKind.INSERT_PREAMBLE, entity_ids=[], params={"code": "import os"})
+        src2 = apply_edit(src, e)
+        rebuilt = self.rebuild(src2)
+        # Both entities must still be found after the edit.
+        self.assertEqual(set(rebuilt.keys()), {"e0", "e1"})
+        # INSERT_PREAMBLE inserts inside e0's body, shifting e1's sentinel.
+        self.assertGreater(rebuilt["e1"][0], original_map["e1"][0],
+                           "e1's sentinel should shift down after INSERT_PREAMBLE adds a line to e0")
+        # e0's sentinel line itself is unchanged (the insert goes inside e0's body, after the sentinel).
+        self.assertEqual(rebuilt["e0"][0], original_map["e0"][0])
+
+    def test_rebuild_returns_empty_without_sentinels(self):
+        result = self.rebuild("x = 1\ny = 2\n")
+        self.assertEqual(result, {})
+
+    def test_sentinel_is_first_line_of_entity_range(self):
+        src, lmap = self._compose2()
+        lines = src.splitlines()
+        for eid, (start, _end) in lmap.items():
+            self.assertIn(eid, lines[start - 1],
+                          msg=f"Expected sentinel for {eid} at line {start}")
+
+
+# ---------------------------------------------------------------------------
 # T7: coherence review
 # ---------------------------------------------------------------------------
 

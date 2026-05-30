@@ -215,8 +215,6 @@ def _collect_branch_nodes_rec(
             condition_text = f"for ({node.child_by_field('variable').text if node.child_by_field('variable') else '?'} in {seq_node.text if seq_node else '?'})"
             out.append((branch_id, node, parent_eid, condition_text, False))
 
-    # TODO: while_statement bodies require solver-driven pre-condition synthesis
-    # to determine an entry state; marked unreachable for now.
     if node.kind == "while_statement":
         body_node = node.child_by_field("body")
         if body_node is not None:
@@ -229,8 +227,9 @@ def _collect_branch_nodes_rec(
                 if sp.start_line <= row <= sp.end_line:
                     parent_eid = eid
                     break
-            # Mark as unreachable — no slice is built.
-            out.append((branch_id, body_node, parent_eid, "while(...)", True))
+            condition_node = node.child_by_field("condition")
+            condition_text = f"while({condition_node.text if condition_node else '...'})"
+            out.append((branch_id, body_node, parent_eid, condition_text, False))
 
     for child in node.children:
         _collect_branch_nodes_rec(child, out, counter, entities)

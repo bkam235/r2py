@@ -12,8 +12,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .types import (
-    Candidate, EpisodeCollector, PolicyTransition, Proposal, TranslateResult,
+    Candidate, EpisodeCollector, EffectBundle, PolicyTransition, Proposal, TranslateResult,
 )
+from .stage0.effects import bundle as _bundle_mod
 
 if TYPE_CHECKING:
     from .types import ScriptMap
@@ -65,6 +66,7 @@ def run_loop(
         **verify_kwargs: Forwarded to stage4.verify() (e.g. rtol, atol, timeout_s).
     """
     from . import stage2, stage3, stage4
+    from .stage2.stitch import rebuild_entity_line_map as _rebuild
     from .stage3.history import EditHistory
     from .library.epistemology import review as _ep_review
     from .library.retrieval import entity_ast_shape_hash as _shape_hash
@@ -78,15 +80,22 @@ def run_loop(
 
     # --- seed translation -------------------------------------------------- #
     seed, entity_line_map = stage2.translate(script_map, library, no_seeds=no_seeds)
-    seed_decomp = stage4.verify(
+    _need_bundles = output_dir is not None
+    seed_result = stage4.verify(
         script_map, seed,
         data_compare=data_compare, use_judge=use_judge,
         entity_line_map=entity_line_map,
+        return_bundle=_need_bundles,
         **verify_kwargs,
     )
-
-    if output_dir is not None:
-        _write_score_report(Path(output_dir), 0, seed_decomp)
+    if _need_bundles:
+        seed_decomp, seed_py_bundle = seed_result
+        _out = Path(output_dir)
+        _write_effect_bundle(_out, "r", stage4.get_r_bundle(script_map))
+        _write_effect_bundle(_out, "py.0", seed_py_bundle)
+        _write_score_report(_out, 0, seed_decomp)
+    else:
+        seed_decomp = seed_result
 
     # Monotonically increasing counter for score_report artifact filenames.
     # Avoids collisions when beam_width > 1 produces multiple proposals per iteration.
@@ -142,18 +151,22 @@ def run_loop(
                 continue
             visited.add(h)
 
-            # entity_line_map may be stale after apply_edit shifts lines;
-            # pass empty dict so decompose falls back to whole-script scores.
-            new_decomp = stage4.verify(
+            iter_result = stage4.verify(
                 script_map, candidate_src,
                 changed=edit.entity_ids,
                 data_compare=data_compare,
                 use_judge=use_judge,
-                entity_line_map={},
+                entity_line_map=_rebuild(candidate_src),
+                return_bundle=_need_bundles,
                 **verify_kwargs,
             )
-            if output_dir is not None:
-                _write_score_report(Path(output_dir), _report_idx, new_decomp)
+            if _need_bundles:
+                new_decomp, iter_py_bundle = iter_result
+                _out = Path(output_dir)
+                _write_effect_bundle(_out, f"py.{_report_idx}", iter_py_bundle)
+                _write_score_report(_out, _report_idx, new_decomp)
+            else:
+                new_decomp = iter_result
             _report_idx += 1
             proposals.append(
                 Proposal(candidate_src, new_decomp.aggregate, new_decomp, edit, parent.score)
@@ -311,6 +324,13 @@ def _write_score_report(out_dir: Path, iteration: int, report) -> None:
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"score_report.{iteration}.json"
     path.write_text(json.dumps(_score_report_to_dict(report), indent=2), encoding="utf-8")
+
+
+def _write_effect_bundle(out_dir: Path, suffix: str, bundle: "EffectBundle") -> None:
+    """Write effect_bundle.{suffix}.json to out_dir (§12.3)."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"effect_bundle.{suffix}.json"
+    path.write_text(json.dumps(_bundle_mod.to_json(bundle), indent=2), encoding="utf-8")
 
 
 def _write_run_logs(
