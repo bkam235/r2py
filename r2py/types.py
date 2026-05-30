@@ -28,6 +28,7 @@ class EffectClass(Enum):
     WARNINGS = "warnings"
     RNG      = "rng"
     NETWORK  = "network"
+    SYNTAX   = "syntax"   # used for SyntaxError FeedbackItems
 
 
 # Set of effect classes a Sandbox.run() should capture.
@@ -140,6 +141,7 @@ class ScoreReport:
     by_effect:    dict[EffectClass, float]       = field(default_factory=dict)
     uncomparable: list[EntityId]                 = field(default_factory=list)
     feedback:     list[FeedbackItem]             = field(default_factory=list)
+    py_exit_code: int                            = 0
 
 
 # ---------------------------------------------------------------------------
@@ -154,6 +156,7 @@ class TranslateResult:
     score_history:                list[ScoreReport]   = field(default_factory=list)
     pattern_evidence_added:       list[PatternId]     = field(default_factory=list)
     pattern_contradictions_added: list[PatternId]     = field(default_factory=list)
+    final_exit_code:              int                 = 0
 
 
 # ---------------------------------------------------------------------------
@@ -254,3 +257,18 @@ class ScriptMap:
     """Returned by analyze(). Stage1 populates all fields; the minimal definition
     here satisfies the top-level API type signature without importing stage1."""
     source: str = ""
+
+
+# ---------------------------------------------------------------------------
+# Progress events — emitted by the library, consumed by caller callbacks
+# ---------------------------------------------------------------------------
+
+@dataclass
+class ProgressEvent:
+    kind: str           # "analysis_done" | "seed_done" | "iteration_start" | "proposal" | "done"
+    iteration: "int | None" = None
+    score: "float | None" = None
+    entity_count: "int | None" = None
+    edit_kind: "str | None" = None
+    entity_id: "str | None" = None
+    outcome: "str | None" = None    # "accepted" | "tie" | "rejected"

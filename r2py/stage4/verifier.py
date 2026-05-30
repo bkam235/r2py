@@ -209,6 +209,7 @@ def verify(
         by_effect=by_effect,
         uncomparable=uncomparable,
         feedback=feedback,
+        py_exit_code=py_bundle.exit_code,
     )
     if return_bundle:
         return report, py_bundle

@@ -184,13 +184,10 @@ def _visit_assignment(node: AstNode, op: str, ctx: _WalkContext) -> None:
         body = rhs.child_by_field("body")
         if body:
             _visit(body, ctx)
-    elif rhs.kind == "call":
-        # Recurse into call arguments — may contain further definitions.
-        args = rhs.child_by_field("arguments")
-        if args:
-            for child in args.named_children():
-                _visit(child, ctx)
     else:
+        # Recurse for braced_expression, if_statement, etc. — may contain
+        # nested named definitions. Call RHS is intentionally not recursed:
+        # sub-calls are translated as part of their enclosing assignment entity.
         for child in rhs.named_children():
             _visit(child, ctx)
 
@@ -234,11 +231,14 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
     for ec in predicted:
         ctx.add_effect(SideEffect(kind=ec, entity_id=entity_id, is_predicted=True))
 
-    # Recurse into arguments
+    # Only detect library/require imports nested inside this call's arguments.
+    # Generic sub-calls (c(), as.Date(), etc.) are NOT extracted as separate
+    # entities — they are translated as part of their enclosing statement.
     args = node.child_by_field("arguments")
     if args:
         for child in args.named_children():
-            _visit(child, ctx)
+            if child.kind == "call" and _call_name(child) in ("library", "require"):
+                _visit_library_call(child, _call_name(child), ctx)
 
 
 def _visit_library_call(node: AstNode, fn_name: str, ctx: _WalkContext) -> None:

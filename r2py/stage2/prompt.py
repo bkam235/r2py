@@ -1,6 +1,7 @@
 """Per-entity LLM prompt construction for Stage 2 translation (§5.3)."""
 from __future__ import annotations
 
+import ast as _ast
 import re
 from typing import TYPE_CHECKING
 
@@ -26,6 +27,9 @@ Rules:
    NSE, vector recycling, copy-on-modify, super-assign, dispatch flags).
 5. List required imports separately; do not embed import statements in the snippet.
 6. Declare which effect classes your translation will produce.
+7. If you cannot translate an entity, output:
+   <python>pass  # untranslatable: <brief reason></python>
+   Do NOT write explanatory prose outside the XML tags.
 
 R-to-Python semantic notes (always apply):
 - R vectors are 1-indexed; Python lists/arrays are 0-indexed.
@@ -108,7 +112,16 @@ def parse_entity_response(raw: str) -> tuple[str, list[str], list[str]]:
     if effects_raw:
         effects = [s.strip() for s in effects_raw.split(",") if s.strip()]
 
-    return python.strip(), imports, effects
+    python = python.strip()
+
+    # Validate: if the extracted snippet is not parseable Python, replace it
+    # with a no-op stub so the assembled script stays syntactically valid.
+    try:
+        _ast.parse(python)
+    except SyntaxError:
+        python = "pass  # r2py: translation failed for entity (LLM response not valid Python)"
+
+    return python, imports, effects
 
 
 # ---------------------------------------------------------------------------
@@ -121,9 +134,10 @@ def _entity_source(entity: "Entity", script_map: "ScriptMap") -> str:
     if not sp or not script_map.source:
         return entity.name
     lines = script_map.source.splitlines()
-    # source_span uses 1-based line numbers
-    start = max(0, sp.start_line - 1)
-    end = min(len(lines), sp.end_line)
+    # source_span uses 0-based line numbers (tree-sitter rows); end+1 because
+    # Python list slices are exclusive on the right.
+    start = sp.start_line
+    end = min(len(lines), sp.end_line + 1)
     return "\n".join(lines[start:end])
 
 
@@ -144,8 +158,9 @@ def _entity_annotations(entity: "Entity", script_map: "ScriptMap") -> str:
     if not sp:
         return ""
     lines = annotated.splitlines()
-    start = max(0, sp.start_line - 1)
-    end = min(len(lines), sp.end_line + 2)
+    # 0-based rows; +1 for exclusive slice, +2 lookahead for trailing annotation lines
+    start = sp.start_line
+    end = min(len(lines), sp.end_line + 3)
     relevant = [ln for ln in lines[start:end] if "# r2py:" in ln]
     return "\n".join(relevant)
 

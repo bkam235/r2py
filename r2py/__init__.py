@@ -26,12 +26,13 @@ def translate(
     sandbox: str = "subprocess",
     no_seeds: bool = False,          # ignore seed:true patterns (§6.7 transfer experiment)
     output_dir: "str | Path | None" = None,  # if set, write edits.log.jsonl + library_diff.json
+    progress=None,                   # callable(ProgressEvent) for progress reporting; None = silent
 ) -> "TranslateResult":
     """Translate an R script to Python via the beam/strict-improvement loop (§4.1)."""
     from pathlib import Path
     from .stage1 import analyze as _analyze
     from .library import get_library
-    from .loop import run_loop
+    from .loop import run_loop, _emit
     from .stage2.llm import _DEFAULT_MODEL
     if model is None:
         model = _DEFAULT_MODEL
@@ -39,8 +40,12 @@ def translate(
     if library is None:
         library = get_library()
 
+    script_map = _analyze(Path(r_path))
+    _emit(progress, kind="analysis_done",
+          entity_count=len(getattr(script_map, "entities", None) or {}))
+
     result = run_loop(
-        _analyze(Path(r_path)),
+        script_map,
         library,
         max_iters=max_iters,
         score_threshold=score_threshold,
@@ -52,8 +57,18 @@ def translate(
         learned_policy=learned_policy,
         output_dir=Path(output_dir) if output_dir is not None else None,
         model=model,
+        progress=progress,
     )
-    Path(py_path).write_text(result.python_source, encoding="utf-8")
+    if result.final_exit_code != 0:
+        import sys
+        print(
+            f"r2py: warning: final Python translation crashed "
+            f"(exit {result.final_exit_code}); no output file written. "
+            f"Score: {result.final_score:.3f}",
+            file=sys.stderr,
+        )
+    else:
+        Path(py_path).write_text(result.python_source, encoding="utf-8")
     return result
 
 

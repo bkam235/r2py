@@ -70,8 +70,14 @@ def make_score_table(
     """
     executed_ok = py_exit_code == 0
     data_result = comparator_results.get(EffectClass.DATA)
-    global_data_score = data_result.score if data_result else 0.0
-    per_variable = data_result.per_variable if data_result else {}
+    if not executed_ok:
+        # Python crashed: empty-vs-empty must not score as 1.0 (avoids inflated
+        # scores when both R and Python produce no captured data).
+        global_data_score = 0.0
+        per_variable: dict[str, float] = {}
+    else:
+        global_data_score = data_result.score if data_result else 0.0
+        per_variable = data_result.per_variable if data_result else {}
 
     stdout_result = comparator_results.get(EffectClass.STDOUT)
     stdout_score = stdout_result.score if stdout_result else float(executed_ok)

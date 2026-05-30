@@ -5,6 +5,7 @@ accepts only strict improvements, preventing neutral drift and cycling.
 """
 from __future__ import annotations
 
+import ast as _ast_mod
 import dataclasses
 import hashlib
 import json
@@ -19,6 +20,52 @@ from .stage2.llm import _DEFAULT_MODEL as _LLM_DEFAULT_MODEL
 
 if TYPE_CHECKING:
     from .types import ScriptMap
+
+
+def _emit(progress, **kwargs) -> None:
+    if progress is not None:
+        from .types import ProgressEvent
+        progress(ProgressEvent(**kwargs))
+
+
+def _make_syntax_error_report(
+    entities: dict,
+    exc: SyntaxError,
+    entity_line_map: dict[str, tuple[int, int]],
+) -> "ScoreReport":
+    """Return a 0.0-score ScoreReport carrying a SYNTAX FeedbackItem.
+
+    Used when the assembled Python source fails ast.parse() so we avoid
+    running the sandbox on provably broken code.
+    """
+    from .types import ScoreReport, EntityScore, FeedbackItem, EffectClass
+
+    # Find the entity whose declared line range contains the SyntaxError line.
+    err_line = exc.lineno or 0
+    target_eid = ""
+    for eid, (start, end) in entity_line_map.items():
+        if start <= err_line <= end:
+            target_eid = eid
+            break
+    if not target_eid and entities:
+        target_eid = next(iter(entities))   # fallback: blame the first entity
+
+    score_table = {
+        eid: EntityScore(entity_id=eid, executed_ok=False)
+        for eid in entities
+    }
+    feedback = [FeedbackItem(
+        entity_id=target_eid,
+        effect_class=EffectClass.SYNTAX,
+        message=f"SyntaxError at line {exc.lineno}: {exc.msg}",
+        score=0.0,
+    )]
+    return ScoreReport(
+        aggregate=0.0,
+        by_entity=score_table,
+        feedback=feedback,
+        py_exit_code=1,
+    )
 
 
 def _state_hash(translation: str) -> str:
@@ -49,6 +96,7 @@ def run_loop(
     learned_policy: bool = False,
     output_dir: "Path | None" = None,
     model: str = _LLM_DEFAULT_MODEL,
+    progress=None,
     **verify_kwargs,
 ) -> TranslateResult:
     """Run the beam/strict-improvement loop (§4.1).
@@ -83,21 +131,37 @@ def run_loop(
     # --- seed translation -------------------------------------------------- #
     seed, entity_line_map = stage2.translate(script_map, library, no_seeds=no_seeds, model=model)
     _need_bundles = output_dir is not None
-    seed_result = stage4.verify(
-        script_map, seed,
-        data_compare=data_compare, use_judge=use_judge,
-        entity_line_map=entity_line_map,
-        return_bundle=_need_bundles,
-        **verify_kwargs,
-    )
-    if _need_bundles:
-        seed_decomp, seed_py_bundle = seed_result
-        _out = Path(output_dir)
-        _write_effect_bundle(_out, "r", stage4.get_r_bundle(script_map))
-        _write_effect_bundle(_out, "py.0", seed_py_bundle)
-        _write_score_report(_out, 0, seed_decomp)
-    else:
-        seed_decomp = seed_result
+    entities = getattr(script_map, "entities", {})
+
+    # Skip the sandbox entirely if the assembled source is not valid Python.
+    try:
+        _ast_mod.parse(seed)
+        seed_result = stage4.verify(
+            script_map, seed,
+            data_compare=data_compare, use_judge=use_judge,
+            entity_line_map=entity_line_map,
+            return_bundle=_need_bundles,
+            **verify_kwargs,
+        )
+        if _need_bundles:
+            seed_decomp, seed_py_bundle = seed_result
+            _out = Path(output_dir)
+            _write_effect_bundle(_out, "r", stage4.get_r_bundle(script_map))
+            _write_effect_bundle(_out, "py.0", seed_py_bundle)
+            _write_score_report(_out, 0, seed_decomp)
+        else:
+            seed_decomp = seed_result
+    except SyntaxError as _syn_exc:
+        seed_decomp = _make_syntax_error_report(entities, _syn_exc, entity_line_map)
+        if _need_bundles:
+            from .stage0.effects.bundle import EffectBundle as _EB
+            seed_py_bundle = _EB(exit_code=1)
+            _out = Path(output_dir)
+            _write_effect_bundle(_out, "r", stage4.get_r_bundle(script_map))
+            _write_effect_bundle(_out, "py.0", seed_py_bundle)
+            _write_score_report(_out, 0, seed_decomp)
+
+    _emit(progress, kind="seed_done", score=seed_decomp.aggregate)
 
     # Monotonically increasing counter for score_report artifact filenames.
     # Avoids collisions when beam_width > 1 produces multiple proposals per iteration.
@@ -122,6 +186,7 @@ def run_loop(
         best = max(beam, key=lambda c: c.score)
         if best.score >= score_threshold:
             break
+        _emit(progress, kind="iteration_start", iteration=i, score=best.score)
 
         proposals: list[Proposal] = []
         # Parallel lists — same index maps collector/transition to its proposal.
@@ -154,12 +219,28 @@ def run_loop(
                 continue
             visited.add(h)
 
+            # Skip sandbox if the edited source is not syntactically valid Python.
+            _candidate_elmap = _rebuild(candidate_src)
+            try:
+                _ast_mod.parse(candidate_src)
+            except SyntaxError as _syn_exc:
+                new_decomp = _make_syntax_error_report(
+                    getattr(script_map, "entities", {}), _syn_exc, _candidate_elmap,
+                )
+                _report_idx += 1
+                proposals.append(
+                    Proposal(candidate_src, 0.0, new_decomp, edit, parent.score)
+                )
+                proposal_collectors.append(collector)
+                proposal_transitions.append(None)
+                continue
+
             iter_result = stage4.verify(
                 script_map, candidate_src,
                 changed=edit.entity_ids,
                 data_compare=data_compare,
                 use_judge=use_judge,
-                entity_line_map=_rebuild(candidate_src),
+                entity_line_map=_candidate_elmap,
                 return_bundle=_need_bundles,
                 **verify_kwargs,
             )
@@ -235,6 +316,11 @@ def run_loop(
                 if p.edit.pattern_id:
                     contradictions_added.append(p.edit.pattern_id)
 
+            _emit(progress, kind="proposal", iteration=i,
+                  edit_kind=p.edit.kind.value,
+                  entity_id=p.edit.entity_ids[0] if p.edit.entity_ids else "",
+                  score=p.new_score, outcome=outcome)
+
             # Stamp outcome onto retrieval episodes from this proposal.
             for ep in proposal_collectors[idx].episodes:
                 ep.outcome = outcome
@@ -277,6 +363,7 @@ def run_loop(
         )
 
     best = max(beam, key=lambda c: c.score)
+    _emit(progress, kind="done", score=best.score, iteration=i + 1)
     return TranslateResult(
         python_source=best.translation,
         final_score=best.score,
@@ -284,6 +371,7 @@ def run_loop(
         score_history=score_history,
         pattern_evidence_added=list(dict.fromkeys(evidence_added)),
         pattern_contradictions_added=list(dict.fromkeys(contradictions_added)),
+        final_exit_code=best.decomp.py_exit_code,
     )
 
 
@@ -319,6 +407,7 @@ def _score_report_to_dict(report) -> dict:
         },
         "by_effect": {ec.value: score for ec, score in report.by_effect.items()},
         "uncomparable": report.uncomparable,
+        "py_exit_code": report.py_exit_code,
     }
 
 

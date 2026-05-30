@@ -2,6 +2,9 @@ anthropic
 tree-sitter
 tree-sitter-language-pack
 
+[embed]
+sentence-transformers>=2.2
+
 [models]
 lightgbm
 

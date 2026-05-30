@@ -44,6 +44,8 @@ def cmd_translate(args: argparse.Namespace) -> int:
         no_seeds=args.no_seeds,
     )
     print(f"Score: {result.final_score:.3f}  Iterations: {result.iterations}")
+    if result.final_exit_code != 0:
+        return 1
     return 0
 
 
