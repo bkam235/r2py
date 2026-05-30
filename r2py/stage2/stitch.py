@@ -18,17 +18,22 @@ def compose(
     script_map: "ScriptMap",
     model: str,
     r_path: str = "",
-) -> str:
+) -> tuple[str, dict[str, tuple[int, int]]]:
     """Compose ordered snippets into a single Python source string.
+
+    Returns:
+        (source, entity_line_map) where entity_line_map maps each EntityId to
+        the (start_line, end_line) range (1-indexed, inclusive) of its body
+        snippet in the assembled source.
 
     Steps:
     1. Collect all import lines (from snippets + per_entity_imports), deduplicate, sort.
-    2. Collect body snippets in topological order.
+    2. Collect body snippets in topological order, tracking per-entity line ranges.
     3. Resolve name collisions (suffix _1, _2, ...).
     4. Prepend header comment.
     """
     all_imports: list[str] = []
-    body_snippets: list[str] = []
+    body_items: list[tuple[str, str]] = []   # (eid, body_text)
     defined_names: dict[str, str] = {}  # python_name → entity_id that defined it
 
     for eid in order:
@@ -44,10 +49,9 @@ def compose(
         all_imports.extend(imp_lines)
 
         if body_lines:
-            # Rename collision: check top-level assigned names
             body_text = "\n".join(body_lines)
             body_text = _resolve_collisions(body_text, eid, defined_names)
-            body_snippets.append(body_text)
+            body_items.append((eid, body_text))
 
     # Deduplicate and sort imports
     seen: set[str] = set()
@@ -66,14 +70,41 @@ def compose(
         f"# Model: {model}  ScriptMap entities: {n_entities}"
     )
 
-    # Assemble
+    # Assemble while tracking line numbers (1-indexed).
+    # Parts are joined by "\n\n" (one blank line between).
+    entity_line_map: dict[str, tuple[int, int]] = {}
+    current_line = 1
+
+    header_lines = header.count("\n") + 1
+    current_line += header_lines  # points to line after header
+
+    if deduped_imports:
+        # "\n\n".join produces one blank line between parts, advancing by 1 line.
+        current_line += 1
+        imports_text = "\n".join(deduped_imports)
+        imports_lines = imports_text.count("\n") + 1
+        current_line += imports_lines
+
+    if body_items:
+        current_line += 1  # "\n\n" separator before first body block (one blank line)
+        for i, (eid, body_text) in enumerate(body_items):
+            start = current_line
+            body_line_count = body_text.count("\n") + 1
+            end = start + body_line_count - 1
+            entity_line_map[eid] = (start, end)
+            current_line = end + 1
+            if i < len(body_items) - 1:
+                current_line += 1  # "\n\n" separator between body blocks (one blank line)
+
+    # Build source string
     parts: list[str] = [header]
     if deduped_imports:
         parts.append("\n".join(deduped_imports))
-    if body_snippets:
-        parts.append("\n\n".join(body_snippets))
+    if body_items:
+        parts.append("\n\n".join(bt for _, bt in body_items))
 
-    return "\n\n".join(parts) + "\n"
+    source = "\n\n".join(parts) + "\n"
+    return source, entity_line_map
 
 
 # ---------------------------------------------------------------------------

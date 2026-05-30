@@ -102,6 +102,9 @@ class ComparatorResult:
     # "value" = real numeric disagreement (never masked by fallback)
     # "infra"  = structural/serialisation mismatch (auto fallback allowed)
     failure_tag:  str | None             = None
+    # Per-variable scores for DATA comparisons (variable_name → score in [0,1]).
+    # Populated by DataComparator; empty for other effect classes.
+    per_variable: dict[str, float]       = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------

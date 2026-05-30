@@ -6,7 +6,7 @@ from pathlib import Path
 
 from ..types import CaptureSpec, EffectClass, EntityKind
 from .ast import parse
-from .branch_extractor import extract_branch
+from .branch_extractor import extract_branch, extract_for_branch
 from .coverage import CoverageTracker
 from .effects import SideEffect
 from .entities import AstNode, Entity
@@ -116,7 +116,23 @@ def _extract_branches(
                 tracker.mark(branch_id, "dynamic")
                 continue
 
-            slice_source = extract_branch(branch_node, entities, main_bundle)
+            # Choose extractor based on node kind.
+            if branch_node.kind == "for_statement":
+                slice_source = extract_for_branch(branch_node, entities, main_bundle)
+            else:
+                slice_source = extract_branch(branch_node, entities, main_bundle)
+            if slice_source is None:
+                # Cannot synthesize a slice for this node; mark unreachable.
+                tracker.mark(branch_id, "unreachable")
+                branches[branch_id] = BranchAnalysis(
+                    branch_id=branch_id,
+                    parent_entity_id=parent_entity_id,
+                    condition_text=condition_text,
+                    was_executed=False,
+                    runnable_slice=None,
+                    bundle=None,
+                )
+                continue
             bundle = None
             try:
                 bundle = run_slice(
@@ -180,6 +196,41 @@ def _collect_branch_nodes_rec(
             # We conservatively mark else-branches as not-executed; Stage 0's
             # EffectBundle does not tell us which branches ran, so we run them all.
             out.append((branch_id, alt_node, parent_eid, condition_text, False))
+
+    if node.kind == "for_statement":
+        body_node = node.child_by_field("body")
+        if body_node is not None:
+            branch_id = f"for_branch_{counter[0]}"
+            counter[0] += 1
+            row = node.start[0]
+            parent_eid = ""
+            for eid, entity in entities.items():
+                sp = entity.source_span
+                if sp.start_line <= row <= sp.end_line:
+                    parent_eid = eid
+                    break
+            # was_executed=False so the extractor always runs a synthetic slice.
+            # condition_text uses the for header as the "condition".
+            seq_node = node.child_by_field("sequence")
+            condition_text = f"for ({node.child_by_field('variable').text if node.child_by_field('variable') else '?'} in {seq_node.text if seq_node else '?'})"
+            out.append((branch_id, node, parent_eid, condition_text, False))
+
+    # TODO: while_statement bodies require solver-driven pre-condition synthesis
+    # to determine an entry state; marked unreachable for now.
+    if node.kind == "while_statement":
+        body_node = node.child_by_field("body")
+        if body_node is not None:
+            branch_id = f"while_branch_{counter[0]}"
+            counter[0] += 1
+            row = node.start[0]
+            parent_eid = ""
+            for eid, entity in entities.items():
+                sp = entity.source_span
+                if sp.start_line <= row <= sp.end_line:
+                    parent_eid = eid
+                    break
+            # Mark as unreachable — no slice is built.
+            out.append((branch_id, body_node, parent_eid, "while(...)", True))
 
     for child in node.children:
         _collect_branch_nodes_rec(child, out, counter, entities)

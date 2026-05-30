@@ -476,6 +476,42 @@ class TestBranchExtractor:
         slice_src = extract_branch(branch_node, entities, parent_bundle)
         assert "x <- 3.5" in slice_src
 
+    def test_extract_for_branch_basic(self):
+        from r2py.stage1.branch_extractor import extract_for_branch
+        from r2py.types import EffectBundle
+
+        source = "for (n in nums) { total <- total + n }"
+        for_node = parse(source).named_children()[0]
+        parent_bundle = EffectBundle(data={"nums": [1, 2, 3], "total": 0})
+        entities, _ = walk(parse("nums <- c(1,2,3)\ntotal <- 0\n"), "test.R")
+        result = extract_for_branch(for_node, entities, parent_bundle)
+        assert result is not None
+        # Should contain the for header with a single element from nums
+        assert "for (n in" in result
+        assert "total" in result
+
+    def test_extract_for_branch_fallback_no_seq(self):
+        """With no sequence data available, falls back to iterating over 1."""
+        from r2py.stage1.branch_extractor import extract_for_branch
+        from r2py.types import EffectBundle
+
+        source = "for (x in unknown_var) { print(x) }"
+        for_node = parse(source).named_children()[0]
+        result = extract_for_branch(for_node, {}, EffectBundle())
+        assert result is not None
+        assert "for (x in" in result
+
+    def test_collect_for_branch_nodes(self):
+        """_collect_branch_nodes_rec should surface for_statement as a branch."""
+        from r2py.stage1 import _collect_branch_nodes
+
+        source = "nums <- c(1, 2)\nfor (n in nums) { print(n) }\n"
+        root = parse(source)
+        entities, _ = walk(root, "test.R")
+        branch_list = _collect_branch_nodes(root, entities)
+        branch_kinds = [node.kind for _, node, *_ in branch_list]
+        assert "for_statement" in branch_kinds
+
 
 # ---------------------------------------------------------------------------
 # runner.py — _py_to_r helper
@@ -524,9 +560,30 @@ class TestPyToR:
         result = self._convert([1, 2, 3])
         assert result == "c(1L, 2L, 3L)"
 
-    def test_dict_returns_none(self):
-        # dicts (e.g. data frames) not representable as simple R literals
-        assert self._convert({"a": 1}) is None
+    def test_dict_simple(self):
+        result = self._convert({"a": 1, "b": 2})
+        assert result == "list(a=1L, b=2L)"
+
+    def test_dict_empty(self):
+        assert self._convert({}) == "list()"
+
+    def test_dict_with_nested_complex_returns_none(self):
+        # If a nested value is too complex, give up
+        assert self._convert({"a": object()}) is None
+
+    def test_dict_mixed_types(self):
+        result = self._convert({"x": 1.5, "y": True, "z": "hi"})
+        assert "x=1.5" in result
+        assert "y=TRUE" in result
+        assert 'z="hi"' in result
+
+    def test_dataframe_produces_jsonlite_call(self):
+        pytest.importorskip("pandas")
+        import pandas as pd
+        df = pd.DataFrame({"x": [1, 2], "y": ["a", "b"]})
+        result = self._convert(df)
+        assert result is not None
+        assert "jsonlite::fromJSON" in result
 
 
 # ---------------------------------------------------------------------------

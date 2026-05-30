@@ -1,7 +1,11 @@
 """Bridge from Stage 1 to Stage 0 sandboxes (§3.4 steps 2–3)."""
 from __future__ import annotations
 
+import re as _re
 from pathlib import Path
+
+# Valid bare R identifier: starts with letter or dot, contains only [A-Za-z0-9._]
+_R_IDENT_RE = _re.compile(r"^[a-zA-Z.][a-zA-Z0-9._]*$")
 
 from ..types import CaptureSpec, EffectBundle, EffectClass
 
@@ -101,6 +105,25 @@ def _py_to_r(value: object) -> str | None:
             return parts[0]
         return f"c({', '.join(parts)})"
     if isinstance(value, dict):
-        # data.frame or named list — skip; too complex for a simple preamble
-        return None
+        items = []
+        for k, v in value.items():
+            rv = _py_to_r(v)
+            if rv is None:
+                return None  # give up if any nested value is too complex
+            # Backtick-quote keys that are not valid bare R identifiers.
+            raw_key = str(k)
+            if _R_IDENT_RE.match(raw_key):
+                safe_key = raw_key
+            else:
+                safe_key = "`" + raw_key.replace("\\", "\\\\").replace("`", "\\`") + "`"
+            items.append(f"{safe_key}={rv}")
+        return f"list({', '.join(items)})" if items else "list()"
+    try:
+        import pandas as _pd  # type: ignore
+        if isinstance(value, _pd.DataFrame):
+            j = value.to_json(orient="records")
+            escaped = j.replace("\\", "\\\\").replace("'", "\\'")
+            return f"jsonlite::fromJSON('{escaped}')"
+    except ImportError:
+        pass
     return None

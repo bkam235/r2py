@@ -415,8 +415,26 @@ class TestJudgeEntity:
         result = judge_entity(None, None, None, use_judge=False)
         assert result is None
 
-    def test_enabled_returns_uncomparable(self):
-        result = judge_entity(None, None, None, use_judge=True)
+    def test_enabled_pass_verdict(self):
+        from unittest.mock import patch
+        with patch("r2py.stage2.llm.call", return_value="<verdict>pass</verdict> They match."):
+            result = judge_entity(None, "1", "1", use_judge=True)
+        assert result is not None
+        assert result.verdict == "pass"
+        assert result.score == 1.0
+
+    def test_enabled_fail_verdict(self):
+        from unittest.mock import patch
+        with patch("r2py.stage2.llm.call", return_value="<verdict>fail</verdict> Different output."):
+            result = judge_entity(None, "1", "2", use_judge=True)
+        assert result is not None
+        assert result.verdict == "fail"
+        assert result.score == 0.0
+
+    def test_enabled_llm_error_returns_uncomparable(self):
+        from unittest.mock import patch
+        with patch("r2py.stage2.llm.call", side_effect=RuntimeError("API down")):
+            result = judge_entity(None, "x", "y", use_judge=True)
         assert result is not None
         assert result.verdict == "uncomparable"
 
@@ -454,16 +472,16 @@ class _FakeLibrary:
         self.contradictions = []
         self.reviews = 0
 
-    def record_evidence(self, edit, *, script_id, score, verification_path):
-        self.evidence.append((edit.pattern_id, script_id, score, verification_path))
+    def record_evidence(self, edit, *, score_delta, script_id, verification_path):
+        self.evidence.append((edit.pattern_id, script_id, score_delta, verification_path))
 
-    def record_tie(self, edit, *, script_id, score):
-        self.ties.append((edit.pattern_id, script_id, score))
+    def record_tie(self, edit, *, script_id):
+        self.ties.append((edit.pattern_id, script_id))
 
-    def record_contradiction(self, edit, *, script_id, score):
-        self.contradictions.append((edit.pattern_id, script_id, score))
+    def record_contradiction(self, edit, *, observed, script_id):
+        self.contradictions.append((edit.pattern_id, script_id, observed))
 
-    def review(self):
+    def epistemology_review(self):
         self.reviews += 1
         return ["reviewed"]
 

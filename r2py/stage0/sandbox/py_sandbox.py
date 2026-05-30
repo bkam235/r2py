@@ -11,6 +11,7 @@ from ..effects import env as _env_effects
 from ..effects import files as _files_effects
 from ..effects import graphics as _graphics_effects
 from ..effects import html as _html_effects
+from ..effects import network as _network_effects
 from ..effects import rng as _rng_effects
 from ..effects import stdout as _stdout_effects
 from ..effects import warnings as _warnings_effects
@@ -63,6 +64,10 @@ class PySandbox:
         if EffectClass.DATA in capture:
             pre_parts.append(_data_effects.build_py_preamble())
             epi_parts.append(_data_effects.PY_EPILOGUE_TEMPLATE)
+
+        if EffectClass.NETWORK in capture:
+            pre_parts.append(_network_effects.PY_PREAMBLE)
+            epi_parts.append(_network_effects.PY_EPILOGUE)
 
         if EffectClass.HTML in capture:
             epi_parts.append(_html_effects.PY_EPILOGUE)
@@ -131,5 +136,9 @@ class PySandbox:
         if EffectClass.RNG in capture:
             collected = _rng_effects.collect(workdir)
             bundle.rng_log = collected["rng_log"]
+
+        if EffectClass.NETWORK in capture:
+            collected = _network_effects.collect(workdir)
+            bundle.network_log = collected.get("network_log", [])
 
         return bundle

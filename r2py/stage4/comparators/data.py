@@ -176,6 +176,7 @@ class DataComparator:
             return ComparatorResult(effect_class=EffectClass.DATA, score=1.0, verdict="pass")
 
         scores: list[float] = []
+        per_variable: dict[str, float] = {}
         explanations: list[str] = []
         uncomparable_vars: list[str] = []
         any_fallback = False
@@ -190,10 +191,12 @@ class DataComparator:
                 # Guard against missing variable before falling back.
                 if name not in py_effect:
                     scores.append(0.0)
+                    per_variable[name] = 0.0
                     explanations.append(f"{name}: missing in Python output")
                     continue
                 fb_score = _text_fallback(r_val, py_effect[name])
                 scores.append(fb_score)
+                per_variable[name] = fb_score
                 if fb_score < 1.0:
                     explanations.append(f"{name}: fallback similarity {fb_score:.3f}")
                 any_fallback = True
@@ -203,6 +206,7 @@ class DataComparator:
             if py_val is None and name not in py_effect:
                 # Variable missing entirely from Python output
                 scores.append(0.0)
+                per_variable[name] = 0.0
                 explanations.append(f"{name}: missing in Python output")
                 continue
 
@@ -214,6 +218,7 @@ class DataComparator:
                 # Rescue infra failures via text fallback; value failures are never rescued
                 fb_score = _text_fallback(r_val, py_val)
                 scores.append(fb_score)
+                per_variable[name] = fb_score
                 if fb_score > 0.0:
                     explanations.append(
                         f"{name}: infra failure rescued by fallback (score {fb_score:.3f}): {explanation}"
@@ -223,6 +228,7 @@ class DataComparator:
                     explanations.append(f"{name}: {explanation}")
             else:
                 scores.append(score)
+                per_variable[name] = score
                 if verdict == "fail":
                     explanations.append(f"{name}: {explanation}")
 
@@ -255,4 +261,5 @@ class DataComparator:
             verdict=verdict,
             explanation="; ".join(explanations) if explanations else "",
             failure_tag="value" if verdict == "fail" else None,
+            per_variable=per_variable,
         )

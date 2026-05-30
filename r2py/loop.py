@@ -67,6 +67,7 @@ def run_loop(
     from . import stage2, stage3, stage4
     from .stage3.history import EditHistory
     from .library.epistemology import review as _ep_review
+    from .library.retrieval import entity_ast_shape_hash as _shape_hash
 
     # Configure optional learned components on the library instance (D6).
     # Graceful: PatternLibrary accepts these as attributes; older stubs ignore them.
@@ -76,12 +77,20 @@ def run_loop(
     script_id = hashlib.sha1(script_map.source.encode()).hexdigest()[:12]
 
     # --- seed translation -------------------------------------------------- #
-    seed = stage2.translate(script_map, library, no_seeds=no_seeds)
+    seed, entity_line_map = stage2.translate(script_map, library, no_seeds=no_seeds)
     seed_decomp = stage4.verify(
         script_map, seed,
         data_compare=data_compare, use_judge=use_judge,
+        entity_line_map=entity_line_map,
         **verify_kwargs,
     )
+
+    if output_dir is not None:
+        _write_score_report(Path(output_dir), 0, seed_decomp)
+
+    # Monotonically increasing counter for score_report artifact filenames.
+    # Avoids collisions when beam_width > 1 produces multiple proposals per iteration.
+    _report_idx = 1
 
     beam: list[Candidate] = [Candidate(seed, seed_decomp.aggregate, seed_decomp)]
     visited: set[str] = {_state_hash(seed)}
@@ -107,7 +116,6 @@ def run_loop(
         # Parallel lists — same index maps collector/transition to its proposal.
         proposal_collectors: list[EpisodeCollector] = []
         proposal_transitions: list["PolicyTransition | None"] = []
-
         for parent in beam:
             parent_history = histories.setdefault(
                 _state_hash(parent.translation), EditHistory()
@@ -134,13 +142,19 @@ def run_loop(
                 continue
             visited.add(h)
 
+            # entity_line_map may be stale after apply_edit shifts lines;
+            # pass empty dict so decompose falls back to whole-script scores.
             new_decomp = stage4.verify(
                 script_map, candidate_src,
                 changed=edit.entity_ids,
                 data_compare=data_compare,
                 use_judge=use_judge,
+                entity_line_map={},
                 **verify_kwargs,
             )
+            if output_dir is not None:
+                _write_score_report(Path(output_dir), _report_idx, new_decomp)
+            _report_idx += 1
             proposals.append(
                 Proposal(candidate_src, new_decomp.aggregate, new_decomp, edit, parent.score)
             )
@@ -181,10 +195,14 @@ def run_loop(
             if p.new_score > p.parent_score:
                 outcome = "accepted"
                 delta = p.new_score - p.parent_score
+                _eid = p.edit.entity_ids[0] if p.edit.entity_ids else ""
+                _ent = getattr(script_map, "entities", {}).get(_eid)
+                _hash = _shape_hash(_ent) if _ent is not None else ""
                 library.record_evidence(
                     p.edit,
                     score_delta=delta,
                     script_id=script_id,
+                    ast_shape_hash=_hash,
                 )
                 if p.edit.pattern_id:
                     evidence_added.append(p.edit.pattern_id)
@@ -263,6 +281,36 @@ def _set_attr(obj: object, name: str, value: object) -> None:
         setattr(obj, name, value)
     except (AttributeError, TypeError):
         pass
+
+
+def _score_report_to_dict(report) -> dict:
+    """Convert ScoreReport to a JSON-serialisable plain dict."""
+    return {
+        "aggregate": report.aggregate,
+        "by_entity": {
+            eid: {
+                "entity_id": es.entity_id,
+                "executed_ok": es.executed_ok,
+                "type_match": es.type_match,
+                "control_flow_match": es.control_flow_match,
+                "data_output": es.data_output,
+                "variable_output": es.variable_output,
+                "callable_output": es.callable_output,
+                "side_effects": es.side_effects,
+                "judge_pass": es.judge_pass,
+            }
+            for eid, es in report.by_entity.items()
+        },
+        "by_effect": {ec.value: score for ec, score in report.by_effect.items()},
+        "uncomparable": report.uncomparable,
+    }
+
+
+def _write_score_report(out_dir: Path, iteration: int, report) -> None:
+    """Write score_report.{iteration}.json to out_dir (§12.3)."""
+    out_dir.mkdir(parents=True, exist_ok=True)
+    path = out_dir / f"score_report.{iteration}.json"
+    path.write_text(json.dumps(_score_report_to_dict(report), indent=2), encoding="utf-8")
 
 
 def _write_run_logs(

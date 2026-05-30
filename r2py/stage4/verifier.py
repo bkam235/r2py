@@ -131,6 +131,7 @@ def verify(
     use_judge: bool = False,
     workdir: Path | None = None,
     timeout_s: float = 60,
+    entity_line_map: dict | None = None,
 ) -> ScoreReport:
     """Score a candidate Python translation against the R ScriptMap.
 
@@ -158,7 +159,11 @@ def verify(
     comparator_results = _compare_bundles(r_bundle, py_bundle, data_compare, rtol, atol)
 
     # --- Score decomposition ---
-    score_table = make_score_table(entities, comparator_results, py_exit_code=py_bundle.exit_code)
+    score_table = make_score_table(
+        entities, comparator_results,
+        py_exit_code=py_bundle.exit_code,
+        entity_line_map=entity_line_map,
+    )
 
     # --- Differential fuzzing (optional) ---
     feedback: list[FeedbackItem] = []

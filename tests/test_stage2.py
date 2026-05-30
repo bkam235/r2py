@@ -219,13 +219,13 @@ class TestCompose(unittest.TestCase):
 
     def test_header_comment_present(self):
         sm = self._sm(1)
-        result = self.compose({"e0": "v0 = 1"}, {}, ["e0"], sm, "claude-sonnet-4-6", "test.R")
+        result, _ = self.compose({"e0": "v0 = 1"}, {}, ["e0"], sm, "claude-sonnet-4-6", "test.R")
         self.assertIn("# Translated from", result)
         self.assertIn("r2py", result)
 
     def test_import_hoisted(self):
         sm = self._sm(1)
-        result = self.compose(
+        result, _ = self.compose(
             {"e0": "import numpy as np\nv0 = np.array([1])"},
             {},
             ["e0"],
@@ -240,12 +240,12 @@ class TestCompose(unittest.TestCase):
     def test_import_deduplication(self):
         sm = self._sm(2)
         per = {"e0": "import os\nv0 = 1", "e1": "import os\nv1 = 2"}
-        result = self.compose(per, {}, ["e0", "e1"], sm, "model")
+        result, _ = self.compose(per, {}, ["e0", "e1"], sm, "model")
         self.assertEqual(result.count("import os"), 1)
 
     def test_explicit_imports_included(self):
         sm = self._sm(1)
-        result = self.compose(
+        result, _ = self.compose(
             {"e0": "v0 = 1"},
             {"e0": ["import pandas as pd"]},
             ["e0"],
@@ -260,12 +260,12 @@ class TestCompose(unittest.TestCase):
             "e1": _make_entity("e1", name="result2"),
         })
         per = {"e0": "result = 1", "e1": "result = 2"}
-        result = self.compose(per, {}, ["e0", "e1"], sm, "model")
+        result, _ = self.compose(per, {}, ["e0", "e1"], sm, "model")
         self.assertIn("result_1", result)
 
     def test_bare_import_before_from_import(self):
         sm = self._sm(1)
-        result = self.compose(
+        result, _ = self.compose(
             {"e0": "from os import path\nimport sys\nv0 = 1"},
             {},
             ["e0"],
@@ -480,7 +480,7 @@ class TestTranslateOrchestration(unittest.TestCase):
         lib = MagicMock()
         lib.retrieve.return_value = []
         with patch("r2py.stage2.translator._llm.call", return_value=self._mock_llm_response("x")):
-            result = translate(sm, lib, run_coherence=False)
+            result, _ = translate(sm, lib, run_coherence=False)
         self.assertIsInstance(result, str)
         self.assertTrue(len(result) > 0)
 
@@ -512,7 +512,7 @@ class TestTranslateOrchestration(unittest.TestCase):
         lib = MagicMock()
         lib.retrieve.return_value = []
         with patch("r2py.stage2.translator._llm.call", side_effect=RuntimeError("down")):
-            result = translate(sm, lib, run_coherence=False)
+            result, _ = translate(sm, lib, run_coherence=False)
         # Should contain a stub comment, not raise
         self.assertIn("translation failed", result)
 
@@ -549,7 +549,7 @@ class TestTranslateOrchestration(unittest.TestCase):
         sm = _make_script_map({}, source="")
         lib = MagicMock()
         lib.retrieve.return_value = []
-        result = translate(sm, lib, run_coherence=False)
+        result, _ = translate(sm, lib, run_coherence=False)
         self.assertIsInstance(result, str)
 
 

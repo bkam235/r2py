@@ -29,7 +29,7 @@ def translate(
     cache_dir: Path | None = None,
     run_coherence: bool = True,
     r_path: str = "",
-) -> str:
+) -> tuple[str, dict[str, tuple[int, int]]]:
     """Translate a ScriptMap to a Python source string.
 
     Procedure (§5.3–§5.6):
@@ -91,13 +91,18 @@ def translate(
     except AttributeError:
         pass  # frozen dataclass — callers can read per_entity_effects from the return value if needed
 
-    python_source = _stitch.compose(
+    python_source, entity_line_map = _stitch.compose(
         per_entity, per_entity_imports, order, script_map, model, r_path=r_path
     )
 
     if run_coherence:
-        python_source, _edits = _coherence.review(
+        # Coherence edits may shift line numbers; invalidate the map to avoid
+        # stale mappings.  TODO: rebuild entity_line_map from the revised source.
+        revised, _edits = _coherence.review(
             python_source, script_map, library, model=model
         )
+        if revised != python_source:
+            python_source = revised
+            entity_line_map = {}   # invalidated by coherence edits
 
-    return python_source
+    return python_source, entity_line_map

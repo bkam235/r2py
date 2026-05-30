@@ -45,6 +45,66 @@ def _free_variables(node: AstNode, parent_entities: dict[EntityId, Entity]) -> l
     return sorted(used & defined_names)
 
 
+def extract_for_branch(
+    node: AstNode,
+    parent_entities: dict[EntityId, Entity],
+    parent_bundle: EffectBundle,
+) -> str | None:
+    """Build a runnable R slice for one synthetic iteration of a for-loop body.
+
+    Strategy:
+    1. Find the loop variable name and sequence expression from the for_statement node.
+    2. Look up the sequence value in parent_bundle.data.
+    3. If it's a list/vector, take the first element as the iterator value.
+    4. Restore free variables from parent_bundle.data as a preamble.
+    5. Return: preamble + ``for (<var> in <value>) { <body> }``
+
+    Returns None if the sequence value cannot be synthesized.
+    """
+    # tree-sitter-r fields: variable, sequence, body
+    var_node = node.child_by_field("variable")
+    seq_node = node.child_by_field("sequence")
+    body_node = node.child_by_field("body")
+
+    if var_node is None or body_node is None:
+        return None
+
+    loop_var = var_node.text
+    body_text = body_node.text
+
+    # Try to find the sequence value in parent bundle data
+    seq_r_lit = "1"  # fallback: iterate over a single integer
+    if seq_node is not None:
+        seq_name = seq_node.text.strip()
+        seq_val = parent_bundle.data.get(seq_name)
+        if seq_val is not None:
+            if isinstance(seq_val, list) and seq_val:
+                first = _py_to_r(seq_val[0])
+                if first:
+                    seq_r_lit = first
+            else:
+                r_lit = _py_to_r(seq_val)
+                if r_lit:
+                    seq_r_lit = r_lit
+
+    # Restore free variables (excluding the loop variable itself)
+    free_vars = _free_variables(body_node, parent_entities)
+    free_vars = [v for v in free_vars if v != loop_var]
+
+    preamble_lines: list[str] = []
+    for var_name in free_vars:
+        value = parent_bundle.data.get(var_name)
+        if value is not None:
+            r_lit = _py_to_r(value)
+            if r_lit is not None:
+                preamble_lines.append(f"{var_name} <- {r_lit}")
+
+    for_slice = f"for ({loop_var} in {seq_r_lit}) {body_text}"
+    if preamble_lines:
+        return "\n".join(preamble_lines) + "\n\n" + for_slice
+    return for_slice
+
+
 def _collect_identifiers(node: AstNode, out: set[str]) -> None:
     if node.kind == "identifier":
         out.add(node.text)

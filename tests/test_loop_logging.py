@@ -70,7 +70,7 @@ class TestLoopLogging:
         improved_decomp = _mock_decomp(0.7)  # strictly better
 
         with (
-            patch(_S2, return_value=seed_src),
+            patch(_S2, return_value=(seed_src, {})),
             patch(_S4, side_effect=[seed_decomp, improved_decomp]),
             patch(_S3_PROPOSE, return_value=edit),
             patch(_S3_APPLY, return_value=improved_src),
@@ -111,7 +111,7 @@ class TestLoopLogging:
         seed_decomp = _mock_decomp(0.9)
 
         with (
-            patch(_S2, return_value="x = 1"),
+            patch(_S2, return_value=("x = 1", {})),
             patch(_S4, return_value=seed_decomp),
             patch(_EP),
         ):
@@ -139,7 +139,7 @@ class TestLoopLogging:
         worse_decomp = _mock_decomp(0.3)
 
         with (
-            patch(_S2, return_value=seed_src),
+            patch(_S2, return_value=(seed_src, {})),
             patch(_S4, side_effect=[seed_decomp, worse_decomp]),
             patch(_S3_PROPOSE, return_value=edit),
             patch(_S3_APPLY, return_value=worse_src),
@@ -222,7 +222,7 @@ class TestRetrievalEpisodeLogging:
             return edit
 
         with (
-            patch(_S2, return_value="x = 1"),
+            patch(_S2, return_value=("x = 1", {})),
             patch(_S4, side_effect=[seed_decomp, improved_decomp]),
             patch(_S3_PROPOSE, side_effect=_fake_propose),
             patch(_S3_APPLY, return_value="x = 2"),

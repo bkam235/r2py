@@ -108,7 +108,7 @@ class TestRunLoopSeed(unittest.TestCase):
 
     def test_returns_seed_translation(self):
         lib = _mock_lib()
-        with patch(_S2, return_value="x = 1"), \
+        with patch(_S2, return_value=("x = 1", {})), \
              patch(_S4, return_value=_sr(0.6)), \
              patch(_S3_PROPOSE), \
              patch(_EP, return_value=[]):
@@ -118,7 +118,7 @@ class TestRunLoopSeed(unittest.TestCase):
 
     def test_iterations_is_one(self):
         lib = _mock_lib()
-        with patch(_S2, return_value="x = 1"), \
+        with patch(_S2, return_value=("x = 1", {})), \
              patch(_S4, return_value=_sr(0.6)), \
              patch(_S3_PROPOSE), \
              patch(_EP, return_value=[]):
@@ -127,7 +127,7 @@ class TestRunLoopSeed(unittest.TestCase):
 
     def test_score_history_contains_seed(self):
         lib = _mock_lib()
-        with patch(_S2, return_value="x = 1"), \
+        with patch(_S2, return_value=("x = 1", {})), \
              patch(_S4, return_value=_sr(0.6)), \
              patch(_S3_PROPOSE), \
              patch(_EP, return_value=[]):
@@ -137,7 +137,7 @@ class TestRunLoopSeed(unittest.TestCase):
 
     def test_no_library_writes_on_seed_only(self):
         lib = _mock_lib()
-        with patch(_S2, return_value="x = 1"), \
+        with patch(_S2, return_value=("x = 1", {})), \
              patch(_S4, return_value=_sr(0.6)), \
              patch(_S3_PROPOSE), \
              patch(_EP, return_value=[]):
@@ -154,7 +154,7 @@ class TestRunLoopSeed(unittest.TestCase):
 class TestHaltOnThreshold(unittest.TestCase):
     def test_seed_meets_threshold(self):
         lib = _mock_lib()
-        with patch(_S2, return_value="x = 1"), \
+        with patch(_S2, return_value=("x = 1", {})), \
              patch(_S4, return_value=_sr(0.9)), \
              patch(_S3_PROPOSE) as mock_s3, \
              patch(_EP, return_value=[]):
@@ -164,7 +164,7 @@ class TestHaltOnThreshold(unittest.TestCase):
 
     def test_iterations_is_one_when_seed_exceeds_threshold(self):
         lib = _mock_lib()
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, return_value=_sr(1.0)), \
              patch(_S3_PROPOSE), \
              patch(_EP, return_value=[]):
@@ -188,7 +188,7 @@ class TestStrictImprovement(unittest.TestCase):
             verify_calls[0] += 1
             return _sr(seed_score if verify_calls[0] == 1 else new_score)
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=edit), \
              patch(_S3_APPLY, return_value="improved"), \
@@ -228,7 +228,7 @@ class TestStrictImprovement(unittest.TestCase):
             verify_calls[0] += 1
             return _sr(0.5 if verify_calls[0] == 1 else 0.8)
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=edit), \
              patch(_S3_APPLY, return_value="improved"), \
@@ -249,7 +249,7 @@ class TestTieNotAccepted(unittest.TestCase):
         lib = _mock_lib()
         edit = _edit(pattern_id="tie_pattern")
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, return_value=_sr(score)), \
              patch(_S3_PROPOSE, return_value=edit), \
              patch(_S3_APPLY, return_value="tie_translation"), \
@@ -291,7 +291,7 @@ class TestRegressionNotAccepted(unittest.TestCase):
             verify_calls[0] += 1
             return _sr(0.6 if verify_calls[0] == 1 else 0.3)
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=edit), \
              patch(_S3_APPLY, return_value="regressed"), \
@@ -332,7 +332,7 @@ class TestTabuSet(unittest.TestCase):
             verify_calls[0] += 1
             return _sr(0.5)
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=_edit()), \
              patch(_S3_APPLY, return_value="seed"), \
@@ -350,7 +350,7 @@ class TestTabuSet(unittest.TestCase):
             verify_calls[0] += 1
             return _sr(0.5 if verify_calls[0] == 1 else 0.8)
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=_edit()), \
              patch(_S3_APPLY, return_value="new_translation"), \
@@ -367,7 +367,7 @@ class TestTabuSet(unittest.TestCase):
 class TestNoProposals(unittest.TestCase):
     def test_runtime_error_causes_early_break(self):
         lib = _mock_lib()
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, return_value=_sr(0.5)), \
              patch(_S3_PROPOSE, side_effect=RuntimeError("exhausted")), \
              patch(_EP, return_value=[]):
@@ -384,7 +384,7 @@ class TestNoProposals(unittest.TestCase):
             verify_calls[0] += 1
             return _sr(0.5)
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=_edit()), \
              patch(_S3_APPLY, return_value="seed"),  \
@@ -409,7 +409,7 @@ class TestBeamWidth(unittest.TestCase):
             verify_calls[0] += 1
             return _sr(0.5 if verify_calls[0] == 1 else 0.7)
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=_edit()), \
              patch(_S3_APPLY, return_value="improved"), \
@@ -435,7 +435,7 @@ class TestMaxItersHalt(unittest.TestCase):
         def fake_apply(translation, e):
             return f"v{verify_calls[0]}"
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=_edit()), \
              patch(_S3_APPLY, side_effect=fake_apply), \
@@ -462,7 +462,7 @@ class TestPatternTracking(unittest.TestCase):
         def fake_apply(t, e):
             return f"v{verify_calls[0]}"
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=edit), \
              patch(_S3_APPLY, side_effect=fake_apply), \
@@ -484,7 +484,7 @@ class TestPatternTracking(unittest.TestCase):
         def fake_apply(t, e):
             return f"v{verify_calls[0]}"
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=edit), \
              patch(_S3_APPLY, side_effect=fake_apply), \
@@ -507,7 +507,7 @@ class TestScoreHistory(unittest.TestCase):
             verify_calls[0] += 1
             return _sr(0.5)
 
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, side_effect=fake_verify), \
              patch(_S3_PROPOSE, return_value=_edit()), \
              patch(_S3_APPLY, return_value="new_v"), \
@@ -519,7 +519,7 @@ class TestScoreHistory(unittest.TestCase):
 
     def test_history_entries_are_score_reports(self):
         lib = _mock_lib()
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, return_value=_sr(0.5)), \
              patch(_S3_PROPOSE, side_effect=RuntimeError), \
              patch(_EP, return_value=[]):
@@ -529,7 +529,7 @@ class TestScoreHistory(unittest.TestCase):
 
     def test_history_not_collected_when_zero_iters(self):
         lib = _mock_lib()
-        with patch(_S2, return_value="seed"), \
+        with patch(_S2, return_value=("seed", {})), \
              patch(_S4, return_value=_sr(0.4)), \
              patch(_S3_PROPOSE), \
              patch(_EP, return_value=[]):

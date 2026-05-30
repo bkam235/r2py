@@ -25,6 +25,7 @@ def record_evidence(
     verification_path: str,
     store: "PatternStore",
     index: "PatternIndex",
+    ast_shape_hash: str = "",
 ) -> None:
     """Append a verified evidence entry to the attributed pattern (§7.7)."""
     if not edit.pattern_id:
@@ -39,7 +40,7 @@ def record_evidence(
     pat.evidence.append(entry)
     pat.last_review = date.today().isoformat()
     store.save(pat)
-    _upsert_index(pat, index)
+    _upsert_index(pat, index, ast_shape_hash=ast_shape_hash)
     # Evidence raises the demotion threshold (ceil(|evidence|/2)), so it can
     # never trigger a demotion by itself.  Epistemology is only run after
     # contradictions, where it may actually fire.
@@ -113,7 +114,7 @@ def _infer_package(edit: Edit) -> str:
     return str(edit.params.get("package", ""))
 
 
-def _upsert_index(pat: Pattern, index: "PatternIndex") -> None:
+def _upsert_index(pat: Pattern, index: "PatternIndex", ast_shape_hash: str = "") -> None:
     index.upsert_meta(
         pattern_id=pat.id,
         package=pat.package,
@@ -121,6 +122,7 @@ def _upsert_index(pat: Pattern, index: "PatternIndex") -> None:
         evidence_count=len(pat.evidence),
         contradictions_count=len(pat.contradictions),
         seed=pat.seed,
+        ast_shape_hash=ast_shape_hash,
     )
 
 

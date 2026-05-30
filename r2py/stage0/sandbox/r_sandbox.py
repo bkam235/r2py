@@ -11,6 +11,7 @@ from ..effects import env as _env_effects
 from ..effects import files as _files_effects
 from ..effects import graphics as _graphics_effects
 from ..effects import html as _html_effects
+from ..effects import network as _network_effects
 from ..effects import rng as _rng_effects
 from ..effects import stdout as _stdout_effects
 from ..effects import warnings as _warnings_effects
@@ -65,6 +66,10 @@ class RSandbox:
         if EffectClass.RNG in capture:
             pre_parts.append(_rng_effects.r_preamble(seed=seed, replay=replay))
             epi_parts.append(_rng_effects.R_EPILOGUE_CAPTURE)
+
+        if EffectClass.NETWORK in capture:
+            pre_parts.append(_network_effects.R_PREAMBLE)
+            epi_parts.append(_network_effects.R_EPILOGUE)
 
         # Snapshot workdir before run (for files diff)
         before_files = _files_effects.snapshot(workdir) if EffectClass.FILES in capture else {}
@@ -138,5 +143,9 @@ class RSandbox:
         if EffectClass.RNG in capture:
             collected = _rng_effects.collect(workdir)
             bundle.rng_log = collected["rng_log"]
+
+        if EffectClass.NETWORK in capture:
+            collected = _network_effects.collect(workdir)
+            bundle.network_log = collected.get("network_log", [])
 
         return bundle

@@ -26,7 +26,7 @@ def after_accepted_edit(
     if edit.pattern_id is None:
         return
     sid = _script_id(r_source) if r_source else "unknown"
-    library.record_evidence(edit, script_id=sid, score=new_score, verification_path="exact")
+    library.record_evidence(edit, score_delta=new_score, script_id=sid, verification_path="exact")
 
 
 def after_tie(
@@ -42,7 +42,7 @@ def after_tie(
     if edit.pattern_id is None:
         return
     sid = _script_id(r_source) if r_source else "unknown"
-    library.record_tie(edit, script_id=sid, score=score)
+    library.record_tie(edit, script_id=sid)
 
 
 def after_rejected_edit(
@@ -54,7 +54,7 @@ def after_rejected_edit(
     if edit.pattern_id is None:
         return
     sid = _script_id(r_source) if r_source else "unknown"
-    library.record_contradiction(edit, script_id=sid, score=0.0)
+    library.record_contradiction(edit, observed=0.0, script_id=sid)
 
 
 def maybe_review(
@@ -64,5 +64,5 @@ def maybe_review(
 ) -> list[str]:
     """Run epistemology review every every_n translations."""
     if n_translations > 0 and n_translations % every_n == 0:
-        return library.review()
+        return library.epistemology_review()
     return []

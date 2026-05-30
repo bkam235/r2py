@@ -15,6 +15,7 @@ dependencies = [
 [project.optional-dependencies]
 rpy2   = ["rpy2"]
 models = ["lightgbm"]
+embed  = ["sentence-transformers>=2.2"]
 
 [project.scripts]
 r2py = "r2py.cli:main"

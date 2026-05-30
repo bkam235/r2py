@@ -94,10 +94,11 @@ class PatternLibrary:
         script_id: str = "",
         entity_id: str = "",
         verification_path: str = "exact",
+        ast_shape_hash: str = "",
     ) -> None:
         _writer.record_evidence(
             edit, score_delta, script_id, entity_id, verification_path,
-            self.store, self.index,
+            self.store, self.index, ast_shape_hash,
         )
 
     def record_tie(
@@ -118,6 +119,10 @@ class PatternLibrary:
         _writer.record_contradiction(
             edit, observed, script_id, entity_id, self.store, self.index,
         )
+
+    def epistemology_review(self) -> list[str]:
+        from . import epistemology as _epi
+        return _epi.review(self.store, self.index)
 
     def __repr__(self) -> str:
         n = len(self.index.all_ids())

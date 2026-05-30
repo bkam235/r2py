@@ -273,3 +273,58 @@ def test_py_sandbox_uncapturable_reported():
     # Either uncapturable contains 'opaque' OR it was handled gracefully.
     # The key invariant: uncapturable field is always present (D2).
     assert isinstance(bundle.uncapturable, list)
+
+
+# ---------------------------------------------------------------------------
+# network.py
+# ---------------------------------------------------------------------------
+
+from r2py.stage0.effects import network as _network_mod
+
+
+def test_network_collect_reads_json(tmp_path):
+    entries = [["GET", "http://example.com", "abc123"], ["POST", "http://api.test/v1", "def456"]]
+    (tmp_path / "_r2py_network.json").write_text(json.dumps(entries), encoding="utf-8")
+    result = _network_mod.collect(tmp_path)
+    assert len(result["network_log"]) == 2
+    assert result["network_log"][0] == ("GET", "http://example.com", "abc123")
+    assert result["network_log"][1][0] == "POST"
+
+
+def test_network_collect_empty_when_no_file(tmp_path):
+    result = _network_mod.collect(tmp_path)
+    assert result == {}
+
+
+def test_network_collect_invalid_json(tmp_path):
+    (tmp_path / "_r2py_network.json").write_text("not json", encoding="utf-8")
+    result = _network_mod.collect(tmp_path)
+    assert result == {}
+
+
+def test_network_py_preamble_captures_urllib():
+    """PySandbox with NETWORK capture records urllib calls."""
+    from r2py.stage0.sandbox.py_sandbox import PySandbox
+    from r2py.stage0.sandbox.isolation import TempWorkdir
+    from r2py.types import EffectClass
+    import socket
+
+    # Only run if we have network access (non-blocking skip otherwise)
+    try:
+        socket.setdefaulttimeout(2)
+        socket.socket(socket.AF_INET, socket.SOCK_STREAM).connect(("example.com", 80))
+    except OSError:
+        pytest.skip("No network access")
+
+    sb = PySandbox()
+    source = (
+        "import urllib.request\n"
+        "urllib.request.urlopen('http://example.com')\n"
+    )
+    with TempWorkdir() as wd:
+        bundle = sb.run(source, workdir=wd, capture=frozenset({EffectClass.NETWORK}))
+    assert isinstance(bundle.network_log, list)
+    assert len(bundle.network_log) >= 1
+    verb, url, h = bundle.network_log[0]
+    assert verb in ("GET", "POST")
+    assert "example.com" in url
