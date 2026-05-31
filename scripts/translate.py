@@ -1,9 +1,13 @@
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 from r2py import translate
 from r2py.library import get_library
 from dotenv import load_dotenv
 from pathlib import Path
 from os import walk, path, listdir, remove, environ
-import random
+# import random
 
 load_dotenv(Path(__name__).parent.parent / ".env", override=True)
 lib = get_library()  # one shared library
@@ -11,7 +15,6 @@ input_dir = r".\work\inputs\harvested"
 output_dir = r".\work\outputs"
 
 VERBOSE = True
-
 
 def _on_progress(event) -> None:
     if event.kind == "analysis_done":
@@ -21,15 +24,15 @@ def _on_progress(event) -> None:
     elif event.kind == "iteration_start" and VERBOSE:
         print(f"[Iter {event.iteration + 1}] Best score so far: {event.score:.3f}")
     elif event.kind == "proposal" and VERBOSE:
-        print(f"          {event.edit_kind} on {event.entity_id!r} → {event.outcome} ({event.score:.3f})")
+        print(f"          {event.edit_kind} on {event.entity_id!r} -> {event.outcome} ({event.score:.3f})")
     elif event.kind == "done":
         print(f"[Done]    Final score: {event.score:.3f} in {event.iteration} iteration(s)")
 
 
 # Iterate through input files for translation
 input_filenames = next(walk(input_dir), (None, None, []))[2]
-# input_filenames = random.sample(input_filenames, 1)
-input_filenames = ["withr__rd_example__with_locale_Rd.R"]
+# input_filenames = random.sample(input_filenames, 1) #don't use random script
+input_filenames = ["withr__rd_example__with_locale_Rd.R"] #translate this specific script
 
 scripts = []
 for r_filename in input_filenames:
@@ -44,4 +47,5 @@ for r_script, py_script in scripts:
                        py_script,
                        library=lib,
                        model="claude-haiku-4-5",
-                       progress=_on_progress)
+                       progress=_on_progress,
+                       score_threshold=1)

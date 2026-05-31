@@ -26,6 +26,8 @@ Rules:
 4. Honour all Stage 1 semantic annotations (1-based indexing, NA semantics,
    NSE, vector recycling, copy-on-modify, super-assign, dispatch flags).
 5. List required imports separately; do not embed import statements in the snippet.
+   CRITICAL: R package names (withr, dplyr, ggplot2, shiny, magrittr, etc.) are NOT
+   Python modules — never add "import withr" or similar. Use Python stdlib/pandas equivalents.
 6. Declare which effect classes your translation will produce.
 7. If you cannot translate an entity, output:
    <python>pass  # untranslatable: <brief reason></python>

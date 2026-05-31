@@ -100,11 +100,19 @@ def _entity_kind_str(entity: object) -> str:
 
 
 def _token_overlap(a: str, b: str) -> float:
-    """Jaccard token overlap between two strings."""
+    """Jaccard token overlap between two strings.
+
+    Splits on whitespace AND on `_`, `.`, `-` so that snake_case identifiers
+    and dotted pattern IDs are tokenised into sub-words.  This lets the
+    retriever rank e.g. `withr.with_locale` high for an entity named
+    `with_locale` even when there are no exact-string matches.
+    """
     if not a or not b:
         return 0.0
-    toks_a = set(a.lower().split())
-    toks_b = set(b.lower().split())
+    import re as _re
+    _split = lambda s: set(_re.split(r"[\s._\-]+", s.lower())) - {""}
+    toks_a = _split(a)
+    toks_b = _split(b)
     if not toks_a or not toks_b:
         return 0.0
     return len(toks_a & toks_b) / len(toks_a | toks_b)

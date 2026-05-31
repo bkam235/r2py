@@ -168,7 +168,11 @@ def _avg_score(es: EntityScore) -> float:
     # (e.g. LIBRARY_IMPORT always gets callable_output=1.0) which would inflate the
     # apparent score of a failed entity and deprioritize it from editing.
     vals = [es.data_output, es.variable_output, es.side_effects]
-    return sum(vals) / len(vals)
+    base = sum(vals) / len(vals)
+    # Penalise entities that did not execute (crash or post-crash): they are more
+    # likely to be causing the failure and should rank ahead of pre-crash entities
+    # that already ran successfully (crash attribution via §7.4 decompose).
+    return base if es.executed_ok else max(0.0, base - 0.1)
 
 
 def _get_entity(script_map: "ScriptMap", eid: str) -> object | None:

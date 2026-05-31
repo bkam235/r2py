@@ -55,8 +55,12 @@ def _kind_scores(
 
 
 def _parse_crash_line(stderr: str) -> int | None:
-    """Extract the last crash line in _r2py_script.py from a Python traceback."""
-    matches = _re.findall(r'File "_r2py_script\.py", line (\d+)', stderr)
+    """Extract the last crash line in _r2py_script.py from a Python traceback.
+
+    Handles both bare filenames ('_r2py_script.py') and full temp paths
+    ('.../tmpXXX/_r2py_script.py') as produced by Windows/Linux sandboxes.
+    """
+    matches = _re.findall(r'File ".*?_r2py_script\.py", line (\d+)', stderr)
     return int(matches[-1]) if matches else None
 
 

@@ -4,6 +4,15 @@ from __future__ import annotations
 import re
 from typing import TYPE_CHECKING
 
+# R packages that have no Python equivalents and must never appear as imports.
+# Entries here are bare package names (no dots/underscores disambiguation needed).
+_R_ONLY_PACKAGES: frozenset[str] = frozenset({
+    "withr", "dplyr", "ggplot2", "shiny", "magrittr", "tidyr", "purrr",
+    "rlang", "tibble", "stringr", "forcats", "readr", "lubridate",
+    "broom", "tidyverse", "devtools", "testthat", "usethis",
+    "data.table", "caret", "mlr", "mlr3", "glue",
+})
+
 _SENTINEL_RE = re.compile(r"^# r2py:entity:(\S+)$")
 
 from .. import __version__ as _r2py_version
@@ -56,11 +65,11 @@ def compose(
             body_text = f"# r2py:entity:{eid}\n" + body_text
             body_items.append((eid, body_text))
 
-    # Deduplicate and sort imports
+    # Deduplicate, filter R-only packages, and sort imports
     seen: set[str] = set()
     deduped_imports: list[str] = []
     for imp in all_imports:
-        if imp not in seen:
+        if imp not in seen and not _is_r_only_import(imp):
             seen.add(imp)
             deduped_imports.append(imp)
     deduped_imports.sort(key=_import_sort_key)
@@ -115,10 +124,20 @@ def compose(
 # ---------------------------------------------------------------------------
 
 _IMPORT_RE = re.compile(r"^\s*(import |from \S+ import )")
+_IMPORT_PKG_RE = re.compile(r"^\s*(?:import|from)\s+(\w[\w.]*)")
 
 
 def _is_import_line(line: str) -> bool:
     return bool(_IMPORT_RE.match(line))
+
+
+def _is_r_only_import(imp: str) -> bool:
+    """Return True if *imp* imports a known R-only package with no Python equivalent."""
+    m = _IMPORT_PKG_RE.match(imp)
+    if not m:
+        return False
+    pkg = m.group(1).split(".")[0]  # top-level package name
+    return pkg in _R_ONLY_PACKAGES
 
 
 def _split_imports(snippet: str) -> tuple[list[str], list[str]]:
