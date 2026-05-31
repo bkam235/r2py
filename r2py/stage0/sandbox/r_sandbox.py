@@ -1,6 +1,7 @@
 """Rscript subprocess sandbox (§2.3)."""
 from __future__ import annotations
 
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -15,9 +16,56 @@ from ..effects import network as _network_effects
 from ..effects import rng as _rng_effects
 from ..effects import stdout as _stdout_effects
 from ..effects import warnings as _warnings_effects
-from ..env.r_runtime import find_rscript
+from ..env.r_runtime import find_rscript, _R_ENV_DIR
 from .base import ReplayLog, SandboxEscape
 from .isolation import TempWorkdir, check_escape, scrub_env, snapshot_home
+
+# Project library — the only library the R sandbox is allowed to use.
+_R_PROJECT_LIB = _R_ENV_DIR / "library"
+
+# R code prepended to every script to lock down the library search path.
+_LIBPATH_PREAMBLE = (
+    f'.libPaths(c({repr(str(_R_PROJECT_LIB).replace(chr(92), "/"))}))\n'
+)
+
+# Matches R's "no package" error in English and German locales.
+_MISSING_PKG_RE = re.compile(
+    r"(?:there is no package called|es gibt kein Paket namens)\s+['\"]([^'\"]+)['\"]",
+    re.IGNORECASE,
+)
+
+
+def _missing_package(stderr: str) -> str | None:
+    """Return the first missing R package name found in stderr, or None."""
+    m = _MISSING_PKG_RE.search(stderr)
+    return m.group(1) if m else None
+
+
+def _auto_install(pkg: str) -> None:
+    """Ensure *pkg* is available in the project library.
+
+    Tries renv::restore() first (covers all packages in renv.lock).
+    Falls back to install.packages() for packages not in the lockfile.
+    """
+    from ..env.r_env_setup import restore_r_env, _LOCKFILE
+    import json
+
+    # Check if the package is listed in renv.lock.
+    in_lockfile = False
+    if _LOCKFILE.exists():
+        try:
+            lock = json.loads(_LOCKFILE.read_text(encoding="utf-8"))
+            in_lockfile = pkg in lock.get("Packages", {})
+        except Exception:
+            pass
+
+    if in_lockfile:
+        restore_r_env()
+    else:
+        # Package not in lockfile — install directly from CRAN into project library.
+        from ..env.package_installer import install
+        print(f"[r2py] Installing R package '{pkg}' from CRAN ...")
+        install(r_packages=[pkg])
 
 
 class RSandbox:
@@ -44,6 +92,13 @@ class RSandbox:
         if seed is not None:
             pre_parts.append(f"set.seed({seed}L)\n")
 
+        # Preambles: ENV before WARNINGS so ENV captures baseline options before
+        # warning.expression is installed.  Epilogues: WARNINGS before ENV so
+        # warning.expression is restored before the options diff is taken.
+
+        if seed is not None:
+            pre_parts.append(f"set.seed({seed}L)\n")
+
         if EffectClass.DATA in capture:
             pre_parts.append(_data_effects.R_PREAMBLE)
             epi_parts.append(_data_effects.build_r_epilogue())
@@ -55,13 +110,12 @@ class RSandbox:
         if EffectClass.HTML in capture:
             epi_parts.append(_html_effects.R_EPILOGUE)
 
+        # ENV preamble before WARNINGS preamble (captures baseline before warning.expression is set)
         if EffectClass.ENV in capture:
             pre_parts.append(_env_effects.R_PREAMBLE)
-            epi_parts.append(_env_effects.R_EPILOGUE)
 
         if EffectClass.WARNINGS in capture:
             pre_parts.append(_warnings_effects.R_PREAMBLE_SIMPLE)
-            epi_parts.append(_warnings_effects.R_EPILOGUE_SIMPLE)
 
         if EffectClass.RNG in capture:
             pre_parts.append(_rng_effects.r_preamble(seed=seed, replay=replay))
@@ -71,15 +125,23 @@ class RSandbox:
             pre_parts.append(_network_effects.R_PREAMBLE)
             epi_parts.append(_network_effects.R_EPILOGUE)
 
+        # WARNINGS epilogue before ENV epilogue (restores warning.expression before options diff)
+        if EffectClass.WARNINGS in capture:
+            epi_parts.append(_warnings_effects.R_EPILOGUE_SIMPLE)
+
+        if EffectClass.ENV in capture:
+            epi_parts.append(_env_effects.R_EPILOGUE)
+
         # Snapshot workdir before run (for files diff)
         before_files = _files_effects.snapshot(workdir) if EffectClass.FILES in capture else {}
 
         # Snapshot home for escape detection
         home_snap = snapshot_home()
 
-        # Assemble the full script
+        # Assemble the full script — library path lock comes first
         full_script = (
-            "\n".join(pre_parts)
+            _LIBPATH_PREAMBLE
+            + "\n".join(pre_parts)
             + "\n"
             + preamble
             + "\n"
@@ -106,6 +168,29 @@ class RSandbox:
 
         # Escape detection
         check_escape(home_snap, workdir)
+
+        if result.returncode != 0:
+            stderr_text = result.stderr.decode("utf-8", errors="replace")
+            pkg = _missing_package(stderr_text)
+            if pkg:
+                # Auto-install the missing package and retry once.
+                _auto_install(pkg)
+                result = subprocess.run(
+                    [str(rscript), "--vanilla", str(script_path)],
+                    cwd=str(workdir),
+                    capture_output=True,
+                    timeout=timeout_s,
+                    env=scrub_env(),
+                )
+
+        # Raise on any remaining non-zero exit (including after retry).
+        if result.returncode != 0:
+            stderr_tail = result.stderr.decode("utf-8", errors="replace").strip()
+            if len(stderr_tail) > 600:
+                stderr_tail = "..." + stderr_tail[-600:]
+            raise RuntimeError(
+                f"R script exited with code {result.returncode}:\n{stderr_tail}"
+            )
 
         # Assemble EffectBundle
         bundle = EffectBundle(exit_code=result.returncode, run_time_s=run_time)

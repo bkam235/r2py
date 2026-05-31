@@ -6,8 +6,11 @@ import re
 import subprocess
 from pathlib import Path
 
-from .r_runtime import find_rscript
+from .r_runtime import find_rscript, _R_ENV_DIR
 from .py_runtime import find_python
+from .r_env_setup import _clean_env
+
+_R_PROJECT_LIB = _R_ENV_DIR / "library"
 
 # Valid R/Python package name: starts with a letter, then letters/digits/._-
 _PKG_NAME_RE = re.compile(r"^[A-Za-z][A-Za-z0-9._-]*$")
@@ -78,6 +81,7 @@ def install(
     py_lock: dict = lock.setdefault("py", {})
 
     rscript = find_rscript()
+    lib_r = str(_R_PROJECT_LIB).replace("\\", "/")
 
     for pkg in r_packages:
         if pkg in r_lock:
@@ -87,15 +91,20 @@ def install(
         _validate_package_name(bare)
         if bioc:
             cmd = (
+                f".libPaths(c('{lib_r}')); "
                 f"if (!requireNamespace('BiocManager', quietly=TRUE)) "
-                f"install.packages('BiocManager', repos='https://cloud.r-project.org'); "
-                f"BiocManager::install('{bare}', ask=FALSE)"
+                f"install.packages('BiocManager', lib='{lib_r}', repos='https://cloud.r-project.org'); "
+                f"BiocManager::install('{bare}', lib='{lib_r}', ask=FALSE)"
             )
         else:
-            cmd = f"install.packages('{bare}', repos='https://cloud.r-project.org')"
+            cmd = (
+                f".libPaths(c('{lib_r}')); "
+                f"install.packages('{bare}', lib='{lib_r}', repos='https://cloud.r-project.org')"
+            )
         subprocess.run(
             [str(rscript), "-e", cmd],
             check=True, timeout=300,
+            env=_clean_env(),
         )
         version = get_r_package_version(bare) or "unknown"
         r_lock[pkg] = version

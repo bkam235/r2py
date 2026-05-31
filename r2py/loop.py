@@ -293,7 +293,12 @@ def run_loop(
             proposal_transitions.append(tr)
 
         if not proposals:
-            break
+            # Break only when every beam member is exhausted (no valid edits remain).
+            # If tabu filtering caused empty proposals, the next iteration will use
+            # the updated history to try different edits.
+            remaining = [p for p in beam if _state_hash(p.translation) not in exhausted_parents]
+            if not remaining:
+                break
 
         score_history.extend(p.new_decomp for p in proposals)
 

@@ -1,6 +1,7 @@
 """Python subprocess sandbox (§2.3)."""
 from __future__ import annotations
 
+import re
 import subprocess
 import time
 from pathlib import Path
@@ -18,6 +19,25 @@ from ..effects import warnings as _warnings_effects
 from ..env.py_runtime import find_python
 from .base import ReplayLog
 from .isolation import check_escape, scrub_env, snapshot_home
+
+_MISSING_MODULE_RE = re.compile(
+    r"ModuleNotFoundError: No module named '([^']+)'"
+)
+
+
+def _missing_module(stderr: str) -> str | None:
+    """Return the top-level package name from a ModuleNotFoundError, or None."""
+    m = _MISSING_MODULE_RE.search(stderr)
+    if not m:
+        return None
+    # 'scipy.stats' → 'scipy'
+    return m.group(1).split(".")[0]
+
+
+def _auto_install_py(pkg: str) -> None:
+    from ..env.package_installer import install
+    print(f"[r2py] Installing Python package '{pkg}' ...")
+    install(py_packages=[pkg])
 
 
 class PySandbox:
@@ -99,6 +119,21 @@ class PySandbox:
             env=scrub_env(),
         )
         run_time = time.monotonic() - t_start
+
+        if result.returncode != 0:
+            stderr_text = result.stderr.decode("utf-8", errors="replace")
+            pkg = _missing_module(stderr_text)
+            if pkg:
+                _auto_install_py(pkg)
+                t_retry = time.monotonic()
+                result = subprocess.run(
+                    [str(python), str(script_path)],
+                    cwd=str(workdir),
+                    capture_output=True,
+                    timeout=timeout_s,
+                    env=scrub_env(),
+                )
+                run_time += time.monotonic() - t_retry
 
         check_escape(home_snap, workdir)
 

@@ -1,0 +1,8 @@
+# Ablation slice — pinned, stratified list of R scripts for §12.4.1.
+# Lines are paths relative to the project root.
+# Blank lines and lines starting with # are ignored.
+# Add scripts here when new curated/harvested examples are available.
+# Keep this list committed and stable; change only when deliberately adding
+# or retiring scripts from the stratified sample.
+
+tests/fixtures/simple.R

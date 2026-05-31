@@ -15,16 +15,6 @@ png(
   filename = file.path(getwd(), sprintf("_r2py_plot_%03d.png", .r2py_plot_idx)),
   width = 800, height = 600
 )
-# Hook ggsave so it also writes into the workdir
-if (requireNamespace("ggplot2", quietly = TRUE)) {
-  .r2py_orig_ggsave <- ggplot2::ggsave
-  ggplot2::ggsave <- function(filename = "last_plot.png", ...) {
-    .r2py_orig_ggsave(
-      filename = file.path(getwd(), basename(filename)),
-      ...
-    )
-  }
-}
 """
 
 R_EPILOGUE = """\

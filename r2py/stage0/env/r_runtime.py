@@ -6,9 +6,17 @@ import shutil
 import subprocess
 from pathlib import Path
 
+# Bundled R environment shipped with r2py.
+_R_ENV_DIR = Path(__file__).parent.parent / "r_env"
+
 
 def find_rscript() -> Path:
     """Return the path to Rscript, raising RuntimeError if not found."""
+    # 0. Bundled R environment (always preferred — ensures hermetic package set)
+    bundled = _R_ENV_DIR / "runtime" / "bin" / "Rscript.exe"
+    if bundled.exists():
+        return bundled
+
     # 1. PATH lookup
     found = shutil.which("Rscript")
     if found:

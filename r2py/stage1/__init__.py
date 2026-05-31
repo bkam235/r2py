@@ -48,23 +48,16 @@ def analyze(
     entities, predicted_effects = walk(ast_root, source_file, tracker)
 
     # ── Step 3: dynamic run ──────────────────────────────────────────────────
-    main_bundle = None
-    try:
-        main_bundle = run_script(r_path, capture=capture, timeout_s=timeout_s)
-        # Mark all known entities as dynamically confirmed.
-        for eid in entities:
-            tracker.mark(eid, "dynamic")
-            entities[eid].actual_bundle = main_bundle
-    except Exception as exc:
-        # Sandbox unavailable or script crashed — static analysis only.
-        print(f"r2py: sandbox run failed, using static analysis only: {exc}", file=sys.stderr)
+    main_bundle = run_script(r_path, capture=capture, timeout_s=timeout_s)
+    for eid in entities:
+        tracker.mark(eid, "dynamic")
+        entities[eid].actual_bundle = main_bundle
 
     # ── Step 4 + 6: branch extraction loop ──────────────────────────────────
     branches: dict[str, BranchAnalysis] = {}
-    if main_bundle is not None:
-        _extract_branches(ast_root, entities, main_bundle,
-                          branches, tracker, capture, timeout_s,
-                          max_coverage_attempts)
+    _extract_branches(ast_root, entities, main_bundle,
+                      branches, tracker, capture, timeout_s,
+                      max_coverage_attempts)
 
     # ── Step 5: resolve external sources ────────────────────────────────────
     external_sources = {}
@@ -77,10 +70,7 @@ def analyze(
                     external_sources[eid] = loc
 
     # ── Step 7: build ScriptMap ──────────────────────────────────────────────
-    # Merge actual effect bundles into the effects list.
-    all_effects = list(predicted_effects)
-    if main_bundle is not None:
-        all_effects = _merge_dynamic_effects(all_effects, main_bundle, entities)
+    all_effects = _merge_dynamic_effects(list(predicted_effects), main_bundle, entities)
 
     return ScriptMap(
         source=source,

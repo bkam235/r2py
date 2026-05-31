@@ -49,6 +49,7 @@ def _file_hash(path: Path) -> str:
 _SNAPSHOT_SKIP_DIRS = frozenset({
     ".git", "node_modules", ".cache", "AppData", ".npm", ".cargo",
     "__pycache__", ".tox", ".venv", "venv", ".mypy_cache",
+    ".claude",  # Claude Code writes here during normal operation
 })
 
 

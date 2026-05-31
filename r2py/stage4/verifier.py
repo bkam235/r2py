@@ -38,12 +38,18 @@ _ALL_CAPTURE: CaptureSpec = frozenset({
 
 
 def _get_r_bundle(script_map) -> EffectBundle:
-    """Aggregate entity actual_bundles from the ScriptMap into one R ground-truth bundle."""
-    bundles = [
-        e.actual_bundle
-        for e in getattr(script_map, "entities", {}).values()
-        if getattr(e, "actual_bundle", None) is not None
-    ]
+    """Aggregate entity actual_bundles from the ScriptMap into one R ground-truth bundle.
+
+    Deduplicates by object identity: all entities produced by Stage 1's main run
+    share the same bundle object, so we merge each unique bundle exactly once.
+    """
+    seen_ids: set[int] = set()
+    bundles: list[EffectBundle] = []
+    for e in getattr(script_map, "entities", {}).values():
+        ab = getattr(e, "actual_bundle", None)
+        if ab is not None and id(ab) not in seen_ids:
+            seen_ids.add(id(ab))
+            bundles.append(ab)
     if bundles:
         return _bundle_mod.merge(bundles)
     # No entity bundles — return empty (all comparators will score as 1.0 empty-vs-empty)
@@ -146,8 +152,6 @@ def verify(
     entities are re-verified (incremental verification, §7.4).
     """
     entities = getattr(script_map, "entities", {})
-    if changed is not None:
-        entities = {eid: e for eid, e in entities.items() if eid in changed}
 
     # --- Run candidate in Python sandbox ---
     r_bundle = _get_r_bundle(script_map)

@@ -1,0 +1,797 @@
+{
+  "by_key": {
+    ":": [
+      "avoid-builtin-shadowing",
+      "base.suppress-package-startup-messages",
+      "base.suppress-package-startup",
+      "base.suppress-startup-messages",
+      "base.suppress-startup-msgs",
+      "datetime.import-fix",
+      "fix-loop-variable-reference",
+      "locale.context-manager-pattern",
+      "r-suppress-startup-messages-context",
+      "r.suppress-package-startup-messages",
+      "r.suppress-startup-messages",
+      "r.suppress-warnings-wrapper",
+      "r.suppressPackageStartupMessages-noop",
+      "r.suppressPackageStartupMessages-to-contextlib",
+      "r.suppressPackageStartupMessages",
+      "r.suppress_startup_messages",
+      "remove-broken-context-call",
+      "remove-missing-import",
+      "remove-r-specific-import",
+      "remove-unavailable-import",
+      "remove-unused-datetime-vars",
+      "remove-unused-import",
+      "remove-unused-withr-import",
+      "suppress-package-startup-messages",
+      "suppress-r-package-import",
+      "suppress-r-pkg-startup",
+      "suppress-startup-messages-context-manager",
+      "suppress-startup-messages-noop",
+      "suppress-startup-messages-remove-import",
+      "suppress-startup-messages-via-warnings",
+      "suppress-startup-messages-warnings",
+      "suppress-startup-messages-with-body",
+      "suppress-startup-messages-wrapper",
+      "suppress-startup-messages",
+      "suppress-startup-r-only-package",
+      "suppress-startup-remove-import",
+      "suppress-stderr-with-redirect",
+      "suppress.package.startup.messages",
+      "syntax.empty-try-block",
+      "withr.with_locale-as-context-manager",
+      "withr.with_locale",
+      "move-function-before-use",
+      "suppress-startup-messages-placeholder",
+      "function-before-call",
+      "function-def-before-call",
+      "suppress-startup-wrapper",
+      "suppress-startup-messages-context",
+      "withr.locale-restoration-fix",
+      "withr.with_locale-complete-lambda",
+      "range-to-list-conversion",
+      "fix-ISOdate-shadowing",
+      "move-function-def-to-preamble",
+      "withr.with_locale-reorder-def",
+      "withr.with_locale-capture-output",
+      "withr.with_locale-move-definition-before-usage",
+      "function-definition-ordering",
+      "withr.reorder-function-def",
+      "withr.with_locale-reorder",
+      "definition-before-call",
+      "suppress-startup-messages-stdout-stderr",
+      "withr.with-locale-plot-execution",
+      "move-function-def-before-call",
+      "suppress-startup-no-op",
+      "suppress-noop-wrapper",
+      "suppress-startup-execute",
+      "locale.utf8-encoding-fix",
+      "locale.utf8-encoding-priority",
+      "locale.tuple-to-string-restoration",
+      "locale-direct-string-first",
+      "locale.platform-aware-encoding",
+      "locale.utf8-encoding-suffix"
+    ],
+    "base:": [
+      "base.cat_to_print",
+      "base.c_to_list",
+      "base.dataframe_to_pandas",
+      "base.lapply_to_listcomp",
+      "base.na_to_none",
+      "base.nrow_ncol_to_shape",
+      "base.paste0_to_fstring",
+      "base.read_csv_to_pandas",
+      "base.seq_to_range",
+      "base.sprintf_to_fstring",
+      "base.which_to_npwhere",
+      "base.write_csv_to_pandas"
+    ],
+    "dplyr:": [
+      "dplyr.filter_to_mask"
+    ],
+    "ggplot2:": [
+      "ggplot2.to_plotnine"
+    ],
+    "magrittr:": [
+      "magrittr.pipe_to_chaining"
+    ],
+    ":ffb01754": [
+      "function-before-call",
+      "function-def-before-call",
+      "withr.with_locale",
+      "definition-before-call",
+      "move-function-def-before-call"
+    ]
+  },
+  "meta": {
+    "avoid-builtin-shadowing": {
+      "confidence": "tentative",
+      "evidence_count": 2,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "base.cat_to_print": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.c_to_list": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.dataframe_to_pandas": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.lapply_to_listcomp": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.na_to_none": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.nrow_ncol_to_shape": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.paste0_to_fstring": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.read_csv_to_pandas": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.seq_to_range": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.sprintf_to_fstring": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.suppress-package-startup-messages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 2,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "base.suppress-package-startup": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "base.suppress-startup-messages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 4,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "base.suppress-startup-msgs": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "base.which_to_npwhere": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "base.write_csv_to_pandas": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
+    "datetime.import-fix": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "dplyr.filter_to_mask": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "dplyr",
+      "ast_shape_hash": ""
+    },
+    "fix-loop-variable-reference": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "ggplot2.to_plotnine": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "locale.context-manager-pattern": {
+      "confidence": "tentative",
+      "evidence_count": 5,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "magrittr.pipe_to_chaining": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "magrittr",
+      "ast_shape_hash": ""
+    },
+    "r-suppress-startup-messages-context": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "r.suppress-package-startup-messages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 5,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "r.suppress-startup-messages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 3,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "r.suppress-warnings-wrapper": {
+      "confidence": "contradicted",
+      "evidence_count": 1,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "r.suppressPackageStartupMessages-noop": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "r.suppressPackageStartupMessages-to-contextlib": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "r.suppressPackageStartupMessages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "r.suppress_startup_messages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-broken-context-call": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-missing-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-r-specific-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-unavailable-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 2,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-unused-datetime-vars": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-unused-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-unused-withr-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-package-startup-messages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-r-package-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-r-pkg-startup": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-context-manager": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-noop": {
+      "confidence": "contradicted",
+      "evidence_count": 1,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-remove-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-via-warnings": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-warnings": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-with-body": {
+      "confidence": "tentative",
+      "evidence_count": 2,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-wrapper": {
+      "confidence": "tentative",
+      "evidence_count": 2,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages": {
+      "confidence": "contradicted",
+      "evidence_count": 2,
+      "contradictions_count": 7,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-r-only-package": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-remove-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-stderr-with-redirect": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress.package.startup.messages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "syntax.empty-try-block": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-as-context-manager": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale": {
+      "confidence": "contradicted",
+      "evidence_count": 9,
+      "contradictions_count": 4,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "move-function-before-use": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-placeholder": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "function-before-call": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754"
+    },
+    "function-def-before-call": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754"
+    },
+    "suppress-startup-wrapper": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-context": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.locale-restoration-fix": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-complete-lambda": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "range-to-list-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "fix-ISOdate-shadowing": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "move-function-def-to-preamble": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-reorder-def": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-capture-output": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 2,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-move-definition-before-usage": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "function-definition-ordering": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.reorder-function-def": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-reorder": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "definition-before-call": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754"
+    },
+    "suppress-startup-messages-stdout-stderr": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with-locale-plot-execution": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "move-function-def-before-call": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754"
+    },
+    "suppress-startup-no-op": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-noop-wrapper": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-execute": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-encoding-fix": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-encoding-priority": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.tuple-to-string-restoration": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-direct-string-first": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.platform-aware-encoding": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-encoding-suffix": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    }
+  }
+}

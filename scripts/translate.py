@@ -48,4 +48,5 @@ for r_script, py_script in scripts:
                        library=lib,
                        model="claude-haiku-4-5",
                        progress=_on_progress,
-                       score_threshold=1)
+                       score_threshold=1,
+                       max_iters=20)

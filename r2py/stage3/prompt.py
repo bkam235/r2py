@@ -136,7 +136,7 @@ def parse_edit_response(raw: str) -> dict | None:
 
     Returns None if no parseable JSON object is found.
     """
-    # Try each line for a JSON object
+    # Try each line for a single-line JSON object
     for line in raw.splitlines():
         line = line.strip()
         if line.startswith("{") and line.endswith("}"):
@@ -147,15 +147,24 @@ def parse_edit_response(raw: str) -> dict | None:
             except json.JSONDecodeError:
                 continue
 
-    # Fallback: scan for any {...} block in the response
-    match = re.search(r"\{[^{}]+\}", raw, re.DOTALL)
-    if match:
-        try:
-            obj = json.loads(match.group())
-            if "kind" in obj:
-                return obj
-        except json.JSONDecodeError:
-            pass
+    # Fallback: extract the outermost {...} block using brace-counting so that
+    # multi-line or nested-brace JSON (e.g. params: {"a": "b"}) is handled.
+    start = raw.find("{")
+    if start != -1:
+        depth = 0
+        for i, ch in enumerate(raw[start:], start=start):
+            if ch == "{":
+                depth += 1
+            elif ch == "}":
+                depth -= 1
+                if depth == 0:
+                    try:
+                        obj = json.loads(raw[start : i + 1])
+                        if "kind" in obj:
+                            return obj
+                    except json.JSONDecodeError:
+                        pass
+                    break
 
     return None
 
