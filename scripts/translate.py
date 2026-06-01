@@ -6,7 +6,7 @@ from r2py import translate, reset_library
 from r2py.library import get_library
 from dotenv import load_dotenv
 from os import walk, path, listdir, remove, environ
-# import random
+import random
 
 load_dotenv(Path(__file__).parent.parent / ".env", override=True)
 
@@ -34,8 +34,11 @@ def _on_progress(event) -> None:
 
 # Iterate through input files for translation
 input_filenames = next(walk(input_dir), (None, None, []))[2]
-# input_filenames = random.sample(input_filenames, 1) #don't use random script
-input_filenames = ["withr__rd_example__with_locale_Rd.R"] #translate this specific script
+input_filenames = random.sample(input_filenames, 1) #don't use random script
+# input_filenames = ["shape__rd_example__greycol_Rd.R"] #translate this specific script
+# withr__rd_example__with_locale_Rd.R 0.996
+# shape__rd_example__greycol_Rd.R 0.967
+
 
 scripts = []
 for r_filename in input_filenames:
@@ -46,6 +49,10 @@ for r_filename in input_filenames:
     scripts.append((r_file_path, py_file_path))
 
 for r_script, py_script in scripts:
+    print("############################")
+    print(f"{r_script}")
+    print("############################")
+    
     result = translate(r_script,
                        py_script,
                        library=lib,
