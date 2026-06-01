@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from .types import ScriptMap, TranslateResult
 
 __version__ = "0.2.0"
-__all__ = ["translate", "analyze"]
+__all__ = ["translate", "analyze", "review_library"]
 
 
 def translate(
@@ -77,3 +77,18 @@ def analyze(r_path: "str | Path") -> "ScriptMap":
     from pathlib import Path
     from .stage1 import analyze as _analyze
     return _analyze(Path(r_path))
+
+
+def review_library(library=None, prune_unimproved: bool = False) -> list[str]:
+    """Manually trigger a library epistemology review.
+
+    Set prune_unimproved=True to immediately archive all patterns that have
+    zero real improvement evidence regardless of run count (Fix D cleanup).
+    """
+    from .library import get_library
+    from .library import epistemology as _epi
+    if library is None:
+        library = get_library()
+    if prune_unimproved:
+        return _epi.prune_unimproved(library.store, library.index)
+    return _epi.review(library.store, library.index)

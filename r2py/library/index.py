@@ -36,13 +36,23 @@ class PatternIndex:
 
     def __init__(self, library_dir: Path) -> None:
         self._path = library_dir / "index.json"
-        self._data: dict = {"by_key": {}, "meta": {}}
+        self._data: dict = {"by_key": {}, "meta": {}, "total_runs": 0}
         if self._path.exists():
             self._load()
 
     # ------------------------------------------------------------------ #
     # Public API                                                           #
     # ------------------------------------------------------------------ #
+
+    def total_runs(self) -> int:
+        return int(self._data.get("total_runs", 0))
+
+    def increment_runs(self) -> int:
+        """Increment the global translation run counter and return the new value."""
+        n = self.total_runs() + 1
+        self._data["total_runs"] = n
+        self._save()
+        return n
 
     def rebuild(self, store: "PatternStore") -> None:
         """Regenerate the index from all patterns in the store.
@@ -93,16 +103,22 @@ class PatternIndex:
 
     def upsert_meta(self, pattern_id: PatternId, package: str, confidence: str,
                     evidence_count: int, contradictions_count: int, seed: bool,
-                    ast_shape_hash: str = "") -> None:
+                    ast_shape_hash: str = "",
+                    contradicted_at_run: int | None = None) -> None:
         """Update metadata for a single pattern without a full rebuild."""
-        self._data["meta"][pattern_id] = {
+        existing = self._data["meta"].get(pattern_id, {})
+        entry: dict = {
             "confidence": confidence,
             "evidence_count": evidence_count,
             "contradictions_count": contradictions_count,
             "seed": seed,
             "package": package,
             "ast_shape_hash": ast_shape_hash,
+            "contradicted_at_run": existing.get("contradicted_at_run", 0),
         }
+        if contradicted_at_run is not None:
+            entry["contradicted_at_run"] = contradicted_at_run
+        self._data["meta"][pattern_id] = entry
         key = _make_key(package, ast_shape_hash)
         ids = self._data["by_key"].setdefault(key, [])
         if pattern_id not in ids:

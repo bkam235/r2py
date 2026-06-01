@@ -49,7 +49,16 @@ def _is_pandas_df(obj: Any) -> bool:
 
 
 def _serialize_pandas_df(obj: Any) -> Any:
-    return obj.to_dict(orient="columns")
+    import pandas as _pd
+    result = {}
+    for col in obj.columns:
+        series = obj[col]
+        if _pd.api.types.is_datetime64_any_dtype(series):
+            # Convert datetime64 to ISO date strings matching R's jsonlite format
+            result[col] = series.dt.strftime("%Y-%m-%d").tolist()
+        else:
+            result[col] = series.tolist()
+    return result
 
 
 def _is_pandas_series(obj: Any) -> bool:
@@ -240,7 +249,14 @@ def _r2py_try_adapters(name, obj):
     try:
         import pandas as _pd
         if isinstance(obj, _pd.DataFrame):
-            return obj.to_dict(orient='columns'), True
+            _r2py_result = {}
+            for _r2py_col in obj.columns:
+                _r2py_series = obj[_r2py_col]
+                if _pd.api.types.is_datetime64_any_dtype(_r2py_series):
+                    _r2py_result[_r2py_col] = _r2py_series.dt.strftime('%Y-%m-%d').tolist()
+                else:
+                    _r2py_result[_r2py_col] = _r2py_series.tolist()
+            return _r2py_result, True
         if isinstance(obj, _pd.Series):
             return obj.tolist(), True
     except ImportError:

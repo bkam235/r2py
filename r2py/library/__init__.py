@@ -95,10 +95,11 @@ class PatternLibrary:
         entity_id: str = "",
         verification_path: str = "exact",
         ast_shape_hash: str = "",
+        entity_package: str = "",
     ) -> None:
         _writer.record_evidence(
             edit, score_delta, script_id, entity_id, verification_path,
-            self.store, self.index, ast_shape_hash,
+            self.store, self.index, ast_shape_hash, entity_package,
         )
 
     def record_tie(

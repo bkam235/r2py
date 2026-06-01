@@ -1,10 +1,10 @@
 ---
 id: suppress-startup-messages-with-body
 package: 
-confidence: tentative
+confidence: contradicted
 seed: false
 created: 2026-05-30
-last_review: 2026-05-30
+last_review: 2026-05-31
 ---
 
 # suppress-startup-messages-with-body
@@ -17,4 +17,4 @@ Auto-created from edit ReplaceCall (no guidance yet).
 - 021894dec169 → score 0.067 (path: exact, variable: )
 
 ## Contradictions
-(none)
+- 021894dec169/: score regressed to 0.000

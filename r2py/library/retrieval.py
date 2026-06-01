@@ -51,6 +51,13 @@ def retrieve(
             continue
         if no_seeds and pat.seed:
             continue
+        # Tentative patterns with a single evidence entry are single-run
+        # observations that haven't been cross-validated. Showing 180+ of them
+        # to Stage 2 overwhelms the LLM and produces crashing seeds. Require
+        # at least 2 evidence entries before a tentative pattern is retrieved.
+        # Seeds are always kept regardless of evidence count.
+        if pat.confidence == "tentative" and not pat.seed and len(pat.evidence) < 2:
+            continue
         candidates.append(pat)
 
     if not candidates:

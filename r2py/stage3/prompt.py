@@ -40,9 +40,13 @@ Valid kind values (use exactly these strings):
 Rules:
 - "pattern_id" is REQUIRED. Use an existing pattern slug (provided below) or propose
   a new short kebab-case slug that names the rule (e.g. "dplyr.filter-to-mask").
-- "entity_ids" MUST contain the ID shown after "## Target entity:" — do not target a different entity.
-- Target the specific entity that is scoring poorly; set entity_ids to its ID.
+- "entity_ids" MUST contain the ID shown after "## Target entity:".
 - Make the smallest change that addresses the failure.
+- RestructureControlFlow replaces any substring of the FULL script — use it to amend
+  earlier shared code (helpers, imports, module-level variables) when that is what the
+  target entity needs. You are not limited to editing only the target entity's section.
+- InsertPreamble is for NEW helpers not yet in the script. If the helper already exists,
+  use RestructureControlFlow to amend it instead of inserting a duplicate.
 - Output ONLY the JSON line. No prose before or after it.
 """
 
@@ -56,6 +60,7 @@ def build_edit_prompt(
     history: "EditHistory",
     exploit: bool,
     preferred_edit_kind: "str | None" = None,
+    r_source: str = "",
 ) -> list[dict]:
     """Build the user-turn message for the edit-proposal LLM call."""
     parts: list[str] = []
@@ -68,6 +73,10 @@ def build_edit_prompt(
     flags = getattr(entity, "r_semantic_flags", [])
     if flags:
         parts.append(f"R semantic flags: {', '.join(flags)}")
+    if r_source:
+        parts.append("")
+        parts.append("### R source")
+        parts.append(f"```r\n{r_source}\n```")
     parts.append("")
     parts.append("### Score breakdown")
     parts.append(f"- executed_ok: {entity_score.executed_ok}")
@@ -121,12 +130,13 @@ def build_edit_prompt(
             "Use it unless a pattern-guided or feedback-driven choice is clearly better."
         )
 
-    # Already-tried edits to avoid
-    if history.tried:
+    # Already-tried edits to avoid — filtered to the current entity
+    entity_tried = [e for e in history.tried if entity.id in e.entity_ids]
+    if entity_tried:
         parts.append("")
-        parts.append("### Already-tried edits (do NOT repeat these)")
-        for e in history.tried[-5:]:  # show last 5 to keep prompt short
-            parts.append(f"- kind={e.kind.value} entity_ids={e.entity_ids} params={e.params}")
+        parts.append("### Already-tried edits on this entity (do NOT repeat these)")
+        for e in entity_tried[-8:]:  # cap at 8 to keep prompt manageable
+            parts.append(f"- kind={e.kind.value} params={e.params}")
 
     return [{"role": "user", "content": "\n".join(parts)}]
 

@@ -2,14 +2,17 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import date, timedelta
+from datetime import date
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .store import PatternStore
     from .index import PatternIndex
 
-_ARCHIVE_AFTER_DAYS = 30
+_ARCHIVE_AFTER_RUNS = 30
+# Patterns with no real improvement evidence are archived after this many
+# non-improvement interactions (ties + contradictions combined).
+_NO_IMPROVEMENT_RUN_THRESHOLD = 100
 _DEMOTION_MAP = {"confirmed": "tentative", "tentative": "contradicted"}
 
 
@@ -73,32 +76,64 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
                         )
                 _write_conflict_note(store, pid_a, pid_b)
 
-    # Rule 3: archive stale contradicted patterns
-    cutoff = date.today() - timedelta(days=_ARCHIVE_AFTER_DAYS)
+    # Rule 3: archive contradicted patterns after enough translation runs.
+    current_run = index.total_runs()
     patterns = store.load_all()
     for pid, pat in patterns.items():
         if pat.confidence != "contradicted":
             continue
-        review_date = _parse_date(pat.last_review or pat.created)
-        if review_date and review_date < cutoff:
+        meta = index.get_meta(pid)
+        contradicted_at = meta.get("contradicted_at_run", 0)
+        if current_run - contradicted_at >= _ARCHIVE_AFTER_RUNS:
             index.remove(pid)
             log.append(
-                f"archived {pid}: contradicted and unchanged"
-                f" for >{_ARCHIVE_AFTER_DAYS} days"
+                f"archived {pid}: contradicted for"
+                f" {current_run - contradicted_at} runs (>{_ARCHIVE_AFTER_RUNS})"
+            )
+
+    # Rule 4: archive patterns tried many times without any improvement.
+    # Seeds are always kept.
+    patterns = store.load_all()
+    for pid, pat in patterns.items():
+        if pat.confidence == "contradicted" or pat.seed:
+            continue
+        real_evidence = [e for e in pat.evidence if e.score > 0.0]
+        if real_evidence:
+            continue  # has at least one genuine improvement — keep
+        non_improvements = len(pat.evidence) + len(pat.contradictions)
+        if non_improvements >= _NO_IMPROVEMENT_RUN_THRESHOLD:
+            index.remove(pid)
+            log.append(
+                f"archived {pid}: {non_improvements} non-improvement runs, no improvement"
             )
 
     return log
 
 
+def prune_unimproved(store: "PatternStore", index: "PatternIndex") -> list[str]:
+    """Immediately archive ALL non-seed patterns with zero improvement evidence.
+
+    Used for Fix D: one-time cleanup of ghost patterns accumulated before
+    the fix that stopped creating patterns from ties/contradictions.
+    """
+    patterns = store.load_all()
+    log: list[str] = []
+    indexed = set(index.all_ids())
+    for pid, pat in patterns.items():
+        if pid not in indexed:
+            continue
+        if pat.confidence == "contradicted" or pat.seed:
+            continue
+        real_evidence = [e for e in pat.evidence if e.score > 0.0]
+        if real_evidence:
+            continue
+        index.remove(pid)
+        log.append(f"pruned {pid}: no improvement evidence")
+    return log
+
+
 def _normalized(text: str) -> str:
     return " ".join(text.lower().split())
-
-
-def _parse_date(s: str) -> date | None:
-    try:
-        return date.fromisoformat(s)
-    except (ValueError, TypeError):
-        return None
 
 
 def _write_conflict_note(store: "PatternStore", pid_a: str, pid_b: str) -> None:

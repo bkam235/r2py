@@ -128,6 +128,10 @@ def run_loop(
 
     script_id = hashlib.sha1(script_map.source.encode()).hexdigest()[:12]
 
+    # Count this translation against the run-based archival thresholds.
+    if hasattr(library, "index") and hasattr(library.index, "increment_runs"):
+        library.index.increment_runs()
+
     # --- seed translation -------------------------------------------------- #
     seed, entity_line_map = stage2.translate(script_map, library, no_seeds=no_seeds, model=model)
     _need_bundles = output_dir is not None
@@ -201,10 +205,10 @@ def run_loop(
         # Parallel lists — same index maps collector/transition to its proposal.
         proposal_collectors: list[EpisodeCollector] = []
         proposal_transitions: list["PolicyTransition | None"] = []
+        proposal_parent_hashes: list[str] = []
         for parent in active_beam:
-            parent_history = histories.setdefault(
-                _state_hash(parent.translation), EditHistory()
-            )
+            parent_hash = _state_hash(parent.translation)
+            parent_history = histories.setdefault(parent_hash, EditHistory())
             collector = EpisodeCollector()
             try:
                 edit = stage3.propose_edit(
@@ -216,7 +220,7 @@ def run_loop(
                     _collector=collector,
                 )
             except RuntimeError:
-                exhausted_parents.add(_state_hash(parent.translation))
+                exhausted_parents.add(parent_hash)
                 continue  # all entities exhausted for this parent
 
             # Record before the tabu check so Stage 3 won't re-propose an edit
@@ -242,6 +246,7 @@ def run_loop(
                 )
                 proposal_collectors.append(collector)
                 proposal_transitions.append(None)
+                proposal_parent_hashes.append(parent_hash)
                 continue
 
             iter_result = stage4.verify(
@@ -291,6 +296,7 @@ def run_loop(
                     iteration=i,
                 )
             proposal_transitions.append(tr)
+            proposal_parent_hashes.append(parent_hash)
 
         if not proposals:
             # Break only when every beam member is exhausted (no valid edits remain).
@@ -306,14 +312,24 @@ def run_loop(
             if p.new_score > p.parent_score:
                 outcome = "accepted"
                 delta = p.new_score - p.parent_score
+                # Carry the parent's edit history forward so the new candidate
+                # doesn't re-propose edits that already failed on the parent state.
+                new_hash = _state_hash(p.candidate)
+                if new_hash not in histories:
+                    parent_hist = histories.get(proposal_parent_hashes[idx])
+                    histories[new_hash] = EditHistory(
+                        tried=list(parent_hist.tried) if parent_hist else []
+                    )
                 _eid = p.edit.entity_ids[0] if p.edit.entity_ids else ""
                 _ent = getattr(script_map, "entities", {}).get(_eid)
                 _hash = _shape_hash(_ent) if _ent is not None else ""
+                _pkg = getattr(_ent, "package", "") or "" if _ent is not None else ""
                 library.record_evidence(
                     p.edit,
                     score_delta=delta,
                     script_id=script_id,
                     ast_shape_hash=_hash,
+                    entity_package=_pkg,
                 )
                 if p.edit.pattern_id:
                     evidence_added.append(p.edit.pattern_id)

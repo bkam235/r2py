@@ -22,6 +22,16 @@ def apply_edit(source: str, edit: Edit) -> str:
             code = p.get("code", "").strip()
             if not code:
                 return source
+            # Deduplication: skip if any top-level name defined by the preamble
+            # already exists in the source.  Prevents _with_locale / _LOCALE_MAP
+            # from being re-inserted for every with_locale_N entity.
+            defined = set(re.findall(r'^(?:def |class )(\w+)\s*[\(:]', code, re.MULTILINE))
+            defined |= set(re.findall(r'^(\w+)\s*=', code, re.MULTILINE))
+            for name in defined:
+                if re.search(rf'^(?:def |class ){re.escape(name)}\b', source, re.MULTILINE):
+                    return source
+                if re.search(rf'^{re.escape(name)}\s*=', source, re.MULTILINE):
+                    return source
             lines = source.splitlines(keepends=True)
             insert_at = 0
             for i, line in enumerate(lines):

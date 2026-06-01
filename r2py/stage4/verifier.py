@@ -108,14 +108,55 @@ def _build_feedback(
     comparator_results: dict[EffectClass, ComparatorResult],
     entities: dict,
 ) -> list[FeedbackItem]:
-    """Convert comparator failures into FeedbackItems for Stage 3.
+    """Convert comparator results into FeedbackItems for Stage 3.
 
-    Feedback is attributed to ALL entities so Stage 3 can act on whichever
-    entity it targets, not just the first one in insertion order.
+    Triggers on any partial score (score < 1.0), not just hard "fail", so
+    pass_via_fallback results (e.g. score=0.603) generate actionable feedback
+    instead of leaving Stage 3 with no signal.
+
+    DATA failures: attributed to the specific entity whose name matches the
+    failing variable, so Stage 3 targets the right entity. Non-DATA effects
+    are broadcast to all entities (whole-script signal).
     """
     items: list[FeedbackItem] = []
+
+    name_to_eid: dict[str, str] = {
+        getattr(e, "name", None): eid
+        for eid, e in entities.items()
+        if getattr(e, "name", None)
+    }
+
     for ec, result in comparator_results.items():
-        if result.verdict in ("fail",) and result.explanation:
+        if result.score >= 1.0:
+            continue
+
+        if ec == EffectClass.DATA and result.per_variable:
+            for var_name, var_score in result.per_variable.items():
+                if var_score >= 1.0:
+                    continue
+                expl = (
+                    _extract_var_explanation(result.explanation, var_name)
+                    or f"{var_name}: score {var_score:.3f}"
+                )
+                target_eid = name_to_eid.get(var_name)
+                if target_eid:
+                    items.append(FeedbackItem(
+                        entity_id=target_eid,
+                        effect_class=ec,
+                        message=expl,
+                        score=var_score,
+                    ))
+                else:
+                    for eid in entities:
+                        items.append(FeedbackItem(
+                            entity_id=eid,
+                            effect_class=ec,
+                            message=expl,
+                            score=var_score,
+                        ))
+        else:
+            if not result.explanation:
+                continue
             for entity_id in entities:
                 items.append(FeedbackItem(
                     entity_id=entity_id,
@@ -123,7 +164,17 @@ def _build_feedback(
                     message=result.explanation,
                     score=result.score,
                 ))
+
     return items
+
+
+def _extract_var_explanation(full_explanation: str, var_name: str) -> str | None:
+    """Extract the semicolon-delimited fragment for var_name from a joined explanation."""
+    for fragment in full_explanation.split(";"):
+        fragment = fragment.strip()
+        if fragment.startswith(var_name + ":") or fragment.startswith(var_name + "["):
+            return fragment
+    return None
 
 
 def get_r_bundle(script_map) -> EffectBundle:

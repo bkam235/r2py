@@ -20,6 +20,19 @@ from .base import text_similarity
 
 _DEFAULT_RTOL = 1e-6
 _DEFAULT_ATOL = 1e-9
+_PREVIEW_MAX = 120   # max chars in a value preview shown in feedback
+
+
+# ---------------------------------------------------------------------------
+# Value preview helper
+# ---------------------------------------------------------------------------
+
+def _preview(val: Any, max_chars: int = _PREVIEW_MAX) -> str:
+    """Truncated repr of a value for inclusion in feedback messages."""
+    r = repr(val)
+    if len(r) <= max_chars:
+        return r
+    return r[:max_chars] + "…"
 
 
 # ---------------------------------------------------------------------------
@@ -103,6 +116,7 @@ def _compare_pair(
         if len(r_val) != len(py_val):
             return 0.0, "fail", "infra", (
                 f"{name}: length {len(r_val)} vs {len(py_val)}"
+                f" — R={_preview(r_val)} Python={_preview(py_val)}"
             )
         for i, (rv, pv) in enumerate(zip(r_val, py_val)):
             elem_score, elem_verdict, elem_tag, elem_expl = _compare_pair(
@@ -118,8 +132,9 @@ def _compare_pair(
         py_cols = set(py_val.keys())
         if r_cols != py_cols:
             return 0.0, "fail", "infra", (
-                f"{name}: column sets differ — only_r={sorted(r_cols - py_cols)} "
-                f"only_py={sorted(py_cols - r_cols)}"
+                f"{name}: column sets differ — only_r={sorted(r_cols - py_cols)}"
+                f" only_py={sorted(py_cols - r_cols)}"
+                f" — R={_preview(r_val)} Python={_preview(py_val)}"
             )
         for col in sorted(r_cols):
             col_score, col_verdict, col_tag, col_expl = _compare_pair(
@@ -131,7 +146,8 @@ def _compare_pair(
 
     # Type mismatch — structural infra failure
     return 0.0, "fail", "infra", (
-        f"{name}: type mismatch — R={type(r_val).__name__} Python={type(py_val).__name__}"
+        f"{name}: type mismatch — R={type(r_val).__name__} {_preview(r_val)}"
+        f" Python={type(py_val).__name__} {_preview(py_val)}"
     )
 
 
@@ -192,7 +208,7 @@ class DataComparator:
                 if name not in py_effect:
                     scores.append(0.0)
                     per_variable[name] = 0.0
-                    explanations.append(f"{name}: missing in Python output")
+                    explanations.append(f"{name}: missing in Python output (R={_preview(r_val)})")
                     continue
                 fb_score = _text_fallback(r_val, py_effect[name])
                 scores.append(fb_score)
@@ -207,7 +223,7 @@ class DataComparator:
                 # Variable missing entirely from Python output
                 scores.append(0.0)
                 per_variable[name] = 0.0
-                explanations.append(f"{name}: missing in Python output")
+                explanations.append(f"{name}: missing in Python output (R={_preview(r_val)})")
                 continue
 
             score, verdict, failure_tag, explanation = _compare_pair(

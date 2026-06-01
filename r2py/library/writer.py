@@ -26,11 +26,16 @@ def record_evidence(
     store: "PatternStore",
     index: "PatternIndex",
     ast_shape_hash: str = "",
+    entity_package: str = "",
 ) -> None:
-    """Append a verified evidence entry to the attributed pattern (§7.7)."""
+    """Append a verified evidence entry to the attributed pattern (§7.7).
+
+    New patterns are created only here (on strict improvement), never on ties
+    or contradictions — that is what keeps the library from bloating.
+    """
     if not edit.pattern_id:
         return
-    pat = _get_or_create(edit.pattern_id, edit, store)
+    pat = _get_or_create(edit.pattern_id, edit, store, entity_package=entity_package)
     entry = EvidenceEntry(
         script_id=script_id,
         score=max(0.0, score_delta),
@@ -53,10 +58,16 @@ def record_tie(
     store: "PatternStore",
     index: "PatternIndex",
 ) -> None:
-    """Record a tie (score unchanged); weak evidence, not accepted into beam (§7.7)."""
+    """Record a tie on an EXISTING pattern only (§7.7).
+
+    Ties do NOT create new patterns. If the pattern doesn't exist yet it was
+    never accepted, so there is no established rule to record the tie against.
+    """
     if not edit.pattern_id:
         return
-    pat = _get_or_create(edit.pattern_id, edit, store)
+    pat = store.get(edit.pattern_id)
+    if pat is None:
+        return
     entry = EvidenceEntry(
         script_id=script_id,
         score=0.0,
@@ -77,16 +88,22 @@ def record_contradiction(
     store: "PatternStore",
     index: "PatternIndex",
 ) -> None:
-    """Append a contradiction and trigger epistemology review (§7.7)."""
+    """Append a contradiction to an EXISTING pattern only (§7.7).
+
+    Contradictions do NOT create new patterns. An unrecognised slug means the
+    edit was never accepted, so there is no established rule to contradict.
+    """
     if not edit.pattern_id:
         return
-    pat = _get_or_create(edit.pattern_id, edit, store)
+    pat = store.get(edit.pattern_id)
+    if pat is None:
+        return
     pat.contradictions.append(
         f"{script_id}/{entity_id}: score regressed to {observed:.3f}"
     )
     pat.last_review = date.today().isoformat()
     store.save(pat)
-    _upsert_index(pat, index)
+    _upsert_index(pat, index, contradicted_at_run=index.total_runs())
     _run_epistemology(store, index)
 
 
@@ -94,14 +111,25 @@ def record_contradiction(
 # Helpers                                                              #
 # ------------------------------------------------------------------ #
 
-def _get_or_create(pattern_id: PatternId, edit: Edit, store: "PatternStore") -> Pattern:
+def _get_or_create(
+    pattern_id: PatternId,
+    edit: Edit,
+    store: "PatternStore",
+    entity_package: str = "",
+) -> Pattern:
     pat = store.get(pattern_id)
     if pat is not None:
+        # Backfill package if the pattern was previously created without one.
+        if not pat.package and entity_package:
+            pat.package = entity_package
         return pat
-    # New pattern proposed by Stage 3; starts tentative (§6.3)
+    # New pattern proposed by Stage 3; starts tentative (§6.3).
+    # Only called from record_evidence (strict-improvement path) — not from
+    # record_tie or record_contradiction, which skip unknown patterns.
+    package = entity_package or _infer_package(edit)
     return Pattern(
         id=pattern_id,
-        package=_infer_package(edit),
+        package=package,
         confidence="tentative",
         seed=False,
         guidance=f"Auto-created from edit {edit.kind.value} (no guidance yet).",
@@ -114,7 +142,8 @@ def _infer_package(edit: Edit) -> str:
     return str(edit.params.get("package", ""))
 
 
-def _upsert_index(pat: Pattern, index: "PatternIndex", ast_shape_hash: str = "") -> None:
+def _upsert_index(pat: Pattern, index: "PatternIndex", ast_shape_hash: str = "",
+                  contradicted_at_run: int | None = None) -> None:
     index.upsert_meta(
         pattern_id=pat.id,
         package=pat.package,
@@ -123,6 +152,7 @@ def _upsert_index(pat: Pattern, index: "PatternIndex", ast_shape_hash: str = "")
         contradictions_count=len(pat.contradictions),
         seed=pat.seed,
         ast_shape_hash=ast_shape_hash,
+        contradicted_at_run=contradicted_at_run,
     )
 
 

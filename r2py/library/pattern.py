@@ -38,8 +38,13 @@ class Pattern:
     # ------------------------------------------------------------------ #
 
     def demotion_threshold(self) -> int:
-        """Contradictions needed to trigger a demotion (§6.5)."""
-        return math.ceil(len(self.evidence) / 2) if self.evidence else 1
+        """Contradictions needed to trigger a demotion (§6.5).
+
+        Scales with evidence count: a pattern with many proven successes requires
+        proportionally more contradictions before demotion.  The minimum of 3 prevents
+        single-evidence patterns from being demoted by a single bad edit.
+        """
+        return max(3, math.ceil(len(self.evidence) * 0.75)) if self.evidence else 1
 
 
 # ------------------------------------------------------------------ #

@@ -1,7 +1,7 @@
 ---
 id: remove-unused-datetime-vars
 package: 
-confidence: tentative
+confidence: contradicted
 seed: false
 created: 2026-05-31
 last_review: 2026-05-31
@@ -14,6 +14,7 @@ Auto-created from edit ReplaceCall (no guidance yet).
 
 ## Evidence
 - 021894dec169 → score 0.788 (path: exact, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
 
 ## Contradictions
-(none)
+- 021894dec169/: score regressed to 0.224

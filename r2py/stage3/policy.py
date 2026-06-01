@@ -89,6 +89,7 @@ def propose(
             history=history,
             exploit=exploit,
             preferred_edit_kind=bandit_hint,
+            r_source=_entity_r_source(entity, script_map),
         )
 
         raw = _llm.call(messages, _prompt.STAGE3_SYSTEM_PROMPT, model=model)
@@ -140,24 +141,26 @@ def propose(
 def _weak_first(candidate: "Candidate", script_map: object = None) -> list[str]:
     """Return entity IDs sorted by ascending average score.
 
-    Tie-break: FUNCTION_CALL / EXTERNAL_SYMBOL entities before LIBRARY_IMPORT /
-    VARIABLE / CONSTANT — function calls are more likely to be causing execution
-    failures and profit more from editing than trivial imports or assignments.
+    Tie-break order:
+    1. Entities with specific feedback in the current ScoreReport (more actionable).
+    2. FUNCTION_CALL / EXTERNAL_SYMBOL entities before LIBRARY_IMPORT / VARIABLE /
+       CONSTANT — callables are more likely to be execution failures.
     """
     from ..types import EntityKind
     scores = candidate.decomp.by_entity
     entities = getattr(script_map, "entities", {}) if script_map is not None else {}
+    feedback_eids = {f.entity_id for f in candidate.decomp.feedback}
 
     def _sort_key(eid: str) -> tuple:
         es = scores[eid]
         avg = _avg_score(es)
-        # Secondary key: 0 = callable entity (prefer editing), 1 = import/constant
+        has_feedback = 0 if eid in feedback_eids else 1
         entity = entities.get(eid)
         kind_val = getattr(entity, "kind", None) if entity else None
         is_callable = kind_val in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL,
                                    EntityKind.FUNCTION_DEF)
         priority = 0 if is_callable else 1
-        return (avg, priority)
+        return (avg, has_feedback, priority)
 
     return sorted(scores.keys(), key=_sort_key)
 
@@ -173,6 +176,20 @@ def _avg_score(es: EntityScore) -> float:
     # likely to be causing the failure and should rank ahead of pre-crash entities
     # that already ran successfully (crash attribution via §7.4 decompose).
     return base if es.executed_ok else max(0.0, base - 0.1)
+
+
+def _entity_r_source(entity: object, script_map: object) -> str:
+    """Extract the R source lines for an entity from the ScriptMap."""
+    source = getattr(script_map, "source", "") or ""
+    if not source:
+        return ""
+    span = getattr(entity, "source_span", None)
+    if span is None:
+        return ""
+    lines = source.splitlines()
+    start = getattr(span, "start_line", 0)
+    end = getattr(span, "end_line", start)
+    return "\n".join(lines[start:end + 1])
 
 
 def _get_entity(script_map: "ScriptMap", eid: str) -> object | None:

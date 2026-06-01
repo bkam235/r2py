@@ -72,6 +72,7 @@ def compose(
         if imp not in seen and not _is_r_only_import(imp):
             seen.add(imp)
             deduped_imports.append(imp)
+    deduped_imports = _remove_module_shadows(deduped_imports)
     deduped_imports.sort(key=_import_sort_key)
 
     # Build header
@@ -116,6 +117,15 @@ def compose(
         parts.append("\n\n".join(bt for _, bt in body_items))
 
     source = "\n\n".join(parts) + "\n"
+
+    # Hoist any top-level function defs called before they are defined
+    # (entity-by-entity LLM translation can produce helper functions in a later
+    # entity that an earlier entity calls — _hoist_function_defs fixes the order).
+    hoisted = _hoist_function_defs(source)
+    if hoisted != source:
+        source = hoisted
+        entity_line_map = rebuild_entity_line_map(source)
+
     return source, entity_line_map
 
 
@@ -163,6 +173,39 @@ def _import_sort_key(imp: str) -> tuple[int, str]:
     return (int(is_from), imp.lower())
 
 
+def _remove_module_shadows(imports: list[str]) -> list[str]:
+    """Remove 'from X import Y' when Y is already bound by a bare 'import Y'.
+
+    Handles: import datetime + from datetime import datetime → second shadows module.
+    Any code using datetime.date(...) would fail because 'datetime' becomes the class.
+    Keep only the bare module import so X.Y attribute access works.
+    """
+    # Collect names bound by bare 'import X' or 'import X as Y'
+    bare_bound: set[str] = set()
+    for imp in imports:
+        if not imp.startswith("from ") and imp.startswith("import "):
+            mod_part = imp[len("import "):].strip()
+            for segment in mod_part.split(","):
+                segment = segment.strip()
+                if " as " in segment:
+                    bare_bound.add(segment.split(" as ")[1].strip())
+                else:
+                    bare_bound.add(segment.split(".")[0].strip())
+
+    result = []
+    for imp in imports:
+        if imp.startswith("from "):
+            m = re.match(r"^from\s+\S+\s+import\s+(\S+)(?:\s+as\s+(\S+))?", imp)
+            if m:
+                sym = m.group(1)
+                alias = m.group(2)
+                bound = alias if alias else sym
+                if bound in bare_bound:
+                    continue  # shadows a bare module import → drop
+        result.append(imp)
+    return result
+
+
 _ASSIGN_RE = re.compile(r"^(\s*)([A-Za-z_]\w*)\s*=(?!=)")
 
 
@@ -201,6 +244,94 @@ def _resolve_collisions(
         result = re.sub(rf"\b{re.escape(old)}\b", new, result)
         defined_names[new] = eid
     return result
+
+
+_DEF_RE = re.compile(r"^def\s+(\w+)\s*\(")
+_SENTINEL_COMMENT_RE = re.compile(r"^# r2py:entity:")
+
+
+def _hoist_function_defs(source: str) -> str:
+    """Move top-level function definitions before their first call sites.
+
+    When entity-by-entity LLM translation places a helper (e.g. ``_with_locale``)
+    in entity B but entity A (earlier in the file) calls it, the assembled source
+    crashes with ``NameError``.  This pass detects such forward references and moves
+    the entire def block (plus any immediately preceding constant assignments) to
+    just before the first call.
+    """
+    lines = source.splitlines()
+    n = len(lines)
+
+    # Collect top-level def blocks: {fname: (block_start, block_end)} (0-indexed, inclusive)
+    def_blocks: dict[str, tuple[int, int]] = {}
+    i = 0
+    while i < n:
+        m = _DEF_RE.match(lines[i])
+        if m:
+            fname = m.group(1)
+            if fname not in def_blocks:
+                start = i
+                i += 1
+                while i < n and (not lines[i] or lines[i][0] in (" ", "\t")):
+                    i += 1
+                def_blocks[fname] = (start, i - 1)
+                continue
+        i += 1
+
+    if not def_blocks:
+        return source
+
+    # For each def, find first call before the def start
+    call_re_cache: dict[str, re.Pattern] = {}
+    hoists: list[tuple[int, int, int]] = []  # (call_line, hoist_start, def_end)
+
+    for fname, (def_start, def_end) in def_blocks.items():
+        pat = call_re_cache.setdefault(
+            fname, re.compile(r"\b" + re.escape(fname) + r"\s*\(")
+        )
+        first_call = next(
+            (j for j in range(def_start) if pat.search(lines[j])),
+            None,
+        )
+        if first_call is None:
+            continue
+
+        # Extend the hoist range backward to the entity sentinel boundary.
+        # The sentinel ``# r2py:entity:<eid>`` marks the start of the entity
+        # block; everything from sentinel+1 up to the def (inclusive) is the
+        # entity's setup code (constants, _LOCALE_MAP dicts, etc.) and must
+        # travel with the def when hoisted.
+        hoist_start = def_start
+        j = def_start - 1
+        while j >= 0:
+            if _SENTINEL_COMMENT_RE.match(lines[j]):
+                candidate = j + 1
+                while candidate < def_start and not lines[candidate].strip():
+                    candidate += 1
+                hoist_start = candidate
+                break
+            j -= 1
+
+        hoists.append((first_call, hoist_start, def_end))
+
+    if not hoists:
+        return source
+
+    # Apply hoists from largest hoist_start to smallest to keep indices valid.
+    hoists.sort(key=lambda h: h[1], reverse=True)
+    lines = list(lines)
+    for call_line, hoist_start, def_end in hoists:
+        block = lines[hoist_start : def_end + 1]
+        del lines[hoist_start : def_end + 1]
+
+        # Adjust call_line for the deletion above.
+        if call_line > hoist_start:
+            call_line -= def_end - hoist_start + 1
+
+        # Insert block before the call, with a trailing blank line.
+        lines[call_line:call_line] = block + [""]
+
+    return "\n".join(lines)
 
 
 def rebuild_entity_line_map(source: str) -> dict[str, tuple[int, int]]:

@@ -1,10 +1,10 @@
 ---
 id: withr.with_locale
 package: 
-confidence: contradicted
+confidence: tentative
 seed: false
 created: 2026-05-30
-last_review: 2026-05-31
+last_review: 2026-06-01
 ---
 
 # withr.with_locale
@@ -84,7 +84,78 @@ def _with_locale(new: dict, code):
 
 ## Evidence
 - 021894dec169 → score 0.742 (path: exact, variable: )
-- 021894dec169 → score 0.133 (path: exact, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.015 (path: exact, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.742 (path: exact, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.379 (path: exact, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.379 (path: exact, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
+- 021894dec169 → score 0.015 (path: exact, variable: )
+- 021894dec169 → score 0.015 (path: exact, variable: )
+- 021894dec169 → score 0.000 (path: tie, variable: )
 - 021894dec169 → score 0.000 (path: tie, variable: )
 - 021894dec169 → score 0.000 (path: tie, variable: )
 - 021894dec169 → score 0.000 (path: tie, variable: )
@@ -94,7 +165,26 @@ def _with_locale(new: dict, code):
 - 021894dec169 → score 0.000 (path: tie, variable: )
 
 ## Contradictions
-- 021894dec169/: score regressed to 0.133
-- 021894dec169/: score regressed to 0.133
-- 021894dec169/: score regressed to 0.133
-- 021894dec169/: score regressed to 0.133
+- 021894dec169/: score regressed to 0.933
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.933
+- 021894dec169/: score regressed to 0.206
+- 021894dec169/: score regressed to 0.206
+- 021894dec169/: score regressed to 0.209
+- 021894dec169/: score regressed to 0.224
+- 021894dec169/: score regressed to 0.224
+- 021894dec169/: score regressed to 0.536
+- 021894dec169/: score regressed to 0.224
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.224
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.206
+- 021894dec169/: score regressed to 0.224
+- 021894dec169/: score regressed to 0.206
