@@ -132,6 +132,7 @@ def _entity_to_dict(e: Entity) -> dict:
         "actual_bundle": _bundle_to_json(e.actual_bundle) if e.actual_bundle else None,
         "r_semantic_flags": e.r_semantic_flags,
         "package": e.package,
+        "free_variable_refs": e.free_variable_refs,
     }
 
 
@@ -150,6 +151,7 @@ def _entity_from_dict(d: dict) -> Entity:
         actual_bundle=_bundle_from_json(d["actual_bundle"]) if d.get("actual_bundle") else None,
         r_semantic_flags=d.get("r_semantic_flags", []),
         package=d.get("package"),
+        free_variable_refs=d.get("free_variable_refs", []),
     )
 
 

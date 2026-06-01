@@ -66,3 +66,7 @@ class Entity:
     r_semantic_flags: list[str] = field(default_factory=list)
     # Set for LIBRARY_IMPORT and EXTERNAL_SYMBOL entities.
     package: str | None = None
+    # Identifiers referenced in this entity's source that are not defined anywhere
+    # in the script (i.e. free variables — R built-in datasets, lazy-loaded objects,
+    # etc.).  Populated by the walker; Stage 2 surfaces observed values to the LLM.
+    free_variable_refs: list[str] = field(default_factory=list)

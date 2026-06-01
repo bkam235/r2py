@@ -1,4 +1,4 @@
-"""Graphics comparator — byte-exact then pixel RMSE (§7.3)."""
+"""Graphics comparator — byte-exact then SSIM (§7.3)."""
 from __future__ import annotations
 
 from ...types import ComparatorResult, EffectClass
@@ -6,21 +6,20 @@ from ...types import ComparatorResult, EffectClass
 _PASS_THRESHOLD = 0.9
 
 
-def _pillow_rmse(r_bytes: bytes, py_bytes: bytes) -> float | None:
-    """Return normalized RMSE in [0, 1] (0 = identical) or None if Pillow absent."""
+def _image_similarity(r_bytes: bytes, py_bytes: bytes) -> float | None:
+    """Return SSIM similarity in [0, 1] (1 = identical) or None if deps absent."""
     try:
         from PIL import Image  # type: ignore[import]
+        from skimage.metrics import structural_similarity as ssim  # type: ignore[import]
+        import numpy as np
         import io
-        import math
 
         r_img = Image.open(io.BytesIO(r_bytes)).convert("L")
         py_img = Image.open(io.BytesIO(py_bytes)).convert("L")
         if r_img.size != py_img.size:
             py_img = py_img.resize(r_img.size, Image.LANCZOS)
-        r_px = list(r_img.getdata())
-        py_px = list(py_img.getdata())
-        mse = sum((a - b) ** 2 for a, b in zip(r_px, py_px)) / len(r_px)
-        return math.sqrt(mse) / 255.0
+        score = ssim(np.array(r_img), np.array(py_img), data_range=255)
+        return float(max(0.0, score))
     except Exception:
         return None
 
@@ -46,15 +45,15 @@ class GraphicsComparator:
             if r_bytes == py_bytes:
                 scores.append(1.0)
                 continue
-            rmse = _pillow_rmse(r_bytes, py_bytes)
-            if rmse is None:
+            sim = _image_similarity(r_bytes, py_bytes)
+            if sim is None:
                 return ComparatorResult(
                     effect_class=EffectClass.GRAPHICS,
                     score=0.0,
                     verdict="uncomparable",
-                    explanation="Pillow not available; cannot compare non-identical graphics",
+                    explanation="Pillow/scikit-image not available; cannot compare non-identical graphics",
                 )
-            scores.append(max(0.0, 1.0 - rmse))
+            scores.append(sim)
 
         score = sum(scores) / len(scores)
         verdict = "pass" if score >= _PASS_THRESHOLD else "fail"

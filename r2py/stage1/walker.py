@@ -168,6 +168,15 @@ def _visit_assignment(node: AstNode, op: str, ctx: _WalkContext) -> None:
     if op in {"<<-", "->>"}:
         predicted.append(EffectClass.ENV)
 
+    # Identifiers on the RHS that aren't defined in this script are free variable
+    # refs (e.g. built-in R datasets).  We record all of them here; Stage 2 will
+    # filter to those that actually appear in actual_bundle.data.
+    free_refs: list[str] = []
+    if rhs is not None:
+        for used_name in _collect_identifiers(rhs):
+            if used_name not in ctx.entities and used_name != name and used_name not in free_refs:
+                free_refs.append(used_name)
+
     entity = Entity(
         id=entity_id,
         kind=kind,
@@ -176,6 +185,7 @@ def _visit_assignment(node: AstNode, op: str, ctx: _WalkContext) -> None:
         dependencies=deps,
         predicted_effects=predicted,
         package=None,
+        free_variable_refs=free_refs,
     )
     ctx.add(entity)
 
@@ -228,6 +238,24 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
     loc = _span(node, ctx.source_file)
     predicted = list(STATIC_PREDICTIONS.get(fn_name, []))
 
+    # Collect identifiers from argument *values* (not keyword names) that aren't
+    # defined in this script.  These may be R built-in datasets or other implicit
+    # environment objects.  We record everything; Stage 2 filters against
+    # actual_bundle.data so base-R function names (c, mean, …) are suppressed.
+    free_refs: list[str] = []
+    _args_node = node.child_by_field("arguments")
+    if _args_node:
+        for _child in _args_node.named_children():
+            if _child.kind == "argument":
+                _val = _child.child_by_field("value")
+                _targets = [_val] if _val is not None else []
+            else:
+                _targets = [_child]
+            for _target in _targets:
+                for _ident in _collect_identifiers(_target):
+                    if _ident not in ctx.entities and _ident not in free_refs:
+                        free_refs.append(_ident)
+
     entity = Entity(
         id=entity_id,
         kind=kind,
@@ -235,6 +263,7 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
         source_span=loc,
         predicted_effects=predicted,
         package=pkg_name,
+        free_variable_refs=free_refs,
     )
     ctx.add(entity)
 

@@ -71,6 +71,7 @@ def build_entity_prompt(
     annotations = _entity_annotations(entity, script_map)
     pattern_block = _format_patterns(patterns)
     dep_block = _format_dependencies(entity, prior_translations)
+    free_var_block = _format_free_variables(entity)
 
     parts: list[str] = []
 
@@ -85,6 +86,9 @@ def build_entity_prompt(
 
     if annotations:
         parts.append(f"## Stage 1 annotations\n{annotations}")
+
+    if free_var_block:
+        parts.append(f"## Implicit R environment variables\n{free_var_block}")
 
     if pattern_block:
         parts.append(f"## Pattern Library guidance\n{pattern_block}")
@@ -221,3 +225,52 @@ def _strip_fences(text: str) -> str:
     if m:
         return m.group(1)
     return text
+
+
+def _format_free_variables(entity: "Entity") -> str:
+    """Describe variables used by this entity that were not defined in the script.
+
+    Only surfaces names whose values were actually captured in actual_bundle.data —
+    this naturally filters out base-R function names (c, mean, …) which are never
+    captured as data variables, leaving only genuine dataset / object references.
+    """
+    refs = getattr(entity, "free_variable_refs", [])
+    if not refs:
+        return ""
+    bundle = getattr(entity, "actual_bundle", None)
+    bundle_data: dict = bundle.data if bundle is not None else {}
+    lines: list[str] = []
+    for name in refs:
+        if name not in bundle_data:
+            continue
+        lines.append(f"- `{name}`: {_summarise_value(bundle_data[name])}")
+    if not lines:
+        return ""
+    header = (
+        "The following names are used in this entity but were NOT defined in this script.\n"
+        "They were present in R's execution environment (built-in datasets, lazy-loaded objects, etc.).\n"
+        "Find appropriate Python equivalents or reproduce the data exactly:"
+    )
+    return header + "\n" + "\n".join(lines)
+
+
+def _summarise_value(val: object) -> str:
+    """Return a compact human-readable description of a captured R value."""
+    try:
+        import numpy as np  # type: ignore[import]
+        if isinstance(val, np.ndarray):
+            shape = "×".join(str(d) for d in val.shape)
+            lo, hi = float(np.nanmin(val)), float(np.nanmax(val))
+            return f"numpy array [{shape}], values {lo:.4g}–{hi:.4g}"
+    except Exception:
+        pass
+    try:
+        import pandas as pd  # type: ignore[import]
+        if isinstance(val, pd.DataFrame):
+            cols = list(val.columns)[:5]
+            return f"DataFrame [{val.shape[0]}×{val.shape[1]}], cols: {cols}"
+    except Exception:
+        pass
+    if isinstance(val, list):
+        return f"list of {len(val)}: {val[:3]}…"
+    return repr(val)[:120]
