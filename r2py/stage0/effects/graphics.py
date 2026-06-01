@@ -36,9 +36,9 @@ PY_EPILOGUE = """\
 try:
     import matplotlib.pyplot as _r2py_plt
     for _r2py_fn in _r2py_plt.get_fignums():
-        _r2py_plt.figure(_r2py_fn).savefig(
-            f"_r2py_plot_{_r2py_fn:03d}.png", dpi=100
-        )
+        _r2py_fig = _r2py_plt.figure(_r2py_fn)
+        _r2py_fig.set_size_inches(8, 6)
+        _r2py_fig.savefig(f"_r2py_plot_{_r2py_fn:03d}.png", dpi=100)
     _r2py_plt.close('all')
 except Exception:
     pass

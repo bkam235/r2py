@@ -132,4 +132,5 @@ def dict_to_edit(d: dict) -> Edit:
         entity_ids=list(d.get("entity_ids", [])),
         params=dict(d.get("params", {})),
         pattern_id=d.get("pattern_id"),
+        guidance=str(d.get("guidance", "")),
     )

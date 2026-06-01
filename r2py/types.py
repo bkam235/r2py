@@ -173,6 +173,9 @@ class Edit:
     params:      dict[str, object]       = field(default_factory=dict)
     # Required at proposal time; None only during construction before attribution.
     pattern_id:  PatternId | None        = None
+    # LLM-authored guidance for a new pattern proposal (explore mode). Empty
+    # string means the pattern is existing or the LLM didn't propose guidance.
+    guidance:    str                     = ""
 
 
 @dataclass

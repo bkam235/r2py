@@ -36,6 +36,9 @@ def record_evidence(
     if not edit.pattern_id:
         return
     pat = _get_or_create(edit.pattern_id, edit, store, entity_package=entity_package)
+    if pat is None:
+        # New pattern proposed without guidance — skip rather than create garbage.
+        return
     entry = EvidenceEntry(
         script_id=script_id,
         score=max(0.0, score_delta),
@@ -60,21 +63,15 @@ def record_tie(
 ) -> None:
     """Record a tie on an EXISTING pattern only (§7.7).
 
-    Ties do NOT create new patterns. If the pattern doesn't exist yet it was
-    never accepted, so there is no established rule to record the tie against.
+    Ties are counted separately from improvement evidence so they do not
+    inflate the demotion threshold. Ties do NOT create new patterns.
     """
     if not edit.pattern_id:
         return
     pat = store.get(edit.pattern_id)
     if pat is None:
         return
-    entry = EvidenceEntry(
-        script_id=script_id,
-        score=0.0,
-        verification_path="tie",
-        variable=entity_id,
-    )
-    pat.evidence.append(entry)
+    pat.tie_count += 1
     pat.last_review = date.today().isoformat()
     store.save(pat)
     _upsert_index(pat, index)
@@ -116,7 +113,7 @@ def _get_or_create(
     edit: Edit,
     store: "PatternStore",
     entity_package: str = "",
-) -> Pattern:
+) -> "Pattern | None":
     pat = store.get(pattern_id)
     if pat is not None:
         # Backfill package if the pattern was previously created without one.
@@ -126,13 +123,18 @@ def _get_or_create(
     # New pattern proposed by Stage 3; starts tentative (§6.3).
     # Only called from record_evidence (strict-improvement path) — not from
     # record_tie or record_contradiction, which skip unknown patterns.
+    # Require non-empty guidance: a pattern with no rule description has no
+    # value in the library and would only confuse Stage 2/3.
+    guidance = edit.guidance.strip() if edit.guidance else ""
+    if not guidance:
+        return None
     package = entity_package or _infer_package(edit)
     return Pattern(
         id=pattern_id,
         package=package,
         confidence="tentative",
         seed=False,
-        guidance=f"Auto-created from edit {edit.kind.value} (no guidance yet).",
+        guidance=guidance,
         created=date.today().isoformat(),
         last_review=date.today().isoformat(),
     )

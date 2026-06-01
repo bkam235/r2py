@@ -17,9 +17,35 @@ _DEMOTION_MAP = {"confirmed": "tentative", "tentative": "contradicted"}
 
 
 def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
-    """Apply all §6.5 demotion rules.  Returns a list of human-readable log lines."""
+    """Apply all §6.5 confidence rules.  Returns a list of human-readable log lines."""
     patterns = store.load_all()
     log: list[str] = []
+
+    # Rule 0: promote tentative → confirmed (§6.5).
+    # Requires evidence from ≥2 distinct scripts (genuine improvements only).
+    for pid, pat in list(patterns.items()):
+        if pat.confidence != "tentative":
+            continue
+        distinct_scripts = {e.script_id for e in pat.evidence if e.score > 0.0}
+        if len(distinct_scripts) >= 2:
+            pat.confidence = "confirmed"
+            pat.last_review = date.today().isoformat()
+            store.save(pat)
+            index.upsert_meta(
+                pattern_id=pid,
+                package=pat.package,
+                confidence="confirmed",
+                evidence_count=len(pat.evidence),
+                contradictions_count=len(pat.contradictions),
+                seed=pat.seed,
+                ast_shape_hash=index.get_meta(pid).get("ast_shape_hash", ""),
+            )
+            log.append(
+                f"promoted {pid}: evidence from {len(distinct_scripts)} distinct scripts"
+            )
+
+    # Reload after mutations
+    patterns = store.load_all()
 
     # Rule 1: contradiction-threshold demotion
     for pid, pat in list(patterns.items()):
@@ -100,7 +126,7 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
         real_evidence = [e for e in pat.evidence if e.score > 0.0]
         if real_evidence:
             continue  # has at least one genuine improvement — keep
-        non_improvements = len(pat.evidence) + len(pat.contradictions)
+        non_improvements = pat.tie_count + len(pat.contradictions)
         if non_improvements >= _NO_IMPROVEMENT_RUN_THRESHOLD:
             index.remove(pid)
             log.append(
@@ -111,10 +137,11 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
 
 
 def prune_unimproved(store: "PatternStore", index: "PatternIndex") -> list[str]:
-    """Immediately archive ALL non-seed patterns with zero improvement evidence.
+    """Immediately archive ALL non-seed patterns with zero genuine improvement evidence.
 
-    Used for Fix D: one-time cleanup of ghost patterns accumulated before
-    the fix that stopped creating patterns from ties/contradictions.
+    One-time cleanup of patterns accumulated before the tie-counting and
+    guidance-requirement fixes. Preserves seed patterns and any pattern that
+    has at least one evidence entry with score > 0.
     """
     patterns = store.load_all()
     log: list[str] = []

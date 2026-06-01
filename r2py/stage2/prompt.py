@@ -28,8 +28,13 @@ Rules:
 5. List required imports separately; do not embed import statements in the snippet.
    CRITICAL: R package names (withr, dplyr, ggplot2, shiny, magrittr, etc.) are NOT
    Python modules — never add "import withr" or similar. Use Python stdlib/pandas equivalents.
-6. Declare which effect classes your translation will produce.
-7. If you cannot translate an entity, output:
+6. CRITICAL Windows locale: POSIX locale strings ("es_ES", "it_IT", "fr_FR", "en_GB",
+   etc.) are INVALID on Windows Python. NEVER call locale.setlocale() directly with such
+   strings — it will raise locale.Error and crash the script. When the Pattern Library
+   provides a _with_locale helper, use it. Otherwise, wrap every locale.setlocale() call
+   in try/except locale.Error and silently skip unsupported locales.
+7. Declare which effect classes your translation will produce.
+8. If you cannot translate an entity, output:
    <python>pass  # untranslatable: <brief reason></python>
    Do NOT write explanatory prose outside the XML tags.
 

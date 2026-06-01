@@ -6,8 +6,126 @@
       "base.suppress-package-startup",
       "base.suppress-startup-messages",
       "base.suppress-startup-msgs",
+      "capture-locale-result",
+      "capture-with-locale-result",
+      "contextmanager.define-before-use",
+      "dataframe-date-strings",
+      "date-json-serializable",
+      "date-json-serialization",
+      "date-serialization-fix",
+      "date-serialization-strftime",
+      "date-to-iso-string",
+      "date-to-string-conversion",
+      "date-to-string-for-json",
+      "date-to-string-serializable",
+      "date-to-string-serialization",
+      "datetime-class-import",
+      "datetime-json-serializable",
+      "datetime-json-serialization-fix",
+      "datetime-json-serialization",
+      "datetime-module-class-disambiguation",
+      "datetime-module-class-reference",
+      "datetime-serialization-fix",
+      "datetime-to-date-conversion",
+      "datetime-to-iso-string",
+      "datetime-to-pandas-serializable",
+      "datetime-to-string-conversion",
+      "datetime-to-string-serialization",
       "datetime.import-fix",
+      "define-before-use",
+      "define-locale-context-before-use",
+      "definition-before-call",
+      "encoding-and-warnings-setup",
+      "encoding-declaration-utf8",
+      "encoding-fix-replace-strict",
+      "encoding-setup-utf8",
+      "encoding-strict-utf8",
+      "encoding-surrogateescape-fix",
+      "encoding-utf8-enforcement",
+      "encoding-utf8-fix",
+      "encoding-utf8-initialization",
+      "encoding-utf8-latin1-mismatch",
+      "encoding-utf8-robust",
+      "encoding.surrogateescape-utf8",
+      "encoding.utf8-backslashreplace",
+      "encoding.utf8-declaration",
+      "encoding.utf8-default",
+      "encoding.utf8-fix",
+      "encoding.utf8-setup",
+      "ensure-json-serializable",
+      "fix-assignment-syntax",
+      "fix-conflicting-date-import",
+      "fix-date-import-reference",
+      "fix-date-import-shadowing",
+      "fix-date-serialization",
+      "fix-ISOdate-shadowing",
+      "fix-loop-variable-reference",
+      "fix-syntax-errors-with-locale",
+      "function-before-call",
+      "function-def-before-call",
+      "function-definition-ordering",
+      "inline-date-formatting",
+      "inline-locale-context",
+      "json-date-serialization",
+      "json-serializable-dates",
+      "json-serializable-locale",
+      "json-serializable-output",
+      "json-serializable-results",
+      "json-serialization-fix",
+      "locale-all-before-specific",
+      "locale-context-definition-order",
+      "locale-context-manager-preamble",
+      "locale-date-serialization",
+      "locale-direct-string-first",
+      "locale-encoding-fix",
+      "locale-encoding-setup",
+      "locale-encoding-utf8",
+      "locale-format-utf8",
+      "locale-inline-format",
+      "locale-json-serializable",
+      "locale-json-serialize",
+      "locale-setlocale-utf8-suffix",
+      "locale-suppress-interactive-output",
+      "locale-utf8-encoding",
+      "locale-utf8-initialization",
+      "locale-utf8-preamble",
+      "locale-with-pandas-dates",
       "locale.context-manager-pattern",
+      "locale.correct-language-code",
+      "locale.date-to-string-format",
+      "locale.fix-assignment-syntax",
+      "locale.init-utf8-encoding",
+      "locale.lc-all-for-encoding",
+      "locale.lc-all-utf8",
+      "locale.lc-time-to-lc-all",
+      "locale.localeconv-json-serialize",
+      "locale.localeconv-stringify",
+      "locale.platform-aware-encoding",
+      "locale.preserve-encoding-output",
+      "locale.serializable-conversion",
+      "locale.tuple-to-string-restoration",
+      "locale.utf8-encoding-fix",
+      "locale.utf8-encoding-priority",
+      "locale.utf8-encoding-suffix",
+      "locale.utf8-fallback",
+      "locale.utf8-normalization",
+      "locale.utf8-stdout-fix",
+      "locale.utf8-suffix",
+      "locale.with-graphics-output",
+      "matplotlib-datetime-plotting",
+      "matplotlib-plot-import",
+      "matplotlib-show-for-display",
+      "matplotlib.date-serialization-fix",
+      "matplotlib.import-and-plot",
+      "matplotlib.plot-call",
+      "move-function-before-use",
+      "move-function-def-before-call",
+      "move-function-def-to-preamble",
+      "move-print-into-context",
+      "output-print-missing",
+      "pandas-date-generation",
+      "pandas.datetime-to-string-serializable",
+      "preserve-dataframe-integrity",
       "r-suppress-startup-messages-context",
       "r.suppress-package-startup-messages",
       "r.suppress-startup-messages",
@@ -16,127 +134,134 @@
       "r.suppressPackageStartupMessages-to-contextlib",
       "r.suppressPackageStartupMessages",
       "r.suppress_startup_messages",
+      "range-to-list-conversion",
       "remove-broken-context-call",
+      "remove-duplicate-definition",
+      "remove-duplicate-function-def",
+      "remove-duplicate-import",
+      "remove-duplicate-with-locale",
+      "remove-global-stdout-redirect",
       "remove-missing-import",
       "remove-r-specific-import",
       "remove-unavailable-import",
+      "remove-undefined-plot-and-print-result",
+      "remove-undefined-plot-call",
       "remove-unused-datetime-vars",
       "remove-unused-import",
+      "remove-unused-startup-suppression",
       "remove-unused-withr-import",
+      "scope-datetime-in-lambda",
+      "simplify-date-formatting",
+      "source-utf8-encoding",
+      "suppress-all-output",
+      "suppress-noop-cleanup",
+      "suppress-noop-comment",
+      "suppress-noop-wrapper",
+      "suppress-output-context-manager",
       "suppress-package-startup-messages",
       "suppress-r-package-import",
       "suppress-r-pkg-startup",
+      "suppress-startup-contextlib",
+      "suppress-startup-execute",
+      "suppress-startup-locale-encoding",
       "suppress-startup-messages-context-manager",
+      "suppress-startup-messages-context-mgr",
+      "suppress-startup-messages-context",
       "suppress-startup-messages-noop",
+      "suppress-startup-messages-placeholder",
       "suppress-startup-messages-remove-import",
+      "suppress-startup-messages-silent-load",
+      "suppress-startup-messages-stdout-stderr",
       "suppress-startup-messages-via-warnings",
       "suppress-startup-messages-warnings",
       "suppress-startup-messages-with-body",
       "suppress-startup-messages-wrapper",
       "suppress-startup-messages",
+      "suppress-startup-no-op",
+      "suppress-startup-noop",
+      "suppress-startup-output",
       "suppress-startup-r-only-package",
       "suppress-startup-remove-import",
-      "suppress-stderr-with-redirect",
-      "suppress.package.startup.messages",
-      "syntax.empty-try-block",
-      "withr.with_locale-as-context-manager",
-      "withr.with_locale",
-      "move-function-before-use",
-      "suppress-startup-messages-placeholder",
-      "function-before-call",
-      "function-def-before-call",
-      "suppress-startup-wrapper",
-      "suppress-startup-messages-context",
-      "move-function-def-to-preamble",
-      "withr.with_locale-reorder-def",
-      "withr.with_locale-capture-output",
-      "withr.with_locale-move-definition-before-usage",
-      "function-definition-ordering",
-      "definition-before-call",
-      "suppress-startup-messages-stdout-stderr",
-      "move-function-def-before-call",
-      "suppress-startup-no-op",
-      "suppress-noop-wrapper",
-      "suppress-startup-execute",
-      "contextmanager.define-before-use",
-      "define-before-use",
-      "locale-context-manager-preamble",
-      "define-locale-context-before-use",
-      "inline-locale-context",
-      "locale-context-definition-order",
-      "suppress-startup-output",
+      "suppress-startup-utf8-fix",
+      "suppress-startup-utf8-setup",
       "suppress-startup-with-encoding",
-      "withr.with_locale-dedup",
-      "withr.with_locale-add-matplotlib",
-      "suppress-all-output",
-      "remove-undefined-plot-call",
-      "withr.with_locale-remove-uncallable",
-      "withr.with_locale-show_plots",
-      "withr.with_locale-display-plot",
-      "withr.with_locale-suppress-output",
-      "withr.with_locale-direct-context",
-      "withr.with_locale-graphics-output",
-      "remove-duplicate-function-def",
-      "withr.remove-duplicate-definition",
-      "locale.with-graphics-output",
-      "withr.with_locale-stdout-graphics",
-      "withr.with_locale-matplotlib-fix",
-      "withr.with_locale_complete_execution",
-      "withr.with_locale-show-plot",
-      "date-json-serialization",
-      "remove-undefined-plot-and-print-result",
-      "date-json-serializable",
-      "suppress-noop-comment",
-      "suppress-startup-noop",
-      "json-serializable-dates",
-      "fix-conflicting-date-import",
-      "remove-duplicate-import",
-      "locale-date-serialization",
-      "scope-datetime-in-lambda",
-      "encoding-utf8-latin1-mismatch",
-      "preserve-dataframe-integrity",
-      "date-to-string-conversion",
-      "date-serialization-fix",
-      "date-to-iso-string",
-      "date-serialization-strftime",
-      "datetime-to-pandas-serializable",
+      "suppress-startup-with-execution",
+      "suppress-startup-with-redirect-stderr",
+      "suppress-startup-wrapper",
+      "suppress-stderr-with-redirect",
+      "suppress-with-output",
+      "suppress.package.startup.messages",
+      "syntax.assignment-before-call",
+      "syntax.empty-try-block",
+      "utf-8-stdout-stderr",
       "utf8-default-encoding",
-      "locale-with-pandas-dates",
-      "encoding.utf8-declaration",
-      "encoding-surrogateescape-fix",
-      "suppress-startup-locale-encoding",
-      "encoding-utf8-robust",
-      "encoding-and-warnings-setup",
-      "locale-encoding-setup",
-      "locale-encoding-fix",
-      "locale.init-utf8-encoding",
-      "locale-utf8-preamble",
-      "locale-utf8-initialization",
-      "encoding-utf8-initialization",
-      "locale-all-before-specific",
-      "locale.utf8-normalization",
-      "locale.lc-all-utf8",
-      "pandas.datetime-to-string-serializable",
-      "matplotlib.date-serialization-fix",
-      "datetime-json-serialization-fix",
-      "matplotlib-datetime-plotting",
-      "json-serializable-output",
-      "locale.fix-assignment-syntax",
-      "datetime-module-class-reference",
-      "with-locale-simple-save-restore",
-      "datetime-module-class-disambiguation",
-      "datetime-class-import",
-      "datetime-to-string-conversion",
-      "locale-suppress-interactive-output",
-      "locale-utf8-encoding",
-      "withr.with_locale-plot-fix",
-      "matplotlib.import-and-plot",
-      "withr.with_locale-deduplicate",
-      "matplotlib-plot-import",
+      "utf8-encoding-declaration",
       "utf8-locale-setup",
+      "utf8-stdout-encoding",
+      "utf8-stdout-wrapper",
+      "with-locale-output",
+      "with-locale-print-result",
+      "with-locale-result-capture",
+      "with-locale-simple-save-restore",
       "withr.add-missing-helpers",
-      "suppress-noop-cleanup",
-      "locale-inline-format"
+      "withr.locale-platform-aware",
+      "withr.locale-restoration-fix",
+      "withr.locale-utf8-direct",
+      "withr.remove-duplicate-definition",
+      "withr.reorder-function-def",
+      "withr.with-locale-context-manager",
+      "withr.with-locale-plot-execution",
+      "withr.with_locale-add-matplotlib",
+      "withr.with_locale-add-pyplot",
+      "withr.with_locale-as-context-manager",
+      "withr.with_locale-assign-print",
+      "withr.with_locale-capture-output",
+      "withr.with_locale-capture-result",
+      "withr.with_locale-complete-lambda",
+      "withr.with_locale-dedup",
+      "withr.with_locale-deduplicate",
+      "withr.with_locale-direct-context",
+      "withr.with_locale-display-plot",
+      "withr.with_locale-encoding-fix",
+      "withr.with_locale-fallback-locale",
+      "withr.with_locale-fallback-to-posix",
+      "withr.with_locale-fallback",
+      "withr.with_locale-fix-locale-restoration",
+      "withr.with_locale-graphics-output",
+      "withr.with_locale-handle-utf8",
+      "withr.with_locale-inline-expansion",
+      "withr.with_locale-inline-restore",
+      "withr.with_locale-locale-save-restore",
+      "withr.with_locale-matplotlib-fix",
+      "withr.with_locale-matplotlib-import",
+      "withr.with_locale-move-definition-before-usage",
+      "withr.with_locale-output-capture",
+      "withr.with_locale-output-dataframe",
+      "withr.with_locale-platform-detection",
+      "withr.with_locale-plot-fix",
+      "withr.with_locale-posix-fallback",
+      "withr.with_locale-print-output",
+      "withr.with_locale-remove-uncallable",
+      "withr.with_locale-remove-undefined-plot",
+      "withr.with_locale-reorder-def",
+      "withr.with_locale-reorder",
+      "withr.with_locale-restore-guard",
+      "withr.with_locale-restore-neutral",
+      "withr.with_locale-save-locale-string",
+      "withr.with_locale-seed",
+      "withr.with_locale-show-plot",
+      "withr.with_locale-show_plots",
+      "withr.with_locale-stdout-graphics",
+      "withr.with_locale-suppress-output",
+      "withr.with_locale-suppress_output",
+      "withr.with_locale-tuple-restoration",
+      "withr.with_locale-tuple-restore",
+      "withr.with_locale-utf8-fallback",
+      "withr.with_locale-utf8",
+      "withr.with_locale",
+      "withr.with_locale_complete_execution",
+      "with_locale-add-print",
+      "with_locale-context_manager"
     ],
     "base:": [
       "base.cat_to_print",
@@ -146,12 +271,12 @@
       "base.na_to_none",
       "base.nrow_ncol_to_shape",
       "base.paste0_to_fstring",
+      "base.plot_to_matplotlib",
       "base.read_csv_to_pandas",
       "base.seq_to_range",
       "base.sprintf_to_fstring",
       "base.which_to_npwhere",
-      "base.write_csv_to_pandas",
-      "base.plot_to_matplotlib"
+      "base.write_csv_to_pandas"
     ],
     "dplyr:": [
       "dplyr.filter_to_mask"
@@ -161,45 +286,12 @@
     ],
     "magrittr:": [
       "magrittr.pipe_to_chaining"
-    ],
-    ":ffb01754": [
-      "function-before-call",
-      "function-def-before-call",
-      "withr.with_locale",
-      "definition-before-call",
-      "move-function-def-before-call",
-      "withr.with_locale-add-matplotlib",
-      "remove-undefined-plot-call",
-      "withr.with_locale-remove-uncallable",
-      "remove-undefined-plot-and-print-result",
-      "scope-datetime-in-lambda",
-      "datetime-to-pandas-serializable",
-      "locale-date-serialization",
-      "locale-with-pandas-dates",
-      "locale.fix-assignment-syntax",
-      "datetime-module-class-reference",
-      "with-locale-simple-save-restore",
-      "datetime-module-class-disambiguation",
-      "datetime-class-import",
-      "date-to-string-conversion",
-      "datetime-to-string-conversion",
-      "locale-suppress-interactive-output",
-      "withr.with_locale-plot-fix",
-      "matplotlib.import-and-plot",
-      "matplotlib-plot-import",
-      "withr.add-missing-helpers",
-      "suppress-noop-cleanup",
-      "locale-inline-format"
-    ],
-    ":47c14840": [
-      "encoding-utf8-latin1-mismatch",
-      "preserve-dataframe-integrity"
     ]
   },
   "meta": {
     "avoid-builtin-shadowing": {
-      "confidence": "tentative",
-      "evidence_count": 3,
+      "confidence": "contradicted",
+      "evidence_count": 0,
       "contradictions_count": 2,
       "seed": false,
       "package": "",
@@ -261,6 +353,14 @@
       "package": "base",
       "ast_shape_hash": ""
     },
+    "base.plot_to_matplotlib": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
     "base.read_csv_to_pandas": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -304,10 +404,11 @@
     "base.suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 0,
-      "contradictions_count": 4,
+      "contradictions_count": 9,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 7
     },
     "base.suppress-startup-msgs": {
       "confidence": "contradicted",
@@ -333,10 +434,234 @@
       "package": "base",
       "ast_shape_hash": ""
     },
+    "capture-locale-result": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "capture-with-locale-result": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "contextmanager.define-before-use": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "dataframe-date-strings": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "date-json-serializable": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "date-json-serialization": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "date-serialization-fix": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "date-serialization-strftime": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "date-to-iso-string": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "date-to-string-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "date-to-string-for-json": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "date-to-string-serializable": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "date-to-string-serialization": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-class-import": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-json-serializable": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-json-serialization-fix": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-json-serialization": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-module-class-disambiguation": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-module-class-reference": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-serialization-fix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-to-date-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-to-iso-string": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-to-pandas-serializable": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-to-string-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "datetime-to-string-serialization": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
     "datetime.import-fix": {
       "confidence": "contradicted",
       "evidence_count": 0,
       "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "define-before-use": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 2,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "define-locale-context-before-use": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "definition-before-call": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
@@ -349,6 +674,239 @@
       "package": "dplyr",
       "ast_shape_hash": ""
     },
+    "encoding-and-warnings-setup": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-declaration-utf8": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-fix-replace-strict": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-setup-utf8": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-strict-utf8": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-surrogateescape-fix": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-utf8-enforcement": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-utf8-fix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-utf8-initialization": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-utf8-latin1-mismatch": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding-utf8-robust": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding.surrogateescape-utf8": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding.utf8-backslashreplace": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding.utf8-declaration": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding.utf8-default": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding.utf8-fix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "encoding.utf8-setup": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "ensure-json-serializable": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "fix-assignment-syntax": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "fix-conflicting-date-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "fix-date-import-reference": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "fix-date-import-shadowing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "fix-date-serialization": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "fix-ISOdate-shadowing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "fix-loop-variable-reference": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "fix-syntax-errors-with-locale": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "function-before-call": {
+      "confidence": "tentative",
+      "evidence_count": 2,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "function-def-before-call": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "function-definition-ordering": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
     "ggplot2.to_plotnine": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -357,10 +915,386 @@
       "package": "ggplot2",
       "ast_shape_hash": ""
     },
-    "locale.context-manager-pattern": {
+    "inline-date-formatting": {
       "confidence": "tentative",
-      "evidence_count": 5,
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "inline-locale-context": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "json-date-serialization": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "json-serializable-dates": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "json-serializable-locale": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "json-serializable-output": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "json-serializable-results": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "json-serialization-fix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-all-before-specific": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-context-definition-order": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-context-manager-preamble": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-date-serialization": {
+      "confidence": "contradicted",
+      "evidence_count": 1,
       "contradictions_count": 3,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-direct-string-first": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-encoding-fix": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-encoding-setup": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-encoding-utf8": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-format-utf8": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-inline-format": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-json-serializable": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-json-serialize": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-setlocale-utf8-suffix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-suppress-interactive-output": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-utf8-encoding": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-utf8-initialization": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-utf8-preamble": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale-with-pandas-dates": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.context-manager-pattern": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 3,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.correct-language-code": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.date-to-string-format": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.fix-assignment-syntax": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.init-utf8-encoding": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.lc-all-for-encoding": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.lc-all-utf8": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.lc-time-to-lc-all": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.localeconv-json-serialize": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.localeconv-stringify": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.platform-aware-encoding": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.preserve-encoding-output": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.serializable-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.tuple-to-string-restoration": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-encoding-fix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-encoding-priority": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-encoding-suffix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-fallback": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-normalization": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-stdout-fix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.utf8-suffix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "locale.with-graphics-output": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
@@ -371,6 +1305,118 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "magrittr",
+      "ast_shape_hash": ""
+    },
+    "matplotlib-datetime-plotting": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "matplotlib-plot-import": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "matplotlib-show-for-display": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "matplotlib.date-serialization-fix": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "matplotlib.import-and-plot": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "matplotlib.plot-call": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "move-function-before-use": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "move-function-def-before-call": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "move-function-def-to-preamble": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "move-print-into-context": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "output-print-missing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "pandas-date-generation": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "pandas.datetime-to-string-serializable": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "preserve-dataframe-integrity": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
       "ast_shape_hash": ""
     },
     "r-suppress-startup-messages-context": {
@@ -392,14 +1438,15 @@
     "r.suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 0,
-      "contradictions_count": 3,
+      "contradictions_count": 5,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 7
     },
     "r.suppress-warnings-wrapper": {
       "confidence": "contradicted",
-      "evidence_count": 1,
+      "evidence_count": 0,
       "contradictions_count": 1,
       "seed": false,
       "package": "",
@@ -437,10 +1484,58 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "range-to-list-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
     "remove-broken-context-call": {
       "confidence": "contradicted",
       "evidence_count": 0,
       "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-duplicate-definition": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-duplicate-function-def": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-duplicate-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-duplicate-with-locale": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-global-stdout-redirect": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
@@ -469,9 +1564,25 @@
       "package": "",
       "ast_shape_hash": ""
     },
-    "remove-unused-datetime-vars": {
+    "remove-undefined-plot-and-print-result": {
       "confidence": "tentative",
-      "evidence_count": 2,
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-undefined-plot-call": {
+      "confidence": "contradicted",
+      "evidence_count": 3,
+      "contradictions_count": 2,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "remove-unused-datetime-vars": {
+      "confidence": "contradicted",
+      "evidence_count": 1,
       "contradictions_count": 1,
       "seed": false,
       "package": "",
@@ -485,6 +1596,14 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "remove-unused-startup-suppression": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
     "remove-unused-withr-import": {
       "confidence": "contradicted",
       "evidence_count": 0,
@@ -493,13 +1612,78 @@
       "package": "",
       "ast_shape_hash": ""
     },
-    "suppress-package-startup-messages": {
+    "scope-datetime-in-lambda": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "simplify-date-formatting": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "source-utf8-encoding": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-all-output": {
       "confidence": "contradicted",
       "evidence_count": 0,
       "contradictions_count": 1,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
+    },
+    "suppress-noop-cleanup": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-noop-comment": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-noop-wrapper": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-output-context-manager": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-package-startup-messages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 2,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "suppress-r-package-import": {
       "confidence": "contradicted",
@@ -517,24 +1701,88 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "suppress-startup-contextlib": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-execute": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-locale-encoding": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
     "suppress-startup-messages-context-manager": {
       "confidence": "contradicted",
-      "evidence_count": 3,
+      "evidence_count": 1,
       "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-context-mgr": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-context": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 4,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
     "suppress-startup-messages-noop": {
       "confidence": "contradicted",
-      "evidence_count": 5,
+      "evidence_count": 0,
       "contradictions_count": 1,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
       "contradicted_at_run": 0
     },
+    "suppress-startup-messages-placeholder": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
     "suppress-startup-messages-remove-import": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-silent-load": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-messages-stdout-stderr": {
       "confidence": "contradicted",
       "evidence_count": 0,
       "contradictions_count": 1,
@@ -559,7 +1807,7 @@
       "ast_shape_hash": ""
     },
     "suppress-startup-messages-with-body": {
-      "confidence": "tentative",
+      "confidence": "contradicted",
       "evidence_count": 2,
       "contradictions_count": 1,
       "seed": false,
@@ -567,8 +1815,8 @@
       "ast_shape_hash": ""
     },
     "suppress-startup-messages-wrapper": {
-      "confidence": "tentative",
-      "evidence_count": 2,
+      "confidence": "contradicted",
+      "evidence_count": 0,
       "contradictions_count": 1,
       "seed": false,
       "package": "",
@@ -576,12 +1824,36 @@
     },
     "suppress-startup-messages": {
       "confidence": "contradicted",
-      "evidence_count": 16,
-      "contradictions_count": 14,
+      "evidence_count": 0,
+      "contradictions_count": 20,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 4
+      "contradicted_at_run": 7
+    },
+    "suppress-startup-no-op": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-noop": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 8,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-output": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 4,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
     },
     "suppress-startup-r-only-package": {
       "confidence": "contradicted",
@@ -599,10 +1871,66 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "suppress-startup-utf8-fix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-utf8-setup": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-with-encoding": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-with-execution": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-with-redirect-stderr": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-startup-wrapper": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
     "suppress-stderr-with-redirect": {
       "confidence": "contradicted",
       "evidence_count": 0,
       "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "suppress-with-output": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
@@ -615,9 +1943,177 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "syntax.assignment-before-call": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
     "syntax.empty-try-block": {
       "confidence": "tentative",
       "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "utf-8-stdout-stderr": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "utf8-default-encoding": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "utf8-encoding-declaration": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "utf8-locale-setup": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "utf8-stdout-encoding": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "utf8-stdout-wrapper": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "with-locale-output": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "with-locale-print-result": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "with-locale-result-capture": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "with-locale-simple-save-restore": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.add-missing-helpers": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.locale-platform-aware": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.locale-restoration-fix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.locale-utf8-direct": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.remove-duplicate-definition": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.reorder-function-def": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with-locale-context-manager": {
+      "confidence": "contradicted",
+      "evidence_count": 1,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with-locale-plot-execution": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-add-matplotlib": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-add-pyplot": {
+      "confidence": "tentative",
+      "evidence_count": 0,
       "contradictions_count": 0,
       "seed": false,
       "package": "",
@@ -631,77 +2127,10 @@
       "package": "",
       "ast_shape_hash": ""
     },
-    "withr.with_locale": {
-      "confidence": "tentative",
-      "evidence_count": 80,
-      "contradictions_count": 23,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 5
-    },
-    "move-function-before-use": {
+    "withr.with_locale-assign-print": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "suppress-startup-messages-placeholder": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "function-before-call": {
-      "confidence": "tentative",
-      "evidence_count": 3,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 3
-    },
-    "function-def-before-call": {
-      "confidence": "tentative",
-      "evidence_count": 1,
       "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "suppress-startup-wrapper": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "suppress-startup-messages-context": {
-      "confidence": "contradicted",
-      "evidence_count": 1,
-      "contradictions_count": 4,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 2
-    },
-    "move-function-def-to-preamble": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "withr.with_locale-reorder-def": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
@@ -714,130 +2143,18 @@
       "package": "",
       "ast_shape_hash": ""
     },
-    "withr.with_locale-move-definition-before-usage": {
+    "withr.with_locale-capture-result": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "function-definition-ordering": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "definition-before-call": {
-      "confidence": "tentative",
-      "evidence_count": 1,
       "contradictions_count": 0,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "suppress-startup-messages-stdout-stderr": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
       "ast_shape_hash": ""
     },
-    "move-function-def-before-call": {
+    "withr.with_locale-complete-lambda": {
       "confidence": "tentative",
-      "evidence_count": 1,
+      "evidence_count": 0,
       "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "suppress-startup-no-op": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "suppress-noop-wrapper": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "suppress-startup-execute": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "contextmanager.define-before-use": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "define-before-use": {
-      "confidence": "contradicted",
-      "evidence_count": 1,
-      "contradictions_count": 2,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale-context-manager-preamble": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "define-locale-context-before-use": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "inline-locale-context": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale-context-definition-order": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "suppress-startup-output": {
-      "confidence": "contradicted",
-      "evidence_count": 9,
-      "contradictions_count": 4,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "suppress-startup-with-encoding": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
@@ -850,40 +2167,16 @@
       "package": "",
       "ast_shape_hash": ""
     },
-    "withr.with_locale-add-matplotlib": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "suppress-all-output": {
+    "withr.with_locale-deduplicate": {
       "confidence": "contradicted",
-      "evidence_count": 1,
+      "evidence_count": 0,
       "contradictions_count": 1,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
-    "remove-undefined-plot-call": {
-      "confidence": "tentative",
-      "evidence_count": 3,
-      "contradictions_count": 2,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "withr.with_locale-remove-uncallable": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "withr.with_locale-show_plots": {
-      "confidence": "tentative",
+    "withr.with_locale-direct-context": {
+      "confidence": "contradicted",
       "evidence_count": 0,
       "contradictions_count": 1,
       "seed": false,
@@ -898,457 +2191,133 @@
       "package": "",
       "ast_shape_hash": ""
     },
-    "withr.with_locale-suppress-output": {
+    "withr.with_locale-encoding-fix": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
+      "contradictions_count": 0,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
-    "withr.with_locale-direct-context": {
+    "withr.with_locale-fallback-locale": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-fallback-to-posix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-fallback": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-fix-locale-restoration": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
     "withr.with_locale-graphics-output": {
-      "confidence": "tentative",
+      "confidence": "contradicted",
       "evidence_count": 0,
       "contradictions_count": 1,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
-    "remove-duplicate-function-def": {
+    "withr.with_locale-handle-utf8": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
+      "contradictions_count": 0,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
-    "withr.remove-duplicate-definition": {
+    "withr.with_locale-inline-expansion": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
+      "contradictions_count": 0,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
-    "locale.with-graphics-output": {
+    "withr.with_locale-inline-restore": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
+      "contradictions_count": 0,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
-    "withr.with_locale-stdout-graphics": {
+    "withr.with_locale-locale-save-restore": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
+      "contradictions_count": 0,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
     "withr.with_locale-matplotlib-fix": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "withr.with_locale_complete_execution": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "withr.with_locale-show-plot": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "date-json-serialization": {
       "confidence": "contradicted",
-      "evidence_count": 1,
+      "evidence_count": 0,
       "contradictions_count": 1,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
-    "remove-undefined-plot-and-print-result": {
+    "withr.with_locale-matplotlib-import": {
       "confidence": "tentative",
-      "evidence_count": 1,
+      "evidence_count": 0,
       "contradictions_count": 0,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "date-json-serializable": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
       "ast_shape_hash": ""
     },
-    "suppress-noop-comment": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "suppress-startup-noop": {
+    "withr.with_locale-move-definition-before-usage": {
       "confidence": "contradicted",
-      "evidence_count": 6,
-      "contradictions_count": 8,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 4
-    },
-    "json-serializable-dates": {
-      "confidence": "tentative",
       "evidence_count": 0,
       "contradictions_count": 1,
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
     },
-    "fix-conflicting-date-import": {
+    "withr.with_locale-output-capture": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "remove-duplicate-import": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale-date-serialization": {
-      "confidence": "tentative",
-      "evidence_count": 16,
-      "contradictions_count": 3,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
-    },
-    "scope-datetime-in-lambda": {
-      "confidence": "tentative",
-      "evidence_count": 1,
       "contradictions_count": 0,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754"
+      "ast_shape_hash": ""
     },
-    "encoding-utf8-latin1-mismatch": {
+    "withr.with_locale-output-dataframe": {
       "confidence": "tentative",
-      "evidence_count": 1,
+      "evidence_count": 0,
       "contradictions_count": 0,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "47c14840"
+      "ast_shape_hash": ""
     },
-    "preserve-dataframe-integrity": {
+    "withr.with_locale-platform-detection": {
       "confidence": "tentative",
-      "evidence_count": 1,
+      "evidence_count": 0,
       "contradictions_count": 0,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "47c14840"
-    },
-    "date-to-string-conversion": {
-      "confidence": "tentative",
-      "evidence_count": 3,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "date-serialization-fix": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
       "ast_shape_hash": ""
-    },
-    "date-to-iso-string": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "date-serialization-strftime": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "datetime-to-pandas-serializable": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "utf8-default-encoding": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale-with-pandas-dates": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "encoding.utf8-declaration": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "encoding-surrogateescape-fix": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "suppress-startup-locale-encoding": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "encoding-utf8-robust": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "encoding-and-warnings-setup": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale-encoding-setup": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale-encoding-fix": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale.init-utf8-encoding": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale-utf8-preamble": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale-utf8-initialization": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "encoding-utf8-initialization": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale-all-before-specific": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale.utf8-normalization": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale.lc-all-utf8": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "pandas.datetime-to-string-serializable": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "matplotlib.date-serialization-fix": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "datetime-json-serialization-fix": {
-      "confidence": "contradicted",
-      "evidence_count": 1,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
-    },
-    "matplotlib-datetime-plotting": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "json-serializable-output": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "locale.fix-assignment-syntax": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "datetime-module-class-reference": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "with-locale-simple-save-restore": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "datetime-module-class-disambiguation": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "datetime-class-import": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "datetime-to-string-conversion": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "locale-suppress-interactive-output": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754"
-    },
-    "locale-utf8-encoding": {
-      "confidence": "contradicted",
-      "evidence_count": 5,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
     },
     "withr.with_locale-plot-fix": {
       "confidence": "tentative",
@@ -1356,81 +2325,193 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
-    "matplotlib.import-and-plot": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754",
-      "contradicted_at_run": 0
-    },
-    "withr.with_locale-deduplicate": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 1,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 2
-    },
-    "matplotlib-plot-import": {
-      "confidence": "tentative",
-      "evidence_count": 2,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754",
-      "contradicted_at_run": 0
-    },
-    "utf8-locale-setup": {
-      "confidence": "tentative",
-      "evidence_count": 2,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
-    },
-    "withr.add-missing-helpers": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754",
-      "contradicted_at_run": 0
-    },
-    "suppress-noop-cleanup": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754",
-      "contradicted_at_run": 0
-    },
-    "locale-inline-format": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754",
-      "contradicted_at_run": 0
-    },
-    "base.plot_to_matplotlib": {
+    "withr.with_locale-posix-fallback": {
       "confidence": "tentative",
       "evidence_count": 0,
       "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-print-output": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-remove-uncallable": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-remove-undefined-plot": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-reorder-def": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-reorder": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-restore-guard": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-restore-neutral": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-save-locale-string": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-seed": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 5,
       "seed": true,
-      "package": "base",
+      "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "contradicted_at_run": 4
+    },
+    "withr.with_locale-show-plot": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-show_plots": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-stdout-graphics": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-suppress-output": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-suppress_output": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-tuple-restoration": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-tuple-restore": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-utf8-fallback": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale-utf8": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale": {
+      "confidence": "contradicted",
+      "evidence_count": 7,
+      "contradictions_count": 23,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "withr.with_locale_complete_execution": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "with_locale-add-print": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
+    },
+    "with_locale-context_manager": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": ""
     }
   },
-  "total_runs": 5
+  "total_runs": 7
 }

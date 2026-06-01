@@ -26,7 +26,7 @@ You will be shown:
 - Optionally: Pattern Library guidance to follow (exploit mode).
 
 You MUST output exactly ONE JSON object on a single line with these fields:
-  {"kind": "<EditKind>", "entity_ids": ["<id>", ...], "params": {...}, "pattern_id": "<slug>"}
+  {"kind": "<EditKind>", "entity_ids": ["<id>", ...], "params": {...}, "pattern_id": "<slug>", "guidance": "<rule>"}
 
 Valid kind values (use exactly these strings):
   ReplaceCall           params: {"old_call": "...", "new_call": "..."}
@@ -40,6 +40,10 @@ Valid kind values (use exactly these strings):
 Rules:
 - "pattern_id" is REQUIRED. Use an existing pattern slug (provided below) or propose
   a new short kebab-case slug that names the rule (e.g. "dplyr.filter-to-mask").
+- "guidance" is REQUIRED when proposing a NEW pattern_id (one not listed in the Pattern
+  Library). Write 1–3 sentences describing the general R→Python translation rule: what
+  R construct is being translated, what Python equivalent to use, and any gotchas.
+  For an EXISTING pattern_id, omit "guidance" or set it to "".
 - "entity_ids" MUST contain the ID shown after "## Target entity:".
 - Make the smallest change that addresses the failure.
 - RestructureControlFlow replaces any substring of the FULL script — use it to amend

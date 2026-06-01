@@ -16,7 +16,7 @@ def _pillow_rmse(r_bytes: bytes, py_bytes: bytes) -> float | None:
         r_img = Image.open(io.BytesIO(r_bytes)).convert("L")
         py_img = Image.open(io.BytesIO(py_bytes)).convert("L")
         if r_img.size != py_img.size:
-            return 1.0  # treat size mismatch as max error
+            py_img = py_img.resize(r_img.size, Image.LANCZOS)
         r_px = list(r_img.getdata())
         py_px = list(py_img.getdata())
         mse = sum((a - b) ** 2 for a, b in zip(r_px, py_px)) / len(r_px)

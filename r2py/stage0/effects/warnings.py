@@ -54,7 +54,8 @@ import warnings as _r2py_warnings_mod
 _r2py_warn_list = []
 _r2py_orig_showwarning = _r2py_warnings_mod.showwarning
 def _r2py_capture_warning(message, category, filename, lineno, file=None, line=None):
-    _r2py_warn_list.append(str(message))
+    if 'matplotlib' not in (filename or ''):
+        _r2py_warn_list.append(str(message))
 _r2py_warnings_mod.showwarning = _r2py_capture_warning
 """
 

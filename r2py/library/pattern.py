@@ -32,6 +32,11 @@ class Pattern:
     contradictions: list[str]           = field(default_factory=list)
     created:        str                 = ""   # ISO date string
     last_review:    str                 = ""   # ISO date string
+    # Counts of tie interactions (score == 0, no regression). Stored separately
+    # from evidence so they don't inflate the demotion threshold. Old-format
+    # files that stored ties as EvidenceEntry(verification_path="tie") are
+    # migrated to this counter on deserialization.
+    tie_count:      int                 = 0
 
     # ------------------------------------------------------------------ #
     # Convenience                                                          #
@@ -40,11 +45,19 @@ class Pattern:
     def demotion_threshold(self) -> int:
         """Contradictions needed to trigger a demotion (§6.5).
 
-        Scales with evidence count: a pattern with many proven successes requires
-        proportionally more contradictions before demotion.  The minimum of 3 prevents
-        single-evidence patterns from being demoted by a single bad edit.
+        Scales only with genuine improvement evidence (score > 0). Tie entries
+        are tracked separately in tie_count and do not raise the threshold —
+        a pattern protected only by repeated tie interactions is no more
+        established than one with no interactions at all.
+
+        Seeds with no evidence use a minimum of 3 (same as patterns with some
+        evidence) so a single bad application doesn't immediately kill a
+        human-verified seed pattern.
         """
-        return max(3, math.ceil(len(self.evidence) * 0.75)) if self.evidence else 1
+        real = sum(1 for e in self.evidence if e.score > 0.0)
+        if real:
+            return max(3, math.ceil(real * 0.75))
+        return 5 if self.seed else 1
 
 
 # ------------------------------------------------------------------ #
@@ -69,6 +82,7 @@ def to_markdown(p: Pattern) -> str:
         f"seed: {'true' if p.seed else 'false'}",
         f"created: {p.created or date.today().isoformat()}",
         f"last_review: {p.last_review or date.today().isoformat()}",
+        f"tie_count: {p.tie_count}",
         "---",
         "",
         f"# {p.id}",
@@ -120,8 +134,19 @@ def from_markdown(text: str) -> Pattern:
     seed       = meta.get("seed", "false").lower() == "true"
     created    = meta.get("created", "")
     last_review = meta.get("last_review", "")
+    try:
+        tie_count = int(meta.get("tie_count", "0"))
+    except ValueError:
+        tie_count = 0
 
     guidance, evidence, contradictions = _parse_body(body)
+
+    # Migration: old files stored tie interactions as EvidenceEntry with
+    # verification_path="tie". Move them to tie_count and strip from evidence.
+    legacy_ties = sum(1 for e in evidence if e.verification_path == "tie")
+    if legacy_ties:
+        tie_count += legacy_ties
+        evidence = [e for e in evidence if e.verification_path != "tie"]
 
     return Pattern(
         id=pid,
@@ -133,6 +158,7 @@ def from_markdown(text: str) -> Pattern:
         contradictions=contradictions,
         created=created,
         last_review=last_review,
+        tie_count=tie_count,
     )
 
 

@@ -24,6 +24,15 @@ _MISSING_MODULE_RE = re.compile(
     r"ModuleNotFoundError: No module named '([^']+)'"
 )
 
+# R package names that are never valid Python packages. If the LLM generates
+# `import withr` etc., attempting pip install is pointless and will crash.
+_R_ONLY_PACKAGES: frozenset[str] = frozenset({
+    "withr", "dplyr", "ggplot2", "shiny", "magrittr", "tidyr", "purrr",
+    "rlang", "tibble", "stringr", "forcats", "readr", "lubridate",
+    "broom", "tidyverse", "devtools", "testthat", "usethis",
+    "data.table", "caret", "mlr", "mlr3", "glue",
+})
+
 
 def _missing_module(stderr: str) -> str | None:
     """Return the top-level package name from a ModuleNotFoundError, or None."""
@@ -35,9 +44,15 @@ def _missing_module(stderr: str) -> str | None:
 
 
 def _auto_install_py(pkg: str) -> None:
+    if pkg in _R_ONLY_PACKAGES:
+        print(f"[r2py] Skipping install of R-only package '{pkg}' (not a Python package)")
+        return
     from ..env.package_installer import install
     print(f"[r2py] Installing Python package '{pkg}' ...")
-    install(py_packages=[pkg])
+    try:
+        install(py_packages=[pkg])
+    except Exception as exc:
+        print(f"[r2py] Warning: failed to install '{pkg}': {exc}")
 
 
 class PySandbox:

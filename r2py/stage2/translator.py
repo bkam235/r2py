@@ -69,6 +69,17 @@ def translate(
             prior_translations[eid] = ext_snippet
             continue
 
+        # For VARIABLE entities with a simple (non-dict) R-captured value, generate
+        # the assignment directly rather than going through the LLM. This avoids
+        # cases where the LLM miscopies non-ASCII characters (e.g. é→è).
+        cap_snippet = _generate_from_capture(entity)
+        if cap_snippet is not None:
+            per_entity[eid] = cap_snippet
+            per_entity_imports[eid] = []
+            per_entity_effects[eid] = []
+            prior_translations[eid] = cap_snippet
+            continue
+
         # General entity: build prompt and call LLM
         messages = build_entity_prompt(entity, script_map, patterns, prior_translations)
         try:
@@ -79,7 +90,6 @@ def translate(
             snippet = f"# r2py: translation failed for {eid}"
             imports = []
             effects = []
-
         per_entity[eid] = snippet
         per_entity_imports[eid] = imports
         per_entity_effects[eid] = effects
@@ -106,3 +116,30 @@ def translate(
             entity_line_map = _stitch.rebuild_entity_line_map(python_source)
 
     return python_source, entity_line_map
+
+
+def _generate_from_capture(entity) -> str | None:
+    """Return a Python assignment snippet for a VARIABLE entity from its R-captured value.
+
+    Only generates for simple non-dict values (lists of scalars, plain scalars).
+    Returns None if the entity is not VARIABLE, has no captured value, or the
+    value is a dict (which may represent a DataFrame needing a proper Python type).
+    """
+    if entity.kind != EntityKind.VARIABLE:
+        return None
+    ab = getattr(entity, "actual_bundle", None)
+    if ab is None:
+        return None
+    name = getattr(entity, "name", None)
+    if not name:
+        return None
+    val = ab.data.get(name) if hasattr(ab, "data") else None
+    if val is None:
+        return None
+    # Skip dicts — they may represent DataFrames or named lists that need proper types
+    if isinstance(val, dict):
+        return None
+    try:
+        return f"{name} = {repr(val)}"
+    except Exception:
+        return None

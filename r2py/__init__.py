@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from .types import ScriptMap, TranslateResult
 
 __version__ = "0.2.0"
-__all__ = ["translate", "analyze", "review_library"]
+__all__ = ["translate", "analyze", "review_library", "reset_library"]
 
 
 def translate(
@@ -77,6 +77,41 @@ def analyze(r_path: "str | Path") -> "ScriptMap":
     from pathlib import Path
     from .stage1 import analyze as _analyze
     return _analyze(Path(r_path))
+
+
+def reset_library(library=None, keep_seeds: bool = True) -> int:
+    """Delete all learned patterns from the library and rebuild the index.
+
+    Args:
+        keep_seeds: If True (default), seed patterns are preserved.
+                    If False, every pattern including seeds is removed.
+    Returns:
+        Number of patterns removed.
+    """
+    from .library import get_library
+    if library is None:
+        library = get_library()
+
+    store = library.store
+    index = library.index
+
+    patterns = store.load_all()
+    removed = 0
+    for pid, pat in patterns.items():
+        if keep_seeds and pat.seed:
+            continue
+        # Delete the markdown file from disk
+        path = store._path(pid)
+        if path.exists():
+            path.unlink()
+        removed += 1
+
+    # Rebuild the index from whatever files remain, and reset the run counter
+    index.rebuild(store)
+    index._data["total_runs"] = 0
+    index._save()
+
+    return removed
 
 
 def review_library(library=None, prune_unimproved: bool = False) -> list[str]:

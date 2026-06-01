@@ -2,15 +2,18 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from r2py import translate
+from r2py import translate, reset_library
 from r2py.library import get_library
 from dotenv import load_dotenv
-from pathlib import Path
 from os import walk, path, listdir, remove, environ
 # import random
 
-load_dotenv(Path(__name__).parent.parent / ".env", override=True)
+load_dotenv(Path(__file__).parent.parent / ".env", override=True)
+
 lib = get_library()  # one shared library
+# reset_library(library=lib) # keep seeds, wipe learned patterns
+# reset_library(library=lib, keep_seeds=False) #wipe everything
+
 input_dir = r".\work\inputs\harvested"
 output_dir = r".\work\outputs"
 
@@ -49,4 +52,8 @@ for r_script, py_script in scripts:
                        model="claude-haiku-4-5",
                        progress=_on_progress,
                        score_threshold=1,
-                       max_iters=20)
+                       max_iters=10)
+
+    # Debug: always write the best translation to disk for inspection
+    Path(py_script + ".debug.py").write_text(result.python_source, encoding="utf-8")
+    print(f"[Debug]   Best translation written to {py_script}.debug.py (exit={result.final_exit_code})")

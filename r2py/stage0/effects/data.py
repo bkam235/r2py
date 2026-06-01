@@ -227,8 +227,19 @@ for _r2py_k, _r2py_v in list(globals().items()):
     except Exception:
         _r2py_uncapturable.append(_r2py_k)
 
-with open('_r2py_state.json', 'w', encoding='utf-8') as _f:
-    _r2py_json.dump(_r2py_state, _f)
+try:
+    with open('_r2py_state.json', 'w', encoding='utf-8') as _f:
+        _r2py_json.dump(_r2py_state, _f)
+except Exception:
+    _r2py_clean = {}
+    for _r2py_k2, _r2py_v2 in _r2py_state.items():
+        try:
+            _r2py_json.dumps(_r2py_v2)
+            _r2py_clean[_r2py_k2] = _r2py_v2
+        except Exception:
+            _r2py_uncapturable.append(_r2py_k2)
+    with open('_r2py_state.json', 'w', encoding='utf-8') as _f:
+        _r2py_json.dump(_r2py_clean, _f)
 with open('_r2py_uncapturable.json', 'w', encoding='utf-8') as _f:
     _r2py_json.dump(_r2py_uncapturable, _f)
 """
@@ -242,8 +253,8 @@ import json as _r2py_json
 def _r2py_try_adapters(name, obj):
     \"\"\"Try registered adapters; return (value, True) or (None, False).\"\"\"
     import json
-    # plain JSON-serializable
-    if isinstance(obj, (bool, int, float, str, list, dict, type(None))):
+    # plain JSON-serializable scalars (not containers — those are tested below)
+    if isinstance(obj, (bool, int, float, str, type(None))):
         return obj, True
     # pandas DataFrame
     try:

@@ -32,9 +32,15 @@ def retrieve(
     entity_name = getattr(entity, "name", "") or ""
     entity_kind = _entity_kind_str(entity)
 
-    # Step 1: gather candidate IDs by package
+    # Step 1: gather candidate IDs by package.
+    # When the entity's package has no dedicated patterns (common for R-only
+    # packages like withr where Python patterns live under package=""), fall
+    # back to the full empty-package bucket so general-purpose patterns are
+    # still retrieved.
     if package:
         candidate_ids = index.lookup(package)
+        if not candidate_ids:
+            candidate_ids = index.all_ids()
     else:
         candidate_ids = index.all_ids()
 
@@ -51,13 +57,14 @@ def retrieve(
             continue
         if no_seeds and pat.seed:
             continue
-        # Tentative patterns with a single evidence entry are single-run
-        # observations that haven't been cross-validated. Showing 180+ of them
-        # to Stage 2 overwhelms the LLM and produces crashing seeds. Require
-        # at least 2 evidence entries before a tentative pattern is retrieved.
-        # Seeds are always kept regardless of evidence count.
-        if pat.confidence == "tentative" and not pat.seed and len(pat.evidence) < 2:
-            continue
+        # Tentative patterns need at least 2 genuine improvements (score > 0)
+        # before they are shown to Stage 2/3. Tie interactions (tracked in
+        # tie_count) do not count — they carry no positive signal. Seeds are
+        # always kept regardless of evidence count.
+        if pat.confidence == "tentative" and not pat.seed:
+            real_evidence = sum(1 for e in pat.evidence if e.score > 0.0)
+            if real_evidence < 2:
+                continue
         candidates.append(pat)
 
     if not candidates:
