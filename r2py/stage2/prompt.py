@@ -26,8 +26,10 @@ Rules:
 4. Honour all Stage 1 semantic annotations (1-based indexing, NA semantics,
    NSE, vector recycling, copy-on-modify, super-assign, dispatch flags).
 5. List required imports separately; do not embed import statements in the snippet.
-   CRITICAL: R package names (withr, dplyr, ggplot2, shiny, magrittr, etc.) are NOT
-   Python modules — never add "import withr" or similar. Use Python stdlib/pandas equivalents.
+   CRITICAL: Any package loaded via library() or require() in the R source is an R package,
+   NOT a Python module. Never emit "import <r-package-name>" for any package that appeared
+   in a library()/require() call — doing so will crash the script. If no Python equivalent
+   exists, omit the import entirely and translate the entity as pass.
 6. CRITICAL Windows locale: POSIX locale strings ("es_ES", "it_IT", "fr_FR", "en_GB",
    etc.) are INVALID on Windows Python. NEVER call locale.setlocale() directly with such
    strings — it will raise locale.Error and crash the script. When the Pattern Library
@@ -249,13 +251,18 @@ def _format_free_variables(entity: "Entity") -> str:
     header = (
         "The following names are used in this entity but were NOT defined in this script.\n"
         "They were present in R's execution environment (built-in datasets, lazy-loaded objects, etc.).\n"
-        "Find appropriate Python equivalents or reproduce the data exactly:"
+        "Use the shape/range info below to find an equivalent Python source — do NOT "
+        "reconstruct or approximate the values from this description:"
     )
     return header + "\n" + "\n".join(lines)
 
 
 def _summarise_value(val: object) -> str:
-    """Return a compact human-readable description of a captured R value."""
+    """Return a shape/range description of a captured R value — no raw data.
+
+    Deliberately omits actual values so the LLM cannot partially reconstruct
+    the data from the summary (e.g. copy 3 sample rows of an 87-row matrix).
+    """
     try:
         import numpy as np  # type: ignore[import]
         if isinstance(val, np.ndarray):
@@ -272,5 +279,20 @@ def _summarise_value(val: object) -> str:
     except Exception:
         pass
     if isinstance(val, list):
-        return f"list of {len(val)}: {val[:3]}…"
-    return repr(val)[:120]
+        # Detect matrix (list-of-equal-length-lists) and report as rows×cols.
+        if val and isinstance(val[0], list):
+            nrows = len(val)
+            ncols = len(val[0])
+            flat = [x for row in val for x in row if isinstance(x, (int, float))]
+            if flat:
+                lo, hi = min(flat), max(flat)
+                return f"matrix [{nrows} rows × {ncols} cols], values {lo:.4g}–{hi:.4g}"
+            return f"matrix [{nrows} rows × {ncols} cols]"
+        lo_hi = ""
+        nums = [x for x in val if isinstance(x, (int, float))]
+        if nums:
+            lo_hi = f", values {min(nums):.4g}–{max(nums):.4g}"
+        return f"vector of {len(val)}{lo_hi}"
+    if isinstance(val, (int, float)):
+        return repr(val)
+    return f"{type(val).__name__} (length {len(val)})" if hasattr(val, "__len__") else type(val).__name__

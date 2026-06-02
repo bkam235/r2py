@@ -4,8 +4,8 @@ package:
 confidence: contradicted
 seed: false
 created: 2026-05-30
-last_review: 2026-06-01
-tie_count: 1
+last_review: 2026-06-02
+tie_count: 7
 ---
 
 # r.suppress-startup-messages
@@ -14,7 +14,7 @@ tie_count: 1
 Auto-created from edit ReplaceCall (no guidance yet).
 
 ## Evidence
-(none)
+- dd2e0ea0b08b → score 0.167 (path: exact, variable: )
 
 ## Contradictions
 - 021894dec169/: score regressed to 0.167
@@ -23,3 +23,4 @@ Auto-created from edit ReplaceCall (no guidance yet).
 - 021894dec169/: score regressed to 0.000
 - 021894dec169/: score regressed to 0.179
 - dd2e0ea0b08b/: score regressed to 0.922
+- dd2e0ea0b08b/: score regressed to 0.000

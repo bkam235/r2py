@@ -5,6 +5,7 @@ EXPLORE: propose freely, guided only by the verifier's feedback.
 """
 from __future__ import annotations
 
+import re
 import random
 from typing import TYPE_CHECKING
 
@@ -61,6 +62,20 @@ def propose(
         entity = _get_entity(script_map, eid)
         if entity is None:
             continue
+
+        # --- Deterministic data-pinning (no LLM) ---
+        # If this entity references R built-in datasets or other inherited values
+        # whose exact data is captured in actual_bundle.data, embed them directly
+        # rather than relying on the LLM to guess or approximate.
+        pin_edit = _try_pin_free_variables(entity, candidate)
+        if pin_edit is not None:
+            try:
+                attributed_pin = attribute(pin_edit, pin_edit.pattern_id)
+            except AttributionError:
+                attributed_pin = None
+            if attributed_pin is not None and not history.was_tried(attributed_pin):
+                return attributed_pin
+        # --- End data-pinning ---
 
         entity_score = candidate.decomp.by_entity.get(eid, EntityScore(entity_id=eid))
         feedback = [f for f in candidate.decomp.feedback if f.entity_id == eid]
@@ -196,6 +211,140 @@ def _get_entity(script_map: "ScriptMap", eid: str) -> object | None:
     """Return the Entity for eid, or None if script_map has no entities dict."""
     entities = getattr(script_map, "entities", {})
     return entities.get(eid)
+
+
+# ---------------------------------------------------------------------------
+# Data-pinning helpers (deterministic, no LLM)
+# ---------------------------------------------------------------------------
+
+_PIN_PATTERN_DATA = "r_builtin_data_pin"
+_PIN_MAX_ELEMENTS = 50_000
+
+
+def _try_pin_free_variables(entity: object, candidate: "Candidate") -> "Edit | None":
+    """Return a deterministic edit embedding captured R data into the translation.
+
+    Checks entity.free_variable_refs against entity.actual_bundle.data (which
+    is the full-script bundle, populated by Stage 1 step 3b for inherited vars).
+
+    Returns RestructureControlFlow if the variable is already assigned wrongly,
+    InsertPreamble if it is absent entirely, or None if nothing to pin.
+    """
+    from ..types import Edit, EditKind
+
+    free_refs = getattr(entity, "free_variable_refs", [])
+    if not free_refs:
+        return None
+
+    bundle = getattr(entity, "actual_bundle", None)
+    bundle_data: dict = bundle.data if bundle is not None else {}
+    if not bundle_data:
+        return None
+
+    source = candidate.translation
+
+    to_pin: list[tuple[str, str]] = []
+    for name in free_refs:
+        if name not in bundle_data:
+            continue
+        code = _pin_value(name, bundle_data[name])
+        if code is not None:
+            to_pin.append((name, code))
+
+    if not to_pin:
+        return None
+
+    # Replace the first wrongly-assigned variable we find.
+    for name, code in to_pin:
+        existing = _find_assignment_line(name, source)
+        if existing is not None:
+            return Edit(
+                kind=EditKind.RESTRUCTURE_CONTROL_FLOW,
+                entity_ids=[getattr(entity, "id", "")],
+                params={"old_code": existing, "new_code": code},
+                pattern_id=_PIN_PATTERN_DATA,
+            )
+
+    # No wrong assignments — insert all absent variables as a single preamble.
+    imports = _pin_imports(bundle_data, [n for n, _ in to_pin])
+    preamble = "\n".join(imports + [code for _, code in to_pin])
+    return Edit(
+        kind=EditKind.INSERT_PREAMBLE,
+        entity_ids=[getattr(entity, "id", "")],
+        params={"code": preamble},
+        pattern_id=_PIN_PATTERN_DATA,
+    )
+
+
+def _find_assignment_line(name: str, source: str) -> "str | None":
+    """Return the full source text of the first top-level assignment to *name*.
+
+    Uses the AST to capture multi-line statements (e.g. np.array([\\n...\\n]))
+    so that RESTRUCTURE_CONTROL_FLOW replaces the whole expression, not just
+    the opening line.  Falls back to a single-line regex if parsing fails.
+    """
+    import ast as _ast_mod
+    lines = source.splitlines(keepends=True)
+    try:
+        tree = _ast_mod.parse(source)
+        for node in tree.body:
+            if isinstance(node, _ast_mod.Assign):
+                for target in node.targets:
+                    if isinstance(target, _ast_mod.Name) and target.id == name:
+                        start = node.lineno - 1       # ast uses 1-based lines
+                        end = node.end_lineno          # inclusive; slice is exclusive
+                        return "".join(lines[start:end])
+    except SyntaxError:
+        pass
+    # Fallback: single-line match only (may leave multi-line tail in place)
+    m = re.search(rf"^{re.escape(name)}\s*=.*$", source, re.MULTILINE)
+    return m.group(0) if m else None
+
+
+def _pin_value(name: str, val: object) -> "str | None":
+    """Serialise *val* to ``name = <literal>``, or None if too large."""
+    try:
+        import numpy as np  # type: ignore[import]
+        if isinstance(val, np.ndarray):
+            if val.size <= _PIN_MAX_ELEMENTS:
+                return f"{name} = np.array({val.tolist()!r})"
+            return None
+    except Exception:
+        pass
+    try:
+        import pandas as pd  # type: ignore[import]
+        if isinstance(val, pd.DataFrame):
+            if val.size <= _PIN_MAX_ELEMENTS:
+                return f"{name} = pd.DataFrame({val.to_dict(orient='list')!r})"
+            return None
+    except Exception:
+        pass
+    if isinstance(val, list):
+        if len(val) <= _PIN_MAX_ELEMENTS:
+            return f"{name} = {val!r}"
+        return None
+    if isinstance(val, (int, float, bool, str)):
+        return f"{name} = {val!r}"
+    return None
+
+
+def _pin_imports(bundle_data: dict, names: list[str]) -> list[str]:
+    imports: list[str] = []
+    for name in names:
+        val = bundle_data.get(name)
+        try:
+            import numpy as np  # type: ignore[import]
+            if isinstance(val, np.ndarray) and "import numpy as np" not in imports:
+                imports.append("import numpy as np")
+        except Exception:
+            pass
+        try:
+            import pandas as pd  # type: ignore[import]
+            if isinstance(val, pd.DataFrame) and "import pandas as pd" not in imports:
+                imports.append("import pandas as pd")
+        except Exception:
+            pass
+    return imports
 
 
 def _make_episode(entity: object, patterns: list, chosen_id: "str | None", exploit: bool) -> object:

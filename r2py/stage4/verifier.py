@@ -238,12 +238,26 @@ def verify(
 
     feedback.extend(_build_feedback(comparator_results, entities))
 
-    # RC2: surface crash traceback as feedback so Stage 3 knows what line failed
+    # RC2: surface crash traceback as feedback so Stage 3 knows what line failed.
+    # Target the feedback to the entity that caused the crash (via crash attribution)
+    # so _weak_first prioritises it. Fall back to all entities if unattributable.
     if py_bundle.exit_code != 0 and py_bundle.stderr:
         crash_msg = py_bundle.stderr.strip()
         if len(crash_msg) > 800:
             crash_msg = "..." + crash_msg[-800:]
-        for entity_id in entities:
+        crash_target_ids: list[str] = []
+        if entity_line_map:
+            from .decompose import _parse_crash_line, _attribute_crash
+            crash_line = _parse_crash_line(py_bundle.stderr)
+            if crash_line is not None:
+                crashing_eid, _ = _attribute_crash(
+                    crash_line, py_bundle.preamble_lines, entity_line_map
+                )
+                if crashing_eid:
+                    crash_target_ids = [crashing_eid]
+        if not crash_target_ids:
+            crash_target_ids = list(entities.keys())
+        for entity_id in crash_target_ids:
             feedback.append(FeedbackItem(
                 entity_id=entity_id,
                 effect_class=EffectClass.SYNTAX,

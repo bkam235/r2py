@@ -53,6 +53,20 @@ def analyze(
         tracker.mark(eid, "dynamic")
         entities[eid].actual_bundle = main_bundle
 
+    # ── Step 3b: probe for inherited free variables ──────────────────────────
+    # R built-in datasets (volcano, iris, …) are accessed by bare name but live
+    # in package:datasets — NOT in .GlobalEnv.  The main capture misses them.
+    # Collect every free_variable_ref that wasn't captured, then run a small R
+    # probe that pulls each one from the search path into .GlobalEnv so the
+    # standard epilogue serialises it normally.
+    _all_free_refs: set[str] = set()
+    for _e in entities.values():
+        _all_free_refs.update(_e.free_variable_refs)
+    _uncaptured = _all_free_refs - set(main_bundle.data.keys())
+    if _uncaptured:
+        _extra = _probe_inherited_vars(_uncaptured, timeout_s)
+        main_bundle.data.update(_extra)
+
     # ── Step 4 + 6: branch extraction loop ──────────────────────────────────
     branches: dict[str, BranchAnalysis] = {}
     _extract_branches(ast_root, entities, main_bundle,
@@ -223,6 +237,38 @@ def _collect_branch_nodes_rec(
 
     for child in node.children:
         _collect_branch_nodes_rec(child, out, counter, entities)
+
+
+def _probe_inherited_vars(names: set[str], timeout_s: float) -> dict:
+    """Capture R values that exist on the search path but not in .GlobalEnv.
+
+    For each name in *names*, if R can find it via ``exists(name, inherits=TRUE)``
+    (i.e. it's a lazy-loaded built-in dataset, an object from an attached package,
+    etc.) and it is not a function or environment, assign it into .GlobalEnv so
+    the standard Stage 0 data-capture epilogue picks it up.
+
+    Returns a dict of name → captured value (same format as EffectBundle.data).
+    """
+    if not names:
+        return {}
+
+    r_names = "c(" + ", ".join(f'"{n}"' for n in sorted(names)) + ")"
+    probe_source = f"""\
+for (.r2py_v in {r_names}) {{
+  if (exists(.r2py_v, inherits = TRUE) && !.r2py_v %in% ls(envir = .GlobalEnv)) {{
+    .r2py_obj <- get(.r2py_v, inherits = TRUE)
+    if (!is.function(.r2py_obj) && !is.environment(.r2py_obj)) {{
+      assign(.r2py_v, .r2py_obj, envir = .GlobalEnv)
+    }}
+  }}
+}}
+"""
+    probe_capture: CaptureSpec = frozenset({EffectClass.DATA})
+    try:
+        bundle = run_slice(probe_source, capture=probe_capture, timeout_s=timeout_s)
+        return bundle.data
+    except Exception:
+        return {}
 
 
 def _merge_dynamic_effects(

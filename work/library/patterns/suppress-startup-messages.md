@@ -4,8 +4,8 @@ package:
 confidence: contradicted
 seed: false
 created: 2026-05-30
-last_review: 2026-06-01
-tie_count: 32
+last_review: 2026-06-02
+tie_count: 39
 ---
 
 # suppress-startup-messages
@@ -14,7 +14,7 @@ tie_count: 32
 Auto-created from edit InsertPreamble (no guidance yet).
 
 ## Evidence
-(none)
+- dd2e0ea0b08b → score 0.033 (path: exact, variable: )
 
 ## Contradictions
 - 021894dec169/: score regressed to 0.167
@@ -38,3 +38,4 @@ Auto-created from edit InsertPreamble (no guidance yet).
 - 021894dec169/: score regressed to 0.000
 - 021894dec169/: score regressed to 0.000
 - dd2e0ea0b08b/: score regressed to 0.900
+- dd2e0ea0b08b/: score regressed to 0.167
