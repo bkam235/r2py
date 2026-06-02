@@ -5,7 +5,7 @@ confidence: contradicted
 seed: false
 created: 2026-05-30
 last_review: 2026-06-02
-tie_count: 15
+tie_count: 16
 ---
 
 # base.suppress-startup-messages
@@ -14,7 +14,7 @@ tie_count: 15
 Auto-created from edit ReplaceCall (no guidance yet).
 
 ## Evidence
-(none)
+- dd2e0ea0b08b → score 0.033 (path: exact, variable: )
 
 ## Contradictions
 - 021894dec169/: score regressed to 0.167

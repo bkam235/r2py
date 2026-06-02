@@ -151,14 +151,14 @@
       "withr.with_locale-restore-guard",
       "withr.with_locale-restore-neutral",
       "withr.with_locale-save-locale-string",
-      "withr.with_locale-seed",
       "withr.with_locale-suppress_output",
       "withr.with_locale-tuple-restoration",
       "withr.with_locale-tuple-restore",
       "withr.with_locale-utf8-fallback",
       "withr.with_locale-utf8",
       "with_locale-add-print",
-      "with_locale-context_manager"
+      "with_locale-context_manager",
+      "r.suppress-package-startup-messages"
     ],
     "base:": [
       "base.cat_to_print",
@@ -187,7 +187,8 @@
     ":ffb01754": [
       "function-before-call",
       "suppress-startup-messages",
-      "r.suppress-startup-messages"
+      "r.suppress-startup-messages",
+      "base.suppress-startup-messages"
     ]
   },
   "meta": {
@@ -300,11 +301,11 @@
     },
     "base.suppress-startup-messages": {
       "confidence": "contradicted",
-      "evidence_count": 0,
+      "evidence_count": 1,
       "contradictions_count": 14,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
+      "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 30
     },
     "base.which_to_npwhere": {
@@ -644,13 +645,13 @@
       "ast_shape_hash": ""
     },
     "function-before-call": {
-      "confidence": "confirmed",
-      "evidence_count": 17,
-      "contradictions_count": 14,
+      "confidence": "tentative",
+      "evidence_count": 19,
+      "contradictions_count": 17,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 27
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 36
     },
     "function-def-before-call": {
       "confidence": "tentative",
@@ -1002,7 +1003,7 @@
       "contradictions_count": 7,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754",
+      "ast_shape_hash": "",
       "contradicted_at_run": 23
     },
     "r.suppressPackageStartupMessages": {
@@ -1129,11 +1130,11 @@
     "suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 1,
-      "contradictions_count": 22,
+      "contradictions_count": 23,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 23
+      "contradicted_at_run": 39
     },
     "suppress-startup-utf8-fix": {
       "confidence": "tentative",
@@ -1527,15 +1528,6 @@
       "package": "",
       "ast_shape_hash": ""
     },
-    "withr.with_locale-seed": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 5,
-      "seed": true,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 4
-    },
     "withr.with_locale-suppress_output": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -1591,7 +1583,16 @@
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
+    },
+    "r.suppress-package-startup-messages": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 6,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 39
     }
   },
-  "total_runs": 30
+  "total_runs": 39
 }

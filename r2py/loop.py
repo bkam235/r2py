@@ -367,10 +367,17 @@ def run_loop(
                 all_transitions.append(tr)
 
         beam_min = min(c.score for c in beam)
+        # When the entire beam is in a crashed state, also accept tie proposals.
+        # Fixing a crash often requires a chain of edits where each step doesn't
+        # move the aggregate score — the strict > beam_min guard would discard
+        # these intermediate states and exhaust the edit budget against a single
+        # stuck parent. The tabu set and max_iters remain as backstops.
+        best_crashed = best.decomp.py_exit_code != 0
         survivors = [
             Candidate(p.candidate, p.new_score, p.new_decomp)
             for p in proposals
             if p.new_score > beam_min
+            or (best_crashed and p.new_score == beam_min)
         ]
         beam = _top_k(beam + survivors, beam_width)
 

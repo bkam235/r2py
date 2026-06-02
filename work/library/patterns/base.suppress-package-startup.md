@@ -5,7 +5,7 @@ confidence: contradicted
 seed: false
 created: 2026-05-30
 last_review: 2026-06-02
-tie_count: 3
+tie_count: 4
 ---
 
 # base.suppress-package-startup
