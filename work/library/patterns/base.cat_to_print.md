@@ -5,7 +5,7 @@ confidence: tentative
 seed: true
 created: 2026-05-28
 last_review: 2026-06-02
-tie_count: 7
+tie_count: 10
 ---
 
 # base.cat_to_print
@@ -20,4 +20,4 @@ coerce non-string values before printing when cat would produce unexpected repr 
 (none)
 
 ## Contradictions
-(none)
+- dd2e0ea0b08b/: score regressed to 0.233

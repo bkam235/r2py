@@ -5,7 +5,7 @@ confidence: contradicted
 seed: false
 created: 2026-05-30
 last_review: 2026-06-02
-tie_count: 1
+tie_count: 2
 ---
 
 # r.suppressPackageStartupMessages-noop

@@ -5,7 +5,7 @@ confidence: contradicted
 seed: false
 created: 2026-05-30
 last_review: 2026-06-02
-tie_count: 11
+tie_count: 13
 ---
 
 # r.suppress-startup-messages
@@ -15,6 +15,9 @@ Auto-created from edit ReplaceCall (no guidance yet).
 
 ## Evidence
 - dd2e0ea0b08b → score 0.167 (path: exact, variable: )
+- dd2e0ea0b08b → score 0.033 (path: exact, variable: )
+- dd2e0ea0b08b → score 0.033 (path: exact, variable: )
+- dd2e0ea0b08b → score 0.033 (path: exact, variable: )
 
 ## Contradictions
 - 021894dec169/: score regressed to 0.167
@@ -23,5 +26,6 @@ Auto-created from edit ReplaceCall (no guidance yet).
 - 021894dec169/: score regressed to 0.000
 - 021894dec169/: score regressed to 0.179
 - dd2e0ea0b08b/: score regressed to 0.922
+- dd2e0ea0b08b/: score regressed to 0.000
 - dd2e0ea0b08b/: score regressed to 0.000
 - dd2e0ea0b08b/: score regressed to 0.000

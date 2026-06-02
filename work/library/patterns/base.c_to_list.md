@@ -4,7 +4,8 @@ package: base
 confidence: tentative
 seed: true
 created: 2026-05-28
-last_review: 2026-05-28
+last_review: 2026-06-02
+tie_count: 0
 ---
 
 # base.c_to_list
@@ -16,7 +17,7 @@ When the result is used for arithmetic, prefer `np.array`. When used as an index
 passed to a function expecting a list, use `list`.
 
 ## Evidence
-(none)
+- dd2e0ea0b08b → score 0.667 (path: exact, variable: )
 
 ## Contradictions
 (none)

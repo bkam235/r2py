@@ -76,12 +76,18 @@ def build_entity_prompt(
     dep_block = _format_dependencies(entity, prior_translations)
     free_var_block = _format_free_variables(entity)
 
+    # For unattributed function calls, try to resolve the actual package and
+    # fetch the R source so the LLM can translate the real implementation
+    # rather than guessing based on the function name alone.
+    resolved_pkg, pkg_fn_source = _lookup_package_source(entity, script_map)
+    pkg_display = entity.package or resolved_pkg or "base R"
+
     parts: list[str] = []
 
     parts.append(f"## Entity to translate\n"
                  f"Kind: {_kind_str(entity)}\n"
                  f"Name: {entity.name}\n"
-                 f"Package: {entity.package or 'base R'}\n"
+                 f"Package: {pkg_display}\n"
                  f"R-semantic flags: {', '.join(entity.r_semantic_flags) or 'none'}\n"
                  f"Predicted effects: {_effects_str(entity)}")
 
@@ -105,6 +111,14 @@ def build_entity_prompt(
             f"## Previous translation failures\n"
             f"The prior attempt produced these errors. Fix them in your new translation:\n"
             f"{failure_lines}"
+        )
+
+    if pkg_fn_source:
+        parts.append(
+            f"## R source of `{entity.name}` (from package `{resolved_pkg}`)\n"
+            f"This is the actual implementation — translate it to Python rather than "
+            f"marking it untranslatable:\n"
+            f"```r\n{pkg_fn_source}\n```"
         )
 
     parts.append("Translate this entity to Python. Use the XML output format specified in the system prompt.")
@@ -236,6 +250,53 @@ def _strip_fences(text: str) -> str:
     if m:
         return m.group(1)
     return text
+
+
+def _lookup_package_source(
+    entity: "Entity",
+    script_map: "ScriptMap",
+) -> tuple[str | None, str | None]:
+    """Try to find the R source of *entity.name* from packages imported in the script.
+
+    Returns ``(package_name, r_source)`` if the function is found in an installed
+    package's R/ directory, otherwise ``(None, None)``.
+
+    Only runs for FUNCTION_CALL entities with no package already attributed —
+    i.e. bare calls like ``graycol(10)`` that lack a ``pkg::fn()`` qualifier.
+    Silently returns ``(None, None)`` on any lookup error.
+    """
+    from ..types import EntityKind
+
+    # Only attempt for unattributed function calls.
+    if getattr(entity, "kind", None) != EntityKind.FUNCTION_CALL:
+        return None, None
+    if entity.package:
+        return None, None
+
+    # Collect packages loaded via library()/require() in this script.
+    imported_pkgs: list[str] = [
+        e.package
+        for e in script_map.entities.values()
+        if getattr(e, "kind", None) == EntityKind.LIBRARY_IMPORT and e.package
+    ]
+    if not imported_pkgs:
+        return None, None
+
+    try:
+        from ..stage1.package_lookup import get_function_source
+    except ImportError:
+        return None, None
+
+    fn_name = entity.name
+    for pkg in imported_pkgs:
+        try:
+            source = get_function_source(pkg, fn_name)
+        except Exception:
+            source = None
+        if source:
+            return pkg, source
+
+    return None, None
 
 
 def _format_free_variables(entity: "Entity") -> str:
