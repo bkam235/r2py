@@ -29,6 +29,7 @@ def translate(
     cache_dir: Path | None = None,
     run_coherence: bool = True,
     r_path: str = "",
+    prior_failures: dict[str, list[str]] | None = None,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Translate a ScriptMap to a Python source string.
 
@@ -81,7 +82,8 @@ def translate(
             continue
 
         # General entity: build prompt and call LLM
-        messages = build_entity_prompt(entity, script_map, patterns, prior_translations)
+        entity_failures = (prior_failures or {}).get(eid)
+        messages = build_entity_prompt(entity, script_map, patterns, prior_translations, entity_failures)
         try:
             raw = _llm.call(messages, SYSTEM_PROMPT, model=model)
             snippet, imports, effects = parse_entity_response(raw)

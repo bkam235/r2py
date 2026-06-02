@@ -59,7 +59,8 @@ for r_script, py_script in scripts:
                        model="claude-haiku-4-5",
                        progress=_on_progress,
                        score_threshold=1,
-                       max_iters=10)
+                       max_iters=10,
+                       retranslation_patience=3)
 
     # Debug: always write the best translation to disk for inspection
     Path(py_script + ".debug.py").write_text(result.python_source, encoding="utf-8")

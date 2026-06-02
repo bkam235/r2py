@@ -27,6 +27,7 @@ def translate(
     no_seeds: bool = False,          # ignore seed:true patterns (§6.7 transfer experiment)
     output_dir: "str | Path | None" = None,  # if set, write edits.log.jsonl + library_diff.json
     progress=None,                   # callable(ProgressEvent) for progress reporting; None = silent
+    retranslation_patience: int = 3, # retranslate from scratch after this many stalled iterations (0 = disabled)
 ) -> "TranslateResult":
     """Translate an R script to Python via the beam/strict-improvement loop (§4.1)."""
     from pathlib import Path
@@ -59,6 +60,7 @@ def translate(
         checkpoint_path=Path(py_path),
         model=model,
         progress=progress,
+        retranslation_patience=retranslation_patience,
     )
     if result.final_exit_code != 0:
         import sys

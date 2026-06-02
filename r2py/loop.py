@@ -98,6 +98,7 @@ def run_loop(
     checkpoint_path: "Path | None" = None,
     model: str = _LLM_DEFAULT_MODEL,
     progress=None,
+    retranslation_patience: int = 3,
     **verify_kwargs,
 ) -> TranslateResult:
     """Run the beam/strict-improvement loop (§4.1).
@@ -175,6 +176,11 @@ def run_loop(
     beam: list[Candidate] = [Candidate(seed, seed_decomp.aggregate, seed_decomp)]
     visited: set[str] = {_state_hash(seed)}
     score_history = [seed_decomp]
+    # Plateau / retranslation tracking.
+    _stall_count = 0
+    _last_improvement_score = seed_decomp.aggregate
+    _retranslation_count = 0
+    _MAX_RETRANSLATIONS = 2
     evidence_added: list[str] = []
     contradictions_added: list[str] = []
     # Per-parent edit histories keyed by state hash so beam members A and B
@@ -195,6 +201,58 @@ def run_loop(
         best = max(beam, key=lambda c: c.score)
         if best.score >= score_threshold:
             break
+
+        # Plateau detection: only count non-crashing iterations toward stall.
+        best_crashed = best.decomp.py_exit_code != 0
+        if best.score > _last_improvement_score:
+            _last_improvement_score = best.score
+            _stall_count = 0
+        elif not best_crashed:
+            _stall_count += 1
+
+        # Retranslate from scratch when stuck on a plateau.
+        if (
+            retranslation_patience > 0
+            and _stall_count >= retranslation_patience
+            and _retranslation_count < _MAX_RETRANSLATIONS
+        ):
+            _stall_count = 0
+            _retranslation_count += 1
+            prior_failures: dict[str, list[str]] = {}
+            for fi in best.decomp.feedback:
+                prior_failures.setdefault(fi.entity_id, []).append(
+                    f"{fi.effect_class.value}: {fi.message}"
+                )
+            _emit(progress, kind="retranslation_start", iteration=i,
+                  score=best.score)
+            try:
+                retry_src, retry_elmap = stage2.translate(
+                    script_map, library,
+                    no_seeds=no_seeds, model=model,
+                    prior_failures=prior_failures,
+                )
+                retry_hash = _state_hash(retry_src)
+                if retry_hash not in visited:
+                    visited.add(retry_hash)
+                    try:
+                        _ast_mod.parse(retry_src)
+                        retry_decomp = stage4.verify(
+                            script_map, retry_src,
+                            data_compare=data_compare, use_judge=use_judge,
+                            entity_line_map=retry_elmap,
+                            **verify_kwargs,
+                        )
+                    except SyntaxError as _syn:
+                        retry_decomp = _make_syntax_error_report(
+                            entities, _syn, retry_elmap
+                        )
+                    score_history.append(retry_decomp)
+                    retry_candidate = Candidate(retry_src, retry_decomp.aggregate, retry_decomp)
+                    beam = _top_k(beam + [retry_candidate], beam_width)
+                    _emit(progress, kind="retranslation_done", iteration=i,
+                          score=retry_decomp.aggregate)
+            except Exception:
+                pass  # retranslation failed; continue with existing beam
 
         active_beam = [p for p in beam if _state_hash(p.translation) not in exhausted_parents]
         if not active_beam:
@@ -373,7 +431,6 @@ def run_loop(
         # move the aggregate score — the strict > beam_min guard would discard
         # these intermediate states and exhaust the edit budget against a single
         # stuck parent. The tabu set and max_iters remain as backstops.
-        best_crashed = best.decomp.py_exit_code != 0
         survivors = [
             Candidate(p.candidate, p.new_score, p.new_decomp)
             for p in proposals
@@ -405,6 +462,10 @@ def run_loop(
 
     best = max(beam, key=lambda c: c.score)
     _emit(progress, kind="done", score=best.score, iteration=i + 1)
+
+    if checkpoint_path is not None and best.decomp.py_exit_code == 0:
+        _delete_checkpoints(checkpoint_path, i)
+
     return TranslateResult(
         python_source=best.translation,
         final_score=best.score,
@@ -470,6 +531,13 @@ def _write_checkpoint(py_path: Path, iteration: int, source: str) -> None:
     """Write the best translation so far as {stem}.iter_{n}.py beside py_path."""
     out = py_path.with_name(f"{py_path.stem}.iter_{iteration}.py")
     out.write_text(source, encoding="utf-8")
+
+
+def _delete_checkpoints(py_path: Path, last_iter: int) -> None:
+    """Delete all {stem}.iter_{n}.py checkpoint files written during this run."""
+    for n in range(last_iter + 1):
+        p = py_path.with_name(f"{py_path.stem}.iter_{n}.py")
+        p.unlink(missing_ok=True)
 
 
 def _write_run_logs(

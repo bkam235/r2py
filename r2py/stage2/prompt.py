@@ -63,6 +63,7 @@ def build_entity_prompt(
     script_map: "ScriptMap",
     patterns: list["Pattern"],
     prior_translations: dict[str, str],
+    prior_failures: list[str] | None = None,
 ) -> list[dict]:
     """Build a messages list for translating one entity.
 
@@ -97,6 +98,14 @@ def build_entity_prompt(
 
     if dep_block:
         parts.append(f"## Previously translated dependencies\n{dep_block}")
+
+    if prior_failures:
+        failure_lines = "\n".join(f"- {f}" for f in prior_failures)
+        parts.append(
+            f"## Previous translation failures\n"
+            f"The prior attempt produced these errors. Fix them in your new translation:\n"
+            f"{failure_lines}"
+        )
 
     parts.append("Translate this entity to Python. Use the XML output format specified in the system prompt.")
 

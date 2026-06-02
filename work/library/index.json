@@ -1,8 +1,6 @@
 {
   "by_key": {
     ":": [
-      "base.suppress-package-startup-messages",
-      "base.suppress-package-startup",
       "base.suppress-startup-messages",
       "capture-locale-result",
       "capture-with-locale-result",
@@ -281,31 +279,13 @@
       "package": "base",
       "ast_shape_hash": ""
     },
-    "base.suppress-package-startup-messages": {
-      "confidence": "contradicted",
-      "evidence_count": 0,
-      "contradictions_count": 3,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 10
-    },
-    "base.suppress-package-startup": {
-      "confidence": "contradicted",
-      "evidence_count": 0,
-      "contradictions_count": 2,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 10
-    },
     "base.suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 1,
       "contradictions_count": 14,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754",
+      "ast_shape_hash": "",
       "contradicted_at_run": 30
     },
     "base.which_to_npwhere": {
@@ -645,13 +625,13 @@
       "ast_shape_hash": ""
     },
     "function-before-call": {
-      "confidence": "tentative",
-      "evidence_count": 19,
-      "contradictions_count": 17,
+      "confidence": "confirmed",
+      "evidence_count": 20,
+      "contradictions_count": 18,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754",
-      "contradicted_at_run": 36
+      "ast_shape_hash": "",
+      "contradicted_at_run": 40
     },
     "function-def-before-call": {
       "confidence": "tentative",
@@ -1000,11 +980,11 @@
     "r.suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 1,
-      "contradictions_count": 7,
+      "contradictions_count": 8,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 23
+      "contradicted_at_run": 42
     },
     "r.suppressPackageStartupMessages": {
       "confidence": "contradicted",
@@ -1594,5 +1574,5 @@
       "contradicted_at_run": 39
     }
   },
-  "total_runs": 39
+  "total_runs": 43
 }
