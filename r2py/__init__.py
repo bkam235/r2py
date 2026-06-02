@@ -56,6 +56,7 @@ def translate(
         learned_retrieval=learned_retrieval,
         learned_policy=learned_policy,
         output_dir=Path(output_dir) if output_dir is not None else None,
+        checkpoint_path=Path(py_path),
         model=model,
         progress=progress,
     )

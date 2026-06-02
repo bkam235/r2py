@@ -95,6 +95,7 @@ def run_loop(
     learned_retrieval: bool = False,
     learned_policy: bool = False,
     output_dir: "Path | None" = None,
+    checkpoint_path: "Path | None" = None,
     model: str = _LLM_DEFAULT_MODEL,
     progress=None,
     **verify_kwargs,
@@ -381,6 +382,9 @@ def run_loop(
         ]
         beam = _top_k(beam + survivors, beam_width)
 
+        if checkpoint_path is not None:
+            _write_checkpoint(checkpoint_path, i, max(beam, key=lambda c: c.score).translation)
+
     # Epistemology review only when the library was actually mutated — avoids
     # unnecessary I/O on no-op runs and aligns with the "every N" intent (§7.7).
     if evidence_added or contradictions_added:
@@ -460,6 +464,12 @@ def _write_effect_bundle(out_dir: Path, suffix: str, bundle: "EffectBundle") -> 
     out_dir.mkdir(parents=True, exist_ok=True)
     path = out_dir / f"effect_bundle.{suffix}.json"
     path.write_text(json.dumps(_bundle_mod.to_json(bundle), indent=2), encoding="utf-8")
+
+
+def _write_checkpoint(py_path: Path, iteration: int, source: str) -> None:
+    """Write the best translation so far as {stem}.iter_{n}.py beside py_path."""
+    out = py_path.with_name(f"{py_path.stem}.iter_{iteration}.py")
+    out.write_text(source, encoding="utf-8")
 
 
 def _write_run_logs(
