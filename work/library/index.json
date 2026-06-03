@@ -288,11 +288,11 @@
     "base.suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 1,
-      "contradictions_count": 22,
+      "contradictions_count": 24,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 47
+      "contradicted_at_run": 54
     },
     "base.which_to_npwhere": {
       "confidence": "tentative",
@@ -633,11 +633,11 @@
     "function-before-call": {
       "confidence": "confirmed",
       "evidence_count": 22,
-      "contradictions_count": 21,
+      "contradictions_count": 22,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 49
+      "contradicted_at_run": 54
     },
     "function-def-before-call": {
       "confidence": "tentative",
@@ -1107,7 +1107,7 @@
     "suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 2,
-      "contradictions_count": 26,
+      "contradictions_count": 27,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
@@ -1591,11 +1591,11 @@
     "suppress-package-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 0,
-      "contradictions_count": 3,
+      "contradictions_count": 4,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 47
+      "contradicted_at_run": 54
     }
   },
   "total_runs": 54
