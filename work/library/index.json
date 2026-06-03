@@ -155,9 +155,7 @@
       "withr.with_locale-utf8",
       "with_locale-add-print",
       "with_locale-context_manager",
-      "r.suppress-package-startup-messages",
       "base.suppress-package-startup-messages",
-      "base.suppress-package-startup",
       "suppress-package-startup-messages"
     ],
     "base:": [
@@ -192,17 +190,20 @@
     ],
     "base:ffb01754": [
       "base.c_to_list"
+    ],
+    ":47c14840": [
+      "function-before-call"
     ]
   },
   "meta": {
     "base.cat_to_print": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 1,
+      "contradictions_count": 5,
       "seed": true,
       "package": "base",
       "ast_shape_hash": "",
-      "contradicted_at_run": 46
+      "contradicted_at_run": 69
     },
     "base.c_to_list": {
       "confidence": "tentative",
@@ -210,16 +211,17 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "base",
-      "ast_shape_hash": "ffb01754",
+      "ast_shape_hash": "",
       "contradicted_at_run": 0
     },
     "base.dataframe_to_pandas": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 0,
+      "contradictions_count": 2,
       "seed": true,
       "package": "base",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 75
     },
     "base.lapply_to_listcomp": {
       "confidence": "tentative",
@@ -287,12 +289,12 @@
     },
     "base.suppress-startup-messages": {
       "confidence": "contradicted",
-      "evidence_count": 1,
-      "contradictions_count": 24,
+      "evidence_count": 2,
+      "contradictions_count": 27,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 54
+      "contradicted_at_run": 74
     },
     "base.which_to_npwhere": {
       "confidence": "tentative",
@@ -632,12 +634,12 @@
     },
     "function-before-call": {
       "confidence": "confirmed",
-      "evidence_count": 24,
-      "contradictions_count": 22,
+      "evidence_count": 28,
+      "contradictions_count": 34,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754",
-      "contradicted_at_run": 54
+      "ast_shape_hash": "47c14840",
+      "contradicted_at_run": 70
     },
     "function-def-before-call": {
       "confidence": "tentative",
@@ -985,11 +987,11 @@
     },
     "r.suppress-startup-messages": {
       "confidence": "contradicted",
-      "evidence_count": 5,
+      "evidence_count": 6,
       "contradictions_count": 10,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
+      "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 55
     },
     "range-to-list-conversion": {
@@ -1106,12 +1108,12 @@
     },
     "suppress-startup-messages": {
       "confidence": "contradicted",
-      "evidence_count": 2,
-      "contradictions_count": 31,
+      "evidence_count": 4,
+      "contradictions_count": 36,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 62
+      "contradicted_at_run": 75
     },
     "suppress-startup-utf8-fix": {
       "confidence": "tentative",
@@ -1561,42 +1563,24 @@
       "package": "",
       "ast_shape_hash": ""
     },
-    "r.suppress-package-startup-messages": {
-      "confidence": "contradicted",
-      "evidence_count": 0,
-      "contradictions_count": 6,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 39
-    },
     "base.suppress-package-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 0,
-      "contradictions_count": 4,
+      "contradictions_count": 5,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 44
-    },
-    "base.suppress-package-startup": {
-      "confidence": "contradicted",
-      "evidence_count": 0,
-      "contradictions_count": 3,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 44
+      "contradicted_at_run": 68
     },
     "suppress-package-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 0,
-      "contradictions_count": 4,
+      "contradictions_count": 5,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 54
+      "contradicted_at_run": 67
     }
   },
-  "total_runs": 63
+  "total_runs": 75
 }

@@ -4,7 +4,8 @@ package: base
 confidence: tentative
 seed: true
 created: 2026-05-28
-last_review: 2026-05-28
+last_review: 2026-06-03
+tie_count: 7
 ---
 
 # base.dataframe_to_pandas
@@ -19,4 +20,5 @@ match the longest column length.
 (none)
 
 ## Contradictions
-(none)
+- 021894dec169/: score regressed to 0.848
+- 021894dec169/: score regressed to 0.238

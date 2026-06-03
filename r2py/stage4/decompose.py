@@ -2,9 +2,11 @@
 from __future__ import annotations
 
 import re as _re
+from typing import TYPE_CHECKING
 
 from ..types import (
     ComparatorResult,
+    EffectBundle,
     EffectClass,
     EntityId,
     EntityKind,
@@ -85,6 +87,52 @@ def _attribute_crash(
     return crashing_eid, pre_crash_eids
 
 
+def _compare_entity_bundles(
+    r_eb: EffectBundle,
+    py_eb: EffectBundle,
+    data_compare: str = "auto",
+    rtol: float = 1e-6,
+    atol: float = 1e-9,
+) -> dict[EffectClass, ComparatorResult]:
+    """Run comparators on a pair of per-entity EffectBundle deltas.
+
+    Only compares DATA, GRAPHICS, and STDOUT — the effect classes populated by
+    the checkpoint mechanism.  Other classes are omitted so callers can detect
+    absence via ``ec in results``.
+    """
+    from .comparators import COMPARATORS
+    from .comparators.data import DataComparator as _DataComparator
+
+    results: dict[EffectClass, ComparatorResult] = {}
+
+    # DATA
+    data_cmp = _DataComparator(data_compare=data_compare, rtol=rtol, atol=atol)
+    results[EffectClass.DATA] = data_cmp.compare(
+        r_eb.data, py_eb.data, uncapturable=py_eb.uncapturable
+    )
+
+    # STDOUT
+    results[EffectClass.STDOUT] = COMPARATORS[EffectClass.STDOUT].compare(
+        r_eb.stdout, py_eb.stdout
+    )
+
+    # GRAPHICS — use count comparison when full images are absent.
+    r_graphics = r_eb.graphics or []
+    py_graphics = py_eb.graphics or []
+    # Checkpoint bundles store graphics_delta as an int count, not image bytes.
+    # Convert: treat each count unit as a placeholder bytes object so the
+    # GraphicsComparator's length check works correctly.
+    if isinstance(r_graphics, int):
+        r_graphics = [b""] * r_graphics
+    if isinstance(py_graphics, int):
+        py_graphics = [b""] * py_graphics
+    results[EffectClass.GRAPHICS] = COMPARATORS[EffectClass.GRAPHICS].compare(
+        r_graphics, py_graphics
+    )
+
+    return results
+
+
 def make_score_table(
     entities: dict,
     comparator_results: dict[EffectClass, ComparatorResult],
@@ -92,6 +140,11 @@ def make_score_table(
     entity_line_map: dict[str, tuple[int, int]] | None = None,
     py_stderr: str = "",
     preamble_lines: int = 0,
+    r_entity_bundles: dict[str, EffectBundle] | None = None,
+    py_entity_bundles: dict[str, EffectBundle] | None = None,
+    data_compare: str = "auto",
+    rtol: float = 1e-6,
+    atol: float = 1e-9,
 ) -> dict[EntityId, EntityScore]:
     """Map entities to EntityScores using comparator_results.
 
@@ -137,15 +190,63 @@ def make_score_table(
     for entity_id, entity in entities.items():
         entity_executed_ok = executed_ok or (entity_id in pre_crash_eids)
 
-        entity_name = getattr(entity, "name", None)
-        if entity_name and entity_name in per_variable:
-            data_score = per_variable[entity_name]
+        # ── Per-entity bundle comparison (Option 2 scoring) ──────────────────
+        r_eb = (r_entity_bundles or {}).get(entity_id)
+        py_eb = (py_entity_bundles or {}).get(entity_id)
+
+        if r_eb is not None and py_eb is not None and entity_executed_ok:
+            eb_results = _compare_entity_bundles(
+                r_eb, py_eb, data_compare=data_compare, rtol=rtol, atol=atol
+            )
+
+            # Build data_score from only the effects R actually produced.
+            # An empty-vs-empty DATA comparison (= 1.0) must not mask a
+            # graphics or stdout failure — only include an effect class in the
+            # proxy when R genuinely emitted something for it.
+            proxy_scores: list[float] = []
+            if r_eb.data:
+                proxy_scores.append(eb_results[EffectClass.DATA].score)
+            r_graphics_count = (
+                r_eb.graphics if isinstance(r_eb.graphics, int)
+                else len(r_eb.graphics or [])
+            )
+            if r_graphics_count > 0:
+                proxy_scores.append(
+                    eb_results.get(EffectClass.GRAPHICS,
+                                   ComparatorResult(effect_class=EffectClass.GRAPHICS,
+                                                    score=0.0, verdict="fail")).score
+                )
+            if r_eb.stdout:
+                proxy_scores.append(eb_results[EffectClass.STDOUT].score)
+
+            data_score = (sum(proxy_scores) / len(proxy_scores)) if proxy_scores else 1.0
+
+            # side_effects from per-entity GRAPHICS + STDOUT comparison
+            entity_side_scores = [
+                eb_results[ec].score
+                for ec in _SIDE_EFFECT_CLASSES | {EffectClass.STDOUT}
+                if ec in eb_results
+            ]
+            entity_side_effects = (
+                sum(entity_side_scores) / len(entity_side_scores)
+                if entity_side_scores else side_effects_score
+            )
+            entity_stdout_score = eb_results.get(EffectClass.STDOUT, ComparatorResult(
+                effect_class=EffectClass.STDOUT, score=stdout_score, verdict="pass"
+            )).score
         else:
-            data_score = global_data_score
+            # ── Fallback: global scores (current behaviour) ──────────────────
+            entity_name = getattr(entity, "name", None)
+            if entity_name and entity_name in per_variable:
+                data_score = per_variable[entity_name]
+            else:
+                data_score = global_data_score
+            entity_side_effects = side_effects_score
+            entity_stdout_score = stdout_score
 
         kind = getattr(entity, "kind", None)
         type_match, control_flow_match, callable_output = _kind_scores(
-            kind, data_score, stdout_score, entity_executed_ok, global_data_score,
+            kind, data_score, entity_stdout_score, entity_executed_ok, global_data_score,
         )
 
         table[entity_id] = EntityScore(
@@ -156,6 +257,6 @@ def make_score_table(
             data_output=data_score,
             variable_output=data_score,
             callable_output=callable_output,
-            side_effects=side_effects_score,
+            side_effects=entity_side_effects,
         )
     return table

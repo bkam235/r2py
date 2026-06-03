@@ -1,11 +1,11 @@
 ---
 id: base.cat_to_print
 package: base
-confidence: tentative
+confidence: contradicted
 seed: true
 created: 2026-05-28
 last_review: 2026-06-03
-tie_count: 11
+tie_count: 15
 ---
 
 # base.cat_to_print
@@ -21,3 +21,7 @@ coerce non-string values before printing when cat would produce unexpected repr 
 
 ## Contradictions
 - dd2e0ea0b08b/: score regressed to 0.233
+- dd2e0ea0b08b/: score regressed to 0.297
+- dd2e0ea0b08b/: score regressed to 0.167
+- dd2e0ea0b08b/: score regressed to 0.781
+- dd2e0ea0b08b/: score regressed to 0.000

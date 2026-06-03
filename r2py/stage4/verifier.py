@@ -182,6 +182,121 @@ def get_r_bundle(script_map) -> EffectBundle:
     return _get_r_bundle(script_map)
 
 
+# ---------------------------------------------------------------------------
+# Per-entity Python checkpoint injection (Option 2 scoring)
+# ---------------------------------------------------------------------------
+
+# Preamble injected before the candidate Python script so _r2py_checkpoint is available.
+_PY_CHECKPOINT_PREAMBLE = """\
+import json as _r2py_json
+import io as _r2py_io
+import sys as _r2py_sys
+
+_r2py_prev_ns: set = set()
+_r2py_stdout_buf = _r2py_io.StringIO()
+_r2py_real_stdout = _r2py_sys.stdout
+_r2py_sys.stdout = type('_Tee', (), {
+    'write': lambda s, x: (_r2py_stdout_buf.write(x), _r2py_real_stdout.write(x)),
+    'flush': lambda s: (_r2py_stdout_buf.flush(), _r2py_real_stdout.flush()),
+    'fileno': lambda s: _r2py_real_stdout.fileno(),
+})()
+_r2py_prev_stdout_pos = 0
+_r2py_prev_fig_count = 0
+
+def _r2py_checkpoint(eid):
+    global _r2py_prev_ns, _r2py_prev_stdout_pos, _r2py_prev_fig_count
+    try:
+        import matplotlib.pyplot as _plt
+        cur_fig_count = len(_plt.get_fignums())
+    except Exception:
+        cur_fig_count = 0
+    graphics_delta = max(0, cur_fig_count - _r2py_prev_fig_count)
+
+    cur_stdout = _r2py_stdout_buf.getvalue()
+    stdout_delta = cur_stdout[_r2py_prev_stdout_pos:]
+
+    g = globals()
+    new_vars = {}
+    for k, v in g.items():
+        if k.startswith('_r2py') or k in _r2py_prev_ns:
+            continue
+        try:
+            _r2py_json.dumps(v)
+            new_vars[k] = v
+        except Exception:
+            pass
+
+    safe_eid = eid.replace('/', '_').replace(':', '_')
+    try:
+        with open(f'_r2py_cp_{safe_eid}.json', 'w', encoding='utf-8') as _f:
+            _r2py_json.dump({'data': new_vars, 'stdout': stdout_delta,
+                             'graphics': graphics_delta}, _f)
+    except Exception:
+        pass
+
+    _r2py_prev_ns = set(k for k in g if not k.startswith('_r2py'))
+    _r2py_prev_stdout_pos = len(cur_stdout)
+    _r2py_prev_fig_count = cur_fig_count
+"""
+
+
+def _inject_py_checkpoints(
+    py_source: str,
+    entity_line_map: dict[str, tuple[int, int]],
+) -> tuple[str, list[str]]:
+    """Insert ``_r2py_checkpoint(eid)`` after each entity's last line.
+
+    Inserts bottom-up so earlier line numbers are not disturbed.
+    Returns ``(modified_source, ordered_eids)`` where ``ordered_eids`` lists
+    the entity ids in ascending end-line order (for checkpoint file collection).
+    """
+    if not entity_line_map:
+        return py_source, []
+
+    lines = py_source.splitlines(keepends=True)
+    # Sort by end_line ascending; process in reverse for bottom-up insertion.
+    sorted_pairs = sorted(entity_line_map.items(), key=lambda kv: kv[1][1])
+    ordered_eids = [eid for eid, _ in sorted_pairs]
+
+    for eid, (_start, end_line) in reversed(sorted_pairs):
+        # entity_line_map uses 1-based line numbers; convert to 0-based index.
+        insert_idx = min(end_line, len(lines))  # insert after end_line (1-based → index)
+        safe_eid = eid.replace("'", "\\'")
+        checkpoint_line = f"_r2py_checkpoint('{safe_eid}')\n"
+        lines.insert(insert_idx, checkpoint_line)
+
+    return "".join(lines), ordered_eids
+
+
+def _collect_py_checkpoints(
+    workdir: "Path",
+    eids: list[str],
+) -> dict[str, EffectBundle]:
+    """Read ``_r2py_cp_{eid}.json`` files from *workdir* and build EffectBundle deltas."""
+    import json as _json
+
+    result: dict[str, EffectBundle] = {}
+    for eid in eids:
+        safe_eid = eid.replace("/", "_").replace(":", "_")
+        cp_path = workdir / f"_r2py_cp_{safe_eid}.json"
+        if not cp_path.exists():
+            continue
+        try:
+            cp = _json.loads(cp_path.read_text(encoding="utf-8"))
+            raw_data = cp.get("data", {})
+            # JSON null/array can appear when no new variables were captured; normalise.
+            if not isinstance(raw_data, dict):
+                raw_data = {}
+            result[eid] = EffectBundle(
+                data=raw_data,
+                stdout=cp.get("stdout", "") or "",
+                graphics=cp.get("graphics", 0),  # type: ignore[arg-type]
+            )
+        except Exception:
+            continue
+    return result
+
+
 def verify(
     script_map,
     candidate: str,
@@ -210,12 +325,27 @@ def verify(
     # Determine which effects were actually captured in R so we capture the same in Python
     capture = _ALL_CAPTURE
 
+    # Inject per-entity checkpoint calls into the Python source (Option 2 scoring).
+    py_source_checkpointed, cp_eids = _inject_py_checkpoints(candidate, entity_line_map or {})
+
     sandbox = PySandbox()
     if workdir is not None:
-        py_bundle = sandbox.run(candidate, workdir=workdir, capture=capture, timeout_s=timeout_s)
+        py_bundle = sandbox.run(
+            py_source_checkpointed, workdir=workdir, capture=capture,
+            preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=timeout_s,
+        )
+        py_entity_bundles = _collect_py_checkpoints(workdir, cp_eids)
     else:
         with tempfile.TemporaryDirectory() as _tmpdir:
-            py_bundle = sandbox.run(candidate, workdir=Path(_tmpdir), capture=capture, timeout_s=timeout_s)
+            _wd = Path(_tmpdir)
+            py_bundle = sandbox.run(
+                py_source_checkpointed, workdir=_wd, capture=capture,
+                preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=timeout_s,
+            )
+            py_entity_bundles = _collect_py_checkpoints(_wd, cp_eids)
+
+    # R per-entity bundles from Stage 1's checkpointed run.
+    r_entity_bundles: dict[str, EffectBundle] = getattr(script_map, "entity_bundles", {})
 
     # --- Compare bundles ---
     comparator_results = _compare_bundles(r_bundle, py_bundle, data_compare, rtol, atol)
@@ -227,6 +357,11 @@ def verify(
         entity_line_map=entity_line_map,
         py_stderr=py_bundle.stderr,
         preamble_lines=py_bundle.preamble_lines,
+        r_entity_bundles=r_entity_bundles or None,
+        py_entity_bundles=py_entity_bundles or None,
+        data_compare=data_compare,
+        rtol=rtol,
+        atol=atol,
     )
 
     # --- Differential fuzzing (optional) ---

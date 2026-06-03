@@ -40,6 +40,138 @@ def run_script(
         )
 
 
+def run_script_checkpointed(
+    r_source: str,
+    entities: dict,
+    capture: CaptureSpec = DEFAULT_CAPTURE,
+    timeout_s: float = 60,
+) -> "tuple[EffectBundle, dict[str, EffectBundle]]":
+    """Run R source with per-entity checkpoint captures.
+
+    Injects a `.r2py_cp(eid)` call after each entity's last source line.
+    The checkpoint function serializes new namespace variables (and graphics count
+    delta) to ``_r2py_cp_{eid}.json`` files in the workdir during a single R run.
+
+    Returns ``(full_bundle, entity_bundles)`` where ``entity_bundles`` maps
+    entity_id → per-entity EffectBundle delta.  Falls back silently: if
+    jsonlite is unavailable or the R run fails, ``entity_bundles`` is empty
+    and ``full_bundle`` is the normal whole-script bundle.
+    """
+    import json as _json
+
+    from ..stage0.sandbox.r_sandbox import RSandbox
+    from ..stage0.sandbox.isolation import TempWorkdir
+    from ..stage0.effects import bundle as _bundle_mod
+
+    # Build sorted list of (end_line_0based, entity_id) pairs.
+    entity_boundaries: list[tuple[int, str]] = []
+    for eid, entity in entities.items():
+        sp = getattr(entity, "source_span", None)
+        if sp is not None:
+            entity_boundaries.append((sp.end_line, eid))
+    # Sort ascending so we can inject bottom-up (preserves earlier line numbers).
+    entity_boundaries.sort(key=lambda x: x[0])
+
+    # Build checkpoint preamble (R).
+    r_cp_preamble = _R_CHECKPOINT_PREAMBLE
+
+    # Inject `.r2py_cp("eid")` after each entity's last line (bottom-up to keep
+    # line numbers stable for earlier insertions).
+    lines = r_source.splitlines(keepends=True)
+    # Bottom-up: process in reverse end_line order.
+    for end_line_0, eid in reversed(entity_boundaries):
+        insert_after = min(end_line_0, len(lines) - 1)
+        safe_eid = eid.replace('"', '\\"').replace("\\", "\\\\")
+        checkpoint_line = f'\n.r2py_cp("{safe_eid}")\n'
+        lines.insert(insert_after + 1, checkpoint_line)
+
+    checkpointed_source = "".join(lines)
+
+    with TempWorkdir() as workdir:
+        sandbox = RSandbox()
+        try:
+            full_bundle = sandbox.run(
+                checkpointed_source,
+                workdir=workdir,
+                capture=capture,
+                preamble=r_cp_preamble,
+                timeout_s=timeout_s,
+            )
+        except Exception:
+            # If the checkpointed run fails, fall back to plain run.
+            full_bundle = sandbox.run(
+                r_source,
+                workdir=workdir,
+                capture=capture,
+                timeout_s=timeout_s,
+            )
+            return full_bundle, {}
+
+        # Parse per-entity checkpoint files.
+        entity_bundles: dict[str, EffectBundle] = {}
+        for _, eid in entity_boundaries:
+            safe_eid = eid.replace("/", "_").replace(":", "_")
+            cp_path = workdir / f"_r2py_cp_{safe_eid}.json"
+            if not cp_path.exists():
+                continue
+            try:
+                cp_data = _json.loads(cp_path.read_text(encoding="utf-8"))
+                raw_data = cp_data.get("data", {})
+                # jsonlite serialises an empty R list() as [] not {}; normalise.
+                if not isinstance(raw_data, dict):
+                    raw_data = {}
+                eb = EffectBundle(
+                    data=raw_data,
+                    stdout=cp_data.get("stdout", ""),
+                    graphics=cp_data.get("graphics", 0),
+                )
+                entity_bundles[eid] = eb
+            except Exception:
+                continue
+
+        return full_bundle, entity_bundles
+
+
+# R preamble that defines the checkpoint function used by run_script_checkpointed.
+_R_CHECKPOINT_PREAMBLE = r"""
+.r2py_prev_vars <- character(0)
+.r2py_prev_fig_count <- 0L
+
+.r2py_cp <- function(eid) {
+  tryCatch({
+    cur_vars <- setdiff(
+      ls(envir = .GlobalEnv),
+      c(".r2py_prev_vars", ".r2py_prev_fig_count", ".r2py_cp")
+    )
+    new_vars <- setdiff(cur_vars, .r2py_prev_vars)
+    state <- list()
+    for (v in new_vars) {
+      obj <- get(v, envir = .GlobalEnv)
+      if (!is.function(obj) && !is.environment(obj)) {
+        state[[v]] <- obj
+      }
+    }
+    cur_fig_count <- length(grDevices::dev.list())
+    graphics_delta <- max(0L, cur_fig_count - .r2py_prev_fig_count)
+    cp <- list(
+      data = state,
+      graphics = graphics_delta
+    )
+    safe_eid <- gsub("[/:]", "_", eid)
+    if (requireNamespace("jsonlite", quietly = TRUE)) {
+      jsonlite::write_json(
+        cp,
+        paste0("_r2py_cp_", safe_eid, ".json"),
+        auto_unbox = TRUE, null = "null", na = "null"
+      )
+    }
+    .r2py_prev_vars <<- cur_vars
+    .r2py_prev_fig_count <<- cur_fig_count
+  }, error = function(e) invisible(NULL))
+}
+"""
+
+
 def run_slice(
     r_source: str,
     capture: CaptureSpec = DEFAULT_CAPTURE,

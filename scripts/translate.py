@@ -39,9 +39,9 @@ def _on_progress(event) -> None:
 # Iterate through input files for translation
 input_filenames = next(walk(input_dir), (None, None, []))[2]
 # input_filenames = random.sample(input_filenames, 1) #don't use random script
-input_filenames = ["shape__rd_example__greycol_Rd.R"] #translate this specific script
+input_filenames = ["withr__rd_example__with_locale_Rd.R"] #translate this specific script
 # withr__rd_example__with_locale_Rd.R 0.996
-# shape__rd_example__greycol_Rd.R
+# shape__rd_example__greycol_Rd.R 0.970
 
 
 scripts = []
@@ -60,11 +60,12 @@ for r_script, py_script in scripts:
     result = translate(r_script,
                        py_script,
                        library=lib,
+                       resume=True,
                        model="claude-haiku-4-5",
                        # model="ollama:gemma4:31b-cloud",
                        progress=_on_progress,
                        score_threshold=1,
-                       max_iters=6,
+                       max_iters=10,
                        retranslation_patience=3)
 
     # Debug: always write the best translation to disk for inspection

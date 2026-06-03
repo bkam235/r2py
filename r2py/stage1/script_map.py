@@ -34,6 +34,10 @@ class ScriptMap(_BaseScriptMap):
     branches:         dict[BranchId, BranchAnalysis]     = field(default_factory=dict)
     external_sources: dict[EntityId, SourceLocation]     = field(default_factory=dict)
     coverage:         CoverageReport | None              = None
+    # Per-entity EffectBundle deltas from the checkpointed R run (§ Option-2 scoring).
+    # Maps entity_id → EffectBundle containing only what that entity added to the
+    # namespace/stdout/graphics.  Empty dict when checkpointing is unavailable.
+    entity_bundles:   dict[EntityId, EffectBundle]       = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -52,6 +56,9 @@ def to_json(sm: ScriptMap) -> dict:
             eid: _loc_to_dict(loc) for eid, loc in sm.external_sources.items()
         },
         "coverage": _coverage_to_dict(sm.coverage) if sm.coverage else None,
+        "entity_bundles": {
+            eid: _bundle_to_json(eb) for eid, eb in sm.entity_bundles.items()
+        },
     }
 
 
@@ -74,6 +81,10 @@ def from_json(d: dict) -> ScriptMap:
             eid: _loc_from_dict(loc) for eid, loc in d.get("external_sources", {}).items()
         },
         coverage=_coverage_from_dict(d["coverage"]) if d.get("coverage") else None,
+        entity_bundles={
+            eid: _bundle_from_json(eb)
+            for eid, eb in d.get("entity_bundles", {}).items()
+        },
     )
 
 

@@ -5,7 +5,7 @@ confidence: tentative
 seed: false
 created: 2026-05-31
 last_review: 2026-06-03
-tie_count: 99
+tie_count: 112
 ---
 
 # function-before-call
@@ -38,6 +38,10 @@ Auto-created from edit RestructureControlFlow (no guidance yet).
 - dd2e0ea0b08b → score 0.700 (path: exact, variable: )
 - dd2e0ea0b08b → score 0.036 (path: exact, variable: )
 - dd2e0ea0b08b → score 0.033 (path: exact, variable: )
+- dd2e0ea0b08b → score 0.292 (path: exact, variable: )
+- dd2e0ea0b08b → score 0.630 (path: exact, variable: )
+- dd2e0ea0b08b → score 0.155 (path: exact, variable: )
+- 021894dec169 → score 0.005 (path: exact, variable: )
 
 ## Contradictions
 - 021894dec169/: score regressed to 0.000
@@ -62,3 +66,15 @@ Auto-created from edit RestructureControlFlow (no guidance yet).
 - dd2e0ea0b08b/: score regressed to 0.167
 - dd2e0ea0b08b/: score regressed to 0.167
 - dd2e0ea0b08b/: score regressed to 0.167
+- dd2e0ea0b08b/: score regressed to 0.167
+- dd2e0ea0b08b/: score regressed to 0.167
+- dd2e0ea0b08b/: score regressed to 0.589
+- dd2e0ea0b08b/: score regressed to 0.297
+- dd2e0ea0b08b/: score regressed to 0.770
+- dd2e0ea0b08b/: score regressed to 0.000
+- dd2e0ea0b08b/: score regressed to 0.953
+- dd2e0ea0b08b/: score regressed to 0.953
+- dd2e0ea0b08b/: score regressed to 0.453
+- dd2e0ea0b08b/: score regressed to 0.453
+- dd2e0ea0b08b/: score regressed to 0.551
+- dd2e0ea0b08b/: score regressed to 0.000

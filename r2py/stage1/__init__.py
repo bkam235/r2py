@@ -11,7 +11,7 @@ from .coverage import CoverageTracker
 from .effects import SideEffect
 from .entities import AstNode, Entity
 from .package_lookup import resolve_symbol
-from .runner import DEFAULT_CAPTURE, run_script, run_slice
+from .runner import DEFAULT_CAPTURE, run_script, run_script_checkpointed, run_slice
 from .script_map import BranchAnalysis, ScriptMap
 from .walker import walk
 
@@ -47,8 +47,10 @@ def analyze(
     tracker = CoverageTracker()
     entities, predicted_effects = walk(ast_root, source_file, tracker)
 
-    # ── Step 3: dynamic run ──────────────────────────────────────────────────
-    main_bundle = run_script(r_path, capture=capture, timeout_s=timeout_s)
+    # ── Step 3: dynamic run with per-entity checkpoints ─────────────────────
+    main_bundle, entity_bundles = run_script_checkpointed(
+        source, entities, capture=capture, timeout_s=timeout_s
+    )
     for eid in entities:
         tracker.mark(eid, "dynamic")
         entities[eid].actual_bundle = main_bundle
@@ -94,6 +96,7 @@ def analyze(
         branches=branches,
         external_sources=external_sources,
         coverage=tracker.report(),
+        entity_bundles=entity_bundles,
     )
 
 

@@ -28,8 +28,10 @@ def translate(
     output_dir: "str | Path | None" = None,  # if set, write edits.log.jsonl + library_diff.json
     progress=None,                   # callable(ProgressEvent) for progress reporting; None = silent
     retranslation_patience: int = 3, # retranslate from scratch after this many stalled iterations (0 = disabled)
+    resume: bool = False,            # if True and py_path exists, continue improving it; if False and py_path exists, warn
 ) -> "TranslateResult":
     """Translate an R script to Python via the beam/strict-improvement loop (§4.1)."""
+    import sys
     from pathlib import Path
     from .stage1 import analyze as _analyze
     from .library import get_library
@@ -40,6 +42,17 @@ def translate(
 
     if library is None:
         library = get_library()
+
+    _py_path = Path(py_path)
+    seed_translation: "str | None" = None
+    if resume and _py_path.exists():
+        seed_translation = _py_path.read_text(encoding="utf-8")
+    elif not resume and _py_path.exists():
+        print(
+            f"r2py: warning: {py_path} already exists and will be overwritten "
+            f"(pass resume=True to continue improving it instead).",
+            file=sys.stderr,
+        )
 
     script_map = _analyze(Path(r_path))
     _emit(progress, kind="analysis_done",
@@ -61,6 +74,7 @@ def translate(
         model=model,
         progress=progress,
         retranslation_patience=retranslation_patience,
+        seed_translation=seed_translation,
     )
     if result.final_exit_code != 0:
         import sys

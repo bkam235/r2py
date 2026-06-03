@@ -5,7 +5,7 @@ confidence: contradicted
 seed: false
 created: 2026-05-30
 last_review: 2026-06-03
-tie_count: 48
+tie_count: 53
 ---
 
 # suppress-startup-messages
@@ -16,6 +16,8 @@ Auto-created from edit InsertPreamble (no guidance yet).
 ## Evidence
 - dd2e0ea0b08b → score 0.033 (path: exact, variable: )
 - dd2e0ea0b08b → score 0.033 (path: exact, variable: )
+- dd2e0ea0b08b → score 0.043 (path: exact, variable: )
+- dd2e0ea0b08b → score 0.007 (path: exact, variable: )
 
 ## Contradictions
 - 021894dec169/: score regressed to 0.167
@@ -49,3 +51,8 @@ Auto-created from edit InsertPreamble (no guidance yet).
 - dd2e0ea0b08b/: score regressed to 0.000
 - dd2e0ea0b08b/: score regressed to 0.000
 - dd2e0ea0b08b/: score regressed to 0.000
+- dd2e0ea0b08b/: score regressed to 0.340
+- dd2e0ea0b08b/: score regressed to 0.157
+- dd2e0ea0b08b/: score regressed to 0.687
+- 021894dec169/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.000

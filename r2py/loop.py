@@ -99,6 +99,7 @@ def run_loop(
     model: str = _LLM_DEFAULT_MODEL,
     progress=None,
     retranslation_patience: int = 3,
+    seed_translation: "str | None" = None,
     **verify_kwargs,
 ) -> TranslateResult:
     """Run the beam/strict-improvement loop (§4.1).
@@ -135,7 +136,19 @@ def run_loop(
         library.index.increment_runs()
 
     # --- seed translation -------------------------------------------------- #
-    seed, entity_line_map = stage2.translate(script_map, library, no_seeds=no_seeds, model=model)
+    from .stage2.stitch import rebuild_entity_line_map as _rebuild
+    if seed_translation is not None:
+        seed = seed_translation
+        entity_line_map = _rebuild(seed)
+        if not entity_line_map:
+            import warnings
+            warnings.warn(
+                "resume: no r2py entity sentinels found in existing file — "
+                "entity-level targeting will be disabled for this run.",
+                stacklevel=2,
+            )
+    else:
+        seed, entity_line_map = stage2.translate(script_map, library, no_seeds=no_seeds, model=model)
     _need_bundles = output_dir is not None
     entities = getattr(script_map, "entities", {})
 
