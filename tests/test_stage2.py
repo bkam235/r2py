@@ -167,6 +167,21 @@ class TestBuildEntityPrompt(unittest.TestCase):
         self.assertIn("<imports>", self.system)
         self.assertIn("<effects>", self.system)
 
+    def test_already_defined_names_in_prompt(self):
+        entity = _make_entity("x1", name="v")
+        sm = _make_script_map({"x1": entity})
+        msgs = self.build(entity, sm, [], {}, already_defined={"_helper", "_MAP"})
+        content = msgs[0]["content"]
+        self.assertIn("_helper", content)
+        self.assertIn("_MAP", content)
+        self.assertIn("Already defined", content)
+
+    def test_no_already_defined_section_when_empty(self):
+        entity = _make_entity("x1", name="v")
+        sm = _make_script_map({"x1": entity})
+        msgs = self.build(entity, sm, [], {}, already_defined=set())
+        self.assertNotIn("Already defined", msgs[0]["content"])
+
 
 class TestParseEntityResponse(unittest.TestCase):
 
@@ -274,6 +289,40 @@ class TestCompose(unittest.TestCase):
         )
         lines = [l for l in result.splitlines() if l.startswith("import") or l.startswith("from")]
         self.assertTrue(lines[0].startswith("import"), msg=f"Got: {lines}")
+
+    def test_duplicate_def_removed_from_later_entity(self):
+        """A top-level def present in entity e0 must not be re-emitted by e1."""
+        sm = self._sm(2)
+        helper = "def _helper(x):\n    return x + 1\n"
+        per = {
+            "e0": helper + "v0 = _helper(1)",
+            "e1": helper + "v1 = _helper(2)",  # same helper — should be stripped
+        }
+        result, _ = self.compose(per, {}, ["e0", "e1"], sm, "model")
+        self.assertEqual(result.count("def _helper"), 1, "Helper def must appear exactly once")
+        self.assertIn("v0 = _helper(1)", result)
+        self.assertIn("v1 = _helper(2)", result)
+
+    def test_duplicate_underscore_constant_removed_from_later_entity(self):
+        """A _-prefixed constant emitted by e0 must not be re-emitted by e1."""
+        sm = self._sm(2)
+        const = "_MAP = {'a': 1}\n"
+        per = {
+            "e0": const + "v0 = _MAP['a']",
+            "e1": const + "v1 = _MAP['a']",  # same constant — should be stripped
+        }
+        result, _ = self.compose(per, {}, ["e0", "e1"], sm, "model")
+        self.assertEqual(result.count("_MAP = "), 1, "_MAP must appear exactly once")
+
+    def test_non_underscore_assignment_still_renamed(self):
+        """Regular (non-_) variable assignments from different entities are still renamed."""
+        sm = _make_script_map({
+            "e0": _make_entity("e0", name="result"),
+            "e1": _make_entity("e1", name="result2"),
+        })
+        per = {"e0": "result = 1", "e1": "result = 2"}
+        result, _ = self.compose(per, {}, ["e0", "e1"], sm, "model")
+        self.assertIn("result_1", result)
 
 
 # ---------------------------------------------------------------------------

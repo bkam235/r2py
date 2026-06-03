@@ -49,6 +49,7 @@ def translate(
     per_entity_imports: dict[str, list[str]] = {}
     per_entity_effects: dict[str, list[str]] = {}
     prior_translations: dict[str, str] = {}
+    already_defined_names: set[str] = set()  # helper names defined by all prior entities
 
     for eid in order:
         entity = entities[eid]
@@ -68,6 +69,7 @@ def translate(
             per_entity[eid] = ext_snippet
             per_entity_imports[eid] = []
             prior_translations[eid] = ext_snippet
+            already_defined_names.update(_stitch.get_toplevel_def_names(ext_snippet))
             continue
 
         # For VARIABLE entities with a simple (non-dict) R-captured value, generate
@@ -79,11 +81,15 @@ def translate(
             per_entity_imports[eid] = []
             per_entity_effects[eid] = []
             prior_translations[eid] = cap_snippet
+            already_defined_names.update(_stitch.get_toplevel_def_names(cap_snippet))
             continue
 
         # General entity: build prompt and call LLM
         entity_failures = (prior_failures or {}).get(eid)
-        messages = build_entity_prompt(entity, script_map, patterns, prior_translations, entity_failures)
+        messages = build_entity_prompt(
+            entity, script_map, patterns, prior_translations, entity_failures,
+            already_defined=already_defined_names,
+        )
         try:
             raw = _llm.call(messages, SYSTEM_PROMPT, model=model)
             snippet, imports, effects = parse_entity_response(raw)
@@ -96,6 +102,7 @@ def translate(
         per_entity_imports[eid] = imports
         per_entity_effects[eid] = effects
         prior_translations[eid] = snippet
+        already_defined_names.update(_stitch.get_toplevel_def_names(snippet))
 
     # Make declared effects available to downstream stages (e.g. Stage 4 verify).
     try:

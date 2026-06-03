@@ -36,7 +36,9 @@ Rules:
    provides a _with_locale helper, use it. Otherwise, wrap every locale.setlocale() call
    in try/except locale.Error and silently skip unsupported locales.
 7. Declare which effect classes your translation will produce.
-8. If you cannot translate an entity, output:
+8. Do not redefine names that are already defined by earlier entities in this script.
+   If a helper function or constant you need was already generated, call it directly.
+9. If you cannot translate an entity, output:
    <python>pass  # untranslatable: <brief reason></python>
    Do NOT write explanatory prose outside the XML tags.
 
@@ -64,6 +66,7 @@ def build_entity_prompt(
     patterns: list["Pattern"],
     prior_translations: dict[str, str],
     prior_failures: list[str] | None = None,
+    already_defined: set[str] | None = None,
 ) -> list[dict]:
     """Build a messages list for translating one entity.
 
@@ -104,6 +107,10 @@ def build_entity_prompt(
 
     if dep_block:
         parts.append(f"## Previously translated dependencies\n{dep_block}")
+
+    already_defined_block = _format_already_defined(already_defined)
+    if already_defined_block:
+        parts.append(f"## Already defined in this script\n{already_defined_block}")
 
     if prior_failures:
         failure_lines = "\n".join(f"- {f}" for f in prior_failures)
@@ -297,6 +304,19 @@ def _lookup_package_source(
             return pkg, source
 
     return None, None
+
+
+def _format_already_defined(names: set[str] | None) -> str:
+    """Format the set of already-defined helper names for display in the prompt."""
+    if not names:
+        return ""
+    sorted_names = sorted(names)
+    listing = ", ".join(f"`{n}`" for n in sorted_names)
+    return (
+        "The following names were defined by earlier entities in this translation. "
+        "Do NOT redefine them — call them directly:\n"
+        + listing
+    )
 
 
 def _format_free_variables(entity: "Entity") -> str:
