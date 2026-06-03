@@ -28,6 +28,10 @@ def _on_progress(event) -> None:
         print(f"[Iter {event.iteration + 1}] Best score so far: {event.score:.3f}")
     elif event.kind == "proposal" and VERBOSE:
         print(f"          {event.edit_kind} on {event.entity_id!r} -> {event.outcome} ({event.score:.3f})")
+    elif event.kind == "retranslation_start" and VERBOSE:
+        print(f"[Retry]   Plateau detected — retranslating from scratch (score: {event.score:.3f})")
+    elif event.kind == "retranslation_done" and VERBOSE:
+        print(f"[Retry]   Retranslation scored: {event.score:.3f}")
     elif event.kind == "done":
         print(f"[Done]    Final score: {event.score:.3f} in {event.iteration} iteration(s)")
 

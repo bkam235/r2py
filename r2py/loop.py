@@ -207,7 +207,7 @@ def run_loop(
         if best.score > _last_improvement_score:
             _last_improvement_score = best.score
             _stall_count = 0
-        elif not best_crashed:
+        else:
             _stall_count += 1
 
         # Retranslate from scratch when stuck on a plateau.

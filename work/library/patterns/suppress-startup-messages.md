@@ -4,7 +4,7 @@ package:
 confidence: contradicted
 seed: false
 created: 2026-05-30
-last_review: 2026-06-02
+last_review: 2026-06-03
 tie_count: 47
 ---
 
@@ -43,3 +43,4 @@ Auto-created from edit InsertPreamble (no guidance yet).
 - dd2e0ea0b08b/: score regressed to 0.169
 - dd2e0ea0b08b/: score regressed to 0.900
 - dd2e0ea0b08b/: score regressed to 0.000
+- dd2e0ea0b08b/: score regressed to 0.167

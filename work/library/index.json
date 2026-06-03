@@ -84,7 +84,6 @@
       "pandas-date-generation",
       "preserve-dataframe-integrity",
       "r.suppress-startup-messages",
-      "r.suppressPackageStartupMessages",
       "range-to-list-conversion",
       "remove-duplicate-definition",
       "remove-duplicate-with-locale",
@@ -993,15 +992,6 @@
       "ast_shape_hash": "",
       "contradicted_at_run": 44
     },
-    "r.suppressPackageStartupMessages": {
-      "confidence": "contradicted",
-      "evidence_count": 0,
-      "contradictions_count": 2,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 23
-    },
     "range-to-list-conversion": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -1117,11 +1107,11 @@
     "suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 2,
-      "contradictions_count": 25,
+      "contradictions_count": 26,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 48
+      "contradicted_at_run": 54
     },
     "suppress-startup-utf8-fix": {
       "confidence": "tentative",
@@ -1608,5 +1598,5 @@
       "contradicted_at_run": 47
     }
   },
-  "total_runs": 50
+  "total_runs": 54
 }
