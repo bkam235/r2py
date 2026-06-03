@@ -632,11 +632,11 @@
     },
     "function-before-call": {
       "confidence": "confirmed",
-      "evidence_count": 22,
+      "evidence_count": 24,
       "contradictions_count": 22,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
+      "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 54
     },
     "function-def-before-call": {
@@ -985,12 +985,12 @@
     },
     "r.suppress-startup-messages": {
       "confidence": "contradicted",
-      "evidence_count": 4,
-      "contradictions_count": 9,
+      "evidence_count": 5,
+      "contradictions_count": 10,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 44
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 55
     },
     "range-to-list-conversion": {
       "confidence": "tentative",
@@ -1107,11 +1107,11 @@
     "suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 2,
-      "contradictions_count": 27,
+      "contradictions_count": 31,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 54
+      "contradicted_at_run": 62
     },
     "suppress-startup-utf8-fix": {
       "confidence": "tentative",
@@ -1598,5 +1598,5 @@
       "contradicted_at_run": 54
     }
   },
-  "total_runs": 54
+  "total_runs": 62
 }

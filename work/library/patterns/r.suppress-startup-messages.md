@@ -4,7 +4,7 @@ package:
 confidence: contradicted
 seed: false
 created: 2026-05-30
-last_review: 2026-06-02
+last_review: 2026-06-03
 tie_count: 13
 ---
 
@@ -18,6 +18,7 @@ Auto-created from edit ReplaceCall (no guidance yet).
 - dd2e0ea0b08b → score 0.033 (path: exact, variable: )
 - dd2e0ea0b08b → score 0.033 (path: exact, variable: )
 - dd2e0ea0b08b → score 0.033 (path: exact, variable: )
+- dd2e0ea0b08b → score 0.033 (path: exact, variable: )
 
 ## Contradictions
 - 021894dec169/: score regressed to 0.167
@@ -26,6 +27,7 @@ Auto-created from edit ReplaceCall (no guidance yet).
 - 021894dec169/: score regressed to 0.000
 - 021894dec169/: score regressed to 0.179
 - dd2e0ea0b08b/: score regressed to 0.922
+- dd2e0ea0b08b/: score regressed to 0.000
 - dd2e0ea0b08b/: score regressed to 0.000
 - dd2e0ea0b08b/: score regressed to 0.000
 - dd2e0ea0b08b/: score regressed to 0.000

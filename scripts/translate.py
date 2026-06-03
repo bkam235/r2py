@@ -61,9 +61,10 @@ for r_script, py_script in scripts:
                        py_script,
                        library=lib,
                        model="claude-haiku-4-5",
+                       # model="ollama:gemma4:31b-cloud",
                        progress=_on_progress,
                        score_threshold=1,
-                       max_iters=10,
+                       max_iters=6,
                        retranslation_patience=3)
 
     # Debug: always write the best translation to disk for inspection

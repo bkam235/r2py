@@ -37,11 +37,14 @@ r2py/stage0/env/__init__.py
 r2py/stage0/env/package_installer.py
 r2py/stage0/env/package_source.py
 r2py/stage0/env/py_runtime.py
+r2py/stage0/env/r_env_setup.py
 r2py/stage0/env/r_runtime.py
 r2py/stage0/harvest/__init__.py
 r2py/stage0/harvest/crawler.py
 r2py/stage0/harvest/extractors.py
 r2py/stage0/harvest/writer.py
+r2py/stage0/r_env/library/bslib/examples-shiny/code-editor/examples/python.py
+r2py/stage0/r_env/library/sf/nc/zarr.py
 r2py/stage0/sandbox/__init__.py
 r2py/stage0/sandbox/base.py
 r2py/stage0/sandbox/isolation.py
