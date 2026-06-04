@@ -156,7 +156,8 @@
       "with_locale-add-print",
       "with_locale-context_manager",
       "base.suppress-package-startup-messages",
-      "suppress-package-startup-messages"
+      "suppress-package-startup-messages",
+      "suppress-startup-output"
     ],
     "base:": [
       "base.cat_to_print",
@@ -634,12 +635,12 @@
     },
     "function-before-call": {
       "confidence": "confirmed",
-      "evidence_count": 29,
-      "contradictions_count": 35,
+      "evidence_count": 31,
+      "contradictions_count": 38,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 78
+      "contradicted_at_run": 82
     },
     "function-def-before-call": {
       "confidence": "tentative",
@@ -988,11 +989,11 @@
     "r.suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 6,
-      "contradictions_count": 11,
+      "contradictions_count": 16,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 79
+      "contradicted_at_run": 82
     },
     "range-to-list-conversion": {
       "confidence": "tentative",
@@ -1109,11 +1110,11 @@
     "suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 4,
-      "contradictions_count": 41,
+      "contradictions_count": 43,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 80
+      "contradicted_at_run": 82
     },
     "suppress-startup-utf8-fix": {
       "confidence": "tentative",
@@ -1580,7 +1581,16 @@
       "package": "",
       "ast_shape_hash": "",
       "contradicted_at_run": 80
+    },
+    "suppress-startup-output": {
+      "confidence": "contradicted",
+      "evidence_count": 0,
+      "contradictions_count": 5,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 82
     }
   },
-  "total_runs": 80
+  "total_runs": 82
 }

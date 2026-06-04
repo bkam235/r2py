@@ -194,6 +194,13 @@ def make_score_table(
         r_eb = (r_entity_bundles or {}).get(entity_id)
         py_eb = (py_entity_bundles or {}).get(entity_id)
 
+        # Treat a missing py_eb as empty only when entity_line_map confirms Python
+        # intentionally omitted this entity (map was provided but entity absent).
+        # Without entity_line_map we can't tell omission from a failed checkpoint,
+        # so fall through to the global-score fallback instead.
+        if py_eb is None and entity_line_map is not None and entity_id not in entity_line_map:
+            py_eb = EffectBundle()
+
         if r_eb is not None and py_eb is not None and entity_executed_ok:
             eb_results = _compare_entity_bundles(
                 r_eb, py_eb, data_compare=data_compare, rtol=rtol, atol=atol
