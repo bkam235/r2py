@@ -4,7 +4,7 @@ package:
 confidence: tentative
 seed: false
 created: 2026-05-31
-last_review: 2026-06-03
+last_review: 2026-06-04
 tie_count: 112
 ---
 
@@ -79,3 +79,4 @@ Auto-created from edit RestructureControlFlow (no guidance yet).
 - dd2e0ea0b08b/: score regressed to 0.453
 - dd2e0ea0b08b/: score regressed to 0.551
 - dd2e0ea0b08b/: score regressed to 0.000
+- 021894dec169/: score regressed to 0.933

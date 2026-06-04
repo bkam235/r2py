@@ -217,11 +217,11 @@
     "base.dataframe_to_pandas": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 3,
+      "contradictions_count": 4,
       "seed": true,
       "package": "base",
       "ast_shape_hash": "",
-      "contradicted_at_run": 76
+      "contradicted_at_run": 78
     },
     "base.lapply_to_listcomp": {
       "confidence": "tentative",
@@ -635,11 +635,11 @@
     "function-before-call": {
       "confidence": "confirmed",
       "evidence_count": 29,
-      "contradictions_count": 34,
+      "contradictions_count": 35,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754",
-      "contradicted_at_run": 70
+      "ast_shape_hash": "",
+      "contradicted_at_run": 78
     },
     "function-def-before-call": {
       "confidence": "tentative",
@@ -1109,11 +1109,11 @@
     "suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 4,
-      "contradictions_count": 36,
+      "contradictions_count": 38,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 75
+      "contradicted_at_run": 78
     },
     "suppress-startup-utf8-fix": {
       "confidence": "tentative",
@@ -1582,5 +1582,5 @@
       "contradicted_at_run": 67
     }
   },
-  "total_runs": 76
+  "total_runs": 78
 }
