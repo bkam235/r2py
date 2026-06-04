@@ -168,10 +168,10 @@ def _weak_first(candidate: "Candidate", script_map: object = None) -> list[str]:
 
     def _sort_key(eid: str) -> tuple:
         es = scores[eid]
-        avg = _avg_score(es)
-        has_feedback = 0 if eid in feedback_eids else 1
         entity = entities.get(eid)
         kind_val = getattr(entity, "kind", None) if entity else None
+        avg = _avg_score(es, kind=kind_val)
+        has_feedback = 0 if eid in feedback_eids else 1
         is_callable = kind_val in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL,
                                    EntityKind.FUNCTION_DEF)
         priority = 0 if is_callable else 1
@@ -180,12 +180,20 @@ def _weak_first(candidate: "Candidate", script_map: object = None) -> list[str]:
     return sorted(scores.keys(), key=_sort_key)
 
 
-def _avg_score(es: EntityScore) -> float:
+def _avg_score(es: EntityScore, kind=None) -> float:
     # Use only execution-outcome fields for edit priority. type_match, control_flow_match,
     # and callable_output include kind-specific 1.0 constants for non-callable entities
     # (e.g. LIBRARY_IMPORT always gets callable_output=1.0) which would inflate the
     # apparent score of a failed entity and deprioritize it from editing.
     vals = [es.data_output, es.variable_output, es.side_effects]
+    # For FUNCTION_DEF, control_flow_match holds stdout_score — the only field that
+    # captures whether the function's output matches R. Include it so a function
+    # with correct data but wrong stdout is still prioritised for editing.
+    # Other kinds use control_flow_match as a binary executed_ok proxy, so we
+    # exclude it there to avoid inflating scores for already-running entities.
+    from ..types import EntityKind
+    if kind == EntityKind.FUNCTION_DEF:
+        vals.append(es.control_flow_match)
     base = sum(vals) / len(vals)
     # Penalise entities that did not execute (crash or post-crash): they are more
     # likely to be causing the failure and should rank ahead of pre-crash entities

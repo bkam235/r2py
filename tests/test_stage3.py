@@ -596,6 +596,44 @@ class TestPolicy(unittest.TestCase):
         self.assertEqual(edit.pattern_id, "good.pat")
 
 
+    def test_function_def_with_low_stdout_prioritised_over_passing_variable(self):
+        # Regression: a FUNCTION_DEF with perfect data scores but zero stdout
+        # (control_flow_match=0.0) should rank *below* a VARIABLE that is fully
+        # passing, i.e. it should appear first in _weak_first's output.
+        from r2py.stage3.policy import _weak_first
+        from r2py.stage1.entities import Entity, SourceLocation
+        from r2py.stage1.script_map import ScriptMap
+        from r2py.types import EntityKind, EntityScore
+
+        fn_def = Entity(id="fn", kind=EntityKind.FUNCTION_DEF, name="with_locale",
+                        source_span=SourceLocation("t.R", 1, 0, 5, 0),
+                        dependencies=[], r_semantic_flags=[], package=None)
+        var = Entity(id="var", kind=EntityKind.VARIABLE, name="df",
+                     source_span=SourceLocation("t.R", 6, 0, 8, 0),
+                     dependencies=[], r_semantic_flags=[], package=None)
+        sm = ScriptMap(source="", entities={"fn": fn_def, "var": var})
+
+        # FUNCTION_DEF: data/variable/side_effects all perfect, but stdout is wrong.
+        fn_score = EntityScore(
+            entity_id="fn", executed_ok=True,
+            type_match=1.0, control_flow_match=0.0,  # stdout failed
+            data_output=1.0, variable_output=1.0, callable_output=1.0,
+            side_effects=1.0,
+        )
+        # VARIABLE: fully passing.
+        var_score = EntityScore(
+            entity_id="var", executed_ok=True,
+            type_match=1.0, control_flow_match=1.0,
+            data_output=1.0, variable_output=1.0, callable_output=1.0,
+            side_effects=1.0,
+        )
+        candidate = _make_candidate({"fn": fn_score, "var": var_score})
+
+        order = _weak_first(candidate, sm)
+        self.assertEqual(order[0], "fn",
+                         "FUNCTION_DEF with failed stdout should be edited first")
+
+
 # ---------------------------------------------------------------------------
 # T8 — TestEditor
 # ---------------------------------------------------------------------------

@@ -49,6 +49,23 @@ def find_rscript() -> Path:
     )
 
 
+def find_r() -> Path:
+    """Return the path to R (not Rscript), raising RuntimeError if not found.
+
+    R and Rscript are always co-installed in the same bin directory, so we
+    locate Rscript first and swap the executable name.
+    """
+    rscript = find_rscript()
+    suffix = rscript.suffix  # ".exe" on Windows, "" on Unix
+    r_exe = rscript.parent / f"R{suffix}"
+    if r_exe.exists():
+        return r_exe
+    raise RuntimeError(
+        f"R executable not found next to Rscript at {rscript}. "
+        "R and Rscript are always co-installed — this is unexpected."
+    )
+
+
 def r_version() -> str:
     """Return the R version string (e.g. '4.3.1'), raising RuntimeError on failure."""
     rscript = find_rscript()

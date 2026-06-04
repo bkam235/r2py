@@ -1,11 +1,11 @@
 ---
 id: base.dataframe_to_pandas
 package: base
-confidence: tentative
+confidence: contradicted
 seed: true
 created: 2026-05-28
 last_review: 2026-06-04
-tie_count: 9
+tie_count: 10
 ---
 
 # base.dataframe_to_pandas
@@ -24,3 +24,4 @@ match the longest column length.
 - 021894dec169/: score regressed to 0.238
 - 021894dec169/: score regressed to 0.238
 - 021894dec169/: score regressed to 0.242
+- 021894dec169/: score regressed to 0.238

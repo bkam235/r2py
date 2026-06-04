@@ -16,7 +16,7 @@ from ..effects import network as _network_effects
 from ..effects import rng as _rng_effects
 from ..effects import stdout as _stdout_effects
 from ..effects import warnings as _warnings_effects
-from ..env.r_runtime import find_rscript, _R_ENV_DIR
+from ..env.r_runtime import find_r, find_rscript, _R_ENV_DIR
 from .base import ReplayLog, SandboxEscape
 from .isolation import TempWorkdir, check_escape, scrub_env, snapshot_home
 
@@ -84,6 +84,7 @@ class RSandbox:
         timeout_s: float = 60,
     ) -> EffectBundle:
         rscript = find_rscript()
+        r_exe = find_r()
 
         # Build capture preambles/epilogues in addition to caller-supplied ones.
         pre_parts: list[str] = []
@@ -156,9 +157,10 @@ class RSandbox:
         script_path = workdir / "_r2py_script.R"
         script_path.write_text(full_script, encoding="utf-8")
 
+        script_path_r = str(script_path).replace("\\", "/")
         t_start = time.monotonic()
         result = subprocess.run(
-            [str(rscript), "--vanilla", str(script_path)],
+            [str(r_exe), "--vanilla", "-e", f'source("{script_path_r}", print.eval=TRUE)'],
             cwd=str(workdir),
             capture_output=True,
             timeout=timeout_s,
@@ -176,7 +178,7 @@ class RSandbox:
                 # Auto-install the missing package and retry once.
                 _auto_install(pkg)
                 result = subprocess.run(
-                    [str(rscript), "--vanilla", str(script_path)],
+                    [str(r_exe), "--vanilla", "-e", f'source("{script_path_r}", print.eval=TRUE)'],
                     cwd=str(workdir),
                     capture_output=True,
                     timeout=timeout_s,

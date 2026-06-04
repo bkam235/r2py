@@ -67,7 +67,3 @@ for r_script, py_script in scripts:
                        score_threshold=1,
                        max_iters=10,
                        retranslation_patience=3)
-
-    # Debug: always write the best translation to disk for inspection
-    # Path(py_script + ".debug.py").write_text(result.python_source, encoding="utf-8")
-    # print(f"[Debug]   Best translation written to {py_script}.debug.py (exit={result.final_exit_code})")
