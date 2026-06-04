@@ -5,7 +5,7 @@ confidence: contradicted
 seed: false
 created: 2026-05-30
 last_review: 2026-06-04
-tie_count: 69
+tie_count: 71
 ---
 
 # suppress-startup-messages
@@ -63,3 +63,4 @@ Auto-created from edit InsertPreamble (no guidance yet).
 - 021894dec169/: score regressed to 0.853
 - 021894dec169/: score regressed to 0.179
 - 021894dec169/: score regressed to 0.335
+- 021894dec169/: score regressed to 0.000

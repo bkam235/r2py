@@ -5,7 +5,7 @@ confidence: tentative
 seed: false
 created: 2026-05-31
 last_review: 2026-06-04
-tie_count: 116
+tie_count: 118
 ---
 
 # function-before-call
@@ -84,4 +84,5 @@ Auto-created from edit RestructureControlFlow (no guidance yet).
 - 021894dec169/: score regressed to 0.933
 - 021894dec169/: score regressed to 0.256
 - 021894dec169/: score regressed to 0.335
+- 021894dec169/: score regressed to 0.256
 - 021894dec169/: score regressed to 0.256

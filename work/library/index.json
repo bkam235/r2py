@@ -636,11 +636,11 @@
     "function-before-call": {
       "confidence": "confirmed",
       "evidence_count": 31,
-      "contradictions_count": 38,
+      "contradictions_count": 39,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 82
+      "contradicted_at_run": 83
     },
     "function-def-before-call": {
       "confidence": "tentative",
@@ -1110,11 +1110,11 @@
     "suppress-startup-messages": {
       "confidence": "contradicted",
       "evidence_count": 4,
-      "contradictions_count": 43,
+      "contradictions_count": 44,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 82
+      "contradicted_at_run": 83
     },
     "suppress-startup-utf8-fix": {
       "confidence": "tentative",
@@ -1592,5 +1592,5 @@
       "contradicted_at_run": 82
     }
   },
-  "total_runs": 82
+  "total_runs": 83
 }

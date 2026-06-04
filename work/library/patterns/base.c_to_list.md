@@ -5,7 +5,7 @@ confidence: tentative
 seed: true
 created: 2026-05-28
 last_review: 2026-06-04
-tie_count: 2
+tie_count: 3
 ---
 
 # base.c_to_list
