@@ -95,6 +95,8 @@ def propose(
             all_arms = [e.value for e in EditKind]
             bandit_hint = _bandit.choose_action(bandit_model, context, all_arms)
 
+        failure_class = _dominant_failure_class_from_feedback(feedback)
+
         messages = _prompt.build_edit_prompt(
             entity=entity,
             entity_score=entity_score,
@@ -105,6 +107,7 @@ def propose(
             exploit=exploit,
             preferred_edit_kind=bandit_hint,
             r_source=_entity_r_source(entity, script_map),
+            failure_class=failure_class,
         )
 
         raw = _llm.call(messages, _prompt.STAGE3_SYSTEM_PROMPT, model=model)
@@ -199,6 +202,19 @@ def _avg_score(es: EntityScore, kind=None) -> float:
     # likely to be causing the failure and should rank ahead of pre-crash entities
     # that already ran successfully (crash attribution via §7.4 decompose).
     return base if es.executed_ok else max(0.0, base - 0.1)
+
+
+def _dominant_failure_class_from_feedback(feedback: list) -> str:
+    """Return the EffectClass.value of the worst-scoring feedback item.
+
+    feedback is already filtered to the current entity by the caller.
+    Returns "" when there is no feedback (no retrieval key available).
+    """
+    if not feedback:
+        return ""
+    worst = min(feedback, key=lambda f: getattr(f, "score", 1.0))
+    ec = getattr(worst, "effect_class", None)
+    return getattr(ec, "value", str(ec)) if ec is not None else ""
 
 
 def _entity_r_source(entity: object, script_map: object) -> str:

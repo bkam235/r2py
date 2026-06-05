@@ -76,16 +76,14 @@ def translate(
         retranslation_patience=retranslation_patience,
         seed_translation=seed_translation,
     )
+    Path(py_path).write_text(result.python_source, encoding="utf-8")
     if result.final_exit_code != 0:
-        import sys
         print(
             f"r2py: warning: final Python translation crashed "
-            f"(exit {result.final_exit_code}); no output file written. "
-            f"Score: {result.final_score:.3f}",
+            f"(exit {result.final_exit_code}); output written to {py_path} "
+            f"but may not run correctly. Score: {result.final_score:.3f}",
             file=sys.stderr,
         )
-    else:
-        Path(py_path).write_text(result.python_source, encoding="utf-8")
     return result
 
 

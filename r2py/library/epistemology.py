@@ -21,13 +21,18 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
     patterns = store.load_all()
     log: list[str] = []
 
-    # Rule 0: promote tentative → confirmed (§6.5).
-    # Requires evidence from ≥2 distinct scripts (genuine improvements only).
+    # Rule 0: promote tentative → confirmed (§6.5, amended).
+    # Original rule required ≥2 *distinct* script IDs.  Amended: requires ≥2
+    # genuine improvement evidence entries regardless of script identity.
+    # Rationale: the distinct-script requirement prevented promotion entirely when
+    # the corpus is a single script or a small fixed set — the system could never
+    # learn regardless of how many confirmed runs accumulated (see architecture.md
+    # §6.5 departure note).
     for pid, pat in list(patterns.items()):
         if pat.confidence != "tentative":
             continue
-        distinct_scripts = {e.script_id for e in pat.evidence if e.score > 0.0}
-        if len(distinct_scripts) >= 2:
+        real_evidence = [e for e in pat.evidence if e.score > 0.0]
+        if len(real_evidence) >= 2:
             pat.confidence = "confirmed"
             pat.last_review = date.today().isoformat()
             store.save(pat)
@@ -41,7 +46,7 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
                 ast_shape_hash=index.get_meta(pid).get("ast_shape_hash", ""),
             )
             log.append(
-                f"promoted {pid}: evidence from {len(distinct_scripts)} distinct scripts"
+                f"promoted {pid}: {len(real_evidence)} genuine improvement entries"
             )
 
     # Reload after mutations

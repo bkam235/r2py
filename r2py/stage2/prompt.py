@@ -102,6 +102,10 @@ def build_entity_prompt(
     if free_var_block:
         parts.append(f"## Implicit R environment variables\n{free_var_block}")
 
+    example_block = _format_translation_examples(patterns)
+    if example_block:
+        parts.append(f"## Verified Translation Example\n{example_block}")
+
     if pattern_block:
         parts.append(f"## Pattern Library guidance\n{pattern_block}")
 
@@ -206,6 +210,25 @@ def _entity_annotations(entity: "Entity", script_map: "ScriptMap") -> str:
     end = min(len(lines), sp.end_line + 3)
     relevant = [ln for ln in lines[start:end] if "# r2py:" in ln]
     return "\n".join(relevant)
+
+
+def _format_translation_examples(patterns: list["Pattern"]) -> str:
+    """Return a prompt block showing the best verified translation example across patterns.
+
+    Shows the highest-scoring TranslationExample from the first pattern that has one.
+    Returns "" when no patterns carry examples yet (graceful no-op until the library
+    accumulates verified runs).
+    """
+    for pat in patterns:
+        examples = getattr(pat, "translation_examples", [])
+        if examples:
+            ex = max(examples, key=lambda e: e.score)
+            return (
+                f"From pattern `{pat.id}` (score {ex.score:.2f}):\n"
+                f"R:\n```r\n{ex.r_snippet}\n```\n"
+                f"Python:\n```python\n{ex.py_snippet}\n```"
+            )
+    return ""
 
 
 def _format_patterns(patterns: list["Pattern"]) -> str:

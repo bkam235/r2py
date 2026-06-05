@@ -65,6 +65,7 @@ def build_edit_prompt(
     exploit: bool,
     preferred_edit_kind: "str | None" = None,
     r_source: str = "",
+    failure_class: str = "",
 ) -> list[dict]:
     """Build the user-turn message for the edit-proposal LLM call."""
     parts: list[str] = []
@@ -116,6 +117,15 @@ def build_edit_prompt(
                 ev = pat.evidence[0]
                 parts.append(f"Evidence: {ev.script_id} → score {ev.score:.3f}")
             parts.append("")
+        # Show the best edit example matching the current failure class, if any.
+        if failure_class:
+            ex = _best_edit_example(patterns, failure_class)
+            if ex is not None:
+                parts.append(f"### How this pattern fixed a `{failure_class}` failure before")
+                parts.append(f"Score delta: +{ex.score_delta:.3f}")
+                parts.append(f"Before:\n```python\n{ex.old_code}\n```")
+                parts.append(f"After:\n```python\n{ex.new_code}\n```")
+                parts.append("")
     elif not exploit:
         parts.append("")
         parts.append("### Mode: explore")
@@ -190,3 +200,19 @@ def parse_edit_response(raw: str) -> dict | None:
 def _kind_str(entity: "Entity") -> str:
     kind = getattr(entity, "kind", None)
     return getattr(kind, "value", str(kind)) if kind is not None else "unknown"
+
+
+def _best_edit_example(patterns: list["Pattern"], failure_class: str) -> "object | None":
+    """Return the EditExample with the highest score_delta matching failure_class.
+
+    Scans edit_examples on all retrieved patterns; returns None when the library
+    has no verified examples for this failure class yet (graceful no-op).
+    """
+    best = None
+    best_delta = -1.0
+    for pat in patterns:
+        for ex in getattr(pat, "edit_examples", []):
+            if ex.failure_class == failure_class and ex.score_delta > best_delta:
+                best = ex
+                best_delta = ex.score_delta
+    return best

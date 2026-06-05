@@ -8,7 +8,9 @@ from __future__ import annotations
 from datetime import date
 from typing import TYPE_CHECKING
 
-from .pattern import EvidenceEntry, Pattern
+from .pattern import (
+    EditExample, EvidenceEntry, Pattern, TranslationExample, r_snippet_hash,
+)
 from ..types import Edit
 
 if TYPE_CHECKING:
@@ -27,11 +29,22 @@ def record_evidence(
     index: "PatternIndex",
     ast_shape_hash: str = "",
     entity_package: str = "",
+    # Entity-level example recording (plan: entity-level examples).
+    r_snippet: str = "",
+    py_snippet: str = "",
+    failure_class: str = "",
+    old_code: str = "",
+    new_code: str = "",
 ) -> None:
     """Append a verified evidence entry to the attributed pattern (§7.7).
 
     New patterns are created only here (on strict improvement), never on ties
     or contradictions — that is what keeps the library from bloating.
+
+    When r_snippet + py_snippet are provided and score_delta > 0, a
+    TranslationExample is appended (capped at 3 per pattern, highest score wins).
+    When failure_class + old_code + new_code are provided and score_delta > 0,
+    an EditExample is appended (capped at 5 per failure_class, highest delta wins).
     """
     if not edit.pattern_id:
         return
@@ -46,6 +59,25 @@ def record_evidence(
         variable=entity_id,
     )
     pat.evidence.append(entry)
+
+    if score_delta > 0:
+        if r_snippet and py_snippet:
+            _add_translation_example(pat, TranslationExample(
+                r_hash=r_snippet_hash(r_snippet),
+                r_snippet=r_snippet[:300],
+                py_snippet=py_snippet[:600],
+                score=max(0.0, score_delta),
+                script_id=script_id,
+            ))
+        if failure_class and old_code and new_code:
+            _add_edit_example(pat, EditExample(
+                failure_class=failure_class,
+                old_code=old_code[:300],
+                new_code=new_code[:300],
+                score_delta=score_delta,
+                script_id=script_id,
+            ))
+
     pat.last_review = date.today().isoformat()
     store.save(pat)
     _upsert_index(pat, index, ast_shape_hash=ast_shape_hash)
@@ -161,3 +193,21 @@ def _upsert_index(pat: Pattern, index: "PatternIndex", ast_shape_hash: str = "",
 def _run_epistemology(store: "PatternStore", index: "PatternIndex") -> None:
     from . import epistemology
     epistemology.review(store, index)
+
+
+def _add_translation_example(pat: Pattern, ex: "TranslationExample") -> None:
+    """Add a TranslationExample to pat, deduplicating by r_hash and capping at 3."""
+    if any(e.r_hash == ex.r_hash for e in pat.translation_examples):
+        return
+    pat.translation_examples.append(ex)
+    pat.translation_examples.sort(key=lambda e: -e.score)
+    pat.translation_examples = pat.translation_examples[:3]
+
+
+def _add_edit_example(pat: Pattern, ex: "EditExample") -> None:
+    """Add an EditExample to pat, capping at 5 per failure_class (highest delta kept)."""
+    same = [e for e in pat.edit_examples if e.failure_class == ex.failure_class]
+    other = [e for e in pat.edit_examples if e.failure_class != ex.failure_class]
+    same.append(ex)
+    same.sort(key=lambda e: -e.score_delta)
+    pat.edit_examples = other + same[:5]

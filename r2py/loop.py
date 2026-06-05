@@ -278,6 +278,7 @@ def run_loop(
         proposal_collectors: list[EpisodeCollector] = []
         proposal_transitions: list["PolicyTransition | None"] = []
         proposal_parent_hashes: list[str] = []
+        proposal_parent_decomps: list = []
         for parent in active_beam:
             parent_hash = _state_hash(parent.translation)
             parent_history = histories.setdefault(parent_hash, EditHistory())
@@ -319,6 +320,7 @@ def run_loop(
                 proposal_collectors.append(collector)
                 proposal_transitions.append(None)
                 proposal_parent_hashes.append(parent_hash)
+                proposal_parent_decomps.append(parent.decomp)
                 continue
 
             iter_result = stage4.verify(
@@ -342,6 +344,7 @@ def run_loop(
                 Proposal(candidate_src, new_decomp.aggregate, new_decomp, edit, parent.score)
             )
             proposal_collectors.append(collector)
+            proposal_parent_decomps.append(parent.decomp)
 
             # Build PolicyTransition directly (bandit data; no stage3 hook needed).
             eid = edit.entity_ids[0] if edit.entity_ids else ""
@@ -396,12 +399,28 @@ def run_loop(
                 _ent = getattr(script_map, "entities", {}).get(_eid)
                 _hash = _shape_hash(_ent) if _ent is not None else ""
                 _pkg = getattr(_ent, "package", "") or "" if _ent is not None else ""
+                _r_snip = _entity_r_snippet(_ent, script_map)
+                _candidate_elmap_ex = _rebuild(p.candidate)
+                _py_snip = _extract_entity_snippet(p.candidate, _candidate_elmap_ex, _eid)
+                _parent_decomp_ex = (
+                    proposal_parent_decomps[idx]
+                    if idx < len(proposal_parent_decomps) else None
+                )
+                _fail_cls = _dominant_failure_class(
+                    getattr(_parent_decomp_ex, "feedback", []), _eid
+                )
+                _old_code, _new_code = _edit_code_pair(p.edit)
                 library.record_evidence(
                     p.edit,
                     score_delta=delta,
                     script_id=script_id,
                     ast_shape_hash=_hash,
                     entity_package=_pkg,
+                    r_snippet=_r_snip,
+                    py_snippet=_py_snip,
+                    failure_class=_fail_cls,
+                    old_code=_old_code,
+                    new_code=_new_code,
                 )
                 if p.edit.pattern_id:
                     evidence_added.append(p.edit.pattern_id)
@@ -455,13 +474,14 @@ def run_loop(
         if checkpoint_path is not None:
             _write_checkpoint(checkpoint_path, i, max(beam, key=lambda c: c.score).translation)
 
-    # Epistemology review only when the library was actually mutated — avoids
-    # unnecessary I/O on no-op runs and aligns with the "every N" intent (§7.7).
-    if evidence_added or contradictions_added:
-        try:
-            _ep_review(library.store, library.index)
-        except Exception:
-            pass
+    # Epistemology review runs unconditionally at end of every loop so that
+    # promotion and archival fire even on runs that made no library changes
+    # (e.g. a high-scoring translation that needed no edits).  The cost is one
+    # store.load_all() per run — acceptable given the library is small.
+    try:
+        _ep_review(library.store, library.index)
+    except Exception:
+        pass
 
     # Write per-run data files (§12.3) when an output_dir is provided.
     if output_dir is not None:
@@ -551,6 +571,60 @@ def _delete_checkpoints(py_path: Path, last_iter: int) -> None:
     for n in range(last_iter + 1):
         p = py_path.with_name(f"{py_path.stem}.iter_{n}.py")
         p.unlink(missing_ok=True)
+
+
+def _entity_r_snippet(entity: object, script_map: object) -> str:
+    """Return the R source text for an entity (capped at 300 chars)."""
+    if entity is None:
+        return ""
+    span = getattr(entity, "source_span", None)
+    if span is None:
+        return ""
+    source = getattr(script_map, "source", "") or ""
+    if not source:
+        return ""
+    lines = source.splitlines()
+    start = getattr(span, "start_line", 0)
+    end = min(len(lines), getattr(span, "end_line", start) + 1)
+    return "\n".join(lines[start:end])[:300]
+
+
+def _extract_entity_snippet(source: str, elmap: dict, eid: str) -> str:
+    """Extract an entity's Python snippet from the assembled source (capped at 600 chars).
+
+    elmap values are 1-based (start, end) inclusive; start points to the sentinel
+    comment line, so actual code starts at lines[start] (0-indexed).
+    """
+    if not eid or eid not in elmap:
+        return ""
+    start, end = elmap[eid]
+    lines = source.splitlines()
+    # start is 1-based; lines[start-1] is the sentinel comment — skip it.
+    snippet_lines = lines[start:end]   # 0-indexed: [start, end-1] inclusive
+    return "\n".join(snippet_lines)[:600]
+
+
+def _dominant_failure_class(feedback: list, eid: str) -> str:
+    """Return the EffectClass.value of the worst-scoring feedback item for eid."""
+    entity_fb = [f for f in feedback if getattr(f, "entity_id", "") == eid]
+    if not entity_fb:
+        return ""
+    worst = min(entity_fb, key=lambda f: getattr(f, "score", 1.0))
+    ec = getattr(worst, "effect_class", None)
+    return getattr(ec, "value", str(ec)) if ec is not None else ""
+
+
+def _edit_code_pair(edit: "Edit") -> tuple[str, str]:
+    """Extract (old_code, new_code) from edit params for structural edit types."""
+    from .types import EditKind
+    params = getattr(edit, "params", {}) or {}
+    if edit.kind == EditKind.RESTRUCTURE_CONTROL_FLOW:
+        return str(params.get("old_code", ""))[:300], str(params.get("new_code", ""))[:300]
+    if edit.kind == EditKind.REPLACE_CALL:
+        return str(params.get("old_call", ""))[:300], str(params.get("new_call", ""))[:300]
+    if edit.kind == EditKind.CHANGE_IMPORT:
+        return str(params.get("old_import", ""))[:300], str(params.get("new_import", ""))[:300]
+    return "", ""
 
 
 def _write_run_logs(

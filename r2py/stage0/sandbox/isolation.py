@@ -50,6 +50,12 @@ _SNAPSHOT_SKIP_DIRS = frozenset({
     ".git", "node_modules", ".cache", "AppData", ".npm", ".cargo",
     "__pycache__", ".tox", ".venv", "venv", ".mypy_cache",
     ".claude",  # Claude Code writes here during normal operation
+    ".local",   # IDE/app state (Positron logs, etc.) written by background processes
+})
+
+# Individual files in $HOME written by background tools (not sandbox scripts).
+_SNAPSHOT_SKIP_FILES = frozenset({
+    ".claude.json",  # Claude Code session state
 })
 
 
@@ -70,6 +76,8 @@ def snapshot_home() -> dict[str, str]:
             break
         # Skip large/irrelevant directories that sandbox scripts never touch.
         if any(part in _SNAPSHOT_SKIP_DIRS for part in p.parts):
+            continue
+        if p.name in _SNAPSHOT_SKIP_FILES:
             continue
         if p.is_file():
             try:

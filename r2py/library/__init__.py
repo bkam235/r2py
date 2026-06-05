@@ -96,10 +96,17 @@ class PatternLibrary:
         verification_path: str = "exact",
         ast_shape_hash: str = "",
         entity_package: str = "",
+        r_snippet: str = "",
+        py_snippet: str = "",
+        failure_class: str = "",
+        old_code: str = "",
+        new_code: str = "",
     ) -> None:
         _writer.record_evidence(
             edit, score_delta, script_id, entity_id, verification_path,
             self.store, self.index, ast_shape_hash, entity_package,
+            r_snippet=r_snippet, py_snippet=py_snippet,
+            failure_class=failure_class, old_code=old_code, new_code=new_code,
         )
 
     def record_tie(

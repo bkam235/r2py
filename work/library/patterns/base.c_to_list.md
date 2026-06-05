@@ -4,8 +4,8 @@ package: base
 confidence: tentative
 seed: true
 created: 2026-05-28
-last_review: 2026-06-04
-tie_count: 3
+last_review: 2026-06-05
+tie_count: 4
 ---
 
 # base.c_to_list
@@ -20,4 +20,10 @@ passed to a function expecting a list, use `list`.
 - dd2e0ea0b08b → score 0.667 (path: exact, variable: )
 
 ## Contradictions
+(none)
+
+## Translation Examples
+(none)
+
+## Edit Examples
 (none)
