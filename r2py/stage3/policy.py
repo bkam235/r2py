@@ -10,7 +10,7 @@ import random
 from typing import TYPE_CHECKING
 
 from ..stage2 import llm as _llm
-from ..types import Edit, EntityScore
+from ..types import Edit, EditKind, EntityScore
 from . import prompt as _prompt
 from .attributor import attribute, AttributionError
 from .edit_types import dict_to_edit
@@ -48,12 +48,56 @@ def propose(
 
     from ..library.bandit import BanditModel as _BanditModel
     from ..library import bandit as _bandit
-    from ..types import EditKind
-    bandit_model = getattr(library, "_bandit_model", None)
 
     # Max edits tried for any single entity before moving on (prevents cycling when
     # the LLM generates slight param variations that all produce the same bad score).
     _MAX_ATTEMPTS_PER_ENTITY = 3
+
+    # Scan ALL entities for stubs before the score-ordered loop.
+    # Stub entities fall back to the global data score in stage 4 (because `pass`
+    # produces no checkpoints and no variable assignment), so they appear to score
+    # well and never rise to the top of the weak-first ordering. We must find them
+    # by inspecting the translation directly.
+    all_entity_ids = list(getattr(script_map, "entities", {}).keys())
+    stub_eids_for_llm: list[str] = []  # stubs where retranslation failed; hand to LLM loop
+    for eid in all_entity_ids:
+        if history.count_for_entity(eid) >= _MAX_ATTEMPTS_PER_ENTITY:
+            continue
+        if not _entity_is_stub(candidate.translation, eid):
+            continue
+        from ..stage2.translator import retranslate_entity as _retranslate
+        new_snippet = _retranslate(
+            eid, script_map, library, model=model,
+            current_source=candidate.translation,
+        )
+        if new_snippet is not None:
+            stub_edit = Edit(
+                kind=EditKind.RETRANSLATE_ENTITY,
+                entity_ids=[eid],
+                params={"new_snippet": new_snippet},
+                pattern_id="retranslate-stub-entity",
+            )
+            try:
+                attributed = attribute(stub_edit, stub_edit.pattern_id)
+            except AttributionError:
+                attributed = None
+            if attributed is not None and not history.was_tried(attributed):
+                return attributed
+        # Retranslation returned None (LLM produced invalid Python again) or was
+        # already tried. Fall back to the LLM edit loop which can propose a
+        # RestructureControlFlow to replace the stub line directly.
+        stub_eids_for_llm.append(eid)
+
+    # Promote stubs that couldn't be retranslated to the front of the edit order
+    # so the LLM edit prompt can attempt a direct RestructureControlFlow fix.
+    if stub_eids_for_llm:
+        ordered_set = set(ordered)
+        ordered = (
+            [eid for eid in stub_eids_for_llm if eid in ordered_set]
+            + [eid for eid in ordered if eid not in set(stub_eids_for_llm)]
+        )
+
+    bandit_model = getattr(library, "_bandit_model", None)
 
     for eid in ordered:
         if history.count_for_entity(eid) >= _MAX_ATTEMPTS_PER_ENTITY:
@@ -155,6 +199,22 @@ def propose(
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
+_STUB_SNIPPET = "pass  # r2py: translation failed for entity (LLM response not valid Python)"
+
+
+def _entity_is_stub(translation: str, eid: str) -> bool:
+    """Return True if the entity's section in the assembled translation is the failure stub."""
+    sentinel = f"# r2py:entity:{eid}\n"
+    idx = translation.find(sentinel)
+    if idx == -1:
+        return False
+    after = translation[idx + len(sentinel):]
+    for line in after.splitlines():
+        if line.strip():
+            return line.strip() == _STUB_SNIPPET
+    return False
+
 
 def _weak_first(candidate: "Candidate", script_map: object = None) -> list[str]:
     """Return entity IDs sorted by ascending average score.

@@ -29,4 +29,5 @@ def attribute(edit: Edit, proposed_pattern_id: str | None) -> Edit:
         entity_ids=list(edit.entity_ids),
         params=dict(edit.params),
         pattern_id=proposed_pattern_id.strip(),
+        guidance=edit.guidance,
     )

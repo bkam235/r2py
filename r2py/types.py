@@ -64,6 +64,7 @@ class EditKind(Enum):
     RENAME_VARIABLE           = "RenameVariable"
     RESTRUCTURE_CONTROL_FLOW  = "RestructureControlFlow"
     REPLACE_LIBRARY           = "ReplaceLibrary"
+    RETRANSLATE_ENTITY        = "RetranslateEntity"
 
 
 # ---------------------------------------------------------------------------
@@ -158,6 +159,7 @@ class TranslateResult:
     pattern_evidence_added:       list[PatternId]     = field(default_factory=list)
     pattern_contradictions_added: list[PatternId]     = field(default_factory=list)
     final_exit_code:              int                 = 0
+    final_score_report:           "ScoreReport | None" = None
 
 
 # ---------------------------------------------------------------------------

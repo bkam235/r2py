@@ -49,6 +49,10 @@ Rules:
 - RestructureControlFlow replaces any substring of the FULL script — use it to amend
   earlier shared code (helpers, imports, module-level variables) when that is what the
   target entity needs. You are not limited to editing only the target entity's section.
+  IMPORTANT: if the entity's current translation is the stub line
+  `pass  # r2py: translation failed for entity (LLM response not valid Python)`, use
+  RestructureControlFlow with old_code set to that exact stub line and new_code set to
+  a correct Python translation of the R source shown above.
 - InsertPreamble is for NEW helpers not yet in the script. If the helper already exists,
   use RestructureControlFlow to amend it instead of inserting a duplicate.
 - Output ONLY the JSON line. No prose before or after it.

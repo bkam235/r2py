@@ -127,6 +127,91 @@ def translate(
     return python_source, entity_line_map
 
 
+def retranslate_entity(
+    eid: str,
+    script_map: "ScriptMap",
+    library: "PatternLibrary",
+    *,
+    model: str = _llm._DEFAULT_MODEL,
+    cache_dir: Path | None = None,
+    current_source: str = "",
+) -> str | None:
+    """Re-translate a single entity via stage 2, returning its new snippet.
+
+    Used by stage 3's RETRANSLATE_ENTITY edit kind to recover entities whose
+    initial translation produced a stub.  Extracts prior translations and
+    already-defined names from *current_source* so the LLM has full context.
+
+    Returns the new Python snippet, or None if the LLM call fails or produces
+    another stub.
+    """
+    if cache_dir is None:
+        cache_dir = Path("work") / "translated_packages"
+
+    entities = script_map.entities if hasattr(script_map, "entities") else {}
+    entity = entities.get(eid)
+    if entity is None:
+        return None
+
+    prior_translations = _prior_translations_from_source(current_source, eid)
+    already_defined = _already_defined_before(current_source, eid)
+
+    patterns = _retrieval.retrieve_patterns(entity, library, no_seeds=False)
+    messages = build_entity_prompt(
+        entity, script_map, patterns, prior_translations,
+        already_defined=already_defined,
+    )
+    try:
+        raw = _llm.call(messages, SYSTEM_PROMPT, model=model)
+        snippet, _imports, _effects = parse_entity_response(raw)
+    except Exception as exc:
+        print(f"r2py: retranslate_entity failed for {eid}: {exc}", file=sys.stderr)
+        return None
+
+    _STUB = "pass  # r2py: translation failed for entity (LLM response not valid Python)"
+    if snippet.strip() == _STUB:
+        return None
+    return snippet
+
+
+def _prior_translations_from_source(source: str, exclude_eid: str) -> dict[str, str]:
+    """Extract per-entity body snippets from an assembled translation string.
+
+    Keyed by entity_id; the target entity is excluded so it is not shown as its
+    own dependency.
+    """
+    from .stitch import _SENTINEL_RE
+    lines = source.splitlines()
+    result: dict[str, str] = {}
+    current_eid: str | None = None
+    current_lines: list[str] = []
+    for line in lines:
+        m = _SENTINEL_RE.match(line)
+        if m:
+            if current_eid is not None and current_eid != exclude_eid:
+                result[current_eid] = "\n".join(current_lines).strip()
+            current_eid = m.group(1)
+            current_lines = []
+        elif current_eid is not None:
+            current_lines.append(line)
+    if current_eid is not None and current_eid != exclude_eid:
+        result[current_eid] = "\n".join(current_lines).strip()
+    return result
+
+
+def _already_defined_before(source: str, target_eid: str) -> set[str]:
+    """Return top-level def/class names and _-prefixed constants from before *target_eid*'s sentinel."""
+    from .stitch import _SENTINEL_RE, get_toplevel_def_names
+    lines = source.splitlines()
+    before_lines: list[str] = []
+    for line in lines:
+        m = _SENTINEL_RE.match(line)
+        if m and m.group(1) == target_eid:
+            break
+        before_lines.append(line)
+    return get_toplevel_def_names("\n".join(before_lines))
+
+
 def _generate_from_capture(entity) -> str | None:
     """Return a Python assignment snippet for a VARIABLE entity from its R-captured value.
 

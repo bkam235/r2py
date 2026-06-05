@@ -83,6 +83,15 @@ def apply_edit(source: str, edit: Edit) -> str:
                 return source
             return source.replace(old_code, new_code)
 
+        elif edit.kind == EditKind.RETRANSLATE_ENTITY:
+            new_snippet = p.get("new_snippet", "").strip()
+            if not new_snippet:
+                return source
+            stub = "pass  # r2py: translation failed for entity (LLM response not valid Python)"
+            if stub not in source:
+                return source
+            return source.replace(stub, new_snippet, 1)
+
         elif edit.kind == EditKind.REPLACE_LIBRARY:
             old_name = p.get("old_name", "")
             new_name = p.get("new_name", "")

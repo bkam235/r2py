@@ -77,6 +77,7 @@ def translate(
         seed_translation=seed_translation,
     )
     Path(py_path).write_text(result.python_source, encoding="utf-8")
+    _write_translation_log(Path(py_path), script_map, result)
     if result.final_exit_code != 0:
         print(
             f"r2py: warning: final Python translation crashed "
@@ -127,6 +128,80 @@ def reset_library(library=None, keep_seeds: bool = True) -> int:
     index._save()
 
     return removed
+
+
+def _write_translation_log(
+    py_path: "Path",
+    script_map: "ScriptMap",
+    result: "TranslateResult",
+) -> None:
+    """Write a human-readable comparison log next to the output .py file."""
+    log_path = py_path.with_suffix(".log")
+    report = result.final_score_report
+    entities = getattr(script_map, "entities", {}) or {}
+
+    # Build entity_line_map from the final Python source to extract py snippets.
+    try:
+        from .stage2.stitch import rebuild_entity_line_map as _rebuild
+        elmap = _rebuild(result.python_source)
+    except Exception:
+        elmap = {}
+
+    lines: list[str] = [
+        "Translation log",
+        f"Final score: {result.final_score:.3f}",
+        f"Iterations:  {result.iterations}",
+        "",
+    ]
+
+    for eid, entity in entities.items():
+        kind = getattr(getattr(entity, "kind", None), "value", "unknown")
+        name = getattr(entity, "name", eid)
+
+        # R source snippet
+        r_snippet = ""
+        span = getattr(entity, "source_span", None)
+        if span is not None and script_map.source:
+            src_lines = script_map.source.splitlines()
+            start = getattr(span, "start_line", 0)
+            end = min(len(src_lines), getattr(span, "end_line", start) + 1)
+            r_snippet = "\n".join(src_lines[start:end])
+
+        # Python snippet
+        py_snippet = ""
+        if eid in elmap:
+            py_start, py_end = elmap[eid]
+            py_lines = result.python_source.splitlines()
+            py_snippet = "\n".join(py_lines[py_start:py_end])
+
+        # Per-entity score (average of the six EntityScore fields)
+        score = None
+        if report is not None:
+            es = report.by_entity.get(eid)
+            if es is not None:
+                score = (
+                    es.type_match + es.control_flow_match + es.data_output
+                    + es.variable_output + es.callable_output + es.side_effects
+                ) / 6
+
+        lines.append("=" * 60)
+        lines.append(f"Entity: {eid}")
+        lines.append(f"  Name:  {name}")
+        lines.append(f"  Kind:  {kind}")
+        if score is not None:
+            lines.append(f"  Score: {score:.3f}")
+        lines.append("")
+        if r_snippet:
+            lines.append("  R:")
+            for ln in r_snippet.splitlines():
+                lines.append(f"    {ln}")
+        if py_snippet:
+            lines.append("  Python:")
+            for ln in py_snippet.splitlines():
+                lines.append(f"    {ln}")
+        lines.append("")
+
+    log_path.write_text("\n".join(lines), encoding="utf-8")
 
 
 def review_library(library=None, prune_unimproved: bool = False) -> list[str]:
