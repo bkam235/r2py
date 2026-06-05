@@ -181,6 +181,7 @@ def run_loop(
             _write_score_report(_out, 0, seed_decomp)
 
     _emit(progress, kind="seed_done", score=seed_decomp.aggregate)
+    _record_seed_translations(seed, seed_decomp, script_map, library, script_id, entity_line_map)
 
     # Monotonically increasing counter for score_report artifact filenames.
     # Avoids collisions when beam_width > 1 produces multiple proposals per iteration.
@@ -262,6 +263,10 @@ def run_loop(
                     score_history.append(retry_decomp)
                     retry_candidate = Candidate(retry_src, retry_decomp.aggregate, retry_decomp)
                     beam = _top_k(beam + [retry_candidate], beam_width)
+                    _record_seed_translations(
+                        retry_src, retry_decomp, script_map, library,
+                        script_id, retry_elmap,
+                    )
                     _emit(progress, kind="retranslation_done", iteration=i,
                           score=retry_decomp.aggregate)
             except Exception:
@@ -507,6 +512,7 @@ def run_loop(
         pattern_evidence_added=list(dict.fromkeys(evidence_added)),
         pattern_contradictions_added=list(dict.fromkeys(contradictions_added)),
         final_exit_code=best.decomp.py_exit_code,
+        final_score_report=best.decomp,
     )
 
 
@@ -615,16 +621,100 @@ def _dominant_failure_class(feedback: list, eid: str) -> str:
 
 
 def _edit_code_pair(edit: "Edit") -> tuple[str, str]:
-    """Extract (old_code, new_code) from edit params for structural edit types."""
+    """Extract (old_code, new_code) from edit params for structural edit types.
+
+    Strips leading r2py entity-sentinel comments (# r2py:entity:<id>) so that
+    stored edit examples contain only the meaningful Python code, not the
+    assembly bookkeeping line.
+    """
     from .types import EditKind
     params = getattr(edit, "params", {}) or {}
     if edit.kind == EditKind.RESTRUCTURE_CONTROL_FLOW:
-        return str(params.get("old_code", ""))[:300], str(params.get("new_code", ""))[:300]
+        old = _strip_sentinel(str(params.get("old_code", "")))[:300]
+        new = _strip_sentinel(str(params.get("new_code", "")))[:300]
+        return old, new
     if edit.kind == EditKind.REPLACE_CALL:
         return str(params.get("old_call", ""))[:300], str(params.get("new_call", ""))[:300]
     if edit.kind == EditKind.CHANGE_IMPORT:
         return str(params.get("old_import", ""))[:300], str(params.get("new_import", ""))[:300]
     return "", ""
+
+
+def _strip_sentinel(code: str) -> str:
+    """Remove a leading '# r2py:entity:<id>' sentinel line if present."""
+    import re as _re
+    return _re.sub(r"^# r2py:entity:\S+[ \t]*\n?", "", code, count=1).lstrip("\n")
+
+
+_SEED_RECORD_THRESHOLD = 0.5  # minimum per-entity avg score to record a TranslationExample
+
+
+def _record_seed_translations(
+    source: str,
+    decomp,
+    script_map: object,
+    library: object,
+    script_id: str,
+    entity_line_map: dict,
+) -> None:
+    """Attach per-entity TranslationExamples to the library from a well-scoring translation.
+
+    Called after the initial seed and each retranslation so that entity
+    implementations that actually worked are captured — not only when an edit
+    is strictly accepted, but whenever a full translation reaches a good score.
+
+    Only attaches to patterns whose package matches the entity's package (or
+    whose package is empty when the entity has no package) to avoid polluting
+    unrelated patterns with examples from a different domain.
+
+    Does NOT create new patterns — that is left to seed_from_translation() for
+    human-authorised seeding.
+    """
+    if not hasattr(library, "retrieve") or not hasattr(library, "store"):
+        return
+    if decomp.aggregate < _SEED_RECORD_THRESHOLD:
+        return
+
+    from .library.pattern import TranslationExample, r_snippet_hash
+    from .library.writer import _add_translation_example
+
+    entities = getattr(script_map, "entities", {})
+
+    for eid, entity in entities.items():
+        es = decomp.by_entity.get(eid)
+        if es is None or not es.executed_ok:
+            continue
+        # Simple avg over execution-outcome fields (same logic as policy._avg_score).
+        avg = (es.data_output + es.variable_output + es.side_effects) / 3
+        if avg < _SEED_RECORD_THRESHOLD:
+            continue
+
+        r_snip = _entity_r_snippet(entity, script_map)
+        py_snip = _extract_entity_snippet(source, entity_line_map, eid)
+        if not r_snip or not py_snip.strip():
+            continue
+        # Skip stub / untranslatable entities — they don't carry useful examples.
+        if py_snip.strip().startswith("pass"):
+            continue
+
+        entity_pkg = getattr(entity, "package", "") or ""
+        patterns = library.retrieve(entity, k=1)
+        for pat_obj in patterns:
+            # Only attach when packages are compatible.
+            if pat_obj.package != entity_pkg:
+                continue
+            pat = library.store.get(pat_obj.id)
+            if pat is None:
+                continue
+            ex = TranslationExample(
+                r_hash=r_snippet_hash(r_snip),
+                r_snippet=r_snip[:300],
+                py_snippet=py_snip[:600],
+                score=avg,
+                script_id=script_id,
+            )
+            _add_translation_example(pat, ex)
+            library.store.save(pat)
 
 
 def _write_run_logs(

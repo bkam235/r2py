@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     from .types import ScriptMap, TranslateResult
 
 __version__ = "0.2.0"
-__all__ = ["translate", "analyze", "review_library", "reset_library"]
+__all__ = ["translate", "analyze", "review_library", "reset_library", "seed_from_translation"]
 
 
 def translate(
@@ -93,6 +93,117 @@ def analyze(r_path: "str | Path") -> "ScriptMap":
     from pathlib import Path
     from .stage1 import analyze as _analyze
     return _analyze(Path(r_path))
+
+
+def seed_from_translation(
+    r_path: "str | Path",
+    py_path: "str | Path",
+    *,
+    library=None,
+    script_id: str = "human-verified",
+) -> list[str]:
+    """Seed the Pattern Library with entity-level examples from a known-good Python file.
+
+    For each entity in the R script whose Python translation in py_path is
+    non-trivial (not a bare `pass` stub):
+      - Finds the best-matching existing pattern and attaches a TranslationExample.
+      - When no same-package pattern exists, creates a new seed pattern so the
+        example is retrievable on the next run.
+
+    Returns a list of pattern IDs that were created or updated.
+
+    Use this after a successful translation run to permanently encode what worked
+    into the library, so future translations of similar scripts benefit immediately
+    from Stage 2 rather than having to rediscover the solution through editing.
+    """
+    import re
+    from datetime import date
+    from pathlib import Path
+    from .stage1 import analyze as _analyze
+    from .library import get_library
+    from .library.pattern import Pattern, TranslationExample, r_snippet_hash
+    from .library.writer import _add_translation_example
+    from .stage2.stitch import rebuild_entity_line_map as _rebuild
+    from .loop import _entity_r_snippet, _extract_entity_snippet
+
+    if library is None:
+        library = get_library()
+
+    script_map = _analyze(Path(r_path))
+    py_source = Path(py_path).read_text(encoding="utf-8")
+    elmap = _rebuild(py_source)
+    entities = getattr(script_map, "entities", {})
+
+    touched: list[str] = []
+
+    # Track pat_ids created in this call to avoid intra-run collisions when
+    # multiple entities share the same name (e.g. with_locale, with_locale_1…).
+    created_ids: set[str] = set()
+
+    for eid, entity in entities.items():
+        r_snip = _entity_r_snippet(entity, script_map)
+        py_snip = _extract_entity_snippet(py_source, elmap, eid)
+        if not r_snip or not py_snip.strip() or py_snip.strip().startswith("pass"):
+            continue
+
+        entity_pkg = getattr(entity, "package", "") or ""
+        ex = TranslationExample(
+            r_hash=r_snippet_hash(r_snip),
+            r_snippet=r_snip[:300],
+            py_snippet=py_snip[:600],
+            score=1.0,   # human-verified: full confidence
+            script_id=script_id,
+        )
+
+        # Prefer an existing package-matched pattern.
+        patterns = library.retrieve(entity, k=3)
+        matched = next((p for p in patterns if p.package == entity_pkg), None)
+
+        if matched:
+            pat = library.store.get(matched.id)
+            if pat is not None:
+                _add_translation_example(pat, ex)
+                library.store.save(pat)
+                if matched.id not in touched:
+                    touched.append(matched.id)
+                continue
+
+        # No package-matched pattern — create a seed so the example is retrievable.
+        # Use the entity ID (eid) to guarantee uniqueness across same-named entities.
+        raw_id = f"{entity_pkg}.{eid}" if entity_pkg else eid
+        base_id = re.sub(r"[^a-z0-9.\-]", "-", raw_id.lower())[:60]
+        # Ensure uniqueness against both the persistent store and this call's creations.
+        pat_id = base_id
+        suffix = 0
+        while library.store.get(pat_id) is not None or pat_id in created_ids:
+            suffix += 1
+            pat_id = f"{base_id}-{suffix}"
+
+        entity_name = getattr(entity, "name", eid) or eid
+        kind_str = getattr(getattr(entity, "kind", None), "value", "entity")
+        pkg_display = entity_pkg or "base R"
+        guidance = (
+            f"Translate R `{entity_name}` ({kind_str} from {pkg_display}) to Python. "
+            f"See verified example below — prefer it over guessing from the R source alone."
+        )
+        pat = Pattern(
+            id=pat_id,
+            package=entity_pkg,
+            confidence="tentative",
+            seed=True,   # seed=True bypasses the evidence-count gate in retrieval
+            guidance=guidance,
+            created=date.today().isoformat(),
+            last_review=date.today().isoformat(),
+        )
+        _add_translation_example(pat, ex)
+        library.store.save(pat)
+        created_ids.add(pat_id)
+        touched.append(pat_id)
+
+    if touched:
+        library.index.rebuild(library.store)
+
+    return touched
 
 
 def reset_library(library=None, keep_seeds: bool = True) -> int:
