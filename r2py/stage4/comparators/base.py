@@ -38,12 +38,20 @@ def _normalize_printed_output(s: str) -> str:
     - R vector indices: ``[1]``, ``[7]``, etc. at line start
     - Surrounding quotes (both ``"`` and ``'``)
     - Python list/tuple brackets and commas
+    - Python dict braces and colons
     """
     # Remove R vector line-index markers like "[1]" or " [7]"
     s = _re.sub(r'^\s*\[\d+\]\s*', '', s, flags=_re.MULTILINE)
-    # Strip quote characters and list punctuation
-    s = s.translate(str.maketrans('', '', '"\'[](),'))
+    # Strip quote characters, list/dict punctuation, and dict colons
+    s = s.translate(str.maketrans('', '', '"\'[](),{}:'))
     return ' '.join(s.split())
+
+
+def _sorted_token_similarity(a: str, b: str) -> float:
+    """Similarity after sorting tokens — catches dict/named-vector ordering differences."""
+    a_sorted = ' '.join(sorted(a.split()))
+    b_sorted = ' '.join(sorted(b.split()))
+    return _difflib_similarity(a_sorted, b_sorted)
 
 
 def _embedding_similarity(a: str, b: str) -> float:
@@ -75,5 +83,8 @@ def text_similarity(a: str, b: str) -> float:
     if os.getenv("R2PY_EMBED"):
         return _embedding_similarity(a, b)
     raw = _difflib_similarity(a, b)
-    norm = _difflib_similarity(_normalize_printed_output(a), _normalize_printed_output(b))
-    return max(raw, norm)
+    norm_a = _normalize_printed_output(a)
+    norm_b = _normalize_printed_output(b)
+    norm = _difflib_similarity(norm_a, norm_b)
+    sorted_tok = _sorted_token_similarity(norm_a, norm_b)
+    return max(raw, norm, sorted_tok)
