@@ -126,6 +126,8 @@ def seed_from_translation(
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
     from .loop import _entity_r_snippet, _extract_entity_snippet
 
+    from collections import defaultdict
+
     if library is None:
         library = get_library()
 
@@ -134,19 +136,60 @@ def seed_from_translation(
     elmap = _rebuild(py_source)
     entities = getattr(script_map, "entities", {})
 
-    touched: list[str] = []
+    from .types import EntityKind as _EK
 
-    # Track pat_ids created in this call to avoid intra-run collisions when
-    # multiple entities share the same name (e.g. with_locale, with_locale_1…).
-    created_ids: set[str] = set()
-
+    # --- Pass 1: collect valid (eid, entity, r_snip, py_snip) tuples ----------
+    valid: list[tuple] = []
     for eid, entity in entities.items():
+        # LibraryImport entities are R-package loads with no meaningful Python
+        # translation; skip them to avoid creating stub patterns like 'withr.withr'.
+        if getattr(entity, "kind", None) == _EK.LIBRARY_IMPORT:
+            continue
         r_snip = _entity_r_snippet(entity, script_map)
         py_snip = _extract_entity_snippet(py_source, elmap, eid)
-        if not r_snip or not py_snip.strip() or py_snip.strip().startswith("pass"):
+        if not r_snip or not py_snip.strip():
             continue
+        # Skip entities whose translation is substantively just `pass` (possibly
+        # surrounded by comments) — they carry no useful Python example.
+        code_lines = [l for l in py_snip.splitlines()
+                      if l.strip() and not l.strip().startswith("#")]
+        if not code_lines or all(l.strip() in ("pass", "pass  # untranslatable") or
+                                  l.strip().startswith("pass  #") for l in code_lines):
+            continue
+        valid.append((eid, entity, r_snip, py_snip))
 
+    # --- Pass 2: group by entity name ----------------------------------------
+    # When multiple entities share the same name (e.g. 7× with_locale), we want
+    # ONE pattern for the concept, not N patterns for N call sites.
+    # Pick the "definer" — the entity whose py_snip contains `def <name>(` —
+    # as the representative. Fall back to the first entity in declaration order.
+    by_name: dict[str, list[tuple]] = defaultdict(list)
+    for item in valid:
+        eid, entity, r_snip, py_snip = item
+        name = getattr(entity, "name", eid) or eid
+        by_name[name].append(item)
+
+    # Build the de-duplicated list: one representative per entity name.
+    representatives: list[tuple] = []
+    for name, group in by_name.items():
+        if len(group) == 1:
+            representatives.append(group[0])
+        else:
+            py_name = name.replace("::", ".").replace(".", "_")
+            definer = next(
+                (item for item in group if f"def {py_name}(" in item[3]),
+                group[0],  # fallback: first entity in topological order
+            )
+            representatives.append(definer)
+
+    # --- Pass 3: attach or create one pattern per representative --------------
+    touched: list[str] = []
+    created_ids: set[str] = set()
+
+    for eid, entity, r_snip, py_snip in representatives:
         entity_pkg = getattr(entity, "package", "") or ""
+        entity_name = getattr(entity, "name", eid) or eid
+
         ex = TranslationExample(
             r_hash=r_snippet_hash(r_snip),
             r_snippet=r_snip[:300],
@@ -168,18 +211,18 @@ def seed_from_translation(
                     touched.append(matched.id)
                 continue
 
-        # No package-matched pattern — create a seed so the example is retrievable.
-        # Use the entity ID (eid) to guarantee uniqueness across same-named entities.
-        raw_id = f"{entity_pkg}.{eid}" if entity_pkg else eid
+        # No package-matched pattern — create a seed (seed=True bypasses the
+        # evidence-count gate so it is immediately retrievable).
+        # Use entity_name (not eid) for the ID so the pattern is named after
+        # the R concept, not the script-local entity numbering.
+        raw_id = f"{entity_pkg}.{entity_name}" if entity_pkg else entity_name
         base_id = re.sub(r"[^a-z0-9.\-]", "-", raw_id.lower())[:60]
-        # Ensure uniqueness against both the persistent store and this call's creations.
         pat_id = base_id
         suffix = 0
         while library.store.get(pat_id) is not None or pat_id in created_ids:
             suffix += 1
             pat_id = f"{base_id}-{suffix}"
 
-        entity_name = getattr(entity, "name", eid) or eid
         kind_str = getattr(getattr(entity, "kind", None), "value", "entity")
         pkg_display = entity_pkg or "base R"
         guidance = (
@@ -190,7 +233,7 @@ def seed_from_translation(
             id=pat_id,
             package=entity_pkg,
             confidence="tentative",
-            seed=True,   # seed=True bypasses the evidence-count gate in retrieval
+            seed=True,
             guidance=guidance,
             created=date.today().isoformat(),
             last_review=date.today().isoformat(),

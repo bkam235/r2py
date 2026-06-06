@@ -15,21 +15,12 @@
       "base.which_to_npwhere",
       "base.write_csv_to_pandas"
     ],
-    "withr:": [
-      "base.suppress-startup-messages"
-    ],
     ":": [
       "df",
-      "suppresspackagestartupmessages",
-      "with-locale-1",
-      "with-locale-2",
-      "with-locale-3",
-      "with-locale-4",
-      "with-locale-5",
-      "with-locale-6",
       "with-locale",
       "withr.with_locale-seed",
-      "x"
+      "x",
+      "datetime-import-conflict"
     ],
     "dplyr:": [
       "dplyr.filter_to_mask"
@@ -41,7 +32,7 @@
       "magrittr.pipe_to_chaining"
     ],
     ":ffb01754": [
-      "with-locale-1"
+      "datetime-import-conflict"
     ]
   },
   "meta": {
@@ -133,14 +124,6 @@
       "package": "base",
       "ast_shape_hash": ""
     },
-    "base.suppress-startup-messages": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 2,
-      "seed": false,
-      "package": "withr",
-      "ast_shape_hash": ""
-    },
     "base.which_to_npwhere": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -163,8 +146,7 @@
       "contradictions_count": 1,
       "seed": true,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 1
+      "ast_shape_hash": ""
     },
     "dplyr.filter_to_mask": {
       "confidence": "tentative",
@@ -190,71 +172,14 @@
       "package": "magrittr",
       "ast_shape_hash": ""
     },
-    "suppresspackagestartupmessages": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 3,
-      "seed": true,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 1
-    },
-    "with-locale-1": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 1,
-      "seed": true,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 1
-    },
-    "with-locale-2": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": true,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "with-locale-3": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": true,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "with-locale-4": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": true,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "with-locale-5": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": true,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "with-locale-6": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": true,
-      "package": "",
-      "ast_shape_hash": ""
-    },
     "with-locale": {
       "confidence": "tentative",
       "evidence_count": 0,
-      "contradictions_count": 0,
+      "contradictions_count": 2,
       "seed": true,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "withr.with_locale-seed": {
       "confidence": "contradicted",
@@ -271,7 +196,16 @@
       "seed": true,
       "package": "",
       "ast_shape_hash": ""
+    },
+    "datetime-import-conflict": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 1
+  "total_runs": 3
 }

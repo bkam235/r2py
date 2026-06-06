@@ -116,6 +116,10 @@ def build_entity_prompt(
     if already_defined_block:
         parts.append(f"## Already defined in this script\n{already_defined_block}")
 
+    repeated_block = _repeated_call_hint(entity, script_map, already_defined)
+    if repeated_block:
+        parts.append(repeated_block)
+
     if prior_failures:
         failure_lines = "\n".join(f"- {f}" for f in prior_failures)
         parts.append(
@@ -215,14 +219,17 @@ def _entity_annotations(entity: "Entity", script_map: "ScriptMap") -> str:
 def _format_translation_examples(patterns: list["Pattern"]) -> str:
     """Return a prompt block showing the best verified translation example across patterns.
 
-    Shows the highest-scoring TranslationExample from the first pattern that has one.
-    Returns "" when no patterns carry examples yet (graceful no-op until the library
-    accumulates verified runs).
+    Shows the highest-quality TranslationExample from the first pattern that has one.
+    Prefers examples that define a Python callable (contain 'def ') over call-site
+    snippets, then breaks ties by score.  Returns "" when no examples exist yet.
     """
     for pat in patterns:
         examples = getattr(pat, "translation_examples", [])
         if examples:
-            ex = max(examples, key=lambda e: e.score)
+            ex = max(
+                examples,
+                key=lambda e: (1 if "def " in e.py_snippet else 0, e.score),
+            )
             return (
                 f"From pattern `{pat.id}` (score {ex.score:.2f}):\n"
                 f"R:\n```r\n{ex.r_snippet}\n```\n"
@@ -340,6 +347,69 @@ def _format_already_defined(names: set[str] | None) -> str:
         "Do NOT redefine them — call them directly:\n"
         + listing
     )
+
+
+def _repeated_call_hint(
+    entity: "Entity",
+    script_map: "ScriptMap",
+    already_defined: set[str] | None,
+) -> str:
+    """Return a prompt section when an entity name appears more than once in the script.
+
+    Two cases:
+    - First occurrence (name not yet in already_defined): tell the LLM to define
+      a reusable Python construct rather than inlining the logic.
+    - Later occurrence (name already defined by a prior entity): tell the LLM to
+      use the existing definition directly and NOT redefine it.
+
+    Applies to: FunctionCall, ExternalSymbol, FunctionDef, S4Class, R6Class, Formula.
+    Excluded: Variable, Constant, LibraryImport — for those, repeated names mean
+    intentional reassignment or duplicate imports, not re-use of the same definition.
+    """
+    from ..types import EntityKind
+
+    _REUSE_KINDS = (
+        EntityKind.FUNCTION_CALL,
+        EntityKind.EXTERNAL_SYMBOL,
+        EntityKind.FUNCTION_DEF,
+        EntityKind.S4_CLASS,
+        EntityKind.R6_CLASS,
+        EntityKind.FORMULA,
+    )
+    _CLASS_KINDS = (EntityKind.S4_CLASS, EntityKind.R6_CLASS)
+
+    kind = getattr(entity, "kind", None)
+    if kind not in _REUSE_KINDS:
+        return ""
+
+    name = getattr(entity, "name", "") or ""
+    if not name:
+        return ""
+
+    entities = getattr(script_map, "entities", {})
+    count = sum(1 for e in entities.values() if getattr(e, "name", "") == name)
+    if count < 2:
+        return ""
+
+    construct = "class" if kind in _CLASS_KINDS else "function/callable"
+    defined = already_defined or set()
+
+    if name in defined:
+        return (
+            f"## Use existing definition — do NOT redefine\n"
+            f"`{name}` was already translated as a Python {construct} by an earlier "
+            f"entity in this script. Do NOT redefine or re-implement it here. "
+            f"Use `{name}` directly with the appropriate arguments for this use-case."
+        )
+    else:
+        return (
+            f"## Define a reusable {construct} ({count} uses in this script)\n"
+            f"`{name}` appears {count} times in this script. "
+            f"In your translation of THIS entity, define a reusable Python {construct} "
+            f"`{name}` that captures the full logic, then use it for this specific call. "
+            f"Later entities will reuse your definition directly — do not inline the "
+            f"logic separately for each occurrence."
+        )
 
 
 def _format_free_variables(entity: "Entity") -> str:

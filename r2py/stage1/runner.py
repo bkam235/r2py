@@ -136,12 +136,19 @@ def run_script_checkpointed(
 _R_CHECKPOINT_PREAMBLE = r"""
 .r2py_prev_vars <- character(0)
 .r2py_prev_fig_count <- 0L
+.r2py_stdout_buf <- character(0)
+.r2py_prev_stdout_len <- 0L
+
+# Redirect stdout into a text connection so we can capture per-entity deltas.
+.r2py_stdout_con <- textConnection(".r2py_stdout_buf", open = "w", local = FALSE)
+sink(.r2py_stdout_con, type = "output", append = FALSE)
 
 .r2py_cp <- function(eid) {
   tryCatch({
     cur_vars <- setdiff(
       ls(envir = .GlobalEnv),
-      c(".r2py_prev_vars", ".r2py_prev_fig_count", ".r2py_cp")
+      c(".r2py_prev_vars", ".r2py_prev_fig_count", ".r2py_cp",
+        ".r2py_stdout_buf", ".r2py_stdout_con", ".r2py_prev_stdout_len")
     )
     new_vars <- setdiff(cur_vars, .r2py_prev_vars)
     state <- list()
@@ -153,9 +160,24 @@ _R_CHECKPOINT_PREAMBLE = r"""
     }
     cur_fig_count <- length(grDevices::dev.list())
     graphics_delta <- max(0L, cur_fig_count - .r2py_prev_fig_count)
+
+    # Flush sink so .r2py_stdout_buf is up to date, then compute delta.
+    sink(type = "output")
+    sink(.r2py_stdout_con, type = "output", append = TRUE)
+    cur_len <- length(.r2py_stdout_buf)
+    stdout_lines <- if (cur_len > .r2py_prev_stdout_len)
+      .r2py_stdout_buf[(.r2py_prev_stdout_len + 1L):cur_len]
+    else
+      character(0)
+    stdout_delta <- if (length(stdout_lines) > 0L)
+      paste(stdout_lines, collapse = "\n")
+    else
+      ""
+
     cp <- list(
       data = state,
-      graphics = graphics_delta
+      graphics = graphics_delta,
+      stdout = stdout_delta
     )
     safe_eid <- gsub("[/:]", "_", eid)
     if (requireNamespace("jsonlite", quietly = TRUE)) {
@@ -167,6 +189,7 @@ _R_CHECKPOINT_PREAMBLE = r"""
     }
     .r2py_prev_vars <<- cur_vars
     .r2py_prev_fig_count <<- cur_fig_count
+    .r2py_prev_stdout_len <<- cur_len
   }, error = function(e) invisible(NULL))
 }
 """

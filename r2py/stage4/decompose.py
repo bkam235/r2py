@@ -201,7 +201,8 @@ def make_score_table(
         if py_eb is None and entity_line_map is not None and entity_id not in entity_line_map:
             py_eb = EffectBundle()
 
-        if r_eb is not None and py_eb is not None and entity_executed_ok:
+        use_per_entity = r_eb is not None and py_eb is not None and entity_executed_ok
+        if use_per_entity:
             eb_results = _compare_entity_bundles(
                 r_eb, py_eb, data_compare=data_compare, rtol=rtol, atol=atol
             )
@@ -226,7 +227,13 @@ def make_score_table(
             if r_eb.stdout:
                 proxy_scores.append(eb_results[EffectClass.STDOUT].score)
 
-            data_score = (sum(proxy_scores) / len(proxy_scores)) if proxy_scores else 1.0
+            # If R emitted nothing we can compare, per-entity bundles give no
+            # signal — fall through to the global-score path instead of
+            # awarding a free 1.0.
+            use_per_entity = bool(proxy_scores)
+
+        if use_per_entity:
+            data_score = sum(proxy_scores) / len(proxy_scores)
 
             # side_effects from per-entity GRAPHICS + STDOUT comparison
             entity_side_scores = [
@@ -242,7 +249,7 @@ def make_score_table(
                 effect_class=EffectClass.STDOUT, score=stdout_score, verdict="pass"
             )).score
         else:
-            # ── Fallback: global scores (current behaviour) ──────────────────
+            # ── Fallback: global scores ───────────────────────────────────────
             entity_name = getattr(entity, "name", None)
             if entity_name and entity_name in per_variable:
                 data_score = per_variable[entity_name]

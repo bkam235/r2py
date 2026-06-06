@@ -1,6 +1,7 @@
 """Confidence transitions and archival rules for the Pattern Library (§6.5)."""
 from __future__ import annotations
 
+import re
 from collections import defaultdict
 from datetime import date
 from typing import TYPE_CHECKING
@@ -138,6 +139,13 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
                 f"archived {pid}: {non_improvements} non-improvement runs, no improvement"
             )
 
+    # Rule 5: consolidate numeric-suffix duplicates.
+    # Patterns like `with-locale`, `with-locale-1`, `with-locale-2` arise when
+    # the recording mechanism creates one pattern per entity for a function
+    # called multiple times.  Merge all into the canonical (base-name) pattern,
+    # keeping the best TranslationExample and discarding the redundant files.
+    log.extend(_consolidate_numeric_duplicates(store, index))
+
     return log
 
 
@@ -161,6 +169,111 @@ def prune_unimproved(store: "PatternStore", index: "PatternIndex") -> list[str]:
             continue
         index.remove(pid)
         log.append(f"pruned {pid}: no improvement evidence")
+    return log
+
+
+_NUMERIC_SUFFIX_RE = re.compile(r"^(.+?)-(\d+)$")
+
+
+def _consolidate_numeric_duplicates(
+    store: "PatternStore",
+    index: "PatternIndex",
+) -> list[str]:
+    """Merge patterns whose IDs are numeric-suffix variants of the same base.
+
+    Example: `with-locale`, `with-locale-1`, `with-locale-2` all have base
+    `with-locale`.  The canonical pattern is the base-named one (or the first
+    alphabetically if the base doesn't exist as a standalone pattern).  All
+    TranslationExamples and EditExamples from the variants are merged into the
+    canonical; the variants are then deleted from disk and removed from the index.
+
+    Evidence and contradictions are also merged so the canonical's confidence
+    reflects the full history.
+
+    Only consolidates groups of 2+ patterns sharing the same base name.
+    """
+    from .writer import _add_translation_example, _add_edit_example
+
+    patterns = store.load_all()
+    log: list[str] = []
+
+    # Group patterns by base name.
+    groups: dict[str, list[str]] = defaultdict(list)
+    for pid in patterns:
+        m = _NUMERIC_SUFFIX_RE.match(pid)
+        base = m.group(1) if m else pid
+        groups[base].append(pid)
+
+    for base, pids in groups.items():
+        if len(pids) < 2:
+            continue
+        # All pids in this group: the base itself (if it exists) plus numbered variants.
+        all_pids = sorted(pids)
+
+        # Choose canonical: prefer the base name if it exists, else first sorted.
+        canonical_id = base if base in patterns else all_pids[0]
+        canonical = patterns[canonical_id]
+        redundant = [pid for pid in all_pids if pid != canonical_id]
+
+        # Among all patterns in the group, find the best TranslationExample:
+        # one whose py_snippet contains a `def` statement (helper definition)
+        # is preferred over one that only calls the function.
+        py_name = base.replace("-", "_")
+        best_tex = None
+        for pid in all_pids:
+            for tex in patterns[pid].translation_examples:
+                if f"def {py_name}(" in tex.py_snippet:
+                    best_tex = tex
+                    break
+            if best_tex:
+                break
+
+        # Merge everything from redundant patterns into canonical.
+        changed = False
+        for rid in redundant:
+            rpat = patterns[rid]
+            for tex in rpat.translation_examples:
+                before = len(canonical.translation_examples)
+                _add_translation_example(canonical, tex)
+                if len(canonical.translation_examples) != before:
+                    changed = True
+            for eex in rpat.edit_examples:
+                before = len(canonical.edit_examples)
+                _add_edit_example(canonical, eex)
+                if len(canonical.edit_examples) != before:
+                    changed = True
+            for ev in rpat.evidence:
+                canonical.evidence.append(ev)
+                changed = True
+            for contra in rpat.contradictions:
+                if contra not in canonical.contradictions:
+                    canonical.contradictions.append(contra)
+                    changed = True
+            canonical.tie_count += rpat.tie_count
+
+        # If a def-containing example was found, make sure it's the best one.
+        if best_tex is not None:
+            _add_translation_example(canonical, best_tex)
+            changed = True
+
+        # Re-sort so the def-containing example (helper definition) comes first;
+        # among equals, higher score wins.  Must happen before store.save().
+        canonical.translation_examples.sort(
+            key=lambda e: (0 if f"def {py_name}(" in e.py_snippet else 1, -e.score)
+        )
+
+        if changed:
+            canonical.last_review = date.today().isoformat()
+            store.save(canonical)
+
+        # Delete redundant patterns from disk and index.
+        for rid in redundant:
+            path = store._path(rid)
+            if path.exists():
+                path.unlink()
+            index.remove(rid)
+            log.append(f"consolidated {rid} → {canonical_id}")
+
     return log
 
 
