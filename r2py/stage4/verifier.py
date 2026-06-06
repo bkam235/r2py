@@ -221,8 +221,9 @@ def _r2py_checkpoint(eid):
         if k.startswith('_r2py') or k in _r2py_prev_ns:
             continue
         try:
-            _r2py_json.dumps(v)
-            new_vars[k] = v
+            _r2py_serialized, _r2py_ok = _r2py_try_adapters(k, v)
+            if _r2py_ok:
+                new_vars[k] = _r2py_serialized
         except Exception:
             pass
 
