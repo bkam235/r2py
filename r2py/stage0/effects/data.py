@@ -49,15 +49,35 @@ def _is_pandas_df(obj: Any) -> bool:
 
 
 def _serialize_pandas_df(obj: Any) -> Any:
+    import json
     import pandas as _pd
+
+    def _elem(x: Any) -> Any:
+        import datetime
+        if isinstance(x, datetime.datetime):
+            return x.isoformat()
+        if isinstance(x, datetime.date):
+            return x.isoformat()
+        try:
+            import numpy as np
+            if isinstance(x, np.generic):
+                return x.item()
+        except ImportError:
+            pass
+        return x
+
     result = {}
     for col in obj.columns:
         series = obj[col]
         if _pd.api.types.is_datetime64_any_dtype(series):
-            # Convert datetime64 to ISO date strings matching R's jsonlite format
             result[col] = series.dt.strftime("%Y-%m-%d").tolist()
         else:
-            result[col] = series.tolist()
+            vals = series.tolist()
+            try:
+                json.dumps(vals)
+                result[col] = vals
+            except (TypeError, ValueError):
+                result[col] = [_elem(v) for v in vals]
     return result
 
 
@@ -70,10 +90,16 @@ def _is_pandas_series(obj: Any) -> bool:
 
 
 def _serialize_pandas_series(obj: Any) -> Any:
+    import json
     import pandas as _pd
     if _pd.api.types.is_datetime64_any_dtype(obj):
         return obj.dt.strftime("%Y-%m-%d").tolist()
-    return obj.tolist()
+    vals = obj.tolist()
+    try:
+        json.dumps(vals)
+        return vals
+    except (TypeError, ValueError):
+        return [_serialize_datetime(v) if _is_datetime(v) else v for v in vals]
 
 
 def _is_numpy_array(obj: Any) -> bool:
@@ -301,6 +327,40 @@ def build_py_preamble() -> str:
     adapter_setup = """\
 import json as _r2py_json
 
+def _r2py_serialize_elem(x):
+    \"\"\"Serialize a single list/column element to a JSON-compatible scalar.\"\"\"
+    if isinstance(x, (bool, int, float, str, type(None))):
+        return x
+    try:
+        import numpy as _np2
+        if isinstance(x, _np2.generic):
+            return x.item()
+    except ImportError:
+        pass
+    try:
+        import datetime as _dt2
+        if isinstance(x, _dt2.datetime):
+            return x.isoformat()
+        if isinstance(x, _dt2.date):
+            return x.isoformat()
+    except ImportError:
+        pass
+    try:
+        import pandas as _pd2
+        if isinstance(x, _pd2.Timestamp):
+            return None if _pd2.isna(x) else x.date().isoformat()
+    except ImportError:
+        pass
+    return x  # leave as-is; caller's json.dumps check will catch anything still bad
+
+def _r2py_serialize_list(lst):
+    \"\"\"Apply _r2py_serialize_elem element-wise, only if needed.\"\"\"
+    try:
+        _r2py_json.dumps(lst)
+        return lst
+    except (TypeError, ValueError):
+        return [_r2py_serialize_elem(x) for x in lst]
+
 def _r2py_try_adapters(name, obj):
     \"\"\"Try registered adapters; return (value, True) or (None, False).\"\"\"
     import json
@@ -313,7 +373,7 @@ def _r2py_try_adapters(name, obj):
         if isinstance(obj, _np.generic):
             return obj.item(), True
         if isinstance(obj, _np.ndarray):
-            return obj.tolist(), True
+            return _r2py_serialize_list(obj.tolist()), True
     except ImportError:
         pass
     # datetime — datetime before date because datetime is a subclass of date
@@ -337,12 +397,12 @@ def _r2py_try_adapters(name, obj):
                 if _pd.api.types.is_datetime64_any_dtype(_r2py_series):
                     _r2py_result[_r2py_col] = _r2py_series.dt.strftime('%Y-%m-%d').tolist()
                 else:
-                    _r2py_result[_r2py_col] = _r2py_series.tolist()
+                    _r2py_result[_r2py_col] = _r2py_serialize_list(_r2py_series.tolist())
             return _r2py_result, True
         if isinstance(obj, _pd.Series):
             if _pd.api.types.is_datetime64_any_dtype(obj):
                 return obj.dt.strftime('%Y-%m-%d').tolist(), True
-            return obj.tolist(), True
+            return _r2py_serialize_list(obj.tolist()), True
         if isinstance(obj, _pd.Categorical):
             return list(obj), True
     except ImportError:
