@@ -217,21 +217,26 @@ def _r2py_checkpoint(eid):
 
     g = globals()
     new_vars = {}
+    uncapturable_vars = []
     for k, v in g.items():
         if k.startswith('_r2py') or k in _r2py_prev_ns:
             continue
         try:
             _r2py_serialized, _r2py_ok = _r2py_try_adapters(k, v)
-            if _r2py_ok:
-                new_vars[k] = _r2py_serialized
+            if not _r2py_ok:
+                uncapturable_vars.append(k)
+                continue
+            _r2py_json.dumps(_r2py_serialized)
+            new_vars[k] = _r2py_serialized
         except Exception:
-            pass
+            uncapturable_vars.append(k)
 
     safe_eid = eid.replace('/', '_').replace(':', '_')
     try:
         with open(f'_r2py_cp_{safe_eid}.json', 'w', encoding='utf-8') as _f:
             _r2py_json.dump({'data': new_vars, 'stdout': stdout_delta,
-                             'graphics': graphics_delta}, _f)
+                             'graphics': graphics_delta,
+                             'uncapturable': uncapturable_vars}, _f)
     except Exception:
         pass
 
@@ -288,11 +293,13 @@ def _collect_py_checkpoints(
             # JSON null/array can appear when no new variables were captured; normalise.
             if not isinstance(raw_data, dict):
                 raw_data = {}
-            result[eid] = EffectBundle(
+            eb = EffectBundle(
                 data=raw_data,
                 stdout=cp.get("stdout", "") or "",
                 graphics=cp.get("graphics", 0),  # type: ignore[arg-type]
             )
+            eb.uncapturable.extend(cp.get("uncapturable", []))
+            result[eid] = eb
         except Exception:
             continue
     return result

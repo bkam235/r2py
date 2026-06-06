@@ -199,6 +199,7 @@ class DataComparator:
 
         for name, r_val in r_effect.items():
             if name in uncapturable:
+                print(f"[r2py] WARNING: '{name}' is a data entity but Python could not serialize it — excluded from comparison", flush=True)
                 uncomparable_vars.append(name)
                 continue
 

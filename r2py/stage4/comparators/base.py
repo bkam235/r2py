@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import os
+import re as _re
 from difflib import SequenceMatcher
 from typing import Protocol
 
@@ -30,6 +31,21 @@ def _difflib_similarity(a: str, b: str) -> float:
     return SequenceMatcher(None, a, b).ratio()
 
 
+def _normalize_printed_output(s: str) -> str:
+    """Strip R/Python print-format decoration to bare whitespace-separated tokens.
+
+    Handles:
+    - R vector indices: ``[1]``, ``[7]``, etc. at line start
+    - Surrounding quotes (both ``"`` and ``'``)
+    - Python list/tuple brackets and commas
+    """
+    # Remove R vector line-index markers like "[1]" or " [7]"
+    s = _re.sub(r'^\s*\[\d+\]\s*', '', s, flags=_re.MULTILINE)
+    # Strip quote characters and list punctuation
+    s = s.translate(str.maketrans('', '', '"\'[](),'))
+    return ' '.join(s.split())
+
+
 def _embedding_similarity(a: str, b: str) -> float:
     """Cosine similarity via sentence-transformers (falls back to difflib on error)."""
     try:
@@ -47,6 +63,10 @@ def text_similarity(a: str, b: str) -> float:
     Default: difflib.SequenceMatcher (stdlib, no ML deps).
     Set R2PY_EMBED=1 to use sentence-transformers cosine similarity instead
     (requires ``pip install r2py[embed]``).
+
+    Always takes the max of raw and normalised similarity so that R auto-print
+    format (``[1] "January" ...``) and Python list repr (``['January', ...]``)
+    score as equivalent when they contain the same tokens.
     """
     if not a and not b:
         return 1.0
@@ -54,4 +74,6 @@ def text_similarity(a: str, b: str) -> float:
         return 0.0
     if os.getenv("R2PY_EMBED"):
         return _embedding_similarity(a, b)
-    return _difflib_similarity(a, b)
+    raw = _difflib_similarity(a, b)
+    norm = _difflib_similarity(_normalize_printed_output(a), _normalize_printed_output(b))
+    return max(raw, norm)

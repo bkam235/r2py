@@ -70,6 +70,9 @@ def _is_pandas_series(obj: Any) -> bool:
 
 
 def _serialize_pandas_series(obj: Any) -> Any:
+    import pandas as _pd
+    if _pd.api.types.is_datetime64_any_dtype(obj):
+        return obj.dt.strftime("%Y-%m-%d").tolist()
     return obj.tolist()
 
 
@@ -93,12 +96,62 @@ def _identity(obj: Any) -> Any:
     return obj
 
 
+def _is_numpy_scalar(obj: Any) -> bool:
+    try:
+        import numpy as np
+        return isinstance(obj, np.generic) and getattr(obj, 'ndim', 1) == 0
+    except ImportError:
+        return False
+
+
+def _serialize_numpy_scalar(obj: Any) -> Any:
+    return obj.item()
+
+
+def _is_datetime(obj: Any) -> bool:
+    import datetime
+    return isinstance(obj, (datetime.date, datetime.datetime))
+
+
+def _serialize_datetime(obj: Any) -> Any:
+    return obj.isoformat()
+
+
+def _is_pandas_timestamp(obj: Any) -> bool:
+    try:
+        import pandas as pd
+        return isinstance(obj, pd.Timestamp)
+    except ImportError:
+        return False
+
+
+def _serialize_pandas_timestamp(obj: Any) -> Any:
+    import pandas as _pd
+    return None if _pd.isna(obj) else obj.date().isoformat()
+
+
+def _is_pandas_categorical(obj: Any) -> bool:
+    try:
+        import pandas as pd
+        return isinstance(obj, pd.Categorical)
+    except ImportError:
+        return False
+
+
+def _serialize_pandas_categorical(obj: Any) -> Any:
+    return list(obj)
+
+
 # Plain JSON types are checked first so bool/int/str primitives never reach
 # downstream adapters. Note bool is a subclass of int — the isinstance check
 # in _is_plain_json catches it correctly before any int-specific adapter could.
 register_py_adapter(_is_plain_json, _identity)
+register_py_adapter(_is_numpy_scalar, _serialize_numpy_scalar)
+register_py_adapter(_is_datetime, _serialize_datetime)
+register_py_adapter(_is_pandas_timestamp, _serialize_pandas_timestamp)
 register_py_adapter(_is_pandas_df, _serialize_pandas_df)
 register_py_adapter(_is_pandas_series, _serialize_pandas_series)
+register_py_adapter(_is_pandas_categorical, _serialize_pandas_categorical)
 register_py_adapter(_is_numpy_array, _serialize_numpy_array)
 
 
@@ -216,14 +269,12 @@ for _r2py_k, _r2py_v in list(globals().items()):
     if callable(_r2py_v) and not isinstance(_r2py_v, type):
         continue
     try:
-        _r2py_serialized = None
-        _r2py_ok = False
-        # Try registered adapters in order
         _r2py_serialized, _r2py_ok = _r2py_try_adapters(_r2py_k, _r2py_v)
-        if _r2py_ok:
-            _r2py_state[_r2py_k] = _r2py_serialized
-        else:
+        if not _r2py_ok:
             _r2py_uncapturable.append(_r2py_k)
+            continue
+        _r2py_json.dumps(_r2py_serialized)
+        _r2py_state[_r2py_k] = _r2py_serialized
     except Exception:
         _r2py_uncapturable.append(_r2py_k)
 
@@ -253,12 +304,32 @@ import json as _r2py_json
 def _r2py_try_adapters(name, obj):
     \"\"\"Try registered adapters; return (value, True) or (None, False).\"\"\"
     import json
-    # plain JSON-serializable scalars (not containers — those are tested below)
+    # plain JSON-serializable scalars
     if isinstance(obj, (bool, int, float, str, type(None))):
         return obj, True
-    # pandas DataFrame
+    # numpy scalars and arrays — before generic json.dumps which rejects them
+    try:
+        import numpy as _np
+        if isinstance(obj, _np.generic):
+            return obj.item(), True
+        if isinstance(obj, _np.ndarray):
+            return obj.tolist(), True
+    except ImportError:
+        pass
+    # datetime — datetime before date because datetime is a subclass of date
+    try:
+        import datetime as _dt
+        if isinstance(obj, _dt.datetime):
+            return obj.isoformat(), True
+        if isinstance(obj, _dt.date):
+            return obj.isoformat(), True
+    except ImportError:
+        pass
+    # pandas
     try:
         import pandas as _pd
+        if isinstance(obj, _pd.Timestamp):
+            return None if _pd.isna(obj) else obj.date().isoformat(), True
         if isinstance(obj, _pd.DataFrame):
             _r2py_result = {}
             for _r2py_col in obj.columns:
@@ -269,14 +340,11 @@ def _r2py_try_adapters(name, obj):
                     _r2py_result[_r2py_col] = _r2py_series.tolist()
             return _r2py_result, True
         if isinstance(obj, _pd.Series):
+            if _pd.api.types.is_datetime64_any_dtype(obj):
+                return obj.dt.strftime('%Y-%m-%d').tolist(), True
             return obj.tolist(), True
-    except ImportError:
-        pass
-    # numpy array
-    try:
-        import numpy as _np
-        if isinstance(obj, _np.ndarray):
-            return obj.tolist(), True
+        if isinstance(obj, _pd.Categorical):
+            return list(obj), True
     except ImportError:
         pass
     # generic: try json.dumps to test serializability
