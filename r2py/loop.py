@@ -433,6 +433,7 @@ def run_loop(
                 outcome = "tie"
                 delta = 0.0
                 library.record_tie(p.edit, script_id=script_id)
+                _record_rejections(histories, proposal_parent_hashes, idx, p.edit)
             else:
                 outcome = "rejected"
                 delta = p.new_score - p.parent_score
@@ -441,6 +442,7 @@ def run_loop(
                 )
                 if p.edit.pattern_id:
                     contradictions_added.append(p.edit.pattern_id)
+                _record_rejections(histories, proposal_parent_hashes, idx, p.edit)
 
             _emit(progress, kind="proposal", iteration=i,
                   edit_kind=p.edit.kind.value,
@@ -519,6 +521,25 @@ def run_loop(
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+def _record_rejections(
+    histories: dict,
+    parent_hashes: list,
+    idx: int,
+    edit: "Edit",
+) -> None:
+    """Mark each targeted entity as rejected in the parent's EditHistory.
+
+    Called after a tie or regression so that _weak_first can deprioritise
+    entities that repeatedly fail to improve.
+    """
+    if idx >= len(parent_hashes):
+        return
+    ph = histories.get(parent_hashes[idx])
+    if ph is not None:
+        for eid in edit.entity_ids:
+            ph.record_rejection(eid)
+
 
 def _set_attr(obj: object, name: str, value: object) -> None:
     """Set an attribute on obj when it exists; silently skip otherwise."""

@@ -42,7 +42,7 @@ def propose(
             "pass script_map to stage3.propose_edit() (§4.1 loop)"
         )
 
-    ordered = _weak_first(candidate, script_map)
+    ordered = _weak_first(candidate, script_map, history=history)
     if not ordered:
         raise RuntimeError("no entities to edit: ScoreReport.by_entity is empty")
 
@@ -216,13 +216,25 @@ def _entity_is_stub(translation: str, eid: str) -> bool:
     return False
 
 
-def _weak_first(candidate: "Candidate", script_map: object = None) -> list[str]:
-    """Return entity IDs sorted by ascending average score.
+def _weak_first(
+    candidate: "Candidate",
+    script_map: object = None,
+    history: "EditHistory | None" = None,
+) -> list[str]:
+    """Return entity IDs sorted by ascending average score, adjusted for past failures.
 
-    Tie-break order:
-    1. Entities with specific feedback in the current ScoreReport (more actionable).
-    2. FUNCTION_CALL / EXTERNAL_SYMBOL entities before LIBRARY_IMPORT / VARIABLE /
-       CONSTANT — callables are more likely to be execution failures.
+    Base order (ascending):
+      (avg_score, has_no_feedback, is_not_callable)
+
+    Then a position-based rank adjustment is applied: each entity's position in
+    the base order is shifted forward by the number of tie/regression edits it
+    has received so far (history.count_for_entity).  Entities with the same
+    adjusted position are ordered by rejection count ascending then original
+    position ascending, so a freshly-tried entity loses to an untried peer at
+    the same adjusted rank.
+
+    Example with 3 entities at base ranks [0, 1, 2] and SMM(rank=0) having
+    2 rejections: SMM adjusted rank = 2, others unchanged → SMM moves to last.
     """
     from ..types import EntityKind
     scores = candidate.decomp.by_entity
@@ -240,7 +252,20 @@ def _weak_first(candidate: "Candidate", script_map: object = None) -> list[str]:
         priority = 0 if is_callable else 1
         return (avg, has_feedback, priority)
 
-    return sorted(scores.keys(), key=_sort_key)
+    base_order = sorted(scores.keys(), key=_sort_key)
+
+    if history is None:
+        return base_order
+
+    # Position-based adjustment: shifted_rank = base_rank + rejection_count.
+    # Secondary key: rejection_count ascending (fewer rejections wins ties at
+    # same shifted rank).  Tertiary: base_rank ascending (original ordering).
+    ranked = [
+        (i, eid, history.count_for_entity(eid))
+        for i, eid in enumerate(base_order)
+    ]
+    ranked.sort(key=lambda t: (t[0] + t[2], t[2], t[0]))
+    return [eid for _, eid, _ in ranked]
 
 
 def _avg_score(es: EntityScore, kind=None) -> float:

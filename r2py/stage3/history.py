@@ -23,10 +23,22 @@ def _edit_key(edit: Edit) -> tuple:
 @dataclass
 class EditHistory:
     tried: list[Edit] = field(default_factory=list)
+    # Counts ties + regressions per entity (not accepted edits).
+    # Used for both the 3-attempt cap and the position-based rank adjustment in
+    # _weak_first so that entities that repeatedly fail to improve are deprioritised.
+    _rejected: dict[str, int] = field(default_factory=dict, init=False, repr=False)
 
     def add(self, edit: Edit) -> None:
         """Record a tried edit."""
         self.tried.append(edit)
+
+    def record_rejection(self, entity_id: str) -> None:
+        """Increment the tie/regression count for entity_id.
+
+        Called by the loop after a tie or regression is confirmed so that
+        count_for_entity reflects only non-improving attempts.
+        """
+        self._rejected[entity_id] = self._rejected.get(entity_id, 0) + 1
 
     def was_tried(self, edit: Edit) -> bool:
         """True if an equivalent edit (same kind + entity_ids + params) was already tried."""
@@ -34,9 +46,14 @@ class EditHistory:
         return any(_edit_key(e) == key for e in self.tried)
 
     def count_for_entity(self, entity_id: str) -> int:
-        """Count edits that targeted this entity (by entity_id membership)."""
-        return sum(1 for e in self.tried if entity_id in e.entity_ids)
+        """Count tie/regression edits for this entity (used for the 3-attempt cap).
+
+        Accepted edits are excluded — an entity that improved once should not
+        be penalised when the loop revisits it to improve it further.
+        """
+        return self._rejected.get(entity_id, 0)
 
     def clear(self) -> None:
         """Reset for a new translation script."""
         self.tried.clear()
+        self._rejected.clear()
