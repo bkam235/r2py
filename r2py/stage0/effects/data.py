@@ -203,7 +203,7 @@ register_r_adapter(
 )
 register_r_adapter(
     "inherits({var}, 'htmltools_tag') || inherits({var}, 'shiny.tag')",
-    "as.character(htmltools::renderTags({var})$html)",
+    "jsonlite::toJSON(as.character(htmltools::renderTags({var})$html), auto_unbox=TRUE)",
 )
 register_r_adapter(
     "inherits({var}, 'lm') || inherits({var}, 'glm')",
@@ -235,44 +235,56 @@ library(jsonlite)
 """
 
 
-def build_r_epilogue() -> str:
-    """Build the R data capture epilogue from the current _R_ADAPTERS registry.
+def build_r_serializer_fn() -> str:
+    """Return R code defining .r2py_serialize_var(.r2py_obj).
 
-    Called at sandbox run-time so that adapters registered after module import
-    (e.g. by user code or tests) are included.  The generated R code walks
-    .GlobalEnv, applies the first matching adapter to each variable, and writes
-    _r2py_state.json + _r2py_uncapturable.json.
+    Uses the same adapter dispatch as build_r_epilogue() and always returns a
+    valid JSON character string, NULL (for functions/environments), or
+    ``'__uncapturable__'`` (for unknown/error types).  Called by both
+    build_r_epilogue() and stage1.runner.build_r_checkpoint_preamble() so that
+    per-entity checkpoint serialization is consistent with the global epilogue.
     """
-    # Build if/else dispatch chain from registered adapters
     dispatch_lines: list[str] = []
     for i, (pred_tmpl, ser_tmpl) in enumerate(_R_ADAPTERS):
         pred = pred_tmpl.replace("{var}", ".r2py_obj")
         ser = ser_tmpl.replace("{var}", ".r2py_obj")
         keyword = "if" if i == 0 else "} else if"
-        dispatch_lines.append(f"      {keyword} ({pred}) {{")
-        dispatch_lines.append(f"        tryCatch({ser}, error = function(e) '__uncapturable__')")
+        dispatch_lines.append(f"    {keyword} ({pred}) {{")
+        dispatch_lines.append(f"      tryCatch({ser}, error = function(e) '__uncapturable__')")
     if dispatch_lines:
-        dispatch_lines.append("      } else {")
-        dispatch_lines.append("        '__uncapturable__'")
-        dispatch_lines.append("      }")
-    else:
+        dispatch_lines.append("    } else {")
         dispatch_lines.append("      '__uncapturable__'")
-    dispatch = "\n".join(dispatch_lines)
-
+        dispatch_lines.append("    }")
+    else:
+        dispatch_lines.append("    '__uncapturable__'")
+    body = "\n".join(dispatch_lines)
     return (
-        "# r2py data capture: serialize all globals to _r2py_state.json\n"
+        ".r2py_serialize_var <- function(.r2py_obj) {\n"
+        "  if (is.function(.r2py_obj) || is.environment(.r2py_obj)) return(NULL)\n"
+        "  tryCatch({\n"
+        f"{body}\n"
+        "  }, error = function(e) '__uncapturable__')\n"
+        "}\n"
+    )
+
+
+def build_r_epilogue() -> str:
+    """Build the R data capture epilogue from the current _R_ADAPTERS registry.
+
+    Called at sandbox run-time so that adapters registered after module import
+    (e.g. by user code or tests) are included.  The generated R code walks
+    .GlobalEnv, applies the first matching adapter to each variable via
+    .r2py_serialize_var(), and writes _r2py_state.json + _r2py_uncapturable.json.
+    """
+    return (
+        build_r_serializer_fn()
+        + "# r2py data capture: serialize all globals to _r2py_state.json\n"
         ".r2py_state <- list()\n"
         ".r2py_vars <- ls(envir = .GlobalEnv)\n"
         ".r2py_vars <- .r2py_vars[!startsWith(.r2py_vars, '.r2py_')]\n"
         "for (.r2py_v in .r2py_vars) {\n"
         "  .r2py_obj <- get(.r2py_v, envir = .GlobalEnv)\n"
-        "  .r2py_serialized <- tryCatch({\n"
-        "    if (is.function(.r2py_obj) || is.environment(.r2py_obj)) {\n"
-        "      NULL\n"
-        "    } else {\n"
-        + dispatch + "\n"
-        "    }\n"
-        "  }, error = function(e) '__uncapturable__')\n"
+        "  .r2py_serialized <- .r2py_serialize_var(.r2py_obj)\n"
         "  if (identical(.r2py_serialized, '__uncapturable__') || is.null(.r2py_serialized)) {\n"
         "    .r2py_uncapturable <- c(.r2py_uncapturable, .r2py_v)\n"
         "  } else {\n"

@@ -180,11 +180,11 @@
     "with-locale": {
       "confidence": "confirmed",
       "evidence_count": 3,
-      "contradictions_count": 4,
+      "contradictions_count": 5,
       "seed": true,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 6
+      "contradicted_at_run": 11
     },
     "withr.with_locale-seed": {
       "confidence": "contradicted",
@@ -230,5 +230,5 @@
       "contradicted_at_run": 0
     }
   },
-  "total_runs": 10
+  "total_runs": 11
 }

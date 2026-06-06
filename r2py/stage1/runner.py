@@ -73,7 +73,7 @@ def run_script_checkpointed(
     entity_boundaries.sort(key=lambda x: x[0])
 
     # Build checkpoint preamble (R).
-    r_cp_preamble = _R_CHECKPOINT_PREAMBLE
+    r_cp_preamble = build_r_checkpoint_preamble()
 
     # Inject `.r2py_cp("eid")` after each entity's last line (bottom-up to keep
     # line numbers stable for earlier insertions).
@@ -132,8 +132,11 @@ def run_script_checkpointed(
         return full_bundle, entity_bundles
 
 
-# R preamble that defines the checkpoint function used by run_script_checkpointed.
-_R_CHECKPOINT_PREAMBLE = r"""
+# Static part of the R checkpoint preamble: state variables, stdout sink, and
+# .r2py_cp() function body.  The serializer function (.r2py_serialize_var) is
+# prepended at call time by build_r_checkpoint_preamble() so both paths share
+# one central implementation from stage0.effects.data.
+_R_CHECKPOINT_BODY = r"""
 .r2py_prev_vars <- character(0)
 .r2py_prev_fig_count <- 0L
 .r2py_stdout_buf <- character(0)
@@ -148,14 +151,19 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
     cur_vars <- setdiff(
       ls(envir = .GlobalEnv),
       c(".r2py_prev_vars", ".r2py_prev_fig_count", ".r2py_cp",
-        ".r2py_stdout_buf", ".r2py_stdout_con", ".r2py_prev_stdout_len")
+        ".r2py_stdout_buf", ".r2py_stdout_con", ".r2py_prev_stdout_len",
+        ".r2py_serialize_var")
     )
     new_vars <- setdiff(cur_vars, .r2py_prev_vars)
-    state <- list()
+    data_parts <- character(0)
+    uncapturable_vars <- character(0)
     for (v in new_vars) {
       obj <- get(v, envir = .GlobalEnv)
-      if (!is.function(obj) && !is.environment(obj)) {
-        state[[v]] <- obj
+      serialized <- .r2py_serialize_var(obj)
+      if (is.null(serialized) || identical(serialized, "__uncapturable__")) {
+        uncapturable_vars <- c(uncapturable_vars, v)
+      } else {
+        data_parts <- c(data_parts, paste0('"', v, '":', as.character(serialized)))
       }
     }
     cur_fig_count <- length(grDevices::dev.list())
@@ -174,25 +182,36 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
     else
       ""
 
-    cp <- list(
-      data = state,
-      graphics = graphics_delta,
-      stdout = stdout_delta
+    data_json <- paste0("{", paste(data_parts, collapse = ","), "}")
+    stdout_json <- jsonlite::toJSON(stdout_delta, auto_unbox = TRUE)
+    uncapturable_json <- jsonlite::toJSON(uncapturable_vars, auto_unbox = FALSE)
+    cp_json <- paste0(
+      '{"data":', data_json,
+      ',"graphics":', as.integer(graphics_delta),
+      ',"stdout":', stdout_json,
+      ',"uncapturable":', uncapturable_json,
+      "}"
     )
     safe_eid <- gsub("[/:]", "_", eid)
-    if (requireNamespace("jsonlite", quietly = TRUE)) {
-      jsonlite::write_json(
-        cp,
-        paste0("_r2py_cp_", safe_eid, ".json"),
-        auto_unbox = TRUE, null = "null", na = "null"
-      )
-    }
+    writeLines(cp_json, paste0("_r2py_cp_", safe_eid, ".json"))
+
     .r2py_prev_vars <<- cur_vars
     .r2py_prev_fig_count <<- cur_fig_count
     .r2py_prev_stdout_len <<- cur_len
   }, error = function(e) invisible(NULL))
 }
 """
+
+
+def build_r_checkpoint_preamble() -> str:
+    """Return the full R checkpoint preamble for run_script_checkpointed().
+
+    Prepends .r2py_serialize_var() from stage0.effects.data so that per-entity
+    checkpoint serialization uses the same adapter dispatch as the global
+    epilogue — data frames column-oriented, all other types identical.
+    """
+    from ..stage0.effects.data import build_r_serializer_fn as _build_serializer
+    return _build_serializer() + _R_CHECKPOINT_BODY
 
 
 def run_slice(
