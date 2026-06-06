@@ -381,6 +381,26 @@ def verify(
 
     feedback.extend(_build_feedback(comparator_results, entities))
 
+    # Per-entity STDOUT feedback: detect R auto-print vs Python missing print.
+    # When R produced stdout for an entity (auto-printed an unassigned expression)
+    # but Python produced nothing, generate a targeted hint for that entity so
+    # Stage 3 knows exactly what to fix rather than receiving only global noise.
+    for eid, r_eb in (r_entity_bundles or {}).items():
+        if not r_eb.stdout:
+            continue
+        py_eb = (py_entity_bundles or {}).get(eid)
+        if py_eb is not None and not py_eb.stdout:
+            feedback.append(FeedbackItem(
+                entity_id=eid,
+                effect_class=EffectClass.STDOUT,
+                message=(
+                    "R auto-prints this expression's result to stdout, "
+                    "but Python produces no output for this entity. "
+                    "Change the Python code or append to it so that it also prints to stdout."
+                ),
+                score=0.0,
+            ))
+
     # RC2: surface crash traceback as feedback so Stage 3 knows what line failed.
     # Target the feedback to the entity that caused the crash (via crash attribution)
     # so _weak_first prioritises it. Fall back to all entities if unattributable.
