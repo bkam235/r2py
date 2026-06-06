@@ -22,7 +22,9 @@
       "x",
       "datetime-import-conflict",
       "withr.with-locale-output-printing",
-      "with-locale-simple-execution"
+      "with-locale-simple-execution",
+      "withr.with-locale-lambda",
+      "suppress-package-startup-noop"
     ],
     "dplyr:": [
       "dplyr.filter_to_mask"
@@ -37,7 +39,9 @@
       "datetime-import-conflict",
       "withr.with-locale-output-printing",
       "with-locale",
-      "with-locale-simple-execution"
+      "with-locale-simple-execution",
+      "withr.with-locale-lambda",
+      "suppress-package-startup-noop"
     ]
   },
   "meta": {
@@ -178,12 +182,12 @@
       "ast_shape_hash": ""
     },
     "with-locale": {
-      "confidence": "confirmed",
-      "evidence_count": 3,
+      "confidence": "tentative",
+      "evidence_count": 6,
       "contradictions_count": 5,
       "seed": true,
       "package": "",
-      "ast_shape_hash": "",
+      "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 11
     },
     "withr.with_locale-seed": {
@@ -228,7 +232,25 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "withr.with-locale-lambda": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "suppress-package-startup-noop": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 11
+  "total_runs": 13
 }
