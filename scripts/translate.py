@@ -65,7 +65,7 @@ for r_script, py_script in scripts:
                     #    model="ollama:gemma4:31b-cloud",
                        progress=_on_progress,
                        score_threshold=1,
-                       max_iters=5,
+                       max_iters=1,
                        retranslation_patience=3)
 
 # from r2py import seed_from_translation

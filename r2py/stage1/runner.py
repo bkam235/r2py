@@ -95,6 +95,7 @@ def run_script_checkpointed(
                 workdir=workdir,
                 capture=capture,
                 preamble=r_cp_preamble,
+                epilogue=_R_CHECKPOINT_EPILOGUE,
                 timeout_s=timeout_s,
             )
         except Exception:
@@ -122,11 +123,31 @@ def run_script_checkpointed(
                     raw_data = {}
                 # Load per-entity PNG snapshot if present so the comparator can
                 # run SSIM. Falls back to the count int when the snapshot is
-                # missing (e.g. dev.copy failed or the entity drew no plot).
+                # missing or suspiciously small.
+                #
+                # A PNG ≤ 2 KB at 800×600 is almost certainly a blank
+                # dev.copy() artefact (the fallback path in .r2py_cp when
+                # close+reopen failed): the primary close-device approach
+                # produces real plots well above this threshold.
+                _MIN_REAL_PLOT_BYTES = 2000
                 plot_path = workdir / f"_r2py_cp_plot_{safe_eid}.png"
                 if plot_path.exists():
                     try:
-                        graphics_field: object = [plot_path.read_bytes()]
+                        _plot_bytes = plot_path.read_bytes()
+                        if len(_plot_bytes) >= _MIN_REAL_PLOT_BYTES:
+                            graphics_field: object = [_plot_bytes]
+                        else:
+                            import warnings as _warnings
+                            _warnings.warn(
+                                f"r2py: per-entity R plot for '{eid}' is only "
+                                f"{len(_plot_bytes)} B (≤ {_MIN_REAL_PLOT_BYTES} B). "
+                                "This is likely a blank dev.copy() artefact — "
+                                "the close-and-reopen capture probably failed for "
+                                "this entity. Falling back to count-based matching.",
+                                RuntimeWarning,
+                                stacklevel=2,
+                            )
+                            graphics_field = cp_data.get("graphics", 0)
                     except OSError:
                         graphics_field = cp_data.get("graphics", 0)
                 else:
@@ -224,15 +245,35 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
     safe_eid <- gsub("[/:]", "_", eid)
     writeLines(cp_json, paste0("_r2py_cp_", safe_eid, ".json"))
 
-    # If a new plot was drawn during this entity, snapshot the current device
-    # to a PNG so the per-entity comparator can run SSIM, not just count-match.
+    # If a new plot was drawn during this entity, capture it to a per-entity PNG
+    # so the comparator can run SSIM rather than just count-matching.
+    #
+    # Many R plot functions (filled.contour, image, contour, …) call plot.new()
+    # internally and then clear the graphics display list before returning.
+    # This makes dev.copy() and recordPlot() unreliable — they replay an empty
+    # display list and produce a near-blank PNG (~560 B for an 800×600 device).
+    #
+    # The only reliable approach is to *close* the current PNG device (which
+    # flushes the rendered pixel buffer to disk), copy the resulting file to a
+    # per-entity snapshot, then *reopen* the device for subsequent entities.
     if (graphics_delta == 1L) {
       tryCatch({
-        grDevices::dev.copy(grDevices::png,
-          filename = paste0("_r2py_cp_plot_", safe_eid, ".png"),
-          width = 800, height = 600)
         grDevices::dev.off()
-      }, error = function(e) NULL)
+        plot_file <- file.path(getwd(),
+          sprintf("_r2py_plot_%03d.png", .r2py_plot_idx))
+        file.copy(plot_file,
+          paste0("_r2py_cp_plot_", safe_eid, ".png"),
+          overwrite = TRUE)
+        grDevices::png(filename = plot_file, width = 800L, height = 600L)
+      }, error = function(e) {
+        # Fallback: dev.copy (less reliable, but non-destructive).
+        tryCatch({
+          grDevices::dev.copy(grDevices::png,
+            filename = paste0("_r2py_cp_plot_", safe_eid, ".png"),
+            width = 800, height = 600)
+          grDevices::dev.off()
+        }, error = function(e) NULL)
+      })
     }
 
     .r2py_prev_vars <<- cur_vars
@@ -240,6 +281,30 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
     .r2py_prev_stdout_len <<- cur_len
   }, error = function(e) invisible(NULL))
 }
+"""
+
+
+# Epilogue appended after the checkpointed user source (runs before R_EPILOGUE).
+#
+# When .r2py_cp() closes and reopens the PNG device, the reopened device
+# starts blank.  If nothing is drawn after the last checkpoint, R_EPILOGUE's
+# dev.off() would flush that blank page to disk, losing the global output.
+# This epilogue closes the blank device first, then restores the most recent
+# real per-entity snapshot as the global plot file so that R_EPILOGUE's
+# tryCatch(dev.off(), ...) fails silently — which is harmless.
+_R_CHECKPOINT_EPILOGUE = r"""
+tryCatch({
+  grDevices::dev.off()
+  plot_file <- file.path(getwd(), sprintf("_r2py_plot_%03d.png", .r2py_plot_idx))
+  cp_plots <- sort(Sys.glob("_r2py_cp_plot_*.png"))
+  if (length(cp_plots) > 0L) {
+    sizes <- vapply(cp_plots, file.size, numeric(1L))
+    real_plots <- cp_plots[sizes >= 2000L]
+    if (length(real_plots) > 0L) {
+      file.copy(tail(real_plots, 1L), plot_file, overwrite = TRUE)
+    }
+  }
+}, error = function(e) NULL)
 """
 
 
