@@ -10,6 +10,66 @@ import re
 from ..types import Edit, EditKind
 
 
+_SENTINEL_PREFIX = "# r2py:entity:"
+
+
+def _find_entity_body(source: str, eid: str) -> tuple[int, int] | None:
+    """Return 0-indexed (insert_idx, end_idx) where the entity body lives.
+
+    insert_idx is the line immediately after the `# r2py:entity:<eid>` sentinel
+    (i.e. the top of the body). end_idx is the line of the next sentinel or
+    len(lines). Returns None when the sentinel is not present.
+    """
+    sentinel = _SENTINEL_PREFIX + eid
+    lines = source.splitlines(keepends=True)
+    start: int | None = None
+    for i, line in enumerate(lines):
+        if line.rstrip("\n") == sentinel:
+            start = i + 1
+            break
+    if start is None:
+        return None
+    end = len(lines)
+    for j in range(start, len(lines)):
+        if lines[j].startswith(_SENTINEL_PREFIX):
+            end = j
+            break
+    return start, end
+
+
+def _insert_into_entity_bodies(source: str, eids: list[str], code: str) -> str:
+    """Insert ``code`` at the top of each entity body referenced in ``eids``.
+
+    Per-entity dedup: when ``code`` defines a name the entity body already
+    binds, the insertion is skipped for that entity. The LLM is expected to
+    use ``ReplaceCall`` to swap a placeholder literal directly when it wants
+    to override a per-entity assignment.
+    """
+    defined = set(re.findall(r'^(?:def |class )(\w+)\s*[\(:]', code, re.MULTILINE))
+    defined |= set(re.findall(r'^(\w+)\s*=', code, re.MULTILINE))
+
+    lines = source.splitlines(keepends=True)
+    spans: list[tuple[int, int, str]] = []
+    for eid in eids:
+        span = _find_entity_body("".join(lines), eid)
+        if span is None:
+            continue
+        start, end = span
+        body_text = "".join(lines[start:end])
+        already_has = any(
+            re.search(rf'^(?:def |class ){re.escape(n)}\b', body_text, re.MULTILINE)
+            or re.search(rf'^{re.escape(n)}\s*=', body_text, re.MULTILINE)
+            for n in defined
+        )
+        if already_has:
+            continue
+        spans.append((start, end, eid))
+
+    for start, _end, _eid in sorted(spans, key=lambda s: s[0], reverse=True):
+        lines.insert(start, code + "\n")
+    return "".join(lines)
+
+
 def apply_edit(source: str, edit: Edit) -> str:
     """Apply one typed edit to a Python source string.
 
@@ -22,9 +82,16 @@ def apply_edit(source: str, edit: Edit) -> str:
             code = p.get("code", "").strip()
             if not code:
                 return source
-            # Deduplication: skip if any top-level name defined by the preamble
-            # already exists in the source.  Prevents _with_locale / _LOCALE_MAP
-            # from being re-inserted for every with_locale_N entity.
+            # When entity_ids is non-empty, insert at the top of each named
+            # entity's body (right after the `# r2py:entity:<eid>` sentinel).
+            # Use this to define names the entity references but cannot define
+            # itself (e.g. R built-in datasets like `volcano`, `mtcars`).
+            if edit.entity_ids:
+                return _insert_into_entity_bodies(source, list(edit.entity_ids), code)
+            # File-top preamble (original behaviour).
+            # Dedup: skip if any top-level name defined by the preamble already
+            # exists in the source.  Prevents _with_locale / _LOCALE_MAP from
+            # being re-inserted for every with_locale_N entity.
             defined = set(re.findall(r'^(?:def |class )(\w+)\s*[\(:]', code, re.MULTILINE))
             defined |= set(re.findall(r'^(\w+)\s*=', code, re.MULTILINE))
             for name in defined:

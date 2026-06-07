@@ -116,19 +116,26 @@ def _compare_entity_bundles(
         r_eb.stdout, py_eb.stdout
     )
 
-    # GRAPHICS — use count comparison when full images are absent.
+    # GRAPHICS — prefer SSIM on real PNG snapshots when both sides have them;
+    # otherwise fall back to count-only matching. (Per-entity bundles may carry
+    # either: list[bytes] from the snapshot path, or an int count when the
+    # snapshot failed or was absent.)
     r_graphics = r_eb.graphics or []
     py_graphics = py_eb.graphics or []
-    # Checkpoint bundles store graphics_delta as an int count, not image bytes.
-    # Convert: treat each count unit as a placeholder bytes object so the
-    # GraphicsComparator's length check works correctly.
-    if isinstance(r_graphics, int):
-        r_graphics = [b""] * r_graphics
-    if isinstance(py_graphics, int):
-        py_graphics = [b""] * py_graphics
-    results[EffectClass.GRAPHICS] = COMPARATORS[EffectClass.GRAPHICS].compare(
-        r_graphics, py_graphics
-    )
+
+    def _has_real_bytes(g) -> bool:
+        return isinstance(g, list) and any(isinstance(b, (bytes, bytearray)) and b for b in g)
+
+    if _has_real_bytes(r_graphics) and _has_real_bytes(py_graphics):
+        results[EffectClass.GRAPHICS] = COMPARATORS[EffectClass.GRAPHICS].compare(
+            r_graphics, py_graphics
+        )
+    else:
+        r_count = r_graphics if isinstance(r_graphics, int) else len(r_graphics)
+        py_count = py_graphics if isinstance(py_graphics, int) else len(py_graphics)
+        results[EffectClass.GRAPHICS] = COMPARATORS[EffectClass.GRAPHICS].compare(
+            [b""] * r_count, [b""] * py_count
+        )
 
     return results
 

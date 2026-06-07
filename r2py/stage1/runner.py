@@ -120,10 +120,21 @@ def run_script_checkpointed(
                 # jsonlite serialises an empty R list() as [] not {}; normalise.
                 if not isinstance(raw_data, dict):
                     raw_data = {}
+                # Load per-entity PNG snapshot if present so the comparator can
+                # run SSIM. Falls back to the count int when the snapshot is
+                # missing (e.g. dev.copy failed or the entity drew no plot).
+                plot_path = workdir / f"_r2py_cp_plot_{safe_eid}.png"
+                if plot_path.exists():
+                    try:
+                        graphics_field: object = [plot_path.read_bytes()]
+                    except OSError:
+                        graphics_field = cp_data.get("graphics", 0)
+                else:
+                    graphics_field = cp_data.get("graphics", 0)
                 eb = EffectBundle(
                     data=raw_data,
                     stdout=cp_data.get("stdout", ""),
-                    graphics=cp_data.get("graphics", 0),
+                    graphics=graphics_field,
                 )
                 entity_bundles[eid] = eb
             except Exception:
@@ -138,9 +149,23 @@ def run_script_checkpointed(
 # one central implementation from stage0.effects.data.
 _R_CHECKPOINT_BODY = r"""
 .r2py_prev_vars <- character(0)
+.r2py_plot_count <- 0L
 .r2py_prev_fig_count <- 0L
 .r2py_stdout_buf <- character(0)
 .r2py_prev_stdout_len <- 0L
+
+# Count plot/figure creation to mirror Python's len(plt.get_fignums()) semantics.
+# `plot.new` fires for base graphics; `grid.newpage` fires for grid-based systems
+# (ggplot2, lattice). Counting open devices (dev.list()) does NOT work because the
+# graphics preamble pre-opens a single PNG device that subsequent plots share.
+local({
+  .inc <- function() {
+    .r2py_plot_count <<- .r2py_plot_count + 1L
+  }
+  setHook("plot.new", .inc, action = "append")
+  tryCatch(setHook("grid.newpage", .inc, action = "append"),
+           error = function(e) NULL)
+})
 
 # Redirect stdout into a text connection so we can capture per-entity deltas.
 .r2py_stdout_con <- textConnection(".r2py_stdout_buf", open = "w", local = FALSE)
@@ -150,7 +175,7 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
   tryCatch({
     cur_vars <- setdiff(
       ls(envir = .GlobalEnv),
-      c(".r2py_prev_vars", ".r2py_prev_fig_count", ".r2py_cp",
+      c(".r2py_prev_vars", ".r2py_plot_count", ".r2py_prev_fig_count", ".r2py_cp",
         ".r2py_stdout_buf", ".r2py_stdout_con", ".r2py_prev_stdout_len",
         ".r2py_serialize_var")
     )
@@ -166,8 +191,12 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
         data_parts <- c(data_parts, paste0('"', v, '":', as.character(serialized)))
       }
     }
-    cur_fig_count <- length(grDevices::dev.list())
-    graphics_delta <- max(0L, cur_fig_count - .r2py_prev_fig_count)
+    cur_fig_count <- .r2py_plot_count
+    # Debounce: collapse to {0,1} per entity. High-level R plotters that use
+    # layouts (filled.contour, layout(), par(mfrow=...)) fire plot.new multiple
+    # times for one semantic figure; Python's plt.figure() typically fires once.
+    # Clamping both sides to 0/1 keeps the count symmetric.
+    graphics_delta <- if (cur_fig_count > .r2py_prev_fig_count) 1L else 0L
 
     # Flush sink so .r2py_stdout_buf is up to date, then compute delta.
     sink(type = "output")
@@ -194,6 +223,17 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
     )
     safe_eid <- gsub("[/:]", "_", eid)
     writeLines(cp_json, paste0("_r2py_cp_", safe_eid, ".json"))
+
+    # If a new plot was drawn during this entity, snapshot the current device
+    # to a PNG so the per-entity comparator can run SSIM, not just count-match.
+    if (graphics_delta == 1L) {
+      tryCatch({
+        grDevices::dev.copy(grDevices::png,
+          filename = paste0("_r2py_cp_plot_", safe_eid, ".png"),
+          width = 800, height = 600)
+        grDevices::dev.off()
+      }, error = function(e) NULL)
+    }
 
     .r2py_prev_vars <<- cur_vars
     .r2py_prev_fig_count <<- cur_fig_count

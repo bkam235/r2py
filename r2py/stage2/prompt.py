@@ -434,7 +434,8 @@ def _format_free_variables(entity: "Entity") -> str:
     header = (
         "The following names are used in this entity but were NOT defined in this script.\n"
         "They were present in R's execution environment (built-in datasets, lazy-loaded objects, etc.).\n"
-        "Use the shape/range info below to find an equivalent Python source — do NOT "
+        "Use the name and shape/range info below to find an equivalent Python source.\n"
+        "If you find an equivalent Python source (e.g. built-in datasets, or capture from R), load it — do NOT "
         "reconstruct or approximate the values from this description:"
     )
     return header + "\n" + "\n".join(lines)

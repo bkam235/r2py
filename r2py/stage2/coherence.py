@@ -26,7 +26,18 @@ inconsistent variable types, broken dataflow assumptions, import conflicts, and
 emergent interactions from composition.
 
 You may ONLY suggest these specific types of changes (never a free rewrite):
-  - InsertPreamble   : add an import or initialisation line at the very top
+  - InsertPreamble   : insert code either at the very top of the file
+                        (entity_ids: []) OR at the top of one or more specific
+                        entity bodies (entity_ids: ["eid", ...]). Use the
+                        entity-scoped form to DEFINE NAMES THAT AN ENTITY USES
+                        BUT COULD NOT DEFINE ITSELF — most importantly,
+                        R built-in datasets like `volcano`, `mtcars`, `iris`,
+                        `Titanic`, `airquality`. The per-entity translator
+                        often leaves a placeholder + a comment such as
+                        "# Placeholder; actual <name> data would be loaded";
+                        when you see that, replace the placeholder by inserting
+                        the real definition (or a load call) at the top of the
+                        entity's body.
   - RenameVariable   : rename a variable name consistently throughout
   - ChangeImport     : replace one import statement with another
   - WrapValue        : wrap a value in a conversion call (e.g. str(x), int(x))
@@ -37,9 +48,36 @@ If there are no changes needed, output nothing at all.
 Use this schema (no prose, no extra text on these lines):
 {"kind": "RenameVariable", "entity_ids": ["x"], "params": {"old": "foo", "new": "bar"}}
 {"kind": "InsertPreamble", "entity_ids": [], "params": {"code": "import numpy as np"}}
+{"kind": "InsertPreamble", "entity_ids": ["filled.contour"], "params": {"code": "volcano = [[...real 87x61 values...]]"}}
 {"kind": "ChangeImport", "entity_ids": [], "params": {"old_import": "import pandas", "new_import": "import pandas as pd"}}
 {"kind": "WrapValue", "entity_ids": ["x"], "params": {"name": "result", "wrapper": "str"}}
 {"kind": "ReplaceCall", "entity_ids": ["x"], "params": {"old_call": "foo(x)", "new_call": "bar(x)"}}
+
+Choosing between InsertPreamble (entity-scoped) and ReplaceCall when a
+placeholder is in the way:
+
+1. If the entity body has NO assignment to the name yet (the entity just
+   references it as a free name), use InsertPreamble with entity_ids targeting
+   that entity to introduce the definition.
+
+2. If the entity body ALREADY assigns the name to a placeholder value
+   (typical pattern: a comment like "# Placeholder; actual <name> would be
+   loaded" followed by something like
+        volcano_data = np.array([[94, 94, ...], [94, 94, ...]])
+   ), entity-scoped InsertPreamble will be SKIPPED because the name is
+   already bound. Use ReplaceCall instead, passing the EXACT placeholder
+   right-hand side as old_call and the real value as new_call:
+     {"kind": "ReplaceCall", "entity_ids": ["filled.contour"],
+      "params": {"old_call": "np.array([[94, 94, ...], [94, 94, ...]])",
+                 "new_call": "np.array([[<real 87x61 values>]])"}}
+   ReplaceCall is a plain text replace, so old_call must match the literal in
+   the source character-for-character (including newlines and indentation).
+
+3. If the placeholder was given a renamed Python name (e.g. R's `volcano`
+   became `volcano_data` in the per-entity output), do NOT inject the data at
+   the file top under the R name — that produces dead code. Either keep the
+   renamed name and ReplaceCall its RHS, or RenameVariable everything back to
+   the R name first and then InsertPreamble.
 """
 
 
@@ -86,12 +124,32 @@ def _summarise_entities(script_map: "ScriptMap") -> str:
     if not hasattr(script_map, "entities") or not script_map.entities:
         return "(no entity information)"
     lines: list[str] = []
+    source_lines = (script_map.source or "").splitlines() if hasattr(script_map, "source") else []
     for eid, entity in script_map.entities.items():
         flags = ", ".join(entity.r_semantic_flags) or "none"
         effects = ", ".join(
             getattr(e, "value", str(e)) for e in entity.predicted_effects
         ) or "none"
-        lines.append(f"- {eid} ({_kind_str(entity)}): flags=[{flags}]  effects=[{effects}]")
+        pkg = getattr(entity, "package", None)
+        pkg_str = f"  package={pkg}" if pkg else ""
+
+        # R source snippet for this entity
+        r_src = ""
+        sp = getattr(entity, "source_span", None)
+        if sp is not None and source_lines:
+            start = getattr(sp, "start_line", 0)
+            end = min(len(source_lines), getattr(sp, "end_line", start) + 1)
+            snippet = "\n    ".join(source_lines[start:end])
+            r_src = f"  R: {snippet}"
+
+        # Free variables (built-in datasets, package-namespace names, etc.)
+        free_refs = getattr(entity, "free_variable_refs", [])
+        free_str = f"  free_vars=[{', '.join(free_refs)}]" if free_refs else ""
+
+        lines.append(
+            f"- {eid} ({_kind_str(entity)}):{pkg_str}  flags=[{flags}]"
+            f"  effects=[{effects}]{free_str}{('  ' + r_src) if r_src else ''}"
+        )
     return "\n".join(lines)
 
 
@@ -152,15 +210,10 @@ def _apply_edit(source: str, edit: "Edit") -> str:
             code = p.get("code", "").strip()
             if not code:
                 return source
-            lines = source.splitlines(keepends=True)
-            insert_at = 0
-            for i, line in enumerate(lines):
-                stripped = line.strip()
-                if stripped and not stripped.startswith("#"):
-                    insert_at = i
-                    break
-            lines.insert(insert_at, code + "\n")
-            return "".join(lines)
+            # Delegate to the canonical applier so file-top vs entity-scoped
+            # behaviour stays consistent with Stage 3.
+            from ..stage3.edit_types import apply_edit as _apply_edit_canonical
+            return _apply_edit_canonical(source, edit)
 
         elif edit.kind == EditKind.RENAME_VARIABLE:
             old, new = p.get("old", ""), p.get("new", "")

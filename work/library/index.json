@@ -26,7 +26,15 @@
       "withr.with-locale-lambda",
       "suppress-package-startup-noop",
       "r.suppress-messages-to-python-warnings",
-      "remove-invalid-imports"
+      "remove-invalid-imports",
+      "fix-duplicate-variable-name",
+      "shape.graycol-palette",
+      "rdatasets-import-fix",
+      "remove-invalid-import",
+      "filled-contour-syntax-fix",
+      "import-order-fix",
+      "fix-scipy-import",
+      "remove-unavailable-import"
     ],
     "dplyr:": [
       "dplyr.filter_to_mask"
@@ -45,7 +53,15 @@
       "withr.with-locale-lambda",
       "suppress-package-startup-noop",
       "r.suppress-messages-to-python-warnings",
-      "remove-invalid-imports"
+      "remove-invalid-imports",
+      "fix-duplicate-variable-name",
+      "shape.graycol-palette",
+      "rdatasets-import-fix",
+      "remove-invalid-import",
+      "filled-contour-syntax-fix",
+      "import-order-fix",
+      "fix-scipy-import",
+      "remove-unavailable-import"
     ]
   },
   "meta": {
@@ -159,7 +175,8 @@
       "contradictions_count": 1,
       "seed": true,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "dplyr.filter_to_mask": {
       "confidence": "tentative",
@@ -272,7 +289,79 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "fix-duplicate-variable-name": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "shape.graycol-palette": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "rdatasets-import-fix": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "remove-invalid-import": {
+      "confidence": "confirmed",
+      "evidence_count": 2,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "filled-contour-syntax-fix": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "import-order-fix": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "fix-scipy-import": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "remove-unavailable-import": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 17
+  "total_runs": 28
 }

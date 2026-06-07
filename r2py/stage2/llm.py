@@ -32,7 +32,7 @@ def call(
     system: str,
     *,
     model: str = _DEFAULT_MODEL,
-    max_tokens: int = 8192,
+    max_tokens: int = 16384,
 ) -> str:
     """Call the Anthropic Messages API with exponential-backoff retry.
 
@@ -102,6 +102,7 @@ def _call_ollama(
     if base_url not in _ollama_clients:
         _ollama_clients[base_url] = openai.OpenAI(api_key="ollama", base_url=base_url)
     client = _ollama_clients[base_url]
+
     all_messages = [{"role": "system", "content": system}] + messages
 
     last_exc: Exception | None = None

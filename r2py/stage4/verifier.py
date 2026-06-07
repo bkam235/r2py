@@ -107,6 +107,8 @@ def _compare_bundles(
 def _build_feedback(
     comparator_results: dict[EffectClass, ComparatorResult],
     entities: dict,
+    r_entity_bundles: dict[str, EffectBundle] | None = None,
+    py_entity_bundles: dict[str, EffectBundle] | None = None,
 ) -> list[FeedbackItem]:
     """Convert comparator results into FeedbackItems for Stage 3.
 
@@ -115,8 +117,11 @@ def _build_feedback(
     instead of leaving Stage 3 with no signal.
 
     DATA failures: attributed to the specific entity whose name matches the
-    failing variable, so Stage 3 targets the right entity. Non-DATA effects
-    are broadcast to all entities (whole-script signal).
+    failing variable, so Stage 3 targets the right entity.
+    GRAPHICS failures: attributed per entity via the per-entity bundles when
+    they carry real PNG bytes; the global GRAPHICS broadcast is suppressed in
+    that case to avoid double-feedback.
+    Other non-DATA effects are broadcast to all entities (whole-script signal).
     """
     items: list[FeedbackItem] = []
 
@@ -125,6 +130,43 @@ def _build_feedback(
         for eid, e in entities.items()
         if getattr(e, "name", None)
     }
+
+    # Build per-entity GRAPHICS feedback when we have real PNG snapshots.
+    # When this fires, suppress the global GRAPHICS broadcast below.
+    graphics_attributed = False
+    if r_entity_bundles and py_entity_bundles:
+        from .decompose import _compare_entity_bundles
+        for eid in entities:
+            r_eb = r_entity_bundles.get(eid)
+            py_eb = py_entity_bundles.get(eid)
+            if r_eb is None or py_eb is None:
+                continue
+            r_g = r_eb.graphics
+            py_g = py_eb.graphics
+            r_has_bytes = isinstance(r_g, list) and any(
+                isinstance(b, (bytes, bytearray)) and b for b in r_g
+            )
+            py_has_bytes = isinstance(py_g, list) and any(
+                isinstance(b, (bytes, bytearray)) and b for b in py_g
+            )
+            if not (r_has_bytes or py_has_bytes):
+                continue
+            eb_results = _compare_entity_bundles(r_eb, py_eb)
+            g_result = eb_results.get(EffectClass.GRAPHICS)
+            if g_result is None or g_result.score >= 1.0:
+                graphics_attributed = True
+                continue
+            msg = g_result.explanation or (
+                f"per-entity graphics similarity {g_result.score:.3f} "
+                "(R plot vs Python figure differ visually for this entity)"
+            )
+            items.append(FeedbackItem(
+                entity_id=eid,
+                effect_class=EffectClass.GRAPHICS,
+                message=msg,
+                score=g_result.score,
+            ))
+            graphics_attributed = True
 
     for ec, result in comparator_results.items():
         if result.score >= 1.0:
@@ -154,6 +196,9 @@ def _build_feedback(
                             message=expl,
                             score=var_score,
                         ))
+        elif ec == EffectClass.GRAPHICS and graphics_attributed:
+            # Per-entity GRAPHICS feedback already emitted; skip global broadcast.
+            continue
         else:
             if not result.explanation:
                 continue
@@ -209,8 +254,24 @@ def _r2py_checkpoint(eid):
         import matplotlib.pyplot as _plt
         cur_fig_count = len(_plt.get_fignums())
     except Exception:
+        _plt = None
         cur_fig_count = 0
-    graphics_delta = max(0, cur_fig_count - _r2py_prev_fig_count)
+    # Debounce to {0,1}: matches the R side, which clamps to handle layout-using
+    # plotters that fire plot.new multiple times per semantic figure.
+    graphics_delta = 1 if cur_fig_count > _r2py_prev_fig_count else 0
+
+    safe_eid = eid.replace('/', '_').replace(':', '_')
+
+    # Snapshot the newest figure so the per-entity comparator can run SSIM
+    # rather than just count-match.
+    if graphics_delta == 1 and _plt is not None:
+        try:
+            _new_fn = max(_plt.get_fignums())
+            _new_fig = _plt.figure(_new_fn)
+            _new_fig.set_size_inches(8, 6)
+            _new_fig.savefig(f'_r2py_cp_plot_{safe_eid}.png', dpi=100)
+        except Exception:
+            pass
 
     cur_stdout = _r2py_stdout_buf.getvalue()
     stdout_delta = cur_stdout[_r2py_prev_stdout_pos:]
@@ -231,7 +292,6 @@ def _r2py_checkpoint(eid):
         except Exception:
             uncapturable_vars.append(k)
 
-    safe_eid = eid.replace('/', '_').replace(':', '_')
     try:
         with open(f'_r2py_cp_{safe_eid}.json', 'w', encoding='utf-8') as _f:
             _r2py_json.dump({'data': new_vars, 'stdout': stdout_delta,
@@ -293,10 +353,18 @@ def _collect_py_checkpoints(
             # JSON null/array can appear when no new variables were captured; normalise.
             if not isinstance(raw_data, dict):
                 raw_data = {}
+            plot_path = workdir / f"_r2py_cp_plot_{safe_eid}.png"
+            if plot_path.exists():
+                try:
+                    graphics_field: object = [plot_path.read_bytes()]
+                except OSError:
+                    graphics_field = cp.get("graphics", 0)
+            else:
+                graphics_field = cp.get("graphics", 0)
             eb = EffectBundle(
                 data=raw_data,
                 stdout=cp.get("stdout", "") or "",
-                graphics=cp.get("graphics", 0),  # type: ignore[arg-type]
+                graphics=graphics_field,  # type: ignore[arg-type]
             )
             eb.uncapturable.extend(cp.get("uncapturable", []))
             result[eid] = eb
@@ -379,7 +447,11 @@ def verify(
         fuzz_cfg = _fuzz.FuzzConfig(n_inputs=fuzz_n)
         feedback.extend(_fuzz.run_fuzz(script_map, candidate, config=fuzz_cfg, data_compare=data_compare))
 
-    feedback.extend(_build_feedback(comparator_results, entities))
+    feedback.extend(_build_feedback(
+        comparator_results, entities,
+        r_entity_bundles=r_entity_bundles or None,
+        py_entity_bundles=py_entity_bundles or None,
+    ))
 
     # Per-entity STDOUT feedback: detect R auto-print vs Python missing print.
     # When R produced stdout for an entity (auto-printed an unassigned expression)

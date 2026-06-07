@@ -96,7 +96,7 @@ def build_edit_prompt(
     parts.append(f"- callable_output: {entity_score.callable_output:.3f}")
     parts.append(f"- side_effects: {entity_score.side_effects:.3f}")
 
-    # Verifier feedback
+    # Verifier feedback (text portion; images appended as separate content blocks below)
     entity_feedback = [f for f in feedback if f.entity_id == entity.id]
     if entity_feedback:
         parts.append("")
