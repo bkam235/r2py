@@ -34,7 +34,7 @@ Valid kind values (use exactly these strings):
   ChangeImport          params: {"old_import": "...", "new_import": "..."}
   InsertPreamble        params: {"code": "..."}
   RenameVariable        params: {"old": "...", "new": "..."}
-  RestructureControlFlow  params: {"old_code": "...", "new_code": "..."}
+  RestructureControlFlow  params: {"old_code": "...", "new_code": "...", "start_line": N, "end_line": N}
   ReplaceLibrary        params: {"old_name": "...", "new_name": "...", "old_import": "...", "new_import": "..."}
 
 Rules:
@@ -49,6 +49,10 @@ Rules:
 - RestructureControlFlow replaces any substring of the FULL script — use it to amend
   earlier shared code (helpers, imports, module-level variables) when that is what the
   target entity needs. You are not limited to editing only the target entity's section.
+  start_line and end_line are 1-indexed line numbers (inclusive start, exclusive end).
+  PREFER start_line/end_line over old_code whenever the target line contains non-ASCII
+  characters (e.g. Unicode in a string literal or comment) — use old_code only for
+  ASCII-only targets. When using line numbers, omit old_code entirely.
   IMPORTANT: if the entity's current translation is the stub line
   `pass  # r2py: translation failed for entity (LLM response not valid Python)`, use
   RestructureControlFlow with old_code set to that exact stub line and new_code set to

@@ -146,6 +146,12 @@ def apply_edit(source: str, edit: Edit) -> str:
         elif edit.kind == EditKind.RESTRUCTURE_CONTROL_FLOW:
             old_code = p.get("old_code", "")
             new_code = p.get("new_code", "")
+            start_line = p.get("start_line")
+            end_line = p.get("end_line")
+            if start_line is not None:
+                lines = source.splitlines(keepends=True)
+                s, e = int(start_line) - 1, int(end_line or start_line)
+                return "".join(lines[:s] + [new_code + "\n"] + lines[e:])
             if not old_code:
                 return source
             return source.replace(old_code, new_code)
