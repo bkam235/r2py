@@ -38,7 +38,17 @@
       "filled-contour-to-matplotlib",
       "r-autoprint-to-python-print",
       "image.proper-display",
-      "matplotlib.filled-contour-with-data"
+      "matplotlib.filled-contour-with-data",
+      "shape.graycol",
+      "r-graycol-to-matplotlib-colormap",
+      "suppress-startup-messages",
+      "suppress-startup-to-noop",
+      "r-library-to-python-import",
+      "r.suppress-startup-to-pass",
+      "r-library-stub",
+      "r-auto-print-to-stdout",
+      "r.auto-print-to-stdout",
+      "suppress-messages"
     ],
     "dplyr:": [
       "dplyr.filter_to_mask"
@@ -72,7 +82,27 @@
       "filled-contour-to-matplotlib",
       "r-autoprint-to-python-print",
       "image.proper-display",
-      "matplotlib.filled-contour-with-data"
+      "matplotlib.filled-contour-with-data",
+      "shape.graycol",
+      "r-graycol-to-matplotlib-colormap",
+      "suppress-startup-messages",
+      "suppress-startup-to-noop",
+      "r-library-to-python-import",
+      "r.suppress-startup-to-pass",
+      "r-library-stub",
+      "r-auto-print-to-stdout",
+      "r.auto-print-to-stdout",
+      "suppress-messages"
+    ],
+    "shape:3ec29fc1": [
+      "r-shape-to-scipy",
+      "r-package-placeholder",
+      "r-package-to-python-library"
+    ],
+    "shape:": [
+      "r-shape-to-scipy",
+      "r-package-placeholder",
+      "r-package-to-python-library"
     ]
   },
   "meta": {
@@ -253,11 +283,11 @@
     "suppress-package-startup-noop": {
       "confidence": "tentative",
       "evidence_count": 1,
-      "contradictions_count": 1,
+      "contradictions_count": 2,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 30
+      "contradicted_at_run": 58
     },
     "r.suppress-messages-to-python-warnings": {
       "confidence": "tentative",
@@ -411,7 +441,124 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "shape.graycol": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r-graycol-to-matplotlib-colormap": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "suppress-startup-messages": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 58
+    },
+    "suppress-startup-to-noop": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r-library-to-python-import": {
+      "confidence": "contradicted",
+      "evidence_count": 3,
+      "contradictions_count": 6,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 60
+    },
+    "r-shape-to-scipy": {
+      "confidence": "confirmed",
+      "evidence_count": 3,
+      "contradictions_count": 4,
+      "seed": false,
+      "package": "shape",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 61
+    },
+    "r-package-placeholder": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "shape",
+      "ast_shape_hash": "3ec29fc1",
+      "contradicted_at_run": 0
+    },
+    "r-package-to-python-library": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "shape",
+      "ast_shape_hash": "3ec29fc1",
+      "contradicted_at_run": 0
+    },
+    "r.suppress-startup-to-pass": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 61
+    },
+    "r-library-stub": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r-auto-print-to-stdout": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r.auto-print-to-stdout": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "suppress-messages": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 53
+  "total_runs": 64
 }
