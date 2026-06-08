@@ -10,6 +10,8 @@ dependencies = [
     "anthropic",
     "tree-sitter",
     "tree-sitter-language-pack",
+    "scikit-image",
+    "Pillow",
 ]
 
 [project.optional-dependencies]

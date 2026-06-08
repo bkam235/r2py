@@ -36,7 +36,9 @@
       "auto-print-stdout",
       "filled.contour-matplotlib",
       "filled-contour-to-matplotlib",
-      "r-autoprint-to-python-print"
+      "r-autoprint-to-python-print",
+      "image.proper-display",
+      "matplotlib.filled-contour-with-data"
     ],
     "dplyr:": [
       "dplyr.filter_to_mask"
@@ -68,7 +70,9 @@
       "auto-print-stdout",
       "filled.contour-matplotlib",
       "filled-contour-to-matplotlib",
-      "r-autoprint-to-python-print"
+      "r-autoprint-to-python-print",
+      "image.proper-display",
+      "matplotlib.filled-contour-with-data"
     ]
   },
   "meta": {
@@ -378,7 +382,7 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "ffb01754",
+      "ast_shape_hash": "",
       "contradicted_at_run": 0
     },
     "r-autoprint-to-python-print": {
@@ -389,7 +393,25 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "image.proper-display": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "matplotlib.filled-contour-with-data": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 39
+  "total_runs": 53
 }
