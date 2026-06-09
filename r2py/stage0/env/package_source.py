@@ -5,15 +5,20 @@ import importlib.util
 import subprocess
 from pathlib import Path
 
-from .r_runtime import find_rscript
+from .r_runtime import find_rscript, find_r_library
 
 
 def find_r_package_source(package: str) -> Path | None:
     """Return the path to the installed R package directory, or None."""
     rscript = find_rscript()
+    lib = find_r_library()
+    lib_setup = (
+        f".libPaths(c('{lib.as_posix()}', .libPaths())); "
+        if lib else ""
+    )
     result = subprocess.run(
         [str(rscript), "-e",
-         f"cat(tryCatch(find.package('{package}'), error=function(e) ''))"],
+         f"{lib_setup}cat(tryCatch(find.package('{package}'), error=function(e) ''))"],
         capture_output=True, text=True, timeout=10,
     )
     path_str = result.stdout.strip()

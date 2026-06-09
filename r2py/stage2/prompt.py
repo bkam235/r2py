@@ -320,18 +320,25 @@ def _lookup_package_source(
         return None, None
 
     try:
-        from ..stage1.package_lookup import get_function_source
+        from ..stage1.package_lookup import get_function_source_recursive
     except ImportError:
         return None, None
 
     fn_name = entity.name
-    for pkg in imported_pkgs:
-        try:
-            source = get_function_source(pkg, fn_name)
-        except Exception:
-            source = None
-        if source:
-            return pkg, source
+    # Try all imported packages together so recursive helper calls can be
+    # resolved across the full set (e.g. a helper defined in the same pkg).
+    try:
+        source = get_function_source_recursive(imported_pkgs, fn_name)
+    except Exception:
+        source = None
+    if source:
+        # Report the first package that actually contains the top-level symbol.
+        from ..stage1.package_lookup import get_function_source as _gfs
+        found_pkg = next(
+            (p for p in imported_pkgs if _gfs(p, fn_name, max_lines=1) is not None),
+            imported_pkgs[0],
+        )
+        return found_pkg, source
 
     return None, None
 

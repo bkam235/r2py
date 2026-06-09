@@ -49,6 +49,17 @@ def find_rscript() -> Path:
     )
 
 
+def find_r_library() -> "Path | None":
+    """Return the bundled R library path, or None if not present.
+
+    The bundled library ships at ``r_env/library/`` alongside the runtime.
+    Callers use this to prepend the hermetic package set to ``.libPaths()``
+    before running ad-hoc Rscript subprocesses.
+    """
+    lib = _R_ENV_DIR / "library"
+    return lib if lib.is_dir() else None
+
+
 def find_r() -> Path:
     """Return the path to R (not Rscript), raising RuntimeError if not found.
 

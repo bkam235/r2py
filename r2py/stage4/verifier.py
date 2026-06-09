@@ -273,6 +273,17 @@ def _r2py_checkpoint(eid):
         except Exception:
             pass
 
+    # Close all figures after snapshotting so the next entity starts with a
+    # clean matplotlib state. Without this, plt.imshow() / plt.plot() in a
+    # later entity draws into the previous entity's still-open figure, producing
+    # composite images and misleading SSIM scores.
+    if _plt is not None:
+        try:
+            _plt.close('all')
+            cur_fig_count = 0
+        except Exception:
+            pass
+
     cur_stdout = _r2py_stdout_buf.getvalue()
     stdout_delta = cur_stdout[_r2py_prev_stdout_pos:]
 

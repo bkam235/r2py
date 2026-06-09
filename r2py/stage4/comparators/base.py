@@ -42,6 +42,14 @@ def _normalize_printed_output(s: str) -> str:
     """
     # Remove R vector line-index markers like "[1]" or " [7]"
     s = _re.sub(r'^\s*\[\d+\]\s*', '', s, flags=_re.MULTILINE)
+    # Normalize hex color codes to lowercase (#FFFFFF → #ffffff).
+    # R's rgb()/col2rgb() always produce uppercase; Python format strings always
+    # produce lowercase.  The values are identical — normalise to one case.
+    s = _re.sub(r'#[0-9A-Fa-f]{3,8}\b', lambda m: m.group(0).lower(), s)
+    # Normalise R logical constants to Python style so TRUE/FALSE score as
+    # equivalent to True/False (both are correct translations of R logicals).
+    s = _re.sub(r'\bTRUE\b', 'True', s)
+    s = _re.sub(r'\bFALSE\b', 'False', s)
     # Strip quote characters, list/dict punctuation, and dict colons
     s = s.translate(str.maketrans('', '', '"\'[](),{}:'))
     return ' '.join(s.split())

@@ -56,6 +56,102 @@ def get_function_source(package: str, symbol: str, max_lines: int = 80) -> str |
     return result
 
 
+def get_function_source_recursive(
+    packages: list[str],
+    symbol: str,
+    *,
+    max_lines_total: int = 200,
+    max_lines_per_fn: int = 80,
+    _seen: "set[str] | None" = None,
+) -> str | None:
+    """Return R source for *symbol* plus any helper functions it calls from *packages*.
+
+    Recursively fetches sources for function calls found in each body, up to
+    *max_lines_total* combined lines.  Stops recursion at depth implied by the
+    budget; never revisits the same symbol.  Returns None when *symbol* is not
+    found in any of the supplied packages.
+    """
+    if _seen is None:
+        _seen = set()
+    if symbol in _seen:
+        return None
+    _seen.add(symbol)
+
+    # Find the symbol in any of the packages.
+    source: str | None = None
+    for pkg in packages:
+        source = get_function_source(pkg, symbol, max_lines=max_lines_per_fn)
+        if source:
+            break
+    if source is None:
+        return None
+
+    parts: list[str] = [source]
+    budget = max_lines_total - len(source.splitlines())
+
+    for callee in _extract_r_calls(source):
+        if budget <= 0:
+            break
+        sub = get_function_source_recursive(
+            packages, callee,
+            max_lines_total=budget,
+            max_lines_per_fn=min(max_lines_per_fn, budget),
+            _seen=_seen,
+        )
+        if sub:
+            parts.append(f"\n# (helper: {callee})\n{sub}")
+            budget -= len(sub.splitlines())
+
+    return "\n".join(parts)
+
+
+# Base-R names to skip when scanning for recursive helper calls.
+_BASE_R_NAMES: frozenset[str] = frozenset({
+    "c", "list", "length", "nrow", "ncol", "dim", "seq", "seq_len", "seq_along",
+    "rep", "rev", "sort", "order", "which", "any", "all", "sum", "prod",
+    "min", "max", "mean", "range", "round", "floor", "ceiling", "abs", "sqrt",
+    "log", "exp", "trunc", "sign", "cumsum", "diff",
+    "is.null", "is.na", "is.numeric", "is.character", "is.logical", "is.integer",
+    "is.vector", "is.list", "is.function", "is.finite", "is.infinite", "is.nan",
+    "as.integer", "as.numeric", "as.character", "as.logical", "as.vector",
+    "class", "inherits", "attr", "attributes", "names", "length",
+    "paste", "paste0", "sprintf", "format", "nchar", "substr", "gsub", "sub",
+    "strsplit", "grep", "grepl", "regexpr", "toupper", "tolower", "trimws",
+    "stop", "warning", "message", "cat", "print", "return", "invisible",
+    "if", "for", "while", "repeat", "break", "next", "function", "switch",
+    "tryCatch", "try", "withCallingHandlers", "simpleError", "simpleWarning",
+    "do.call", "match.arg", "match.call", "sys.call", "missing",
+    "force", "identity", "Recall",
+    "vector", "numeric", "character", "logical", "integer", "complex",
+    "matrix", "array", "data.frame", "environment", "new.env",
+    "Reduce", "Filter", "Map", "Find", "Position",
+    "sapply", "lapply", "vapply", "tapply", "mapply", "apply",
+    "setdiff", "union", "intersect",
+    "get", "assign", "exists", "ls", "rm", "get0",
+    "library", "require", "requireNamespace", "loadNamespace",
+    "options", "getOption", "Sys.time", "proc.time", "system.time",
+    "rgb", "col2rgb", "adjustcolor", "gray", "grey",
+    "rainbow", "heat.colors", "terrain.colors", "topo.colors", "cm.colors",
+    "colorRamp", "colorRampPalette",
+    "plot", "lines", "points", "text", "axis", "legend", "title", "par",
+    "image", "contour", "filled.contour", "persp",
+    "nargs", "sys.nframe", "sys.function",
+})
+
+
+def _extract_r_calls(source: str) -> list[str]:
+    """Return unique non-base function names called in an R source snippet."""
+    import re
+    names = re.findall(r'\b([a-zA-Z.][a-zA-Z0-9._]*)\s*\(', source)
+    seen: set[str] = set()
+    result: list[str] = []
+    for name in names:
+        if name not in _BASE_R_NAMES and name not in seen:
+            seen.add(name)
+            result.append(name)
+    return result
+
+
 def _try_file_scan(package: str, symbol: str, max_lines: int) -> str | None:
     """Scan installed R source files for *symbol* in *package*."""
     from ..stage0.env.package_source import find_r_package_source
@@ -81,17 +177,25 @@ def _try_r_deparse(package: str, symbol: str, max_lines: int) -> str | None:
     """
     import subprocess
 
-    from ..stage0.env.r_runtime import find_rscript
+    from ..stage0.env.r_runtime import find_rscript, find_r_library
 
     rscript = find_rscript()
     if rscript is None:
         return None
 
-    # Use asNamespace so unexported functions are also accessible.
+    lib = find_r_library()
+    lib_setup = (
+        f".libPaths(c('{lib.as_posix()}', .libPaths())); "
+        if lib else ""
+    )
+
+    # Use asNamespace with inherits=FALSE so only the package's own namespace
+    # is searched (not base/parent environments), keeping results package-scoped.
     r_code = (
+        f"{lib_setup}"
         f"tryCatch({{"
         f"  suppressPackageStartupMessages(library('{package}', character.only=TRUE));"
-        f"  fn <- get('{symbol}', envir=asNamespace('{package}'));"
+        f"  fn <- get('{symbol}', envir=asNamespace('{package}'), inherits=FALSE);"
         f"  cat(paste(deparse(fn), collapse='\\n'))"
         f"}}, error=function(e) cat(''))"
     )
