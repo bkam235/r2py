@@ -209,7 +209,10 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
       if (is.null(serialized) || identical(serialized, "__uncapturable__")) {
         uncapturable_vars <- c(uncapturable_vars, v)
       } else {
-        data_parts <- c(data_parts, paste0('"', v, '":', as.character(serialized)))
+        # .r2py_serialize_var now returns an R object; encode it here so the
+        # per-checkpoint JSON document is well-formed.
+        json_val <- jsonlite::toJSON(serialized, auto_unbox = TRUE, na = 'null', force = TRUE)
+        data_parts <- c(data_parts, paste0('"', v, '":', as.character(json_val)))
       }
     }
     cur_fig_count <- .r2py_plot_count

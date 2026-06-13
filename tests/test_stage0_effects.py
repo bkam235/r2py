@@ -132,17 +132,124 @@ def test_graphics_collect_multiple_sorted(tmp_path):
 # data.py — adapter registry
 # ---------------------------------------------------------------------------
 
-def test_data_register_py_adapter():
-    class MyObj:
-        def __init__(self, v): self.v = v
-
-    _data_mod.register_py_adapter(
-        lambda obj: isinstance(obj, MyObj),
-        lambda obj: {"my_value": obj.v},
-    )
-    serialized, ok = _data_mod._serialize_py("x", MyObj(99))
+def test_data_py_preamble_encoder_handles_nested_dates():
+    """Phase 1a: _R2PyEncoder must recurse into nested non-native elements."""
+    import datetime
+    import json
+    # Execute the preamble in a fresh namespace, then invoke the helper.
+    ns: dict = {}
+    exec(_data_mod.build_py_preamble(), ns)
+    try_serialize = ns["_r2py_try_serialize"]
+    val = {"d": [datetime.date(2024, 1, 1), datetime.date(2024, 2, 1)], "n": 3}
+    out, ok = try_serialize("x", val)
     assert ok
-    assert serialized == {"my_value": 99}
+    assert out == {"d": ["2024-01-01", "2024-02-01"], "n": 3}
+    # Round-trip stable
+    json.dumps(out)
+
+
+def test_data_r_py_parity():
+    """Phase 1c: R and Python serializers must produce identical JSON shapes
+    for the same logical value across all supported types."""
+    import shutil
+    if not shutil.which("Rscript") and not (Path(__file__).resolve().parent.parent
+                                            / "r2py" / "stage0" / "r_env" / "runtime" / "bin"
+                                            / "Rscript.exe").exists():
+        pytest.skip("R not available")
+
+    from r2py.stage0.sandbox.r_sandbox import RSandbox
+    from r2py.stage0.sandbox.isolation import TempWorkdir
+    from r2py.types import EffectClass
+
+    # Run an R script that creates representative values.
+    r_src = """
+x_vec <- c(1, 2, 3)
+x_named <- list(a = 1L, b = c(10L, 20L))
+x_df <- data.frame(d = as.Date(c('2024-01-01','2024-02-01')), v = c(1, 2))
+x_factor <- factor(c('a','b','a'))
+"""
+    with TempWorkdir() as wd:
+        sb = RSandbox()
+        rbundle = sb.run(r_src, workdir=wd,
+                         capture=frozenset({EffectClass.DATA}),
+                         preamble="", timeout_s=60)
+
+    # Equivalent Python values.
+    import pandas as pd
+    import datetime
+    py_vals = {
+        "x_vec": [1, 2, 3],
+        "x_named": {"a": 1, "b": [10, 20]},
+        "x_df": pd.DataFrame({"d": [datetime.date(2024, 1, 1),
+                                    datetime.date(2024, 2, 1)],
+                              "v": [1, 2]}),
+        "x_factor": ["a", "b", "a"],
+    }
+    ns: dict = {}
+    exec(_data_mod.build_py_preamble(), ns)
+    try_serialize = ns["_r2py_try_serialize"]
+
+    for name, py_val in py_vals.items():
+        r_serialized = rbundle.data.get(name)
+        py_serialized, ok = try_serialize(name, py_val)
+        assert ok, f"py side failed to serialize {name}"
+        # Compare structurally as JSON
+        assert json.loads(json.dumps(r_serialized)) == json.loads(json.dumps(py_serialized)), (
+            f"R/Py parity mismatch for {name}:\n  R = {r_serialized}\n  Py = {py_serialized}"
+        )
+
+
+def test_data_r_lm_serialization_structure():
+    """Phase 1c: lm model must serialize to {coefficients, residuals, fitted}
+    with each component a dict of name→number.  Verifies the recursive
+    dispatcher's container handling for non-trivial nested structures."""
+    import shutil
+    if not shutil.which("Rscript") and not (Path(__file__).resolve().parent.parent
+                                            / "r2py" / "stage0" / "r_env" / "runtime" / "bin"
+                                            / "Rscript.exe").exists():
+        pytest.skip("R not available")
+
+    from r2py.stage0.sandbox.r_sandbox import RSandbox
+    from r2py.stage0.sandbox.isolation import TempWorkdir
+    from r2py.types import EffectClass
+
+    with TempWorkdir() as wd:
+        sb = RSandbox()
+        rbundle = sb.run("m <- lm(mpg ~ wt, data = mtcars)", workdir=wd,
+                         capture=frozenset({EffectClass.DATA}),
+                         preamble="", timeout_s=60)
+    m = rbundle.data.get("m")
+    assert isinstance(m, dict)
+    assert sorted(m.keys()) == ["coefficients", "fitted", "residuals"]
+    assert isinstance(m["coefficients"], dict)
+    assert "(Intercept)" in m["coefficients"]
+    assert "wt" in m["coefficients"]
+    assert all(isinstance(v, (int, float)) for v in m["coefficients"].values())
+    # residuals/fitted: dict of obs-name → number
+    assert isinstance(m["residuals"], dict)
+    assert isinstance(m["fitted"], dict)
+    assert len(m["residuals"]) == 32  # mtcars has 32 rows
+    assert len(m["fitted"]) == 32
+
+
+def test_data_py_preamble_encoder_handles_dataframe_with_date_column():
+    """Nested dates inside a DataFrame column must serialize via recursion."""
+    try:
+        import pandas as pd
+    except ImportError:
+        return  # pandas not installed in this environment
+    import datetime
+    ns: dict = {}
+    exec(_data_mod.build_py_preamble(), ns)
+    try_serialize = ns["_r2py_try_serialize"]
+    df = pd.DataFrame({
+        "date": [datetime.date(2019, 1, 1), datetime.date(2019, 2, 1)],
+        "value": [1, 2],
+    })
+    out, ok = try_serialize("df", df)
+    assert ok
+    assert out["date"] == ["2019-01-01", "2019-02-01"]
+    assert out["value"] == [1, 2]
 
 
 def test_data_unknown_type_returns_not_ok():

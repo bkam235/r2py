@@ -78,6 +78,23 @@ placeholder is in the way:
    the file top under the R name — that produces dead code. Either keep the
    renamed name and ReplaceCall its RHS, or RenameVariable everything back to
    the R name first and then InsertPreamble.
+
+## SHIM-LOADED NAMES (CRITICAL)
+
+The user message may include a section "## Shim-loaded names" listing names
+that are pre-bound into module globals by a data-loading shim BEFORE the body
+runs.  For each such name:
+
+  - Do NOT emit InsertPreamble whose `code` assigns it.
+  - Do NOT emit ReplaceCall whose `new_call` binds it via an assignment.
+  - Do NOT emit RenameVariable that renames such a name (the shim references
+    it by its original name).
+
+The shim's value is authoritative — any binding edit you emit will be
+stripped post-coherence anyway, wasting an LLM round-trip.  If you see a
+placeholder for a shim-loaded name (e.g. ``volcano = np.array([[94, 94, ...]])``),
+the right action is to leave it alone or RemoveLine it (use ReplaceCall with
+new_call="" to delete it).
 """
 
 
@@ -86,17 +103,23 @@ def review(
     script_map: "ScriptMap",
     library: "PatternLibrary",
     model: str = _llm._DEFAULT_MODEL,
+    shim_names: list[str] | None = None,
 ) -> tuple[str, list["Edit"]]:
     """Run the whole-program coherence pass.
 
     Returns (revised_python_source, list_of_edits).
     On any failure returns (python_source, []) — the pass can never lower the score.
+
+    shim_names: names pre-bound into module globals by the data-loading shim
+    (Option A).  Surfaced in the user message so the LLM skips edits that
+    re-bind them; a post-pass in translator.translate() strips any that slip
+    through.
     """
     if not python_source.strip():
         return python_source, []
 
     try:
-        user_content = _build_user_message(python_source, script_map)
+        user_content = _build_user_message(python_source, script_map, shim_names)
         messages = [{"role": "user", "content": user_content}]
         raw = _llm.call(messages, _COHERENCE_SYSTEM, model=model)
         return _parse_response(raw, python_source)
@@ -108,11 +131,27 @@ def review(
 # Internal helpers
 # ---------------------------------------------------------------------------
 
-def _build_user_message(python_source: str, script_map: "ScriptMap") -> str:
+def _build_user_message(
+    python_source: str,
+    script_map: "ScriptMap",
+    shim_names: list[str] | None = None,
+) -> str:
     entity_summary = _summarise_entities(script_map)
+    shim_block = ""
+    if shim_names:
+        names_str = ", ".join(f"`{n}`" for n in sorted(shim_names))
+        shim_block = (
+            "## Shim-loaded names\n"
+            f"The following names are pre-bound into module globals by the "
+            f"data-loading shim before the body runs: {names_str}.\n"
+            "Do NOT emit InsertPreamble/ReplaceCall/RenameVariable edits that "
+            "re-bind or rename these names. The shim's values are authoritative; "
+            "any such edits will be stripped post-coherence.\n\n"
+        )
     return (
         "## Python translation to review\n"
         f"```python\n{python_source}\n```\n\n"
+        f"{shim_block}"
         "## ScriptMap entity summary (for cross-entity coherence check)\n"
         f"{entity_summary}\n\n"
         "Review the Python translation for global coherence issues. "

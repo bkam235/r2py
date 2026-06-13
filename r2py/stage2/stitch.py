@@ -16,6 +16,155 @@ _R_ONLY_PACKAGES: frozenset[str] = frozenset({
 
 _SENTINEL_RE = re.compile(r"^# r2py:entity:(\S+)$")
 
+# Data-loading shim sentinels (§ Option A in plans/i-go-with-option-melodic-dewdrop.md).
+# Saved on disk in fully-commented form; the verifier un-comments at sandbox time.
+DATA_SHIM_BEGIN = "# r2py:data_shim:begin"
+DATA_SHIM_END = "# r2py:data_shim:end"
+DATA_SHIM_RE = re.compile(
+    r"(# r2py:data_shim:begin\n)(.*?)(# r2py:data_shim:end)",
+    re.DOTALL,
+)
+
+# R call names whose results are non-deterministic from Python's PRNG (RNG)
+# or environment-dependent (file reads, env vars).  Entities whose defining
+# call is in this set are reclassified as "non-translatable sources" — their
+# captured R values are loaded by the shim at test time even though they ARE
+# defined in the script.  This is the only case where the shim overrides a
+# name the translation also assigns; without it, the equivalence test would
+# fail purely because the two PRNGs produced different draws.
+_NON_TRANSLATABLE_SOURCE_CALLS: frozenset[str] = frozenset({
+    "rnorm", "runif", "sample", "rbinom", "rpois", "rgamma", "rbeta", "rt",
+    "rexp", "rchisq", "rlnorm", "rweibull", "rcauchy", "rf",
+    "read.csv", "read.csv2", "read.table", "read.delim", "read.delim2",
+    "readRDS", "readLines", "scan", "load",
+    "Sys.getenv", "Sys.time", "Sys.Date", "Sys.timezone",
+})
+
+# Compile once: match the first call expression in an entity's R source.
+# Captures the (possibly dotted) function name.
+_R_CALL_RE = re.compile(r"\b([A-Za-z_][\w.]*)\s*\(")
+
+
+_R_COMMENT_RE = re.compile(r"#[^\n]*")
+
+
+def is_non_translatable_source_entity(entity_source: str) -> bool:
+    """Return True if *entity_source* assigns from a non-translatable R source.
+
+    Used by compose() to widen the shim's payload beyond pure free-variable
+    refs.  Detection is intentionally simple: strip R comments first (so a
+    name in a comment never triggers a false positive), then look at the first
+    call expression in the code; if it's in the allowlist, the value must be
+    loaded from the R-captured sidecar rather than recomputed.
+    """
+    if not entity_source:
+        return False
+    # Strip line comments first — a comment like ``# uses rnorm()`` must not
+    # cause the classifier to mark an unrelated entity as a non-translatable
+    # source.  R has no block comments, so a single-pass strip is sufficient.
+    text = _R_COMMENT_RE.sub("", entity_source).strip()
+    # Strip a leading assignment so we look at the RHS.
+    text = re.sub(r"^[A-Za-z_.][\w.]*\s*(<-|=)\s*", "", text, count=1)
+    m = _R_CALL_RE.search(text)
+    if not m:
+        return False
+    return m.group(1) in _NON_TRANSLATABLE_SOURCE_CALLS
+
+
+def build_data_shim(needed_names: list[str], sidecar_filename: str) -> str:
+    """Return the commented-out data-loading shim block.
+
+    Every body line is prefixed ``# `` so the saved .py is a no-op when run
+    directly.  The verifier strips the prefix at sandbox time via
+    ``DATA_SHIM_RE`` to activate the shim for the equivalence test.
+
+    Body lines load *sidecar_filename* (which must sit next to ``__file__``)
+    and bind any name in *needed_names* that is present in the captured data
+    into module globals.  Names not in the captured data are silently skipped
+    — the translation's natural assignment then takes over for them.
+    """
+    if not needed_names or not sidecar_filename:
+        return ""
+    # Build the name list as a Python literal so it embeds cleanly in a comment.
+    names_literal = "[" + ", ".join(repr(n) for n in sorted(needed_names)) + "]"
+    body = [
+        "import json as _r2py_shim_json",
+        "from pathlib import Path as _r2py_shim_Path",
+        f"_r2py_shim_data = _r2py_shim_json.loads("
+        f"(_r2py_shim_Path(__file__).parent / {sidecar_filename!r}).read_text(encoding='utf-8'))",
+        f"for _r2py_shim_n in {names_literal}:",
+        "    if _r2py_shim_n in _r2py_shim_data:",
+        "        globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]",
+    ]
+    return (
+        DATA_SHIM_BEGIN
+        + "\n"
+        + "\n".join("# " + line for line in body)
+        + "\n"
+        + DATA_SHIM_END
+    )
+
+
+def collect_shim_needed_names(script_map: "ScriptMap") -> list[str]:
+    """Return names the data-loading shim should pre-bind for *script_map*.
+
+    Two sources:
+      1. Free-variable refs whose values were captured into ``actual_bundle.data``
+         — these are R built-in datasets, package datasets, and other inherited
+         values the script uses but does not define.
+      2. Names defined by entities whose RHS is a non-translatable source call
+         (RNG, file read, environment query) — see
+         ``is_non_translatable_source_entity``.
+
+    Empty list if no captured data is available — caller can then skip shim
+    emission entirely.
+    """
+    entities = getattr(script_map, "entities", {}) or {}
+    # Bundle data is shared across all entities (Stage 1 main run); grab any one.
+    captured: dict = {}
+    for e in entities.values():
+        ab = getattr(e, "actual_bundle", None)
+        if ab is not None and ab.data:
+            captured = ab.data
+            break
+    if not captured:
+        return []
+
+    needed: set[str] = set()
+
+    # (1) Free variable refs the script references but does not define.
+    for e in entities.values():
+        for ref in getattr(e, "free_variable_refs", []) or []:
+            if ref in captured:
+                needed.add(ref)
+
+    # (2) Names defined by RNG/read entities — overridden by R-captured values
+    # at test time so equivalence doesn't fail on PRNG divergence.
+    r_source = getattr(script_map, "source", "") or ""
+    r_lines = r_source.splitlines() if r_source else []
+    for e in entities.values():
+        span = getattr(e, "source_span", None)
+        if span is None or not r_lines:
+            continue
+        # SourceLocation uses 0-based tree-sitter rows; end+1 because slices
+        # are exclusive.  Matches the convention used in stage2/prompt.py
+        # (_entity_source).  Using 1-based math here would slice one line
+        # too early and miss single-line entities at row 0 entirely
+        # (lines[-1:0] returns []).
+        try:
+            start = max(0, span.start_line)
+            end = min(len(r_lines), span.end_line + 1)
+            seg = "\n".join(r_lines[start:end])
+        except Exception:
+            continue
+        if is_non_translatable_source_entity(seg):
+            name = getattr(e, "name", None)
+            if name and name in captured:
+                needed.add(name)
+
+    return sorted(needed)
+
+
 from .. import __version__ as _r2py_version
 
 
@@ -38,6 +187,65 @@ def get_toplevel_def_names(text: str) -> set[str]:
                 if isinstance(t, _ast.Name) and t.id.startswith("_"):
                     names.add(t.id)
     return names
+
+
+def remove_shim_overrides(text: str, shim_names: set[str]) -> str:
+    """Strip top-level assignments whose target is a name pre-loaded by the shim.
+
+    The data-loading shim (Option A) binds R-captured values into module
+    globals BEFORE the translated body runs.  Any later top-level assignment
+    to the same name overwrites the authoritative R value with whatever the
+    LLM produced — typically a truncated stub when the data is large
+    (the LLM token budget can't reproduce ``volcano``'s 87×61 elevation
+    matrix faithfully, so it hallucinates a few rows of plausible values).
+
+    Stripping these assignments at compose time is a structural guarantee
+    that complements the LLM-facing prompt instruction (which the LLM may
+    ignore).  Side-effecting RHS expressions are converted to bare
+    expression statements so the side effects, if any, are preserved.
+    """
+    if not shim_names:
+        return text
+    try:
+        tree = _ast.parse(text)
+    except SyntaxError:
+        return text
+
+    lines = text.splitlines()
+    # Map line index → replacement text (None = delete line).
+    line_edits: dict[int, str | None] = {}
+
+    for node in tree.body:
+        if not isinstance(node, _ast.Assign):
+            continue
+        if len(node.targets) != 1:
+            continue
+        target = node.targets[0]
+        if not isinstance(target, _ast.Name):
+            continue
+        if target.id not in shim_names:
+            continue
+
+        # The assignment may span several lines (e.g. multi-line np.array).
+        # Mark the whole node range for removal.
+        start = node.lineno - 1
+        end = node.end_lineno - 1 if node.end_lineno else start
+        for i in range(start, end + 1):
+            line_edits[i] = None
+
+    if not line_edits:
+        return text
+
+    result = [
+        line for i, line in enumerate(lines)
+        if line_edits.get(i, line) is not None
+    ]
+    # Tidy trailing/leading blank lines created by the removal.
+    while result and not result[0].strip():
+        result.pop(0)
+    while result and not result[-1].strip():
+        result.pop()
+    return "\n".join(result)
 
 
 def remove_prior_definitions(text: str, defined: set[str]) -> str:
@@ -94,6 +302,7 @@ def compose(
     script_map: "ScriptMap",
     model: str,
     r_path: str = "",
+    sidecar_filename: str | None = None,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Compose ordered snippets into a single Python source string.
 
@@ -113,6 +322,13 @@ def compose(
     defined_names: dict[str, str] = {}  # python_name → entity_id that defined it
     already_defined_defs: set[str] = set()  # def/class names + _-prefixed consts already emitted
 
+    # Compute shim payload up front so we can strip body-level reassignments
+    # to those names (the shim is authoritative — see remove_shim_overrides).
+    shim_needed_names: list[str] = (
+        collect_shim_needed_names(script_map) if sidecar_filename else []
+    )
+    shim_names_set: set[str] = set(shim_needed_names)
+
     for eid in order:
         snippet = per_entity.get(eid, "")
         # Collect explicit imports registered by the translator
@@ -130,6 +346,14 @@ def compose(
             # Remove def/class blocks and _-prefixed constants already emitted by a
             # prior entity — these are shared helpers, not entity-specific state.
             body_text = remove_prior_definitions(body_text, already_defined_defs)
+            # Strip top-level assignments to names the shim pre-loads.  The LLM
+            # sometimes hallucinates a truncated literal (e.g. a 2-row stub of
+            # the 87-row ``volcano`` matrix) when told the value is pre-bound;
+            # removing the assignment guarantees the shim's authoritative value
+            # survives into the body.
+            body_text = remove_shim_overrides(body_text, shim_names_set)
+            if not body_text.strip():
+                continue  # entity was nothing but a shim-overridden assignment
             body_text = _resolve_collisions(body_text, eid, defined_names)
             # Track all helpers newly defined by this entity for subsequent entities.
             already_defined_defs.update(get_toplevel_def_names(body_text))
@@ -154,40 +378,27 @@ def compose(
         f"# Model: {model}  ScriptMap entities: {n_entities}"
     )
 
-    # Assemble while tracking line numbers (1-indexed).
-    # Parts are joined by "\n\n" (one blank line between).
-    entity_line_map: dict[str, tuple[int, int]] = {}
-    current_line = 1
+    # Build commented-out data-loading shim (§ Option A).  Empty string when
+    # there is nothing to pre-load — keeps the saved .py minimal.
+    shim_text = (
+        build_data_shim(shim_needed_names, sidecar_filename)
+        if (sidecar_filename and shim_needed_names) else ""
+    )
 
-    header_lines = header.count("\n") + 1
-    current_line += header_lines  # points to line after header
-
-    if deduped_imports:
-        # "\n\n".join produces one blank line between parts, advancing by 1 line.
-        current_line += 1
-        imports_text = "\n".join(deduped_imports)
-        imports_lines = imports_text.count("\n") + 1
-        current_line += imports_lines
-
-    if body_items:
-        current_line += 1  # "\n\n" separator before first body block (one blank line)
-        for i, (eid, body_text) in enumerate(body_items):
-            start = current_line
-            body_line_count = body_text.count("\n") + 1
-            end = start + body_line_count - 1
-            entity_line_map[eid] = (start, end)
-            current_line = end + 1
-            if i < len(body_items) - 1:
-                current_line += 1  # "\n\n" separator between body blocks (one blank line)
-
-    # Build source string
+    # Build source string first, then derive line ranges by scanning sentinels.
     parts: list[str] = [header]
     if deduped_imports:
         parts.append("\n".join(deduped_imports))
+    if shim_text:
+        parts.append(shim_text)
     if body_items:
         parts.append("\n\n".join(bt for _, bt in body_items))
 
     source = "\n\n".join(parts) + "\n"
+
+    # Rebuild entity_line_map from sentinels — simpler and less error-prone than
+    # accumulating line counts while inserting a variable-length shim block.
+    entity_line_map = rebuild_entity_line_map(source)
 
     # Hoist any top-level function defs called before they are defined
     # (entity-by-entity LLM translation can produce helper functions in a later

@@ -5,6 +5,8 @@ import ast as _ast
 import re
 from typing import TYPE_CHECKING
 
+from .stitch import is_non_translatable_source_entity as _is_non_translatable_source
+
 if TYPE_CHECKING:
     from ..stage1.entities import Entity
     from ..stage1.script_map import ScriptMap
@@ -101,6 +103,23 @@ def build_entity_prompt(
 
     if free_var_block:
         parts.append(f"## Implicit R environment variables\n{free_var_block}")
+
+    # Phase 3b: RNG / file-read / env-query entities are loaded from R-captured
+    # values at test time by the data-loading shim — emitting the natural
+    # Python translation is still desired (it's what the saved .py shows the
+    # reader), but the LLM should know its output value will be overridden so
+    # PRNG / file-content divergence doesn't surface as a translation error.
+    if _is_non_translatable_source(r_source):
+        parts.append(
+            "## Test-harness note: pre-loaded entity\n"
+            "This entity's defining call is a non-deterministic source (RNG draw, "
+            "file read, or environment query). At equivalence-test time, the test "
+            "harness pre-loads this entity's output from the R-captured value, so "
+            "it will overwrite whatever your translation assigns. Emit the natural, "
+            "idiomatic Python translation anyway (it is preserved in the saved "
+            ".py for the reader) — do NOT try to match R's PRNG, encode the file "
+            "contents inline, or otherwise short-circuit the call."
+        )
 
     example_block = _format_translation_examples(patterns)
     if example_block:
@@ -440,10 +459,14 @@ def _format_free_variables(entity: "Entity") -> str:
         return ""
     header = (
         "The following names are used in this entity but were NOT defined in this script.\n"
-        "They were present in R's execution environment (built-in datasets, lazy-loaded objects, etc.).\n"
-        "Use the name and shape/range info below to find an equivalent Python source.\n"
-        "If you find an equivalent Python source (e.g. built-in datasets, or capture from R), load it — do NOT "
-        "reconstruct or approximate the values from this description:"
+        "They were captured from R's execution environment (built-in datasets, RNG draws,\n"
+        "file reads, etc.) and will be PRE-LOADED into Python globals by an external test\n"
+        "harness BEFORE this code runs.\n"
+        "\n"
+        "Use each name AS-IS. Do NOT emit code to load, import, read, sample, or otherwise\n"
+        "reconstruct these values — any such code will run AFTER the pre-loaded value is\n"
+        "already bound and may overwrite it with a divergent value, breaking the equivalence\n"
+        "test. The shape/range info below is for type-aware reference only:"
     )
     return header + "\n" + "\n".join(lines)
 

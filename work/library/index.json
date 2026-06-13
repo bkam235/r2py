@@ -49,7 +49,20 @@
       "r-auto-print-to-stdout",
       "r.auto-print-to-stdout",
       "suppress-messages",
-      "auto-print-to-stdout"
+      "auto-print-to-stdout",
+      "suppress-startup-messages-noop",
+      "incomplete-statement-fix",
+      "function-call-print",
+      "matplotlib.colormap-def",
+      "auto-print-result",
+      "suppress-startup-skip",
+      "list-to-array-conversion",
+      "r-auto-print-to-py-print",
+      "filled-contour-plot",
+      "numpy.shape-access",
+      "suppress-package-startup-messages",
+      "withr-with-locale-plot",
+      "contextmanager-yield-fix"
     ],
     "dplyr:": [
       "dplyr.filter_to_mask"
@@ -94,7 +107,18 @@
       "r-auto-print-to-stdout",
       "r.auto-print-to-stdout",
       "suppress-messages",
-      "auto-print-to-stdout"
+      "auto-print-to-stdout",
+      "incomplete-statement-fix",
+      "function-call-print",
+      "matplotlib.colormap-def",
+      "auto-print-result",
+      "suppress-startup-skip",
+      "list-to-array-conversion",
+      "r-auto-print-to-py-print",
+      "filled-contour-plot",
+      "numpy.shape-access",
+      "withr-with-locale-plot",
+      "contextmanager-yield-fix"
     ],
     "shape:3ec29fc1": [
       "r-shape-to-scipy",
@@ -104,7 +128,11 @@
     "shape:": [
       "r-shape-to-scipy",
       "r-package-placeholder",
-      "r-package-to-python-library"
+      "r-package-to-python-library",
+      "r-auto-print-to-stdout"
+    ],
+    "shape:ffb01754": [
+      "r-auto-print-to-stdout"
     ]
   },
   "meta": {
@@ -492,11 +520,11 @@
     "r-shape-to-scipy": {
       "confidence": "confirmed",
       "evidence_count": 3,
-      "contradictions_count": 4,
+      "contradictions_count": 10,
       "seed": false,
       "package": "shape",
       "ast_shape_hash": "",
-      "contradicted_at_run": 61
+      "contradicted_at_run": 71
     },
     "r-package-placeholder": {
       "confidence": "tentative",
@@ -535,12 +563,12 @@
       "contradicted_at_run": 0
     },
     "r-auto-print-to-stdout": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 0,
+      "confidence": "confirmed",
+      "evidence_count": 3,
+      "contradictions_count": 3,
       "seed": false,
-      "package": "",
-      "ast_shape_hash": "ffb01754",
+      "package": "shape",
+      "ast_shape_hash": "",
       "contradicted_at_run": 0
     },
     "r.auto-print-to-stdout": {
@@ -553,6 +581,51 @@
       "contradicted_at_run": 0
     },
     "suppress-messages": {
+      "confidence": "confirmed",
+      "evidence_count": 15,
+      "contradictions_count": 22,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 76
+    },
+    "auto-print-to-stdout": {
+      "confidence": "confirmed",
+      "evidence_count": 7,
+      "contradictions_count": 4,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 73
+    },
+    "suppress-startup-messages-noop": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "incomplete-statement-fix": {
+      "confidence": "confirmed",
+      "evidence_count": 2,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 72
+    },
+    "function-call-print": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 1,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 70
+    },
+    "matplotlib.colormap-def": {
       "confidence": "tentative",
       "evidence_count": 1,
       "contradictions_count": 0,
@@ -561,7 +634,79 @@
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
     },
-    "auto-print-to-stdout": {
+    "auto-print-result": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "suppress-startup-skip": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "list-to-array-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r-auto-print-to-py-print": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "filled-contour-plot": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "numpy.shape-access": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "suppress-package-startup-messages": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 2,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 71
+    },
+    "withr-with-locale-plot": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "contextmanager-yield-fix": {
       "confidence": "tentative",
       "evidence_count": 1,
       "contradictions_count": 0,
@@ -571,5 +716,5 @@
       "contradicted_at_run": 0
     }
   },
-  "total_runs": 66
+  "total_runs": 76
 }

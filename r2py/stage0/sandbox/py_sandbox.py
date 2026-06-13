@@ -69,6 +69,7 @@ class PySandbox:
         seed: int | None = None,
         replay: ReplayLog | None = None,
         timeout_s: float = 60,
+        sidecar_files: dict[str, str] | None = None,
     ) -> EffectBundle:
         python = find_python()
 
@@ -124,6 +125,12 @@ class PySandbox:
 
         script_path = workdir / "_r2py_script.py"
         script_path.write_text(full_script, encoding="utf-8")
+
+        # Stage sidecar files (data-loading shim payload, etc.) next to the
+        # script so its ``Path(__file__).parent / "<name>"`` lookup resolves.
+        if sidecar_files:
+            for fn, content in sidecar_files.items():
+                (workdir / fn).write_text(content, encoding="utf-8")
 
         t_start = time.monotonic()
         result = subprocess.run(

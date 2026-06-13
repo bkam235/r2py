@@ -398,6 +398,24 @@ class TestCoherenceReview(unittest.TestCase):
     def _sm(self) -> ScriptMap:
         return _make_script_map({"e0": _make_entity("e0", name="x")})
 
+    def test_build_user_message_surfaces_shim_names(self):
+        """Shim-bound names must appear in the coherence user message so the
+        LLM knows to skip InsertPreamble/ReplaceCall edits that re-bind them."""
+        from r2py.stage2.coherence import _build_user_message
+        sm = self._sm()
+        msg = _build_user_message("x = 1\n", sm, shim_names=["volcano", "iris"])
+        self.assertIn("## Shim-loaded names", msg)
+        self.assertIn("`iris`", msg)
+        self.assertIn("`volcano`", msg)
+
+    def test_build_user_message_omits_shim_section_when_empty(self):
+        from r2py.stage2.coherence import _build_user_message
+        sm = self._sm()
+        msg = _build_user_message("x = 1\n", sm, shim_names=None)
+        self.assertNotIn("## Shim-loaded names", msg)
+        msg2 = _build_user_message("x = 1\n", sm, shim_names=[])
+        self.assertNotIn("## Shim-loaded names", msg2)
+
     def test_parse_insert_preamble_edit_applied(self):
         # Applier should prepend the code; <python> block is ignored
         raw = (
@@ -680,6 +698,433 @@ class TestLLMModule(unittest.TestCase):
             with patch.dict(os.environ, env, clear=True):
                 with self.assertRaises(RuntimeError):
                     call([{"role": "user", "content": "hi"}], "sys")
+
+
+# ---------------------------------------------------------------------------
+# Data-loading shim (Option A — plans/i-go-with-option-melodic-dewdrop.md)
+# ---------------------------------------------------------------------------
+
+
+class TestDataLoadingShim(unittest.TestCase):
+    """Phase 3 + 4: shim emission, saved-form is no-op, activated form executes."""
+
+    def test_classifier_detects_rng_and_read_sources(self):
+        from r2py.stage2.stitch import is_non_translatable_source_entity as cls
+        self.assertTrue(cls("x <- rnorm(10)"))
+        self.assertTrue(cls("df <- read.csv('a.csv')"))
+        self.assertTrue(cls("env <- Sys.getenv('HOME')"))
+        self.assertFalse(cls("y <- mean(x)"))
+        self.assertFalse(cls("x <- c(1, 2, 3)"))
+        self.assertFalse(cls(""))
+
+    def test_classifier_ignores_call_names_in_r_comments(self):
+        """Regression: an R comment that mentions an allowlist call name must
+        not flip the classifier — only the actual RHS call matters."""
+        from r2py.stage2.stitch import is_non_translatable_source_entity as cls
+        self.assertFalse(cls("# uses rnorm() internally\nx <- some_other(1)"))
+        self.assertFalse(cls("y <- mean(x)  # not read.csv()"))
+        # Sanity: comment plus real RNG call still classifies as RNG.
+        self.assertTrue(cls("# generate samples\nx <- rnorm(10)"))
+
+    def test_build_shim_returns_empty_when_no_names(self):
+        from r2py.stage2.stitch import build_data_shim
+        self.assertEqual(build_data_shim([], "foo.json"), "")
+        self.assertEqual(build_data_shim(["x"], ""), "")
+
+    def test_shim_saved_form_is_fully_commented(self):
+        from r2py.stage2.stitch import build_data_shim, DATA_SHIM_BEGIN, DATA_SHIM_END
+        shim = build_data_shim(["iris"], "test.r2py_data.json")
+        self.assertIn(DATA_SHIM_BEGIN, shim)
+        self.assertIn(DATA_SHIM_END, shim)
+        for line in shim.splitlines():
+            if line in (DATA_SHIM_BEGIN, DATA_SHIM_END):
+                continue
+            self.assertTrue(line.startswith("# "), f"uncommented body line: {line!r}")
+
+    def test_shim_activation_round_trip_produces_valid_python(self):
+        import ast
+        from r2py.stage2.stitch import build_data_shim
+        from r2py.stage4.verifier import _activate_data_shim
+
+        shim = build_data_shim(["iris", "mtcars"], "x.r2py_data.json")
+        src = "import json\n\n" + shim + "\n\nresult = iris\n"
+        activated, has_shim = _activate_data_shim(src)
+        self.assertTrue(has_shim)
+        # Activated form must be valid Python
+        ast.parse(activated)
+        # Saved form must also be valid Python (it's a no-op)
+        ast.parse(src)
+        # And source without a shim block returns has_shim=False unchanged
+        plain = "x = 1\nprint(x)\n"
+        unchanged, has_shim2 = _activate_data_shim(plain)
+        self.assertEqual(unchanged, plain)
+        self.assertFalse(has_shim2)
+
+    def test_shim_loads_data_into_globals_in_subprocess(self):
+        """The activated shim, given a sidecar JSON, binds names into globals."""
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+        from r2py.stage2.stitch import build_data_shim
+        from r2py.stage4.verifier import _activate_data_shim
+
+        shim = build_data_shim(["iris"], "data.r2py_data.json")
+        src = (
+            shim
+            + "\nimport json as _j\nprint(_j.dumps({'iris_loaded': iris}))\n"
+        )
+        activated, _ = _activate_data_shim(src)
+        with tempfile.TemporaryDirectory() as wd:
+            wd = Path(wd)
+            (wd / "data.r2py_data.json").write_text(
+                json.dumps({"iris": [[1, 2], [3, 4]]}),
+                encoding="utf-8",
+            )
+            (wd / "script.py").write_text(activated, encoding="utf-8")
+            r = subprocess.run(
+                [sys.executable, str(wd / "script.py")],
+                capture_output=True, text=True, timeout=30,
+            )
+            self.assertEqual(r.returncode, 0, f"stderr: {r.stderr}")
+            out = json.loads(r.stdout.strip())
+            self.assertEqual(out, {"iris_loaded": [[1, 2], [3, 4]]})
+
+    def test_compose_skips_shim_when_no_free_vars_or_sources(self):
+        """No free-var ∩ captured-data intersection + no RNG/read entities → no shim."""
+        from r2py.stage2.stitch import compose, DATA_SHIM_BEGIN
+        entities = {"x1": _make_entity("x1", name="x")}
+        sm = _make_script_map(entities, source="x <- 1")
+        source, _ = compose(
+            per_entity={"x1": "x = 1"},
+            per_entity_imports={"x1": []},
+            order=["x1"],
+            script_map=sm,
+            model="test",
+            sidecar_filename="t.r2py_data.json",
+        )
+        self.assertNotIn(DATA_SHIM_BEGIN, source)
+
+    def test_collect_shim_needed_names_handles_rng_entity_at_row_zero(self):
+        """Regression: collect_shim_needed_names must use 0-based SourceLocation
+        rows (matching prompt._entity_source). The previous 1-based slice
+        returned [] for any entity whose start_line==0, silently dropping
+        RNG/read-source entities at the top of the R script."""
+        from r2py.stage0.effects.bundle import EffectBundle
+        from r2py.stage2.stitch import collect_shim_needed_names
+
+        ent = _make_entity("e1", name="x")
+        ent.source_span = SourceLocation(
+            file="t.R", start_line=0, start_col=0, end_line=0, end_col=15,
+        )
+        ent.actual_bundle = EffectBundle(data={"x": [0.1, 0.2, 0.3]})
+
+        sm = _make_script_map({"e1": ent}, source="x <- rnorm(3)")
+        needed = collect_shim_needed_names(sm)
+        self.assertIn("x", needed,
+                      "RNG entity at row 0 must be classified as non-translatable source")
+
+    def test_collect_shim_needed_names_handles_multiline_entity(self):
+        """A multi-line entity (start_line=2, end_line=5) must slice exactly
+        rows 2..5 inclusive, not 1..4."""
+        from r2py.stage0.effects.bundle import EffectBundle
+        from r2py.stage2.stitch import collect_shim_needed_names
+
+        ent = _make_entity("e1", name="df")
+        ent.source_span = SourceLocation(
+            file="t.R", start_line=2, start_col=0, end_line=2, end_col=30,
+        )
+        ent.actual_bundle = EffectBundle(data={"df": {"col": [1, 2]}})
+        r_src = "# line 0\n# line 1\ndf <- read.csv('x.csv')\n"
+        sm = _make_script_map({"e1": ent}, source=r_src)
+        needed = collect_shim_needed_names(sm)
+        self.assertIn("df", needed)
+
+    def test_remove_shim_overrides_strips_volcano_stub(self):
+        """Regression for shape__rd_example__greycol_Rd.py: an LLM-emitted
+        ``volcano = np.array([...])`` stub appearing after the shim must be
+        stripped at compose time so the shim's authoritative R value survives
+        into the body."""
+        from r2py.stage2.stitch import remove_shim_overrides
+
+        body = (
+            "volcano = np.array([[94, 94, 94],\n"
+            "                    [97, 97, 97]], dtype=int)\n"
+            "# filled.contour creates a filled contour plot\n"
+            "plt.contourf(volcano)\n"
+        )
+        cleaned = remove_shim_overrides(body, {"volcano"})
+        self.assertNotIn("np.array", cleaned)
+        self.assertIn("plt.contourf(volcano)", cleaned)
+        # Comments and downstream code preserved
+        self.assertIn("# filled.contour creates", cleaned)
+
+    def test_remove_shim_overrides_preserves_unrelated_assignments(self):
+        from r2py.stage2.stitch import remove_shim_overrides
+        body = "x = 1\ny = 2\nresult = x + y\n"
+        # Empty shim set → no-op
+        self.assertEqual(remove_shim_overrides(body, set()), body)
+        # Only matching target removed
+        cleaned = remove_shim_overrides(body, {"x"})
+        self.assertNotIn("x = 1", cleaned)
+        self.assertIn("y = 2", cleaned)
+        self.assertIn("result = x + y", cleaned)
+
+    def test_translator_post_strip_removes_coherence_injected_literal(self):
+        """Regression for shape__rd_example__greycol_Rd.py round 2: the
+        coherence pass injects ``volcano = [[...full matrix...]]`` via an
+        InsertPreamble edit after compose, undoing compose's strip.  The
+        post-coherence strip in translator.translate must remove it again
+        so the shim's value survives."""
+        from r2py.stage0.effects.bundle import EffectBundle
+        from r2py.stage2 import stitch as _stitch
+        from r2py.stage2.translator import _strip_shim_overrides_global
+
+        # Simulate the post-compose / post-coherence state: shim block followed
+        # by a body that re-defines volcano (as coherence does).
+        source = (
+            "import numpy as np\n"
+            "\n"
+            "# r2py:data_shim:begin\n"
+            "# import json as _r2py_shim_json\n"
+            "# r2py:data_shim:end\n"
+            "\n"
+            "# r2py:entity:filled.contour\n"
+            "volcano = [[100, 100], [101, 101]]\n"
+            "import matplotlib.pyplot as plt\n"
+            "plt.contourf(volcano)\n"
+        )
+        cleaned = _strip_shim_overrides_global(source, {"volcano"}, _stitch)
+        self.assertNotIn("volcano = [[", cleaned)
+        # Other code in the entity body and the shim block both preserved.
+        self.assertIn("plt.contourf(volcano)", cleaned)
+        self.assertIn("# r2py:data_shim:begin", cleaned)
+        self.assertIn("# r2py:entity:filled.contour", cleaned)
+
+    def test_post_strip_leaves_non_shim_assignments_alone(self):
+        """The post-strip must not touch assignments to names the shim
+        does not bind."""
+        from r2py.stage2 import stitch as _stitch
+        from r2py.stage2.translator import _strip_shim_overrides_global
+
+        source = (
+            "# r2py:entity:e1\n"
+            "x = 42\n"
+            "y = x + 1\n"
+        )
+        cleaned = _strip_shim_overrides_global(source, {"volcano"}, _stitch)
+        self.assertEqual(cleaned, source)
+
+    def test_compose_strips_volcano_stub_when_shim_loads_it(self):
+        """End-to-end through compose(): a body containing a volcano stub
+        appearing AFTER the shim block must have the stub removed so the shim's
+        binding survives into the body block."""
+        from r2py.stage0.effects.bundle import EffectBundle
+        from r2py.stage2.stitch import compose, DATA_SHIM_BEGIN
+
+        ent = _make_entity("e1", name="plot")
+        ent.free_variable_refs = ["volcano"]
+        ent.actual_bundle = EffectBundle(data={"volcano": [[100, 101], [102, 103]]})
+
+        sm = _make_script_map({"e1": ent}, source="filled.contour(volcano)")
+        snippet = (
+            "volcano = np.array([[94, 94],\n"
+            "                    [97, 97]], dtype=int)\n"
+            "plt.contourf(volcano)\n"
+        )
+        source, _ = compose(
+            per_entity={"e1": snippet},
+            per_entity_imports={"e1": []},
+            order=["e1"],
+            script_map=sm,
+            model="test",
+            sidecar_filename="t.r2py_data.json",
+        )
+        self.assertIn(DATA_SHIM_BEGIN, source)
+        # The hallucinated stub is gone; the actual call survives.
+        self.assertNotIn("np.array", source)
+        self.assertIn("plt.contourf(volcano)", source)
+
+    def test_compose_emits_shim_for_free_variable_with_captured_data(self):
+        from r2py.stage0.effects.bundle import EffectBundle
+        from r2py.stage2.stitch import compose, DATA_SHIM_BEGIN, DATA_SHIM_END
+
+        ent = _make_entity("e1", name="result")
+        ent.free_variable_refs = ["iris"]
+        bundle = EffectBundle(data={"iris": [[1, 2], [3, 4]]})
+        ent.actual_bundle = bundle
+
+        sm = _make_script_map({"e1": ent}, source="result <- head(iris)")
+        source, _ = compose(
+            per_entity={"e1": "result = iris[:5]"},
+            per_entity_imports={"e1": []},
+            order=["e1"],
+            script_map=sm,
+            model="test",
+            sidecar_filename="t.r2py_data.json",
+        )
+        self.assertIn(DATA_SHIM_BEGIN, source)
+        self.assertIn(DATA_SHIM_END, source)
+        # The shim must reference the iris name we provided
+        self.assertIn("'iris'", source)
+
+
+# ---------------------------------------------------------------------------
+# Pipeline-level shim tests (Stage 1 → Stage 2 stitch → Stage 4 activation)
+# LLM-free: we hand-assemble per-entity snippets and call stitch.compose
+# directly, then exercise the verifier's shim activation in-subprocess.
+# ---------------------------------------------------------------------------
+
+
+class TestShimPipelineIris(unittest.TestCase):
+    """End-to-end: R script using `iris` → Stage 1 capture → stitch with shim
+    → verifier activation → subprocess subprocess binds iris from sidecar JSON."""
+
+    def test_iris_inherited_var_flows_through_shim(self):
+        import shutil
+        from pathlib import Path as _P
+        if not shutil.which("Rscript") and not (_P(__file__).resolve().parent.parent
+                                                / "r2py" / "stage0" / "r_env" / "runtime"
+                                                / "bin" / "Rscript.exe").exists():
+            self.skipTest("R not available")
+
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from r2py import stage1
+        from r2py.stage2.stitch import compose, DATA_SHIM_BEGIN
+        from r2py.stage4.verifier import _activate_data_shim, _build_sidecar_payload
+
+        # ── Stage 1: run on a script that touches a built-in dataset ──
+        r_src = "n <- nrow(iris)\nm <- mean(iris$Sepal.Length)\n"
+        with tempfile.NamedTemporaryFile("w", suffix=".R", delete=False,
+                                         encoding="utf-8") as _rf:
+            _rf.write(r_src)
+            _r_path = _P(_rf.name)
+        try:
+            sm = stage1.analyze(_r_path)
+        finally:
+            _r_path.unlink(missing_ok=True)
+
+        # Pull main bundle via the verifier helper.
+        from r2py.stage4.verifier import get_r_bundle
+        bundle = get_r_bundle(sm)
+        self.assertIn("iris", bundle.data,
+                      "Stage 1's inherited-var probe should capture iris")
+
+        # ── Stage 2 (LLM-free): hand-assembled per-entity snippets ──
+        # Build a minimal per_entity map covering the entity ids Stage 1 produced.
+        eids = list(sm.entities.keys())
+        per_entity = {eid: "" for eid in eids}
+        # Put a single use-iris snippet in the first entity so its free_variable_refs
+        # populate the shim.  The other entities stay no-ops.
+        per_entity[eids[0]] = (
+            "import json as _j\n"
+            "print(_j.dumps({'n_cols': len(iris), "
+            "'n_rows': len(next(iter(iris.values()))), "
+            "'has_sepal_length': 'Sepal.Length' in iris}))"
+        )
+        per_entity_imports = {eid: [] for eid in eids}
+
+        source, _ = compose(
+            per_entity, per_entity_imports, eids, sm,
+            model="test", sidecar_filename="iris_test.r2py_data.json",
+        )
+        self.assertIn(DATA_SHIM_BEGIN, source,
+                      "shim should be emitted when iris is a free-variable ref")
+
+        # ── Stage 4 activation: un-comment shim, write sidecar, run ──
+        activated, has_shim = _activate_data_shim(source)
+        self.assertTrue(has_shim)
+        payload = _build_sidecar_payload(sm)
+
+        with tempfile.TemporaryDirectory() as wd:
+            wd = _P(wd)
+            (wd / "iris_test.r2py_data.json").write_text(payload, encoding="utf-8")
+            (wd / "script.py").write_text(activated, encoding="utf-8")
+            r = subprocess.run(
+                [sys.executable, str(wd / "script.py")],
+                capture_output=True, text=True, timeout=30,
+            )
+            self.assertEqual(r.returncode, 0, f"stderr: {r.stderr}")
+            # iris in R is a 150-row data.frame; serialized via the column-dict
+            # adapter, it becomes a dict whose values are 150-element lists.
+            out = json.loads(r.stdout.strip().splitlines()[-1])
+            self.assertEqual(out.get("n_rows"), 150)
+            self.assertEqual(out.get("n_cols"), 5)
+            self.assertTrue(out.get("has_sepal_length"))
+
+
+class TestShimPipelineWithLocaleNestedDate(unittest.TestCase):
+    """Regression for the v0.1 JSON-opacity trap: a DataFrame column of
+    datetime.date objects must serialize correctly through the full pipeline
+    (Phase 1c parity verified end-to-end via the shim)."""
+
+    def test_with_locale_dataframe_date_column_round_trip(self):
+        import shutil
+        from pathlib import Path as _P
+        repo = _P(__file__).resolve().parent.parent
+        if not shutil.which("Rscript") and not (
+            repo / "r2py" / "stage0" / "r_env" / "runtime" / "bin" / "Rscript.exe"
+        ).exists():
+            self.skipTest("R not available")
+
+        fixture = repo / "work" / "inputs" / "harvested" / "withr__rd_example__with_locale_Rd.R"
+        if not fixture.exists():
+            self.skipTest("withr fixture not present")
+
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from r2py import stage1
+        from r2py.stage4.verifier import _build_sidecar_payload
+
+        # Stage 1: run the fixture; df with a Date column should be captured.
+        sm = stage1.analyze(fixture)
+
+        from r2py.stage4.verifier import get_r_bundle
+        bundle = get_r_bundle(sm)
+        # Stage 1's R sandbox may fail to run the full with_locale calls
+        # (en_GB / es_ES locales may be unavailable on the test host), but
+        # the data.frame assignment must always succeed.
+        self.assertIn("df", bundle.data, f"df not captured; keys={list(bundle.data)}")
+        df = bundle.data["df"]
+        self.assertIsInstance(df, dict)
+        self.assertIn("date", df)
+        # The nested-date case: column values must be ISO date strings, NOT
+        # opaque jsonlite-flattened ints or empty lists.
+        self.assertEqual(df["date"], ["2019-01-01", "2019-02-01"])
+        self.assertEqual(df["value"], [1, 2])
+
+        # Round-trip through the sidecar / shim and confirm Python sees the
+        # same structure (no information lost across the JSON boundary).
+        payload = _build_sidecar_payload(sm)
+        loaded = json.loads(payload)
+        self.assertEqual(loaded["df"]["date"], ["2019-01-01", "2019-02-01"])
+
+        # And the activated shim binds df with the same shape.
+        from r2py.stage2.stitch import build_data_shim
+        from r2py.stage4.verifier import _activate_data_shim
+        shim = build_data_shim(["df"], "with_locale.r2py_data.json")
+        check = (
+            shim
+            + "\nimport json as _j\nprint(_j.dumps(df))\n"
+        )
+        activated, _ = _activate_data_shim(check)
+        with tempfile.TemporaryDirectory() as wd:
+            wd = _P(wd)
+            (wd / "with_locale.r2py_data.json").write_text(payload, encoding="utf-8")
+            (wd / "script.py").write_text(activated, encoding="utf-8")
+            r = subprocess.run(
+                [sys.executable, str(wd / "script.py")],
+                capture_output=True, text=True, timeout=30,
+            )
+            self.assertEqual(r.returncode, 0, f"stderr: {r.stderr}")
+            out = json.loads(r.stdout.strip().splitlines()[-1])
+            self.assertEqual(out["date"], ["2019-01-01", "2019-02-01"])
 
 
 # ---------------------------------------------------------------------------

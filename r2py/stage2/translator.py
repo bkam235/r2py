@@ -30,6 +30,7 @@ def translate(
     run_coherence: bool = True,
     r_path: str = "",
     prior_failures: dict[str, list[str]] | None = None,
+    sidecar_filename: str | None = None,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Translate a ScriptMap to a Python source string.
 
@@ -111,20 +112,63 @@ def translate(
         pass  # frozen dataclass — callers can read per_entity_effects from the return value if needed
 
     python_source, entity_line_map = _stitch.compose(
-        per_entity, per_entity_imports, order, script_map, model, r_path=r_path
+        per_entity, per_entity_imports, order, script_map, model,
+        r_path=r_path, sidecar_filename=sidecar_filename,
+    )
+
+    # Compute the shim's bound name set once — used by both coherence (to
+    # warn the LLM) and the post-coherence strip (to enforce the contract).
+    shim_names_list: list[str] = (
+        _stitch.collect_shim_needed_names(script_map) if sidecar_filename else []
     )
 
     if run_coherence:
         # Coherence edits may shift line numbers; invalidate the map to avoid
         # stale mappings.  TODO: rebuild entity_line_map from the revised source.
         revised, _edits = _coherence.review(
-            python_source, script_map, library, model=model
+            python_source, script_map, library, model=model,
+            shim_names=shim_names_list or None,
         )
         if revised != python_source:
             python_source = revised
             entity_line_map = _stitch.rebuild_entity_line_map(python_source)
 
+    # Re-strip any shim-bound name reassignments that the coherence pass may
+    # have re-introduced (coherence's InsertPreamble / ReplaceCall edits exist
+    # precisely to bind R built-in datasets like ``volcano`` — the data-loading
+    # shim now owns that responsibility, so coherence-emitted literals would
+    # overwrite the shim's authoritative value).  This is a defensive
+    # post-pass: even with the coherence prompt warning, the LLM may still
+    # emit such edits; this guarantees they cannot land.
+    if shim_names_list:
+        python_source = _strip_shim_overrides_global(
+            python_source, set(shim_names_list), _stitch
+        )
+        entity_line_map = _stitch.rebuild_entity_line_map(python_source)
+
     return python_source, entity_line_map
+
+
+def _strip_shim_overrides_global(
+    source: str,
+    shim_names: set[str],
+    _stitch,
+) -> str:
+    """Apply ``stitch.remove_shim_overrides`` to a fully-stitched source.
+
+    The compose-time strip runs per entity (each snippet parses cleanly in
+    isolation).  This pass runs on the entire stitched file, which has the
+    data-loading shim block + entity sentinels mixed in — those parse fine,
+    but to keep the entity sentinels intact we split on them and only strip
+    within entity bodies.
+    """
+    import re as _re
+    sentinel = _re.compile(r"^(# r2py:entity:\S+)$", _re.MULTILINE)
+    parts = sentinel.split(source)
+    # parts: [prefix, sentinel_1, body_1, sentinel_2, body_2, ...]
+    for i in range(2, len(parts), 2):
+        parts[i] = _stitch.remove_shim_overrides(parts[i], shim_names)
+    return "".join(parts)
 
 
 def retranslate_entity(

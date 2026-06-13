@@ -1,12 +1,16 @@
 """Stage 4 verifier orchestrator (§7.1, §7.4)."""
 from __future__ import annotations
 
+import json as _json
+import re as _re
 import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from ..stage0.effects import bundle as _bundle_mod
+from ..stage0.effects.data import serialize_bundle_data
 from ..stage0.sandbox.py_sandbox import PySandbox
+from ..stage2.stitch import DATA_SHIM_RE
 from ..types import (
     CaptureSpec,
     ComparatorResult,
@@ -228,6 +232,50 @@ def get_r_bundle(script_map) -> EffectBundle:
 
 
 # ---------------------------------------------------------------------------
+# Data-loading shim activation (Option A — see plan file)
+# ---------------------------------------------------------------------------
+
+def _activate_data_shim(source: str) -> tuple[str, bool]:
+    """Un-comment any ``# r2py:data_shim:*`` blocks in *source*.
+
+    Returns ``(rewritten_source, has_shim)``.  The shim is saved commented-out
+    on disk so the artifact is a clean translation; this pass activates it
+    in-memory before the sandbox runs the equivalence test.
+
+    The shim's sidecar filename is the caller's responsibility — it was known
+    when the shim was emitted and should be threaded through ``verify()``
+    rather than reverse-engineered from the rewritten text.
+    """
+    has_shim = False
+
+    def _sub(m: "_re.Match[str]") -> str:
+        nonlocal has_shim
+        has_shim = True
+        begin = m.group(1)
+        body_commented = m.group(2)
+        end = m.group(3)
+        # Strip a leading ``# `` from each body line (re-activate).
+        activated_lines = [
+            line[2:] if line.startswith("# ") else line
+            for line in body_commented.splitlines()
+        ]
+        return begin + "\n".join(activated_lines) + "\n" + end
+
+    rewritten = DATA_SHIM_RE.sub(_sub, source)
+    return rewritten, has_shim
+
+
+def _build_sidecar_payload(script_map) -> str:
+    """Serialize R-captured data into the same JSON the shim expects to read.
+
+    Delegates to ``stage0.effects.data.serialize_bundle_data`` so the on-disk
+    sidecar (loop._write_data_sidecar) and the in-sandbox copy stay in lockstep.
+    """
+    data = getattr(get_r_bundle(script_map), "data", {}) or {}
+    return serialize_bundle_data(data)
+
+
+# ---------------------------------------------------------------------------
 # Per-entity Python checkpoint injection (Option 2 scoring)
 # ---------------------------------------------------------------------------
 
@@ -294,11 +342,10 @@ def _r2py_checkpoint(eid):
         if k.startswith('_r2py') or k in _r2py_prev_ns:
             continue
         try:
-            _r2py_serialized, _r2py_ok = _r2py_try_adapters(k, v)
+            _r2py_serialized, _r2py_ok = _r2py_try_serialize(k, v)
             if not _r2py_ok:
                 uncapturable_vars.append(k)
                 continue
-            _r2py_json.dumps(_r2py_serialized)
             new_vars[k] = _r2py_serialized
         except Exception:
             uncapturable_vars.append(k)
@@ -398,11 +445,17 @@ def verify(
     timeout_s: float = 60,
     entity_line_map: dict | None = None,
     return_bundle: bool = False,
+    sidecar_filename: str | None = None,
 ) -> "ScoreReport | tuple[ScoreReport, EffectBundle]":
     """Score a candidate Python translation against the R ScriptMap.
 
     changed: entity_ids touched by the last edit; if provided, only those
     entities are re-verified (incremental verification, §7.4).
+
+    sidecar_filename: when the candidate source contains a data-loading shim
+    (Option A), this is the basename the shim's ``Path(__file__).parent /
+    "<name>"`` lookup expects.  Threaded from the loop (which knows it from
+    ``checkpoint_path.stem``); see plans/i-go-with-option-melodic-dewdrop.md.
     """
     entities = getattr(script_map, "entities", {})
 
@@ -415,19 +468,30 @@ def verify(
     # Inject per-entity checkpoint calls into the Python source (Option 2 scoring).
     py_source_checkpointed, cp_eids = _inject_py_checkpoints(candidate, entity_line_map or {})
 
+    # Activate the data-loading shim (Option A) in the source we hand to the
+    # sandbox.  The on-disk artifact stays commented-out; this rewrite affects
+    # only the in-memory copy used for equivalence testing.
+    py_source_activated, has_shim = _activate_data_shim(py_source_checkpointed)
+    sidecar_files: dict[str, str] | None = None
+    if has_shim and sidecar_filename:
+        payload = _build_sidecar_payload(script_map)
+        sidecar_files = {sidecar_filename: payload}
+
     sandbox = PySandbox()
     if workdir is not None:
         py_bundle = sandbox.run(
-            py_source_checkpointed, workdir=workdir, capture=capture,
+            py_source_activated, workdir=workdir, capture=capture,
             preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=timeout_s,
+            sidecar_files=sidecar_files,
         )
         py_entity_bundles = _collect_py_checkpoints(workdir, cp_eids)
     else:
         with tempfile.TemporaryDirectory() as _tmpdir:
             _wd = Path(_tmpdir)
             py_bundle = sandbox.run(
-                py_source_checkpointed, workdir=_wd, capture=capture,
+                py_source_activated, workdir=_wd, capture=capture,
                 preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=timeout_s,
+                sidecar_files=sidecar_files,
             )
             py_entity_bundles = _collect_py_checkpoints(_wd, cp_eids)
 

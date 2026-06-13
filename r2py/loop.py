@@ -147,10 +147,31 @@ def run_loop(
                 "entity-level targeting will be disabled for this run.",
                 stacklevel=2,
             )
-    else:
-        seed, entity_line_map = stage2.translate(script_map, library, no_seeds=no_seeds, model=model)
+    # Single source of truth for the data-loading shim's sidecar filename —
+    # used by stage2.translate (to emit the shim block referencing it) and
+    # passed to every stage4.verify call (so the verifier stages the same file
+    # in the sandbox workdir).  ``None`` when no checkpoint path is set; the
+    # shim is not emitted in that case.
+    _sidecar_fn = (
+        f"{checkpoint_path.stem}.r2py_data.json"
+        if checkpoint_path is not None else None
+    )
+
+    if seed_translation is None:
+        seed, entity_line_map = stage2.translate(
+            script_map, library,
+            no_seeds=no_seeds, model=model,
+            sidecar_filename=_sidecar_fn,
+        )
     _need_bundles = output_dir is not None
     entities = getattr(script_map, "entities", {})
+
+    # Persist the R-captured runtime data as a sidecar JSON beside the eventual
+    # saved .py (Option A — see plans/i-go-with-option-melodic-dewdrop.md).
+    # Written here once so the verifier-time shim (Phase 4) has a stable file to
+    # read, regardless of whether the loop exits before any iteration completes.
+    if checkpoint_path is not None:
+        _write_data_sidecar(checkpoint_path, script_map)
 
     # Skip the sandbox entirely if the assembled source is not valid Python.
     try:
@@ -160,6 +181,7 @@ def run_loop(
             data_compare=data_compare, use_judge=use_judge,
             entity_line_map=entity_line_map,
             return_bundle=_need_bundles,
+            sidecar_filename=_sidecar_fn,
             **verify_kwargs,
         )
         if _need_bundles:
@@ -254,6 +276,7 @@ def run_loop(
                             script_map, retry_src,
                             data_compare=data_compare, use_judge=use_judge,
                             entity_line_map=retry_elmap,
+                            sidecar_filename=_sidecar_fn,
                             **verify_kwargs,
                         )
                     except SyntaxError as _syn:
@@ -335,6 +358,7 @@ def run_loop(
                 use_judge=use_judge,
                 entity_line_map=_candidate_elmap,
                 return_bundle=_need_bundles,
+                sidecar_filename=_sidecar_fn,
                 **verify_kwargs,
             )
             if _need_bundles:
@@ -480,6 +504,8 @@ def run_loop(
 
         if checkpoint_path is not None:
             _write_checkpoint(checkpoint_path, i, max(beam, key=lambda c: c.score).translation)
+            # Sidecar JSON is iteration-invariant and was written once before
+            # this loop began (see line ~165); no need to rewrite per iter.
 
     # Epistemology review runs unconditionally at end of every loop so that
     # promotion and archival fire even on runs that made no library changes
@@ -598,6 +624,38 @@ def _delete_checkpoints(py_path: Path, last_iter: int) -> None:
     for n in range(last_iter + 1):
         p = py_path.with_name(f"{py_path.stem}.iter_{n}.py")
         p.unlink(missing_ok=True)
+
+
+def _write_data_sidecar(py_path: "Path", script_map: object) -> None:
+    """Persist R-captured runtime data as ``{stem}.r2py_data.json`` beside py_path.
+
+    Loaded by the verifier via the data-loading shim (see stage2/stitch.py and
+    stage4/verifier.py).  Also serves as a manual-debugging artifact — the user
+    can un-comment the shim block in the saved .py and re-run the script
+    against the same captured data.
+
+    Idempotent and safe to call repeatedly (data is iteration-invariant).
+    """
+    try:
+        from .stage4.verifier import get_r_bundle
+        from .stage0.effects.data import serialize_bundle_data
+    except Exception:
+        return  # Sidecar is best-effort; never block a translation on this.
+    try:
+        bundle = get_r_bundle(script_map)
+    except Exception:
+        return
+    data = getattr(bundle, "data", {}) or {}
+    if not data:
+        return
+    sidecar = py_path.with_name(f"{py_path.stem}.r2py_data.json")
+    try:
+        sidecar.write_text(
+            serialize_bundle_data(data, indent=2),
+            encoding="utf-8",
+        )
+    except Exception:
+        pass
 
 
 def _entity_r_snippet(entity: object, script_map: object) -> str:
