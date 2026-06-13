@@ -31,6 +31,7 @@ def translate(
     r_path: str = "",
     prior_failures: dict[str, list[str]] | None = None,
     sidecar_filename: str | None = None,
+    script_relpath: str | None = None,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Translate a ScriptMap to a Python source string.
 
@@ -114,6 +115,7 @@ def translate(
     python_source, entity_line_map = _stitch.compose(
         per_entity, per_entity_imports, order, script_map, model,
         r_path=r_path, sidecar_filename=sidecar_filename,
+        script_relpath=script_relpath,
     )
 
     # Compute the shim's bound name set once — used by both coherence (to

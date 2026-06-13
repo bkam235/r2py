@@ -61,11 +61,11 @@ for r_script, py_script in scripts:
                        py_script,
                        library=lib,
                        resume=True,
-                    #    model="claude-haiku-4-5",
-                       model="ollama:gemma4:31b-cloud",
+                       model="claude-haiku-4-5",
+                    #    model="ollama:gemma4:31b-cloud",
                        progress=_on_progress,
                        score_threshold=1,
-                       max_iters=5,
+                       max_iters=10,
                        retranslation_patience=3)
 
 # from r2py import seed_from_translation

@@ -157,11 +157,24 @@ def run_loop(
         if checkpoint_path is not None else None
     )
 
+    # Relative path to the saved .py from the current working directory.
+    # Surfaced into the shim so the body defines ``__file__`` as a fallback,
+    # letting users paste-execute the script in a REPL / Jupyter cell that
+    # hasn't been started via ``%run``.  Falls back to the absolute path when
+    # the checkpoint lives outside cwd.
+    _script_relpath: str | None = None
+    if checkpoint_path is not None:
+        try:
+            _script_relpath = str(checkpoint_path.resolve().relative_to(Path.cwd()))
+        except (ValueError, OSError):
+            _script_relpath = str(checkpoint_path)
+
     if seed_translation is None:
         seed, entity_line_map = stage2.translate(
             script_map, library,
             no_seeds=no_seeds, model=model,
             sidecar_filename=_sidecar_fn,
+            script_relpath=_script_relpath,
         )
     _need_bundles = output_dir is not None
     entities = getattr(script_map, "entities", {})

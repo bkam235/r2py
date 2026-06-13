@@ -731,6 +731,59 @@ class TestDataLoadingShim(unittest.TestCase):
         self.assertEqual(build_data_shim([], "foo.json"), "")
         self.assertEqual(build_data_shim(["x"], ""), "")
 
+    def test_shim_defines_file_fallback_when_relpath_given(self):
+        """The shim must define ``__file__`` as a fallback when given a
+        script_relpath, so users can paste-execute the .py in a REPL where
+        Python doesn't bind __file__ automatically."""
+        from r2py.stage2.stitch import build_data_shim
+        shim = build_data_shim(
+            ["volcano"],
+            "foo.r2py_data.json",
+            script_relpath=r"work\outputs\foo.py",
+        )
+        # Forward-slash normalized (avoids \n / \t escape pitfalls).
+        self.assertIn("'work/outputs/foo.py'", shim)
+        # Guarded so a normal `python foo.py` invocation still gets the
+        # real __file__ (which uses an absolute path).
+        self.assertIn("if '__file__' not in globals():", shim)
+
+    def test_shim_omits_file_fallback_when_relpath_absent(self):
+        from r2py.stage2.stitch import build_data_shim
+        shim = build_data_shim(["volcano"], "foo.r2py_data.json")
+        self.assertNotIn("__file__ =", shim)
+
+    def test_shim_file_fallback_works_in_interactive_subprocess(self):
+        """End-to-end: activate the shim, drop the sidecar file in the cwd,
+        and run a Python -c snippet that simulates a REPL (no __file__).
+        The shim must define __file__ and load the data."""
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+        from r2py.stage2.stitch import build_data_shim
+        from r2py.stage4.verifier import _activate_data_shim
+
+        with tempfile.TemporaryDirectory() as wd:
+            wd = Path(wd)
+            (wd / "data.r2py_data.json").write_text(
+                json.dumps({"v": [1, 2, 3]}), encoding="utf-8"
+            )
+            shim = build_data_shim(
+                ["v"], "data.r2py_data.json",
+                script_relpath="ignored.py",   # next to sidecar
+            )
+            activated, _ = _activate_data_shim(shim)
+            # Simulate a REPL: ``python -c`` does not bind __file__.
+            program = activated + "\nimport json as _j; print(_j.dumps(v))\n"
+            r = subprocess.run(
+                [sys.executable, "-c", program],
+                cwd=str(wd),
+                capture_output=True, text=True, timeout=30,
+            )
+            self.assertEqual(r.returncode, 0, f"stderr: {r.stderr}")
+            self.assertEqual(json.loads(r.stdout.strip()), [1, 2, 3])
+
     def test_shim_saved_form_is_fully_commented(self):
         from r2py.stage2.stitch import build_data_shim, DATA_SHIM_BEGIN, DATA_SHIM_END
         shim = build_data_shim(["iris"], "test.r2py_data.json")

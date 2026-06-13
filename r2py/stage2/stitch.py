@@ -71,7 +71,11 @@ def is_non_translatable_source_entity(entity_source: str) -> bool:
     return m.group(1) in _NON_TRANSLATABLE_SOURCE_CALLS
 
 
-def build_data_shim(needed_names: list[str], sidecar_filename: str) -> str:
+def build_data_shim(
+    needed_names: list[str],
+    sidecar_filename: str,
+    script_relpath: str | None = None,
+) -> str:
     """Return the commented-out data-loading shim block.
 
     Every body line is prefixed ``# `` so the saved .py is a no-op when run
@@ -82,20 +86,34 @@ def build_data_shim(needed_names: list[str], sidecar_filename: str) -> str:
     and bind any name in *needed_names* that is present in the captured data
     into module globals.  Names not in the captured data are silently skipped
     — the translation's natural assignment then takes over for them.
+
+    *script_relpath* — when provided, the shim defines ``__file__`` as a
+    fallback if it is not already bound (i.e. when the body is pasted into a
+    REPL or executed without ``runpy.run_path``).  Use forward slashes for
+    cross-platform compatibility; ``Path`` normalizes them on Windows.
     """
     if not needed_names or not sidecar_filename:
         return ""
     # Build the name list as a Python literal so it embeds cleanly in a comment.
     names_literal = "[" + ", ".join(repr(n) for n in sorted(needed_names)) + "]"
-    body = [
+    body: list[str] = [
         "import json as _r2py_shim_json",
         "from pathlib import Path as _r2py_shim_Path",
+    ]
+    if script_relpath:
+        # Normalize backslashes to forward slashes — works on every OS, dodges
+        # the ``\n`` / ``\t`` escape-sequence pitfall in single-quoted strings.
+        normalized = script_relpath.replace("\\", "/")
+        body.append(
+            f"if '__file__' not in globals(): __file__ = {normalized!r}"
+        )
+    body.extend([
         f"_r2py_shim_data = _r2py_shim_json.loads("
         f"(_r2py_shim_Path(__file__).parent / {sidecar_filename!r}).read_text(encoding='utf-8'))",
         f"for _r2py_shim_n in {names_literal}:",
         "    if _r2py_shim_n in _r2py_shim_data:",
         "        globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]",
-    ]
+    ])
     return (
         DATA_SHIM_BEGIN
         + "\n"
@@ -303,6 +321,7 @@ def compose(
     model: str,
     r_path: str = "",
     sidecar_filename: str | None = None,
+    script_relpath: str | None = None,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Compose ordered snippets into a single Python source string.
 
@@ -381,7 +400,8 @@ def compose(
     # Build commented-out data-loading shim (§ Option A).  Empty string when
     # there is nothing to pre-load — keeps the saved .py minimal.
     shim_text = (
-        build_data_shim(shim_needed_names, sidecar_filename)
+        build_data_shim(shim_needed_names, sidecar_filename,
+                        script_relpath=script_relpath)
         if (sidecar_filename and shim_needed_names) else ""
     )
 
