@@ -63,7 +63,10 @@
       "suppress-package-startup-messages",
       "withr-with-locale-plot",
       "contextmanager-yield-fix",
-      "r-sys-localeconv-to-py-localeconv"
+      "r-sys-localeconv-to-py-localeconv",
+      "withr.with-locale-code-param",
+      "r.graycol-palette",
+      "shape.graycol-function"
     ],
     "dplyr:": [
       "dplyr.filter_to_mask"
@@ -120,7 +123,10 @@
       "numpy.shape-access",
       "withr-with-locale-plot",
       "contextmanager-yield-fix",
-      "r-sys-localeconv-to-py-localeconv"
+      "r-sys-localeconv-to-py-localeconv",
+      "withr.with-locale-code-param",
+      "r.graycol-palette",
+      "shape.graycol-function"
     ],
     "shape:3ec29fc1": [
       "r-shape-to-scipy",
@@ -493,13 +499,13 @@
       "contradicted_at_run": 0
     },
     "suppress-startup-messages": {
-      "confidence": "tentative",
-      "evidence_count": 1,
-      "contradictions_count": 2,
+      "confidence": "contradicted",
+      "evidence_count": 7,
+      "contradictions_count": 18,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 66
+      "contradicted_at_run": 82
     },
     "suppress-startup-to-noop": {
       "confidence": "tentative",
@@ -522,11 +528,11 @@
     "r-shape-to-scipy": {
       "confidence": "confirmed",
       "evidence_count": 3,
-      "contradictions_count": 10,
+      "contradictions_count": 11,
       "seed": false,
       "package": "shape",
       "ast_shape_hash": "",
-      "contradicted_at_run": 71
+      "contradicted_at_run": 83
     },
     "r-package-placeholder": {
       "confidence": "tentative",
@@ -584,20 +590,20 @@
     },
     "suppress-messages": {
       "confidence": "confirmed",
-      "evidence_count": 15,
-      "contradictions_count": 24,
+      "evidence_count": 18,
+      "contradictions_count": 37,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 77
+      "contradicted_at_run": 83
     },
     "auto-print-to-stdout": {
       "confidence": "confirmed",
-      "evidence_count": 7,
+      "evidence_count": 10,
       "contradictions_count": 4,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
+      "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 73
     },
     "suppress-startup-messages-noop": {
@@ -725,7 +731,34 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "withr.with-locale-code-param": {
+      "confidence": "confirmed",
+      "evidence_count": 2,
+      "contradictions_count": 5,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 79
+    },
+    "r.graycol-palette": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "shape.graycol-function": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 77
+  "total_runs": 83
 }

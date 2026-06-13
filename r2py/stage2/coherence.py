@@ -95,6 +95,25 @@ stripped post-coherence anyway, wasting an LLM round-trip.  If you see a
 placeholder for a shim-loaded name (e.g. ``volcano = np.array([[94, 94, ...]])``),
 the right action is to leave it alone or RemoveLine it (use ReplaceCall with
 new_call="" to delete it).
+
+## LIBRARY FUNCTION REFERENCES
+
+Check that free variable refs from loaded R packages are properly wired up.
+A common failure mode: entity A's R source passes a library function by
+reference (e.g. ``filled.contour(volcano, color = graycol, ...)`` where
+``graycol`` is a function from ``library(shape)``), but the per-entity
+translator didn't know what ``graycol`` was and substituted a built-in
+fallback (e.g. ``cmap='gray'``).  Meanwhile, a later entity B correctly
+defines ``graycol()`` as a Python function.
+
+When you see this pattern — a Python function defined by one entity but not
+used by an earlier entity that should reference it — emit a ReplaceCall to
+wire them up.  For example:
+{"kind": "ReplaceCall", "entity_ids": ["filled.contour"], "params": {"old_call": "cmap='gray'", "new_call": "colors=graycol()"}}
+
+Check the entity summary's ``free_vars`` lists: if an entity lists a free
+variable that matches the name of a function defined by another entity,
+verify the translation actually uses that function.
 """
 
 

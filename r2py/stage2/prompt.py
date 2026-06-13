@@ -84,8 +84,20 @@ def build_entity_prompt(
     # For unattributed function calls, try to resolve the actual package and
     # fetch the R source so the LLM can translate the real implementation
     # rather than guessing based on the function name alone.
-    resolved_pkg, pkg_fn_source = _lookup_package_source(entity, script_map)
+    # Skip when the function is already defined by a prior entity — the LLM
+    # should call the existing definition, not re-translate from R source.
+    _defined = already_defined or set()
+    if entity.name in _defined:
+        resolved_pkg, pkg_fn_source = None, None
+    else:
+        resolved_pkg, pkg_fn_source = _lookup_package_source(entity, script_map)
     pkg_display = entity.package or resolved_pkg or "base R"
+
+    # Resolve free variable refs that are functions from imported packages.
+    # These are symbols used in this entity (e.g. passed by reference as
+    # arguments) but not defined in the script — the per-entity translator
+    # needs their R source to translate correctly rather than guessing.
+    free_ref_sources = _lookup_free_ref_sources(entity, script_map)
 
     parts: list[str] = []
 
@@ -153,6 +165,27 @@ def build_entity_prompt(
             f"This is the actual implementation — translate it to Python rather than "
             f"marking it untranslatable:\n"
             f"```r\n{pkg_fn_source}\n```"
+        )
+
+    if free_ref_sources:
+        ref_parts: list[str] = []
+        for ref_name, ref_pkg, ref_source in free_ref_sources:
+            ref_parts.append(
+                f"### `{ref_name}` (from package `{ref_pkg}`)\n"
+                f"```r\n{ref_source}\n```"
+            )
+        parts.append(
+            "## Library functions referenced by this entity\n"
+            "This entity uses the following function(s) from loaded R packages. "
+            "They are passed by reference or called without a namespace qualifier. "
+            "Define ONLY these listed functions as Python functions above the usage "
+            "so this entity's behaviour matches R. Later entities that call the "
+            "same function will reuse your definition.\n\n"
+            "CRITICAL: Do NOT define, assign, or fabricate any OTHER names "
+            "(variables, datasets, arrays) — especially not names listed in the "
+            "\"Implicit R environment variables\" section above. Those are pre-loaded "
+            "by the test harness and must be used as-is.\n\n"
+            + "\n\n".join(ref_parts)
         )
 
     parts.append("Translate this entity to Python. Use the XML output format specified in the system prompt.")
@@ -362,6 +395,67 @@ def _lookup_package_source(
     return None, None
 
 
+def _lookup_free_ref_sources(
+    entity: "Entity",
+    script_map: "ScriptMap",
+) -> list[tuple[str, str, str]]:
+    """Find R source for free variable refs that are functions from imported packages.
+
+    Returns a list of ``(symbol_name, package_name, r_source)`` tuples for each
+    free variable ref that resolves to a function in one of the script's loaded
+    packages.  Skips refs that are already defined by prior entities in the
+    script (those are handled by the dependency/already-defined mechanism).
+    """
+    from ..types import EntityKind
+
+    refs = getattr(entity, "free_variable_refs", [])
+    if not refs:
+        return []
+
+    # Refs already in actual_bundle.data are data values handled by the shim.
+    bundle = getattr(entity, "actual_bundle", None)
+    bundle_data: dict = bundle.data if bundle is not None else {}
+
+    # Names already defined by prior entities — no need to look them up.
+    defined_names: set[str] = set()
+    for e in script_map.entities.values():
+        if e.source_span.start_line < entity.source_span.start_line:
+            defined_names.add(e.name)
+
+    imported_pkgs: list[str] = [
+        e.package
+        for e in script_map.entities.values()
+        if getattr(e, "kind", None) == EntityKind.LIBRARY_IMPORT and e.package
+    ]
+    if not imported_pkgs:
+        return []
+
+    try:
+        from ..stage1.package_lookup import get_function_source_recursive, get_function_source
+    except ImportError:
+        return []
+
+    results: list[tuple[str, str, str]] = []
+    for ref_name in refs:
+        if ref_name in bundle_data:
+            continue
+        if ref_name in defined_names:
+            continue
+        try:
+            source = get_function_source_recursive(imported_pkgs, ref_name)
+        except Exception:
+            source = None
+        if not source:
+            continue
+        found_pkg = next(
+            (p for p in imported_pkgs if get_function_source(p, ref_name, max_lines=1) is not None),
+            imported_pkgs[0],
+        )
+        results.append((ref_name, found_pkg, source))
+
+    return results
+
+
 def _format_already_defined(names: set[str] | None) -> str:
     """Format the set of already-defined helper names for display in the prompt."""
     if not names:
@@ -370,7 +464,9 @@ def _format_already_defined(names: set[str] | None) -> str:
     listing = ", ".join(f"`{n}`" for n in sorted_names)
     return (
         "The following names were defined by earlier entities in this translation. "
-        "Do NOT redefine them — call them directly:\n"
+        "Do NOT redefine them — call them directly.\n"
+        "You MUST still translate this entity's R code into Python — just use the "
+        "existing definitions instead of re-implementing them:\n"
         + listing
     )
 
@@ -425,7 +521,10 @@ def _repeated_call_hint(
             f"## Use existing definition — do NOT redefine\n"
             f"`{name}` was already translated as a Python {construct} by an earlier "
             f"entity in this script. Do NOT redefine or re-implement it here. "
-            f"Use `{name}` directly with the appropriate arguments for this use-case."
+            f"You MUST still translate this entity's R code — call `{name}` with the "
+            f"appropriate arguments. If the R code is a bare call like `{name}(...)` "
+            f"at the top level, translate it as `print({name}(...))` to match R's "
+            f"auto-print behaviour."
         )
     else:
         return (
