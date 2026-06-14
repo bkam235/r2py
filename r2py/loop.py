@@ -279,6 +279,8 @@ def run_loop(
                     script_map, library,
                     no_seeds=no_seeds, model=model,
                     prior_failures=prior_failures,
+                    sidecar_filename=_sidecar_fn,
+                    script_relpath=_script_relpath,
                 )
                 retry_hash = _state_hash(retry_src)
                 if retry_hash not in visited:
