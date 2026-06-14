@@ -119,7 +119,7 @@ def run_loop(
         **verify_kwargs: Forwarded to stage4.verify() (e.g. rtol, atol, timeout_s).
     """
     from . import stage2, stage3, stage4
-    from .stage2.stitch import rebuild_entity_line_map as _rebuild
+    from .stage2.stitch import rebuild_entity_line_map as _rebuild, validate_data_shim
     from .stage3.history import EditHistory
     from .library.epistemology import review as _ep_review
     from .library.retrieval import entity_ast_shape_hash as _shape_hash
@@ -179,6 +179,10 @@ def run_loop(
     _need_bundles = output_dir is not None
     entities = getattr(script_map, "entities", {})
 
+    # Expected data-shim variable names — used to validate shim integrity after edits.
+    from .stage2.stitch import collect_shim_needed_names as _collect_shim_names
+    _shim_expected_names = _collect_shim_names(script_map) if _sidecar_fn else None
+
     # Persist the R-captured runtime data as a sidecar JSON beside the eventual
     # saved .py (Option A — see plans/i-go-with-option-melodic-dewdrop.md).
     # Written here once so the verifier-time shim (Phase 4) has a stable file to
@@ -187,6 +191,10 @@ def run_loop(
         _write_data_sidecar(checkpoint_path, script_map)
 
     # Skip the sandbox entirely if the assembled source is not valid Python.
+    _seed_shim_err = validate_data_shim(seed, _shim_expected_names)
+    if _seed_shim_err:
+        import warnings
+        warnings.warn(f"seed translation has broken data_shim: {_seed_shim_err}", stacklevel=2)
     try:
         _ast_mod.parse(seed)
         seed_result = stage4.verify(
@@ -286,8 +294,11 @@ def run_loop(
                 retry_hash = _state_hash(retry_src)
                 if retry_hash not in visited:
                     visited.add(retry_hash)
+                    _retry_shim_err = validate_data_shim(retry_src, _shim_expected_names)
                     try:
                         _ast_mod.parse(retry_src)
+                        if _retry_shim_err:
+                            raise SyntaxError(_retry_shim_err, ("<shim>", 0, 0, ""))
                         retry_decomp = stage4.verify(
                             script_map, retry_src,
                             data_compare=data_compare, use_judge=use_judge,
@@ -357,6 +368,32 @@ def run_loop(
             except SyntaxError as _syn_exc:
                 new_decomp = _make_syntax_error_report(
                     getattr(script_map, "entities", {}), _syn_exc, _candidate_elmap,
+                )
+                proposals.append(
+                    Proposal(candidate_src, 0.0, new_decomp, edit, parent.score)
+                )
+                proposal_collectors.append(collector)
+                proposal_transitions.append(None)
+                proposal_parent_hashes.append(parent_hash)
+                proposal_parent_decomps.append(parent.decomp)
+                continue
+
+            # Reject candidates with corrupted data shim.
+            _shim_err = validate_data_shim(candidate_src, _shim_expected_names)
+            if _shim_err:
+                from .types import ScoreReport, EntityScore, FeedbackItem, EffectClass
+                _first_eid = next(iter(entities), "")
+                new_decomp = ScoreReport(
+                    aggregate=0.0,
+                    by_entity={eid: EntityScore(entity_id=eid, executed_ok=False)
+                               for eid in entities},
+                    feedback=[FeedbackItem(
+                        entity_id=_first_eid,
+                        effect_class=EffectClass.SYNTAX,
+                        message=f"data_shim integrity: {_shim_err}",
+                        score=0.0,
+                    )],
+                    py_exit_code=1,
                 )
                 proposals.append(
                     Proposal(candidate_src, 0.0, new_decomp, edit, parent.score)

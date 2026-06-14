@@ -123,6 +123,34 @@ def build_data_shim(
     )
 
 
+def validate_data_shim(source: str, expected_names: list[str] | None = None) -> str | None:
+    """Check data shim integrity in *source*. Return error message or None if OK.
+
+    Checks:
+      1. Completeness: if DATA_SHIM_BEGIN is present, DATA_SHIM_END must also be.
+      2. Variable coverage: if *expected_names* is provided, the shim's name list
+         must contain all of them.
+    """
+    has_begin = DATA_SHIM_BEGIN in source
+    has_end = DATA_SHIM_END in source
+    if has_begin and not has_end:
+        return "data_shim is incomplete (begin marker without end marker)"
+    if not has_begin:
+        return None
+    if expected_names:
+        m = re.search(r"for _r2py_shim_n in (\[.*?\]):", source)
+        if not m:
+            return "data_shim is malformed (no for-loop over needed names)"
+        try:
+            shim_names = set(eval(m.group(1)))  # noqa: S307 — trusted source
+        except Exception:
+            return "data_shim is malformed (cannot parse name list)"
+        missing = set(expected_names) - shim_names
+        if missing:
+            return f"data_shim missing variables: {sorted(missing)}"
+    return None
+
+
 def collect_shim_needed_names(script_map: "ScriptMap") -> list[str]:
     """Return names the data-loading shim should pre-bind for *script_map*.
 
