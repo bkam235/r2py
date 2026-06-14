@@ -152,6 +152,7 @@ def make_score_table(
     data_compare: str = "auto",
     rtol: float = 1e-6,
     atol: float = 1e-9,
+    verbose: bool = False,
 ) -> dict[EntityId, EntityScore]:
     """Map entities to EntityScores using comparator_results.
 
@@ -185,6 +186,44 @@ def make_score_table(
         if ec in comparator_results
     ]
     side_effects_score = sum(side_scores) / len(side_scores) if side_scores else 1.0
+
+    # ── R bundle deduplication: effects should be scored exactly once ──────
+    # When two entities share overlapping source spans (e.g. outer wrapper
+    # contains inner library call), the R checkpoint ordering may attribute
+    # effects to the outer entity that actually belong to the inner.  Clear
+    # the outer entity's R bundle so it scores via empty-vs-empty instead.
+    if r_entity_bundles:
+        r_entity_bundles = dict(r_entity_bundles)  # don't mutate caller's dict
+        _spans = {
+            eid: getattr(entities.get(eid), "source_span", None)
+            for eid in r_entity_bundles
+        }
+        for outer_eid, outer_sp in _spans.items():
+            if outer_sp is None:
+                continue
+            outer_eb = r_entity_bundles.get(outer_eid)
+            if outer_eb is None:
+                continue
+            # Check if any other entity is nested inside this one
+            for inner_eid, inner_sp in _spans.items():
+                if inner_eid == outer_eid or inner_sp is None:
+                    continue
+                # Inner is nested: starts at or after outer, ends at or before outer
+                nested = (
+                    (inner_sp.start_line > outer_sp.start_line
+                     or (inner_sp.start_line == outer_sp.start_line
+                         and inner_sp.start_col >= outer_sp.start_col))
+                    and (inner_sp.end_line < outer_sp.end_line
+                         or (inner_sp.end_line == outer_sp.end_line
+                             and inner_sp.end_col <= outer_sp.end_col))
+                )
+                if not nested:
+                    continue
+                # Outer contains inner — outer's effects are owned by the inner.
+                # Replace with an empty bundle so the outer scores via
+                # empty-vs-empty (if Python is also silent for this entity).
+                r_entity_bundles[outer_eid] = EffectBundle()
+                break
 
     # Idea C: crash attribution — give partial credit to entities that ran before the crash.
     pre_crash_eids: set[str] = set()
@@ -247,10 +286,11 @@ def make_score_table(
                     not py_eb.data and not py_eb.stdout and py_graphics_count == 0
                 )
                 if py_also_empty:
-                    print(
-                        f"  [score] {entity_id}: empty-vs-empty → 1.0 "
-                        f"(both R and Python produced no observable effects)"
-                    )
+                    if verbose:
+                        print(
+                            f"  [score] {entity_id}: empty-vs-empty → 1.0 "
+                            f"(both R and Python produced no observable effects)"
+                        )
                     proxy_scores = [1.0]
 
             use_per_entity = bool(proxy_scores)

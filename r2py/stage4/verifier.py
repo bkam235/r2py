@@ -446,6 +446,7 @@ def verify(
     entity_line_map: dict | None = None,
     return_bundle: bool = False,
     sidecar_filename: str | None = None,
+    verbose: bool = False,
 ) -> "ScoreReport | tuple[ScoreReport, EffectBundle]":
     """Score a candidate Python translation against the R ScriptMap.
 
@@ -513,6 +514,7 @@ def verify(
         data_compare=data_compare,
         rtol=rtol,
         atol=atol,
+        verbose=verbose,
     )
 
     # --- Differential fuzzing (optional) ---

@@ -195,6 +195,7 @@ def run_loop(
             entity_line_map=entity_line_map,
             return_bundle=_need_bundles,
             sidecar_filename=_sidecar_fn,
+            verbose=(max_iters == 0),
             **verify_kwargs,
         )
         if _need_bundles:
@@ -374,6 +375,7 @@ def run_loop(
                 entity_line_map=_candidate_elmap,
                 return_bundle=_need_bundles,
                 sidecar_filename=_sidecar_fn,
+                verbose=(i == max_iters - 1),
                 **verify_kwargs,
             )
             if _need_bundles:
