@@ -234,9 +234,25 @@ def make_score_table(
             if r_eb.stdout:
                 proxy_scores.append(eb_results[EffectClass.STDOUT].score)
 
-            # If R emitted nothing we can compare, per-entity bundles give no
-            # signal — fall through to the global-score path instead of
-            # awarding a free 1.0.
+            if not proxy_scores:
+                # R emitted nothing observable.  Check whether Python also
+                # emitted nothing — if so, the entity is equivalent (both
+                # sides are silent) and deserves 1.0 rather than falling
+                # through to the potentially-unrelated global data score.
+                py_graphics_count = (
+                    py_eb.graphics if isinstance(py_eb.graphics, int)
+                    else len(py_eb.graphics or [])
+                )
+                py_also_empty = (
+                    not py_eb.data and not py_eb.stdout and py_graphics_count == 0
+                )
+                if py_also_empty:
+                    print(
+                        f"  [score] {entity_id}: empty-vs-empty → 1.0 "
+                        f"(both R and Python produced no observable effects)"
+                    )
+                    proxy_scores = [1.0]
+
             use_per_entity = bool(proxy_scores)
 
         if use_per_entity:
