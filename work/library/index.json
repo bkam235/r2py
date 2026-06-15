@@ -70,7 +70,9 @@
       "graphics.image-to-imshow",
       "r-matrix-to-numpy-array",
       "image-graycol-colormap",
-      "r.suppress-startup-to-silent-import"
+      "r.suppress-startup-to-silent-import",
+      "withr.with-locale-context-usage",
+      "fix-truncated-loop"
     ],
     "base:": [
       "base.cat_to_print",
@@ -112,7 +114,9 @@
       "suppress-messages",
       "filled.contour-matplotlib",
       "image-graycol-colormap",
-      "r.suppress-startup-to-silent-import"
+      "r.suppress-startup-to-silent-import",
+      "withr.with-locale-context-usage",
+      "fix-truncated-loop"
     ],
     "shape:3ec29fc1": [
       "r-suppress-startup-messages"
@@ -362,7 +366,7 @@
     },
     "filled.contour-matplotlib": {
       "confidence": "confirmed",
-      "evidence_count": 5,
+      "evidence_count": 7,
       "contradictions_count": 5,
       "seed": true,
       "package": "",
@@ -462,10 +466,11 @@
     "incomplete-statement-fix": {
       "confidence": "confirmed",
       "evidence_count": 2,
-      "contradictions_count": 1,
+      "contradictions_count": 2,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 19
     },
     "list-to-array-conversion": {
       "confidence": "tentative",
@@ -688,11 +693,11 @@
     "suppress-messages": {
       "confidence": "confirmed",
       "evidence_count": 26,
-      "contradictions_count": 77,
+      "contradictions_count": 79,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 11
+      "contradicted_at_run": 19
     },
     "suppress-package-startup-messages": {
       "confidence": "contradicted",
@@ -724,7 +729,8 @@
       "contradictions_count": 19,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "suppress-startup-skip": {
       "confidence": "tentative",
@@ -778,11 +784,11 @@
     "withr.with-locale-code-param": {
       "confidence": "confirmed",
       "evidence_count": 2,
-      "contradictions_count": 5,
+      "contradictions_count": 24,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "contradicted_at_run": 19
     },
     "withr.with-locale-lambda": {
       "confidence": "tentative",
@@ -869,7 +875,25 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "withr.with-locale-context-usage": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "fix-truncated-loop": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 11
+  "total_runs": 19
 }

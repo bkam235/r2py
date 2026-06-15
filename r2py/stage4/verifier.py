@@ -389,6 +389,14 @@ def _inject_py_checkpoints(
         checkpoint_line = f"_r2py_checkpoint('{safe_eid}')\n"
         lines.insert(insert_idx, checkpoint_line)
 
+    # Baseline the namespace right before the first entity so that imports
+    # and the data shim (which run earlier in the file) are excluded from
+    # the first entity's checkpoint delta.
+    first_start = sorted_pairs[0][1][0] if sorted_pairs else None
+    if first_start is not None:
+        baseline_idx = min(first_start - 1, len(lines))  # 1-based → 0-based insert
+        lines.insert(baseline_idx, "_r2py_prev_ns = set(k for k in globals() if not k.startswith('_r2py'))\n")
+
     return "".join(lines), ordered_eids
 
 
