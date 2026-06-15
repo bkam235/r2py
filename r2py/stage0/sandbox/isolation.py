@@ -24,9 +24,10 @@ _ALLOWED_ENV_VARS = frozenset({
     "LANG",
     "LC_ALL",
     "LC_CTYPE",
-    "SYSTEMROOT",      # Windows — required for many subprocesses
-    "WINDIR",          # Windows
-    "COMSPEC",         # Windows cmd.exe path
+    "SYSTEMROOT",           # Windows — required for many subprocesses
+    "WINDIR",               # Windows
+    "COMSPEC",              # Windows cmd.exe path
+    "PROCESSOR_ARCHITECTURE",  # Windows — required by some R native extensions (xfun crash)
 })
 
 

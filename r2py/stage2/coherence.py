@@ -141,7 +141,9 @@ def review(
         user_content = _build_user_message(python_source, script_map, shim_names)
         messages = [{"role": "user", "content": user_content}]
         raw = _llm.call(messages, _COHERENCE_SYSTEM, model=model)
-        return _parse_response(raw, python_source)
+        revised, edits = _parse_response(raw, python_source)
+        revised = _hoist_imports(revised)
+        return revised, edits
     except Exception:
         return python_source, []
 
@@ -149,6 +151,51 @@ def review(
 # ---------------------------------------------------------------------------
 # Internal helpers
 # ---------------------------------------------------------------------------
+
+_IMPORT_RE = re.compile(
+    r"^(?:import\s|from\s\S+\s+import\s)", re.MULTILINE
+)
+_COMMENT_OR_BLANK_RE = re.compile(r"^(\s*#.*|\s*)$")
+_SENTINEL_RE = re.compile(r"^# r2py:entity:\S+$")
+
+
+def _hoist_imports(source: str) -> str:
+    """Move import statements to the top if code precedes them.
+
+    Scans for lines that are import statements. If any non-import,
+    non-comment, non-blank, non-sentinel code appears *before* the first
+    import, all import lines are collected, removed from their original
+    positions, and re-inserted at the top of the file. The code that was
+    originally above the imports follows immediately after.
+    """
+    lines = source.splitlines(keepends=True)
+    if not lines:
+        return source
+
+    import_indices: list[int] = []
+    first_import_idx: int | None = None
+    has_code_before_first_import = False
+
+    for i, line in enumerate(lines):
+        stripped = line.strip()
+        if _IMPORT_RE.match(stripped):
+            import_indices.append(i)
+            if first_import_idx is None:
+                first_import_idx = i
+        elif first_import_idx is None and not _COMMENT_OR_BLANK_RE.match(stripped) and not _SENTINEL_RE.match(stripped):
+            has_code_before_first_import = True
+
+    if not has_code_before_first_import or not import_indices:
+        return source
+
+    import_lines = [lines[i] for i in import_indices]
+    remaining = [lines[i] for i in range(len(lines)) if i not in set(import_indices)]
+
+    # Ensure each import line ends with a newline
+    import_lines = [l if l.endswith("\n") else l + "\n" for l in import_lines]
+
+    return "".join(import_lines) + "".join(remaining)
+
 
 def _build_user_message(
     python_source: str,

@@ -39,9 +39,10 @@ def _on_progress(event) -> None:
 # Iterate through input files for translation
 input_filenames = next(walk(input_dir), (None, None, []))[2]
 # input_filenames = random.sample(input_filenames, 1) #don't use random script
-input_filenames = ["withr__rd_example__with_locale_Rd.R"] #translate this specific script
+input_filenames = ["xfun__rd_example__cache_rds_Rd.R"] #translate this specific script
 # shape__rd_example__greycol_Rd.R 0.931
 # withr__rd_example__with_locale_Rd.R 0.981
+# outputs\xfun__rd_example__cache_rds_Rd.py 0.939
 
 
 scripts = []
