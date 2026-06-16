@@ -223,7 +223,7 @@ class TestRetrievalEpisodeLogging:
         from r2py.types import RetrievalEpisode, RetrievalEpisodeCandidate
 
         def _fake_propose(candidate, lib, script_map=None, history=None, iteration=0,
-                          _collector=None):
+                          model=None, _collector=None):
             if _collector is not None:
                 _collector.episodes.append(RetrievalEpisode(
                     query_entity_id="e1", query_entity_kind="FunctionCall",

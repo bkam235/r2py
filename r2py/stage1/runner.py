@@ -298,13 +298,13 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
 _R_CHECKPOINT_EPILOGUE = r"""
 tryCatch({
   grDevices::dev.off()
-  plot_file <- file.path(getwd(), sprintf("_r2py_plot_%03d.png", .r2py_plot_idx))
-  cp_plots <- sort(Sys.glob("_r2py_cp_plot_*.png"))
-  if (length(cp_plots) > 0L) {
-    sizes <- vapply(cp_plots, file.size, numeric(1L))
-    real_plots <- cp_plots[sizes >= 2000L]
-    if (length(real_plots) > 0L) {
-      file.copy(tail(real_plots, 1L), plot_file, overwrite = TRUE)
+  .r2py_plot_file <- file.path(getwd(), sprintf("_r2py_plot_%03d.png", .r2py_plot_idx))
+  .r2py_cp_plots <- sort(Sys.glob("_r2py_cp_plot_*.png"))
+  if (length(.r2py_cp_plots) > 0L) {
+    .r2py_sizes <- vapply(.r2py_cp_plots, file.size, numeric(1L))
+    .r2py_real_plots <- .r2py_cp_plots[.r2py_sizes >= 2000L]
+    if (length(.r2py_real_plots) > 0L) {
+      file.copy(tail(.r2py_real_plots, 1L), .r2py_plot_file, overwrite = TRUE)
     }
   }
 }, error = function(e) NULL)

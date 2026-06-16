@@ -35,9 +35,9 @@ def _make_pattern(pid: str, package: str = "base",
     )
 
 
-def _make_edit(pattern_id: str, package: str = "") -> Edit:
+def _make_edit(pattern_id: str, package: str = "", guidance: str = "Use this pattern.") -> Edit:
     return Edit(kind=EditKind.REPLACE_CALL, pattern_id=pattern_id,
-                params={"package": package})
+                params={"package": package}, guidance=guidance)
 
 
 class _FakeEntity:
@@ -112,7 +112,7 @@ class TestPatternRoundTrip:
         p = _make_pattern("t")
         assert p.demotion_threshold() == 1  # no evidence → threshold = 1
         p.evidence = [EvidenceEntry("s", 0.9, "exact", "v")] * 4
-        assert p.demotion_threshold() == math.ceil(4 / 2)  # = 2
+        assert p.demotion_threshold() == max(3, math.ceil(4 * 0.75))  # = 3
 
 
 # ---------------------------------------------------------------------------
@@ -231,8 +231,8 @@ class TestRetrieval:
 
     def test_package_first(self, tmp_path):
         store, index = self._setup(tmp_path)
-        store.save(_make_pattern("dplyr.a", package="dplyr"))
-        store.save(_make_pattern("base.a", package="base"))
+        store.save(_make_pattern("dplyr.a", package="dplyr", seed=True))
+        store.save(_make_pattern("base.a", package="base", seed=True))
         index.rebuild(store)
         entity = _FakeEntity(package="dplyr")
         results = retrieve(entity, k=5, store=store, index=index)
@@ -244,7 +244,7 @@ class TestRetrieval:
     def test_excludes_contradicted(self, tmp_path):
         store, index = self._setup(tmp_path)
         store.save(_make_pattern("base.bad", package="base", confidence="contradicted"))
-        store.save(_make_pattern("base.good", package="base", confidence="tentative"))
+        store.save(_make_pattern("base.good", package="base", seed=True))
         index.rebuild(store)
         entity = _FakeEntity(package="base")
         results = retrieve(entity, k=5, store=store, index=index)
@@ -255,7 +255,11 @@ class TestRetrieval:
     def test_no_seeds_filter(self, tmp_path):
         store, index = self._setup(tmp_path)
         store.save(_make_pattern("base.seed", package="base", seed=True))
-        store.save(_make_pattern("base.learned", package="base", seed=False))
+        # Non-seed tentative patterns need ≥2 genuine improvement entries to be retrieved.
+        learned = _make_pattern("base.learned", package="base", seed=False)
+        learned.evidence = [EvidenceEntry("s1", 0.9, "exact", "v"),
+                            EvidenceEntry("s2", 0.8, "exact", "v")]
+        store.save(learned)
         index.rebuild(store)
         entity = _FakeEntity(package="base")
         results = retrieve(entity, k=5, store=store, index=index, no_seeds=True)
@@ -306,8 +310,9 @@ class TestEpistemology:
         store = PatternStore(tmp_path)
         index = PatternIndex(tmp_path)
         p = _make_pattern("base.y", package="base", confidence="confirmed")
-        p.evidence = [EvidenceEntry("s1", 0.9, "exact", "v")] * 2  # threshold = ceil(2/2) = 1
-        p.contradictions = ["s2/e2: regressed"]
+        # 2 evidence entries → threshold = max(3, ceil(2*0.75)) = 3; need ≥3 contradictions
+        p.evidence = [EvidenceEntry("s1", 0.9, "exact", "v")] * 2
+        p.contradictions = ["s2/e2: regressed", "s3/e3: regressed", "s4/e4: regressed"]
         store.save(p)
         index.rebuild(store)
         epistemology.review(store, index)
@@ -373,10 +378,13 @@ class TestEpistemology:
         store = PatternStore(tmp_path)
         index = PatternIndex(tmp_path)
         p = _make_pattern("base.old", package="base", confidence="contradicted")
-        old_date = (date.today() - timedelta(days=35)).isoformat()
-        p.last_review = old_date
         store.save(p)
         index.rebuild(store)
+        # Archival is run-count based: contradicted_at_run=0, total_runs must be ≥30.
+        index.upsert_meta("base.old", "base", "contradicted", 0, 1, False,
+                          contradicted_at_run=0)
+        for _ in range(30):
+            index.increment_runs()
         log = epistemology.review(store, index)
         # Pattern should no longer be in index
         assert "base.old" not in index.lookup("base")
@@ -449,9 +457,10 @@ class TestWriter:
         edit = _make_edit("base.w")
         writer.record_tie(edit, "s.R", "e", store, index)
         p2 = store.get("base.w")
-        # tie: evidence added, confidence unchanged
+        # tie: tracked in tie_count only, evidence unchanged, confidence unchanged
         assert p2.confidence == "tentative"
-        assert len(p2.evidence) == 1
+        assert p2.tie_count == 1
+        assert len(p2.evidence) == 0
 
     def test_no_pattern_id_is_noop(self, tmp_path):
         store = PatternStore(tmp_path)
@@ -475,7 +484,7 @@ class TestPatternLibrary:
 
     def test_retrieve_via_facade(self, tmp_path):
         lib = get_library(tmp_path)
-        lib.store.save(_make_pattern("base.foo", package="base"))
+        lib.store.save(_make_pattern("base.foo", package="base", seed=True))
         lib.index.rebuild(lib.store)
         entity = _FakeEntity(package="base")
         results = lib.retrieve(entity, k=3)

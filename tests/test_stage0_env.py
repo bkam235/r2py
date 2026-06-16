@@ -79,6 +79,8 @@ def test_find_rscript_raises_when_absent(monkeypatch):
     # Also patch glob to return no Windows paths
     import glob as _glob
     monkeypatch.setattr(_glob, "glob", lambda *a, **kw: [])
+    # Patch Path.exists so the bundled r_env check also returns False
+    monkeypatch.setattr(Path, "exists", lambda self: False)
     with pytest.raises(RuntimeError, match="Rscript not found"):
         _r_runtime.find_rscript()
 

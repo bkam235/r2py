@@ -317,7 +317,7 @@ class TestBuildEditPrompt(unittest.TestCase):
         entity = self._make_entity()
         es = _entity_score("e1")
         h = EditHistory()
-        h.add(_make_edit(EditKind.RENAME_VARIABLE, params={"old": "a", "new": "b"}))
+        h.add(_make_edit(EditKind.RENAME_VARIABLE, entity_ids=["e1"], params={"old": "a", "new": "b"}))
         messages = self.build(entity, es, [], "x = 1", [], h, exploit=False)
         content = messages[0]["content"]
         self.assertIn("RenameVariable", content)

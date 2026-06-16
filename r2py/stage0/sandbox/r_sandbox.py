@@ -170,7 +170,7 @@ class RSandbox:
         script_path_r = str(script_path).replace("\\", "/")
         t_start = time.monotonic()
         result = subprocess.run(
-            [str(r_exe), "--vanilla", "-e", f'source("{script_path_r}", print.eval=TRUE)'],
+            [str(r_exe), "--vanilla", "--quiet", "-e", f'source("{script_path_r}", print.eval=TRUE)'],
             cwd=str(workdir),
             capture_output=True,
             timeout=timeout_s,
@@ -188,7 +188,7 @@ class RSandbox:
                 # Auto-install the missing package and retry once.
                 _auto_install(pkg)
                 result = subprocess.run(
-                    [str(r_exe), "--vanilla", "-e", f'source("{script_path_r}", print.eval=TRUE)'],
+                    [str(r_exe), "--vanilla", "--quiet", "-e", f'source("{script_path_r}", print.eval=TRUE)'],
                     cwd=str(workdir),
                     capture_output=True,
                     timeout=timeout_s,

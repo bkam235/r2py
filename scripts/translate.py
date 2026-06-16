@@ -38,13 +38,15 @@ def _on_progress(event) -> None:
 
 # Iterate through input files for translation
 input_filenames = next(walk(input_dir), (None, None, []))[2]
-input_filenames = random.sample(input_filenames, 1) #don't use random script
+# input_filenames = random.sample(input_filenames, 1) #don't use random script
 
-# input_filenames = ["withr__rd_example__with_locale_Rd.R"] #translate this specific script
-# input_filenames = ["shape__rd_example__greycol_Rd.R", "withr__rd_example__with_locale_Rd.R, xfun__rd_example__cache_rds_Rd.py"]
+# input_filenames = ["googlesheets4__rd_example__sheet_append_Rd.R"] #translate this specific script
+input_filenames = ["shape__rd_example__greycol_Rd.R", "withr__rd_example__with_locale_Rd.R, xfun__rd_example__cache_rds_Rd.py"]
 # shape__rd_example__greycol_Rd.R 0.930
 # withr__rd_example__with_locale_Rd.R 0.987
 # xfun__rd_example__cache_rds_Rd.py 0.927
+# googlesheets4__rd_example__sheet_append_Rd.R 0.992
+# progressr__rd_example__handler_rpushbullet_Rd.R 0.990
 
 
 scripts = []

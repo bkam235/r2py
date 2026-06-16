@@ -22,14 +22,14 @@ from r2py.types import (
 # ---------------------------------------------------------------------------
 
 def test_effect_class_count():
-    assert len(list(EffectClass)) == 9
+    assert len(list(EffectClass)) == 10
 
 
 def test_effect_class_values():
     values = {e.value for e in EffectClass}
     assert values == {
         "stdout", "files", "graphics", "data", "html",
-        "env", "warnings", "rng", "network",
+        "env", "warnings", "rng", "network", "syntax",
     }
 
 
@@ -38,8 +38,8 @@ def test_entity_kind_count():
 
 
 def test_edit_kind_count():
-    # Closed taxonomy from §8.3 — exactly 7 variants.
-    assert len(list(EditKind)) == 7
+    # Closed taxonomy from §8.3 — exactly 8 variants.
+    assert len(list(EditKind)) == 8
 
 
 def test_edit_kind_members():

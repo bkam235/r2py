@@ -240,6 +240,13 @@ def make_score_table(
         r_eb = (r_entity_bundles or {}).get(entity_id)
         py_eb = (py_entity_bundles or {}).get(entity_id)
 
+        # When the checkpointed R run executed (r_entity_bundles populated) but
+        # this entity's checkpoint was never reached (e.g. placed inside an
+        # unexecuted conditional branch), treat the R bundle as empty — the
+        # entity produced no observable effects in R.
+        if r_eb is None and r_entity_bundles:
+            r_eb = EffectBundle()
+
         # Treat a missing py_eb as empty only when entity_line_map confirms Python
         # intentionally omitted this entity (map was provided but entity absent).
         # Without entity_line_map we can't tell omission from a failed checkpoint,
@@ -288,7 +295,7 @@ def make_score_table(
                 if py_also_empty:
                     if verbose:
                         print(
-                            f"  [score] {entity_id}: empty-vs-empty → 1.0 "
+                            f"  [score] {entity_id}: empty-vs-empty -> 1.0 "
                             f"(both R and Python produced no observable effects)"
                         )
                     proxy_scores = [1.0]

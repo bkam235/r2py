@@ -55,7 +55,9 @@ def collect(workdir: Path) -> dict:
     graphics: list[bytes] = []
     for p in plots:
         try:
-            graphics.append(p.read_bytes())
+            data = p.read_bytes()
+            if len(data) >= 2000:  # skip blank PNGs from device open/close with no content
+                graphics.append(data)
         except OSError:
             pass
     return {"graphics": graphics}
