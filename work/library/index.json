@@ -37,7 +37,6 @@
       "r-auto-print-to-py-print",
       "r-autoprint-to-python-print",
       "r-library-stub",
-      "r-library-to-python-import",
       "r-sys-localeconv-to-py-localeconv",
       "r.auto-print-to-stdout",
       "r.builtin-dataset-to-array",
@@ -51,10 +50,8 @@
       "remove-unavailable-import",
       "shape.graycol-function",
       "suppress-messages",
-      "suppress-package-startup-messages",
       "suppress-package-startup-noop",
       "suppress-startup-messages-noop",
-      "suppress-startup-messages",
       "suppress-startup-skip",
       "suppress-startup-to-noop",
       "suppress-warnings",
@@ -64,7 +61,6 @@
       "withr.with-locale-code-param",
       "withr.with-locale-lambda",
       "withr.with-locale-output-printing",
-      "withr.with_locale-seed",
       "x",
       "matplotlib.rgb-to-hex-import",
       "graphics.image-to-imshow",
@@ -75,12 +71,16 @@
       "fix-truncated-loop",
       "xfun-cache-rds-python",
       "xfun.cache-rds-to-python",
-      "xfun.cache-rds-return-value"
+      "xfun.cache-rds-return-value",
+      "unlink-to-pathlib",
+      "xfun.cache-rds-to-pickle",
+      "withr.with-locale-context-syntax",
+      "withr.with_locale-context-manager",
+      "withr.with-locale-context-manager",
+      "withr.with-locale-context-not-code"
     ],
     "base:": [
-      "base.cat_to_print",
       "base.c_to_list",
-      "base.dataframe_to_pandas",
       "base.lapply_to_listcomp",
       "base.na_to_none",
       "base.nrow_ncol_to_shape",
@@ -119,7 +119,13 @@
       "image-graycol-colormap",
       "r.suppress-startup-to-silent-import",
       "withr.with-locale-context-usage",
-      "fix-truncated-loop"
+      "fix-truncated-loop",
+      "unlink-to-pathlib",
+      "withr.with-locale-context-syntax",
+      "withr.with_locale-context-manager",
+      "withr.with-locale-context-manager",
+      "withr.with-locale-context-not-code",
+      "withr.with-locale-code-param"
     ],
     "shape:3ec29fc1": [
       "r-suppress-startup-messages"
@@ -127,7 +133,8 @@
     ":dfbb0694": [
       "xfun-cache-rds-python",
       "xfun.cache-rds-to-python",
-      "xfun.cache-rds-return-value"
+      "xfun.cache-rds-return-value",
+      "xfun.cache-rds-to-pickle"
     ]
   },
   "meta": {
@@ -158,32 +165,16 @@
     "auto-print-to-stdout": {
       "confidence": "confirmed",
       "evidence_count": 14,
-      "contradictions_count": 12,
+      "contradictions_count": 13,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 20
-    },
-    "base.cat_to_print": {
-      "confidence": "contradicted",
-      "evidence_count": 0,
-      "contradictions_count": 5,
-      "seed": true,
-      "package": "base",
-      "ast_shape_hash": ""
+      "contradicted_at_run": 27
     },
     "base.c_to_list": {
       "confidence": "tentative",
       "evidence_count": 1,
       "contradictions_count": 0,
-      "seed": true,
-      "package": "base",
-      "ast_shape_hash": ""
-    },
-    "base.dataframe_to_pandas": {
-      "confidence": "contradicted",
-      "evidence_count": 0,
-      "contradictions_count": 5,
       "seed": true,
       "package": "base",
       "ast_shape_hash": ""
@@ -374,11 +365,11 @@
     },
     "filled.contour-matplotlib": {
       "confidence": "confirmed",
-      "evidence_count": 7,
+      "evidence_count": 8,
       "contradictions_count": 5,
       "seed": true,
       "package": "",
-      "ast_shape_hash": "",
+      "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 11
     },
     "fix-duplicate-variable-name": {
@@ -561,14 +552,6 @@
       "package": "",
       "ast_shape_hash": ""
     },
-    "r-library-to-python-import": {
-      "confidence": "contradicted",
-      "evidence_count": 3,
-      "contradictions_count": 6,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
     "r-package-placeholder": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -707,14 +690,6 @@
       "ast_shape_hash": "",
       "contradicted_at_run": 19
     },
-    "suppress-package-startup-messages": {
-      "confidence": "contradicted",
-      "evidence_count": 1,
-      "contradictions_count": 5,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
     "suppress-package-startup-noop": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -730,15 +705,6 @@
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
-    },
-    "suppress-startup-messages": {
-      "confidence": "contradicted",
-      "evidence_count": 7,
-      "contradictions_count": 19,
-      "seed": false,
-      "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
     },
     "suppress-startup-skip": {
       "confidence": "tentative",
@@ -791,12 +757,12 @@
     },
     "withr.with-locale-code-param": {
       "confidence": "confirmed",
-      "evidence_count": 2,
-      "contradictions_count": 24,
+      "evidence_count": 3,
+      "contradictions_count": 31,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 19
+      "contradicted_at_run": 31
     },
     "withr.with-locale-lambda": {
       "confidence": "tentative",
@@ -811,14 +777,6 @@
       "evidence_count": 1,
       "contradictions_count": 0,
       "seed": false,
-      "package": "",
-      "ast_shape_hash": ""
-    },
-    "withr.with_locale-seed": {
-      "confidence": "contradicted",
-      "evidence_count": 0,
-      "contradictions_count": 5,
-      "seed": true,
       "package": "",
       "ast_shape_hash": ""
     },
@@ -928,7 +886,61 @@
       "package": "",
       "ast_shape_hash": "dfbb0694",
       "contradicted_at_run": 0
+    },
+    "unlink-to-pathlib": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "xfun.cache-rds-to-pickle": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "dfbb0694",
+      "contradicted_at_run": 0
+    },
+    "withr.with-locale-context-syntax": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "withr.with_locale-context-manager": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "withr.with-locale-context-manager": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "withr.with-locale-context-not-code": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 21
+  "total_runs": 31
 }

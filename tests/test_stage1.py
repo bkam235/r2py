@@ -813,16 +813,20 @@ class TestFindSymbolBacktick:
 # ---------------------------------------------------------------------------
 
 class TestAnnotatedREdgeCases:
-    def test_two_entities_same_end_line(self):
-        """to_annotated_r emits both annotations when two entities end on the same line."""
-        # A one-liner function def: walker creates FUNCTION_DEF 'f' (line 0) and
-        # FUNCTION_CALL 'print' inside the body — both span only line 0.
+    def test_function_def_is_single_entity(self):
+        """Walker produces only the FUNCTION_DEF entity for a one-liner function.
+
+        Calls inside a function body are NOT extracted as separate entities —
+        the entire function (body included) is translated as one unit.
+        """
         src = "f <- function(x) print(x)\n"
         root = parse(src)
         entities, _ = walk(root, "test.R")
+        # Only 'f' — 'print' inside the body must not become a separate entity.
+        assert list(entities.keys()) == ["f"]
         sm = ScriptMap(source=src, ast_root=root, entities=entities, effects=[])
         ann = to_annotated_r(sm)
         assert "# r2py: f" in ann
-        assert "# r2py: print" in ann
+        assert "# r2py: print" not in ann
         # Original source line appears exactly once
         assert ann.count("f <- function(x) print(x)") == 1

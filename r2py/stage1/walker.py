@@ -189,11 +189,14 @@ def _visit_assignment(node: AstNode, op: str, ctx: _WalkContext) -> None:
     )
     ctx.add(entity)
 
-    # If RHS is a function definition or other compound, recurse into body.
+    # Do NOT recurse into function definition bodies.  The entire function
+    # (body included) is one FUNCTION_DEF entity; local assignments and calls
+    # inside it are not top-level effects and must not become separate entities.
+    # free_variable_refs collected above already includes all identifiers inside
+    # the body (via _collect_identifiers), so _lookup_free_ref_sources in
+    # prompt.py can still fetch package sources for symbols used inside.
     if rhs.kind == "function_definition":
-        body = rhs.child_by_field("body")
-        if body:
-            _visit(body, ctx)
+        pass
     elif rhs.kind == "call":
         # Call RHS: sub-calls are translated as part of their enclosing entity.
         # Only scan for nested library/require imports.

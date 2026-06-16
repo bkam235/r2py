@@ -303,11 +303,13 @@ def _write_translation_log(
 
     from .types import EffectClass
     data_score = report.by_effect.get(EffectClass.DATA) if report is not None else None
+    files_score = report.by_effect.get(EffectClass.FILES) if report is not None else None
 
     lines: list[str] = [
         "Translation log",
         f"Final score: {result.final_score:.3f}",
         *([f"Data score:  {data_score:.3f}"] if data_score is not None else []),
+        *([f"Files score: {files_score:.3f}"] if files_score is not None else []),
         f"Iterations:  {result.iterations}",
         "",
     ]

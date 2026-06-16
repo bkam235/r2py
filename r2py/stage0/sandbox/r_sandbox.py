@@ -133,6 +133,11 @@ class RSandbox:
         if EffectClass.ENV in capture:
             epi_parts.append(_env_effects.R_EPILOGUE)
 
+        # FILES epilogue LAST — copies tempdir() contents into workdir before
+        # R's session cleanup removes them.
+        if EffectClass.FILES in capture:
+            epi_parts.append(_files_effects.R_EPILOGUE_FILES)
+
         # Snapshot workdir before run (for files diff)
         before_files = _files_effects.snapshot(workdir) if EffectClass.FILES in capture else {}
 
@@ -157,6 +162,11 @@ class RSandbox:
         script_path = workdir / "_r2py_script.R"
         script_path.write_text(full_script, encoding="utf-8")
 
+        # Redirect R's tempdir()/tempfile() into the sandbox workdir so that
+        # files written via temp paths are captured by the FILES snapshot.
+        run_env = scrub_env()
+        run_env["TMPDIR"] = str(workdir)
+
         script_path_r = str(script_path).replace("\\", "/")
         t_start = time.monotonic()
         result = subprocess.run(
@@ -164,7 +174,7 @@ class RSandbox:
             cwd=str(workdir),
             capture_output=True,
             timeout=timeout_s,
-            env=scrub_env(),
+            env=run_env,
         )
         run_time = time.monotonic() - t_start
 
@@ -182,7 +192,7 @@ class RSandbox:
                     cwd=str(workdir),
                     capture_output=True,
                     timeout=timeout_s,
-                    env=scrub_env(),
+                    env=run_env,
                 )
 
         # Raise on any remaining non-zero exit (including after retry).
