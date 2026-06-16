@@ -28,6 +28,7 @@ def translate(
     output_dir: "str | Path | None" = None,  # if set, write edits.log.jsonl + library_diff.json
     progress=None,                   # callable(ProgressEvent) for progress reporting; None = silent
     retranslation_patience: int = 3, # retranslate from scratch after this many stalled iterations (0 = disabled)
+    n_seeds: int = 3,               # number of initial translation seeds (extra seeds only generated if first scores below 0.5)
     resume: bool = False,            # if True and py_path exists, continue improving it; if False and py_path exists, warn
 ) -> "TranslateResult":
     """Translate an R script to Python via the beam/strict-improvement loop (§4.1)."""
@@ -75,6 +76,7 @@ def translate(
         progress=progress,
         retranslation_patience=retranslation_patience,
         seed_translation=seed_translation,
+        n_seeds=n_seeds,
     )
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     _write_translation_log(Path(py_path), script_map, result)

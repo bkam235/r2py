@@ -30,6 +30,7 @@ def translate_batch(
     beam_width: int = 4,
     no_seeds: bool = False,
     data_compare: str = "auto",
+    n_seeds: int = 3,
     force: bool = False,
 ) -> list[dict]:
     """Translate all R scripts under input_dir, writing CSV tracking files.
@@ -89,6 +90,7 @@ def translate_batch(
                 beam_width=beam_width,
                 no_seeds=no_seeds,
                 data_compare=data_compare,
+                n_seeds=n_seeds,
                 output_dir=run_dir,
             )
             row = {

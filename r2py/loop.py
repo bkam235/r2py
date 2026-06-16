@@ -100,6 +100,8 @@ def run_loop(
     progress=None,
     retranslation_patience: int = 3,
     seed_translation: "str | None" = None,
+    n_seeds: int = 1,
+    seed_score_threshold: float = 0.5,
     **verify_kwargs,
 ) -> TranslateResult:
     """Run the beam/strict-improvement loop (§4.1).
@@ -227,12 +229,53 @@ def run_loop(
     _emit(progress, kind="seed_done", score=seed_decomp.aggregate)
     _record_seed_translations(seed, seed_decomp, script_map, library, script_id, entity_line_map)
 
+    # --- multi-seed: generate additional seeds when the first scores poorly ---
+    extra_seeds: list[Candidate] = []
+    if (
+        n_seeds > 1
+        and seed_translation is None
+        and seed_decomp.aggregate < seed_score_threshold
+    ):
+        for _seed_i in range(n_seeds - 1):
+            try:
+                alt_src, alt_elmap = stage2.translate(
+                    script_map, library,
+                    no_seeds=no_seeds, model=model,
+                    sidecar_filename=_sidecar_fn,
+                    script_relpath=_script_relpath,
+                )
+            except Exception:
+                continue
+            alt_hash = _state_hash(alt_src)
+            if alt_hash == _state_hash(seed):
+                continue
+            _alt_shim_err = validate_data_shim(alt_src, _shim_expected_names)
+            try:
+                _ast_mod.parse(alt_src)
+                if _alt_shim_err:
+                    raise SyntaxError(_alt_shim_err, ("<shim>", 0, 0, ""))
+                alt_decomp = stage4.verify(
+                    script_map, alt_src,
+                    data_compare=data_compare, use_judge=use_judge,
+                    entity_line_map=alt_elmap,
+                    sidecar_filename=_sidecar_fn,
+                    **verify_kwargs,
+                )
+            except SyntaxError as _syn:
+                alt_decomp = _make_syntax_error_report(entities, _syn, alt_elmap)
+            _emit(progress, kind="seed_done", score=alt_decomp.aggregate)
+            _record_seed_translations(
+                alt_src, alt_decomp, script_map, library, script_id, alt_elmap,
+            )
+            extra_seeds.append(Candidate(alt_src, alt_decomp.aggregate, alt_decomp))
+
     # Monotonically increasing counter for score_report artifact filenames.
     # Avoids collisions when beam_width > 1 produces multiple proposals per iteration.
     _report_idx = 1
 
-    beam: list[Candidate] = [Candidate(seed, seed_decomp.aggregate, seed_decomp)]
-    visited: set[str] = {_state_hash(seed)}
+    all_seeds = [Candidate(seed, seed_decomp.aggregate, seed_decomp)] + extra_seeds
+    beam: list[Candidate] = _top_k(all_seeds, beam_width)
+    visited: set[str] = {_state_hash(c.translation) for c in all_seeds}
     score_history = [seed_decomp]
     # Plateau / retranslation tracking.
     _stall_count = 0

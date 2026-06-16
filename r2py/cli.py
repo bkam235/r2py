@@ -42,6 +42,7 @@ def cmd_translate(args: argparse.Namespace) -> int:
         learned_policy=args.learned_policy,
         data_compare=args.data_compare,
         no_seeds=args.no_seeds,
+        n_seeds=args.n_seeds,
     )
     print(f"Score: {result.final_score:.3f}  Iterations: {result.iterations}")
     if result.final_exit_code != 0:
@@ -156,6 +157,8 @@ def main() -> None:
                              choices=["auto", "exact", "embedding"])
     p_translate.add_argument("--no-seeds", action="store_true", dest="no_seeds",
                              help="Ignore seed:true patterns (transfer experiment §6.7)")
+    p_translate.add_argument("--n-seeds", type=int, default=3, dest="n_seeds",
+                             help="Number of initial translation seeds; extras generated only if first scores < 0.5 (default: 3)")
 
     # library
     p_lib = sub.add_parser("library", help="Pattern Library operations")

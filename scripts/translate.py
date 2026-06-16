@@ -71,7 +71,8 @@ for r_script, py_script in scripts:
                        progress=_on_progress,
                        score_threshold=0.9,
                        max_iters=10,
-                       retranslation_patience=3)
+                       retranslation_patience=3,
+                       n_seeds=3)
 
 # from r2py import seed_from_translation
 # seed_from_translation(
