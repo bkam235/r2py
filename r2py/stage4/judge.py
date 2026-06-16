@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re as _re
+import sys as _sys
 
 from ..types import ComparatorResult, EffectClass
 
@@ -57,6 +58,7 @@ def judge_entity(
             max_tokens=256,
         )
     except Exception as exc:
+        print(f"r2py: judge LLM call failed: {exc}", file=_sys.stderr)
         return ComparatorResult(
             effect_class=EffectClass.DATA,
             score=0.0,

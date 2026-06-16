@@ -1,6 +1,7 @@
 """Translate ExternalSymbol R sources for Stage 2 (§5.4)."""
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -70,7 +71,8 @@ def translate_external_symbol(
         snippet, _imports, _effects = parse_entity_response(raw)
         cache_path.write_text(snippet, encoding="utf-8")
         return snippet
-    except Exception:
+    except Exception as exc:
+        print(f"r2py: package_translator failed for {pkg}::{entity.name}: {exc}", file=sys.stderr)
         return None
     finally:
         _in_progress.discard(pkg)

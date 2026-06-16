@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+import sys
 from typing import TYPE_CHECKING
 
 from . import llm as _llm
@@ -144,7 +145,8 @@ def review(
         revised, edits = _parse_response(raw, python_source)
         revised = _hoist_imports(revised)
         return revised, edits
-    except Exception:
+    except Exception as exc:
+        print(f"r2py: coherence pass failed: {exc}", file=sys.stderr)
         return python_source, []
 
 
