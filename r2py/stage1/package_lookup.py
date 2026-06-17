@@ -121,6 +121,7 @@ _BASE_R_NAMES: frozenset[str] = frozenset({
     "if", "for", "while", "repeat", "break", "next", "function", "switch",
     "tryCatch", "try", "withCallingHandlers", "simpleError", "simpleWarning",
     "do.call", "match.arg", "match.call", "sys.call", "missing",
+    "UseMethod", "NextMethod", "standardGeneric", "callNextMethod",
     "force", "identity", "Recall",
     "vector", "numeric", "character", "logical", "integer", "complex",
     "matrix", "array", "data.frame", "environment", "new.env",
@@ -140,7 +141,12 @@ _BASE_R_NAMES: frozenset[str] = frozenset({
 
 
 def _extract_r_calls(source: str) -> list[str]:
-    """Return unique non-base function names called in an R source snippet."""
+    """Return unique non-base function names called in an R source snippet.
+
+    Also detects S3 dispatch (UseMethod) and appends the corresponding .default
+    method so the recursive lookup fetches the actual implementation, not just
+    the generic stub.
+    """
     import re
     names = re.findall(r'\b([a-zA-Z.][a-zA-Z0-9._]*)\s*\(', source)
     seen: set[str] = set()
@@ -149,6 +155,18 @@ def _extract_r_calls(source: str) -> list[str]:
         if name not in _BASE_R_NAMES and name not in seen:
             seen.add(name)
             result.append(name)
+
+    # S3 dispatch: UseMethod("name") → also include name.default so the
+    # translator sees the vectorized/typed implementation, not just the stub.
+    use_method_names = re.findall(
+        r'\bUseMethod\s*\(\s*["\']([a-zA-Z.][a-zA-Z0-9._]*)["\']', source
+    )
+    for dispatch_name in use_method_names:
+        default_method = f"{dispatch_name}.default"
+        if default_method not in seen:
+            seen.add(default_method)
+            result.append(default_method)
+
     return result
 
 

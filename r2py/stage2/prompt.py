@@ -50,8 +50,50 @@ R-to-Python semantic notes (always apply):
 - R's x:y produces an inclusive range; use range(x, y+1) in Python.
 - Negative R indices exclude elements, not index from the end.
 - R has no scalars; length-1 vectors should stay as length-1 arrays where behaviour differs.
+- CRITICAL — When translating R functions that use boolean-indexed assignment (e.g. `x[x > 0] <- 0`
+  or `cc[RB == 0 | NB == 0] <- 0L`), always wrap parameters with np.atleast_1d() so they are at
+  least 1-dimensional. Using np.asarray() alone on a Python int produces a 0-d array, which raises
+  TypeError on boolean indexing. Pattern: use `x = np.atleast_1d(np.asarray(x, dtype=np.int64))`
+  at the top of any function that performs boolean-indexed writes on its parameters.
 - <<- super-assignment escapes the local scope; model with nonlocal or a mutable container.
 - NSE (non-standard eval) in dplyr/ggplot2 must be rewritten as explicit Python equivalents.
+- CRITICAL — R vector constructors: complex(n), raw(n), logical(n), integer(n),
+  character(n), numeric(n) called with a single integer n create a VECTOR of n elements
+  (NOT a type conversion). Translate as: complex(n) → np.zeros(int(n), dtype=complex),
+  raw(n) → np.zeros(int(n), dtype=np.uint8), logical(n) → np.zeros(int(n), dtype=bool),
+  integer(n) → np.zeros(int(n), dtype=np.int32), character(n) → [''] * int(n),
+  numeric(n) / double(n) → np.zeros(int(n)). Annotated with vector_constructor flag.
+  Do NOT use bytes(int(n)) for raw(n) — np.asarray(bytes_obj) produces dtype=object,
+  losing element-type information that downstream functions need.
+- CRITICAL — R `raw` type maps to Python `np.uint8` dtype with RECORDBYTES=1. In any
+  RECORDBYTES dtype-detection table, always include `dtype == np.uint8 → RECORDBYTES = 1`
+  (not 4 or 8). When passing `raw(n)` to a function, use `np.zeros(int(n), dtype=np.uint8)`.
+- CRITICAL — R positional argument binding: When translating `f(1, 100, 10)`, the args
+  bind in order to the formal parameters. If the R signature is `f(x=NULL, ..., opt=NULL)`,
+  then `f(1, 100, 10)` sets `x=1` and `...=list(100, 10)` — NOT `f(from=1, to=100, by=10)`.
+  Always inspect the actual R function signature before translating a call. Do not assume
+  positional args map to `from/to/by` or any other named params unless you verify the
+  function's formal parameter list.
+- CRITICAL — R parameter names that are Python reserved keywords: R uses `from` as a
+  parameter name (e.g. `chunks(from=1, to=100, by=10)`). When translating such a function,
+  rename `from` to `from_val` CONSISTENTLY in BOTH the function definition AND all call sites.
+  Never use `from_=1` at a call site if the function definition uses `from_val` — this will
+  raise TypeError: unexpected keyword argument. The standard rename: R `from` → Python `from_val`.
+- CRITICAL — R partial argument matching: R allows abbreviated names at call sites, e.g.
+  `chunk(raw(n), length=3)` where `length` partially matches `length.out`. In Python there is
+  no partial matching — translate both the definition and the call site with the FULL unambiguous
+  Python-safe name. `length.out` → `length_out` everywhere. Never pass `length=3` to a function
+  that has `length_out` as its parameter name.
+- R named list printing: when R auto-prints a named list, element names that contain
+  special characters (spaces, colons, etc.) are quoted with backticks, e.g.
+  '`' + key + '`' instead of just key. When reproducing R list output in Python, wrap
+  keys containing non-identifier characters in backticks: f"$`{key}`".
+  CRITICAL: when a previous entity already established a print loop for these objects,
+  reuse that EXACT same format for all subsequent calls to the same function.
+- R NA in printed output: R's NA value prints as the string "NA" (not Python's None,
+  nan, or empty string). When R output contains "maxindex NA", the Python translation
+  must also print "maxindex NA" — use `"NA" if val is None or (isinstance(val, float)
+  and math.isnan(val)) else str(int(val))` when formatting NA-able numeric values.
 
 Output format (use these exact XML tags — no other text outside the tags):
 <python>
@@ -109,6 +151,25 @@ def build_entity_prompt(
                  f"Predicted effects: {_effects_str(entity)}")
 
     parts.append(f"## R source\n```r\n{r_source}\n```")
+
+    # If R produced output when this entity was evaluated, show it so the LLM
+    # knows exactly what format to reproduce.  This is especially important for
+    # entities that auto-print S3 objects with custom print methods (e.g. ri,
+    # ggplot, data.frame) where the format cannot be inferred from source alone.
+    _entity_bundles = getattr(script_map, "entity_bundles", {})
+    _r_entity_bundle = _entity_bundles.get(entity.id)
+    if _r_entity_bundle is not None:
+        _r_stdout = (_r_entity_bundle.stdout or "").strip()
+        if _r_stdout:
+            _stdout_lines = _r_stdout.splitlines()
+            if len(_stdout_lines) > 50:
+                _r_stdout = "\n".join(_stdout_lines[:50]) + f"\n... ({len(_stdout_lines) - 50} more lines truncated)"
+            parts.append(
+                "## Expected R output\n"
+                "R produced the following output when this entity was evaluated. "
+                "Your Python translation MUST produce output that matches this format exactly:\n"
+                f"```\n{_r_stdout}\n```"
+            )
 
     if annotations:
         parts.append(f"## Stage 1 annotations\n{annotations}")
@@ -517,14 +578,32 @@ def _repeated_call_hint(
     defined = already_defined or set()
 
     if name in defined:
+        # Check whether this entity has per-entity R stdout (meaning R produced
+        # a specific output format that must be matched, not just auto-print).
+        _entity_bundles = getattr(script_map, "entity_bundles", {})
+        _r_eb = _entity_bundles.get(entity.id)
+        _has_custom_output = (
+            _r_eb is not None
+            and (_r_eb.stdout or "").strip()
+        )
+        if _has_custom_output:
+            print_hint = (
+                f"The 'Expected R output' section above shows the exact output this "
+                f"entity must produce. Do NOT use `print({name}(...))` alone — the raw "
+                f"Python repr will NOT match R's format. Use the same output-formatting "
+                f"approach that produced the first `{name}` entity's output."
+            )
+        else:
+            print_hint = (
+                f"If the R code is a bare call like `{name}(...)` at the top level, "
+                f"translate it as `print({name}(...))` to match R's auto-print behaviour."
+            )
         return (
             f"## Use existing definition — do NOT redefine\n"
             f"`{name}` was already translated as a Python {construct} by an earlier "
             f"entity in this script. Do NOT redefine or re-implement it here. "
             f"You MUST still translate this entity's R code — call `{name}` with the "
-            f"appropriate arguments. If the R code is a bare call like `{name}(...)` "
-            f"at the top level, translate it as `print({name}(...))` to match R's "
-            f"auto-print behaviour."
+            f"appropriate arguments. {print_hint}"
         )
     else:
         return (

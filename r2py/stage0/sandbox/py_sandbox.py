@@ -133,13 +133,20 @@ class PySandbox:
                 (workdir / fn).write_text(content, encoding="utf-8")
 
         t_start = time.monotonic()
-        result = subprocess.run(
-            [str(python), str(script_path)],
-            cwd=str(workdir),
-            capture_output=True,
-            timeout=timeout_s,
-            env=scrub_env(),
-        )
+        try:
+            result = subprocess.run(
+                [str(python), str(script_path)],
+                cwd=str(workdir),
+                capture_output=True,
+                timeout=timeout_s,
+                env=scrub_env(),
+            )
+        except subprocess.TimeoutExpired:
+            return EffectBundle(
+                exit_code=1,
+                stderr=f"TimeoutExpired: script exceeded {timeout_s}s sandbox limit",
+                preamble_lines=_preamble_lines,
+            )
         run_time = time.monotonic() - t_start
 
         if result.returncode != 0:
@@ -148,13 +155,20 @@ class PySandbox:
             if pkg:
                 _auto_install_py(pkg)
                 t_retry = time.monotonic()
-                result = subprocess.run(
-                    [str(python), str(script_path)],
-                    cwd=str(workdir),
-                    capture_output=True,
-                    timeout=timeout_s,
-                    env=scrub_env(),
-                )
+                try:
+                    result = subprocess.run(
+                        [str(python), str(script_path)],
+                        cwd=str(workdir),
+                        capture_output=True,
+                        timeout=timeout_s,
+                        env=scrub_env(),
+                    )
+                except subprocess.TimeoutExpired:
+                    return EffectBundle(
+                        exit_code=1,
+                        stderr=f"TimeoutExpired: script exceeded {timeout_s}s sandbox limit (after module install)",
+                        preamble_lines=_preamble_lines,
+                    )
                 run_time += time.monotonic() - t_retry
 
         check_escape(home_snap, workdir)

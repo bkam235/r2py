@@ -78,7 +78,17 @@
       "withr.with_locale-context-manager",
       "withr.with-locale-context-manager",
       "withr.with-locale-context-not-code",
-      "googlesheets4-mock-auth"
+      "googlesheets4-mock-auth",
+      "syntax.remove-checkpoint-suffix",
+      "ri-maxindex-nan-handling",
+      "nan-safe-int-conversion",
+      "bit.ri-nan-conversion",
+      "param-name-mismatch",
+      "bit.chunk-to-chunks",
+      "r-param-alias-kwargs",
+      "bit.ri-nan-handling",
+      "ri-nan-handling",
+      "bit.nan-maxindex-handling"
     ],
     "base:": [
       "base.c_to_list",
@@ -127,7 +137,18 @@
       "withr.with-locale-context-manager",
       "withr.with-locale-context-not-code",
       "withr.with-locale-code-param",
-      "googlesheets4-mock-auth"
+      "googlesheets4-mock-auth",
+      "syntax.remove-checkpoint-suffix",
+      "ri-maxindex-nan-handling",
+      "nan-safe-int-conversion",
+      "bit.ri-nan-conversion",
+      "param-name-mismatch",
+      "bit.chunk-to-chunks",
+      "auto-print-to-stdout",
+      "r-param-alias-kwargs",
+      "bit.ri-nan-handling",
+      "ri-nan-handling",
+      "bit.nan-maxindex-handling"
     ],
     "shape:3ec29fc1": [
       "r-suppress-startup-messages"
@@ -166,12 +187,12 @@
     },
     "auto-print-to-stdout": {
       "confidence": "confirmed",
-      "evidence_count": 14,
-      "contradictions_count": 13,
+      "evidence_count": 20,
+      "contradictions_count": 24,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 27
+      "contradicted_at_run": 53
     },
     "base.c_to_list": {
       "confidence": "tentative",
@@ -686,11 +707,11 @@
     "suppress-messages": {
       "confidence": "confirmed",
       "evidence_count": 26,
-      "contradictions_count": 79,
+      "contradictions_count": 80,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 19
+      "contradicted_at_run": 43
     },
     "suppress-package-startup-noop": {
       "confidence": "tentative",
@@ -951,7 +972,97 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "syntax.remove-checkpoint-suffix": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "ri-maxindex-nan-handling": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "nan-safe-int-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "bit.ri-nan-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "param-name-mismatch": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "bit.chunk-to-chunks": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r-param-alias-kwargs": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "bit.ri-nan-handling": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "ri-nan-handling": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "bit.nan-maxindex-handling": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 34
+  "total_runs": 55
 }

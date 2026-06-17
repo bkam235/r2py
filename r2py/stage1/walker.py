@@ -356,6 +356,14 @@ _DISPATCH_FUNCTIONS = frozenset({
     "is", "inherits", "class",
 })
 
+# R vector constructor functions: called with a single integer argument n they create
+# a vector of length n — NOT a type conversion.  Annotated so Stage 2 translates them
+# as np.zeros / bytes / list-of-empty rather than the Python scalar equivalents.
+_R_VECTOR_CONSTRUCTORS = frozenset({
+    "complex", "raw", "logical", "integer", "character",
+    "numeric", "double", "single",
+})
+
 
 def _annotate_r_semantics(entities: dict[EntityId, Entity], ast_root: AstNode) -> None:
     """Scan AST and attach §3.7 semantic flags to relevant entities.
@@ -441,6 +449,29 @@ def _annotate_r_semantics(entities: dict[EntityId, Entity], ast_root: AstNode) -
             fn = _call_name(node)
             if fn == "length":
                 _flag_enclosing(node, entities_by_line,"scalar_vs_vector")
+
+        # R vector constructors: complex(n), raw(n), logical(n), integer(n), etc.
+        # Called with a single numeric argument they create a length-n vector, NOT a
+        # type conversion. Flag so Stage 2 knows to use np.zeros / bytes / [] not
+        # Python's scalar-producing equivalents.
+        if kind == "call":
+            fn = _call_name(node)
+            if fn in _R_VECTOR_CONSTRUCTORS:
+                args = node.child_by_field("arguments")
+                if args:
+                    arg_children = [c for c in args.named_children()
+                                    if c.kind in ("argument", "float", "integer",
+                                                  "identifier", "call", "binary_operator")]
+                    # Heuristic: single positional argument that looks numeric (no keyword =)
+                    if len(arg_children) == 1:
+                        child = arg_children[0]
+                        if child.kind == "argument":
+                            # argument node: check it has no keyword label (positional)
+                            key = child.child_by_field("name")
+                            if key is None or key.text in ("length.out", "n", ""):
+                                _flag_enclosing(node, entities_by_line, "vector_constructor")
+                        elif child.kind in ("float", "integer", "identifier", "call"):
+                            _flag_enclosing(node, entities_by_line, "vector_constructor")
 
 
 def _flag_enclosing(
