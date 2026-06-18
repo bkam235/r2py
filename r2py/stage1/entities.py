@@ -70,3 +70,5 @@ class Entity:
     # in the script (i.e. free variables — R built-in datasets, lazy-loaded objects,
     # etc.).  Populated by the walker; Stage 2 surfaces observed values to the LLM.
     free_variable_refs: list[str] = field(default_factory=list)
+    # R match.call() resolution for FUNCTION_CALL entities, e.g. "chunk(x = 1, 100, 10)".
+    resolved_call: str | None = None

@@ -48,6 +48,7 @@ input_filenames = ["bit__rd_example__chunk_Rd.R"] #translate this specific scrip
 # xfun__rd_example__cache_rds_Rd.py 0.927
 # googlesheets4__rd_example__sheet_append_Rd.R 0.992
 # progressr__rd_example__handler_rpushbullet_Rd.R 0.990
+# bit__rd_example__chunk_Rd.R 0.826 with Sonnet-4-6
 
 # from r2py import seed_from_translation
 # seed_from_translation(
@@ -72,11 +73,13 @@ for r_script, py_script in scripts:
                        py_script,
                        library=lib,
                        resume=True,
-                       model="claude-haiku-4-5",
+                    #    model="claude-haiku-4-5",
+                       model="claude-sonnet-4-6",
                     #    model="ollama:gemma4:31b-cloud",
+                       meta_model="claude-sonnet-4-6",
                        progress=_on_progress,
                        score_threshold=0.9,
-                       max_iters=5,
+                       max_iters=10,
                        retranslation_patience=3,
-                       n_seeds=3)
+                       n_seeds=2)
 

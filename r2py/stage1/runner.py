@@ -45,17 +45,18 @@ def run_script_checkpointed(
     entities: dict,
     capture: CaptureSpec = DEFAULT_CAPTURE,
     timeout_s: float = 60,
-) -> "tuple[EffectBundle, dict[str, EffectBundle]]":
+) -> "tuple[EffectBundle, dict[str, EffectBundle], dict[str, dict]]":
     """Run R source with per-entity checkpoint captures.
 
     Injects a `.r2py_cp(eid)` call after each entity's last source line.
     The checkpoint function serializes new namespace variables (and graphics count
     delta) to ``_r2py_cp_{eid}.json`` files in the workdir during a single R run.
 
-    Returns ``(full_bundle, entity_bundles)`` where ``entity_bundles`` maps
-    entity_id → per-entity EffectBundle delta.  Falls back silently: if
-    jsonlite is unavailable or the R run fails, ``entity_bundles`` is empty
-    and ``full_bundle`` is the normal whole-script bundle.
+    Returns ``(full_bundle, entity_bundles, entity_types)`` where
+    ``entity_bundles`` maps entity_id → per-entity EffectBundle delta and
+    ``entity_types`` maps entity_id → {var_name: {"class": ..., "typeof": ...}}.
+    Falls back silently: if jsonlite is unavailable or the R run fails,
+    ``entity_bundles`` and ``entity_types`` are empty.
     """
     import json as _json
 
@@ -106,10 +107,11 @@ def run_script_checkpointed(
                 capture=capture,
                 timeout_s=timeout_s,
             )
-            return full_bundle, {}
+            return full_bundle, {}, {}
 
         # Parse per-entity checkpoint files.
         entity_bundles: dict[str, EffectBundle] = {}
+        entity_types: dict[str, dict] = {}
         for _, eid in entity_boundaries:
             safe_eid = eid.replace("/", "_").replace(":", "_")
             cp_path = workdir / f"_r2py_cp_{safe_eid}.json"
@@ -158,10 +160,13 @@ def run_script_checkpointed(
                     graphics=graphics_field,
                 )
                 entity_bundles[eid] = eb
+                types_data = cp_data.get("types", {})
+                if isinstance(types_data, dict) and types_data:
+                    entity_types[eid] = types_data
             except Exception:
                 continue
 
-        return full_bundle, entity_bundles
+        return full_bundle, entity_bundles, entity_types
 
 
 # Static part of the R checkpoint preamble: state variables, stdout sink, and
@@ -215,6 +220,13 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
         data_parts <- c(data_parts, paste0('"', v, '":', as.character(json_val)))
       }
     }
+    types_parts <- character(0)
+    for (v in new_vars) {
+      obj <- get(v, envir = .GlobalEnv)
+      cls <- paste(class(obj), collapse = ", ")
+      tp <- typeof(obj)
+      types_parts <- c(types_parts, paste0('"', v, '":{"class":"', cls, '","typeof":"', tp, '"}'))
+    }
     cur_fig_count <- .r2py_plot_count
     # Debounce: collapse to {0,1} per entity. High-level R plotters that use
     # layouts (filled.contour, layout(), par(mfrow=...)) fire plot.new multiple
@@ -236,10 +248,12 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
       ""
 
     data_json <- paste0("{", paste(data_parts, collapse = ","), "}")
+    types_json <- paste0("{", paste(types_parts, collapse = ","), "}")
     stdout_json <- jsonlite::toJSON(stdout_delta, auto_unbox = TRUE)
     uncapturable_json <- jsonlite::toJSON(uncapturable_vars, auto_unbox = FALSE)
     cp_json <- paste0(
       '{"data":', data_json,
+      ',"types":', types_json,
       ',"graphics":', as.integer(graphics_delta),
       ',"stdout":', stdout_json,
       ',"uncapturable":', uncapturable_json,

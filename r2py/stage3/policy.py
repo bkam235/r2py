@@ -29,6 +29,7 @@ def propose(
     history: "EditHistory",
     epsilon: float = 0.2,
     model: str = _llm._DEFAULT_MODEL,
+    meta_model: str = _llm._DEFAULT_MODEL,
     _collector: object = None,
 ) -> Edit:
     """Propose a typed edit targeting the weakest entity in the candidate.
@@ -51,7 +52,7 @@ def propose(
 
     # Max edits tried for any single entity before moving on (prevents cycling when
     # the LLM generates slight param variations that all produce the same bad score).
-    _MAX_ATTEMPTS_PER_ENTITY = 3
+    _MAX_ATTEMPTS_PER_ENTITY = 5
 
     # Scan ALL entities for stubs before the score-ordered loop.
     # Stub entities fall back to the global data score in stage 4 (because `pass`
@@ -141,6 +142,61 @@ def propose(
 
         failure_class = _dominant_failure_class_from_feedback(feedback)
 
+        # Gap 3: extract per-entity R expected output (ground truth).
+        # Gap 5: If entity_bundles lack stdout AND this is a repeat attempt,
+        # run a diagnostic R sandbox probe to get ground truth.
+        r_expected = _entity_r_expected_output(eid, script_map)
+        if not r_expected and history.count_for_entity(eid) >= 2:
+            r_expected = _diagnostic_r_probe(entity, script_map)
+
+        # Gap 4: extract called function context from prior entities
+        called_ctx = _called_function_context(entity, candidate.translation, script_map)
+
+        # Gap 4 extension: R source of the called function
+        r_fn_source = _called_function_r_source(entity, script_map)
+
+        # Gap 2/5: extract print-format hint from the first entity that used this name
+        fmt_hint = _format_hint_for_entity(entity, candidate.translation, script_map)
+
+        # Resolved positional arg binding from Stage 1's match.call() probe
+        resolved_call = getattr(entity, "resolved_call", None) or ""
+
+        # Actual Python output for this entity (from previous verification run)
+        py_bundles = getattr(candidate.decomp, "py_entity_bundles", {})
+        py_eb = py_bundles.get(eid)
+        py_actual_output = (getattr(py_eb, "stdout", "") or "").strip() if py_eb else ""
+
+        # R type/class info for variables produced by this entity
+        r_type_info = getattr(script_map, "entity_types", {}).get(eid, {})
+
+        # Meta-diagnosis: when an entity has 2+ rejections, ask a stronger model
+        # to diagnose why edits keep failing before the next attempt.
+        _r_src = _entity_r_source(entity, script_map)
+        meta_diag = ""
+        if history.count_for_entity(eid) >= 2:
+            _rej_count = history.count_for_entity(eid)
+            print(f"[Meta]    Diagnosing stuck entity {eid!r} ({_rej_count} rejections) via {meta_model}")
+            try:
+                meta_msgs = _prompt.build_meta_diagnosis_prompt(
+                    entity=entity,
+                    entity_score=entity_score,
+                    history=history,
+                    translation=candidate.translation,
+                    r_source=_r_src,
+                    r_expected_output=r_expected,
+                    py_actual_output=py_actual_output,
+                    resolved_call=resolved_call,
+                    called_function_context=called_ctx,
+                )
+                meta_diag = _llm.call(
+                    meta_msgs, _prompt.METADIAG_SYSTEM_PROMPT,
+                    model=meta_model, max_tokens=1024,
+                )
+                print(f"[Meta]    Diagnosis: {meta_diag[:200]}")
+            except Exception as _meta_exc:
+                print(f"[Meta]    Diagnosis failed: {_meta_exc}")
+                meta_diag = ""
+
         messages = _prompt.build_edit_prompt(
             entity=entity,
             entity_score=entity_score,
@@ -150,8 +206,16 @@ def propose(
             history=history,
             exploit=exploit,
             preferred_edit_kind=bandit_hint,
-            r_source=_entity_r_source(entity, script_map),
+            r_source=_r_src,
             failure_class=failure_class,
+            r_expected_output=r_expected,
+            called_function_context=called_ctx,
+            r_function_source=r_fn_source,
+            format_hint=fmt_hint,
+            resolved_call=resolved_call,
+            r_type_info=r_type_info,
+            py_actual_output=py_actual_output,
+            meta_diagnosis=meta_diag,
         )
 
         raw = _llm.call(messages, _prompt.STAGE3_SYSTEM_PROMPT, model=model)
@@ -320,6 +384,285 @@ def _get_entity(script_map: "ScriptMap", eid: str) -> object | None:
     """Return the Entity for eid, or None if script_map has no entities dict."""
     entities = getattr(script_map, "entities", {})
     return entities.get(eid)
+
+
+# ---------------------------------------------------------------------------
+# Gap 3: Per-entity R expected output
+# ---------------------------------------------------------------------------
+
+def _entity_r_expected_output(eid: str, script_map: object) -> str:
+    """Return the R stdout for an entity from Stage 1's per-entity bundles."""
+    entity_bundles = getattr(script_map, "entity_bundles", {})
+    bundle = entity_bundles.get(eid)
+    if bundle is None:
+        return ""
+    return (getattr(bundle, "stdout", "") or "").strip()
+
+
+# ---------------------------------------------------------------------------
+# Gap 5: Diagnostic R sandbox probe for stuck entities
+# ---------------------------------------------------------------------------
+
+def _diagnostic_r_probe(entity: object, script_map: object) -> str:
+    """Run the entity's R source in the Stage 0 sandbox to get ground truth output.
+
+    Invoked as a last resort when entity_bundles lack stdout for this entity
+    and multiple edit attempts have already failed.  Builds a minimal R script
+    from the full script source up to and including this entity, runs it, and
+    returns the captured stdout.
+    """
+    source = getattr(script_map, "source", "") or ""
+    if not source:
+        return ""
+    entity_span = getattr(entity, "source_span", None)
+    if entity_span is None:
+        return ""
+
+    # Build a script from the beginning through this entity's end line.
+    lines = source.splitlines()
+    end = min(len(lines), entity_span.end_line + 1)
+    r_script = "\n".join(lines[:end])
+    if not r_script.strip():
+        return ""
+
+    try:
+        from ..stage0.sandbox.r_sandbox import RSandbox
+        sandbox = RSandbox()
+        bundle = sandbox.run(r_script, capture={"stdout"}, timeout_s=30)
+        stdout = (getattr(bundle, "stdout", "") or "").strip()
+        # The full-script stdout includes all prior entities' output too.
+        # Try to isolate this entity's contribution by subtracting prior output.
+        prior_stdout = ""
+        entity_bundles = getattr(script_map, "entity_bundles", {})
+        entities = getattr(script_map, "entities", {})
+        for eid, ent in entities.items():
+            ent_span = getattr(ent, "source_span", None)
+            if ent_span is not None and ent_span.end_line < entity_span.start_line:
+                eb = entity_bundles.get(eid)
+                if eb is not None:
+                    prior_stdout += (getattr(eb, "stdout", "") or "")
+        # Rough isolation: if total stdout starts with prior stdout, take the rest
+        prior_stripped = prior_stdout.strip()
+        if prior_stripped and stdout.startswith(prior_stripped):
+            stdout = stdout[len(prior_stripped):].strip()
+        return stdout
+    except Exception:
+        return ""
+
+
+# ---------------------------------------------------------------------------
+# Gap 4: Cross-entity context (function/name definitions from prior entities)
+# ---------------------------------------------------------------------------
+
+def _called_function_context(entity: object, translation: str, script_map: object) -> str:
+    """Extract the Python definition of a function/name the target entity calls.
+
+    When the target entity is a FUNCTION_CALL and the function was defined by a
+    prior entity, return the function's signature + first few lines from the
+    current translation.  Also works for VARIABLE and other entity kinds that
+    reference names defined by prior entities.
+    """
+    name = getattr(entity, "name", "") or ""
+    if not name:
+        return ""
+
+    entities = getattr(script_map, "entities", {})
+    entity_span = getattr(entity, "source_span", None)
+    if entity_span is None:
+        return ""
+
+    # Find a prior entity that defines this name
+    definer_eid = None
+    for eid, ent in entities.items():
+        ent_name = getattr(ent, "name", "")
+        ent_span = getattr(ent, "source_span", None)
+        if ent_name == name and ent_span is not None:
+            if ent_span.start_line < entity_span.start_line:
+                definer_eid = eid
+                break
+
+    if definer_eid is None:
+        return ""
+
+    # Extract the full entity code then find the specific function definition
+    full_code = _extract_entity_code(translation, definer_eid, max_lines=200)
+    if not full_code:
+        return ""
+
+    # Look for `def name(` in the entity code and extract that function
+    fn_code = _extract_function_def(full_code, name)
+    if fn_code:
+        return fn_code
+
+    # Fallback: return first 30 lines if no function def found
+    lines = full_code.splitlines()
+    if len(lines) > 30:
+        lines = lines[:30] + [f"... ({len(lines) - 30} more lines)"]
+    return "\n".join(lines)
+
+
+def _extract_entity_code(translation: str, eid: str, max_lines: int = 30) -> str:
+    """Extract the Python code for a given entity from the assembled translation."""
+    sentinel = f"# r2py:entity:{eid}\n"
+    idx = translation.find(sentinel)
+    if idx == -1:
+        return ""
+    after = translation[idx + len(sentinel):]
+
+    # Find the next entity sentinel or end of file
+    next_sentinel = re.search(r"^# r2py:entity:", after, re.MULTILINE)
+    if next_sentinel:
+        code = after[:next_sentinel.start()]
+    else:
+        code = after
+
+    lines = code.strip().splitlines()
+    if len(lines) > max_lines:
+        lines = lines[:max_lines] + [f"... ({len(lines) - max_lines} more lines)"]
+    return "\n".join(lines)
+
+
+def _extract_function_def(code: str, name: str, max_lines: int = 30) -> str:
+    """Extract a `def name(...)` block from a larger code string."""
+    lines = code.splitlines()
+    start_idx = None
+    for i, line in enumerate(lines):
+        if re.match(rf"^def\s+{re.escape(name)}\s*\(", line):
+            start_idx = i
+            break
+    if start_idx is None:
+        return ""
+    # Collect the function body (indented lines after the def line)
+    end_idx = start_idx + 1
+    for j in range(start_idx + 1, len(lines)):
+        stripped = lines[j].strip()
+        if stripped == "":
+            end_idx = j + 1
+            continue
+        if lines[j][0] != " " and lines[j][0] != "\t":
+            break
+        end_idx = j + 1
+    result_lines = lines[start_idx:end_idx]
+    if len(result_lines) > max_lines:
+        result_lines = result_lines[:max_lines] + [f"... ({len(result_lines) - max_lines} more lines)"]
+    return "\n".join(result_lines)
+
+
+def _called_function_r_source(entity: object, script_map: object) -> str:
+    """Return the R source of the function this entity calls, via package_lookup.
+
+    Only for FUNCTION_CALL entities where the function source is available.
+    """
+    from ..types import EntityKind
+
+    kind = getattr(entity, "kind", None)
+    if kind != EntityKind.FUNCTION_CALL:
+        return ""
+
+    name = getattr(entity, "name", "") or ""
+    if not name:
+        return ""
+
+    # Check if this function was defined by a prior entity (in-script definition)
+    # — if so, the R source is already in the ScriptMap, not a package.
+    # Only match FUNCTION_DEF entities, not FUNCTION_CALL entities that happen
+    # to share the same name (those are call sites, not definitions).
+    entities = getattr(script_map, "entities", {})
+    entity_span = getattr(entity, "source_span", None)
+    for eid, ent in entities.items():
+        ent_name = getattr(ent, "name", "")
+        ent_kind = getattr(ent, "kind", None)
+        ent_span = getattr(ent, "source_span", None)
+        if (ent_name == name and ent_kind == EntityKind.FUNCTION_DEF
+                and ent_span is not None and entity_span is not None):
+            if ent_span.start_line < entity_span.start_line:
+                source = getattr(script_map, "source", "") or ""
+                if source:
+                    lines = source.splitlines()
+                    start = ent_span.start_line
+                    end = min(len(lines), ent_span.end_line + 1)
+                    r_code = "\n".join(lines[start:end])
+                    if len(r_code) > 2000:
+                        r_code = r_code[:2000] + "\n... (truncated)"
+                    return r_code
+                return ""
+
+    # Not in-script — try package_lookup
+    imported_pkgs: list[str] = [
+        e.package
+        for e in entities.values()
+        if getattr(e, "kind", None) == EntityKind.LIBRARY_IMPORT and e.package
+    ]
+    if not imported_pkgs:
+        return ""
+
+    try:
+        from ..stage1.package_lookup import get_function_source_recursive
+        source = get_function_source_recursive(imported_pkgs, name)
+        if source and len(source) > 2000:
+            source = source[:2000] + "\n... (truncated)"
+        return source or ""
+    except Exception:
+        return ""
+
+
+# ---------------------------------------------------------------------------
+# Gap 2: Format hint from prior entity's print pattern
+# ---------------------------------------------------------------------------
+
+def _format_hint_for_entity(entity: object, translation: str, script_map: object) -> str:
+    """Extract a print-formatting pattern from the first entity that used this name.
+
+    When multiple entities call the same function (e.g. chunk, chunk_1, chunk_2),
+    the first entity's translation typically includes a print-formatting loop.
+    Later entities should reuse that format, not fall back to print(result).
+    """
+    name = getattr(entity, "name", "") or ""
+    if not name:
+        return ""
+
+    entities = getattr(script_map, "entities", {})
+    entity_span = getattr(entity, "source_span", None)
+    if entity_span is None:
+        return ""
+
+    # Find the first entity with the same name that was translated earlier
+    first_eid = None
+    first_start = entity_span.start_line
+    for eid, ent in entities.items():
+        ent_name = getattr(ent, "name", "")
+        ent_span = getattr(ent, "source_span", None)
+        if ent_name == name and ent_span is not None:
+            if ent_span.start_line < first_start:
+                first_start = ent_span.start_line
+                first_eid = eid
+
+    if first_eid is None:
+        return ""
+
+    # Extract the first entity's FULL code to find print-formatting pattern
+    first_code = _extract_entity_code(translation, first_eid, max_lines=500)
+    if not first_code:
+        return ""
+
+    # Look for a print loop (for key in result: ... print(...))
+    lines = first_code.splitlines()
+    format_lines: list[str] = []
+    in_format = False
+    for line in lines:
+        stripped = line.strip()
+        if "for " in stripped and " in " in stripped and ("result" in stripped or "ret" in stripped):
+            in_format = True
+        if in_format:
+            format_lines.append(line)
+            if stripped and not stripped.startswith("#") and not stripped.startswith("for "):
+                # Check if we've left the loop body (non-indented line after loop start)
+                if format_lines and len(format_lines) > 1 and not line.startswith(" ") and not line.startswith("\t"):
+                    break
+    if not format_lines:
+        return ""
+
+    return "\n".join(format_lines).strip()
 
 
 # ---------------------------------------------------------------------------

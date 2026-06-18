@@ -16,6 +16,7 @@ def translate(
     *,
     library=None,                    # inject a PatternLibrary (or _FrozenLibrary); None → get_library()
     model: "str | None" = None,  # Anthropic model ID, or "ollama:<name>" for local Ollama; None → _DEFAULT_MODEL
+    meta_model: "str | None" = None,  # stronger model for meta-diagnosis of stuck entities; None → model
     max_iters: int = 8,
     score_threshold: float = 0.85,
     beam_width: int = 4,
@@ -74,6 +75,7 @@ def translate(
         output_dir=Path(output_dir) if output_dir is not None else None,
         checkpoint_path=Path(py_path),
         model=model,
+        meta_model=meta_model or model,
         progress=progress,
         retranslation_patience=retranslation_patience,
         seed_translation=seed_translation,

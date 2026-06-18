@@ -97,11 +97,12 @@ def run_loop(
     output_dir: "Path | None" = None,
     checkpoint_path: "Path | None" = None,
     model: str = _LLM_DEFAULT_MODEL,
+    meta_model: str = _LLM_DEFAULT_MODEL,
     progress=None,
     retranslation_patience: int = 3,
     seed_translation: "str | None" = None,
     n_seeds: int = 1,
-    seed_score_threshold: float = 0.5,
+    seed_score_threshold: float = 0.7,
     **verify_kwargs,
 ) -> TranslateResult:
     """Run the beam/strict-improvement loop (§4.1).
@@ -388,6 +389,7 @@ def run_loop(
                     history=parent_history,
                     iteration=i,
                     model=model,
+                    meta_model=meta_model,
                     _collector=collector,
                 )
             except RuntimeError:
@@ -521,6 +523,8 @@ def run_loop(
                     histories[new_hash] = EditHistory(
                         tried=list(parent_hist.tried) if parent_hist else []
                     )
+                    if parent_hist:
+                        parent_hist.copy_to(histories[new_hash])
                 _eid = p.edit.entity_ids[0] if p.edit.entity_ids else ""
                 _ent = getattr(script_map, "entities", {}).get(_eid)
                 _hash = _shape_hash(_ent) if _ent is not None else ""
@@ -554,7 +558,23 @@ def run_loop(
                 outcome = "tie"
                 delta = 0.0
                 library.record_tie(p.edit, script_id=script_id)
-                _record_rejections(histories, proposal_parent_hashes, idx, p.edit)
+                if _target_entity_improved(p, proposal_parent_decomps, idx):
+                    # Entity progressed even though the aggregate didn't —
+                    # carry history forward so the new state can build on this.
+                    new_hash = _state_hash(p.candidate)
+                    if new_hash not in histories:
+                        parent_hist = histories.get(proposal_parent_hashes[idx])
+                        histories[new_hash] = EditHistory(
+                            tried=list(parent_hist.tried) if parent_hist else []
+                        )
+                        if parent_hist:
+                            parent_hist.copy_to(histories[new_hash])
+                else:
+                    _record_rejections(histories, proposal_parent_hashes, idx, p.edit)
+                    _record_regression_note(
+                        histories, proposal_parent_hashes, idx, p.edit,
+                        proposal_parent_decomps, p.new_decomp,
+                    )
             else:
                 outcome = "rejected"
                 delta = p.new_score - p.parent_score
@@ -564,6 +584,10 @@ def run_loop(
                 if p.edit.pattern_id:
                     contradictions_added.append(p.edit.pattern_id)
                 _record_rejections(histories, proposal_parent_hashes, idx, p.edit)
+                _record_regression_note(
+                    histories, proposal_parent_hashes, idx, p.edit,
+                    proposal_parent_decomps, p.new_decomp,
+                )
 
             _emit(progress, kind="proposal", iteration=i,
                   edit_kind=p.edit.kind.value,
@@ -586,16 +610,19 @@ def run_loop(
                 all_transitions.append(tr)
 
         beam_min = min(c.score for c in beam)
-        # When the entire beam is in a crashed state, also accept tie proposals.
-        # Fixing a crash often requires a chain of edits where each step doesn't
-        # move the aggregate score — the strict > beam_min guard would discard
-        # these intermediate states and exhaust the edit budget against a single
-        # stuck parent. The tabu set and max_iters remain as backstops.
+        # Accept proposals that:
+        # 1. Strictly improve on the worst beam member, OR
+        # 2. Tie when the entire beam is crashed (chain-of-edits), OR
+        # 3. Tie but the TARGET ENTITY's score improved — enables incremental
+        #    progress when an entity has multiple errors and partial fixes
+        #    don't move the aggregate.
         survivors = [
             Candidate(p.candidate, p.new_score, p.new_decomp)
-            for p in proposals
+            for idx, p in enumerate(proposals)
             if p.new_score > beam_min
             or (best_crashed and p.new_score == beam_min)
+            or (p.new_score == beam_min
+                and _target_entity_improved(p, proposal_parent_decomps, idx))
         ]
         beam = _top_k(beam + survivors, beam_width)
 
@@ -645,6 +672,25 @@ def run_loop(
 # Helpers
 # ---------------------------------------------------------------------------
 
+def _entity_avg(es) -> float:
+    """Per-entity average of all six EntityScore fields (same as aggregate formula)."""
+    return (es.type_match + es.control_flow_match + es.data_output
+            + es.variable_output + es.callable_output + es.side_effects) / 6
+
+
+def _target_entity_improved(p: "Proposal", parent_decomps: list, idx: int) -> bool:
+    """Return True if the edit's target entity scored higher than in the parent."""
+    eid = p.edit.entity_ids[0] if p.edit.entity_ids else ""
+    if not eid or idx >= len(parent_decomps):
+        return False
+    parent_decomp = parent_decomps[idx]
+    old_es = parent_decomp.by_entity.get(eid)
+    new_es = p.new_decomp.by_entity.get(eid)
+    if old_es is None or new_es is None:
+        return False
+    return _entity_avg(new_es) > _entity_avg(old_es)
+
+
 def _record_rejections(
     histories: dict,
     parent_hashes: list,
@@ -662,6 +708,35 @@ def _record_rejections(
     if ph is not None:
         for eid in edit.entity_ids:
             ph.record_rejection(eid)
+
+
+def _record_regression_note(
+    histories: dict,
+    parent_hashes: list,
+    idx: int,
+    edit: "Edit",
+    parent_decomps: list,
+    new_decomp,
+) -> None:
+    """Store a human-readable note about which entities regressed."""
+    if idx >= len(parent_hashes) or idx >= len(parent_decomps):
+        return
+    ph = histories.get(parent_hashes[idx])
+    if ph is None:
+        return
+    parent_decomp = parent_decomps[idx]
+    regressions = []
+    for eid in parent_decomp.by_entity:
+        old_es = parent_decomp.by_entity.get(eid)
+        new_es = new_decomp.by_entity.get(eid)
+        if old_es and new_es:
+            old_avg = _entity_avg(old_es)
+            new_avg = _entity_avg(new_es)
+            if new_avg < old_avg - 0.01:
+                regressions.append(f"{eid} ({old_avg:.2f}→{new_avg:.2f})")
+    if regressions:
+        note = "REJECTED — regressed: " + ", ".join(regressions[:4])
+        ph.record_rejection_note(edit, note)
 
 
 def _set_attr(obj: object, name: str, value: object) -> None:

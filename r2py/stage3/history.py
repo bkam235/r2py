@@ -27,6 +27,7 @@ class EditHistory:
     # Used for both the 3-attempt cap and the position-based rank adjustment in
     # _weak_first so that entities that repeatedly fail to improve are deprioritised.
     _rejected: dict[str, int] = field(default_factory=dict, init=False, repr=False)
+    _rejection_notes: dict[tuple, str] = field(default_factory=dict, init=False, repr=False)
 
     def add(self, edit: Edit) -> None:
         """Record a tried edit."""
@@ -39,6 +40,12 @@ class EditHistory:
         count_for_entity reflects only non-improving attempts.
         """
         self._rejected[entity_id] = self._rejected.get(entity_id, 0) + 1
+
+    def record_rejection_note(self, edit: Edit, note: str) -> None:
+        self._rejection_notes[_edit_key(edit)] = note
+
+    def get_rejection_note(self, edit: Edit) -> str:
+        return self._rejection_notes.get(_edit_key(edit), "")
 
     def was_tried(self, edit: Edit) -> bool:
         """True if an equivalent edit (same kind + entity_ids + params) was already tried."""
@@ -53,7 +60,12 @@ class EditHistory:
         """
         return self._rejected.get(entity_id, 0)
 
+    def copy_to(self, other: "EditHistory") -> None:
+        """Copy rejection notes to another history (used when inheriting history)."""
+        other._rejection_notes.update(self._rejection_notes)
+
     def clear(self) -> None:
         """Reset for a new translation script."""
         self.tried.clear()
         self._rejected.clear()
+        self._rejection_notes.clear()

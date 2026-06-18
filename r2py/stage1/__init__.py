@@ -48,7 +48,7 @@ def analyze(
     entities, predicted_effects = walk(ast_root, source_file, tracker)
 
     # ── Step 3: dynamic run with per-entity checkpoints ─────────────────────
-    main_bundle, entity_bundles = run_script_checkpointed(
+    main_bundle, entity_bundles, entity_types = run_script_checkpointed(
         source, entities, capture=capture, timeout_s=timeout_s
     )
     for eid in entities:
@@ -85,6 +85,9 @@ def analyze(
                 if loc:
                     external_sources[eid] = loc
 
+    # ── Step 5b: resolve positional arg bindings via match.call() ─────────
+    _resolve_arg_bindings(source, entities, timeout_s)
+
     # ── Step 7: build ScriptMap ──────────────────────────────────────────────
     all_effects = _merge_dynamic_effects(list(predicted_effects), main_bundle, entities)
 
@@ -97,6 +100,7 @@ def analyze(
         external_sources=external_sources,
         coverage=tracker.report(),
         entity_bundles=entity_bundles,
+        entity_types=entity_types,
     )
 
 
@@ -272,6 +276,110 @@ for (.r2py_v in {r_names}) {{
         return bundle.data
     except Exception:
         return {}
+
+
+def _resolve_arg_bindings(
+    source: str,
+    entities: dict[str, Entity],
+    timeout_s: float,
+) -> None:
+    """Use R's match.call() to resolve positional args to formal names.
+
+    For each FUNCTION_CALL / EXTERNAL_SYMBOL entity, runs match.call(fn, quote(call))
+    in R and stores the deparsed result on entity.resolved_call.  Modifies entities
+    in place.  Degrades gracefully: on any failure, entities keep resolved_call=None.
+    """
+    import re
+
+    targets: list[tuple[str, Entity, str]] = []
+    for eid, entity in entities.items():
+        if entity.kind not in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL):
+            continue
+        span = entity.source_span
+        r_lines = source.splitlines()[span.start_line:span.end_line + 1]
+        r_call = " ".join(l.strip() for l in r_lines)
+        if not r_call or "(" not in r_call:
+            continue
+        targets.append((eid, entity, r_call))
+
+    if not targets:
+        return
+
+    # Extract library() calls to load packages before match.call.
+    lib_lines: list[str] = []
+    for eid, entity in entities.items():
+        if entity.kind == EntityKind.LIBRARY_IMPORT:
+            span = entity.source_span
+            lib_lines.append(
+                " ".join(source.splitlines()[span.start_line:span.end_line + 1])
+            )
+
+    # Build the probe script.
+    parts: list[str] = []
+    for lib_call in lib_lines:
+        parts.append(f"tryCatch(suppressPackageStartupMessages({lib_call}), error=function(e) NULL)")
+
+    # Also source function definitions from the script so match.call works for
+    # in-script functions.  Extract only FUNCTION_DEF entities.
+    for eid, entity in entities.items():
+        if entity.kind == EntityKind.FUNCTION_DEF:
+            span = entity.source_span
+            fn_lines = source.splitlines()[span.start_line:span.end_line + 1]
+            fn_src = "\n".join(fn_lines)
+            parts.append(f"tryCatch({{\n{fn_src}\n}}, error=function(e) NULL)")
+
+    for eid, entity, r_call in targets:
+        fn_name = entity.name
+        safe_eid = eid.replace('"', '\\"')
+        # Try method-level match.call first (e.g. chunk.default for S3 dispatch),
+        # then fall back to the generic.  Method-level resolution is more informative
+        # because it resolves positional args against the full method signature
+        # (including args that the generic hides behind ...).
+        parts.append(
+            f'tryCatch({{\n'
+            f'  .r2py_method <- tryCatch(getS3method("{fn_name}", "default"), error=function(e) NULL)\n'
+            f'  if (!is.null(.r2py_method)) {{\n'
+            f'    .r2py_mcall <- quote({r_call})\n'
+            f'    .r2py_mcall[[1]] <- as.name("{fn_name}.default")\n'
+            f'    .r2py_resolved <- deparse(match.call(.r2py_method, .r2py_mcall))\n'
+            f'  }} else {{\n'
+            f'    .r2py_resolved <- deparse(match.call({fn_name}, quote({r_call})))\n'
+            f'  }}\n'
+            f'  cat(paste0("__R2PY_MATCH__{safe_eid}__", paste(.r2py_resolved, collapse=" "), "\\n"))\n'
+            f'}}, error=function(e) NULL)'
+        )
+
+    probe_source = "\n".join(parts)
+
+    try:
+        bundle = run_slice(probe_source, capture=frozenset({EffectClass.STDOUT}),
+                           timeout_s=min(timeout_s, 15))
+        stdout = getattr(bundle, "stdout", "") or ""
+    except Exception:
+        return
+
+    marker = "__R2PY_MATCH__"
+    for line in stdout.splitlines():
+        if not line.startswith(marker):
+            continue
+        rest = line[len(marker):]
+        sep_idx = rest.find("__")
+        if sep_idx < 0:
+            continue
+        eid = rest[:sep_idx]
+        resolved = rest[sep_idx + 2:].strip()
+        if not resolved:
+            continue
+        # Strip .default/.numeric/etc. suffix from the function name so the
+        # LLM sees the generic name it needs to call in Python.
+        for target_eid, entity, _ in targets:
+            if target_eid == eid:
+                import re as _re
+                resolved = _re.sub(
+                    r'^(\w+)\.\w+\(', lambda m: m.group(1) + '(', resolved
+                )
+                entity.resolved_call = resolved
+                break
 
 
 def _merge_dynamic_effects(

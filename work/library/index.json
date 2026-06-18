@@ -88,7 +88,32 @@
       "r-param-alias-kwargs",
       "bit.ri-nan-handling",
       "ri-nan-handling",
-      "bit.nan-maxindex-handling"
+      "bit.nan-maxindex-handling",
+      "chunk-wrapper",
+      "parameter-name-alignment",
+      "r-chunks-named-output",
+      "r-to-python-param-rename",
+      "chunk-vector-formatting",
+      "chunk-complex-vector-dispatch",
+      "chunk-vector-to-chunks",
+      "chunk-raw-vector-formatting",
+      "chunk.auto-print-result",
+      "chunk-complex-vector",
+      "raw-vector-chunk-call",
+      "chunk-varargs-forward",
+      "r-complex-vector-constructor",
+      "chunk-dispatch-fix",
+      "param-name-underscore",
+      "arg-name-mismatch",
+      "chunk-positional-to-keyword",
+      "chunk-length-dispatch",
+      "chunk.raw-handling",
+      "chunk.keyword-args",
+      "chunk-length-kwarg-mapping",
+      "r-kwargs-to-python-kwargs",
+      "chunk-kwargs-dispatch",
+      "chunk-length-parameter",
+      "repr-trailing-space-removal"
     ],
     "base:": [
       "base.c_to_list",
@@ -148,7 +173,32 @@
       "r-param-alias-kwargs",
       "bit.ri-nan-handling",
       "ri-nan-handling",
-      "bit.nan-maxindex-handling"
+      "bit.nan-maxindex-handling",
+      "chunk-wrapper",
+      "parameter-name-alignment",
+      "r-chunks-named-output",
+      "r-to-python-param-rename",
+      "chunk-vector-formatting",
+      "chunk-complex-vector-dispatch",
+      "chunk-vector-to-chunks",
+      "chunk-raw-vector-formatting",
+      "chunk.auto-print-result",
+      "chunk-complex-vector",
+      "raw-vector-chunk-call",
+      "chunk-varargs-forward",
+      "r-complex-vector-constructor",
+      "chunk-dispatch-fix",
+      "param-name-underscore",
+      "arg-name-mismatch",
+      "chunk-positional-to-keyword",
+      "chunk-length-dispatch",
+      "chunk.raw-handling",
+      "chunk.keyword-args",
+      "chunk-length-kwarg-mapping",
+      "r-kwargs-to-python-kwargs",
+      "chunk-kwargs-dispatch",
+      "chunk-length-parameter",
+      "repr-trailing-space-removal"
     ],
     "shape:3ec29fc1": [
       "r-suppress-startup-messages"
@@ -187,12 +237,12 @@
     },
     "auto-print-to-stdout": {
       "confidence": "confirmed",
-      "evidence_count": 20,
-      "contradictions_count": 24,
+      "evidence_count": 43,
+      "contradictions_count": 102,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 53
+      "contradicted_at_run": 85
     },
     "base.c_to_list": {
       "confidence": "tentative",
@@ -1062,7 +1112,232 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "chunk-wrapper": {
+      "confidence": "confirmed",
+      "evidence_count": 2,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "parameter-name-alignment": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r-chunks-named-output": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r-to-python-param-rename": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-vector-formatting": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-complex-vector-dispatch": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-vector-to-chunks": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-raw-vector-formatting": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk.auto-print-result": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-complex-vector": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "raw-vector-chunk-call": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-varargs-forward": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r-complex-vector-constructor": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-dispatch-fix": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "param-name-underscore": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "arg-name-mismatch": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-positional-to-keyword": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-length-dispatch": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk.raw-handling": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk.keyword-args": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-length-kwarg-mapping": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "r-kwargs-to-python-kwargs": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-kwargs-dispatch": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "chunk-length-parameter": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "repr-trailing-space-removal": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 55
+  "total_runs": 87
 }

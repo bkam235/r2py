@@ -615,6 +615,7 @@ def verify(
         uncomparable=uncomparable,
         feedback=feedback,
         py_exit_code=py_bundle.exit_code,
+        py_entity_bundles=py_entity_bundles or {},
     )
     if return_bundle:
         return report, py_bundle

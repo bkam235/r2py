@@ -13,6 +13,7 @@ def propose_edit(
     history: EditHistory | None = None,
     iteration: int = 0,
     model: str | None = None,
+    meta_model: str | None = None,
     _collector: object = None,
 ) -> Edit:
     """Propose a typed edit for the weakest entity in the candidate.
@@ -22,13 +23,15 @@ def propose_edit(
     """
     from .editor import propose_edit as _propose
     from ..stage2.llm import _DEFAULT_MODEL
+    _model = model if model is not None else _DEFAULT_MODEL
     return _propose(
         candidate,
         library,
         script_map,
         history if history is not None else EditHistory(),
         iteration,
-        model=model if model is not None else _DEFAULT_MODEL,
+        model=_model,
+        meta_model=meta_model if meta_model is not None else _model,
         _collector=_collector,
     )
 

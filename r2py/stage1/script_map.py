@@ -38,6 +38,8 @@ class ScriptMap(_BaseScriptMap):
     # Maps entity_id → EffectBundle containing only what that entity added to the
     # namespace/stdout/graphics.  Empty dict when checkpointing is unavailable.
     entity_bundles:   dict[EntityId, EffectBundle]       = field(default_factory=dict)
+    # Per-entity R type info: entity_id → {var_name: {"class": "...", "typeof": "..."}}.
+    entity_types:     dict[EntityId, dict]               = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -59,6 +61,7 @@ def to_json(sm: ScriptMap) -> dict:
         "entity_bundles": {
             eid: _bundle_to_json(eb) for eid, eb in sm.entity_bundles.items()
         },
+        "entity_types": sm.entity_types,
     }
 
 
@@ -85,6 +88,7 @@ def from_json(d: dict) -> ScriptMap:
             eid: _bundle_from_json(eb)
             for eid, eb in d.get("entity_bundles", {}).items()
         },
+        entity_types=d.get("entity_types", {}),
     )
 
 
@@ -144,6 +148,7 @@ def _entity_to_dict(e: Entity) -> dict:
         "r_semantic_flags": e.r_semantic_flags,
         "package": e.package,
         "free_variable_refs": e.free_variable_refs,
+        "resolved_call": e.resolved_call,
     }
 
 
@@ -163,6 +168,7 @@ def _entity_from_dict(d: dict) -> Entity:
         r_semantic_flags=d.get("r_semantic_flags", []),
         package=d.get("package"),
         free_variable_refs=d.get("free_variable_refs", []),
+        resolved_call=d.get("resolved_call"),
     )
 
 
