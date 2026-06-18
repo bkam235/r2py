@@ -13,6 +13,7 @@ from ..stage0.sandbox.py_sandbox import PySandbox
 from ..stage2.stitch import DATA_SHIM_RE
 from ..types import (
     CaptureSpec,
+    ComparisonDetail,
     ComparatorResult,
     EffectBundle,
     EffectClass,
@@ -103,6 +104,16 @@ def _compare_bundles(
     data_cmp = _DataComparator(data_compare=data_compare, rtol=rtol, atol=atol)
     results[EffectClass.DATA] = data_cmp.compare(
         r_bundle.data, py_bundle.data, uncapturable=py_bundle.uncapturable
+    )
+
+    # NETWORK
+    results[EffectClass.NETWORK] = COMPARATORS[EffectClass.NETWORK].compare(
+        r_bundle.network_log, py_bundle.network_log
+    )
+
+    # RNG
+    results[EffectClass.RNG] = COMPARATORS[EffectClass.RNG].compare(
+        r_bundle.rng_log, py_bundle.rng_log
     )
 
     return results
@@ -224,6 +235,153 @@ def _extract_var_explanation(full_explanation: str, var_name: str) -> str | None
         if fragment.startswith(var_name + ":") or fragment.startswith(var_name + "["):
             return fragment
     return None
+
+
+_TRUNCATE_LIMIT = 500
+
+
+def _serialize_value(val: object) -> str:
+    """Serialize a bundle value to a compact string for prompt inclusion."""
+    s = str(val)
+    if len(s) > _TRUNCATE_LIMIT:
+        s = s[:_TRUNCATE_LIMIT] + f"... ({len(s) - _TRUNCATE_LIMIT} more chars)"
+    return s
+
+
+def _stdout_diff_summary(r_out: str, py_out: str) -> str:
+    """Build a concise diff summary between R and Python stdout."""
+    r_lines = r_out.splitlines()
+    py_lines = py_out.splitlines()
+    if not r_out and py_out:
+        return f"R produced no output, Python printed {len(py_lines)} line(s)"
+    if r_out and not py_out:
+        return f"R printed {len(r_lines)} line(s), Python produced no output"
+    if len(r_lines) != len(py_lines):
+        return f"R printed {len(r_lines)} line(s), Python printed {len(py_lines)} line(s)"
+    diffs = []
+    for i, (rl, pl) in enumerate(zip(r_lines, py_lines)):
+        if rl != pl:
+            diffs.append(f"line {i+1}: R={rl[:60]!r} vs Py={pl[:60]!r}")
+            if len(diffs) >= 3:
+                diffs.append(f"... and more differences")
+                break
+    return "; ".join(diffs) if diffs else "stdout differs"
+
+
+def _build_comparisons(
+    comparator_results: dict[EffectClass, ComparatorResult],
+    r_bundle: EffectBundle,
+    py_bundle: EffectBundle,
+    entities: dict,
+    r_entity_bundles: dict[str, EffectBundle] | None = None,
+    py_entity_bundles: dict[str, EffectBundle] | None = None,
+) -> list[ComparisonDetail]:
+    """Build concrete R-vs-Python comparison details for every failing effect."""
+    details: list[ComparisonDetail] = []
+    name_to_eid: dict[str, str] = {
+        getattr(e, "name", None): eid
+        for eid, e in entities.items()
+        if getattr(e, "name", None)
+    }
+
+    for ec, result in comparator_results.items():
+        if result.score >= 1.0:
+            continue
+
+        if ec == EffectClass.DATA and result.per_variable:
+            for var_name, var_score in result.per_variable.items():
+                if var_score >= 1.0:
+                    continue
+                r_val = _serialize_value(r_bundle.data.get(var_name, "<missing>"))
+                py_val = _serialize_value(py_bundle.data.get(var_name, "<missing>"))
+                eid = name_to_eid.get(var_name, "")
+                diff = (
+                    _extract_var_explanation(result.explanation, var_name)
+                    or f"score {var_score:.3f}"
+                )
+                details.append(ComparisonDetail(
+                    effect_class=ec, entity_id=eid,
+                    r_value=r_val, py_value=py_val,
+                    score=var_score, diff_summary=diff,
+                ))
+
+        elif ec == EffectClass.STDOUT:
+            if r_entity_bundles and py_entity_bundles:
+                for eid in entities:
+                    r_eb = r_entity_bundles.get(eid)
+                    py_eb = py_entity_bundles.get(eid)
+                    r_out = (r_eb.stdout if r_eb else "").strip()
+                    py_out = (py_eb.stdout if py_eb else "").strip()
+                    if r_out == py_out:
+                        continue
+                    details.append(ComparisonDetail(
+                        effect_class=ec, entity_id=eid,
+                        r_value=_serialize_value(r_out) or "(empty)",
+                        py_value=_serialize_value(py_out) or "(empty)",
+                        score=result.score,
+                        diff_summary=_stdout_diff_summary(r_out, py_out),
+                    ))
+            else:
+                r_out = r_bundle.stdout.strip()
+                py_out = py_bundle.stdout.strip()
+                details.append(ComparisonDetail(
+                    effect_class=ec, entity_id="",
+                    r_value=_serialize_value(r_out) or "(empty)",
+                    py_value=_serialize_value(py_out) or "(empty)",
+                    score=result.score,
+                    diff_summary=_stdout_diff_summary(r_out, py_out),
+                ))
+
+        elif ec == EffectClass.GRAPHICS:
+            r_count = len(r_bundle.graphics)
+            py_count = len(py_bundle.graphics)
+            details.append(ComparisonDetail(
+                effect_class=ec, entity_id="",
+                r_value=f"{r_count} plot(s)",
+                py_value=f"{py_count} plot(s)",
+                score=result.score,
+                diff_summary=result.explanation or f"R produced {r_count} plots, Python produced {py_count}",
+            ))
+
+        elif ec == EffectClass.FILES:
+            r_files = set(r_bundle.files.keys())
+            py_files = set(py_bundle.files.keys())
+            details.append(ComparisonDetail(
+                effect_class=ec, entity_id="",
+                r_value=", ".join(sorted(r_files)) or "(none)",
+                py_value=", ".join(sorted(py_files)) or "(none)",
+                score=result.score,
+                diff_summary=result.explanation or "file outputs differ",
+            ))
+
+        elif ec == EffectClass.WARNINGS:
+            details.append(ComparisonDetail(
+                effect_class=ec, entity_id="",
+                r_value="; ".join(r_bundle.warnings) or "(none)",
+                py_value="; ".join(py_bundle.warnings) or "(none)",
+                score=result.score,
+                diff_summary=result.explanation or "warnings differ",
+            ))
+
+        elif ec == EffectClass.ENV:
+            details.append(ComparisonDetail(
+                effect_class=ec, entity_id="",
+                r_value=_serialize_value(r_bundle.env) if r_bundle.env else "(none)",
+                py_value=_serialize_value(py_bundle.env) if py_bundle.env else "(none)",
+                score=result.score,
+                diff_summary=result.explanation or "environment state differs",
+            ))
+
+        elif ec == EffectClass.HTML:
+            details.append(ComparisonDetail(
+                effect_class=ec, entity_id="",
+                r_value=f"{len(r_bundle.html)} HTML fragment(s)",
+                py_value=f"{len(py_bundle.html)} HTML fragment(s)",
+                score=result.score,
+                diff_summary=result.explanation or "HTML output differs",
+            ))
+
+    return details
 
 
 def get_r_bundle(script_map) -> EffectBundle:
@@ -378,6 +536,9 @@ def _inject_py_checkpoints(
         return py_source, []
 
     lines = py_source.splitlines(keepends=True)
+    # Ensure last line has a trailing newline so checkpoint insertion works.
+    if lines and not lines[-1].endswith("\n"):
+        lines[-1] += "\n"
     # Sort by end_line ascending; process in reverse for bottom-up insertion.
     sorted_pairs = sorted(entity_line_map.items(), key=lambda kv: kv[1][1])
     ordered_eids = [eid for eid, _ in sorted_pairs]
@@ -608,12 +769,19 @@ def verify(
 
     by_effect = {ec: result.score for ec, result in comparator_results.items()}
 
+    comparisons = _build_comparisons(
+        comparator_results, r_bundle, py_bundle, entities,
+        r_entity_bundles=r_entity_bundles or None,
+        py_entity_bundles=py_entity_bundles or None,
+    )
+
     report = ScoreReport(
         aggregate=aggregate,
         by_entity=score_table,
         by_effect=by_effect,
         uncomparable=uncomparable,
         feedback=feedback,
+        comparisons=comparisons,
         py_exit_code=py_bundle.exit_code,
         py_entity_bundles=py_entity_bundles or {},
     )

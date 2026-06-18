@@ -113,7 +113,10 @@
       "r-kwargs-to-python-kwargs",
       "chunk-kwargs-dispatch",
       "chunk-length-parameter",
-      "repr-trailing-space-removal"
+      "repr-trailing-space-removal",
+      "chunk-vector-default-chunking",
+      "kwarg-reserved-keyword-wrapper",
+      "kwargs-reserved-keyword"
     ],
     "base:": [
       "base.c_to_list",
@@ -198,7 +201,10 @@
       "r-kwargs-to-python-kwargs",
       "chunk-kwargs-dispatch",
       "chunk-length-parameter",
-      "repr-trailing-space-removal"
+      "repr-trailing-space-removal",
+      "chunk-vector-default-chunking",
+      "kwarg-reserved-keyword-wrapper",
+      "kwargs-reserved-keyword"
     ],
     "shape:3ec29fc1": [
       "r-suppress-startup-messages"
@@ -238,11 +244,11 @@
     "auto-print-to-stdout": {
       "confidence": "confirmed",
       "evidence_count": 43,
-      "contradictions_count": 102,
+      "contradictions_count": 109,
       "seed": false,
       "package": "",
       "ast_shape_hash": "",
-      "contradicted_at_run": 85
+      "contradicted_at_run": 91
     },
     "base.c_to_list": {
       "confidence": "tentative",
@@ -756,11 +762,11 @@
     },
     "suppress-messages": {
       "confidence": "confirmed",
-      "evidence_count": 26,
+      "evidence_count": 32,
       "contradictions_count": 80,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
+      "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 43
     },
     "suppress-package-startup-noop": {
@@ -1337,7 +1343,34 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "chunk-vector-default-chunking": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "kwarg-reserved-keyword-wrapper": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
+    },
+    "kwargs-reserved-keyword": {
+      "confidence": "tentative",
+      "evidence_count": 1,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "",
+      "ast_shape_hash": "ffb01754",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 87
+  "total_runs": 124
 }

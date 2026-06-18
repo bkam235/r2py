@@ -65,6 +65,18 @@ def test_stdout_collect_handles_invalid_utf8():
     assert isinstance(result["stdout"], str)
 
 
+def test_stdout_collect_strips_source_echo():
+    raw = b'> source("C:/tmp/r2py_sandbox_abc/_r2py_script.R", print.eval=TRUE)\n[1] 42\n'
+    result = _stdout_mod.collect(raw, b"")
+    assert result["stdout"] == "[1] 42\n"
+
+
+def test_stdout_collect_preserves_normal_output():
+    raw = b"[1] 42\nhello world\n"
+    result = _stdout_mod.collect(raw, b"")
+    assert result["stdout"] == "[1] 42\nhello world\n"
+
+
 # ---------------------------------------------------------------------------
 # files.py
 # ---------------------------------------------------------------------------

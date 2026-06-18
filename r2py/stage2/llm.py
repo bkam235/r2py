@@ -113,11 +113,11 @@ def _call_ollama(
                 messages=all_messages,
                 max_tokens=max_tokens,
             )
-            if response.choices[0].finish_reason == "length":
-                raise RuntimeError(
-                    f"Ollama response truncated at max_tokens={max_tokens}. "
-                    "Increase max_tokens or reduce entity size."
-                )
+            finish_reason = response.choices[0].finish_reason
+            if finish_reason == "length":
+                usage = getattr(response, "usage", None)
+                comp_tokens = getattr(usage, "completion_tokens", "?") if usage else "?"
+                print(f"[LLM]     Warning: Ollama response truncated at {comp_tokens} tokens (max_tokens={max_tokens})")
             content = response.choices[0].message.content
             if content is None:
                 raise RuntimeError(

@@ -24,16 +24,10 @@ def _on_progress(event) -> None:
         print(f"[Stage 1] Analysis complete — {event.entity_count} entities")
     elif event.kind == "seed_done":
         print(f"[Seed]    Initial score: {event.score:.3f}")
-    elif event.kind == "iteration_start" and VERBOSE:
-        print(f"[Iter {event.iteration + 1}] Best score so far: {event.score:.3f}")
-    elif event.kind == "proposal" and VERBOSE and event.edit_kind != "RetranslateEntity":
-        print(f"          {event.edit_kind} on {event.entity_id!r} -> {event.outcome} ({event.score:.3f})")
-    elif event.kind == "retranslation_start" and VERBOSE:
-        print(f"[Retry]   Plateau detected — retranslating from scratch (score: {event.score:.3f})")
-    elif event.kind == "retranslation_done" and VERBOSE:
-        print(f"[Retry]   Retranslation scored: {event.score:.3f}")
+    elif event.kind == "agent_start" and VERBOSE:
+        print(f"[Agent]   Escalating to reasoning agent (seed score: {event.score:.3f})")
     elif event.kind == "done":
-        print(f"[Done]    Final score: {event.score:.3f} in {event.iteration} iteration(s)")
+        print(f"[Done]    Final score: {event.score:.3f}")
 
 
 # Iterate through input files for translation
@@ -41,14 +35,17 @@ input_filenames = next(walk(input_dir), (None, None, []))[2]
 # input_filenames = random.sample(input_filenames, 1) #don't use random script
 
 input_filenames = ["bit__rd_example__chunk_Rd.R"] #translate this specific script
-# input_filenames = ["shape__rd_example__greycol_Rd.R", "withr__rd_example__with_locale_Rd.R, xfun__rd_example__cache_rds_Rd.py"]
 
+#v0.3
+# bit__rd_example__chunk_Rd.R sonnet 0.970  haiku 0.756 gemma 0.927
+
+#v0.2
 # shape__rd_example__greycol_Rd.R 0.930
 # withr__rd_example__with_locale_Rd.R 0.987
 # xfun__rd_example__cache_rds_Rd.py 0.927
 # googlesheets4__rd_example__sheet_append_Rd.R 0.992
 # progressr__rd_example__handler_rpushbullet_Rd.R 0.990
-# bit__rd_example__chunk_Rd.R 0.826 with Sonnet-4-6
+
 
 # from r2py import seed_from_translation
 # seed_from_translation(
@@ -74,12 +71,9 @@ for r_script, py_script in scripts:
                        library=lib,
                        resume=True,
                     #    model="claude-haiku-4-5",
-                       model="claude-sonnet-4-6",
-                    #    model="ollama:gemma4:31b-cloud",
-                       meta_model="claude-sonnet-4-6",
+                       model="ollama:gemma4:31b-cloud",
+                       escalation_model="ollama:gemma4:31b-cloud",
                        progress=_on_progress,
                        score_threshold=0.9,
-                       max_iters=10,
-                       retranslation_patience=3,
-                       n_seeds=2)
+                       max_iters=5)
 

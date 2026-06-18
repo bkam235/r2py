@@ -15,25 +15,19 @@ def translate(
     py_path: "str | Path",
     *,
     library=None,                    # inject a PatternLibrary (or _FrozenLibrary); None → get_library()
-    model: "str | None" = None,  # Anthropic model ID, or "ollama:<name>" for local Ollama; None → _DEFAULT_MODEL
-    meta_model: "str | None" = None,  # stronger model for meta-diagnosis of stuck entities; None → model
-    max_iters: int = 8,
+    model: "str | None" = None,      # cheap model for seed translation; None → _DEFAULT_MODEL
+    escalation_model: "str | None" = None,  # stronger model for reasoning agent; None → model
+    max_iters: int = 20,
     score_threshold: float = 0.85,
-    beam_width: int = 4,
     use_judge: bool = False,         # D4: LLM judge off by default
-    learned_retrieval: bool = False, # D6: learned reranker (§12.6 A); off by default
-    learned_policy: bool = False,    # D6: learned edit policy (§12.6 B); off by default
     data_compare: str = "auto",      # "auto" | "exact" | "embedding"
-    sandbox: str = "subprocess",
     no_seeds: bool = False,          # ignore seed:true patterns (§6.7 transfer experiment)
     output_dir: "str | Path | None" = None,  # if set, write edits.log.jsonl + library_diff.json
     progress=None,                   # callable(ProgressEvent) for progress reporting; None = silent
-    retranslation_patience: int = 3, # retranslate from scratch after this many stalled iterations (0 = disabled)
-    n_seeds: int = 3,               # number of initial translation seeds (extra seeds only generated if first scores below 0.5)
     resume: bool = False,            # if True and py_path exists, continue improving it; if False and py_path exists, warn
-    timeout_s: float = 60,          # per-execution timeout in seconds for sandbox runs
+    timeout_s: float = 60,           # per-execution timeout in seconds for sandbox runs
 ) -> "TranslateResult":
-    """Translate an R script to Python via the beam/strict-improvement loop (§4.1)."""
+    """Translate an R script to Python via cheap path + reasoning agent escalation."""
     import sys
     from pathlib import Path
     from .stage1 import analyze as _analyze
@@ -66,20 +60,15 @@ def translate(
         library,
         max_iters=max_iters,
         score_threshold=score_threshold,
-        beam_width=beam_width,
         use_judge=use_judge,
         data_compare=data_compare,
         no_seeds=no_seeds,
-        learned_retrieval=learned_retrieval,
-        learned_policy=learned_policy,
         output_dir=Path(output_dir) if output_dir is not None else None,
         checkpoint_path=Path(py_path),
         model=model,
-        meta_model=meta_model or model,
+        escalation_model=escalation_model or model,
         progress=progress,
-        retranslation_patience=retranslation_patience,
         seed_translation=seed_translation,
-        n_seeds=n_seeds,
         timeout_s=timeout_s,
     )
     Path(py_path).write_text(result.python_source, encoding="utf-8")

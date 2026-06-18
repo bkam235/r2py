@@ -38,6 +38,7 @@ Valid kind values (use exactly these strings):
   RenameVariable        params: {"old": "...", "new": "..."}
   RestructureControlFlow  params: {"old_code": "...", "new_code": "...", "start_line": N, "end_line": N}
   ReplaceLibrary        params: {"old_name": "...", "new_name": "...", "old_import": "...", "new_import": "..."}
+  RetranslateScript     params: {"new_source": "..."}  (full script rewrite — use only when entity-level edits cannot fix the issue)
 
 Rules:
 - "pattern_id" is REQUIRED. Use an existing pattern slug (provided below) or propose
@@ -95,6 +96,7 @@ def build_edit_prompt(
     r_type_info: dict | None = None,
     py_actual_output: str = "",
     meta_diagnosis: str = "",
+    comparisons: list | None = None,
 ) -> list[dict]:
     """Build the user-turn message for the edit-proposal LLM call."""
     parts: list[str] = []
@@ -142,7 +144,26 @@ def build_edit_prompt(
     parts.append(f"- callable_output: {entity_score.callable_output:.3f}")
     parts.append(f"- side_effects: {entity_score.side_effects:.3f}")
 
-    # Verifier feedback (text portion; images appended as separate content blocks below)
+    # Output comparison: concrete R-vs-Python values for failing effects
+    entity_comparisons = [
+        c for c in (comparisons or [])
+        if c.entity_id == entity.id or c.entity_id == ""
+    ]
+    if entity_comparisons:
+        parts.append("")
+        parts.append("### Output comparison: R vs Python")
+        parts.append(
+            "These are the concrete outputs that your edit must reconcile. "
+            "Focus on matching the R output exactly."
+        )
+        for c in entity_comparisons:
+            parts.append(f"**[{c.effect_class.value}]** (score {c.score:.3f}):")
+            parts.append(f"  R produced:      {c.r_value}")
+            parts.append(f"  Python produced: {c.py_value}")
+            if c.diff_summary:
+                parts.append(f"  Diff: {c.diff_summary}")
+
+    # Verifier feedback (supplementary to the comparison above)
     entity_feedback = [f for f in feedback if f.entity_id == entity.id]
     if entity_feedback:
         parts.append("")

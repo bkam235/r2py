@@ -15,6 +15,7 @@ def propose_edit(
     model: str | None = None,
     meta_model: str | None = None,
     _collector: object = None,
+    harness: object = None,
 ) -> Edit:
     """Propose a typed edit for the weakest entity in the candidate.
 
@@ -33,6 +34,7 @@ def propose_edit(
         model=_model,
         meta_model=meta_model if meta_model is not None else _model,
         _collector=_collector,
+        harness=harness,
     )
 
 

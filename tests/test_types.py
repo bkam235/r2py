@@ -38,8 +38,8 @@ def test_entity_kind_count():
 
 
 def test_edit_kind_count():
-    # Closed taxonomy from §8.3 — exactly 8 variants.
-    assert len(list(EditKind)) == 8
+    # Closed taxonomy from §8.3 — 9 variants (includes RetranslateScript).
+    assert len(list(EditKind)) == 9
 
 
 def test_edit_kind_members():

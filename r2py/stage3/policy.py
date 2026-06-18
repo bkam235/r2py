@@ -31,6 +31,7 @@ def propose(
     model: str = _llm._DEFAULT_MODEL,
     meta_model: str = _llm._DEFAULT_MODEL,
     _collector: object = None,
+    harness: object = None,
 ) -> Edit:
     """Propose a typed edit targeting the weakest entity in the candidate.
 
@@ -143,10 +144,14 @@ def propose(
         failure_class = _dominant_failure_class_from_feedback(feedback)
 
         # Gap 3: extract per-entity R expected output (ground truth).
-        # Gap 5: If entity_bundles lack stdout AND this is a repeat attempt,
-        # run a diagnostic R sandbox probe to get ground truth.
+        # Probe R sandbox whenever entity bundles lack stdout — no longer gated
+        # behind 2+ rejections since concrete output is the primary feedback signal.
         r_expected = _entity_r_expected_output(eid, script_map)
-        if not r_expected and history.count_for_entity(eid) >= 2:
+        if not r_expected and harness is not None:
+            r_src_for_probe = _entity_r_source(entity, script_map)
+            if r_src_for_probe:
+                r_expected = harness.probe_r(r_src_for_probe)
+        if not r_expected:
             r_expected = _diagnostic_r_probe(entity, script_map)
 
         # Gap 4: extract called function context from prior entities
@@ -169,11 +174,13 @@ def propose(
         # R type/class info for variables produced by this entity
         r_type_info = getattr(script_map, "entity_types", {}).get(eid, {})
 
-        # Meta-diagnosis: when an entity has 2+ rejections, ask a stronger model
-        # to diagnose why edits keep failing before the next attempt.
+        # Meta-diagnosis: reserve the LLM meta-diagnosis call for genuinely stuck
+        # entities (3+ rejections). Structured output comparisons (Phase 1) now
+        # provide concrete evidence on every iteration, so the LLM meta-call is
+        # only needed for complex structural failures the comparison alone can't diagnose.
         _r_src = _entity_r_source(entity, script_map)
         meta_diag = ""
-        if history.count_for_entity(eid) >= 2:
+        if history.count_for_entity(eid) >= 3:
             _rej_count = history.count_for_entity(eid)
             print(f"[Meta]    Diagnosing stuck entity {eid!r} ({_rej_count} rejections) via {meta_model}")
             try:
@@ -197,6 +204,20 @@ def propose(
                 print(f"[Meta]    Diagnosis failed: {_meta_exc}")
                 meta_diag = ""
 
+        all_comparisons = getattr(candidate.decomp, "comparisons", [])
+        entity_comparisons = [
+            c for c in all_comparisons
+            if c.entity_id == eid or c.entity_id == ""
+        ]
+        if entity_comparisons:
+            print(f"[Compare] {len(entity_comparisons)} comparison(s) for {eid!r}:")
+            for c in entity_comparisons[:3]:
+                print(f"          [{c.effect_class.value}] score={c.score:.3f}: R={c.r_value[:80]!r} Py={c.py_value[:80]!r}")
+        elif all_comparisons:
+            print(f"[Compare] {len(all_comparisons)} comparison(s) total but none match entity {eid!r}")
+        else:
+            print(f"[Compare] No comparisons in ScoreReport for this candidate")
+
         messages = _prompt.build_edit_prompt(
             entity=entity,
             entity_score=entity_score,
@@ -216,6 +237,7 @@ def propose(
             r_type_info=r_type_info,
             py_actual_output=py_actual_output,
             meta_diagnosis=meta_diag,
+            comparisons=entity_comparisons,
         )
 
         raw = _llm.call(messages, _prompt.STAGE3_SYSTEM_PROMPT, model=model)

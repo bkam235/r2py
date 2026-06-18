@@ -65,6 +65,7 @@ class EditKind(Enum):
     RESTRUCTURE_CONTROL_FLOW  = "RestructureControlFlow"
     REPLACE_LIBRARY           = "ReplaceLibrary"
     RETRANSLATE_ENTITY        = "RetranslateEntity"
+    RETRANSLATE_SCRIPT        = "RetranslateScript"
 
 
 # ---------------------------------------------------------------------------
@@ -137,12 +138,24 @@ class FeedbackItem:
 
 
 @dataclass
+class ComparisonDetail:
+    """Concrete R-vs-Python output comparison for a single effect/entity pair."""
+    effect_class: EffectClass
+    entity_id:    EntityId
+    r_value:      str       # serialized R output (truncated for prompt inclusion)
+    py_value:     str       # serialized Python output (truncated for prompt inclusion)
+    score:        float
+    diff_summary: str       # human-readable "expected X, got Y" one-liner
+
+
+@dataclass
 class ScoreReport:
     aggregate:    float
     by_entity:    dict[EntityId, EntityScore]   = field(default_factory=dict)
     by_effect:    dict[EffectClass, float]       = field(default_factory=dict)
     uncomparable: list[EntityId]                 = field(default_factory=list)
     feedback:     list[FeedbackItem]             = field(default_factory=list)
+    comparisons:  list[ComparisonDetail]         = field(default_factory=list)
     py_exit_code: int                            = 0
     py_entity_bundles: dict[EntityId, EffectBundle] = field(default_factory=dict)
 
@@ -272,7 +285,7 @@ class ScriptMap:
 
 @dataclass
 class ProgressEvent:
-    kind: str           # "analysis_done" | "seed_done" | "iteration_start" | "proposal" | "done"
+    kind: str           # "analysis_done" | "seed_done" | "agent_start" | "done"
     iteration: "int | None" = None
     score: "float | None" = None
     entity_count: "int | None" = None

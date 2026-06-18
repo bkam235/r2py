@@ -27,6 +27,7 @@ def propose_edit(
     model: str = _llm._DEFAULT_MODEL,
     meta_model: str = _llm._DEFAULT_MODEL,
     _collector: object = None,
+    harness: object = None,
 ) -> "Edit":
     """Propose a typed edit to improve the candidate's score.
 
@@ -35,7 +36,8 @@ def propose_edit(
     """
     epsilon = _epsilon(iteration)
     return _policy.propose(candidate, script_map, library, history, epsilon, model,
-                           meta_model=meta_model, _collector=_collector)
+                           meta_model=meta_model, _collector=_collector,
+                           harness=harness)
 
 
 def _epsilon(iteration: int) -> float:

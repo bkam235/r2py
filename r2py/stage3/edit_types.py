@@ -172,10 +172,6 @@ def apply_edit(source: str, edit: Edit) -> str:
             new_import = p.get("new_import", "").strip()
             if not old_name or not new_name:
                 return source
-            # Replace name references on non-import lines first, then swap the
-            # import line.  Doing it this way prevents the name regex from
-            # accidentally mangling the new import line (e.g. if new_import
-            # itself contains old_name as a substring of a new alias).
             lines = source.splitlines(keepends=True)
             result_lines = []
             for line in lines:
@@ -186,6 +182,12 @@ def apply_edit(source: str, edit: Edit) -> str:
                         re.sub(rf"\b{re.escape(old_name)}\b", new_name, line)
                     )
             return "".join(result_lines)
+
+        elif edit.kind == EditKind.RETRANSLATE_SCRIPT:
+            new_source = p.get("new_source", "").strip()
+            if not new_source:
+                return source
+            return new_source
 
     except Exception:
         pass

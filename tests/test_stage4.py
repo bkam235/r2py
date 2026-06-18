@@ -356,14 +356,15 @@ class TestComparatorsRegistry:
         expected = {
             EffectClass.STDOUT, EffectClass.WARNINGS, EffectClass.ENV,
             EffectClass.FILES, EffectClass.HTML, EffectClass.GRAPHICS, EffectClass.DATA,
+            EffectClass.NETWORK, EffectClass.RNG,
         }
         assert set(COMPARATORS.keys()) == expected
 
-    def test_rng_not_in_registry(self):
-        assert EffectClass.RNG not in COMPARATORS
+    def test_rng_in_registry(self):
+        assert EffectClass.RNG in COMPARATORS
 
-    def test_network_not_in_registry(self):
-        assert EffectClass.NETWORK not in COMPARATORS
+    def test_network_in_registry(self):
+        assert EffectClass.NETWORK in COMPARATORS
 
 
 # ---------------------------------------------------------------------------
