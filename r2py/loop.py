@@ -69,6 +69,7 @@ def run_loop(
     use_judge: bool = False,
     data_compare: str = "auto",
     no_seeds: bool = False,
+    n_seeds: int = 1,
     output_dir: "Path | None" = None,
     checkpoint_path: "Path | None" = None,
     model: str = _LLM_DEFAULT_MODEL,
@@ -89,7 +90,7 @@ def run_loop(
     from . import stage2, stage4
     from .harness.tools import HarnessTools
     from .harness.agent import reason as _reason
-    from .stage2.stitch import rebuild_entity_line_map as _rebuild, validate_data_shim
+    from .stage2.stitch import rebuild_entity_line_map as _rebuild
     from .library.epistemology import review as _ep_review
 
     script_id = hashlib.sha1(script_map.source.encode()).hexdigest()[:12]
@@ -148,60 +149,62 @@ def run_loop(
     if checkpoint_path is not None:
         _write_data_sidecar(checkpoint_path, script_map)
 
-    # --- Verify seed ------------------------------------------------------- #
-    _seed_shim_err = validate_data_shim(seed, _shim_expected_names)
-    if _seed_shim_err:
-        import warnings
-        warnings.warn(f"seed translation has broken data_shim: {_seed_shim_err}", stacklevel=2)
-    try:
-        _ast_mod.parse(seed)
-        seed_result = stage4.verify(
-            script_map, seed,
-            data_compare=data_compare, use_judge=use_judge,
-            entity_line_map=entity_line_map,
-            return_bundle=_need_bundles,
-            sidecar_filename=_sidecar_fn,
-            **verify_kwargs,
-        )
-        if _need_bundles:
-            seed_decomp, seed_py_bundle = seed_result
-            _out = Path(output_dir)
-            _write_effect_bundle(_out, "r", stage4.get_r_bundle(script_map))
-            _write_effect_bundle(_out, "py.0", seed_py_bundle)
-            _write_score_report(_out, 0, seed_decomp)
-        else:
-            seed_decomp = seed_result
-    except SyntaxError as _syn_exc:
-        seed_decomp = _make_syntax_error_report(entities, _syn_exc, entity_line_map)
-        if _need_bundles:
-            from .stage0.effects.bundle import EffectBundle as _EB
-            seed_py_bundle = _EB(exit_code=1)
-            _out = Path(output_dir)
-            _write_effect_bundle(_out, "r", stage4.get_r_bundle(script_map))
-            _write_effect_bundle(_out, "py.0", seed_py_bundle)
-            _write_score_report(_out, 0, seed_decomp)
+    # --- Verify seed 1 ----------------------------------------------------- #
+    seed, seed_decomp = _verify_seed(
+        seed, entity_line_map, script_map, stage4,
+        data_compare, use_judge, _need_bundles, output_dir,
+        _sidecar_fn, _shim_expected_names, entities, verify_kwargs,
+    )
 
     _emit(progress, kind="seed_done", score=seed_decomp.aggregate)
     _record_seed_translations(seed, seed_decomp, script_map, library, script_id, entity_line_map)
 
-    score_history = [seed_decomp]
     best_source = seed
     best_decomp = seed_decomp
 
+    # --- Additional seeds (lazy: only when seed 1 is below reseed threshold) #
+    if (seed_translation is None
+            and n_seeds > 1
+            and best_decomp.aggregate < score_threshold):
+        for seed_idx in range(2, n_seeds + 1):
+            alt_seed, alt_elmap = stage2.translate(
+                script_map, library,
+                no_seeds=no_seeds, model=model,
+                sidecar_filename=_sidecar_fn,
+                script_relpath=_script_relpath,
+            )
+            alt_seed, alt_decomp = _verify_seed(
+                alt_seed, alt_elmap, script_map, stage4,
+                data_compare, use_judge, False, None,
+                _sidecar_fn, _shim_expected_names, entities, verify_kwargs,
+            )
+            print(f"[Seed {seed_idx}] score: {alt_decomp.aggregate:.3f}")
+            _record_seed_translations(
+                alt_seed, alt_decomp, script_map, library, script_id, alt_elmap,
+            )
+            if alt_decomp.aggregate > best_decomp.aggregate:
+                best_source = alt_seed
+                best_decomp = alt_decomp
+                entity_line_map = alt_elmap
+            if best_decomp.aggregate >= score_threshold:
+                break
+
+    score_history = [best_decomp]
+
     # --- Cheap path: done if score is good enough -------------------------- #
-    if seed_decomp.aggregate >= score_threshold:
-        _emit(progress, kind="done", score=seed_decomp.aggregate, iteration=0)
+    if best_decomp.aggregate >= score_threshold:
+        _emit(progress, kind="done", score=best_decomp.aggregate, iteration=0)
         _run_epistemology(library, _ep_review)
-        if checkpoint_path is not None and seed_decomp.py_exit_code == 0:
+        if checkpoint_path is not None and best_decomp.py_exit_code == 0:
             _delete_checkpoints(checkpoint_path, 0)
         return _make_result(best_source, best_decomp, 0, score_history)
 
     # --- Escalate to reasoning agent --------------------------------------- #
-    _emit(progress, kind="agent_start", iteration=0, score=seed_decomp.aggregate)
+    _emit(progress, kind="agent_start", iteration=0, score=best_decomp.aggregate)
 
     agent_result = _reason(
-        current_source=seed,
-        score_report=seed_decomp,
+        current_source=best_source,
+        score_report=best_decomp,
         harness=harness,
         script_map=script_map,
         model=escalation_model,
@@ -246,6 +249,48 @@ def _make_result(
         final_exit_code=decomp.py_exit_code,
         final_score_report=decomp,
     )
+
+
+def _verify_seed(
+    seed, entity_line_map, script_map, stage4,
+    data_compare, use_judge, need_bundles, output_dir,
+    sidecar_fn, shim_expected_names, entities, verify_kwargs,
+):
+    """Verify a seed translation, return (seed, decomp)."""
+    from .stage2.stitch import validate_data_shim
+
+    shim_err = validate_data_shim(seed, shim_expected_names)
+    if shim_err:
+        import warnings
+        warnings.warn(f"seed translation has broken data_shim: {shim_err}", stacklevel=2)
+    try:
+        _ast_mod.parse(seed)
+        result = stage4.verify(
+            script_map, seed,
+            data_compare=data_compare, use_judge=use_judge,
+            entity_line_map=entity_line_map,
+            return_bundle=need_bundles,
+            sidecar_filename=sidecar_fn,
+            **verify_kwargs,
+        )
+        if need_bundles:
+            decomp, py_bundle = result
+            _out = Path(output_dir)
+            _write_effect_bundle(_out, "r", stage4.get_r_bundle(script_map))
+            _write_effect_bundle(_out, "py.0", py_bundle)
+            _write_score_report(_out, 0, decomp)
+        else:
+            decomp = result
+    except SyntaxError as syn_exc:
+        decomp = _make_syntax_error_report(entities, syn_exc, entity_line_map)
+        if need_bundles:
+            from .stage0.effects.bundle import EffectBundle as _EB
+            py_bundle = _EB(exit_code=1)
+            _out = Path(output_dir)
+            _write_effect_bundle(_out, "r", stage4.get_r_bundle(script_map))
+            _write_effect_bundle(_out, "py.0", py_bundle)
+            _write_score_report(_out, 0, decomp)
+    return seed, decomp
 
 
 def _extract_agent_knowledge(

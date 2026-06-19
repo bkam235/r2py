@@ -45,10 +45,23 @@ def reason(
     print(f"[Agent]   Starting reasoning loop (model={model}, score={best_score:.3f}, "
           f"threshold={score_threshold}, max_steps={max_steps})")
 
+    stall_count = 0
+
     for step in range(1, max_steps + 1):
         if report.aggregate >= score_threshold:
             print(f"[Agent]   Score {report.aggregate:.3f} >= threshold, stopping")
             break
+
+        if stall_count >= 3:
+            print(f"[Agent]   3 consecutive non-improving rewrites, stopping")
+            break
+
+        if stall_count >= 2:
+            history.append(
+                "SYSTEM: You have rewritten twice without improving the score. "
+                "Try probe_r to investigate what R actually produces for the "
+                "failing entities, or action:done if you cannot improve further."
+            )
 
         messages = _prompt.build_agent_turn(
             r_source=r_source,
@@ -95,6 +108,7 @@ def reason(
                 result = f"ERROR: {exc}"
             print(f"[Agent]   Probe result: {result[:200]!r}")
             history.append(f"Step {step}: probe_r -> {result[:100]!r}")
+            stall_count = 0
 
         elif action_type == "rewrite":
             new_source = action.get("new_source", "")
@@ -125,11 +139,13 @@ def reason(
                 best_source = new_source
                 best_score = new_report.aggregate
                 report = new_report
+                stall_count = 0
                 history.append(
                     f"Step {step}: rewrite -> {new_report.aggregate:.3f} (ACCEPTED)")
             else:
+                stall_count += 1
                 history.append(
-                    f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected)")
+                    f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count})")
                 report = new_report if new_report.aggregate == best_score else report
 
         else:

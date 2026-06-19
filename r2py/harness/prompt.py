@@ -44,6 +44,9 @@ Do not probe before your first rewrite attempt.
 - Focus on the WORST-scoring entities first.
 - Use the pattern library guidance and translation examples to inform your rewrite.
 - Probe only to debug specific mismatches AFTER a rewrite attempt, not before.
+- If a rewrite does not improve the score, DO NOT rewrite again with minor changes. \
+Instead, probe_r to understand what R actually outputs for the failing entities, \
+then rewrite with that knowledge. If you cannot improve further, use action "done".
 - When rewriting, preserve ALL entity sentinel comments (# r2py:entity:<id>).
 - Each step costs budget. Be action-oriented: rewrite, verify, iterate.
 """
@@ -87,6 +90,9 @@ ACTION: done
 - The rewrite MUST be the COMPLETE file. Never output just the first few entities.
 - Preserve ALL entity sentinel comments (# r2py:entity:<id>).
 - Focus on the WORST-scoring entities first, but include ALL entities in the rewrite.
+- If a rewrite does not improve the score, DO NOT rewrite again blindly. \
+Use probe_r to check what R actually outputs, then rewrite with that knowledge. \
+If you cannot improve further, use ACTION: done.
 - Each step costs budget. Be action-oriented.
 """
 

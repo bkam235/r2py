@@ -22,6 +22,7 @@ def translate(
     use_judge: bool = False,         # D4: LLM judge off by default
     data_compare: str = "auto",      # "auto" | "exact" | "embedding"
     no_seeds: bool = False,          # ignore seed:true patterns (§6.7 transfer experiment)
+    n_seeds: int = 3,                # cheap seeds to try before agent escalation (best-of-N)
     output_dir: "str | Path | None" = None,  # if set, write edits.log.jsonl + library_diff.json
     progress=None,                   # callable(ProgressEvent) for progress reporting; None = silent
     resume: bool = False,            # if True and py_path exists, continue improving it; if False and py_path exists, warn
@@ -63,6 +64,7 @@ def translate(
         use_judge=use_judge,
         data_compare=data_compare,
         no_seeds=no_seeds,
+        n_seeds=n_seeds,
         output_dir=Path(output_dir) if output_dir is not None else None,
         checkpoint_path=Path(py_path),
         model=model,

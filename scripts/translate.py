@@ -34,13 +34,13 @@ def _on_progress(event) -> None:
 input_filenames = next(walk(input_dir), (None, None, []))[2]
 # input_filenames = random.sample(input_filenames, 1) #don't use random script
 
-input_filenames = ["xfun__rd_example__cache_rds_Rd.R"] #translate this specific script
+input_filenames = ["googlesheets4__rd_example__sheet_append_Rd.R"] #translate this specific script
 
 #v0.3
 # bit__rd_example__chunk_Rd.R gemma:1.000
 # shape__rd_example__greycol_Rd.R gemma:0.924
 # withr__rd_example__with_locale_Rd.R gemma 10x, haiku 5x:0.987
-# xfun__rd_example__cache_rds_Rd.R gemma:0.997
+# xfun__rd_example__cache_rds_Rd.R gemma/haiku:0.997
 
 #v0.2
 # shape__rd_example__greycol_Rd.R 0.930
@@ -73,11 +73,13 @@ for r_script, py_script in scripts:
                        py_script,
                        library=lib,
                        resume=True,
-                       #    model="claude-haiku-4-5",
+                    #    model="claude-haiku-4-5",
                        model="ollama:gemma4:31b-cloud",
-                       #    escalation_model="claude-haiku-4-5",
+                    #    escalation_model="claude-haiku-4-5",
                        escalation_model="ollama:gemma4:31b-cloud",
                        progress=_on_progress,
                        score_threshold=0.95,
                        max_iters=10)
 
+# Hypothesis: I need repeated runs on the same script to make scores higher and reproducible
+# First with stronger models, then after 3-5 re-runs Gemma does it right on seed
