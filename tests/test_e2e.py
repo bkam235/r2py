@@ -38,7 +38,6 @@ class TestEndToEndTranslate(unittest.TestCase):
                 r_path=FIXTURE_R,
                 py_path=py_path,
                 max_iters=2,
-                beam_width=1,
             )
 
             # Basic invariants
@@ -67,7 +66,6 @@ class TestEndToEndTranslate(unittest.TestCase):
                 r_path=FIXTURE_R,
                 py_path=py_path,
                 max_iters=2,
-                beam_width=1,
             )
             assert isinstance(result.score_history, list)
             # At least the initial seed score should be recorded
@@ -87,7 +85,6 @@ class TestEndToEndTranslate(unittest.TestCase):
                 r_path=FIXTURE_R,
                 py_path=py_path,
                 max_iters=1,
-                beam_width=1,
                 no_seeds=True,
             )
             assert result.final_score >= 0.0
@@ -137,7 +134,6 @@ class TestEndToEndBatch(unittest.TestCase):
             learning_curve_csv=lc_csv,
             scoring_table_csv=st_csv,
             max_iters=1,
-            beam_width=1,
         )
 
         assert len(results) == 1

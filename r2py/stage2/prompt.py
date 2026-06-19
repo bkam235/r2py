@@ -113,6 +113,18 @@ def build_entity_prompt(
             "Your Python translation MUST bind arguments accordingly."
         )
 
+    _fm = getattr(entity, "function_metadata", None)
+    if _fm is not None:
+        fm_parts = ["## Function metadata (from R introspection)"]
+        if _fm.formals:
+            formals_str = ", ".join(f"{k}={v}" if v else k for k, v in _fm.formals.items())
+            fm_parts.append(f"Formals: {formals_str}")
+        if _fm.methods:
+            fm_parts.append(f"S3 methods: {', '.join(_fm.methods)}")
+        if _fm.where:
+            fm_parts.append(f"Defined in: {', '.join(_fm.where)}")
+        parts.append("\n".join(fm_parts))
+
     # If R produced output when this entity was evaluated, show it so the LLM
     # knows exactly what format to reproduce.  This is especially important for
     # entities that auto-print S3 objects with custom print methods (e.g. ri,

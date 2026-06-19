@@ -37,7 +37,6 @@ def run_ablation(
     output_dir: str | Path = "work/analysis/ablation",
     *,
     max_iters: int = 8,
-    beam_width: int = 4,
 ) -> dict:
     """Run the paired ablation experiment and write results.
 
@@ -74,7 +73,6 @@ def run_ablation(
     #   frozen-vs-learning : A=no-learning baseline, B=learning on
     #   heuristic-vs-learned: A=heuristic-retrieval baseline (frozen), B=learned on
     lib_a = _FrozenLibrary(library)
-    learned_a = False
     print("\n--- Run A ---")
     for idx, r_path_str in enumerate(scripts):
         r_path = Path(r_path_str)
@@ -85,8 +83,6 @@ def run_ablation(
                 py_path=str(out_dir / f"A_{idx:03d}_{r_path.stem}.py"),
                 library=lib_a,
                 max_iters=max_iters,
-                beam_width=beam_width,
-                learned_retrieval=learned_a,
             )
             scores_a[r_path_str] = result.final_score
             print(f"  A {label}: {result.final_score:.3f}")
@@ -96,7 +92,8 @@ def run_ablation(
 
     # ---- Run B ----
     lib_b = library  # learning-enabled; sees library in its pre-run-A state
-    learned_b = compare == "heuristic-vs-learned"
+    if compare == "heuristic-vs-learned":
+        lib_b.learned_retrieval = True
     print("\n--- Run B ---")
     for idx, r_path_str in enumerate(scripts):
         r_path = Path(r_path_str)
@@ -107,8 +104,6 @@ def run_ablation(
                 py_path=str(out_dir / f"B_{idx:03d}_{r_path.stem}.py"),
                 library=lib_b,
                 max_iters=max_iters,
-                beam_width=beam_width,
-                learned_retrieval=learned_b,
             )
             scores_b[r_path_str] = result.final_score
             print(f"  B {label}: {result.final_score:.3f}")

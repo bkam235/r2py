@@ -5,6 +5,7 @@ from ...types import EffectClass
 from .base import Comparator, text_similarity
 from .data import DataComparator
 from .env import EnvComparator
+from .exit_code import ExitCodeComparator
 from .files import FilesComparator
 from .graphics import GraphicsComparator
 from .html import HtmlComparator
@@ -23,6 +24,7 @@ COMPARATORS: dict[EffectClass, Comparator] = {
     EffectClass.DATA:     DataComparator(),
     EffectClass.NETWORK:  NetworkComparator(),
     EffectClass.RNG:      RngComparator(),
+    EffectClass.SYNTAX:   ExitCodeComparator(),
 }
 
 __all__ = [
@@ -31,6 +33,7 @@ __all__ = [
     "text_similarity",
     "DataComparator",
     "EnvComparator",
+    "ExitCodeComparator",
     "FilesComparator",
     "GraphicsComparator",
     "HtmlComparator",

@@ -36,6 +36,7 @@ class HarnessTools:
         self._sidecar_filename = sidecar_filename
         self._verify_kwargs = verify_kwargs or {}
         self._probe_count = 0
+        self._probe_history: list[tuple[str, str]] = []
 
     def verify(self, python_source: str) -> "ScoreReport":
         """Run Stage 4 verification, return full ScoreReport with comparisons."""
@@ -77,7 +78,9 @@ class HarnessTools:
                 capture=frozenset({EffectClass.STDOUT}),
                 timeout_s=min(self._timeout_s, 15),
             )
-        return (bundle.stdout or "").strip()
+        result = (bundle.stdout or "").strip()
+        self._probe_history.append((r_expression, result))
+        return result
 
     def lookup_patterns(self, entity_id: str, k: int = 3) -> list["Pattern"]:
         """Query pattern library for the given entity."""

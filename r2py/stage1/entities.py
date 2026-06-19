@@ -47,6 +47,14 @@ class AstNode:
 
 
 @dataclass
+class FunctionMetadata:
+    """R introspection results for a function: formals, S3 methods, namespace location."""
+    formals: dict[str, str] = field(default_factory=dict)
+    methods: list[str] = field(default_factory=list)
+    where: list[str] = field(default_factory=list)
+
+
+@dataclass
 class EntityRef:
     """A directed dependency edge from one entity to another."""
     entity_id: EntityId
@@ -72,3 +80,5 @@ class Entity:
     free_variable_refs: list[str] = field(default_factory=list)
     # R match.call() resolution for FUNCTION_CALL entities, e.g. "chunk(x = 1, 100, 10)".
     resolved_call: str | None = None
+    # R introspection: formals, S3 methods, namespace location.
+    function_metadata: FunctionMetadata | None = None

@@ -356,7 +356,7 @@ class TestComparatorsRegistry:
         expected = {
             EffectClass.STDOUT, EffectClass.WARNINGS, EffectClass.ENV,
             EffectClass.FILES, EffectClass.HTML, EffectClass.GRAPHICS, EffectClass.DATA,
-            EffectClass.NETWORK, EffectClass.RNG,
+            EffectClass.NETWORK, EffectClass.RNG, EffectClass.SYNTAX,
         }
         assert set(COMPARATORS.keys()) == expected
 
@@ -365,6 +365,39 @@ class TestComparatorsRegistry:
 
     def test_network_in_registry(self):
         assert EffectClass.NETWORK in COMPARATORS
+
+    def test_syntax_in_registry(self):
+        assert EffectClass.SYNTAX in COMPARATORS
+
+
+# ---------------------------------------------------------------------------
+# ExitCodeComparator
+# ---------------------------------------------------------------------------
+
+class TestExitCodeComparator:
+    def setup_method(self):
+        from r2py.stage4.comparators.exit_code import ExitCodeComparator
+        self.cmp = ExitCodeComparator()
+
+    def test_both_zero(self):
+        r = self.cmp.compare(0, 0)
+        assert r.score == 1.0
+        assert r.verdict == "pass"
+
+    def test_both_nonzero(self):
+        r = self.cmp.compare(1, 1)
+        assert r.score == 0.8
+        assert r.verdict == "pass"
+
+    def test_r_ok_py_crash(self):
+        r = self.cmp.compare(0, 1)
+        assert r.score == 0.0
+        assert r.verdict == "fail"
+
+    def test_r_crash_py_ok(self):
+        r = self.cmp.compare(1, 0)
+        assert r.score == 0.0
+        assert r.verdict == "fail"
 
 
 # ---------------------------------------------------------------------------

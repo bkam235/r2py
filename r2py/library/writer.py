@@ -207,6 +207,33 @@ def _add_translation_example(pat: Pattern, ex: "TranslationExample") -> None:
     pat.translation_examples = pat.translation_examples[:3]
 
 
+def record_agent_insight(
+    store: "PatternStore",
+    index: "PatternIndex",
+    pattern_id: "PatternId",
+    insight_text: str,
+    entity_package: str = "",
+) -> None:
+    """Append agent-articulated guidance to an existing or new pattern."""
+    pat = store.get(pattern_id)
+    if pat is None:
+        pat = Pattern(
+            id=pattern_id,
+            package=entity_package,
+            confidence="tentative",
+            seed=False,
+            guidance=insight_text,
+            created=date.today().isoformat(),
+            last_review=date.today().isoformat(),
+        )
+    else:
+        if insight_text not in pat.guidance:
+            pat.guidance = pat.guidance.rstrip() + "\n\n" + insight_text
+    pat.last_review = date.today().isoformat()
+    store.save(pat)
+    _upsert_index(pat, index)
+
+
 def _add_edit_example(pat: Pattern, ex: "EditExample") -> None:
     """Add an EditExample to pat, capping at 5 per failure_class (highest delta kept)."""
     same = [e for e in pat.edit_examples if e.failure_class == ex.failure_class]

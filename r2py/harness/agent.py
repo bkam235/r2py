@@ -255,3 +255,81 @@ def _parse_action(raw: str) -> dict | None:
                 return {"action": "probe_r", "expression": py_match.group(1).strip()}
 
     return None
+
+
+_INSIGHT_PROMPT = """\
+You are a translation-rule extractor. Given the R source, the original broken Python \
+translation, and the corrected Python translation, extract 1–3 reusable translation \
+rules that would help translate similar R code in the future.
+
+Each rule should:
+- Name the R construct (function, idiom, or pattern)
+- Describe the correct Python equivalent
+- Be concise (1–2 sentences)
+
+Return a JSON array of objects: [{{"name": "rule_name", "guidance": "description"}}]
+Return ONLY the JSON array, no other text.
+
+## R source
+```r
+{r_source}
+```
+
+## Original (broken) Python
+```python
+{original}
+```
+
+## Corrected Python
+```python
+{improved}
+```
+"""
+
+
+def extract_insights(
+    r_source: str,
+    original: str,
+    improved: str,
+    *,
+    model: str = _llm._DEFAULT_MODEL,
+) -> list[tuple[str, str]]:
+    """Ask the model to articulate reusable translation rules from a successful fix.
+
+    Returns list of (rule_name, guidance_text) tuples.
+    """
+    user_msg = _INSIGHT_PROMPT.format(
+        r_source=r_source, original=original, improved=improved,
+    )
+    try:
+        raw = _llm.call(
+            [{"role": "user", "content": user_msg}],
+            system="You extract translation rules as JSON.",
+            model=model, max_tokens=2048,
+        )
+    except Exception:
+        return []
+
+    raw = raw.strip()
+    if raw.startswith("```"):
+        m = re.search(r'```(?:json)?\s*\n(.*?)```', raw, re.DOTALL)
+        if m:
+            raw = m.group(1).strip()
+
+    try:
+        items = json.loads(raw)
+    except json.JSONDecodeError:
+        return []
+
+    if not isinstance(items, list):
+        return []
+
+    results: list[tuple[str, str]] = []
+    for item in items:
+        if not isinstance(item, dict):
+            continue
+        name = item.get("name", "")
+        guidance = item.get("guidance", "")
+        if name and guidance:
+            results.append((str(name), str(guidance)))
+    return results

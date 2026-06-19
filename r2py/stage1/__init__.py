@@ -9,7 +9,7 @@ from .ast import parse
 from .branch_extractor import extract_branch, extract_for_branch
 from .coverage import CoverageTracker
 from .effects import SideEffect
-from .entities import AstNode, Entity
+from .entities import AstNode, Entity, FunctionMetadata
 from .package_lookup import resolve_symbol
 from .runner import DEFAULT_CAPTURE, run_script, run_script_checkpointed, run_slice
 from .script_map import BranchAnalysis, ScriptMap
@@ -87,6 +87,9 @@ def analyze(
 
     # ── Step 5b: resolve positional arg bindings via match.call() ─────────
     _resolve_arg_bindings(source, entities, timeout_s)
+
+    # ── Step 5c: probe function metadata (formals, methods, namespace) ───
+    _probe_function_metadata(source, entities, timeout_s)
 
     # ── Step 7: build ScriptMap ──────────────────────────────────────────────
     all_effects = _merge_dynamic_effects(list(predicted_effects), main_bundle, entities)
@@ -380,6 +383,111 @@ def _resolve_arg_bindings(
                 )
                 entity.resolved_call = resolved
                 break
+
+
+def _probe_function_metadata(
+    source: str,
+    entities: dict[str, Entity],
+    timeout_s: float,
+) -> None:
+    """Probe formals(), methods(), and getAnywhere()$where for function-call entities.
+
+    Populates entity.function_metadata in place.  Degrades gracefully: on any
+    failure the entity keeps function_metadata=None.
+    """
+    import json as _json
+
+    targets: list[tuple[str, Entity]] = []
+    for eid, entity in entities.items():
+        if entity.kind not in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL):
+            continue
+        targets.append((eid, entity))
+
+    if not targets:
+        return
+
+    # Load packages so probed functions are available.
+    parts: list[str] = []
+    for eid, entity in entities.items():
+        if entity.kind == EntityKind.LIBRARY_IMPORT:
+            span = entity.source_span
+            lib_call = " ".join(source.splitlines()[span.start_line:span.end_line + 1])
+            parts.append(f"tryCatch(suppressPackageStartupMessages({lib_call}), error=function(e) NULL)")
+
+    # Source function definitions from the script.
+    for eid, entity in entities.items():
+        if entity.kind == EntityKind.FUNCTION_DEF:
+            span = entity.source_span
+            fn_lines = source.splitlines()[span.start_line:span.end_line + 1]
+            parts.append(f"tryCatch({{\n{chr(10).join(fn_lines)}\n}}, error=function(e) NULL)")
+
+    seen_names: set[str] = set()
+    for eid, entity in targets:
+        fn_name = entity.name
+        if fn_name in seen_names:
+            continue
+        seen_names.add(fn_name)
+        safe_eid = eid.replace('"', '\\"')
+        parts.append(
+            f'tryCatch({{\n'
+            f'  .r2py_fm <- list()\n'
+            f'  .r2py_f <- tryCatch(formals({fn_name}), error=function(e) NULL)\n'
+            f'  if (!is.null(.r2py_f)) .r2py_fm$formals <- lapply(.r2py_f, function(x) if(missing(x)) "" else deparse(x))\n'
+            f'  .r2py_m <- tryCatch(as.character(methods({fn_name})), error=function(e) character(0))\n'
+            f'  .r2py_fm$methods <- .r2py_m\n'
+            f'  .r2py_w <- tryCatch(getAnywhere("{fn_name}")$where, error=function(e) character(0))\n'
+            f'  .r2py_fm$where <- .r2py_w\n'
+            f'  cat(paste0("__R2PY_META__{safe_eid}__", '
+            f'jsonlite::toJSON(.r2py_fm, auto_unbox=TRUE), "\\n"))\n'
+            f'}}, error=function(e) NULL)'
+        )
+
+    probe_source = "\n".join(parts)
+
+    try:
+        bundle = run_slice(probe_source, capture=frozenset({EffectClass.STDOUT}),
+                           timeout_s=min(timeout_s, 15))
+        stdout = getattr(bundle, "stdout", "") or ""
+    except Exception:
+        return
+
+    marker = "__R2PY_META__"
+    # Build eid→FunctionMetadata, then assign to all entities with the same function name.
+    name_to_meta: dict[str, FunctionMetadata] = {}
+    for line in stdout.splitlines():
+        if not line.startswith(marker):
+            continue
+        rest = line[len(marker):]
+        sep_idx = rest.find("__")
+        if sep_idx < 0:
+            continue
+        eid = rest[:sep_idx]
+        json_str = rest[sep_idx + 2:].strip()
+        if not json_str:
+            continue
+        try:
+            data = _json.loads(json_str)
+        except _json.JSONDecodeError:
+            continue
+        formals_raw = data.get("formals", {})
+        formals = {k: (v if isinstance(v, str) else str(v)) for k, v in formals_raw.items()}
+        methods = data.get("methods", [])
+        where = data.get("where", [])
+        if isinstance(methods, str):
+            methods = [methods]
+        if isinstance(where, str):
+            where = [where]
+        fm = FunctionMetadata(formals=formals, methods=methods, where=where)
+        # Find the function name for this eid and store by name.
+        for target_eid, entity in targets:
+            if target_eid == eid:
+                name_to_meta[entity.name] = fm
+                break
+
+    # Assign to all matching entities (multiple call sites for the same function).
+    for eid, entity in targets:
+        if entity.name in name_to_meta:
+            entity.function_metadata = name_to_meta[entity.name]
 
 
 def _merge_dynamic_effects(

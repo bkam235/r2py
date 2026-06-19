@@ -146,7 +146,11 @@
       "r-package-to-python-library",
       "r-shape-to-scipy",
       "r.auto-print-to-explicit-print",
-      "r-suppress-startup-messages"
+      "r-suppress-startup-messages",
+      "filled.contour",
+      "image",
+      "r-vector-printing",
+      "graycol"
     ],
     ":ffb01754": [
       "matplotlib.rgb-to-hex-import",
@@ -214,6 +218,36 @@
       "xfun.cache-rds-to-python",
       "xfun.cache-rds-return-value",
       "xfun.cache-rds-to-pickle"
+    ],
+    "bit:": [
+      "r-generic-function-translation-(usemethod)",
+      "r-keyword-'from'-handling",
+      "r-named-argument-mapping",
+      "r-list-like-printing",
+      "r-positional-to-keyword-argument-coercion",
+      "r-complex-raw-to-python-numpy-bytes",
+      "r-chunking-logic--by-vs-length",
+      "r-named-arguments-backward-compatibility",
+      "bit--chunk-chunks",
+      "r-named-list-output-simulation",
+      "r-argument-mapping",
+      "r-sequence-chunking--range-logic",
+      "r-style-string-representation"
+    ],
+    "withr:": [
+      "withr--with_locale",
+      "lc_collate--locale-aware-sorting",
+      "r-code-argument-in-wrappers",
+      "r-with_locale---context-manager-pattern",
+      "r-named-vector-c---to-python-dict",
+      "locale-aware-string-operations-in-python"
+    ],
+    "xfun:": [
+      "tempfile",
+      "vector-printing",
+      "unlink---with-patterns",
+      "xfun--cache_rds",
+      "r-numeric-sequence--1-10"
     ]
   },
   "meta": {
@@ -1370,7 +1404,259 @@
       "package": "",
       "ast_shape_hash": "ffb01754",
       "contradicted_at_run": 0
+    },
+    "r-generic-function-translation-(usemethod)": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-keyword-'from'-handling": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-named-argument-mapping": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-list-like-printing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-positional-to-keyword-argument-coercion": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-complex-raw-to-python-numpy-bytes": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-chunking-logic--by-vs-length": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-named-arguments-backward-compatibility": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "bit--chunk-chunks": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-named-list-output-simulation": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-argument-mapping": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-sequence-chunking--range-logic": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-style-string-representation": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "filled.contour": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "shape",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "image": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "shape",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-vector-printing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "shape",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "graycol": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "shape",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "withr--with_locale": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "lc_collate--locale-aware-sorting": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-code-argument-in-wrappers": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-with_locale---context-manager-pattern": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-named-vector-c---to-python-dict": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "locale-aware-string-operations-in-python": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "tempfile": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "xfun",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "vector-printing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "xfun",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "unlink---with-patterns": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "xfun",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "xfun--cache_rds": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "xfun",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-numeric-sequence--1-10": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "xfun",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 129
+  "total_runs": 146
 }

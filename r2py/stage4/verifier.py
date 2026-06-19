@@ -116,6 +116,11 @@ def _compare_bundles(
         r_bundle.rng_log, py_bundle.rng_log
     )
 
+    # EXIT CODE (error/exception symmetry)
+    results[EffectClass.SYNTAX] = COMPARATORS[EffectClass.SYNTAX].compare(
+        r_bundle.exit_code, py_bundle.exit_code
+    )
+
     return results
 
 

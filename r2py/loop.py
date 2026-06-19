@@ -219,6 +219,9 @@ def run_loop(
                 improved, agent_report, script_map, library,
                 script_id, _rebuild(improved),
             )
+            _extract_agent_knowledge(
+                harness, seed, improved, script_map, library, escalation_model,
+            )
 
     if checkpoint_path is not None:
         _write_checkpoint(checkpoint_path, 0, best_source)
@@ -243,6 +246,59 @@ def _make_result(
         final_exit_code=decomp.py_exit_code,
         final_score_report=decomp,
     )
+
+
+def _extract_agent_knowledge(
+    harness,
+    original_source: str,
+    improved_source: str,
+    script_map,
+    library,
+    model: str,
+) -> None:
+    """Record probe history and extract agent-articulated insights after success."""
+    from .library.writer import record_agent_insight
+
+    r_source = getattr(script_map, "source", "") or ""
+
+    # Record probe history on relevant patterns.
+    for expression, result in harness._probe_history:
+        probe_note = f"R probe: `{expression}` → `{result[:200]}`"
+        for eid, entity in getattr(script_map, "entities", {}).items():
+            pkg = getattr(entity, "package", None)
+            if not pkg:
+                continue
+            if entity.name in expression:
+                pat_id = f"{pkg}.{entity.name}"
+                pat = library.store.get(pat_id)
+                if pat is not None and probe_note not in pat.guidance:
+                    record_agent_insight(
+                        library.store, library.index, pat_id, probe_note,
+                        entity_package=pkg,
+                    )
+                break
+
+    # Extract reusable insights via LLM.
+    try:
+        from .harness.agent import extract_insights
+        insights = extract_insights(
+            r_source, original_source, improved_source, model=model,
+        )
+    except Exception:
+        insights = []
+
+    for rule_name, guidance in insights:
+        import re as _re
+        pat_id = _re.sub(r'[^a-z0-9._-]', '-', rule_name.lower()).strip('-')[:80]
+        pkg = ""
+        for entity in getattr(script_map, "entities", {}).values():
+            if getattr(entity, "package", None):
+                pkg = entity.package
+                break
+        record_agent_insight(
+            library.store, library.index, pat_id, guidance,
+            entity_package=pkg,
+        )
 
 
 def _run_epistemology(library, review_fn) -> None:

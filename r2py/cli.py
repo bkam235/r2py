@@ -36,13 +36,9 @@ def cmd_translate(args: argparse.Namespace) -> int:
         model=args.model,
         max_iters=args.max_iters,
         score_threshold=args.score_threshold,
-        beam_width=args.beam_width,
         use_judge=args.use_judge,
-        learned_retrieval=args.learned_retrieval,
-        learned_policy=args.learned_policy,
         data_compare=args.data_compare,
         no_seeds=args.no_seeds,
-        n_seeds=args.n_seeds,
     )
     print(f"Score: {result.final_score:.3f}  Iterations: {result.iterations}")
     if result.final_exit_code != 0:
@@ -96,13 +92,6 @@ def cmd_library(args: argparse.Namespace) -> int:
             min_episodes=args.min_episodes,
         )
         return rc
-    elif sub == "train-policy":
-        from r2py.library.bandit import train as _train
-        rc = _train(
-            out_dir=args.out,
-            min_transitions=args.min_transitions,
-        )
-        return rc
     raise NotImplementedError(f"Unknown library command: {sub}")
 
 
@@ -146,19 +135,12 @@ def main() -> None:
                              help="Model to use: Anthropic model ID or 'ollama:<name>' for local Ollama")
     p_translate.add_argument("--max-iters", type=int, default=8, dest="max_iters")
     p_translate.add_argument("--score-threshold", type=float, default=0.85, dest="score_threshold")
-    p_translate.add_argument("--beam-width", type=int, default=4, dest="beam_width")
     p_translate.add_argument("--use-judge", action="store_true", dest="use_judge",
                              help="Enable LLM judge fallback (D4; off by default)")
-    p_translate.add_argument("--learned-retrieval", action="store_true", dest="learned_retrieval",
-                             help="Use learned retrieval reranker (D6; off by default)")
-    p_translate.add_argument("--learned-policy", action="store_true", dest="learned_policy",
-                             help="Use learned edit policy (D6; off by default)")
     p_translate.add_argument("--data-compare", default="auto", dest="data_compare",
                              choices=["auto", "exact", "embedding"])
     p_translate.add_argument("--no-seeds", action="store_true", dest="no_seeds",
                              help="Ignore seed:true patterns (transfer experiment §6.7)")
-    p_translate.add_argument("--n-seeds", type=int, default=3, dest="n_seeds",
-                             help="Number of initial translation seeds; extras generated only if first scores < 0.5 (default: 3)")
 
     # library
     p_lib = sub.add_parser("library", help="Pattern Library operations")
@@ -175,9 +157,6 @@ def main() -> None:
     p_reranker = lib_sub.add_parser("train-reranker", help="Train offline retrieval reranker (§12.6 A)")
     p_reranker.add_argument("--min-episodes", type=int, default=500, dest="min_episodes")
     p_reranker.add_argument("--out", default="work/models/reranker/")
-    p_policy = lib_sub.add_parser("train-policy", help="Train offline contextual bandit edit policy (§12.6 B)")
-    p_policy.add_argument("--min-transitions", type=int, default=200, dest="min_transitions")
-    p_policy.add_argument("--out", default="work/models/policy/")
 
     # harvest
     p_harvest = sub.add_parser("harvest", help="Harvest R examples from a repo or URL (stage 0)")

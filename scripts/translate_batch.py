@@ -35,7 +35,6 @@ def main() -> None:
                         dest="scoring_table_csv")
     parser.add_argument("--max-iters", type=int, default=8, dest="max_iters")
     parser.add_argument("--score-threshold", type=float, default=0.85, dest="score_threshold")
-    parser.add_argument("--beam-width", type=int, default=4, dest="beam_width")
     parser.add_argument("--no-seeds", action="store_true", dest="no_seeds")
     parser.add_argument("--data-compare", default="auto", dest="data_compare",
                         choices=["auto", "exact", "embedding"])
@@ -55,7 +54,6 @@ def main() -> None:
         recursive=not args.no_recursive,
         max_iters=args.max_iters,
         score_threshold=args.score_threshold,
-        beam_width=args.beam_width,
         no_seeds=args.no_seeds,
         data_compare=args.data_compare,
         force=args.force,

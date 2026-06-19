@@ -396,16 +396,14 @@ class TestRunAblation(unittest.TestCase):
         # run B library must be the real one
         assert library_instances[1] is mock_lib
 
-    def test_heuristic_vs_learned_passes_learned_flag(self):
+    def test_heuristic_vs_learned_sets_learned_flag(self):
         from r2py.ablation import run_ablation, _FrozenLibrary
         slice_path = self._write_slice(["a.R"])
         out_dir = self._tmp / "h_vs_l"
 
-        learned_flags = []
         library_instances = []
 
         def capture_learned(*args, **kwargs):
-            learned_flags.append(kwargs.get("learned_retrieval", False))
             library_instances.append(kwargs.get("library"))
             py = kwargs.get("py_path")
             if py:
@@ -413,15 +411,15 @@ class TestRunAblation(unittest.TestCase):
             return _fake_result()
 
         mock_lib = MagicMock()
+        mock_lib.learned_retrieval = False
         with patch("r2py.ablation.get_library", return_value=mock_lib), \
              patch("r2py.translate", side_effect=capture_learned):
             run_ablation(slice_path=slice_path, compare="heuristic-vs-learned",
                          output_dir=out_dir)
 
-        assert learned_flags[0] is False          # run A: heuristic retrieval
-        assert learned_flags[1] is True           # run B: learned retrieval
         assert isinstance(library_instances[0], _FrozenLibrary)  # run A always frozen
         assert library_instances[1] is mock_lib   # run B uses live library
+        assert mock_lib.learned_retrieval is True  # flag set directly on library
 
 
 # ---------------------------------------------------------------------------

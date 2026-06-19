@@ -11,7 +11,6 @@ from r2py.types import (
     ScoreReport,
     TranslateResult,
     Candidate,
-    Proposal,
     Edit,
     ScriptMap,
 )
@@ -167,7 +166,7 @@ def test_edit_with_attribution():
 
 
 # ---------------------------------------------------------------------------
-# Candidate / Proposal
+# Candidate
 # ---------------------------------------------------------------------------
 
 def test_candidate_fields():
@@ -175,19 +174,6 @@ def test_candidate_fields():
     c = Candidate(translation="x = 1", score=0.7, decomp=rep)
     assert c.score == 0.7
     assert c.translation == "x = 1"
-
-
-def test_proposal_fields():
-    rep = ScoreReport(aggregate=0.8)
-    edit = Edit(kind=EditKind.CHANGE_IMPORT, pattern_id="some_pattern")
-    p = Proposal(
-        candidate="import polars as pl",
-        new_score=0.8,
-        new_decomp=rep,
-        edit=edit,
-        parent_score=0.6,
-    )
-    assert p.new_score > p.parent_score  # improvement
 
 
 # ---------------------------------------------------------------------------

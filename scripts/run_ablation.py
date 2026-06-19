@@ -33,7 +33,6 @@ def main() -> None:
     parser.add_argument("--output-dir", default="work/analysis/ablation",
                         dest="output_dir")
     parser.add_argument("--max-iters", type=int, default=8, dest="max_iters")
-    parser.add_argument("--beam-width", type=int, default=4, dest="beam_width")
     args = parser.parse_args()
 
     from r2py.ablation import run_ablation
@@ -43,7 +42,6 @@ def main() -> None:
         compare=args.compare,
         output_dir=args.output_dir,
         max_iters=args.max_iters,
-        beam_width=args.beam_width,
     )
     sys.exit(0)
 
