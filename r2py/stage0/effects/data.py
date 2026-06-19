@@ -133,6 +133,11 @@ register_r_adapter(
     "is.list({var})",
     "lapply({var}, .r2py_serialize_var)",
 )
+# vctrs_vctr (haven_labelled, etc.) → strip class so jsonlite doesn't recurse.
+register_r_adapter(
+    "inherits({var}, 'vctrs_vctr')",
+    "unclass({var})",
+)
 # Plain atomic vectors / scalars → return as-is; jsonlite encodes them at the top.
 register_r_adapter(
     "is.atomic({var}) || is.numeric({var}) || is.character({var}) || is.logical({var})",

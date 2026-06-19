@@ -262,6 +262,11 @@
       "r-style-indexing--1-n",
       "r-pipe",
       "identical"
+    ],
+    "haven:": [
+      "r-loop-over-dataframe-columns",
+      "haven--labelled",
+      "r-dataframe-column-access---var"
     ]
   },
   "meta": {
@@ -1778,7 +1783,34 @@
       "package": "withr",
       "ast_shape_hash": "",
       "contradicted_at_run": 0
+    },
+    "r-loop-over-dataframe-columns": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "haven",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "haven--labelled": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "haven",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-dataframe-column-access---var": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "haven",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 160
+  "total_runs": 161
 }

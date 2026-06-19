@@ -52,22 +52,7 @@ def translate(
             file=sys.stderr,
         )
 
-    try:
-        script_map = _analyze(Path(r_path))
-    except RuntimeError as exc:
-        print(
-            f"r2py: R script failed during analysis — skipping.\n  {exc}",
-            file=sys.stderr,
-        )
-        from .types import TranslateResult, ScoreReport
-        result = TranslateResult(
-            python_source="", final_score=0.0, iterations=0,
-            final_exit_code=1,
-            final_score_report=ScoreReport(aggregate=0.0, py_exit_code=1),
-        )
-        _append_run_record(Path(r_path), result, model, escalation_model or model)
-        return result
-
+    script_map = _analyze(Path(r_path))
     _emit(progress, kind="analysis_done",
           entity_count=len(getattr(script_map, "entities", None) or {}))
 
