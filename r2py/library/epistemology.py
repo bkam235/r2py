@@ -15,6 +15,7 @@ _ARCHIVE_AFTER_RUNS = 30
 # non-improvement interactions (ties + contradictions combined).
 _NO_IMPROVEMENT_RUN_THRESHOLD = 100
 _DEMOTION_MAP = {"confirmed": "tentative", "tentative": "contradicted"}
+_MIN_EXAMPLE_SCORE = 0.3
 
 
 def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
@@ -65,7 +66,7 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
             store.save(pat)
             log.append(
                 f"demoted {pid}: contradictions({len(pat.contradictions)})"
-                f" >= threshold({threshold}) → {new_conf}"
+                f" >= threshold({threshold}) -> {new_conf}"
             )
 
     # Reload after mutations
@@ -139,7 +140,23 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
                 f"archived {pid}: {non_improvements} non-improvement runs, no improvement"
             )
 
-    # Rule 5: consolidate numeric-suffix duplicates.
+    # Rule 5: prune low-scoring translation examples.
+    # Broken runs (e.g. verification crashes) can record near-zero score
+    # examples that block future updates via the r_hash dedup check.
+    patterns = store.load_all()
+    for pid, pat in patterns.items():
+        before = len(pat.translation_examples)
+        pat.translation_examples = [
+            e for e in pat.translation_examples if e.score >= _MIN_EXAMPLE_SCORE
+        ]
+        if len(pat.translation_examples) < before:
+            store.save(pat)
+            log.append(
+                f"pruned {before - len(pat.translation_examples)} low-score"
+                f" example(s) from {pid}"
+            )
+
+    # Rule 6: consolidate numeric-suffix duplicates.
     # Patterns like `with-locale`, `with-locale-1`, `with-locale-2` arise when
     # the recording mechanism creates one pattern per entity for a function
     # called multiple times.  Merge all into the canonical (base-name) pattern,
@@ -272,7 +289,7 @@ def _consolidate_numeric_duplicates(
             if path.exists():
                 path.unlink()
             index.remove(rid)
-            log.append(f"consolidated {rid} → {canonical_id}")
+            log.append(f"consolidated {rid} -> {canonical_id}")
 
     return log
 

@@ -75,5 +75,5 @@ for r_script, py_script in scripts:
                        escalation_model="ollama:gemma4:31b-cloud",
                        progress=_on_progress,
                        score_threshold=0.9,
-                       max_iters=5)
+                       max_iters=10)
 

@@ -197,8 +197,11 @@ def _run_epistemology(store: "PatternStore", index: "PatternIndex") -> None:
 
 def _add_translation_example(pat: Pattern, ex: "TranslationExample") -> None:
     """Add a TranslationExample to pat, deduplicating by r_hash and capping at 3."""
-    if any(e.r_hash == ex.r_hash for e in pat.translation_examples):
-        return
+    for i, e in enumerate(pat.translation_examples):
+        if e.r_hash == ex.r_hash:
+            if ex.score > e.score:
+                pat.translation_examples[i] = ex
+            return
     pat.translation_examples.append(ex)
     pat.translation_examples.sort(key=lambda e: -e.score)
     pat.translation_examples = pat.translation_examples[:3]

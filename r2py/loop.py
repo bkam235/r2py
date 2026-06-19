@@ -427,22 +427,38 @@ def _record_seed_translations(
         if py_snip.strip().startswith("pass"):
             continue
 
+        r_hash = r_snippet_hash(r_snip)
+        ex = TranslationExample(
+            r_hash=r_hash,
+            r_snippet=r_snip[:300],
+            py_snippet=py_snip[:600],
+            score=avg,
+            script_id=script_id,
+        )
+
+        updated_pids: set[str] = set()
+
+        # Record against retrieved pattern matches.
         entity_pkg = getattr(entity, "package", "") or ""
-        patterns = library.retrieve(entity, k=1)
+        patterns = library.retrieve(entity, k=3)
         for pat_obj in patterns:
             if not _packages_compatible(pat_obj.package, entity_pkg):
                 continue
             pat = library.store.get(pat_obj.id)
             if pat is None:
                 continue
-            ex = TranslationExample(
-                r_hash=r_snippet_hash(r_snip),
-                r_snippet=r_snip[:300],
-                py_snippet=py_snip[:600],
-                score=avg,
-                script_id=script_id,
-            )
             _add_translation_example(pat, ex)
             library.store.save(pat)
+            updated_pids.add(pat_obj.id)
+
+        # Also update any pattern that already has an example with the
+        # same r_hash — these were created by record_evidence and may
+        # not be returned by retrieve.
+        for pid, pat_data in library.store.load_all().items():
+            if pid in updated_pids:
+                continue
+            if any(e.r_hash == r_hash for e in pat_data.translation_examples):
+                _add_translation_example(pat_data, ex)
+                library.store.save(pat_data)
 
 
