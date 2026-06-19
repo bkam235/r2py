@@ -52,7 +52,22 @@ def translate(
             file=sys.stderr,
         )
 
-    script_map = _analyze(Path(r_path))
+    try:
+        script_map = _analyze(Path(r_path))
+    except RuntimeError as exc:
+        print(
+            f"r2py: R script failed during analysis — skipping.\n  {exc}",
+            file=sys.stderr,
+        )
+        from .types import TranslateResult, ScoreReport
+        result = TranslateResult(
+            python_source="", final_score=0.0, iterations=0,
+            final_exit_code=1,
+            final_score_report=ScoreReport(aggregate=0.0, py_exit_code=1),
+        )
+        _append_run_record(Path(r_path), result, model, escalation_model or model)
+        return result
+
     _emit(progress, kind="analysis_done",
           entity_count=len(getattr(script_map, "entities", None) or {}))
 
@@ -75,6 +90,7 @@ def translate(
     )
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     _write_translation_log(Path(py_path), script_map, result)
+    _append_run_record(Path(r_path), result, model, escalation_model or model)
     if result.final_exit_code != 0:
         print(
             f"r2py: warning: final Python translation crashed "
@@ -279,6 +295,41 @@ def reset_library(library=None, keep_seeds: bool = True) -> int:
     index._save()
 
     return removed
+
+
+def _append_run_record(
+    r_path: "Path",
+    result: "TranslateResult",
+    model: str,
+    escalation_model: str,
+) -> None:
+    """Append a JSONL record to work/analysis/run_history.jsonl."""
+    import json
+    from datetime import datetime, timezone
+    from pathlib import Path
+
+    history_path = Path(__file__).resolve().parent.parent / "work" / "analysis" / "run_history.jsonl"
+    history_path.parent.mkdir(parents=True, exist_ok=True)
+
+    report = result.final_score_report
+    by_effect = {}
+    if report is not None:
+        from .types import EffectClass
+        by_effect = {ec.value: score for ec, score in report.by_effect.items()}
+
+    record = {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "script": r_path.stem,
+        "final_score": result.final_score,
+        "iterations": result.iterations,
+        "exit_code": result.final_exit_code,
+        "entity_count": len(report.by_entity) if report else 0,
+        "by_effect": by_effect,
+        "model": model,
+        "escalation_model": escalation_model,
+    }
+    with open(history_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(record) + "\n")
 
 
 def _write_translation_log(

@@ -232,7 +232,10 @@
       "r-named-list-output-simulation",
       "r-argument-mapping",
       "r-sequence-chunking--range-logic",
-      "r-style-string-representation"
+      "r-style-string-representation",
+      "r-positional-vs-keyword-arguments--overloading",
+      "r-range-distribution--remainder-handling",
+      "r-raw-complex-vector-allocation"
     ],
     "withr:": [
       "withr--with_locale",
@@ -240,7 +243,12 @@
       "r-code-argument-in-wrappers",
       "r-with_locale---context-manager-pattern",
       "r-named-vector-c---to-python-dict",
-      "locale-aware-string-operations-in-python"
+      "locale-aware-string-operations-in-python",
+      "with_locale",
+      "locale-aware-sorting",
+      "with_locale-context-manager-usage",
+      "r-function-calls-within-with_locale",
+      "r-vector-output-formatting"
     ],
     "xfun:": [
       "tempfile",
@@ -249,6 +257,11 @@
       "xfun--cache_rds",
       "r-numeric-sequence--1-10",
       "unlink-pattern"
+    ],
+    "googlesheets4:": [
+      "r-style-indexing--1-n",
+      "r-pipe",
+      "identical"
     ]
   },
   "meta": {
@@ -1666,7 +1679,106 @@
       "package": "xfun",
       "ast_shape_hash": "",
       "contradicted_at_run": 0
+    },
+    "r-style-indexing--1-n": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "googlesheets4",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-pipe": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "googlesheets4",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "identical": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "googlesheets4",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-positional-vs-keyword-arguments--overloading": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-range-distribution--remainder-handling": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-raw-complex-vector-allocation": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "with_locale": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "locale-aware-sorting": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "with_locale-context-manager-usage": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-function-calls-within-with_locale": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-vector-output-formatting": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "withr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 151
+  "total_runs": 160
 }

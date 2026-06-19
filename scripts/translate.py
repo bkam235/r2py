@@ -34,20 +34,7 @@ def _on_progress(event) -> None:
 input_filenames = next(walk(input_dir), (None, None, []))[2]
 # input_filenames = random.sample(input_filenames, 1) #don't use random script
 
-input_filenames = ["googlesheets4__rd_example__sheet_append_Rd.R"] #translate this specific script
-
-#v0.3
-# bit__rd_example__chunk_Rd.R gemma:1.000
-# shape__rd_example__greycol_Rd.R gemma:0.924
-# withr__rd_example__with_locale_Rd.R gemma 10x, haiku 5x:0.987
-# xfun__rd_example__cache_rds_Rd.R gemma/haiku:0.997
-
-#v0.2
-# shape__rd_example__greycol_Rd.R 0.930
-# withr__rd_example__with_locale_Rd.R 0.987
-# xfun__rd_example__cache_rds_Rd.R 0.927
-# googlesheets4__rd_example__sheet_append_Rd.R 0.992
-# progressr__rd_example__handler_rpushbullet_Rd.R 0.990
+input_filenames = ["haven__rd_example__print_labels_Rd.R"] #translate this specific script
 
 
 # from r2py import seed_from_translation
