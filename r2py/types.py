@@ -218,10 +218,11 @@ class ScriptMap:
 
 @dataclass
 class ProgressEvent:
-    kind: str           # "analysis_done" | "seed_done" | "agent_start" | "done"
+    kind: str           # "analysis_done" | "seed_done" | "agent_start" | "done" | "seeded"
     iteration: "int | None" = None
     score: "float | None" = None
     entity_count: "int | None" = None
+    count: "int | None" = None
     edit_kind: "str | None" = None
     entity_id: "str | None" = None
     outcome: "str | None" = None    # "accepted" | "tie" | "rejected"

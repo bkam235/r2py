@@ -26,22 +26,17 @@ def _on_progress(event) -> None:
         print(f"[Seed]    Initial score: {event.score:.3f}")
     elif event.kind == "agent_start" and VERBOSE:
         print(f"[Agent]   Escalating to reasoning agent (seed score: {event.score:.3f})")
+    elif event.kind == "seeded":
+        print(f"[Seed]    Seeded {event.count} patterns from translation")
     elif event.kind == "done":
         print(f"[Done]    Final score: {event.score:.3f}")
 
 
 # Iterate through input files for translation
 input_filenames = next(walk(input_dir), (None, None, []))[2]
-# input_filenames = random.sample(input_filenames, 1) #don't use random script
+# input_filenames = random.sample(input_filenames, 3) #don't use random script
 
-input_filenames = ["haven__rd_example__print_labels_Rd.R"] #translate this specific script
-
-
-# from r2py import seed_from_translation
-# seed_from_translation(
-#     "work/inputs/harvested/withr__rd_example__with_locale_Rd.R",
-#     "work/outputs/withr__rd_example__with_locale_Rd.py",
-# )
+input_filenames = ["purrr__rd_example__lift_Rd.R"] #translate this specific script
 
 scripts = []
 for r_filename in input_filenames:
@@ -67,6 +62,12 @@ for r_script, py_script in scripts:
                        progress=_on_progress,
                        score_threshold=0.95,
                        max_iters=10)
+
+# from r2py import seed_from_translation
+# seed_from_translation(
+#     "work/inputs/harvested/purrr__rd_example__lift_Rd.R",
+#     "work/outputs/purrr__rd_example__lift_Rd.py",
+# )
 
 # Hypothesis: I need repeated runs on the same script to make scores higher and reproducible
 # First with stronger models, then after 3-5 re-runs Gemma does it right on seed

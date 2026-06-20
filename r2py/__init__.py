@@ -76,6 +76,12 @@ def translate(
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     _write_translation_log(Path(py_path), script_map, result)
     _append_run_record(Path(r_path), result, model, escalation_model or model)
+    if result.final_score >= score_threshold:
+        seeded = seed_from_translation(
+            r_path, py_path, library=library,
+        )
+        if seeded:
+            _emit(progress, kind="seeded", count=len(seeded))
     if result.final_exit_code != 0:
         print(
             f"r2py: warning: final Python translation crashed "
