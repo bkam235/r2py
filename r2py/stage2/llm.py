@@ -9,6 +9,16 @@ import anthropic
 _DEFAULT_MODEL = "claude-sonnet-4-6"
 _MAX_RETRIES = 4
 
+
+class TruncatedResponseError(RuntimeError):
+    """Raised when the LLM response was cut off at max_tokens."""
+    def __init__(self, partial_text: str, max_tokens: int):
+        self.partial_text = partial_text
+        super().__init__(
+            f"LLM response truncated at max_tokens={max_tokens}. "
+            "Increase max_tokens or reduce entity size."
+        )
+
 # Module-level client cache keyed by api_key so the underlying HTTP session
 # is reused across all entity calls within a translation run.
 _clients: dict[str, anthropic.Anthropic] = {}
@@ -66,9 +76,8 @@ def call(
                 messages=messages,
             )
             if response.stop_reason == "max_tokens":
-                raise RuntimeError(
-                    f"LLM response truncated at max_tokens={max_tokens}. "
-                    "Increase max_tokens or reduce entity size."
+                raise TruncatedResponseError(
+                    response.content[0].text, max_tokens,
                 )
             return response.content[0].text
         except RuntimeError:

@@ -214,7 +214,7 @@ def build_agent_turn(
             parts.append(h)
         parts.append("")
 
-    parts.append("What is your next action?")
+    parts.append("What is your next action? (brief analysis, then action JSON)")
 
     return [{"role": "user", "content": "\n".join(parts)}]
 

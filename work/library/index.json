@@ -213,7 +213,13 @@
       "r-named-list-unpacking-with",
       "r-s-exec---do.call",
       "r-pmap_dbl---and-pmap_lgl---functions",
-      "r-lift_ld---with-partial---composition"
+      "r-lift_ld---with-partial---composition",
+      "pmap_--row-unpacking",
+      "lift_vd-for-vector-to-varargs-conversion",
+      "lift_ld-wrapper-signature-and-argument-packing",
+      "r-numeric-formatting-in-print-statements",
+      "multi-line-vector-printing-with-proper-indexing",
+      "trimming-logic-in-statistical-functions"
     ],
     "magrittr:": [
       "magrittr.pipe_to_chaining"
@@ -1854,7 +1860,61 @@
       "package": "purrr",
       "ast_shape_hash": "",
       "contradicted_at_run": 0
+    },
+    "pmap_--row-unpacking": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "lift_vd-for-vector-to-varargs-conversion": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "lift_ld-wrapper-signature-and-argument-packing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-numeric-formatting-in-print-statements": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "multi-line-vector-printing-with-proper-indexing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "trimming-logic-in-statistical-functions": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 4
+  "total_runs": 20
 }

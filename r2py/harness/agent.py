@@ -6,6 +6,7 @@ import re
 from typing import TYPE_CHECKING
 
 from ..stage2 import llm as _llm
+from ..stage2.llm import TruncatedResponseError
 from . import prompt as _prompt
 
 if TYPE_CHECKING:
@@ -75,20 +76,55 @@ def reason(
             patterns_by_entity=patterns_by_entity,
         )
 
+        truncated = False
         try:
             raw = _llm.call(
                 messages, system_prompt,
                 model=model, max_tokens=16384,
             )
+        except TruncatedResponseError as exc:
+            raw = exc.partial_text
+            truncated = True
+            print(f"[Agent]   Response truncated at max_tokens — attempting recovery")
         except Exception as exc:
             print(f"[Agent]   LLM call failed: {exc}")
             break
 
         action = _parse_action(raw)
         if action is None:
-            print(f"[Agent]   Could not parse action from response")
-            history.append(f"Step {step}: (parse error)")
-            continue
+            # Haiku sometimes outputs analysis without an action — nudge it
+            snippet = raw[:300].replace('\n', '\\n')
+            print(f"[Agent]   Could not parse action from response: {snippet!r}")
+            try:
+                retry_messages = messages + [
+                    {"role": "assistant", "content": raw},
+                    {"role": "user", "content": (
+                        "Your analysis above is good. Now act on it: "
+                        "output a rewrite, probe_r, or done action. "
+                        "For a rewrite, output the COMPLETE Python file:\n"
+                        '{"action": "rewrite", "new_source": "..."}\n'
+                        "For a probe:\n"
+                        '{"action": "probe_r", "expression": "..."}\n'
+                        "To stop:\n"
+                        '{"action": "done"}'
+                    )},
+                ]
+                continuation = _llm.call(
+                    retry_messages,
+                    system_prompt,
+                    model=model, max_tokens=16384,
+                )
+                action = _parse_action(continuation)
+                if action:
+                    print(f"[Agent]   Continuation retry succeeded: {action.get('action', '?')}")
+            except Exception as exc:
+                print(f"[Agent]   Continuation retry failed: {exc}")
+            if action is None:
+                history.append(
+                    f"Step {step}: (your response was analysis only, no action was taken. "
+                    "You MUST include an action in your response.)"
+                )
+                continue
 
         action_type = action.get("action", "")
         print(f"[Agent]   Step {step}: {action_type}")
@@ -269,6 +305,13 @@ def _parse_action(raw: str) -> dict | None:
             py_match = _PY_FENCE_RE.search(raw) or _FENCE_RE.search(raw)
             if py_match:
                 return {"action": "probe_r", "expression": py_match.group(1).strip()}
+
+    # 6) Last resort: bare python fence without any action keyword
+    py_match = _PY_FENCE_RE.search(raw) or _PY_FENCE_OPEN_RE.search(raw)
+    if py_match:
+        code = py_match.group(1).rstrip("`").rstrip()
+        if code.strip() and ("import " in code or "def " in code or "r2py:entity" in code):
+            return {"action": "rewrite", "new_source": code}
 
     return None
 
