@@ -34,7 +34,7 @@ def _on_progress(event) -> None:
 
 # Iterate through input files for translation
 input_filenames = next(walk(input_dir), (None, None, []))[2]
-input_filenames = random.sample(input_filenames, 3) #don't use random script
+input_filenames = random.sample(input_filenames, 10) #don't use random script
 
 # input_filenames = ["purrr__rd_example__lift_Rd.R"] #translate this specific script
 # HARD CASES #
