@@ -211,7 +211,9 @@
       "r-lift_dl---function",
       "r-na-and-logical-values-in-numeric-contexts",
       "r-named-list-unpacking-with",
-      "r-s-exec---do.call"
+      "r-s-exec---do.call",
+      "r-pmap_dbl---and-pmap_lgl---functions",
+      "r-lift_ld---with-partial---composition"
     ],
     "magrittr:": [
       "magrittr.pipe_to_chaining"
@@ -259,12 +261,13 @@
       "ast_shape_hash": ""
     },
     "auto-print-to-stdout": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 43,
       "contradictions_count": 109,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "base.cat_to_print": {
       "confidence": "contradicted",
@@ -515,12 +518,13 @@
       "ast_shape_hash": ""
     },
     "chunk-wrapper": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 2,
       "contradictions_count": 0,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "chunk.auto-print-result": {
       "confidence": "tentative",
@@ -659,12 +663,13 @@
       "ast_shape_hash": ""
     },
     "filled.contour-matplotlib": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 8,
       "contradictions_count": 5,
       "seed": true,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "filled.contour": {
       "confidence": "tentative",
@@ -1035,12 +1040,13 @@
       "ast_shape_hash": ""
     },
     "r-auto-print-to-stdout": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 4,
       "contradictions_count": 3,
       "seed": false,
       "package": "shape",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "r-autoprint-to-python-print": {
       "confidence": "tentative",
@@ -1160,7 +1166,8 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "purrr",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "r-list-like-printing": {
       "confidence": "tentative",
@@ -1323,12 +1330,13 @@
       "ast_shape_hash": ""
     },
     "r-shape-to-scipy": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 4,
       "contradictions_count": 14,
       "seed": false,
       "package": "shape",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "r-style-indexing--1-n": {
       "confidence": "tentative",
@@ -1547,12 +1555,13 @@
       "ast_shape_hash": ""
     },
     "suppress-messages": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 32,
       "contradictions_count": 80,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "suppress-package-startup-messages": {
       "confidence": "contradicted",
@@ -1667,12 +1676,13 @@
       "ast_shape_hash": ""
     },
     "with-locale": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 7,
       "contradictions_count": 7,
       "seed": true,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "withr--with_locale": {
       "confidence": "tentative",
@@ -1691,12 +1701,13 @@
       "ast_shape_hash": ""
     },
     "withr.with-locale-code-param": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 3,
       "contradictions_count": 31,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "withr.with-locale-context-manager": {
       "confidence": "tentative",
@@ -1825,7 +1836,25 @@
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
+    },
+    "r-pmap_dbl---and-pmap_lgl---functions": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-lift_ld---with-partial---composition": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 1
+  "total_runs": 4
 }
