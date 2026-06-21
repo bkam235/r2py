@@ -168,6 +168,10 @@
       "base.which_to_npwhere",
       "base.write_csv_to_pandas"
     ],
+    "broom:": [
+      "broom--tidy---broom--glance",
+      "rlang--is_installed"
+    ],
     "timeDate:": [
       "callable-string-argument-polymorphism",
       "r-date-vector-printing",
@@ -332,13 +336,12 @@
       "ast_shape_hash": ""
     },
     "auto-print-to-stdout": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 43,
       "contradictions_count": 109,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "base.cat_to_print": {
       "confidence": "contradicted",
@@ -482,6 +485,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "broom--tidy---broom--glance": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
       "ast_shape_hash": ""
     },
     "callable-string-argument-polymorphism": {
@@ -1277,13 +1288,12 @@
       "ast_shape_hash": ""
     },
     "r-auto-print-to-stdout": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 4,
       "contradictions_count": 3,
       "seed": false,
       "package": "shape",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "r-autoprint-to-python-print": {
       "confidence": "tentative",
@@ -1614,13 +1624,12 @@
       "ast_shape_hash": ""
     },
     "r-shape-to-scipy": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 4,
       "contradictions_count": 14,
       "seed": false,
       "package": "shape",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "r-style-indexing--1-n": {
       "confidence": "tentative",
@@ -1854,6 +1863,14 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "rlang--is_installed": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": ""
+    },
     "row.match": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -1871,13 +1888,12 @@
       "ast_shape_hash": ""
     },
     "suppress-messages": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 32,
       "contradictions_count": 80,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "suppress-package-startup-messages": {
       "confidence": "contradicted",
@@ -2064,13 +2080,12 @@
       "ast_shape_hash": ""
     },
     "with-locale": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 7,
       "contradictions_count": 7,
       "seed": true,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "withautoprint": {
       "confidence": "tentative",
@@ -2097,13 +2112,12 @@
       "ast_shape_hash": ""
     },
     "withr.with-locale-code-param": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 3,
       "contradictions_count": 31,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "withr.with-locale-context-manager": {
       "confidence": "tentative",
@@ -2233,6 +2247,5 @@
       "package": "",
       "ast_shape_hash": ""
     }
-  },
-  "total_runs": 2
+  }
 }

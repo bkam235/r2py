@@ -19,7 +19,7 @@ def find_r_package_source(package: str) -> Path | None:
     result = subprocess.run(
         [str(rscript), "-e",
          f"{lib_setup}cat(tryCatch(find.package('{package}'), error=function(e) ''))"],
-        capture_output=True, text=True, timeout=10,
+        capture_output=True, text=True, encoding="utf-8", timeout=10,
     )
     path_str = result.stdout.strip()
     if path_str:

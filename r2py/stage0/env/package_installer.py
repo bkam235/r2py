@@ -46,7 +46,7 @@ def get_r_package_version(package: str) -> str | None:
     result = subprocess.run(
         [str(rscript), "-e",
          f"cat(tryCatch(as.character(packageVersion('{package}')), error=function(e) 'NOT_INSTALLED'))"],
-        capture_output=True, text=True, timeout=15,
+        capture_output=True, text=True, encoding="utf-8", timeout=15,
     )
     v = result.stdout.strip()
     return None if v == "NOT_INSTALLED" or not v else v
@@ -58,7 +58,7 @@ def get_py_package_version(package: str) -> str | None:
     result = subprocess.run(
         [str(python), "-c",
          f"import importlib.metadata; print(importlib.metadata.version('{package}'))"],
-        capture_output=True, text=True, timeout=10,
+        capture_output=True, text=True, encoding="utf-8", timeout=10,
     )
     if result.returncode == 0:
         return result.stdout.strip()

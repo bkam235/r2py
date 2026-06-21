@@ -220,7 +220,7 @@ def _try_r_deparse(package: str, symbol: str, max_lines: int) -> str | None:
     try:
         result = subprocess.run(
             [str(rscript), "--vanilla", "-e", r_code],
-            capture_output=True, text=True, timeout=30,
+            capture_output=True, text=True, encoding="utf-8", timeout=30,
         )
     except Exception:
         return None

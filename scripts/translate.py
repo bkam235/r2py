@@ -40,6 +40,7 @@ input_filenames = random.sample(input_filenames, 10) #don't use random script
 # HARD CASES #
 # purrr__rd_example__lift_Rd.R
 # plyr__rd_example__splitter_a_Rd.R
+# VERIFY shiny__rd_example__submitButton_Rd.py
 
 scripts = []
 for r_filename in input_filenames:

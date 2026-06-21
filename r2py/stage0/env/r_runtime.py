@@ -84,6 +84,7 @@ def r_version() -> str:
         [str(rscript), "--version"],
         capture_output=True,
         text=True,
+        encoding="utf-8",
         timeout=10,
     )
     # R prints version to stderr: "R scripting front-end version 4.3.1 (2023-06-16)"
