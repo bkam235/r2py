@@ -222,6 +222,7 @@
       "identical",
       "namespace-qualification",
       "package-internal-access",
+      "r-numeric-indexing-to-python-iloc",
       "r-pipe",
       "r-style-indexing--1-n",
       "withautoprint"
@@ -1528,6 +1529,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "purrr",
+      "ast_shape_hash": ""
+    },
+    "r-numeric-indexing-to-python-iloc": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "googlesheets4",
       "ast_shape_hash": ""
     },
     "r-numeric-sequence--1-10": {
