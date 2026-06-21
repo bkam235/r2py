@@ -52,6 +52,7 @@ _SNAPSHOT_SKIP_DIRS = frozenset({
     "__pycache__", ".tox", ".venv", "venv", ".mypy_cache",
     ".claude",  # Claude Code writes here during normal operation
     ".local",   # IDE/app state (Positron logs, etc.) written by background processes
+    ".ipython", # IPython session history (history.sqlite) updated on every Python run
 })
 
 # Individual files in $HOME written by background tools (not sandbox scripts).

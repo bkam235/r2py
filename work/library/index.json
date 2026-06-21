@@ -128,22 +128,8 @@
       "xfun.cache-rds-to-pickle",
       "xfun.cache-rds-to-python"
     ],
-    "base:": [
-      "base.cat_to_print",
-      "base.c_to_list",
-      "base.dataframe_to_pandas",
-      "base.lapply_to_listcomp",
-      "base.na_to_none",
-      "base.nrow_ncol_to_shape",
-      "base.paste0_to_fstring",
-      "base.plot_to_matplotlib",
-      "base.read_csv_to_pandas",
-      "base.seq_to_range",
-      "base.sprintf_to_fstring",
-      "base.which_to_npwhere",
-      "base.write_csv_to_pandas"
-    ],
     "bit:": [
+      "as.logical",
       "bit--chunk-chunks",
       "r-argument-mapping",
       "r-chunking-logic--by-vs-length",
@@ -160,8 +146,27 @@
       "r-raw-complex-vector-allocation",
       "r-sequence-chunking--range-logic",
       "r-style-string-representation",
-      "which",
-      "as.logical"
+      "which"
+    ],
+    "xtable:": [
+      "as.math-----as.is----xtable",
+      "names-vector",
+      "vectorized-string-functions"
+    ],
+    "base:": [
+      "base.cat_to_print",
+      "base.c_to_list",
+      "base.dataframe_to_pandas",
+      "base.lapply_to_listcomp",
+      "base.na_to_none",
+      "base.nrow_ncol_to_shape",
+      "base.paste0_to_fstring",
+      "base.plot_to_matplotlib",
+      "base.read_csv_to_pandas",
+      "base.seq_to_range",
+      "base.sprintf_to_fstring",
+      "base.which_to_npwhere",
+      "base.write_csv_to_pandas"
     ],
     "timeDate:": [
       "callable-string-argument-polymorphism",
@@ -169,10 +174,15 @@
       "vectorized-function-inputs"
     ],
     "dplyr:": [
+      "dataframe-indexing-with-rownames-names",
+      "dplyr--arrange",
+      "dplyr--filter",
+      "dplyr--lag-with-order_by",
+      "dplyr--mutate",
       "dplyr.filter_to_mask",
       "ggplot2-pipeline",
       "paste---in-aes",
-      "dplyr--filter"
+      "r-sample---for-shuffling-indices"
     ],
     "shape:": [
       "filled.contour",
@@ -196,8 +206,11 @@
     ],
     "googlesheets4:": [
       "identical",
+      "namespace-qualification",
+      "package-internal-access",
       "r-pipe",
-      "r-style-indexing--1-n"
+      "r-style-indexing--1-n",
+      "withautoprint"
     ],
     "withr:": [
       "lc_collate--locale-aware-sorting",
@@ -234,6 +247,14 @@
     "magrittr:": [
       "magrittr.pipe_to_chaining"
     ],
+    "plyr:": [
+      "r-1-indexed-array-dimensions-vs-python-0-indexed",
+      "r-array-dataframe-dimension-splitting",
+      "r-datasets--mtcars--ozone--embedding",
+      "r-triple-colon-namespace-access",
+      "r-triple-colon-namespace-operator",
+      "suppressing-package-startup-messages"
+    ],
     "xfun:": [
       "r-numeric-sequence--1-10",
       "tempfile",
@@ -241,6 +262,14 @@
       "unlink-pattern",
       "vector-printing",
       "xfun--cache_rds"
+    ],
+    "prodlim:": [
+      "r-vector-to-python-list-dataframe",
+      "row.match"
+    ],
+    "rlang:": [
+      "typed-na-handling",
+      "typeof"
     ]
   },
   "meta": {
@@ -250,6 +279,22 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "as.logical": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": ""
+    },
+    "as.math-----as.is----xtable": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "xtable",
       "ast_shape_hash": ""
     },
     "auto-print-expression": {
@@ -277,13 +322,12 @@
       "ast_shape_hash": ""
     },
     "auto-print-to-stdout": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 43,
       "contradictions_count": 109,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "base.cat_to_print": {
       "confidence": "contradicted",
@@ -629,6 +673,14 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "dataframe-indexing-with-rownames-names": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "dplyr",
+      "ast_shape_hash": ""
+    },
     "datetime-import-conflict": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -643,6 +695,38 @@
       "contradictions_count": 4,
       "seed": true,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "dplyr--arrange": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "dplyr",
+      "ast_shape_hash": ""
+    },
+    "dplyr--filter": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "dplyr",
+      "ast_shape_hash": ""
+    },
+    "dplyr--lag-with-order_by": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "dplyr",
+      "ast_shape_hash": ""
+    },
+    "dplyr--mutate": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "dplyr",
       "ast_shape_hash": ""
     },
     "dplyr.filter_to_mask": {
@@ -747,6 +831,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "ggplot2-pipeline": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "dplyr",
       "ast_shape_hash": ""
     },
     "ggplot2.to_plotnine": {
@@ -997,6 +1089,22 @@
       "package": "purrr",
       "ast_shape_hash": ""
     },
+    "names-vector": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "xtable",
+      "ast_shape_hash": ""
+    },
+    "namespace-qualification": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "googlesheets4",
+      "ast_shape_hash": ""
+    },
     "nan-array-conversion-fix": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -1021,6 +1129,14 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "package-internal-access": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "googlesheets4",
+      "ast_shape_hash": ""
+    },
     "param-name-mismatch": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -1043,6 +1159,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "paste---in-aes": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "dplyr",
       "ast_shape_hash": ""
     },
     "pmap_--row-unpacking": {
@@ -1077,12 +1201,28 @@
       "package": "purrr",
       "ast_shape_hash": ""
     },
+    "r-1-indexed-array-dimensions-vs-python-0-indexed": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "plyr",
+      "ast_shape_hash": ""
+    },
     "r-argument-mapping": {
       "confidence": "tentative",
       "evidence_count": 0,
       "contradictions_count": 0,
       "seed": false,
       "package": "bit",
+      "ast_shape_hash": ""
+    },
+    "r-array-dataframe-dimension-splitting": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "plyr",
       "ast_shape_hash": ""
     },
     "r-auto-print-to-py-print": {
@@ -1094,13 +1234,12 @@
       "ast_shape_hash": ""
     },
     "r-auto-print-to-stdout": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 4,
       "contradictions_count": 3,
       "seed": false,
       "package": "shape",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "r-autoprint-to-python-print": {
       "confidence": "tentative",
@@ -1156,6 +1295,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "haven",
+      "ast_shape_hash": ""
+    },
+    "r-datasets--mtcars--ozone--embedding": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "plyr",
       "ast_shape_hash": ""
     },
     "r-date-vector-printing": {
@@ -1406,6 +1553,14 @@
       "package": "purrr",
       "ast_shape_hash": ""
     },
+    "r-sample---for-shuffling-indices": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "dplyr",
+      "ast_shape_hash": ""
+    },
     "r-sequence-chunking--range-logic": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -1415,13 +1570,12 @@
       "ast_shape_hash": ""
     },
     "r-shape-to-scipy": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 4,
       "contradictions_count": 14,
       "seed": false,
       "package": "shape",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "r-style-indexing--1-n": {
       "confidence": "tentative",
@@ -1463,6 +1617,22 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "r-triple-colon-namespace-access": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "plyr",
+      "ast_shape_hash": ""
+    },
+    "r-triple-colon-namespace-operator": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "plyr",
+      "ast_shape_hash": ""
+    },
     "r-vector-output-formatting": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -1477,6 +1647,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "shape",
+      "ast_shape_hash": ""
+    },
+    "r-vector-to-python-list-dataframe": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "prodlim",
       "ast_shape_hash": ""
     },
     "r-with_locale---context-manager-pattern": {
@@ -1631,6 +1809,14 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "row.match": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "prodlim",
+      "ast_shape_hash": ""
+    },
     "shape.graycol-function": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -1640,13 +1826,12 @@
       "ast_shape_hash": ""
     },
     "suppress-messages": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 32,
       "contradictions_count": 80,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "suppress-package-startup-messages": {
       "confidence": "contradicted",
@@ -1704,6 +1889,14 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "suppressing-package-startup-messages": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "plyr",
+      "ast_shape_hash": ""
+    },
     "syntax.remove-checkpoint-suffix": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -1726,6 +1919,22 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "purrr",
+      "ast_shape_hash": ""
+    },
+    "typed-na-handling": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "rlang",
+      "ast_shape_hash": ""
+    },
+    "typeof": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "rlang",
       "ast_shape_hash": ""
     },
     "unlink---with-patterns": {
@@ -1768,6 +1977,22 @@
       "package": "timeDate",
       "ast_shape_hash": ""
     },
+    "vectorized-string-functions": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "xtable",
+      "ast_shape_hash": ""
+    },
+    "which": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "bit",
+      "ast_shape_hash": ""
+    },
     "with-locale-simple-execution": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -1777,13 +2002,20 @@
       "ast_shape_hash": ""
     },
     "with-locale": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 7,
       "contradictions_count": 7,
       "seed": true,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
+    },
+    "withautoprint": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "googlesheets4",
+      "ast_shape_hash": ""
     },
     "withr--with_locale": {
       "confidence": "tentative",
@@ -1802,13 +2034,12 @@
       "ast_shape_hash": ""
     },
     "withr.with-locale-code-param": {
-      "confidence": "confirmed",
+      "confidence": "tentative",
       "evidence_count": 3,
       "contradictions_count": 31,
       "seed": false,
       "package": "",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
+      "ast_shape_hash": ""
     },
     "withr.with-locale-context-manager": {
       "confidence": "tentative",
@@ -1937,52 +2168,7 @@
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
-    },
-    "which": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "bit",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
-    },
-    "as.logical": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "bit",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
-    },
-    "ggplot2-pipeline": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "dplyr",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
-    },
-    "paste---in-aes": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "dplyr",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
-    },
-    "dplyr--filter": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "dplyr",
-      "ast_shape_hash": "",
-      "contradicted_at_run": 0
     }
   },
-  "total_runs": 2
+  "total_runs": 1
 }

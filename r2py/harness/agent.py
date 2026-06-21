@@ -92,31 +92,30 @@ def reason(
 
         action = _parse_action(raw)
         if action is None:
-            # Haiku sometimes outputs analysis without an action — nudge it
             snippet = raw[:300].replace('\n', '\\n')
             print(f"[Agent]   Could not parse action from response: {snippet!r}")
+            # Retry with assistant prefill to force JSON output
             try:
                 retry_messages = messages + [
                     {"role": "assistant", "content": raw},
                     {"role": "user", "content": (
-                        "Your analysis above is good. Now act on it: "
-                        "output a rewrite, probe_r, or done action. "
-                        "For a rewrite, output the COMPLETE Python file:\n"
-                        '{"action": "rewrite", "new_source": "..."}\n'
-                        "For a probe:\n"
-                        '{"action": "probe_r", "expression": "..."}\n'
-                        "To stop:\n"
-                        '{"action": "done"}'
+                        "Now output ONLY your action as a JSON object. "
+                        "No analysis, no explanation."
                     )},
+                    {"role": "assistant", "content": '{"action": "'},
                 ]
                 continuation = _llm.call(
                     retry_messages,
                     system_prompt,
                     model=model, max_tokens=16384,
                 )
-                action = _parse_action(continuation)
+                action = _parse_action('{"action": "' + continuation)
                 if action:
                     print(f"[Agent]   Continuation retry succeeded: {action.get('action', '?')}")
+            except TruncatedResponseError as exc:
+                action = _parse_action('{"action": "' + exc.partial_text)
+                if action:
+                    print(f"[Agent]   Continuation retry succeeded (truncated): {action.get('action', '?')}")
             except Exception as exc:
                 print(f"[Agent]   Continuation retry failed: {exc}")
             if action is None:

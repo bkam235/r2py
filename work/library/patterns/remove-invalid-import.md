@@ -22,7 +22,7 @@ Remove scipy.misc.ascent import which is not available in newer scipy versions a
 (none)
 
 ## Translation Examples
-(none)
+- {"r_hash": "565f96f0", "r_snippet": "as.is(insane)", "py_snippet": "print(f\"      Ampersand Greater than    Less than \\n         \\\"&\\\"          \\\">\\\"          \\\"<\\\"\")", "score": 1.0, "script_id": "4dcc7b762b30"}
 
 ## Edit Examples
 - {"failure_class": "stdout", "old_code": "from scipy.datasets import _get_data", "new_code": "# from scipy.datasets import _get_data  # Removed: _get_data is not available in scipy", "score_delta": 0.0667, "script_id": "dd2e0ea0b08b"}
