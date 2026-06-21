@@ -13,8 +13,28 @@ from __future__ import annotations
 
 import datetime as _dt
 import json as _json
+import math as _math
 from pathlib import Path
 from typing import Any
+
+
+def _sanitize_non_finite(obj: Any) -> Any:
+    """Replace non-finite floats to match R's jsonlite output.
+
+    nan → None  (jsonlite na='null' maps both NA and NaN to null)
+    inf → "Inf", -inf → "-Inf"  (jsonlite wraps in strings)
+    """
+    if isinstance(obj, float):
+        if _math.isnan(obj):
+            return None
+        if _math.isinf(obj):
+            return "Inf" if obj > 0 else "-Inf"
+        return obj
+    if isinstance(obj, dict):
+        return {k: _sanitize_non_finite(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_sanitize_non_finite(v) for v in obj]
+    return obj
 
 
 # ---------------------------------------------------------------------------
@@ -35,25 +55,25 @@ class _R2PyEncoder(_json.JSONEncoder):
         except ImportError:
             pass
         if isinstance(obj, _dt.datetime):
-            return obj.isoformat()
+            return obj.strftime("%Y-%m-%dT%H:%M:%S")
         if isinstance(obj, _dt.date):
             return obj.isoformat()
         try:
             import pandas as _pd  # type: ignore[import]
             if isinstance(obj, _pd.Timestamp):
-                return None if _pd.isna(obj) else obj.date().isoformat()
+                return None if _pd.isna(obj) else obj.strftime("%Y-%m-%dT%H:%M:%S")
             if isinstance(obj, _pd.DataFrame):
                 result: dict = {}
                 for _c in obj.columns:
                     _series = obj[_c]
                     if _pd.api.types.is_datetime64_any_dtype(_series):
-                        result[_c] = _series.dt.strftime("%Y-%m-%d").tolist()
+                        result[_c] = [None if _pd.isna(v) else v.strftime("%Y-%m-%d") for v in _series]
                     else:
                         result[_c] = _series.tolist()
                 return result
             if isinstance(obj, _pd.Series):
                 if _pd.api.types.is_datetime64_any_dtype(obj):
-                    return obj.dt.strftime("%Y-%m-%d").tolist()
+                    return [None if _pd.isna(v) else v.strftime("%Y-%m-%d") for v in obj]
                 return obj.tolist()
             if isinstance(obj, _pd.Categorical):
                 return list(obj)
@@ -241,19 +261,8 @@ for _r2py_k, _r2py_v in list(globals().items()):
         continue
     _r2py_state[_r2py_k] = _r2py_serialized
 
-try:
-    with open('_r2py_state.json', 'w', encoding='utf-8') as _f:
-        _r2py_json.dump(_r2py_state, _f)
-except Exception:
-    _r2py_clean = {}
-    for _r2py_k2, _r2py_v2 in _r2py_state.items():
-        try:
-            _r2py_json.dumps(_r2py_v2)
-            _r2py_clean[_r2py_k2] = _r2py_v2
-        except Exception:
-            _r2py_uncapturable.append(_r2py_k2)
-    with open('_r2py_state.json', 'w', encoding='utf-8') as _f:
-        _r2py_json.dump(_r2py_clean, _f)
+with open('_r2py_state.json', 'w', encoding='utf-8') as _f:
+    _r2py_json.dump(_r2py_state, _f)
 with open('_r2py_uncapturable.json', 'w', encoding='utf-8') as _f:
     _r2py_json.dump(_r2py_uncapturable, _f)
 """
@@ -274,6 +283,21 @@ def build_py_preamble() -> str:
     return """\
 import json as _r2py_json
 import datetime as _r2py_dt
+import math as _r2py_math
+
+
+def _r2py_sanitize(obj):
+    if isinstance(obj, float):
+        if _r2py_math.isnan(obj):
+            return None
+        if _r2py_math.isinf(obj):
+            return "Inf" if obj > 0 else "-Inf"
+        return obj
+    if isinstance(obj, dict):
+        return {k: _r2py_sanitize(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_r2py_sanitize(v) for v in obj]
+    return obj
 
 
 class _R2PyEncoder(_r2py_json.JSONEncoder):
@@ -289,28 +313,26 @@ class _R2PyEncoder(_r2py_json.JSONEncoder):
             pass
         # datetime — datetime before date (datetime is a subclass of date)
         if isinstance(obj, _r2py_dt.datetime):
-            return obj.isoformat()
+            return obj.strftime('%Y-%m-%dT%H:%M:%S')
         if isinstance(obj, _r2py_dt.date):
             return obj.isoformat()
         # pandas
         try:
             import pandas as _pd
             if isinstance(obj, _pd.Timestamp):
-                return None if _pd.isna(obj) else obj.date().isoformat()
+                return None if _pd.isna(obj) else obj.strftime('%Y-%m-%dT%H:%M:%S')
             if isinstance(obj, _pd.DataFrame):
                 result = {}
                 for _c in obj.columns:
                     _series = obj[_c]
                     if _pd.api.types.is_datetime64_any_dtype(_series):
-                        result[_c] = _series.dt.strftime('%Y-%m-%d').tolist()
+                        result[_c] = [None if _pd.isna(v) else v.strftime('%Y-%m-%d') for v in _series]
                     else:
-                        # Elements that are themselves non-native re-enter default()
-                        # via the outer json.dumps recursion.
                         result[_c] = _series.tolist()
                 return result
             if isinstance(obj, _pd.Series):
                 if _pd.api.types.is_datetime64_any_dtype(obj):
-                    return obj.dt.strftime('%Y-%m-%d').tolist()
+                    return [None if _pd.isna(v) else v.strftime('%Y-%m-%d') for v in obj]
                 return obj.tolist()
             if isinstance(obj, _pd.Categorical):
                 return list(obj)
@@ -323,14 +345,17 @@ class _R2PyEncoder(_r2py_json.JSONEncoder):
 
 
 def _r2py_try_serialize(name, obj):
-    \"\"\"Round-trip ``obj`` through ``_R2PyEncoder``.
+    \"\"\"Round-trip ``obj`` through ``_R2PyEncoder``, sanitizing non-finite floats.
 
     Returns ``(json_safe_value, True)`` on success — the value is pure Python
     (dict/list/str/number/bool/None) and can be re-serialized without a custom
     encoder.  Returns ``(None, False)`` for anything the encoder cannot handle.
     \"\"\"
     try:
-        return _r2py_json.loads(_r2py_json.dumps(obj, cls=_R2PyEncoder)), True
+        raw = _r2py_json.dumps(obj, cls=_R2PyEncoder, allow_nan=True)
+        return _r2py_sanitize(_r2py_json.loads(raw, parse_constant=lambda c: {
+            'NaN': None, 'Infinity': 'Inf', '-Infinity': '-Inf',
+        }.get(c))), True
     except (TypeError, ValueError):
         return None, False
 """
@@ -394,4 +419,5 @@ def serialize_bundle_data(data: dict, *, indent: int | None = None) -> str:
     equivalence testing).  Keeping these two paths in lockstep ensures a new
     type added to ``_R2PyEncoder`` is automatically supported by both.
     """
-    return _json.dumps(data or {}, cls=_R2PyEncoder, indent=indent)
+    encoded = _json.loads(_json.dumps(data or {}, cls=_R2PyEncoder, allow_nan=True))
+    return _json.dumps(_sanitize_non_finite(encoded), indent=indent)

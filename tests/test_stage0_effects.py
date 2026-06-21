@@ -274,6 +274,82 @@ def test_data_unknown_type_returns_not_ok():
     pass  # covered by the integration test below
 
 
+def test_data_py_preamble_nan_serializes_as_none():
+    """float('nan') must serialize to None (matching R's na='null')."""
+    ns: dict = {}
+    exec(_data_mod.build_py_preamble(), ns)
+    try_serialize = ns["_r2py_try_serialize"]
+    out, ok = try_serialize("x", float("nan"))
+    assert ok
+    assert out is None
+
+
+def test_data_py_preamble_inf_serializes_as_string():
+    """float('inf') must serialize to 'Inf' string (matching jsonlite)."""
+    ns: dict = {}
+    exec(_data_mod.build_py_preamble(), ns)
+    try_serialize = ns["_r2py_try_serialize"]
+    out, ok = try_serialize("x", float("inf"))
+    assert ok
+    assert out == "Inf"
+    out2, ok2 = try_serialize("y", float("-inf"))
+    assert ok2
+    assert out2 == "-Inf"
+
+
+def test_data_py_preamble_nan_in_list():
+    """NaN nested inside a list must become None."""
+    ns: dict = {}
+    exec(_data_mod.build_py_preamble(), ns)
+    try_serialize = ns["_r2py_try_serialize"]
+    out, ok = try_serialize("x", [1.0, float("nan"), 3.0])
+    assert ok
+    assert out == [1.0, None, 3.0]
+
+
+def test_data_py_preamble_nan_in_dataframe():
+    """DataFrame with NaN cells must serialize with None, not fail."""
+    try:
+        import pandas as pd
+    except ImportError:
+        return
+    ns: dict = {}
+    exec(_data_mod.build_py_preamble(), ns)
+    try_serialize = ns["_r2py_try_serialize"]
+    df = pd.DataFrame({"a": [1.0, float("nan"), 3.0], "b": [4, 5, 6]})
+    out, ok = try_serialize("df", df)
+    assert ok
+    assert out["a"] == [1.0, None, 3.0]
+
+
+def test_data_py_preamble_nat_in_datetime_column():
+    """NaT in a datetime column must serialize as None."""
+    try:
+        import pandas as pd
+    except ImportError:
+        return
+    ns: dict = {}
+    exec(_data_mod.build_py_preamble(), ns)
+    try_serialize = ns["_r2py_try_serialize"]
+    df = pd.DataFrame({"d": pd.to_datetime(["2024-01-01", None])})
+    out, ok = try_serialize("df", df)
+    assert ok
+    assert out["d"][0] == "2024-01-01"
+    assert out["d"][1] is None
+
+
+def test_data_py_preamble_datetime_no_microseconds():
+    """datetime must serialize without microseconds (matching R format)."""
+    import datetime
+    ns: dict = {}
+    exec(_data_mod.build_py_preamble(), ns)
+    try_serialize = ns["_r2py_try_serialize"]
+    dt = datetime.datetime(2024, 1, 15, 13, 30, 45, 123456)
+    out, ok = try_serialize("t", dt)
+    assert ok
+    assert out == "2024-01-15T13:30:45"
+
+
 def test_data_collect_reads_state_json(tmp_path):
     (tmp_path / "_r2py_state.json").write_text(
         json.dumps({"x": 42, "y": [1, 2]}), encoding="utf-8"
