@@ -386,7 +386,12 @@ def _lookup_package_source(
 
     Only runs for FUNCTION_CALL entities with no package already attributed —
     i.e. bare calls like ``graycol(10)`` that lack a ``pkg::fn()`` qualifier.
-    Silently returns ``(None, None)`` on any lookup error.
+
+    For S3 generics (tidy, glance, augment, etc.), the bare name often resolves
+    to just ``UseMethod("name")`` or isn't directly findable.  When entity_types
+    is available from the sandbox run, we use the runtime class of the first
+    argument to construct the S3 method name (e.g. ``tidy.durbinWatsonTest``)
+    and look that up instead.
     """
     from ..types import EntityKind
 
@@ -411,14 +416,19 @@ def _lookup_package_source(
         return None, None
 
     fn_name = entity.name
-    # Try all imported packages together so recursive helper calls can be
-    # resolved across the full set (e.g. a helper defined in the same pkg).
+
+    # Try S3 method name first when we have runtime class information.
+    s3_source = _try_s3_method_lookup(entity, script_map, imported_pkgs)
+    if s3_source:
+        source, found_pkg = s3_source
+        return found_pkg, source
+
+    # Fall back to bare name lookup.
     try:
         source = get_function_source_recursive(imported_pkgs, fn_name)
     except Exception:
         source = None
     if source:
-        # Report the first package that actually contains the top-level symbol.
         from ..stage1.package_lookup import get_function_source as _gfs
         found_pkg = next(
             (p for p in imported_pkgs if _gfs(p, fn_name, max_lines=1) is not None),
@@ -427,6 +437,62 @@ def _lookup_package_source(
         return found_pkg, source
 
     return None, None
+
+
+def _try_s3_method_lookup(
+    entity: "Entity",
+    script_map: "ScriptMap",
+    imported_pkgs: list[str],
+) -> tuple[str, str] | None:
+    """Try to resolve an S3 method using runtime class info from entity_types.
+
+    Extracts the first argument name from the entity's R source, finds its
+    runtime class in entity_types, and looks up ``fn_name.class_name`` in the
+    imported packages.  Returns ``(r_source, package_name)`` or None.
+    """
+    import re
+
+    entity_types = getattr(script_map, "entity_types", {})
+    if not entity_types:
+        return None
+
+    # Extract first argument name from R source: fn_name(arg, ...)
+    r_source = _entity_source(entity, script_map)
+    m = re.match(r'\s*\w[\w.]*\s*\(\s*([a-zA-Z.][a-zA-Z0-9._]*)', r_source)
+    if not m:
+        return None
+    first_arg = m.group(1)
+
+    # Find which entity defined this variable and get its class from entity_types.
+    arg_classes: list[str] = []
+    for eid, types_dict in entity_types.items():
+        if first_arg in types_dict:
+            cls = types_dict[first_arg].get("class", "")
+            if cls:
+                arg_classes = [c.strip() for c in cls.split(",")]
+            break
+
+    if not arg_classes:
+        return None
+
+    from ..stage1.package_lookup import get_function_source_recursive, get_function_source
+
+    # Try each class in the S3 method resolution order.
+    fn_name = entity.name
+    for cls in arg_classes:
+        method_name = f"{fn_name}.{cls}"
+        try:
+            source = get_function_source_recursive(imported_pkgs, method_name)
+        except Exception:
+            continue
+        if source:
+            found_pkg = next(
+                (p for p in imported_pkgs if get_function_source(p, method_name, max_lines=1) is not None),
+                imported_pkgs[0],
+            )
+            return source, found_pkg
+
+    return None
 
 
 def _lookup_free_ref_sources(

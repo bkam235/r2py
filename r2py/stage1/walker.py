@@ -199,7 +199,7 @@ def _visit_assignment(node: AstNode, op: str, ctx: _WalkContext) -> None:
         pass
     elif rhs.kind == "call":
         # Call RHS: sub-calls are translated as part of their enclosing entity.
-        # Only scan for nested library/require imports.
+        # Scan for nested library/require imports and braced-expression arguments.
         args = rhs.child_by_field("arguments")
         if args:
             for child in args.named_children():
@@ -207,8 +207,14 @@ def _visit_assignment(node: AstNode, op: str, ctx: _WalkContext) -> None:
                     val = child.child_by_field("value")
                     if val is not None and val.kind == "call" and _call_name(val) in ("library", "require"):
                         _visit_library_call(val, _call_name(val), ctx)
+                    elif val is not None and val.kind == "braced_expression":
+                        for stmt in val.named_children():
+                            _visit(stmt, ctx)
                 elif child.kind == "call" and _call_name(child) in ("library", "require"):
                     _visit_library_call(child, _call_name(child), ctx)
+                elif child.kind == "braced_expression":
+                    for stmt in child.named_children():
+                        _visit(stmt, ctx)
     else:
         # Recurse for braced_expression, if_statement, etc. — may contain
         # nested named definitions.
@@ -274,10 +280,13 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
     for ec in predicted:
         ctx.add_effect(SideEffect(kind=ec, entity_id=entity_id, is_predicted=True))
 
-    # Only detect library/require imports nested inside this call's arguments.
+    # Scan arguments for two structural patterns:
+    # 1. Nested library/require imports.
+    # 2. Braced-expression arguments — wrapper calls like withAutoprint({ … }),
+    #    local({ … }), suppressWarnings({ … }) etc. contain top-level-like
+    #    statements that should be walked as separate entities.
     # Generic sub-calls (c(), as.Date(), etc.) are NOT extracted as separate
     # entities — they are translated as part of their enclosing statement.
-    # tree-sitter-r wraps each argument in an "argument" node, so unwrap it.
     args = node.child_by_field("arguments")
     if args:
         for child in args.named_children():
@@ -285,8 +294,14 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
                 val = child.child_by_field("value")
                 if val is not None and val.kind == "call" and _call_name(val) in ("library", "require"):
                     _visit_library_call(val, _call_name(val), ctx)
+                elif val is not None and val.kind == "braced_expression":
+                    for stmt in val.named_children():
+                        _visit(stmt, ctx)
             elif child.kind == "call" and _call_name(child) in ("library", "require"):
                 _visit_library_call(child, _call_name(child), ctx)
+            elif child.kind == "braced_expression":
+                for stmt in child.named_children():
+                    _visit(stmt, ctx)
 
 
 def _visit_library_call(node: AstNode, fn_name: str, ctx: _WalkContext) -> None:

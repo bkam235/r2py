@@ -191,7 +191,8 @@
       "dplyr.filter_to_mask",
       "ggplot2-pipeline",
       "paste---in-aes",
-      "r-sample---for-shuffling-indices"
+      "r-sample---for-shuffling-indices",
+      "implicit-tibble-printing"
     ],
     "vctrs:": [
       "direction----downup",
@@ -288,6 +289,11 @@
     "prodlim:": [
       "r-vector-to-python-list-dataframe",
       "row.match"
+    ],
+    "progressr:": [
+      "requirenamespace",
+      "with_progress---expr",
+      "print-x"
     ]
   },
   "meta": {
@@ -340,12 +346,13 @@
       "ast_shape_hash": ""
     },
     "auto-print-to-stdout": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 43,
       "contradictions_count": 109,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "base.cat_to_print": {
       "confidence": "contradicted",
@@ -1292,12 +1299,13 @@
       "ast_shape_hash": ""
     },
     "r-auto-print-to-stdout": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 4,
       "contradictions_count": 3,
       "seed": false,
       "package": "shape",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "r-autoprint-to-python-print": {
       "confidence": "tentative",
@@ -1644,12 +1652,13 @@
       "ast_shape_hash": ""
     },
     "r-shape-to-scipy": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 4,
       "contradictions_count": 14,
       "seed": false,
       "package": "shape",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "r-style-indexing--1-n": {
       "confidence": "tentative",
@@ -1924,12 +1933,13 @@
       "ast_shape_hash": ""
     },
     "suppress-messages": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 32,
       "contradictions_count": 80,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "suppress-package-startup-messages": {
       "confidence": "contradicted",
@@ -2116,12 +2126,13 @@
       "ast_shape_hash": ""
     },
     "with-locale": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 7,
       "contradictions_count": 7,
       "seed": true,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "withautoprint": {
       "confidence": "tentative",
@@ -2148,12 +2159,13 @@
       "ast_shape_hash": ""
     },
     "withr.with-locale-code-param": {
-      "confidence": "tentative",
+      "confidence": "confirmed",
       "evidence_count": 3,
       "contradictions_count": 31,
       "seed": false,
       "package": "",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "withr.with-locale-context-manager": {
       "confidence": "tentative",
@@ -2282,6 +2294,43 @@
       "seed": false,
       "package": "",
       "ast_shape_hash": ""
+    },
+    "requirenamespace": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "progressr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "with_progress---expr": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "progressr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "print-x": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "progressr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "implicit-tibble-printing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "dplyr",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     }
-  }
+  },
+  "total_runs": 8
 }

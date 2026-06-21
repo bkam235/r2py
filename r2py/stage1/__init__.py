@@ -73,7 +73,9 @@ def analyze(
     branches: dict[str, BranchAnalysis] = {}
     _extract_branches(ast_root, entities, main_bundle,
                       branches, tracker, capture, timeout_s,
-                      max_coverage_attempts)
+                      max_coverage_attempts,
+                      entity_bundles=entity_bundles,
+                      source=source)
 
     # ── Step 5: resolve external sources ────────────────────────────────────
     external_sources = {}
@@ -107,6 +109,37 @@ def analyze(
     )
 
 
+def _entities_in_node(node: AstNode, entities: dict[str, Entity]) -> list[str]:
+    """Return entity ids whose source spans are strictly inside *node*'s span."""
+    ns_row, ns_col = node.start
+    ne_row, ne_col = node.end
+    result = []
+    for eid, entity in entities.items():
+        sp = entity.source_span
+        starts_inside = (sp.start_line > ns_row or
+                         (sp.start_line == ns_row and sp.start_col >= ns_col))
+        ends_inside = (sp.end_line < ne_row or
+                       (sp.end_line == ne_row and sp.end_col <= ne_col))
+        if starts_inside and ends_inside:
+            result.append(eid)
+    return result
+
+
+def _build_lib_preamble(entities: dict[str, Entity], source: str) -> str:
+    """Build R preamble that loads libraries from LIBRARY_IMPORT entities."""
+    lines = source.splitlines()
+    lib_lines: list[str] = []
+    for entity in entities.values():
+        if entity.kind == EntityKind.LIBRARY_IMPORT:
+            sp = entity.source_span
+            lib_call = "\n".join(lines[sp.start_line:sp.end_line + 1]).strip()
+            if lib_call:
+                lib_lines.append(f"suppressPackageStartupMessages({lib_call})")
+    if lib_lines:
+        return "\n".join(lib_lines) + "\n\n"
+    return ""
+
+
 def _extract_branches(
     ast_root: AstNode,
     entities: dict[str, Entity],
@@ -116,9 +149,32 @@ def _extract_branches(
     capture: CaptureSpec,
     timeout_s: float,
     max_attempts: int,
+    entity_bundles: dict[str, "EffectBundle"] | None = None,
+    source: str = "",
 ) -> None:
-    """Find if/else alternative branches and run each as a slice."""
+    """Find if/else and loop branches; force-execute untaken ones as slices.
+
+    When *entity_bundles* is provided, infers which branches were actually
+    taken during the main run (any contained entity with a checkpoint →
+    branch was taken).  Untaken branches are force-executed via ``run_slice``
+    and their effects are merged into *entity_bundles* so Stage 4 scores
+    against real effects instead of empty-vs-empty.
+    """
     branch_nodes = _collect_branch_nodes(ast_root, entities)
+
+    # Detect which branches were actually executed from entity checkpoint data.
+    if entity_bundles:
+        resolved = []
+        for branch_id, branch_node, parent_eid, cond_text, was_executed in branch_nodes:
+            if not was_executed:
+                contained = _entities_in_node(branch_node, entities)
+                if any(eid in entity_bundles for eid in contained):
+                    was_executed = True
+            resolved.append((branch_id, branch_node, parent_eid, cond_text, was_executed))
+        branch_nodes = resolved
+
+    lib_preamble = _build_lib_preamble(entities, source) if source else ""
+
     attempt = 0
     pending = branch_nodes
 
@@ -147,18 +203,30 @@ def _extract_branches(
                     bundle=None,
                 )
                 continue
+
+            # Wrap in invisible() to prevent auto-printing of objects
+            # that start blocking operations (e.g. shinyApp → runApp).
+            wrapped_source = f"invisible({{\n{slice_source}\n}})"
+            full_slice = lib_preamble + wrapped_source if lib_preamble else wrapped_source
+
             bundle = None
             try:
                 bundle = run_slice(
-                    slice_source,
+                    full_slice,
                     capture=capture,
                     timeout_s=min(timeout_s, 30),
                 )
                 tracker.mark(branch_id, "branch-extracted")
+
+                # Merge branch effects into entity_bundles for entities inside
+                # this branch that had no checkpoint during the main run.
+                if entity_bundles is not None:
+                    contained = _entities_in_node(branch_node, entities)
+                    for eid in contained:
+                        if eid not in entity_bundles:
+                            entity_bundles[eid] = bundle
             except Exception:
-                still_pending.append(
-                    (branch_id, branch_node, parent_entity_id, condition_text, was_executed)
-                )
+                tracker.mark(branch_id, "unreachable")
 
             branches[branch_id] = BranchAnalysis(
                 branch_id=branch_id,
@@ -177,7 +245,8 @@ def _collect_branch_nodes(
 ) -> list[tuple[str, AstNode, str, str, bool]]:
     """Walk the AST and collect (branch_id, node, parent_eid, condition, was_executed) tuples.
 
-    Currently collects `else` branches of `if_statement` nodes.
+    Collects both if-body (consequence) and else-body (alternative) branches
+    of ``if_statement`` nodes, plus for and while loop bodies.
     """
     results: list[tuple[str, AstNode, str, str, bool]] = []
     _collect_branch_nodes_rec(ast_root, results, counter=[0], entities=entities)
@@ -193,22 +262,27 @@ def _collect_branch_nodes_rec(
     if node.kind == "if_statement":
         condition_node = node.child_by_field("condition")
         condition_text = condition_node.text if condition_node else ""
-        # consequence is always executed when condition is true — we focus on
-        # the alternative (else) branch, which may not be executed.
+
+        row = node.start[0]
+        parent_eid = ""
+        for eid, entity in entities.items():
+            sp = entity.source_span
+            if sp.start_line <= row <= sp.end_line:
+                parent_eid = eid
+                break
+
+        # Collect consequence (if-body) — not executed when condition is FALSE.
+        consequence_node = node.child_by_field("consequence")
+        if consequence_node is not None:
+            branch_id = f"if_branch_{counter[0]}"
+            counter[0] += 1
+            out.append((branch_id, consequence_node, parent_eid, condition_text, False))
+
+        # Collect alternative (else-body) — not executed when condition is TRUE.
         alt_node = node.child_by_field("alternative")
         if alt_node is not None:
             branch_id = f"branch_{counter[0]}"
             counter[0] += 1
-            # Find the enclosing entity (the one whose span contains this if_statement).
-            row = node.start[0]
-            parent_eid = ""
-            for eid, entity in entities.items():
-                sp = entity.source_span
-                if sp.start_line <= row <= sp.end_line:
-                    parent_eid = eid
-                    break
-            # We conservatively mark else-branches as not-executed; Stage 0's
-            # EffectBundle does not tell us which branches ran, so we run them all.
             out.append((branch_id, alt_node, parent_eid, condition_text, False))
 
     if node.kind == "for_statement":
