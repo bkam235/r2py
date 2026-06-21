@@ -23,6 +23,7 @@ Remove scipy.misc.ascent import which is not available in newer scipy versions a
 
 ## Translation Examples
 - {"r_hash": "565f96f0", "r_snippet": "as.is(insane)", "py_snippet": "print(f\"      Ampersand Greater than    Less than \\n         \\\"&\\\"          \\\">\\\"          \\\"<\\\"\")", "score": 1.0, "script_id": "4dcc7b762b30"}
+- {"r_hash": "aacfc0e2", "r_snippet": "my_summary_function <- function(data) {\n  data |>\n    select(grp, x, y) |>\n    filter(x > 0) |>\n    group_by(grp) |>\n    summarise(y = mean(y), n = n())\n}", "py_snippet": "def my_summary_function(data):\n    return (\n        data[['grp', 'x', 'y']]\n        .query('x > 0')\n        .groupby(['grp'])\n        .agg(y=('y', 'mean'), n=('y', 'size'))\n    )", "score": 1.0, "script_id": "afcb36815109"}
 
 ## Edit Examples
 - {"failure_class": "stdout", "old_code": "from scipy.datasets import _get_data", "new_code": "# from scipy.datasets import _get_data  # Removed: _get_data is not available in scipy", "score_delta": 0.0667, "script_id": "dd2e0ea0b08b"}

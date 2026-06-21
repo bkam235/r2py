@@ -82,6 +82,7 @@ def translate(
         )
         if seeded:
             _emit(progress, kind="seeded", count=len(seeded))
+            _commit_library(library, seeded, Path(r_path).stem)
     if result.final_exit_code != 0:
         print(
             f"r2py: warning: final Python translation crashed "
@@ -286,6 +287,24 @@ def reset_library(library=None, keep_seeds: bool = True) -> int:
     index._save()
 
     return removed
+
+
+def _commit_library(library, pattern_ids: list[str], script_stem: str) -> None:
+    """Git-add and commit any new/changed library files."""
+    import subprocess
+    lib_dir = str(library._dir)
+    try:
+        subprocess.run(
+            ["git", "add", lib_dir],
+            capture_output=True, check=True,
+        )
+        msg = f"library: seed {len(pattern_ids)} patterns from {script_stem}"
+        subprocess.run(
+            ["git", "commit", "-m", msg, "--", lib_dir],
+            capture_output=True, check=True,
+        )
+    except (subprocess.CalledProcessError, FileNotFoundError):
+        pass
 
 
 def _append_run_record(
