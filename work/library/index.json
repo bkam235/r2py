@@ -182,6 +182,7 @@
     "broom:": [
       "broom--tidy---broom--glance",
       "broom--tidy-and-broom--glance",
+      "car--durbinwatsontest",
       "r-broom-tidier-functions--tidy--glance",
       "r-conditional-package-check-with-execution",
       "r-withautoprint-context-manager",
@@ -558,6 +559,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "timeDate",
+      "ast_shape_hash": ""
+    },
+    "car--durbinwatsontest": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
       "ast_shape_hash": ""
     },
     "chunk-complex-vector-dispatch": {
