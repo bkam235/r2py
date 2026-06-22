@@ -202,6 +202,11 @@
       "na-representation",
       "vec_fill_missing--dataframe"
     ],
+    "modelr:": [
+      "factor-----ordered",
+      "modelr--typical",
+      "sample"
+    ],
     "shape:": [
       "filled.contour",
       "graycol",
@@ -213,6 +218,10 @@
       "r-suppress-startup-messages",
       "r-vector-printing",
       "r.auto-print-to-explicit-print"
+    ],
+    "recipes:": [
+      "ggplot2-cex",
+      "recipes-pipeline"
     ],
     "ggplot2:": [
       "ggplot2.to_plotnine"
@@ -788,6 +797,14 @@
       "package": "dplyr",
       "ast_shape_hash": ""
     },
+    "factor-----ordered": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "modelr",
+      "ast_shape_hash": ""
+    },
     "factor-with-labels": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -898,6 +915,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "ggplot2-cex": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "recipes",
       "ast_shape_hash": ""
     },
     "ggplot2-pipeline": {
@@ -1162,6 +1187,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "modelr--typical": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "modelr",
       "ast_shape_hash": ""
     },
     "multi-line-vector-printing-with-proper-indexing": {
@@ -1860,6 +1893,14 @@
       "package": "",
       "ast_shape_hash": ""
     },
+    "recipes-pipeline": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "recipes",
+      "ast_shape_hash": ""
+    },
     "reconstruct-chunk-function": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -1970,6 +2011,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "xtable",
+      "ast_shape_hash": ""
+    },
+    "sample": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "modelr",
       "ast_shape_hash": ""
     },
     "shape.graycol-function": {
