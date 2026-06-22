@@ -757,6 +757,25 @@ def verify(
     if data_result and data_result.verdict == "uncomparable":
         uncomparable.extend(entities.keys())
 
+    # Only include effect classes where R actually produced something.
+    _r_has_effect = {
+        EffectClass.STDOUT:   bool(r_bundle.stdout),
+        EffectClass.DATA:     bool(r_bundle.data),
+        EffectClass.FILES:    bool(r_bundle.files),
+        EffectClass.GRAPHICS: bool(r_bundle.graphics),
+        EffectClass.HTML:     bool(r_bundle.html),
+        EffectClass.ENV:      bool(r_bundle.env),
+        EffectClass.WARNINGS: bool(r_bundle.warnings),
+        EffectClass.RNG:      bool(r_bundle.rng_log),
+        EffectClass.NETWORK:  bool(r_bundle.network_log),
+        EffectClass.SYNTAX:   True,
+    }
+    by_effect = {
+        ec: result.score
+        for ec, result in comparator_results.items()
+        if _r_has_effect.get(ec, False)
+    }
+
     # --- Aggregate score ---
     # Per entity: average of all six EntityScore fields (kind-aware proxies populated by decompose).
     entity_scores = list(score_table.values())
@@ -768,11 +787,12 @@ def verify(
         ]
         aggregate = sum(per_entity_avgs) / len(per_entity_avgs)
     else:
-        # No entities: score the raw effect comparison
-        scored_results = [r for r in comparator_results.values() if r.verdict != "uncomparable"]
+        # No entities: score the raw effect comparison, excluding empty-vs-empty classes
+        scored_results = [
+            r for ec, r in comparator_results.items()
+            if r.verdict != "uncomparable" and _r_has_effect.get(ec, False)
+        ]
         aggregate = sum(r.score for r in scored_results) / len(scored_results) if scored_results else 1.0
-
-    by_effect = {ec: result.score for ec, result in comparator_results.items()}
 
     comparisons = _build_comparisons(
         comparator_results, r_bundle, py_bundle, entities,
