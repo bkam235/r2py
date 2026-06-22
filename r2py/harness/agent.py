@@ -58,7 +58,7 @@ def reason(
             print(f"[Agent]   {max_stalls} consecutive non-improving rewrites, stopping")
             break
 
-        if stall_count >= max_stalls - 1:
+        if stall_count > 0 and stall_count >= max_stalls - 1:
             history.append(
                 "SYSTEM: You have rewritten twice without improving the score. "
                 "Try probe_r to investigate what R actually produces for the "

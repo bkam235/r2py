@@ -78,7 +78,11 @@ def translate(
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     _write_translation_log(Path(py_path), script_map, result)
     _append_run_record(Path(r_path), result, model, escalation_model or model)
-    if result.final_score >= score_threshold:
+    _report = result.final_score_report
+    _all_effects_pass = _report is not None and all(
+        s >= score_threshold for s in _report.by_effect.values()
+    )
+    if result.final_score >= score_threshold and _all_effects_pass:
         seeded = seed_from_translation(
             r_path, py_path, library=library,
         )
