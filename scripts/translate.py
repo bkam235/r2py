@@ -34,12 +34,18 @@ def _on_progress(event) -> None:
 
 # Iterate through input files for translation
 input_filenames = next(walk(input_dir), (None, None, []))[2]
-# input_filenames = random.sample(input_filenames, 10) #don't use random script
+# input_filenames = random.sample(input_filenames, 20) #don't use random script
 
 input_filenames = ["broom__rd_example__durbinWatsonTest_tidiers_Rd.R"] #translate this specific script
 # HARD CASES #
 # purrr__rd_example__lift_Rd.R
 # plyr__rd_example__splitter_a_Rd.R
+
+# CRASHES/INCOMPLETE
+# vroom __ rd_example __ guess_type_RdR
+# ggplot2__rd_example__facet_wrap_Rd.R
+# xtable__rd_example__xtableFtable_Rd.R
+
 
 scripts = []
 for r_filename in input_filenames:
@@ -55,17 +61,18 @@ for r_script, py_script in scripts:
     print("############################")
     
     # trans_model = "claude-haiku-4-5"
+    # trans_model = "claude-sonnet-4-6"
     trans_model = "ollama:gemma4:31b-cloud"
 
     result = translate(r_script,
                        py_script,
                        library=lib,
-                       resume=False,
+                       resume=True,
                        model=trans_model,
                        escalation_model=trans_model,
                        progress=_on_progress,
                        score_threshold=0.9,
-                       max_iters=10)
+                       max_iters=15)
 
 # from r2py import seed_from_translation
 # seed_from_translation(

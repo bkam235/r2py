@@ -89,7 +89,21 @@ def get_function_source_recursive(
     parts: list[str] = [source]
     budget = max_lines_total - len(source.splitlines())
 
-    for callee in _extract_r_calls(source):
+    callees = _extract_r_calls(source)
+
+    # When the source is a UseMethod generic, also discover all class-specific
+    # S3 methods (e.g. durbinWatsonTest.lm) in the packages so the translator
+    # gets the real implementations, not just .default.
+    import re as _re
+    for dispatch_name in _re.findall(
+        r'\bUseMethod\s*\(\s*["\']([a-zA-Z.][a-zA-Z0-9._]*)["\']', source
+    ):
+        for pkg in packages:
+            for method_name in _find_s3_methods(pkg, dispatch_name):
+                if method_name not in _seen and method_name not in callees:
+                    callees.append(method_name)
+
+    for callee in callees:
         if budget <= 0:
             break
         sub = get_function_source_recursive(
@@ -156,8 +170,10 @@ def _extract_r_calls(source: str) -> list[str]:
             seen.add(name)
             result.append(name)
 
-    # S3 dispatch: UseMethod("name") → also include name.default so the
-    # translator sees the vectorized/typed implementation, not just the stub.
+    # S3 dispatch: UseMethod("name") → collect all available S3 methods so the
+    # translator sees the class-specific implementations, not just the stub.
+    # The actual method names (e.g. durbinWatsonTest.lm) are injected by
+    # get_function_source_recursive which has access to the package list.
     use_method_names = re.findall(
         r'\bUseMethod\s*\(\s*["\']([a-zA-Z.][a-zA-Z0-9._]*)["\']', source
     )
@@ -168,6 +184,84 @@ def _extract_r_calls(source: str) -> list[str]:
             result.append(default_method)
 
     return result
+
+
+def _find_s3_methods(package: str, generic_name: str) -> list[str]:
+    """Return all S3 method names for *generic_name* found in *package*.
+
+    Strategy:
+    1. Scan R/ source files for ``generic_name.ClassName <- function``.
+    2. Fall back to R's ``methods()`` for binary-only packages (.rdb/.rdx).
+    """
+    import re
+
+    from ..stage0.env.package_source import find_r_package_source
+
+    methods: list[str] = []
+
+    # Strategy 1: scan source files.
+    pkg_dir = find_r_package_source(package)
+    if pkg_dir is not None:
+        r_dir = pkg_dir / "R"
+        if r_dir.is_dir():
+            pattern = re.compile(
+                r'^[`"]*(' + re.escape(generic_name) + r'\.[a-zA-Z][a-zA-Z0-9._]*)[`"]*\s*<-\s*function'
+            )
+            for r_file in sorted(r_dir.glob("*.R")):
+                try:
+                    text = r_file.read_text(encoding="utf-8", errors="replace")
+                except OSError:
+                    continue
+                for line in text.splitlines():
+                    m = pattern.match(line.strip())
+                    if m and m.group(1) not in methods:
+                        methods.append(m.group(1))
+
+    if methods:
+        return methods
+
+    # Strategy 2: ask R for registered S3 methods (works for binary packages).
+    methods = _find_s3_methods_via_r(package, generic_name)
+    return methods
+
+
+def _find_s3_methods_via_r(package: str, generic_name: str) -> list[str]:
+    """Use R's methods() to discover S3 methods for binary-only packages."""
+    import subprocess
+
+    from ..stage0.env.r_runtime import find_rscript, find_r_library
+
+    rscript = find_rscript()
+    if rscript is None:
+        return []
+
+    lib = find_r_library()
+    lib_setup = (
+        f".libPaths(c('{lib.as_posix()}', .libPaths())); "
+        if lib else ""
+    )
+
+    r_code = (
+        f"{lib_setup}"
+        f"tryCatch({{"
+        f"  suppressPackageStartupMessages(library('{package}', character.only=TRUE));"
+        f"  m <- methods('{generic_name}');"
+        f"  cat(paste(m, collapse='\\n'))"
+        f"}}, error=function(e) cat(''))"
+    )
+    try:
+        result = subprocess.run(
+            [str(rscript), "--vanilla", "-e", r_code],
+            capture_output=True, text=True, encoding="utf-8", timeout=30,
+        )
+    except Exception:
+        return []
+
+    output = result.stdout.strip()
+    if not output:
+        return []
+
+    return [name.strip() for name in output.splitlines() if name.strip()]
 
 
 def _try_file_scan(package: str, symbol: str, max_lines: int) -> str | None:

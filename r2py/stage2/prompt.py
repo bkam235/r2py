@@ -126,9 +126,10 @@ def build_entity_prompt(
         parts.append("\n".join(fm_parts))
 
     # If R produced output when this entity was evaluated, show it so the LLM
-    # knows exactly what format to reproduce.  This is especially important for
-    # entities that auto-print S3 objects with custom print methods (e.g. ri,
-    # ggplot, data.frame) where the format cannot be inferred from source alone.
+    # knows the output format to reproduce.  When R library source is available,
+    # redact data values to prevent the LLM from hardcoding them instead of
+    # implementing the actual computation.
+    _has_r_source = bool(pkg_fn_source or free_ref_sources)
     _entity_bundles = getattr(script_map, "entity_bundles", {})
     _r_entity_bundle = _entity_bundles.get(entity.id)
     if _r_entity_bundle is not None:
@@ -137,12 +138,24 @@ def build_entity_prompt(
             _stdout_lines = _r_stdout.splitlines()
             if len(_stdout_lines) > 50:
                 _r_stdout = "\n".join(_stdout_lines[:50]) + f"\n... ({len(_stdout_lines) - 50} more lines truncated)"
-            parts.append(
-                "## Expected R output\n"
-                "R produced the following output when this entity was evaluated. "
-                "Your Python translation MUST produce output that matches this format exactly:\n"
-                f"```\n{_r_stdout}\n```"
-            )
+            if _has_r_source:
+                _r_stdout_fmt = _redact_data_values(_r_stdout)
+                parts.append(
+                    "## Expected R output format\n"
+                    "R produced output in the format shown below (data values replaced "
+                    "with «…»). Your Python translation MUST implement the R source "
+                    "code provided and produce output that matches this FORMAT exactly "
+                    "WITHOUT hardcoding values — compute them from the data:\n"
+                    f"```\n{_r_stdout_fmt}\n```"
+                )
+            else:
+                parts.append(
+                    "## Expected R output\n"
+                    "R produced the following output when this entity was evaluated. "
+                    "Your Python translation MUST produce output that matches this "
+                    "format exactly:\n"
+                    f"```\n{_r_stdout}\n```"
+                )
 
     if annotations:
         parts.append(f"## Stage 1 annotations\n{annotations}")
@@ -196,8 +209,9 @@ def build_entity_prompt(
     if pkg_fn_source:
         parts.append(
             f"## R source of `{entity.name}` (from package `{resolved_pkg}`)\n"
-            f"This is the actual implementation — translate it to Python rather than "
-            f"marking it untranslatable:\n"
+            f"You MUST implement Python code that produces the same output as "
+            f"this R code. Translate the logic — do NOT hardcode return values "
+            f"or output strings:\n"
             f"```r\n{pkg_fn_source}\n```"
         )
 
@@ -211,7 +225,9 @@ def build_entity_prompt(
         parts.append(
             "## Library functions referenced by this entity\n"
             "This entity uses the following function(s) from loaded R packages. "
-            "They are passed by reference or called without a namespace qualifier. "
+            "You MUST translate the R source below into working Python functions "
+            "that compute correct results — do NOT hardcode return values or "
+            "output strings. "
             "Define ONLY these listed functions as Python functions above the usage "
             "so this entity's behaviour matches R. Later entities that call the "
             "same function will reuse your definition.\n\n"
@@ -264,6 +280,44 @@ def parse_entity_response(raw: str) -> tuple[str, list[str], list[str]]:
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
+
+def _redact_data_values(stdout: str) -> str:
+    """Replace data values in R output with ``<values>``, preserving format.
+
+    Keeps tibble headers ("# A tibble: ..."), column names, type annotations
+    (<dbl>, <chr>, etc.), and row numbers.  Replaces the actual data cells
+    so the LLM can see the output format without being tempted to hardcode values.
+    """
+    import re
+
+    lines = stdout.splitlines()
+    result: list[str] = []
+    for line in lines:
+        stripped = line.strip()
+        # Preserve blank lines
+        if not stripped:
+            result.append(line)
+            continue
+        # Preserve tibble/data-frame headers
+        if stripped.startswith("#"):
+            result.append(line)
+            continue
+        # Preserve type annotation rows: lines consisting of <type> tokens
+        if re.match(r'^[\s<>a-z/]+$', stripped):
+            result.append(line)
+            continue
+        # Preserve column-name header rows: no standalone numbers
+        if not re.search(r'(?<!\w)\d+\.?\d*(?!\w)', stripped):
+            result.append(line)
+            continue
+        # Data row: replace values after the row number or [n] prefix
+        m = re.match(r'^(\s*\d+\s+)', line) or re.match(r'^(\s*\[\d+\]\s*)', line)
+        if m:
+            result.append(m.group(1) + "<values>")
+        else:
+            result.append("<values>")
+    return "\n".join(result)
+
 
 def _entity_source(entity: "Entity", script_map: "ScriptMap") -> str:
     """Extract the R source text for the entity's span."""

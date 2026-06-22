@@ -233,6 +233,29 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
         _visit_library_call(node, fn_name, ctx)
         return
 
+    # Transparent wrapper detection: if any argument is a braced expression,
+    # this call is a wrapper (withAutoprint, local, suppressWarnings, etc.).
+    # Walk the braced-expression children as top-level statements and skip
+    # creating an entity for the wrapper itself — it has no translatable
+    # semantics beyond its children.
+    if _has_braced_arg(node):
+        args = node.child_by_field("arguments")
+        if args:
+            for child in args.named_children():
+                if child.kind == "argument":
+                    val = child.child_by_field("value")
+                    if val is not None and val.kind == "braced_expression":
+                        for stmt in val.named_children():
+                            _visit(stmt, ctx)
+                    elif val is not None and val.kind == "call" and _call_name(val) in ("library", "require"):
+                        _visit_library_call(val, _call_name(val), ctx)
+                elif child.kind == "braced_expression":
+                    for stmt in child.named_children():
+                        _visit(stmt, ctx)
+                elif child.kind == "call" and _call_name(child) in ("library", "require"):
+                    _visit_library_call(child, _call_name(child), ctx)
+        return
+
     # Detect pkg::fn() or pkg:::fn() — EXTERNAL_SYMBOL
     fn_node = node.child_by_field("function")
     pkg_name: str | None = None
@@ -280,11 +303,7 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
     for ec in predicted:
         ctx.add_effect(SideEffect(kind=ec, entity_id=entity_id, is_predicted=True))
 
-    # Scan arguments for two structural patterns:
-    # 1. Nested library/require imports.
-    # 2. Braced-expression arguments — wrapper calls like withAutoprint({ … }),
-    #    local({ … }), suppressWarnings({ … }) etc. contain top-level-like
-    #    statements that should be walked as separate entities.
+    # Scan arguments for nested library/require imports only.
     # Generic sub-calls (c(), as.Date(), etc.) are NOT extracted as separate
     # entities — they are translated as part of their enclosing statement.
     args = node.child_by_field("arguments")
@@ -294,14 +313,8 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
                 val = child.child_by_field("value")
                 if val is not None and val.kind == "call" and _call_name(val) in ("library", "require"):
                     _visit_library_call(val, _call_name(val), ctx)
-                elif val is not None and val.kind == "braced_expression":
-                    for stmt in val.named_children():
-                        _visit(stmt, ctx)
             elif child.kind == "call" and _call_name(child) in ("library", "require"):
                 _visit_library_call(child, _call_name(child), ctx)
-            elif child.kind == "braced_expression":
-                for stmt in child.named_children():
-                    _visit(stmt, ctx)
 
 
 def _visit_library_call(node: AstNode, fn_name: str, ctx: _WalkContext) -> None:
@@ -512,6 +525,21 @@ def _collect_all_nodes(node: AstNode, out: list[AstNode]) -> None:
     out.append(node)
     for child in node.children:
         _collect_all_nodes(child, out)
+
+
+def _has_braced_arg(node: AstNode) -> bool:
+    """Return True if a call node has a braced_expression among its arguments."""
+    args = node.child_by_field("arguments")
+    if args is None:
+        return False
+    for child in args.named_children():
+        if child.kind == "braced_expression":
+            return True
+        if child.kind == "argument":
+            val = child.child_by_field("value")
+            if val is not None and val.kind == "braced_expression":
+                return True
+    return False
 
 
 def _find_op(node: AstNode) -> AstNode | None:
