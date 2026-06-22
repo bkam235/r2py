@@ -156,6 +156,14 @@
       "s3-generic-method-print.xtableftable",
       "vectorized-string-functions"
     ],
+    "timeDate:": [
+      "assignment-and-printing",
+      "callable-string-argument-polymorphism",
+      "is.na-x-----value",
+      "r-date-vector-printing",
+      "vectorized-function-inputs",
+      "vectorized-is.na"
+    ],
     "base:": [
       "base.cat_to_print",
       "base.c_to_list",
@@ -173,12 +181,8 @@
     ],
     "broom:": [
       "broom--tidy---broom--glance",
+      "broom--tidy-and-broom--glance",
       "rlang--is_installed"
-    ],
-    "timeDate:": [
-      "callable-string-argument-polymorphism",
-      "r-date-vector-printing",
-      "vectorized-function-inputs"
     ],
     "clock:": [
       "clock--duration_days",
@@ -303,6 +307,7 @@
       "r-expression-evaluation--lazy-delayed",
       "rlang--abort-and-rlang--signal",
       "rlang--catch_cnd",
+      "rlang.is-installed",
       "typed-na-handling",
       "typeof"
     ],
@@ -342,6 +347,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "xtable",
+      "ast_shape_hash": ""
+    },
+    "assignment-and-printing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "timeDate",
       "ast_shape_hash": ""
     },
     "auto-print-expression": {
@@ -521,6 +534,14 @@
       "ast_shape_hash": ""
     },
     "broom--tidy---broom--glance": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": ""
+    },
+    "broom--tidy-and-broom--glance": {
       "confidence": "tentative",
       "evidence_count": 0,
       "contradictions_count": 0,
@@ -1110,6 +1131,14 @@
       "contradictions_count": 2,
       "seed": false,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "is.na-x-----value": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "timeDate",
       "ast_shape_hash": ""
     },
     "kwarg-reserved-keyword-wrapper": {
@@ -2080,6 +2109,14 @@
       "package": "broom",
       "ast_shape_hash": ""
     },
+    "rlang.is-installed": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "rlang",
+      "ast_shape_hash": ""
+    },
     "row.match": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -2265,6 +2302,14 @@
       "ast_shape_hash": ""
     },
     "vectorized-function-inputs": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "timeDate",
+      "ast_shape_hash": ""
+    },
+    "vectorized-is.na": {
       "confidence": "tentative",
       "evidence_count": 0,
       "contradictions_count": 0,
