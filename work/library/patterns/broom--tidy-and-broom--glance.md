@@ -17,6 +17,10 @@ Translate these as functions that convert model result objects into a pandas Dat
 
 Translate to pandas DataFrames. For single-model summaries, create a DataFrame with a single row containing the extracted statistics as columns.
 
+Translate these functions into pandas.DataFrame constructions that extract specific scalars or summaries from a model object, ensuring array values are indexed (e.g., `[0]`) to avoid nesting arrays inside the DataFrame.
+
+Translate these to pandas DataFrame construction and print statements that mimic R's tibble output formatting, including column names and types.
+
 ## Evidence
 (none)
 

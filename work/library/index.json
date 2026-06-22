@@ -183,10 +183,14 @@
       "broom--tidy---broom--glance",
       "broom--tidy-and-broom--glance",
       "car--durbinwatsontest",
+      "durbinwatsontest--and-similar-simulation-tests",
       "durbinwatsontest",
+      "library---call-in-conditional-blocks",
+      "library",
       "lm---formula-translation",
       "r-broom-tidier-functions--tidy--glance",
       "r-conditional-package-check-with-execution",
+      "r-simulation-based-tests",
       "rlang--is_installed"
     ],
     "clock:": [
@@ -841,6 +845,14 @@
       "package": "dplyr",
       "ast_shape_hash": ""
     },
+    "durbinwatsontest--and-similar-simulation-tests": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": ""
+    },
     "durbinwatsontest": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -1183,6 +1195,22 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "withr",
+      "ast_shape_hash": ""
+    },
+    "library---call-in-conditional-blocks": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": ""
+    },
+    "library": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
       "ast_shape_hash": ""
     },
     "lift_dl--dict-list-to-function-arguments": {
@@ -1879,6 +1907,14 @@
       "contradictions_count": 14,
       "seed": false,
       "package": "shape",
+      "ast_shape_hash": ""
+    },
+    "r-simulation-based-tests": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
       "ast_shape_hash": ""
     },
     "r-style-indexing--1-n": {
