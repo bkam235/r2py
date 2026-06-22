@@ -207,6 +207,11 @@
       "modelr--typical",
       "sample"
     ],
+    "forcats:": [
+      "factor",
+      "lvls_reorder-----lvls_expand",
+      "lvls_revalue"
+    ],
     "shape:": [
       "filled.contour",
       "graycol",
@@ -219,12 +224,15 @@
       "r-vector-printing",
       "r.auto-print-to-explicit-print"
     ],
+    "ggplot2:": [
+      "ggplot2--facet_wrap-vars",
+      "ggplot2--reorder",
+      "ggplot2--transform-df--col---null",
+      "ggplot2.to_plotnine"
+    ],
     "recipes:": [
       "ggplot2-cex",
       "recipes-pipeline"
-    ],
-    "ggplot2:": [
-      "ggplot2.to_plotnine"
     ],
     "haven:": [
       "haven--labelled",
@@ -813,6 +821,14 @@
       "package": "xtable",
       "ast_shape_hash": ""
     },
+    "factor": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "forcats",
+      "ast_shape_hash": ""
+    },
     "filled-contour-levels": {
       "confidence": "tentative",
       "evidence_count": 1,
@@ -915,6 +931,30 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "ggplot2--facet_wrap-vars": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "ggplot2--reorder": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "ggplot2--transform-df--col---null": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "ggplot2",
       "ast_shape_hash": ""
     },
     "ggplot2-cex": {
@@ -1147,6 +1187,22 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "withr",
+      "ast_shape_hash": ""
+    },
+    "lvls_reorder-----lvls_expand": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "forcats",
+      "ast_shape_hash": ""
+    },
+    "lvls_revalue": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "forcats",
       "ast_shape_hash": ""
     },
     "magrittr.pipe_to_chaining": {
