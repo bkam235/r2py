@@ -19,6 +19,8 @@ The `withAutoprint` wrapper is used for interactive R output; in Python, it shou
 
 In Python, this idiom should be handled by explicitly printing the results of the expressions within the block, as Python does not automatically print top-level expressions.
 
+In Python, wrap the resulting dataframes or objects in explicit print statements, including simulated R-style console markers (e.g., '> function_name(arg)') to replicate the interactive R environment behavior.
+
 ## Evidence
 (none)
 

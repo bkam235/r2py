@@ -15,6 +15,8 @@ Implement using a try-except block with __import__(package_name) to check if a m
 
 Use `importlib.util.find_spec(package_name) is not None` to check if a Python package is available.
 
+Use 'importlib.util.find_spec(package_name) is not None' to check for the existence of a Python package.
+
 ## Evidence
 (none)
 

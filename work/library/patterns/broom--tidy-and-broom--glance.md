@@ -13,6 +13,8 @@ tie_count: 0
 ## Guidance
 Translate into Python by extracting the relevant statistics from the model object into a pandas DataFrame or a formatted dictionary to mimic the R tibble output.
 
+Translate these as functions that convert model result objects into a pandas DataFrame with specific columns (statistic, p.value, etc.) to mimic R's tibble output.
+
 ## Evidence
 (none)
 
