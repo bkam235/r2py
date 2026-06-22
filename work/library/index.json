@@ -186,7 +186,10 @@
       "r-broom-tidier-functions--tidy--glance",
       "r-conditional-package-check-with-execution",
       "r-withautoprint-context-manager",
-      "rlang--is_installed"
+      "rlang--is_installed",
+      "r_package_with_no_python_equivalent",
+      "r_tibble_print_format",
+      "withautoprint_side_effects"
     ],
     "clock:": [
       "clock--duration_days",
@@ -2161,6 +2164,22 @@
       "package": "prodlim",
       "ast_shape_hash": ""
     },
+    "r_package_with_no_python_equivalent": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": ""
+    },
+    "r_tibble_print_format": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": ""
+    },
     "s3-generic-method-print.xtableftable": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -2399,6 +2418,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "googlesheets4",
+      "ast_shape_hash": ""
+    },
+    "withautoprint_side_effects": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
       "ast_shape_hash": ""
     },
     "withr--with_locale": {
