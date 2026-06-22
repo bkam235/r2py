@@ -17,6 +17,8 @@ Convert the output of a statistical test into a pandas DataFrame containing the 
 
 Translate these as data frames (e.g., using pandas) that summarize model statistics into a tidy, tabular format.
 
+Translate as functions that return a pandas DataFrame containing a summarized version of the model object's key statistics.
+
 ## Evidence
 (none)
 

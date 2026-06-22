@@ -190,6 +190,7 @@
       "lm---formula-translation",
       "r-broom-tidier-functions--tidy--glance",
       "r-conditional-package-check-with-execution",
+      "r-scalar-return--max_lag-1",
       "r-simulation-based-tests",
       "rlang--is_installed",
       "withautoprint"
@@ -1892,6 +1893,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "dplyr",
+      "ast_shape_hash": ""
+    },
+    "r-scalar-return--max_lag-1": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
       "ast_shape_hash": ""
     },
     "r-sequence-chunking--range-logic": {
