@@ -39,6 +39,7 @@ def cmd_translate(args: argparse.Namespace) -> int:
         use_judge=args.use_judge,
         data_compare=args.data_compare,
         no_seeds=args.no_seeds,
+        max_stalls=args.max_stalls,
     )
     print(f"Score: {result.final_score:.3f}  Iterations: {result.iterations}")
     if result.final_exit_code != 0:
@@ -141,6 +142,8 @@ def main() -> None:
                              choices=["auto", "exact", "embedding"])
     p_translate.add_argument("--no-seeds", action="store_true", dest="no_seeds",
                              help="Ignore seed:true patterns (transfer experiment §6.7)")
+    p_translate.add_argument("--max-stalls", type=int, default=3, dest="max_stalls",
+                             help="Consecutive non-improving agent rewrites before stopping (default: 3)")
 
     # library
     p_lib = sub.add_parser("library", help="Pattern Library operations")

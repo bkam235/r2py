@@ -24,6 +24,7 @@ def reason(
     model: str = _llm._DEFAULT_MODEL,
     max_steps: int = 20,
     score_threshold: float = 0.9,
+    max_stalls: int = 3,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -53,11 +54,11 @@ def reason(
             print(f"[Agent]   Score {report.aggregate:.3f} >= threshold, stopping")
             break
 
-        if stall_count >= 3:
-            print(f"[Agent]   3 consecutive non-improving rewrites, stopping")
+        if stall_count >= max_stalls:
+            print(f"[Agent]   {max_stalls} consecutive non-improving rewrites, stopping")
             break
 
-        if stall_count >= 2:
+        if stall_count >= max_stalls - 1:
             history.append(
                 "SYSTEM: You have rewritten twice without improving the score. "
                 "Try probe_r to investigate what R actually produces for the "

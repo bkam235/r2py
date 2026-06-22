@@ -37,15 +37,50 @@ input_filenames = next(walk(input_dir), (None, None, []))[2]
 # input_filenames = random.sample(input_filenames, 20) #don't use random script
 
 input_filenames = ["broom__rd_example__durbinWatsonTest_tidiers_Rd.R"] #translate this specific script
-# HARD CASES #
-# purrr__rd_example__lift_Rd.R
-# plyr__rd_example__splitter_a_Rd.R
 
-# CRASHES/INCOMPLETE
-# vroom __ rd_example __ guess_type_RdR
-# ggplot2__rd_example__facet_wrap_Rd.R
-# xtable__rd_example__xtableFtable_Rd.R
-
+# all_translated_scripts = [
+#     "S7__vignette__generics-methods_s13",
+#     "bit__rd_example__chunk_Rd",
+#     "bit__vignette__bit-usage_s15",
+#     "broom__rd_example__durbinWatsonTest_tidiers_Rd",
+#     "bslib__rd_example__popover_Rd",
+#     "cli__rd_example__cat_line_Rd",
+#     "clock__rd_example__duration_spanning_seq_Rd",
+#     "clock__vignette__clock_s4",
+#     "dplyr__rd_example__all_equal_Rd",
+#     "dplyr__rd_example__storms_Rd",
+#     "dplyr__vignette__in-packages_s3",
+#     "dplyr__vignette__two-table_s13",
+#     "dplyr__vignette__window-functions_s11",
+#     "forcats__rd_example__lvls_Rd",
+#     "ggplot2__rd_example__facet_wrap_Rd",
+#     "glue__vignette__wrappers_s1",
+#     "googlesheets4__rd_example__range_flood_Rd",
+#     "googlesheets4__rd_example__sheet_append_Rd",
+#     "haven__rd_example__print_labels_Rd",
+#     "modelr__rd_example__typical_Rd",
+#     "plyr__rd_example__splitter_a_Rd",
+#     "prodlim__rd_example__row_match_Rd",
+#     "progressr__rd_example__handler_rpushbullet_Rd",
+#     "purrr__rd_example__keep_at_Rd",
+#     "purrr__rd_example__lift_Rd",
+#     "recipes__rd_example__step_profile_Rd",
+#     "recipes__vignette__Roles_s1",
+#     "rlang__rd_example__catch_cnd_Rd",
+#     "rlang__rd_example__missing_Rd",
+#     "shape__rd_example__greycol_Rd",
+#     "shiny__rd_example__withOtelCollect_Rd",
+#     "timeDate__rd_example__holiday_Rd",
+#     "timeDate__rd_example__stats-na-fail_Rd",
+#     "vctrs__rd_example__vec_fill_missing_Rd",
+#     "vctrs__vignette__type-size_s21",
+#     "withr__rd_example__with_locale_Rd",
+#     "xfun__rd_example__cache_rds_Rd",
+#     "xfun__rd_example__protect_math_Rd",
+#     "xtable__rd_example__sanitize_Rd",
+#     "xtable__rd_example__xtableFtable_Rd",
+#     "xtable__vignette__listOfTablesGallery_s2",
+# ]
 
 scripts = []
 for r_filename in input_filenames:
@@ -72,7 +107,8 @@ for r_script, py_script in scripts:
                        escalation_model=trans_model,
                        progress=_on_progress,
                        score_threshold=0.9,
-                       max_iters=15)
+                       max_iters=15,
+                       max_stalls=7)
 
 # from r2py import seed_from_translation
 # seed_from_translation(

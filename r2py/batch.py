@@ -30,6 +30,7 @@ def translate_batch(
     no_seeds: bool = False,
     data_compare: str = "auto",
     force: bool = False,
+    max_stalls: int = 3,
 ) -> list[dict]:
     """Translate all R scripts under input_dir, writing CSV tracking files.
 
@@ -88,6 +89,7 @@ def translate_batch(
                 no_seeds=no_seeds,
                 data_compare=data_compare,
                 output_dir=run_dir,
+                max_stalls=max_stalls,
             )
             row = {
                 "script_id": script_id,

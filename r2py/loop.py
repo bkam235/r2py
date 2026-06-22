@@ -77,6 +77,7 @@ def run_loop(
     progress=None,
     seed_translation: "str | None" = None,
     timeout_s: float = 60,
+    max_stalls: int = 3,
     **verify_kwargs,
 ) -> TranslateResult:
     """Cheap path → reasoning agent escalation loop.
@@ -210,6 +211,7 @@ def run_loop(
         model=escalation_model,
         max_steps=max_iters,
         score_threshold=score_threshold,
+        max_stalls=max_stalls,
     )
 
     if agent_result is not None:

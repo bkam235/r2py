@@ -154,9 +154,15 @@ def run_script_checkpointed(
                         graphics_field = cp_data.get("graphics", 0)
                 else:
                     graphics_field = cp_data.get("graphics", 0)
+                raw_stdout = cp_data.get("stdout", "")
+                if raw_stdout:
+                    raw_stdout = "\n".join(
+                        ln for ln in raw_stdout.splitlines()
+                        if not ln.lstrip("> ").startswith(".r2py_cp(")
+                    )
                 eb = EffectBundle(
                     data=raw_data,
-                    stdout=cp_data.get("stdout", ""),
+                    stdout=raw_stdout,
                     graphics=graphics_field,
                 )
                 entity_bundles[eid] = eb

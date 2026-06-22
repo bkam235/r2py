@@ -27,6 +27,7 @@ def translate(
     progress=None,                   # callable(ProgressEvent) for progress reporting; None = silent
     resume: bool = False,            # if True and py_path exists, continue improving it; if False and py_path exists, warn
     timeout_s: float = 60,           # per-execution timeout in seconds for sandbox runs
+    max_stalls: int = 3,             # consecutive non-improving agent rewrites before stopping
 ) -> "TranslateResult":
     """Translate an R script to Python via cheap path + reasoning agent escalation."""
     import sys
@@ -72,6 +73,7 @@ def translate(
         progress=progress,
         seed_translation=seed_translation,
         timeout_s=timeout_s,
+        max_stalls=max_stalls,
     )
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     _write_translation_log(Path(py_path), script_map, result)
