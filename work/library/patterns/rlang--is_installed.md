@@ -17,6 +17,8 @@ Use `importlib.util.find_spec(package_name) is not None` to check if a Python pa
 
 Use 'importlib.util.find_spec(package_name) is not None' to check for the existence of a Python package.
 
+Use `importlib.util.find_spec(package_name) is not None` to check for the presence of a Python package.
+
 ## Evidence
 (none)
 

@@ -191,7 +191,8 @@
       "r-broom-tidier-functions--tidy--glance",
       "r-conditional-package-check-with-execution",
       "r-simulation-based-tests",
-      "rlang--is_installed"
+      "rlang--is_installed",
+      "withautoprint"
     ],
     "clock:": [
       "clock--duration_days",
@@ -2435,6 +2436,14 @@
       "contradictions_count": 7,
       "seed": true,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "withautoprint": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
       "ast_shape_hash": ""
     },
     "withr--with_locale": {

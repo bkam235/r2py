@@ -15,6 +15,8 @@ Translate these functions by creating Python functions that extract relevant sta
 
 Convert the output of a statistical test into a pandas DataFrame containing the statistic, p-value, and method metadata.
 
+Translate these as data frames (e.g., using pandas) that summarize model statistics into a tidy, tabular format.
+
 ## Evidence
 (none)
 
