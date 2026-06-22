@@ -183,13 +183,11 @@
       "broom--tidy---broom--glance",
       "broom--tidy-and-broom--glance",
       "car--durbinwatsontest",
+      "durbinwatsontest",
+      "lm---formula-translation",
       "r-broom-tidier-functions--tidy--glance",
       "r-conditional-package-check-with-execution",
-      "r-withautoprint-context-manager",
-      "rlang--is_installed",
-      "r_package_with_no_python_equivalent",
-      "r_tibble_print_format",
-      "withautoprint_side_effects"
+      "rlang--is_installed"
     ],
     "clock:": [
       "clock--duration_days",
@@ -256,8 +254,7 @@
       "package-internal-access",
       "r-numeric-indexing-to-python-iloc",
       "r-pipe",
-      "r-style-indexing--1-n",
-      "withautoprint"
+      "r-style-indexing--1-n"
     ],
     "withr:": [
       "lc_collate--locale-aware-sorting",
@@ -844,6 +841,14 @@
       "package": "dplyr",
       "ast_shape_hash": ""
     },
+    "durbinwatsontest": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": ""
+    },
     "factor-----ordered": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -1218,6 +1223,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "lm---formula-translation": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
       "ast_shape_hash": ""
     },
     "locale-aware-sorting": {
@@ -1948,14 +1961,6 @@
       "package": "prodlim",
       "ast_shape_hash": ""
     },
-    "r-withautoprint-context-manager": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "broom",
-      "ast_shape_hash": ""
-    },
     "r-with_locale---context-manager-pattern": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -2162,22 +2167,6 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "prodlim",
-      "ast_shape_hash": ""
-    },
-    "r_package_with_no_python_equivalent": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "broom",
-      "ast_shape_hash": ""
-    },
-    "r_tibble_print_format": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "broom",
       "ast_shape_hash": ""
     },
     "s3-generic-method-print.xtableftable": {
@@ -2410,22 +2399,6 @@
       "contradictions_count": 7,
       "seed": true,
       "package": "",
-      "ast_shape_hash": ""
-    },
-    "withautoprint": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "googlesheets4",
-      "ast_shape_hash": ""
-    },
-    "withautoprint_side_effects": {
-      "confidence": "tentative",
-      "evidence_count": 0,
-      "contradictions_count": 0,
-      "seed": false,
-      "package": "broom",
       "ast_shape_hash": ""
     },
     "withr--with_locale": {

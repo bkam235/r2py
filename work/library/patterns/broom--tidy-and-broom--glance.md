@@ -15,6 +15,8 @@ Translate into Python by extracting the relevant statistics from the model objec
 
 Translate these as functions that convert model result objects into a pandas DataFrame with specific columns (statistic, p.value, etc.) to mimic R's tibble output.
 
+Translate to pandas DataFrames. For single-model summaries, create a DataFrame with a single row containing the extracted statistics as columns.
+
 ## Evidence
 (none)
 
