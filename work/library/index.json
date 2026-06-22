@@ -268,13 +268,16 @@
       "multi-line-vector-printing-with-proper-indexing",
       "pmap_--row-unpacking",
       "pmap_dbl-pmap_lgl-with-dict-columns",
+      "purrr--keep_at---purrr--discard_at",
       "purrr--lift_dl",
       "purrr--pmap_---row-wise-application",
+      "r-1-based-indexing",
       "r-dot-notation-in-parameter-names",
       "r-lift_dl---function",
       "r-lift_ld---with-partial---composition",
       "r-na-and-logical-values-in-numeric-contexts",
       "r-named-list-unpacking-with",
+      "r-named-vector",
       "r-numeric-formatting-in-print-statements",
       "r-pmap_dbl---and-pmap_lgl---functions",
       "r-s-exec---do.call",
@@ -1373,6 +1376,14 @@
       "package": "progressr",
       "ast_shape_hash": ""
     },
+    "purrr--keep_at---purrr--discard_at": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": ""
+    },
     "purrr--lift_dl": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -1382,6 +1393,14 @@
       "ast_shape_hash": ""
     },
     "purrr--pmap_---row-wise-application": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
+      "ast_shape_hash": ""
+    },
+    "r-1-based-indexing": {
       "confidence": "tentative",
       "evidence_count": 0,
       "contradictions_count": 0,
@@ -1651,6 +1670,14 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "withr",
+      "ast_shape_hash": ""
+    },
+    "r-named-vector": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "purrr",
       "ast_shape_hash": ""
     },
     "r-numeric-formatting-in-print-statements": {
