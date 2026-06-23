@@ -18,6 +18,8 @@ from ..types import (
     EffectBundle,
     EffectClass,
     EntityId,
+    EntityKind,
+    EntityScore,
     FeedbackItem,
     ScoreReport,
 )
@@ -777,17 +779,67 @@ def verify(
     }
 
     # --- Aggregate score ---
-    # Per entity: average of all six EntityScore fields (kind-aware proxies populated by decompose).
+    # Only average entities where R actually produced observable output.
+    # Within each entity, only average dimensions backed by effect classes
+    # that R exercised (skip N/A fillers like callable_output=1.0 for VARIABLE).
+    _has_side = any(_r_has_effect.get(ec, False) for ec in (
+        EffectClass.FILES, EffectClass.GRAPHICS, EffectClass.HTML,
+        EffectClass.ENV, EffectClass.WARNINGS,
+    ))
+
+    def _r_entity_has_output(eid: str) -> bool:
+        r_eb = (r_entity_bundles or {}).get(eid)
+        if r_eb is None:
+            return True  # no per-entity bundles — can't tell, include
+        return bool(r_eb.data or r_eb.stdout or r_eb.graphics)
+
+    def _weighted_entity_avg(es: EntityScore) -> float:
+        kind = getattr(entities.get(es.entity_id), "kind", None)
+        dims: list[float] = []
+        # type_match: execution-backed for most kinds, DATA-backed for VARIABLE/FUNCTION_CALL
+        if kind in (EntityKind.VARIABLE, EntityKind.CONSTANT,
+                    EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL):
+            if _r_has_effect.get(EffectClass.DATA, False):
+                dims.append(es.type_match)
+        else:
+            dims.append(es.type_match)  # execution-backed, always include
+        # control_flow_match: execution-backed for most, STDOUT for FUNCTION_DEF,
+        # DATA for FUNCTION_CALL
+        if kind == EntityKind.FUNCTION_DEF:
+            if _r_has_effect.get(EffectClass.STDOUT, False):
+                dims.append(es.control_flow_match)
+        elif kind in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL):
+            if _r_has_effect.get(EffectClass.DATA, False):
+                dims.append(es.control_flow_match)
+        else:
+            dims.append(es.control_flow_match)  # execution-backed
+        # data_output, variable_output: always DATA-backed
+        if _r_has_effect.get(EffectClass.DATA, False):
+            dims.append(es.data_output)
+            dims.append(es.variable_output)
+        # callable_output: N/A for most kinds, DATA-backed for FUNCTION_DEF/CALL
+        if kind in (EntityKind.FUNCTION_DEF, EntityKind.FUNCTION_CALL,
+                    EntityKind.EXTERNAL_SYMBOL):
+            if _r_has_effect.get(EffectClass.DATA, False):
+                dims.append(es.callable_output)
+        # side_effects: include only if R produced any side effect
+        if _has_side:
+            dims.append(es.side_effects)
+        if not dims:
+            return float(es.executed_ok)
+        return sum(dims) / len(dims)
+
     entity_scores = list(score_table.values())
     if entity_scores:
-        per_entity_avgs = [
-            (es.type_match + es.control_flow_match + es.data_output
-             + es.variable_output + es.callable_output + es.side_effects) / 6
+        contributing = [
+            _weighted_entity_avg(es)
             for es in entity_scores
+            if _r_entity_has_output(es.entity_id)
         ]
-        aggregate = sum(per_entity_avgs) / len(per_entity_avgs)
+        if not contributing:
+            contributing = [_weighted_entity_avg(es) for es in entity_scores]
+        aggregate = sum(contributing) / len(contributing)
     else:
-        # No entities: score the raw effect comparison, excluding empty-vs-empty classes
         scored_results = [
             r for ec, r in comparator_results.items()
             if r.verdict != "uncomparable" and _r_has_effect.get(ec, False)
