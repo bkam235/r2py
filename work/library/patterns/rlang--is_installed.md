@@ -4,7 +4,7 @@ package: broom
 confidence: tentative
 seed: false
 created: 2026-06-21
-last_review: 2026-06-22
+last_review: 2026-06-23
 tie_count: 0
 ---
 
@@ -18,6 +18,10 @@ Use `importlib.util.find_spec(package_name) is not None` to check if a Python pa
 Use 'importlib.util.find_spec(package_name) is not None' to check for the existence of a Python package.
 
 Use `importlib.util.find_spec(package_name) is not None` to check for the presence of a Python package.
+
+Use importlib.util.find_spec(package_name) to check for the existence of a Python module.
+
+Implement using 'importlib.util.find_spec(package_name) is not None' to check for the presence of a Python package.
 
 ## Evidence
 (none)

@@ -26,6 +26,17 @@ def _emit(progress, **kwargs) -> None:
         progress(ProgressEvent(**kwargs))
 
 
+def _penalise_reviewed(decomp: "ScoreReport") -> "ScoreReport":
+    """Cap the aggregate score so a review-failing translation cannot meet threshold."""
+    from .types import ScoreReport
+    if decomp.aggregate > 0.5:
+        import copy
+        penalised = copy.copy(decomp)
+        penalised.aggregate = min(decomp.aggregate, 0.5)
+        return penalised
+    return decomp
+
+
 def _make_syntax_error_report(
     entities: dict,
     exc: SyntaxError,
@@ -93,6 +104,7 @@ def run_loop(
     from .harness.agent import reason as _reason
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
     from .library.epistemology import review as _ep_review
+    from .harness.review import review_translation as _review
 
     script_id = hashlib.sha1(script_map.source.encode()).hexdigest()[:12]
 
@@ -160,6 +172,19 @@ def run_loop(
     _emit(progress, kind="seed_done", score=seed_decomp.aggregate)
     _record_seed_translations(seed, seed_decomp, script_map, library, script_id, entity_line_map)
 
+    r_source = getattr(script_map, "source", "") or ""
+
+    # Review seed for rule compliance — only if it would meet threshold
+    if seed_decomp.aggregate >= score_threshold:
+        _seed_passed, _seed_violations = _review(
+            r_source, seed, script_map, model=escalation_model,
+        )
+        if not _seed_passed:
+            print("[Review]  Seed FAILED code review:")
+            for v in _seed_violations:
+                print(f"[Review]    entity={v.get('entity','?')}: {v.get('evidence','')}")
+            seed_decomp = _penalise_reviewed(seed_decomp)
+
     best_source = seed
     best_decomp = seed_decomp
 
@@ -184,9 +209,20 @@ def run_loop(
                 alt_seed, alt_decomp, script_map, library, script_id, alt_elmap,
             )
             if alt_decomp.aggregate > best_decomp.aggregate:
-                best_source = alt_seed
-                best_decomp = alt_decomp
-                entity_line_map = alt_elmap
+                if alt_decomp.aggregate >= score_threshold:
+                    alt_passed, alt_violations = _review(
+                        r_source, alt_seed, script_map, model=escalation_model,
+                    )
+                    if not alt_passed:
+                        print(f"[Review]  Seed {seed_idx} FAILED code review:")
+                        for v in alt_violations:
+                            print(f"[Review]    entity={v.get('entity','?')}: "
+                                  f"{v.get('evidence','')}")
+                        alt_decomp = _penalise_reviewed(alt_decomp)
+                if alt_decomp.aggregate > best_decomp.aggregate:
+                    best_source = alt_seed
+                    best_decomp = alt_decomp
+                    entity_line_map = alt_elmap
             if best_decomp.aggregate >= score_threshold:
                 break
 
@@ -428,10 +464,14 @@ def _write_data_sidecar(py_path: "Path", script_map: object) -> None:
     data = getattr(bundle, "data", {}) or {}
     if not data:
         return
+    entity_names = set(getattr(script_map, "entities", {}) or {})
+    filtered = {k: v for k, v in data.items() if k not in entity_names}
+    if not filtered:
+        return
     sidecar = py_path.with_name(f"{py_path.stem}.r2py_data.json")
     try:
         sidecar.write_text(
-            serialize_bundle_data(data, indent=2),
+            serialize_bundle_data(filtered, indent=2),
             encoding="utf-8",
         )
     except Exception:

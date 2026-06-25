@@ -125,6 +125,11 @@ class EntityScore:
     variable_output:     float           = 0.0
     callable_output:     float           = 0.0
     side_effects:        float           = 0.0
+    # Dimensions included in the weighted aggregate for this entity.
+    active_dims:         frozenset[str]  = frozenset((
+        "type_match", "control_flow_match", "data_output",
+        "variable_output", "callable_output", "side_effects",
+    ))
     # None when use_judge=False (D4 default); bool when judge is enabled.
     judge_pass:          bool | None     = None
 

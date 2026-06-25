@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 from ..stage2 import llm as _llm
 from ..stage2.llm import TruncatedResponseError
 from . import prompt as _prompt
+from .review import review_translation
 
 if TYPE_CHECKING:
     from ..stage1.script_map import ScriptMap
@@ -144,7 +145,7 @@ def reason(
                 result = f"ERROR: {exc}"
             print(f"[Agent]   Probe result: {result[:200]!r}")
             history.append(f"Step {step}: probe_r -> {result[:100]!r}")
-            stall_count = 0
+            stall_count += 1
 
         elif action_type == "rewrite":
             new_source = action.get("new_source", "")
@@ -172,12 +173,34 @@ def reason(
                     print(f"[Agent]   Crash: {crash_fb[0].message[:200]}")
 
             if new_report.aggregate > best_score:
-                best_source = new_source
-                best_score = new_report.aggregate
-                report = new_report
-                stall_count = 0
-                history.append(
-                    f"Step {step}: rewrite -> {new_report.aggregate:.3f} (ACCEPTED)")
+                # Code review gate: check for rule violations before adopting
+                passed, violations = review_translation(
+                    r_source, new_source, script_map, model=model,
+                )
+                if not passed:
+                    for v in violations:
+                        print(f"[Review]  VIOLATION entity={v.get('entity','?')}: "
+                              f"{v.get('evidence','')}")
+                    stall_count += 1
+                    violation_summary = "; ".join(
+                        f"{v.get('entity','?')}: {v.get('evidence','')}"
+                        for v in violations[:3]
+                    )
+                    history.append(
+                        f"Step {step}: rewrite -> {new_report.aggregate:.3f} "
+                        f"(REJECTED by review: {violation_summary}). "
+                        "Your code contains hardcoded values — you must COMPUTE "
+                        "results, not copy expected output as literals."
+                    )
+                    report = new_report if new_report.aggregate == best_score else report
+                else:
+                    print(f"[Review]  PASSED")
+                    best_source = new_source
+                    best_score = new_report.aggregate
+                    report = new_report
+                    stall_count = 0
+                    history.append(
+                        f"Step {step}: rewrite -> {new_report.aggregate:.3f} (ACCEPTED)")
             else:
                 stall_count += 1
                 history.append(

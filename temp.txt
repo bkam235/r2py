@@ -1,0 +1,7 @@
+Doesn't tidy() have any other effects besides STDOUT?
+
+How can a crashing script get any score?
+
+Reasonable stopping: We can't get any closer by computation, only by hardcoding.
+
+Execution equivalence isn't Output equivalence. Currently, I only have Output equivalence. Execution equivalence would also Need to compare WHAT was executed.

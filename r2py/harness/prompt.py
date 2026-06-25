@@ -49,6 +49,11 @@ Instead, probe_r to understand what R actually outputs for the failing entities,
 then rewrite with that knowledge. If you cannot improve further, use action "done".
 - When rewriting, preserve ALL entity sentinel comments (# r2py:entity:<id>).
 - Each step costs budget. Be action-oriented: rewrite, verify, iterate.
+- NEVER hardcode output values. Your Python must COMPUTE results using the same \
+logic as the R source — not print literal strings or assign pre-computed values \
+to match the expected output. Hardcoded translations will be detected and rejected. \
+If R calls a function, Python must call an equivalent function. If R computes a \
+statistic, Python must compute it too.
 """
 
 AGENT_SYSTEM_PROMPT_OLLAMA = """\
@@ -94,6 +99,9 @@ ACTION: done
 Use probe_r to check what R actually outputs, then rewrite with that knowledge. \
 If you cannot improve further, use ACTION: done.
 - Each step costs budget. Be action-oriented.
+- NEVER hardcode output values. Your Python must COMPUTE results the same way \
+R does — not print literal strings or assign pre-computed values. If R calls a \
+function, Python must call an equivalent function.
 """
 
 
@@ -165,6 +173,35 @@ def format_patterns(patterns_by_entity: dict[str, list]) -> str:
     return "\n".join(parts) if parts else "(no patterns matched)"
 
 
+def _format_data_vars(script_map: "ScriptMap") -> str:
+    """Summarise the shape of R data variables available via the data shim."""
+    from ..stage4.verifier import _get_r_bundle
+    try:
+        r_bundle = _get_r_bundle(script_map)
+    except Exception:
+        return ""
+    data = r_bundle.data
+    if not data:
+        return ""
+    entity_names = set(getattr(script_map, "entities", {}) or {})
+    parts: list[str] = []
+    for name, val in data.items():
+        if name in entity_names:
+            continue
+        if isinstance(val, dict):
+            keys = list(val.keys())
+            first_key = keys[0] if keys else None
+            length = len(val[first_key]) if first_key and isinstance(val.get(first_key), list) else "?"
+            parts.append(f"  {name}: dict with {len(keys)} columns, {length} rows")
+            parts.append(f"    columns: {keys}")
+            parts.append(f"    Usage: pd.DataFrame({name})  # column-oriented dict")
+        elif isinstance(val, list):
+            parts.append(f"  {name}: list, length {len(val)}")
+        else:
+            parts.append(f"  {name}: {type(val).__name__}")
+    return "\n".join(parts)
+
+
 def build_agent_turn(
     r_source: str,
     python_source: str,
@@ -202,6 +239,12 @@ def build_agent_turn(
     parts.append("### Entities")
     parts.append(format_entity_list(script_map))
     parts.append("")
+
+    data_info = _format_data_vars(script_map)
+    if data_info:
+        parts.append("### Data variables (loaded by the data shim)")
+        parts.append(data_info)
+        parts.append("")
 
     if patterns_by_entity:
         parts.append("### Pattern library (known translation patterns)")

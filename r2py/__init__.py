@@ -398,15 +398,12 @@ def _write_translation_log(
             py_lines = result.python_source.splitlines()
             py_snippet = "\n".join(py_lines[py_start:py_end])
 
-        # Per-entity score (average of the six EntityScore fields)
+        es = report.by_entity.get(eid) if report is not None else None
         score = None
-        if report is not None:
-            es = report.by_entity.get(eid)
-            if es is not None:
-                score = (
-                    es.type_match + es.control_flow_match + es.data_output
-                    + es.variable_output + es.callable_output + es.side_effects
-                ) / 6
+        if es is not None:
+            ad = es.active_dims
+            vals = [getattr(es, name) for name in ad]
+            score = sum(vals) / len(vals) if vals else float(es.executed_ok)
 
         lines.append("=" * 60)
         lines.append(f"Entity: {eid}")
@@ -414,6 +411,20 @@ def _write_translation_log(
         lines.append(f"  Kind:  {kind}")
         if score is not None:
             lines.append(f"  Score: {score:.3f}")
+        if es is not None:
+            ad = es.active_dims
+            _all_dims = [
+                ("type_match",        es.type_match),
+                ("control_flow_match", es.control_flow_match),
+                ("data_output",       es.data_output),
+                ("variable_output",   es.variable_output),
+                ("callable_output",   es.callable_output),
+                ("side_effects",      es.side_effects),
+            ]
+            for dname, dval in _all_dims:
+                if dname in ad:
+                    lines.append(f"  {dname + ':':<21s}{dval:.3f}")
+            lines.append(f"  executed_ok:       {es.executed_ok}")
         lines.append("")
         if r_snippet:
             lines.append("  R:")

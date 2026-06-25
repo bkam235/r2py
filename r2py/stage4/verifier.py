@@ -435,9 +435,15 @@ def _build_sidecar_payload(script_map) -> str:
 
     Delegates to ``stage0.effects.data.serialize_bundle_data`` so the on-disk
     sidecar (loop._write_data_sidecar) and the in-sandbox copy stay in lockstep.
+
+    Entity-named variables are excluded: they are computed results that Python
+    must reproduce, not input data.  Without this filter the agent can load
+    pre-computed answers from the sidecar instead of translating the computation.
     """
     data = getattr(get_r_bundle(script_map), "data", {}) or {}
-    return serialize_bundle_data(data)
+    entity_names = set(getattr(script_map, "entities", {}) or {})
+    filtered = {k: v for k, v in data.items() if k not in entity_names}
+    return serialize_bundle_data(filtered)
 
 
 # ---------------------------------------------------------------------------
@@ -645,6 +651,14 @@ def verify(
     # Inject per-entity checkpoint calls into the Python source (Option 2 scoring).
     py_source_checkpointed, cp_eids = _inject_py_checkpoints(candidate, entity_line_map or {})
 
+    # Rebuild entity_line_map from the checkpointed source so crash attribution
+    # line numbers (which reference the checkpointed script) map correctly.
+    if entity_line_map:
+        from ..stage2.stitch import rebuild_entity_line_map as _rebuild_elmap
+        cp_entity_line_map = _rebuild_elmap(py_source_checkpointed)
+    else:
+        cp_entity_line_map = None
+
     # Activate the data-loading shim (Option A) in the source we hand to the
     # sandbox.  The on-disk artifact stays commented-out; this rewrite affects
     # only the in-memory copy used for equivalence testing.
@@ -682,7 +696,7 @@ def verify(
     score_table = make_score_table(
         entities, comparator_results,
         py_exit_code=py_bundle.exit_code,
-        entity_line_map=entity_line_map,
+        entity_line_map=cp_entity_line_map or entity_line_map,
         py_stderr=py_bundle.stderr,
         preamble_lines=py_bundle.preamble_lines,
         r_entity_bundles=r_entity_bundles or None,
@@ -734,12 +748,13 @@ def verify(
         if len(crash_msg) > 800:
             crash_msg = "..." + crash_msg[-800:]
         crash_target_ids: list[str] = []
-        if entity_line_map:
+        _crash_elmap = cp_entity_line_map or entity_line_map
+        if _crash_elmap:
             from .decompose import _parse_crash_line, _attribute_crash
             crash_line = _parse_crash_line(py_bundle.stderr)
             if crash_line is not None:
                 crashing_eid, _ = _attribute_crash(
-                    crash_line, py_bundle.preamble_lines, entity_line_map
+                    crash_line, py_bundle.preamble_lines, _crash_elmap
                 )
                 if crashing_eid:
                     crash_target_ids = [crashing_eid]
@@ -780,56 +795,78 @@ def verify(
 
     # --- Aggregate score ---
     # Only average entities where R actually produced observable output.
-    # Within each entity, only average dimensions backed by effect classes
-    # that R exercised (skip N/A fillers like callable_output=1.0 for VARIABLE).
-    _has_side = any(_r_has_effect.get(ec, False) for ec in (
-        EffectClass.FILES, EffectClass.GRAPHICS, EffectClass.HTML,
-        EffectClass.ENV, EffectClass.WARNINGS,
-    ))
+    # Within each entity, only average dimensions backed by effects that
+    # THIS ENTITY's R bundle actually produced (per-entity, not global).
+
+    def _entity_r_effects(eid: str) -> dict[EffectClass, bool]:
+        """What did R produce for this specific entity?"""
+        r_eb = (r_entity_bundles or {}).get(eid)
+        if r_eb is None:
+            return _r_has_effect  # fallback to global
+        r_gfx = r_eb.graphics if isinstance(r_eb.graphics, int) else len(r_eb.graphics or [])
+        return {
+            EffectClass.DATA:     bool(r_eb.data),
+            EffectClass.STDOUT:   bool(r_eb.stdout),
+            EffectClass.GRAPHICS: r_gfx > 0,
+            EffectClass.FILES:    bool(getattr(r_eb, "files", None)),
+            EffectClass.HTML:     bool(getattr(r_eb, "html", None)),
+            EffectClass.ENV:      bool(getattr(r_eb, "env", None)),
+            EffectClass.WARNINGS: bool(getattr(r_eb, "warnings", None)),
+        }
 
     def _r_entity_has_output(eid: str) -> bool:
         r_eb = (r_entity_bundles or {}).get(eid)
         if r_eb is None:
-            return True  # no per-entity bundles — can't tell, include
-        return bool(r_eb.data or r_eb.stdout or r_eb.graphics)
+            return True
+        r_gfx = r_eb.graphics if isinstance(r_eb.graphics, int) else len(r_eb.graphics or [])
+        return bool(r_eb.data or r_eb.stdout or r_gfx > 0)
 
-    def _weighted_entity_avg(es: EntityScore) -> float:
+    def _active_dims(es: EntityScore) -> frozenset[str]:
         kind = getattr(entities.get(es.entity_id), "kind", None)
-        dims: list[float] = []
-        # type_match: execution-backed for most kinds, DATA-backed for VARIABLE/FUNCTION_CALL
+        eff = _entity_r_effects(es.entity_id)
+        has_data = eff.get(EffectClass.DATA, False)
+        has_stdout = eff.get(EffectClass.STDOUT, False)
+        has_side = any(eff.get(ec, False) for ec in (
+            EffectClass.FILES, EffectClass.GRAPHICS, EffectClass.HTML,
+            EffectClass.ENV, EffectClass.WARNINGS,
+        ))
+        names: list[str] = []
         if kind in (EntityKind.VARIABLE, EntityKind.CONSTANT,
                     EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL):
-            if _r_has_effect.get(EffectClass.DATA, False):
-                dims.append(es.type_match)
+            if has_data:
+                names.append("type_match")
         else:
-            dims.append(es.type_match)  # execution-backed, always include
-        # control_flow_match: execution-backed for most, STDOUT for FUNCTION_DEF,
-        # DATA for FUNCTION_CALL
+            names.append("type_match")
         if kind == EntityKind.FUNCTION_DEF:
-            if _r_has_effect.get(EffectClass.STDOUT, False):
-                dims.append(es.control_flow_match)
+            if has_stdout:
+                names.append("control_flow_match")
         elif kind in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL):
-            if _r_has_effect.get(EffectClass.DATA, False):
-                dims.append(es.control_flow_match)
+            if has_data:
+                names.append("control_flow_match")
         else:
-            dims.append(es.control_flow_match)  # execution-backed
-        # data_output, variable_output: always DATA-backed
-        if _r_has_effect.get(EffectClass.DATA, False):
-            dims.append(es.data_output)
-            dims.append(es.variable_output)
-        # callable_output: N/A for most kinds, DATA-backed for FUNCTION_DEF/CALL
+            names.append("control_flow_match")
+        if has_data:
+            names.extend(("data_output", "variable_output"))
         if kind in (EntityKind.FUNCTION_DEF, EntityKind.FUNCTION_CALL,
                     EntityKind.EXTERNAL_SYMBOL):
-            if _r_has_effect.get(EffectClass.DATA, False):
-                dims.append(es.callable_output)
-        # side_effects: include only if R produced any side effect
-        if _has_side:
-            dims.append(es.side_effects)
-        if not dims:
+            if has_data:
+                names.append("callable_output")
+        if has_side:
+            names.append("side_effects")
+        if has_stdout and not has_data and not has_side:
+            names.append("side_effects")
+        return frozenset(names)
+
+    def _weighted_entity_avg(es: EntityScore) -> float:
+        ad = es.active_dims
+        vals = [getattr(es, name) for name in ad]
+        if not vals:
             return float(es.executed_ok)
-        return sum(dims) / len(dims)
+        return sum(vals) / len(vals)
 
     entity_scores = list(score_table.values())
+    for es in entity_scores:
+        es.active_dims = _active_dims(es)
     if entity_scores:
         contributing = [
             _weighted_entity_avg(es)
