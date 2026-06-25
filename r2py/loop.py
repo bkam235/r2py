@@ -176,13 +176,11 @@ def run_loop(
 
     # Review seed for rule compliance — only if it would meet threshold
     if seed_decomp.aggregate >= score_threshold:
-        _seed_passed, _seed_violations = _review(
+        _seed_passed, _seed_reason = _review(
             r_source, seed, script_map, model=escalation_model,
         )
         if not _seed_passed:
-            print("[Review]  Seed FAILED code review:")
-            for v in _seed_violations:
-                print(f"[Review]    entity={v.get('entity','?')}: {v.get('evidence','')}")
+            print(f"[Review]  Seed FAILED code review: {_seed_reason}")
             seed_decomp = _penalise_reviewed(seed_decomp)
 
     best_source = seed
@@ -210,14 +208,11 @@ def run_loop(
             )
             if alt_decomp.aggregate > best_decomp.aggregate:
                 if alt_decomp.aggregate >= score_threshold:
-                    alt_passed, alt_violations = _review(
+                    alt_passed, alt_reason = _review(
                         r_source, alt_seed, script_map, model=escalation_model,
                     )
                     if not alt_passed:
-                        print(f"[Review]  Seed {seed_idx} FAILED code review:")
-                        for v in alt_violations:
-                            print(f"[Review]    entity={v.get('entity','?')}: "
-                                  f"{v.get('evidence','')}")
+                        print(f"[Review]  Seed {seed_idx} FAILED: {alt_reason}")
                         alt_decomp = _penalise_reviewed(alt_decomp)
                 if alt_decomp.aggregate > best_decomp.aggregate:
                     best_source = alt_seed

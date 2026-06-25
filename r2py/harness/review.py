@@ -41,6 +41,8 @@ row numbers, alignment — these are presentation, not computed values
    - One function delegating to another (e.g. `glance` calling `tidy`) — \
 this is valid if R does the same thing
    - Literal values that also appear as literals in the R source code
+   - Loading INPUT DATA (like mtcars) from a data file — input datasets are \
+not computed results
 
 ## R source
 ```r
@@ -54,20 +56,14 @@ this is valid if R does the same thing
 
 ## Task
 
-Check each entity (marked by `# r2py:entity:<id>` comments) against the \
-rules above. Only flag hardcoded NUMERIC/COMPUTED values, not string \
-literals used for labeling or formatting.
+Does this Python translation contain hardcoded COMPUTED VALUES? \
+Answer with a JSON object:
 
-Return a JSON object:
-{{"pass": true/false, "violations": [{{"entity": "<id>", "rule": 1, "evidence": "brief quote from Python"}}]}}
+{{"pass": true}}   — if the translation computes its results correctly
+{{"pass": false, "reason": "brief explanation of what is hardcoded"}}  — \
+if you found hardcoded computed values
 
-IMPORTANT: Only include an entry in "violations" if you are CERTAIN it is \
-a real violation. If you analyse something and conclude it is acceptable, \
-do NOT add it to the violations list. An empty violations list means pass. \
-Set "pass" to false ONLY when violations is non-empty.
-
-Return ONLY the JSON object. If there are no violations, return \
-{{"pass": true, "violations": []}}.
+Return ONLY the JSON object, nothing else.
 """
 
 
@@ -77,11 +73,11 @@ def review_translation(
     script_map: "ScriptMap | None" = None,
     *,
     model: str = _llm._DEFAULT_MODEL,
-) -> tuple[bool, list[dict]]:
+) -> tuple[bool, str]:
     """Review a Python translation for rule compliance.
 
-    Returns (passed, violations) where violations is a list of
-    {"entity": str, "rule": int, "evidence": str} dicts.
+    Returns (passed, reason) where reason is empty on pass or a brief
+    explanation on failure.
     """
     prompt = _REVIEW_PROMPT.format(r_source=r_source, py_source=py_source)
 
@@ -90,11 +86,11 @@ def review_translation(
             [{"role": "user", "content": prompt}],
             _REVIEW_SYSTEM,
             model=model,
-            max_tokens=2048,
+            max_tokens=512,
         )
     except Exception as exc:
         print(f"[Review]  LLM call failed: {exc}")
-        return True, []  # fail-open: don't block on review errors
+        return True, ""  # fail-open
 
     raw = raw.strip()
     if raw.startswith("```"):
@@ -106,14 +102,12 @@ def review_translation(
         result = json.loads(raw)
     except json.JSONDecodeError:
         print(f"[Review]  Could not parse review response: {raw[:200]!r}")
-        return True, []  # fail-open
+        return True, ""  # fail-open
 
     if not isinstance(result, dict):
-        return True, []
+        return True, ""
 
     passed = result.get("pass", True)
-    violations = result.get("violations", [])
-    if not isinstance(violations, list):
-        violations = []
+    reason = result.get("reason", "")
 
-    return bool(passed), violations
+    return bool(passed), str(reason)

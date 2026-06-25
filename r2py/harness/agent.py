@@ -9,6 +9,7 @@ from ..stage2 import llm as _llm
 from ..stage2.llm import TruncatedResponseError
 from . import prompt as _prompt
 from .review import review_translation
+from ..stage2.stitch import DATA_SHIM_BEGIN as _SHIM_MARKER
 
 if TYPE_CHECKING:
     from ..stage1.script_map import ScriptMap
@@ -153,6 +154,15 @@ def reason(
                 history.append(f"Step {step}: rewrite (empty source)")
                 continue
 
+            if _SHIM_MARKER in best_source and _SHIM_MARKER not in new_source:
+                print(f"[Agent]   Rewrite dropped data shim block — rejecting")
+                history.append(
+                    f"Step {step}: rewrite REJECTED — you deleted the "
+                    "# r2py:data_shim block. Preserve it exactly as-is."
+                )
+                stall_count += 1
+                continue
+
             sentinel_count = new_source.count("# r2py:entity:")
             source_lines = len(new_source.splitlines())
             print(f"[Agent]   Rewrite: {source_lines} lines, {sentinel_count} entity sentinels")
@@ -174,21 +184,15 @@ def reason(
 
             if new_report.aggregate > best_score:
                 # Code review gate: check for rule violations before adopting
-                passed, violations = review_translation(
+                passed, reason = review_translation(
                     r_source, new_source, script_map, model=model,
                 )
                 if not passed:
-                    for v in violations:
-                        print(f"[Review]  VIOLATION entity={v.get('entity','?')}: "
-                              f"{v.get('evidence','')}")
+                    print(f"[Review]  FAILED: {reason}")
                     stall_count += 1
-                    violation_summary = "; ".join(
-                        f"{v.get('entity','?')}: {v.get('evidence','')}"
-                        for v in violations[:3]
-                    )
                     history.append(
                         f"Step {step}: rewrite -> {new_report.aggregate:.3f} "
-                        f"(REJECTED by review: {violation_summary}). "
+                        f"(REJECTED by review: {reason}). "
                         "Your code contains hardcoded values — you must COMPUTE "
                         "results, not copy expected output as literals."
                     )

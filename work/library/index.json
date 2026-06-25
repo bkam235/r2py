@@ -206,7 +206,10 @@
       "r-tidier-functions--tidy-glance--returning-data-frames",
       "withautoprint-context-output-suppression",
       "object-__repr__-method-for-statistical-test-results",
-      "simulation-p-value-calculation-with-directional-comparisons"
+      "simulation-p-value-calculation-with-directional-comparisons",
+      "conditional-package-loading-with-is_installed",
+      "move-imports-to-module-level",
+      "embed-r-dataset-constants-as-python-dicts"
     ],
     "clock:": [
       "clock--duration_days",
@@ -2762,7 +2765,34 @@
       "package": "broom",
       "ast_shape_hash": "",
       "contradicted_at_run": 0
+    },
+    "conditional-package-loading-with-is_installed": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "move-imports-to-module-level": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "embed-r-dataset-constants-as-python-dicts": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "broom",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 34
+  "total_runs": 37
 }

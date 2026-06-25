@@ -48,6 +48,9 @@ Do not probe before your first rewrite attempt.
 Instead, probe_r to understand what R actually outputs for the failing entities, \
 then rewrite with that knowledge. If you cannot improve further, use action "done".
 - When rewriting, preserve ALL entity sentinel comments (# r2py:entity:<id>).
+- When rewriting, preserve the data shim block (# r2py:data_shim:begin ... \
+# r2py:data_shim:end) exactly as-is. Do NOT replace it with hardcoded data \
+literals — the shim loads input datasets (like mtcars) at runtime.
 - Each step costs budget. Be action-oriented: rewrite, verify, iterate.
 - NEVER hardcode output values. Your Python must COMPUTE results using the same \
 logic as the R source — not print literal strings or assign pre-computed values \
@@ -94,6 +97,8 @@ ACTION: done
 - Keep your analysis to 1-2 sentences. ALL your output tokens should go to code.
 - The rewrite MUST be the COMPLETE file. Never output just the first few entities.
 - Preserve ALL entity sentinel comments (# r2py:entity:<id>).
+- Preserve the data shim block (# r2py:data_shim:begin ... # r2py:data_shim:end) \
+exactly as-is. Do NOT replace it with hardcoded data literals.
 - Focus on the WORST-scoring entities first, but include ALL entities in the rewrite.
 - If a rewrite does not improve the score, DO NOT rewrite again blindly. \
 Use probe_r to check what R actually outputs, then rewrite with that knowledge. \

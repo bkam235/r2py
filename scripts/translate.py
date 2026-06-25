@@ -96,8 +96,8 @@ for r_script, py_script in scripts:
     print("############################")
     
     # trans_model = "ollama:gemma4:31b-cloud"
-    trans_model = "claude-haiku-4-5"
-    # trans_model = "claude-sonnet-4-6"
+    # trans_model = "claude-haiku-4-5"
+    trans_model = "claude-sonnet-4-6"
 
 
     result = translate(r_script,
@@ -108,7 +108,8 @@ for r_script, py_script in scripts:
                        escalation_model=trans_model,
                        progress=_on_progress,
                        score_threshold=0.9,
-                       max_iters=20,
+                       n_seeds=3,
+                       max_iters=10,
                        max_stalls=5)
 
 # from r2py import seed_from_translation
