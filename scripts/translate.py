@@ -33,54 +33,55 @@ def _on_progress(event) -> None:
 
 
 # Iterate through input files for translation
-input_filenames = next(walk(input_dir), (None, None, []))[2]
+# input_filenames = next(walk(input_dir), (None, None, []))[2]
 # input_filenames = random.sample(input_filenames, 20) #don't use random script
 
-input_filenames = ["broom__rd_example__durbinWatsonTest_tidiers_Rd.R"] #translate this specific script
+all_translated_scripts = [
+    "bit__rd_example__chunk_Rd.R",
+    "bit__vignette__bit-usage_s15.R",
+    "broom__rd_example__durbinWatsonTest_tidiers_Rd.R",
+    "bslib__rd_example__popover_Rd.R",
+    "cli__rd_example__cat_line_Rd.R",
+    "clock__rd_example__duration_spanning_seq_Rd.R",
+    "clock__vignette__clock_s4.R",
+    "dplyr__rd_example__all_equal_Rd.R",
+    "dplyr__rd_example__storms_Rd.R",
+    "dplyr__vignette__in-packages_s3.R",
+    "dplyr__vignette__two-table_s13.R",
+    "dplyr__vignette__window-functions_s11.R",
+    "forcats__rd_example__lvls_Rd.R",
+    "ggplot2__rd_example__facet_wrap_Rd.R",
+    "glue__vignette__wrappers_s1.R",
+    "googlesheets4__rd_example__range_flood_Rd.R",
+    "googlesheets4__rd_example__sheet_append_Rd.R",
+    "haven__rd_example__print_labels_Rd.R",
+    "modelr__rd_example__typical_Rd.R",
+    "plyr__rd_example__splitter_a_Rd.R",
+    "prodlim__rd_example__row_match_Rd.R",
+    "progressr__rd_example__handler_rpushbullet_Rd.R",
+    "purrr__rd_example__keep_at_Rd.R",
+    "purrr__rd_example__lift_Rd.R",
+    "recipes__rd_example__step_profile_Rd.R",
+    "recipes__vignette__Roles_s1.R",
+    "rlang__rd_example__catch_cnd_Rd.R",
+    "rlang__rd_example__missing_Rd.R",
+    "shape__rd_example__greycol_Rd.R",
+    "shiny__rd_example__withOtelCollect_Rd.R",
+    "timeDate__rd_example__holiday_Rd.R",
+    "timeDate__rd_example__stats-na-fail_Rd.R",
+    "vctrs__rd_example__vec_fill_missing_Rd.R",
+    "vctrs__vignette__type-size_s21.R",
+    "withr__rd_example__with_locale_Rd.R",
+    "xfun__rd_example__cache_rds_Rd.R",
+    "xfun__rd_example__protect_math_Rd.R",
+    "xtable__rd_example__sanitize_Rd.R",
+    "xtable__rd_example__xtableFtable_Rd.R",
+    "xtable__vignette__listOfTablesGallery_s2.R",
+]
 
-# all_translated_scripts = [
-#     "S7__vignette__generics-methods_s13",
-#     "bit__rd_example__chunk_Rd",
-#     "bit__vignette__bit-usage_s15",
-#     "broom__rd_example__durbinWatsonTest_tidiers_Rd",
-#     "bslib__rd_example__popover_Rd",
-#     "cli__rd_example__cat_line_Rd",
-#     "clock__rd_example__duration_spanning_seq_Rd",
-#     "clock__vignette__clock_s4",
-#     "dplyr__rd_example__all_equal_Rd",
-#     "dplyr__rd_example__storms_Rd",
-#     "dplyr__vignette__in-packages_s3",
-#     "dplyr__vignette__two-table_s13",
-#     "dplyr__vignette__window-functions_s11",
-#     "forcats__rd_example__lvls_Rd",
-#     "ggplot2__rd_example__facet_wrap_Rd",
-#     "glue__vignette__wrappers_s1",
-#     "googlesheets4__rd_example__range_flood_Rd",
-#     "googlesheets4__rd_example__sheet_append_Rd",
-#     "haven__rd_example__print_labels_Rd",
-#     "modelr__rd_example__typical_Rd",
-#     "plyr__rd_example__splitter_a_Rd",
-#     "prodlim__rd_example__row_match_Rd",
-#     "progressr__rd_example__handler_rpushbullet_Rd",
-#     "purrr__rd_example__keep_at_Rd",
-#     "purrr__rd_example__lift_Rd",
-#     "recipes__rd_example__step_profile_Rd",
-#     "recipes__vignette__Roles_s1",
-#     "rlang__rd_example__catch_cnd_Rd",
-#     "rlang__rd_example__missing_Rd",
-#     "shape__rd_example__greycol_Rd",
-#     "shiny__rd_example__withOtelCollect_Rd",
-#     "timeDate__rd_example__holiday_Rd",
-#     "timeDate__rd_example__stats-na-fail_Rd",
-#     "vctrs__rd_example__vec_fill_missing_Rd",
-#     "vctrs__vignette__type-size_s21",
-#     "withr__rd_example__with_locale_Rd",
-#     "xfun__rd_example__cache_rds_Rd",
-#     "xfun__rd_example__protect_math_Rd",
-#     "xtable__rd_example__sanitize_Rd",
-#     "xtable__rd_example__xtableFtable_Rd",
-#     "xtable__vignette__listOfTablesGallery_s2",
-# ]
+# input_filenames = [] #translate this specific script
+input_filenames = all_translated_scripts[:1]
+
 
 scripts = []
 for r_filename in input_filenames:
@@ -95,9 +96,9 @@ for r_script, py_script in scripts:
     print(f"{r_script}")
     print("############################")
     
-    # trans_model = "ollama:gemma4:31b-cloud"
+    trans_model = "ollama:gemma4:31b-cloud"
     # trans_model = "claude-haiku-4-5"
-    trans_model = "claude-sonnet-4-6"
+    # trans_model = "claude-sonnet-4-6"
 
 
     result = translate(r_script,
@@ -109,7 +110,7 @@ for r_script, py_script in scripts:
                        progress=_on_progress,
                        score_threshold=0.9,
                        n_seeds=3,
-                       max_iters=10,
+                       max_iters=20,
                        max_stalls=5)
 
 # from r2py import seed_from_translation

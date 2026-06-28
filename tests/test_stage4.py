@@ -11,7 +11,7 @@ from r2py.stage4.comparators.env import EnvComparator
 from r2py.stage4.comparators.files import FilesComparator
 from r2py.stage4.comparators.html import HtmlComparator
 from r2py.stage4.comparators.graphics import GraphicsComparator
-from r2py.stage4.comparators.data import DataComparator, _compare_pair
+from r2py.stage4.comparators.data import DataComparator, _compare_pair, _compare_callable_meta
 from r2py.stage4.comparators import COMPARATORS
 from r2py.stage4.decompose import make_score_table
 from r2py.stage4.judge import judge_entity
@@ -840,6 +840,83 @@ class TestBoolIntCompat:
         score, verdict, tag, _ = _compare_pair("x", 1, False, 1e-6, 1e-9)
         assert verdict == "fail"
         assert tag == "value"
+
+
+# ---------------------------------------------------------------------------
+# Callable metadata comparison
+# ---------------------------------------------------------------------------
+
+class TestCallableMetaComparison:
+    def _meta(self, formals, attrs=None, cls=None):
+        return {
+            "__r2py_callable_meta__": True,
+            "class": cls or ["S7_generic", "function"],
+            "formals": formals,
+            "attributes": attrs or {},
+        }
+
+    def test_exact_formals_match_no_attrs(self):
+        r = self._meta(["x", "y", "..."])
+        py = self._meta(["x", "y"], cls=["S7GenericWrapper"])
+        score, verdict, _, _ = _compare_callable_meta("foo", r, py)
+        assert verdict == "pass"
+        assert score == pytest.approx(1.0)
+
+    def test_exact_formals_match_with_attrs(self):
+        r = self._meta(["x", "y", "..."], {"name": "foo", "dispatch_args": "x"})
+        py = self._meta(["x", "y"], cls=["Wrapper"], attrs={"name": "foo", "dispatch_args": "x"})
+        score, verdict, _, _ = _compare_callable_meta("foo", r, py)
+        assert verdict == "pass"
+        assert score == pytest.approx(1.0)
+
+    def test_mismatched_formals(self):
+        r = self._meta(["x", "y", "..."])
+        py = self._meta(["a", "b"], cls=["Wrapper"])
+        score, verdict, tag, _ = _compare_callable_meta("foo", r, py)
+        assert verdict == "fail"
+        assert score < 0.7
+
+    def test_partial_formals_overlap(self):
+        r = self._meta(["x", "y", "z", "..."])
+        py = self._meta(["x", "y", "w"], cls=["Wrapper"])
+        score, verdict, tag, _ = _compare_callable_meta("foo", r, py)
+        assert 0.3 < score < 0.9
+        assert tag == "infra"
+
+    def test_attr_mismatch_partial_score(self):
+        r = self._meta(["x", "..."], {"name": "foo", "dispatch_args": "x"})
+        py = self._meta(["x"], cls=["W"], attrs={"name": "bar", "dispatch_args": "x"})
+        score, verdict, _, _ = _compare_callable_meta("foo", r, py)
+        assert score == pytest.approx(0.7 + 0.3 * 0.5)
+
+    def test_compare_pair_dispatches_to_callable_meta(self):
+        r = self._meta(["x", "y", "..."], {"name": "foo"})
+        py = self._meta(["x", "y"], cls=["W"], attrs={"name": "foo"})
+        score, verdict, _, _ = _compare_pair("foo", r, py, 1e-6, 1e-9)
+        assert verdict == "pass"
+
+    def test_compare_pair_regular_dict_not_affected(self):
+        r = {"a": [1, 2], "b": [3, 4]}
+        score, verdict, _, _ = _compare_pair("x", r, r, 1e-6, 1e-9)
+        assert verdict == "pass"
+
+    def test_data_comparator_r_callable_py_missing(self):
+        cmp = DataComparator()
+        r_meta = self._meta(["x", "y", "..."])
+        result = cmp.compare({"foo": r_meta}, {})
+        assert result.score == 0.0
+        assert result.verdict == "fail"
+
+    def test_r_callable_vs_py_plain_dict_is_infra_fail(self):
+        """A non-callable Python object that contains the sentinel key
+        should have the sentinel stripped by the epilogue, so the comparator
+        sees callable-meta vs plain-dict → infra mismatch."""
+        r = self._meta(["x", "y", "..."], {"name": "foo"})
+        # Simulate what the epilogue produces after stripping the sentinel
+        py_plain = {k: v for k, v in r.items() if k != "__r2py_callable_meta__"}
+        score, verdict, tag, _ = _compare_pair("foo", r, py_plain, 1e-6, 1e-9)
+        assert verdict == "fail"
+        assert tag == "infra"
 
 
 # ---------------------------------------------------------------------------

@@ -204,7 +204,23 @@ def build_r_serializer_fn() -> str:
     return (
         ".r2py_serialize_var <- function(.r2py_obj) {\n"
         "  if (is.null(.r2py_obj)) return(NULL)\n"
-        "  if (is.function(.r2py_obj) || is.environment(.r2py_obj)) return(NULL)\n"
+        "  if (is.environment(.r2py_obj)) return(NULL)\n"
+        "  if (is.function(.r2py_obj)) {\n"
+        "    .r2py_cls <- class(.r2py_obj)\n"
+        "    if (identical(.r2py_cls, 'function')) return(NULL)\n"
+        "    .r2py_fmls <- tryCatch(names(formals(.r2py_obj)), error = function(e) character(0))\n"
+        "    .r2py_attrs <- list()\n"
+        "    for (.r2py_an in c('name', 'dispatch_args')) {\n"
+        "      .r2py_av <- tryCatch(attr(.r2py_obj, .r2py_an), error = function(e) NULL)\n"
+        "      if (!is.null(.r2py_av)) .r2py_attrs[[.r2py_an]] <- .r2py_av\n"
+        "    }\n"
+        "    return(list(\n"
+        "      `__r2py_callable_meta__` = TRUE,\n"
+        "      class = as.list(.r2py_cls),\n"
+        "      formals = as.list(.r2py_fmls),\n"
+        "      attributes = .r2py_attrs\n"
+        "    ))\n"
+        "  }\n"
         "  tryCatch({\n"
         f"{body}\n"
         "  }, error = function(e) '__uncapturable__')\n"
@@ -254,11 +270,49 @@ for _r2py_k, _r2py_v in list(globals().items()):
     if _r2py_k.startswith('_r2py_') or _r2py_k.startswith('__'):
         continue
     if callable(_r2py_v) and not isinstance(_r2py_v, type):
+        _r2py_vtype = type(_r2py_v)
+        _r2py_tname = _r2py_vtype.__name__
+        if _r2py_tname in ('function', 'builtin_function_or_method', 'method',
+                            'method-wrapper', 'method_descriptor'):
+            continue
+        import inspect as _r2py_inspect
+        try:
+            _r2py_sig = _r2py_inspect.signature(_r2py_v)
+            _r2py_fmls = list(_r2py_sig.parameters.keys())
+        except (ValueError, TypeError):
+            _r2py_fmls = []
+        if set(_r2py_fmls) <= {'args', 'kwargs', 'self', 'cls'}:
+            for _r2py_wattr in dir(_r2py_v):
+                if _r2py_wattr.startswith('__') and _r2py_wattr != '__wrapped__':
+                    continue
+                _r2py_inner = getattr(_r2py_v, _r2py_wattr, None)
+                if _r2py_inner is None or not callable(_r2py_inner) or type(_r2py_inner).__name__ != 'function':
+                    continue
+                try:
+                    _r2py_inner_fmls = list(_r2py_inspect.signature(_r2py_inner).parameters.keys())
+                    if not set(_r2py_inner_fmls) <= {'args', 'kwargs', 'self', 'cls'}:
+                        _r2py_fmls = _r2py_inner_fmls
+                        break
+                except (ValueError, TypeError):
+                    pass
+        _r2py_meta = {
+            '__r2py_callable_meta__': True,
+            'class': [_r2py_vtype.__name__],
+            'formals': _r2py_fmls,
+            'attributes': {},
+        }
+        for _r2py_an in ('name', 'dispatch_args'):
+            _r2py_av = getattr(_r2py_v, _r2py_an, None)
+            if _r2py_av is not None:
+                _r2py_meta['attributes'][_r2py_an] = _r2py_av
+        _r2py_state[_r2py_k] = _r2py_meta
         continue
     _r2py_serialized, _r2py_ok = _r2py_try_serialize(_r2py_k, _r2py_v)
     if not _r2py_ok:
         _r2py_uncapturable.append(_r2py_k)
         continue
+    if isinstance(_r2py_serialized, dict) and '__r2py_callable_meta__' in _r2py_serialized:
+        _r2py_serialized = {k: v for k, v in _r2py_serialized.items() if k != '__r2py_callable_meta__'}
     _r2py_state[_r2py_k] = _r2py_serialized
 
 with open('_r2py_state.json', 'w', encoding='utf-8') as _f:

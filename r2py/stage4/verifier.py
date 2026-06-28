@@ -513,10 +513,50 @@ def _r2py_checkpoint(eid):
         if k.startswith('_r2py') or k in _r2py_prev_ns:
             continue
         try:
+            if callable(v) and not isinstance(v, type):
+                _r2py_vtype = type(v)
+                _r2py_tname = _r2py_vtype.__name__
+                if _r2py_tname in ('function', 'builtin_function_or_method', 'method',
+                                    'method-wrapper', 'method_descriptor'):
+                    continue
+                import inspect as _r2py_inspect
+                try:
+                    _r2py_sig = _r2py_inspect.signature(v)
+                    _r2py_fmls = list(_r2py_sig.parameters.keys())
+                except (ValueError, TypeError):
+                    _r2py_fmls = []
+                if set(_r2py_fmls) <= {'args', 'kwargs', 'self', 'cls'}:
+                    for _r2py_wattr in dir(v):
+                        if _r2py_wattr.startswith('__') and _r2py_wattr != '__wrapped__':
+                            continue
+                        _r2py_inner = getattr(v, _r2py_wattr, None)
+                        if _r2py_inner is None or not callable(_r2py_inner) or type(_r2py_inner).__name__ != 'function':
+                            continue
+                        try:
+                            _r2py_inner_fmls = list(_r2py_inspect.signature(_r2py_inner).parameters.keys())
+                            if not set(_r2py_inner_fmls) <= {'args', 'kwargs', 'self', 'cls'}:
+                                _r2py_fmls = _r2py_inner_fmls
+                                break
+                        except (ValueError, TypeError):
+                            pass
+                _r2py_meta = {
+                    '__r2py_callable_meta__': True,
+                    'class': [_r2py_vtype.__name__],
+                    'formals': _r2py_fmls,
+                    'attributes': {},
+                }
+                for _r2py_an in ('name', 'dispatch_args'):
+                    _r2py_av = getattr(v, _r2py_an, None)
+                    if _r2py_av is not None:
+                        _r2py_meta['attributes'][_r2py_an] = _r2py_av
+                new_vars[k] = _r2py_meta
+                continue
             _r2py_serialized, _r2py_ok = _r2py_try_serialize(k, v)
             if not _r2py_ok:
                 uncapturable_vars.append(k)
                 continue
+            if isinstance(_r2py_serialized, dict) and '__r2py_callable_meta__' in _r2py_serialized:
+                _r2py_serialized = {_k: _v for _k, _v in _r2py_serialized.items() if _k != '__r2py_callable_meta__'}
             new_vars[k] = _r2py_serialized
         except Exception:
             uncapturable_vars.append(k)

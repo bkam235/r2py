@@ -59,6 +59,50 @@ def _numeric_equal(a: Any, b: Any, rtol: float, atol: float) -> bool:
 # Per-value comparison: returns (score, verdict, failure_tag, explanation)
 # ---------------------------------------------------------------------------
 
+def _compare_callable_meta(
+    name: str,
+    r_meta: dict[str, Any],
+    py_meta: dict[str, Any],
+) -> tuple[float, str, str | None, str]:
+    """Compare callable metadata dicts from R and Python sides."""
+    score = 0.0
+
+    r_formals = r_meta.get("formals", [])
+    py_formals = py_meta.get("formals", [])
+    r_clean = [f for f in r_formals if f != "..."]
+    py_clean = [f for f in py_formals if f not in ("args", "kwargs")]
+
+    if r_clean == py_clean:
+        score += 0.7
+    elif r_clean and py_clean:
+        common = len(set(r_clean) & set(py_clean))
+        total = max(len(r_clean), len(py_clean))
+        score += 0.7 * (common / total) if total > 0 else 0.0
+
+    r_attrs = r_meta.get("attributes", {})
+    py_attrs = py_meta.get("attributes", {})
+    if r_attrs and py_attrs:
+        common_keys = set(r_attrs.keys()) & set(py_attrs.keys())
+        if common_keys:
+            matches = sum(1 for k in common_keys if r_attrs[k] == py_attrs[k])
+            score += 0.3 * (matches / len(common_keys))
+        else:
+            score += 0.15
+    elif not r_attrs and not py_attrs:
+        score += 0.3
+
+    if score >= 0.95:
+        return 1.0, "pass", None, ""
+
+    explanation = (
+        f"{name}: callable meta — formals R={r_formals} Py={py_formals}, "
+        f"attrs R={list(r_attrs.keys())} Py={list(py_attrs.keys())}, score={score:.3f}"
+    )
+    if score >= 0.5:
+        return score, "fail", "infra", explanation
+    return score, "fail", "value", explanation
+
+
 def _compare_pair(
     name: str,
     r_val: Any,
@@ -125,6 +169,11 @@ def _compare_pair(
             if elem_verdict == "fail":
                 return 0.0, "fail", elem_tag, elem_expl
         return 1.0, "pass", None, ""
+
+    # Both dicts with callable metadata sentinel
+    if (isinstance(r_val, dict) and isinstance(py_val, dict)
+            and r_val.get("__r2py_callable_meta__") and py_val.get("__r2py_callable_meta__")):
+        return _compare_callable_meta(name, r_val, py_val)
 
     # Both dict (R data.frame stored as dict-of-columns, or named list)
     if isinstance(r_val, dict) and isinstance(py_val, dict):
