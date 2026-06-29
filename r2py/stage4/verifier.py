@@ -834,6 +834,31 @@ def verify(
     }
 
     # --- Aggregate score ---
+    # If R succeeded but Python crashed, the scripts are not execution-equivalent.
+    # Force aggregate to 0.0 so the agent gets clear feedback to fix the crash.
+    if r_bundle.exit_code == 0 and py_bundle.exit_code != 0:
+        aggregate = 0.0
+
+        comparisons = _build_comparisons(
+            comparator_results, r_bundle, py_bundle, entities,
+            r_entity_bundles=r_entity_bundles or None,
+            py_entity_bundles=py_entity_bundles or None,
+        )
+
+        report = ScoreReport(
+            aggregate=aggregate,
+            by_entity=score_table,
+            by_effect=by_effect,
+            uncomparable=uncomparable,
+            feedback=feedback,
+            comparisons=comparisons,
+            py_exit_code=py_bundle.exit_code,
+            py_entity_bundles=py_entity_bundles or {},
+        )
+        if return_bundle:
+            return report, py_bundle
+        return report
+
     # Only average entities where R actually produced observable output.
     # Within each entity, only average dimensions backed by effects that
     # THIS ENTITY's R bundle actually produced (per-entity, not global).

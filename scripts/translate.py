@@ -96,8 +96,8 @@ for r_script, py_script in scripts:
     print(f"{r_script}")
     print("############################")
     
-    trans_model = "ollama:gemma4:31b-cloud"
-    # trans_model = "claude-haiku-4-5"
+    # trans_model = "ollama:gemma4:31b-cloud"
+    trans_model = "claude-haiku-4-5"
     # trans_model = "claude-sonnet-4-6"
 
 
