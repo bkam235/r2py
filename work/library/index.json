@@ -177,7 +177,13 @@
       "base.seq_to_range",
       "base.sprintf_to_fstring",
       "base.which_to_npwhere",
-      "base.write_csv_to_pandas"
+      "base.write_csv_to_pandas",
+      "suppresspackagestartupmessages",
+      "which---function",
+      "as.logical---coercion",
+      "r-vector-printing-output",
+      "r-simulation-logic--resampling-bootstrapping",
+      "r-residual-standard-error--sigma"
     ],
     "broom:": [
       "broom--tidy---broom--glance",
@@ -381,7 +387,8 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "bit",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "as.math-----as.is----xtable": {
       "confidence": "tentative",
@@ -2430,7 +2437,8 @@
       "contradictions_count": 0,
       "seed": false,
       "package": "bit",
-      "ast_shape_hash": ""
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     },
     "with-locale-simple-execution": {
       "confidence": "tentative",
@@ -2934,7 +2942,61 @@
       "package": "bit",
       "ast_shape_hash": "",
       "contradicted_at_run": 0
+    },
+    "suppresspackagestartupmessages": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "base",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "which---function": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "base",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "as.logical---coercion": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "base",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-vector-printing-output": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "base",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-simulation-logic--resampling-bootstrapping": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "base",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-residual-standard-error--sigma": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "base",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 53
+  "total_runs": 63
 }

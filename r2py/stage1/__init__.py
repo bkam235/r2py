@@ -93,6 +93,9 @@ def analyze(
     # ── Step 5c: probe function metadata (formals, methods, namespace) ───
     _probe_function_metadata(source, entities, timeout_s)
 
+    # ── Step 5d: backfill entity.package from function_metadata.where ───
+    _backfill_package_from_metadata(entities)
+
     # ── Step 7: build ScriptMap ──────────────────────────────────────────────
     all_effects = _merge_dynamic_effects(list(predicted_effects), main_bundle, entities)
 
@@ -562,6 +565,26 @@ def _probe_function_metadata(
     for eid, entity in targets:
         if entity.name in name_to_meta:
             entity.function_metadata = name_to_meta[entity.name]
+
+
+def _backfill_package_from_metadata(entities: dict[str, Entity]) -> None:
+    """Set entity.package from function_metadata.where when still None.
+
+    The walker only sets package for pkg::fn() calls.  For bare calls like
+    which(), the R probe already collected getAnywhere()$where — e.g.
+    ["package:base", "namespace:base"].  Extract the first "package:X" entry
+    and use it.  Skip ".GlobalEnv" (user-defined functions).
+    """
+    for entity in entities.values():
+        if entity.package is not None:
+            continue
+        fm = entity.function_metadata
+        if fm is None or not fm.where:
+            continue
+        for w in fm.where:
+            if w.startswith("package:"):
+                entity.package = w[len("package:"):]
+                break
 
 
 def _merge_dynamic_effects(

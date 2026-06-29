@@ -37,8 +37,6 @@ def _on_progress(event) -> None:
 # input_filenames = random.sample(input_filenames, 20) #don't use random script
 
 all_translated_scripts = [
-    "bit__rd_example__chunk_Rd.R",
-    "bit__vignette__bit-usage_s15.R",
     "broom__rd_example__durbinWatsonTest_tidiers_Rd.R",
     "bslib__rd_example__popover_Rd.R",
     "cli__rd_example__cat_line_Rd.R",
@@ -96,8 +94,8 @@ for r_script, py_script in scripts:
     print(f"{r_script}")
     print("############################")
     
-    # trans_model = "ollama:gemma4:31b-cloud"
-    trans_model = "claude-haiku-4-5"
+    trans_model = "ollama:gemma4:31b-cloud"
+    # trans_model = "claude-haiku-4-5"
     # trans_model = "claude-sonnet-4-6"
 
 
@@ -111,7 +109,7 @@ for r_script, py_script in scripts:
                        score_threshold=0.9,
                        n_seeds=3,
                        max_iters=20,
-                       max_stalls=5)
+                       max_stalls=7)
 
 # from r2py import seed_from_translation
 # seed_from_translation(

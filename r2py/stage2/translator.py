@@ -1,8 +1,10 @@
 """Stage 2 translation orchestrator (§5.3–§5.6)."""
 from __future__ import annotations
 
+import re as _re
 import sys
 from pathlib import Path
+from types import SimpleNamespace
 from typing import TYPE_CHECKING
 
 from . import llm as _llm
@@ -11,13 +13,83 @@ from . import retrieval as _retrieval
 from . import package_translator as _pkg_trans
 from . import stitch as _stitch
 from . import coherence as _coherence
-from .prompt import SYSTEM_PROMPT, build_entity_prompt, parse_entity_response
+from .prompt import SYSTEM_PROMPT, build_entity_prompt, parse_entity_response, _entity_source
 
 if TYPE_CHECKING:
     from ..stage1.script_map import ScriptMap
     from ..library import PatternLibrary
 
 from ..types import EntityKind
+
+_R_CALL_RE = _re.compile(r'(?<![a-zA-Z0-9_])([a-zA-Z.][a-zA-Z0-9._]*)(?=\s*\()')
+_R_KEYWORDS = frozenset({
+    "if", "else", "for", "while", "repeat", "function", "return",
+    "next", "break", "in", "NULL", "TRUE", "FALSE", "NA",
+})
+
+
+def _extract_r_call_names(r_source: str) -> list[str]:
+    """Extract function call names from R source text.
+
+    Handles simple calls, nested calls, and piped chains like:
+        df %>% group_by(x) %>% select(y)
+    """
+    seen: set[str] = set()
+    result: list[str] = []
+    for m in _R_CALL_RE.finditer(r_source):
+        name = m.group(1)
+        if name not in seen and name not in _R_KEYWORDS:
+            seen.add(name)
+            result.append(name)
+    return result
+
+
+def _retrieve_for_calls(
+    call_names: list[str],
+    entity: object,
+    library: "PatternLibrary",
+    existing_ids: set[str],
+    no_seeds: bool = False,
+) -> list:
+    """Retrieve patterns for function calls found in an entity's R source.
+
+    Returns patterns not already in existing_ids, at most 1 per call name.
+    Searches all patterns (ignoring package buckets) since we don't know
+    which package the embedded call belongs to.
+    """
+    from ..library.retrieval import _token_overlap
+
+    extra = []
+    entity_name = getattr(entity, "name", "")
+    store = library.store
+    index = library.index
+    all_ids = index.all_ids()
+
+    for name in call_names:
+        if name == entity_name:
+            continue
+        best = None
+        best_score = -1.0
+        for pid in all_ids:
+            if pid in existing_ids:
+                continue
+            pat = store.get(pid)
+            if pat is None or pat.confidence == "contradicted":
+                continue
+            if no_seeds and pat.seed:
+                continue
+            if pat.confidence == "tentative" and not pat.seed:
+                real_evidence = sum(1 for e in pat.evidence if e.score > 0.0)
+                if real_evidence < 2:
+                    continue
+            sim = _token_overlap(name, pat.id)
+            if sim > best_score:
+                best_score = sim
+                best = pat
+        if best is not None and best_score > 0:
+            existing_ids.add(best.id)
+            extra.append(best)
+    return extra
 
 
 def translate(
@@ -58,6 +130,16 @@ def translate(
 
         # Retrieve patterns from the library
         patterns = _retrieval.retrieve_patterns(entity, library, no_seeds=no_seeds)
+
+        # Also retrieve patterns for function calls within this entity's R source
+        # (e.g. which() inside `w <- which(l)`, or group_by/select in a pipe chain).
+        r_source = _entity_source(entity, script_map)
+        call_names = _extract_r_call_names(r_source)
+        if call_names:
+            existing_ids = {p.id for p in patterns}
+            patterns = list(patterns) + _retrieve_for_calls(
+                call_names, entity, library, existing_ids, no_seeds=no_seeds,
+            )
 
         # For ExternalSymbol entities, attempt a cached package translation
         ext_snippet: str | None = None
@@ -203,6 +285,13 @@ def retranslate_entity(
     already_defined = _already_defined_before(current_source, eid)
 
     patterns = _retrieval.retrieve_patterns(entity, library, no_seeds=False)
+    r_source = _entity_source(entity, script_map)
+    call_names = _extract_r_call_names(r_source)
+    if call_names:
+        existing_ids = {p.id for p in patterns}
+        patterns = list(patterns) + _retrieve_for_calls(
+            call_names, entity, library, existing_ids, no_seeds=False,
+        )
     messages = build_entity_prompt(
         entity, script_map, patterns, prior_translations,
         already_defined=already_defined,
