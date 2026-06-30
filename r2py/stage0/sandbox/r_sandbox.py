@@ -1,8 +1,10 @@
 """Rscript subprocess sandbox (§2.3)."""
 from __future__ import annotations
 
+import os
 import re
 import subprocess
+import sys
 import time
 from pathlib import Path
 
@@ -23,9 +25,16 @@ from .isolation import TempWorkdir, check_escape, scrub_env, snapshot_home
 # Project library — the only library the R sandbox is allowed to use.
 _R_PROJECT_LIB = _R_ENV_DIR / "library"
 
-# R code prepended to every script to lock down the library search path.
+# R code prepended to every script to lock down the library search path,
+# enable rlang::is_interactive() so examplesIf-guarded code executes,
+# and prevent shinyApp() auto-print from blocking on runApp().
 _LIBPATH_PREAMBLE = (
     f'.libPaths(c({repr(str(_R_PROJECT_LIB).replace(chr(92), "/"))}))\n'
+    'options(rlang_interactive = TRUE)\n'
+    'setHook(packageEvent("shiny", "onLoad"), function(...) {\n'
+    '  assignInNamespace("print.shiny.appobj",\n'
+    '    function(x, ...) invisible(x), ns = "shiny")\n'
+    '})\n'
 )
 
 # Matches R's "no package" error in English and German locales.
@@ -66,6 +75,43 @@ def _auto_install(pkg: str) -> None:
         from ..env.package_installer import install
         print(f"[r2py] Installing R package '{pkg}' from CRAN ...")
         install(r_packages=[pkg])
+
+
+def _run_with_tree_kill(
+    cmd: list[str],
+    cwd: str,
+    env: dict,
+    timeout_s: float,
+) -> subprocess.CompletedProcess:
+    """Run a subprocess, killing the entire process tree on timeout (Windows).
+
+    On Windows, R.exe spawns Rterm.exe as a child.  subprocess.run's timeout
+    only kills the top-level process, leaving Rterm alive and holding pipes
+    open — which causes the caller to hang indefinitely.  This helper uses
+    taskkill /T to tear down the whole tree.
+    """
+    proc = subprocess.Popen(
+        cmd,
+        cwd=cwd,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env=env,
+        **({"creationflags": subprocess.CREATE_NEW_PROCESS_GROUP}
+           if sys.platform == "win32" else {}),
+    )
+    try:
+        stdout, stderr = proc.communicate(timeout=timeout_s)
+    except subprocess.TimeoutExpired:
+        if sys.platform == "win32":
+            subprocess.run(
+                ["taskkill", "/F", "/T", "/PID", str(proc.pid)],
+                capture_output=True,
+            )
+        else:
+            proc.kill()
+        stdout, stderr = proc.communicate(timeout=10)
+        raise subprocess.TimeoutExpired(cmd, timeout_s, stdout, stderr)
+    return subprocess.CompletedProcess(cmd, proc.returncode, stdout, stderr)
 
 
 class RSandbox:
@@ -168,14 +214,11 @@ class RSandbox:
         run_env["TMPDIR"] = str(workdir)
 
         script_path_r = str(script_path).replace("\\", "/")
+        r_cmd = [str(r_exe), "--vanilla", "--quiet", "-e",
+                 f'source("{script_path_r}", print.eval=TRUE)']
         t_start = time.monotonic()
-        result = subprocess.run(
-            [str(r_exe), "--vanilla", "--quiet", "-e", f'source("{script_path_r}", print.eval=TRUE)'],
-            cwd=str(workdir),
-            capture_output=True,
-            timeout=timeout_s,
-            env=run_env,
-        )
+        result = _run_with_tree_kill(r_cmd, cwd=str(workdir),
+                                     env=run_env, timeout_s=timeout_s)
         run_time = time.monotonic() - t_start
 
         # Escape detection
@@ -187,13 +230,8 @@ class RSandbox:
             if pkg:
                 # Auto-install the missing package and retry once.
                 _auto_install(pkg)
-                result = subprocess.run(
-                    [str(r_exe), "--vanilla", "--quiet", "-e", f'source("{script_path_r}", print.eval=TRUE)'],
-                    cwd=str(workdir),
-                    capture_output=True,
-                    timeout=timeout_s,
-                    env=run_env,
-                )
+                result = _run_with_tree_kill(r_cmd, cwd=str(workdir),
+                                             env=run_env, timeout_s=timeout_s)
 
         # Raise on any remaining non-zero exit (including after retry).
         if result.returncode != 0:
