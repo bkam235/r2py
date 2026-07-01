@@ -37,7 +37,6 @@ def _on_progress(event) -> None:
 # input_filenames = random.sample(input_filenames, 20) #don't use random script
 
 all_translated_scripts = [
-    "broom__rd_example__durbinWatsonTest_tidiers_Rd.R",
     "bslib__rd_example__popover_Rd.R",
     "cli__rd_example__cat_line_Rd.R",
     "clock__rd_example__duration_spanning_seq_Rd.R",

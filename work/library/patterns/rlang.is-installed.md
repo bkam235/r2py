@@ -21,6 +21,7 @@ Translate R `is_installed` (ExternalSymbol from rlang) to Python. See verified e
 
 ## Translation Examples
 - {"r_hash": "559f1f52", "r_snippet": "if (rlang::is_installed(\"car\")) {", "py_snippet": "def is_installed(package_name):\n    return importlib.util.find_spec(package_name) is not None", "score": 1.0, "script_id": "human-verified"}
+- {"r_hash": "19e0f1d8", "r_snippet": "if (rlang::is_interactive()) withAutoprint({ # examplesIf", "py_snippet": "def is_interactive():\n    return sys.stdin.isatty()", "score": 1.0, "script_id": "e102a4db34de"}
 
 ## Edit Examples
 (none)

@@ -57,6 +57,9 @@ logic as the R source — not print literal strings or assign pre-computed value
 to match the expected output. Hardcoded translations will be detected and rejected. \
 If R calls a function, Python must call an equivalent function. If R computes a \
 statistic, Python must compute it too.
+- In Python, positional arguments must come BEFORE keyword arguments in every \
+function call. R allows named arguments before positional ones — reorder them \
+when translating. Code with this error will be rejected before verification.
 """
 
 AGENT_SYSTEM_PROMPT_OLLAMA = """\
@@ -107,6 +110,9 @@ If you cannot improve further, use ACTION: done.
 - NEVER hardcode output values. Your Python must COMPUTE results the same way \
 R does — not print literal strings or assign pre-computed values. If R calls a \
 function, Python must call an equivalent function.
+- In Python, positional arguments must come BEFORE keyword arguments in every \
+function call. R allows named arguments before positional ones — reorder them \
+when translating.
 """
 
 

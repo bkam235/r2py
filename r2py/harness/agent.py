@@ -1,6 +1,7 @@
 """Reasoning agent — adaptive translation loop driven by model decisions."""
 from __future__ import annotations
 
+import ast
 import json
 import re
 from typing import TYPE_CHECKING
@@ -166,6 +167,16 @@ def reason(
             sentinel_count = new_source.count("# r2py:entity:")
             source_lines = len(new_source.splitlines())
             print(f"[Agent]   Rewrite: {source_lines} lines, {sentinel_count} entity sentinels")
+
+            syntax_error = _check_syntax(new_source)
+            if syntax_error:
+                print(f"[Agent]   Syntax error: {syntax_error}")
+                stall_count += 1
+                history.append(
+                    f"Step {step}: rewrite REJECTED — Python syntax error: "
+                    f"{syntax_error}. Fix the error and rewrite."
+                )
+                continue
 
             try:
                 new_report = harness.verify(new_source)
@@ -340,6 +351,21 @@ def _parse_action(raw: str) -> dict | None:
         if code.strip() and ("import " in code or "def " in code or "r2py:entity" in code):
             return {"action": "rewrite", "new_source": code}
 
+    return None
+
+
+def _check_syntax(source: str) -> str | None:
+    """Parse *source* with the AST and return a one-line error or None."""
+    # Strip lines that start with r2py sentinel comments — they can appear
+    # between arguments in some placements and confuse the parser.
+    clean = "\n".join(
+        line for line in source.splitlines()
+        if not line.lstrip().startswith("# r2py:")
+    )
+    try:
+        ast.parse(clean)
+    except SyntaxError as exc:
+        return f"line {exc.lineno}: {exc.msg}"
     return None
 
 

@@ -6,6 +6,7 @@ from pathlib import Path
 
 # Valid bare R identifier: starts with letter or dot, contains only [A-Za-z0-9._]
 _R_IDENT_RE = _re.compile(r"^[a-zA-Z.][a-zA-Z0-9._]*$")
+_CRAWLER_PKG_RE = _re.compile(r"^#\s*package:\s*(\S+)", _re.MULTILINE)
 
 from ..types import CaptureSpec, EffectBundle, EffectClass
 
@@ -87,6 +88,14 @@ def run_script_checkpointed(
         lines.insert(insert_after + 1, checkpoint_line)
 
     checkpointed_source = "".join(lines)
+
+    # If the script has crawler metadata naming its source package, pre-load
+    # that package so its own examples can find their unexported symbols.
+    _pkg_match = _CRAWLER_PKG_RE.search(r_source)
+    if _pkg_match:
+        _pkg_lib = f'suppressPackageStartupMessages(library({_pkg_match.group(1)}))\n'
+        checkpointed_source = _pkg_lib + checkpointed_source
+        r_source = _pkg_lib + r_source
 
     with TempWorkdir() as workdir:
         sandbox = RSandbox()

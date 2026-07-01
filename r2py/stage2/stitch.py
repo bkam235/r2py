@@ -5,14 +5,7 @@ import ast as _ast
 import re
 from typing import TYPE_CHECKING
 
-# R packages that have no Python equivalents and must never appear as imports.
-# Entries here are bare package names (no dots/underscores disambiguation needed).
-_R_ONLY_PACKAGES: frozenset[str] = frozenset({
-    "withr", "dplyr", "ggplot2", "shiny", "magrittr", "tidyr", "purrr",
-    "rlang", "tibble", "stringr", "forcats", "readr", "lubridate",
-    "broom", "tidyverse", "devtools", "testthat", "usethis",
-    "data.table", "caret", "mlr", "mlr3", "glue",
-})
+from ..stage0.sandbox.py_sandbox import _SKIP_PACKAGES
 
 _SENTINEL_RE = re.compile(r"^# r2py:entity:(\S+)$")
 
@@ -477,7 +470,7 @@ def _is_r_only_import(imp: str) -> bool:
     if not m:
         return False
     pkg = m.group(1).split(".")[0]  # top-level package name
-    return pkg in _R_ONLY_PACKAGES
+    return pkg in _SKIP_PACKAGES
 
 
 def _split_imports(snippet: str) -> tuple[list[str], list[str]]:

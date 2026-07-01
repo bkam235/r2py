@@ -93,13 +93,14 @@ def run_loop(
 ) -> TranslateResult:
     """Cheap path → reasoning agent escalation loop.
 
-    1. Generate a seed translation with Stage 2 (cheap model, entity-by-entity).
-    2. Verify with Stage 4. If score >= threshold, done.
+    1. Generate a seed translation (whole-file LLM call).
+    2. Verify. If score >= threshold, done.
     3. Otherwise, escalate to the reasoning agent (expensive model) which
        adaptively probes R, rewrites, and verifies until success or budget exhaustion.
     4. Extract patterns from successful agent sessions into the library.
     """
-    from . import stage2, stage4
+    from . import stage4
+    from .seed import translate as _seed_translate
     from .harness.tools import HarnessTools
     from .harness.agent import reason as _reason
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
@@ -146,7 +147,7 @@ def run_loop(
     )
 
     if seed_translation is None:
-        seed, entity_line_map = stage2.translate(
+        seed, entity_line_map = _seed_translate(
             script_map, library,
             no_seeds=no_seeds, model=model,
             sidecar_filename=_sidecar_fn,
@@ -191,7 +192,7 @@ def run_loop(
             and n_seeds > 1
             and best_decomp.aggregate < score_threshold):
         for seed_idx in range(2, n_seeds + 1):
-            alt_seed, alt_elmap = stage2.translate(
+            alt_seed, alt_elmap = _seed_translate(
                 script_map, library,
                 no_seeds=no_seeds, model=model,
                 sidecar_filename=_sidecar_fn,

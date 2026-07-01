@@ -347,7 +347,13 @@
       "rlang--catch_cnd",
       "rlang.is-installed",
       "typed-na-handling",
-      "typeof"
+      "typeof",
+      "shiny-bslib-ui-components-without-python-equivalents",
+      "r-named-arguments-with-special-names--class--title--etc.",
+      "conditional-example-execution-with-is_interactive",
+      "is_interactive---conditional-wrapper",
+      "graceful-import-error-handling",
+      "ui-function-argument-conversion--class-parameter"
     ],
     "xfun:": [
       "r-numeric-sequence--1-10",
@@ -2996,7 +3002,61 @@
       "package": "base",
       "ast_shape_hash": "",
       "contradicted_at_run": 0
+    },
+    "shiny-bslib-ui-components-without-python-equivalents": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "rlang",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "r-named-arguments-with-special-names--class--title--etc.": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "rlang",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "conditional-example-execution-with-is_interactive": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "rlang",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "is_interactive---conditional-wrapper": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "rlang",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "graceful-import-error-handling": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "rlang",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
+    },
+    "ui-function-argument-conversion--class-parameter": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": false,
+      "package": "rlang",
+      "ast_shape_hash": "",
+      "contradicted_at_run": 0
     }
   },
-  "total_runs": 63
+  "total_runs": 75
 }
