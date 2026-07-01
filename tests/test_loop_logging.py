@@ -22,7 +22,7 @@ def _make_verify_side_effect(*decomps):
 
 
 _S4_GET_R_BUNDLE = "r2py.stage4.get_r_bundle"
-_S2 = "r2py.stage2.translate"
+_S2 = "r2py.seed.translate"
 _S4 = "r2py.stage4.verify"
 _EP = "r2py.library.epistemology.review"
 _AGENT = "r2py.harness.agent.reason"

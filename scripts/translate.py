@@ -76,8 +76,8 @@ all_translated_scripts = [
     "xtable__vignette__listOfTablesGallery_s2.R",
 ]
 
-# input_filenames = [] #translate this specific script
-input_filenames = all_translated_scripts[:1]
+input_filenames = ["broom__rd_example__durbinWatsonTest_tidiers_Rd.R"] #translate this specific script
+# input_filenames = all_translated_scripts[:1]
 
 
 scripts = []
@@ -106,7 +106,7 @@ for r_script, py_script in scripts:
                        escalation_model=trans_model,
                        progress=_on_progress,
                        score_threshold=0.9,
-                       n_seeds=3,
+                       n_seeds=5,
                        max_iters=20,
                        max_stalls=7)
 
