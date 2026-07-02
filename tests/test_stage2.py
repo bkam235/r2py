@@ -132,21 +132,6 @@ class TestSentinelAndRebuild(unittest.TestCase):
             self.assertEqual(rebuilt[eid], original_map[eid],
                              msg=f"Range mismatch for {eid}: {rebuilt[eid]} vs {original_map[eid]}")
 
-    def test_rebuild_after_insert_preamble(self):
-        from r2py.types import Edit, EditKind
-        from r2py.stage3.edit_types import apply_edit
-        src, original_map = self._compose2()
-        e = Edit(kind=EditKind.INSERT_PREAMBLE, entity_ids=[], params={"code": "import os"})
-        src2 = apply_edit(src, e)
-        rebuilt = self.rebuild(src2)
-        # Both entities must still be found after the edit.
-        self.assertEqual(set(rebuilt.keys()), {"e0", "e1"})
-        # INSERT_PREAMBLE inserts inside e0's body, shifting e1's sentinel.
-        self.assertGreater(rebuilt["e1"][0], original_map["e1"][0],
-                           "e1's sentinel should shift down after INSERT_PREAMBLE adds a line to e0")
-        # e0's sentinel line itself is unchanged (the insert goes inside e0's body, after the sentinel).
-        self.assertEqual(rebuilt["e0"][0], original_map["e0"][0])
-
     def test_rebuild_returns_empty_without_sentinels(self):
         result = self.rebuild("x = 1\ny = 2\n")
         self.assertEqual(result, {})

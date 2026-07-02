@@ -13,7 +13,7 @@ if TYPE_CHECKING:
     from ..library import PatternLibrary
     from ..library.pattern import Pattern
     from ..stage1.script_map import ScriptMap
-    from ..types import Edit, ScoreReport
+    from ..types import ScoreReport
 
 
 class HarnessTools:
@@ -89,24 +89,3 @@ class HarnessTools:
             return []
         return self._library.retrieve(entity, k=k)
 
-    def get_entity_r_source(self, entity_id: str) -> str:
-        """Return the R source code for an entity."""
-        entity = self._script_map.entities.get(entity_id)
-        if entity is None:
-            return ""
-        r_source = getattr(entity, "r_source", None)
-        if r_source:
-            return r_source
-        src_lines = getattr(self._script_map, "r_source_lines", None)
-        if src_lines is None:
-            return ""
-        start = getattr(entity, "start_line", 0)
-        end = getattr(entity, "end_line", start)
-        if start > 0 and end >= start:
-            return "\n".join(src_lines[start - 1:end])
-        return ""
-
-    def apply_edit(self, source: str, edit: "Edit") -> str:
-        """Apply a typed edit to Python source, return modified source."""
-        from ..stage3.edit_types import apply_edit
-        return apply_edit(source, edit)

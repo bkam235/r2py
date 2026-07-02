@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .types import ScriptMap, TranslateResult
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __all__ = ["translate", "analyze", "review_library", "reset_library", "seed_from_translation"]
 
 
