@@ -11,7 +11,7 @@ tie_count: 0
 # conditional-package-loading-with-is_installed
 
 ## Guidance
-Use `if is_installed(package_name):` to conditionally execute code blocks that depend on optional packages, replacing R's `if (rlang::is_installed(...)) { ... }` pattern. This allows graceful handling of missing dependencies in Python.
+`rlang::is_installed()` is documentation scaffolding — a guard that makes R examples optional. In our pipeline the guarded code ALWAYS executes in R, so Python must execute it unconditionally. Remove the `if (rlang::is_installed(...))` guard entirely and translate the code inside the block directly. Do NOT translate this as `importlib.util.find_spec()` — the R package name has no Python equivalent, and the guard would cause the block to be skipped.
 
 ## Evidence
 (none)

@@ -51,6 +51,11 @@ then rewrite with that knowledge. If you cannot improve further, use action "don
 - When rewriting, preserve the data shim block (# r2py:data_shim:begin ... \
 # r2py:data_shim:end) exactly as-is. Do NOT replace it with hardcoded data \
 literals — the shim loads input datasets (like mtcars) at runtime.
+- Drop R documentation scaffolding: withAutoprint, examplesIf, \
+rlang::is_interactive(), rlang::is_installed() wrappers are guards for \
+optional/interactive examples. In our pipeline the guarded code ALWAYS \
+executes in R, so Python must execute it unconditionally — remove the guard \
+and translate the code inside it directly.
 - Each step costs budget. Be action-oriented: rewrite, verify, iterate.
 - NEVER hardcode output values. Your Python must COMPUTE results using the same \
 logic as the R source — not print literal strings or assign pre-computed values \
@@ -102,6 +107,8 @@ ACTION: done
 - Preserve ALL entity sentinel comments (# r2py:entity:<id>).
 - Preserve the data shim block (# r2py:data_shim:begin ... # r2py:data_shim:end) \
 exactly as-is. Do NOT replace it with hardcoded data literals.
+- Drop R scaffolding guards: withAutoprint, examplesIf, rlang::is_interactive(), \
+rlang::is_installed() — remove the guard, translate the code inside unconditionally.
 - Focus on the WORST-scoring entities first, but include ALL entities in the rewrite.
 - If a rewrite does not improve the score, DO NOT rewrite again blindly. \
 Use probe_r to check what R actually outputs, then rewrite with that knowledge. \
@@ -223,6 +230,8 @@ def build_agent_turn(
     probe_budget_remaining: int,
     history: list[str] | None = None,
     patterns_by_entity: dict[str, list] | None = None,
+    r_function_sources: list[str] | None = None,
+    entity_metadata: str | None = None,
 ) -> list[dict]:
     """Build the messages for one agent reasoning turn."""
     parts = []
@@ -260,6 +269,19 @@ def build_agent_turn(
     if patterns_by_entity:
         parts.append("### Pattern library (known translation patterns)")
         parts.append(format_patterns(patterns_by_entity))
+        parts.append("")
+
+    # R function source — include on step 1 only (doesn't change between turns).
+    if step == 1 and r_function_sources:
+        parts.append(
+            "### R function source (translate the logic, don't hardcode values)")
+        parts.append("\n\n".join(r_function_sources))
+        parts.append("")
+
+    # Function metadata — include on step 1 only.
+    if step == 1 and entity_metadata:
+        parts.append("### Function metadata (from R introspection)")
+        parts.append(entity_metadata)
         parts.append("")
 
     if history:

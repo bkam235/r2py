@@ -4,24 +4,14 @@ package: broom
 confidence: tentative
 seed: false
 created: 2026-06-21
-last_review: 2026-06-23
+last_review: 2026-07-01
 tie_count: 0
 ---
 
 # rlang--is_installed
 
 ## Guidance
-Implement using a try-except block with __import__(package_name) to check if a module is available in the Python environment.
-
-Use `importlib.util.find_spec(package_name) is not None` to check if a Python package is available.
-
-Use 'importlib.util.find_spec(package_name) is not None' to check for the existence of a Python package.
-
-Use `importlib.util.find_spec(package_name) is not None` to check for the presence of a Python package.
-
-Use importlib.util.find_spec(package_name) to check for the existence of a Python module.
-
-Implement using 'importlib.util.find_spec(package_name) is not None' to check for the presence of a Python package.
+`rlang::is_installed("pkg")` is documentation scaffolding — a guard that makes R examples optional so they skip gracefully when a suggested package is missing. In our pipeline the guarded code ALWAYS executes in R (the package is installed), so Python must execute it unconditionally. Remove the `if is_installed(...)` guard entirely and translate the code inside the block directly.
 
 ## Evidence
 (none)

@@ -40,6 +40,7 @@ def reason(
     history: list[str] = []
 
     patterns_by_entity = _prefetch_patterns(harness, score_report)
+    r_function_sources, entity_metadata = _prefetch_r_sources(script_map)
 
     is_ollama = model.startswith("ollama:")
     system_prompt = (
@@ -78,6 +79,8 @@ def reason(
             probe_budget_remaining=max(0, 10 - harness._probe_count),
             history=history,
             patterns_by_entity=patterns_by_entity,
+            r_function_sources=r_function_sources,
+            entity_metadata=entity_metadata,
         )
 
         truncated = False
@@ -241,6 +244,31 @@ def _prefetch_patterns(harness: "HarnessTools", report: "ScoreReport") -> dict:
         if patterns:
             result[eid] = patterns
     return result
+
+
+def _prefetch_r_sources(
+    script_map: "ScriptMap",
+) -> "tuple[list[str], str]":
+    """Compute R source lookups and entity metadata once before the agent loop."""
+    from ..types import EntityKind
+    from ..seed import collect_source_lookups, format_entity_metadata
+
+    entities = getattr(script_map, "entities", {}) or {}
+    imported_pkgs: list[str] = [
+        e.package
+        for e in entities.values()
+        if getattr(e, "kind", None) == EntityKind.LIBRARY_IMPORT and e.package
+    ]
+
+    source_parts: list[str] = []
+    if imported_pkgs:
+        try:
+            source_parts = collect_source_lookups(entities, imported_pkgs)
+        except Exception:
+            pass
+
+    metadata = format_entity_metadata(entities)
+    return source_parts, metadata
 
 
 _ACTION_RE = re.compile(r'\{[^{}]*"action"\s*:', re.DOTALL)

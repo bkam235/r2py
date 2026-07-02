@@ -11,7 +11,7 @@ tie_count: 0
 # r-conditional-execution-with-rlang--is_installed
 
 ## Guidance
-Translate `if (rlang::is_installed("package")) { ... }` to a Python function using `importlib.util.find_spec()`, and conditionally execute the block; handle missing packages gracefully with try-except.
+`rlang::is_installed()` is documentation scaffolding — a guard that makes R examples optional. In our pipeline the guarded code ALWAYS executes in R, so Python must execute it unconditionally. Remove the `if (rlang::is_installed(...))` guard entirely and translate the code inside the block directly.
 
 ## Evidence
 (none)

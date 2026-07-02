@@ -28,8 +28,10 @@ Rules:
 1. Use the standard Python equivalents for R packages (e.g. shiny for Python, \
 pandas for data frames, numpy for arrays, plotnine for ggplot2).
 2. Do not create stub classes or fake implementations. Use real Python libraries.
-3. Drop R documentation scaffolding (withAutoprint, examplesIf, rlang::is_interactive \
-wrappers) — translate the actual example code inside them.
+3. Drop R documentation scaffolding (withAutoprint, examplesIf, rlang::is_interactive, \
+rlang::is_installed wrappers) — translate the actual example code inside them. \
+These are guards for optional/interactive examples; in our pipeline the guarded \
+code always executes in R, so Python must execute it unconditionally too.
 4. When Pattern Library guidance is provided, follow it.
 5. In Python, positional arguments must come before keyword arguments in \
 every function call. R allows named arguments before positional ones — \
@@ -108,53 +110,139 @@ def _build_prompt(
             "## Translation patterns (follow these):\n" + "\n\n".join(pattern_parts)
         )
 
-    # Collect R source lookups for function calls.
+    # Collect R source lookups for all package symbols referenced by entities.
     imported_pkgs: list[str] = [
         e.package
         for e in entities.values()
         if getattr(e, "kind", None) == EntityKind.LIBRARY_IMPORT and e.package
     ]
     if imported_pkgs:
-        source_parts = _collect_source_lookups(entities, imported_pkgs)
+        source_parts = collect_source_lookups(entities, imported_pkgs)
         if source_parts:
             parts.append(
                 "## R function source (for reference — translate the logic, "
                 "don't hardcode values):\n" + "\n\n".join(source_parts)
             )
 
+    # Surface resolved_call and function_metadata from Stage 1 probes.
+    metadata_text = format_entity_metadata(entities)
+    if metadata_text:
+        parts.append(
+            "## Function metadata (from R introspection):\n" + metadata_text
+        )
+
     return parts
 
 
-def _collect_source_lookups(
+def collect_source_lookups(
     entities: dict,
     imported_pkgs: list[str],
 ) -> list[str]:
-    """Look up R source for unattributed function calls in the script."""
+    """Look up R source for all package symbols referenced by entities.
+
+    Collects function names from:
+    - entity.name for FUNCTION_CALL and EXTERNAL_SYMBOL entities
+    - entity.free_variable_refs for ALL entity kinds (captures nested function
+      calls inside assignments, arguments, function bodies, etc.)
+
+    When an entity has entity.package set, looks up source in that specific
+    package first before searching all imported packages.
+    """
     from .types import EntityKind
 
     try:
-        from .stage1.package_lookup import get_function_source_recursive
+        from .stage1.package_lookup import (
+            get_function_source_recursive, _BASE_R_NAMES,
+        )
     except ImportError:
         return []
 
+    # Entity names that define local variables/functions — skip these for
+    # source lookup since they're script-defined, not package symbols.
+    local_defs = {
+        eid for eid, e in entities.items()
+        if getattr(e, "kind", None) in (
+            EntityKind.VARIABLE, EntityKind.FUNCTION_DEF, EntityKind.LIBRARY_IMPORT,
+        )
+    }
     seen: set[str] = set()
-    parts: list[str] = []
+    # (name, packages_to_search) pairs — package-specific lookups first
+    lookups: list[tuple[str, list[str]]] = []
+
+    # Collect all identifiers from the script as S3 class hints — when a
+    # UseMethod generic is found, only fetch methods whose class suffix
+    # matches one of these names (avoids fetching 100+ methods for tidy/glance).
+    all_refs: set[str] = set()
+
     for entity in entities.values():
-        if getattr(entity, "kind", None) != EntityKind.FUNCTION_CALL:
-            continue
-        if entity.package:
-            continue
-        name = entity.name
-        if name in seen:
-            continue
-        seen.add(name)
+        kind = getattr(entity, "kind", None)
+        all_refs.add(entity.name)
+
+        # For FUNCTION_CALL and EXTERNAL_SYMBOL, the entity name is a function.
+        if kind in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL):
+            name = entity.name
+            if name not in seen and name not in _BASE_R_NAMES:
+                seen.add(name)
+                pkg = getattr(entity, "package", None)
+                if pkg and pkg not in imported_pkgs:
+                    lookups.append((name, [pkg] + imported_pkgs))
+                else:
+                    lookups.append((name, imported_pkgs))
+
+        # For ALL entity kinds, free_variable_refs captures identifiers from
+        # RHS expressions / arguments — includes nested function calls.
+        for ref in getattr(entity, "free_variable_refs", []):
+            all_refs.add(ref)
+            if ref not in seen and ref not in local_defs and ref not in _BASE_R_NAMES:
+                seen.add(ref)
+                lookups.append((ref, imported_pkgs))
+
+    s3_class_hints = frozenset(all_refs)
+
+    parts: list[str] = []
+    for name, pkgs in lookups:
         try:
-            source = get_function_source_recursive(imported_pkgs, name)
+            source = get_function_source_recursive(
+                pkgs, name, s3_class_hints=s3_class_hints,
+            )
         except Exception:
             source = None
         if source:
             parts.append(f"### `{name}`\n```r\n{source}\n```")
     return parts
+
+
+def format_entity_metadata(entities: dict) -> str:
+    """Format resolved_call and function_metadata for the LLM prompt."""
+    parts: list[str] = []
+    seen_names: set[str] = set()
+    for entity in entities.values():
+        name = entity.name
+        if name in seen_names:
+            continue
+
+        lines: list[str] = []
+
+        resolved = getattr(entity, "resolved_call", None)
+        if resolved:
+            lines.append(f"  Resolved call: {resolved}")
+
+        fm = getattr(entity, "function_metadata", None)
+        if fm:
+            if fm.formals:
+                formals_str = ", ".join(
+                    f"{k}={v}" if v else k
+                    for k, v in fm.formals.items()
+                )
+                lines.append(f"  Formals: {formals_str}")
+            if fm.methods:
+                lines.append(f"  S3 methods: {', '.join(fm.methods)}")
+
+        if lines:
+            seen_names.add(name)
+            parts.append(f"  {name}:\n" + "\n".join(lines))
+
+    return "\n".join(parts)
 
 
 def _extract_python(raw: str) -> str:

@@ -106,9 +106,9 @@ for r_script, py_script in scripts:
                        escalation_model=trans_model,
                        progress=_on_progress,
                        score_threshold=0.9,
-                       n_seeds=5,
+                       n_seeds=3,
                        max_iters=20,
-                       max_stalls=7)
+                       max_stalls=5)
 
 # from r2py import seed_from_translation
 # seed_from_translation(

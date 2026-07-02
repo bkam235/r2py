@@ -62,6 +62,7 @@ def get_function_source_recursive(
     *,
     max_lines_total: int = 200,
     max_lines_per_fn: int = 80,
+    s3_class_hints: "frozenset[str] | None" = None,
     _seen: "set[str] | None" = None,
 ) -> str | None:
     """Return R source for *symbol* plus any helper functions it calls from *packages*.
@@ -70,6 +71,11 @@ def get_function_source_recursive(
     *max_lines_total* combined lines.  Stops recursion at depth implied by the
     budget; never revisits the same symbol.  Returns None when *symbol* is not
     found in any of the supplied packages.
+
+    *s3_class_hints*: when provided, S3 method discovery for UseMethod generics
+    is filtered to only methods whose class suffix appears in this set.  Without
+    hints all discovered methods are fetched (potentially hundreds for generics
+    like ``tidy``).
     """
     if _seen is None:
         _seen = set()
@@ -91,17 +97,21 @@ def get_function_source_recursive(
 
     callees = _extract_r_calls(source)
 
-    # When the source is a UseMethod generic, also discover all class-specific
-    # S3 methods (e.g. durbinWatsonTest.lm) in the packages so the translator
-    # gets the real implementations, not just .default.
+    # When the source is a UseMethod generic, discover class-specific S3 methods.
+    # If s3_class_hints is provided, only fetch methods whose class suffix matches.
     import re as _re
     for dispatch_name in _re.findall(
         r'\bUseMethod\s*\(\s*["\']([a-zA-Z.][a-zA-Z0-9._]*)["\']', source
     ):
         for pkg in packages:
             for method_name in _find_s3_methods(pkg, dispatch_name):
-                if method_name not in _seen and method_name not in callees:
-                    callees.append(method_name)
+                if method_name in _seen or method_name in callees:
+                    continue
+                if s3_class_hints is not None:
+                    class_suffix = method_name[len(dispatch_name) + 1:]
+                    if class_suffix not in s3_class_hints:
+                        continue
+                callees.append(method_name)
 
     for callee in callees:
         if budget <= 0:
@@ -110,6 +120,7 @@ def get_function_source_recursive(
             packages, callee,
             max_lines_total=budget,
             max_lines_per_fn=min(max_lines_per_fn, budget),
+            s3_class_hints=s3_class_hints,
             _seen=_seen,
         )
         if sub:
@@ -144,6 +155,8 @@ _BASE_R_NAMES: frozenset[str] = frozenset({
     "setdiff", "union", "intersect",
     "get", "assign", "exists", "ls", "rm", "get0",
     "library", "require", "requireNamespace", "loadNamespace",
+    "suppressMessages", "suppressWarnings", "suppressPackageStartupMessages",
+    "on.exit", "sys.on.exit", "Sys.getenv", "Sys.setenv",
     "options", "getOption", "Sys.time", "proc.time", "system.time",
     "rgb", "col2rgb", "adjustcolor", "gray", "grey",
     "rainbow", "heat.colors", "terrain.colors", "topo.colors", "cm.colors",
@@ -301,13 +314,16 @@ def _try_r_deparse(package: str, symbol: str, max_lines: int) -> str | None:
         if lib else ""
     )
 
-    # Use asNamespace with inherits=FALSE so only the package's own namespace
-    # is searched (not base/parent environments), keeping results package-scoped.
+    # Try the namespace first (inherits=FALSE), then getExportedValue to find
+    # re-exported generics (e.g. tidy/glance re-exported from generics into broom).
+    # getExportedValue only returns symbols the package explicitly exports,
+    # avoiding leaking base R functions like library() or lm().
     r_code = (
         f"{lib_setup}"
         f"tryCatch({{"
         f"  suppressPackageStartupMessages(library('{package}', character.only=TRUE));"
-        f"  fn <- get('{symbol}', envir=asNamespace('{package}'), inherits=FALSE);"
+        f"  fn <- tryCatch(get('{symbol}', envir=asNamespace('{package}'), inherits=FALSE),"
+        f"    error=function(e) getExportedValue('{package}', '{symbol}'));"
         f"  cat(paste(deparse(fn), collapse='\\n'))"
         f"}}, error=function(e) cat(''))"
     )
