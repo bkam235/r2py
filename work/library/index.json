@@ -2,6 +2,9 @@
   "by_key": {
     "broom:": [
       "broom.tidy"
+    ],
+    ":": [
+      "foo"
     ]
   },
   "meta": {
@@ -11,6 +14,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "broom",
+      "ast_shape_hash": ""
+    },
+    "foo": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "",
       "ast_shape_hash": ""
     }
   }
