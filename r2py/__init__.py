@@ -85,6 +85,7 @@ def translate(
     if result.final_score >= score_threshold and _all_effects_pass:
         seeded = seed_from_translation(
             r_path, py_path, library=library,
+            score_report=result.final_score_report,
         )
         if seeded:
             _emit(progress, kind="seeded", count=len(seeded))
@@ -112,6 +113,8 @@ def seed_from_translation(
     *,
     library=None,
     script_id: str = "human-verified",
+    score_report=None,
+    entity_score_threshold: float = 0.95,
 ) -> list[str]:
     """Seed the Pattern Library with entity-level examples from a known-good Python file.
 
@@ -135,9 +138,27 @@ def seed_from_translation(
     from .library.pattern import Pattern, TranslationExample, r_snippet_hash
     from .library.writer import _add_translation_example
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
-    from .loop import _entity_r_snippet, _extract_entity_snippet
 
     from collections import defaultdict
+
+    def _entity_r_snippet(entity, script_map):
+        span = getattr(entity, "source_span", None)
+        if not span:
+            return ""
+        source = getattr(script_map, "source", "") or ""
+        if not source:
+            return ""
+        lines = source.splitlines()
+        start = getattr(span, "start_line", 0)
+        end = min(len(lines), getattr(span, "end_line", start) + 1)
+        return "\n".join(lines[start:end])[:300]
+
+    def _extract_entity_snippet(source, elmap, eid):
+        if not eid or eid not in elmap:
+            return ""
+        start, end = elmap[eid]
+        lines = source.splitlines()
+        return "\n".join(lines[start:end])[:600]
 
     if library is None:
         library = get_library()
@@ -149,25 +170,33 @@ def seed_from_translation(
 
     from .types import EntityKind as _EK
 
-    # --- Pass 1: collect valid (eid, entity, r_snip, py_snip) tuples ----------
+    def _entity_score(eid):
+        if score_report is None:
+            return 1.0
+        es = score_report.by_entity.get(eid)
+        if es is None or not es.executed_ok:
+            return 0.0
+        return (es.type_match + es.control_flow_match + es.data_output
+                + es.variable_output + es.callable_output + es.side_effects) / 6
+
+    # --- Pass 1: collect valid (eid, entity, r_snip, py_snip, score) tuples ---
     valid: list[tuple] = []
     for eid, entity in entities.items():
-        # LibraryImport entities are R-package loads with no meaningful Python
-        # translation; skip them to avoid creating stub patterns like 'withr.withr'.
         if getattr(entity, "kind", None) == _EK.LIBRARY_IMPORT:
+            continue
+        escore = _entity_score(eid)
+        if escore < entity_score_threshold:
             continue
         r_snip = _entity_r_snippet(entity, script_map)
         py_snip = _extract_entity_snippet(py_source, elmap, eid)
         if not r_snip or not py_snip.strip():
             continue
-        # Skip entities whose translation is substantively just `pass` (possibly
-        # surrounded by comments) — they carry no useful Python example.
         code_lines = [l for l in py_snip.splitlines()
                       if l.strip() and not l.strip().startswith("#")]
         if not code_lines or all(l.strip() in ("pass", "pass  # untranslatable") or
                                   l.strip().startswith("pass  #") for l in code_lines):
             continue
-        valid.append((eid, entity, r_snip, py_snip))
+        valid.append((eid, entity, r_snip, py_snip, escore))
 
     # --- Pass 2: group by entity name ----------------------------------------
     # When multiple entities share the same name (e.g. 7× with_locale), we want
@@ -176,7 +205,7 @@ def seed_from_translation(
     # as the representative. Fall back to the first entity in declaration order.
     by_name: dict[str, list[tuple]] = defaultdict(list)
     for item in valid:
-        eid, entity, r_snip, py_snip = item
+        eid, entity, r_snip, py_snip, escore = item
         name = getattr(entity, "name", eid) or eid
         by_name[name].append(item)
 
@@ -197,7 +226,7 @@ def seed_from_translation(
     touched: list[str] = []
     created_ids: set[str] = set()
 
-    for eid, entity, r_snip, py_snip in representatives:
+    for eid, entity, r_snip, py_snip, escore in representatives:
         entity_pkg = getattr(entity, "package", "") or ""
         entity_name = getattr(entity, "name", eid) or eid
 
@@ -205,7 +234,7 @@ def seed_from_translation(
             r_hash=r_snippet_hash(r_snip),
             r_snippet=r_snip[:300],
             py_snippet=py_snip[:600],
-            score=1.0,   # human-verified: full confidence
+            score=escore,
             script_id=script_id,
         )
 

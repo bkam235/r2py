@@ -104,7 +104,6 @@ def run_loop(
     from .harness.tools import HarnessTools
     from .harness.agent import reason as _reason
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
-    from .library.epistemology import review as _ep_review
     from .harness.review import review_translation as _review
 
     script_id = hashlib.sha1(script_map.source.encode()).hexdigest()[:12]
@@ -171,7 +170,6 @@ def run_loop(
     )
 
     _emit(progress, kind="seed_done", score=seed_decomp.aggregate)
-    _record_seed_translations(seed, seed_decomp, script_map, library, script_id, entity_line_map)
 
     r_source = getattr(script_map, "source", "") or ""
 
@@ -204,9 +202,6 @@ def run_loop(
                 _sidecar_fn, _shim_expected_names, entities, verify_kwargs,
             )
             print(f"[Seed {seed_idx}] score: {alt_decomp.aggregate:.3f}")
-            _record_seed_translations(
-                alt_seed, alt_decomp, script_map, library, script_id, alt_elmap,
-            )
             if alt_decomp.aggregate > best_decomp.aggregate:
                 if alt_decomp.aggregate >= score_threshold:
                     alt_passed, alt_reason = _review(
@@ -227,7 +222,6 @@ def run_loop(
     # --- Cheap path: done if score is good enough -------------------------- #
     if best_decomp.aggregate >= score_threshold:
         _emit(progress, kind="done", score=best_decomp.aggregate, iteration=0)
-        _run_epistemology(library, _ep_review)
         if checkpoint_path is not None and best_decomp.py_exit_code == 0:
             _delete_checkpoints(checkpoint_path, 0)
         return _make_result(best_source, best_decomp, 0, score_history)
@@ -252,18 +246,10 @@ def run_loop(
         if agent_report.aggregate > best_decomp.aggregate:
             best_source = improved
             best_decomp = agent_report
-            _record_seed_translations(
-                improved, agent_report, script_map, library,
-                script_id, _rebuild(improved),
-            )
-            _extract_agent_knowledge(
-                harness, seed, improved, script_map, library, escalation_model,
-            )
 
     if checkpoint_path is not None:
         _write_checkpoint(checkpoint_path, 0, best_source)
 
-    _run_epistemology(library, _ep_review)
     _emit(progress, kind="done", score=best_decomp.aggregate, iteration=1)
 
     if checkpoint_path is not None and best_decomp.py_exit_code == 0:
@@ -325,66 +311,6 @@ def _verify_seed(
             _write_effect_bundle(_out, "py.0", py_bundle)
             _write_score_report(_out, 0, decomp)
     return seed, decomp
-
-
-def _extract_agent_knowledge(
-    harness,
-    original_source: str,
-    improved_source: str,
-    script_map,
-    library,
-    model: str,
-) -> None:
-    """Record probe history and extract agent-articulated insights after success."""
-    from .library.writer import record_agent_insight
-
-    r_source = getattr(script_map, "source", "") or ""
-
-    # Record probe history on relevant patterns.
-    for expression, result in harness._probe_history:
-        probe_note = f"R probe: `{expression}` → `{result[:200]}`"
-        for eid, entity in getattr(script_map, "entities", {}).items():
-            pkg = getattr(entity, "package", None)
-            if not pkg:
-                continue
-            if entity.name in expression:
-                pat_id = f"{pkg}.{entity.name}"
-                pat = library.store.get(pat_id)
-                if pat is not None and probe_note not in pat.guidance:
-                    record_agent_insight(
-                        library.store, library.index, pat_id, probe_note,
-                        entity_package=pkg,
-                    )
-                break
-
-    # Extract reusable insights via LLM.
-    try:
-        from .harness.agent import extract_insights
-        insights = extract_insights(
-            r_source, original_source, improved_source, model=model,
-        )
-    except Exception:
-        insights = []
-
-    for rule_name, guidance in insights:
-        import re as _re
-        pat_id = _re.sub(r'[^a-z0-9._-]', '-', rule_name.lower()).strip('-')[:80]
-        pkg = ""
-        for entity in getattr(script_map, "entities", {}).values():
-            if getattr(entity, "package", None):
-                pkg = entity.package
-                break
-        record_agent_insight(
-            library.store, library.index, pat_id, guidance,
-            entity_package=pkg,
-        )
-
-
-def _run_epistemology(library, review_fn) -> None:
-    try:
-        review_fn(library.store, library.index)
-    except Exception:
-        pass
 
 
 def _score_report_to_dict(report) -> dict:
@@ -473,131 +399,5 @@ def _write_data_sidecar(py_path: "Path", script_map: object) -> None:
     except Exception:
         pass
 
-
-def _entity_r_snippet(entity: object, script_map: object) -> str:
-    """Return the R source text for an entity (capped at 300 chars)."""
-    if entity is None:
-        return ""
-    span = getattr(entity, "source_span", None)
-    if span is None:
-        return ""
-    source = getattr(script_map, "source", "") or ""
-    if not source:
-        return ""
-    lines = source.splitlines()
-    start = getattr(span, "start_line", 0)
-    end = min(len(lines), getattr(span, "end_line", start) + 1)
-    return "\n".join(lines[start:end])[:300]
-
-
-def _extract_entity_snippet(source: str, elmap: dict, eid: str) -> str:
-    """Extract an entity's Python snippet from the assembled source (capped at 600 chars).
-
-    elmap values are 1-based (start, end) inclusive; start points to the sentinel
-    comment line, so actual code starts at lines[start] (0-indexed).
-    """
-    if not eid or eid not in elmap:
-        return ""
-    start, end = elmap[eid]
-    lines = source.splitlines()
-    # start is 1-based; lines[start-1] is the sentinel comment — skip it.
-    snippet_lines = lines[start:end]   # 0-indexed: [start, end-1] inclusive
-    return "\n".join(snippet_lines)[:600]
-
-
-_SEED_RECORD_THRESHOLD = 0.5  # minimum per-entity avg score to record a TranslationExample
-
-
-def _entity_score_avg(es) -> float:
-    """Average over all six EntityScore fields (same formula as the aggregate)."""
-    return (es.type_match + es.control_flow_match + es.data_output
-            + es.variable_output + es.callable_output + es.side_effects) / 6
-
-
-def _packages_compatible(pattern_pkg: str, entity_pkg: str) -> bool:
-    """True when a pattern's package is compatible with an entity's package.
-
-    Empty-package patterns (created without package info) match any entity.
-    Non-empty packages must match exactly.
-    """
-    if not pattern_pkg or not entity_pkg:
-        return True
-    return pattern_pkg == entity_pkg
-
-
-def _record_seed_translations(
-    source: str,
-    decomp,
-    script_map: object,
-    library: object,
-    script_id: str,
-    entity_line_map: dict,
-) -> None:
-    """Attach per-entity TranslationExamples to the library from a well-scoring translation.
-
-    Called after the initial seed and after agent success so that entity
-    implementations that actually worked are captured.
-
-    Does NOT create new patterns — that is left to seed_from_translation() for
-    human-authorised seeding.
-    """
-    if not hasattr(library, "retrieve") or not hasattr(library, "store"):
-        return
-    if decomp.aggregate < _SEED_RECORD_THRESHOLD:
-        return
-
-    from .library.pattern import TranslationExample, r_snippet_hash
-    from .library.writer import _add_translation_example
-
-    entities = getattr(script_map, "entities", {})
-
-    for eid, entity in entities.items():
-        es = decomp.by_entity.get(eid)
-        if es is None or not es.executed_ok:
-            continue
-        avg = _entity_score_avg(es)
-        if avg < _SEED_RECORD_THRESHOLD:
-            continue
-
-        r_snip = _entity_r_snippet(entity, script_map)
-        py_snip = _extract_entity_snippet(source, entity_line_map, eid)
-        if not r_snip or not py_snip.strip():
-            continue
-        if py_snip.strip().startswith("pass"):
-            continue
-
-        r_hash = r_snippet_hash(r_snip)
-        ex = TranslationExample(
-            r_hash=r_hash,
-            r_snippet=r_snip[:300],
-            py_snippet=py_snip[:600],
-            score=avg,
-            script_id=script_id,
-        )
-
-        updated_pids: set[str] = set()
-
-        # Record against retrieved pattern matches.
-        entity_pkg = getattr(entity, "package", "") or ""
-        patterns = library.retrieve(entity, k=3)
-        for pat_obj in patterns:
-            if not _packages_compatible(pat_obj.package, entity_pkg):
-                continue
-            pat = library.store.get(pat_obj.id)
-            if pat is None:
-                continue
-            _add_translation_example(pat, ex)
-            library.store.save(pat)
-            updated_pids.add(pat_obj.id)
-
-        # Also update any pattern that already has an example with the
-        # same r_hash — these were created by record_evidence and may
-        # not be returned by retrieve.
-        for pid, pat_data in library.store.load_all().items():
-            if pid in updated_pids:
-                continue
-            if any(e.r_hash == r_hash for e in pat_data.translation_examples):
-                _add_translation_example(pat_data, ex)
-                library.store.save(pat_data)
 
 
