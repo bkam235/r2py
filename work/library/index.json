@@ -3,6 +3,10 @@
     "base:": [
       "base.as.logical"
     ],
+    "bit:": [
+      "bit.chunk",
+      "bit.chunks"
+    ],
     "broom:": [
       "broom.tidy"
     ],
@@ -17,6 +21,22 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "base",
+      "ast_shape_hash": ""
+    },
+    "bit.chunk": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "bit",
+      "ast_shape_hash": ""
+    },
+    "bit.chunks": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "bit",
       "ast_shape_hash": ""
     },
     "broom.tidy": {
