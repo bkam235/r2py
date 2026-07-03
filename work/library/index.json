@@ -1,5 +1,17 @@
 {
-  "by_key": {},
-  "meta": {},
-  "total_runs": 1
+  "by_key": {
+    "broom:": [
+      "broom.tidy"
+    ]
+  },
+  "meta": {
+    "broom.tidy": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "broom",
+      "ast_shape_hash": ""
+    }
+  }
 }
