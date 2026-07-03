@@ -10,7 +10,6 @@ from .stage2 import llm as _llm
 from .stage2.stitch import (
     build_data_shim,
     collect_shim_needed_names,
-    rebuild_entity_line_map,
     remove_shim_overrides,
 )
 from . import __version__ as _r2py_version
@@ -71,8 +70,14 @@ def translate(
         sidecar_filename=sidecar_filename,
         script_relpath=script_relpath,
     )
-    entity_line_map = rebuild_entity_line_map(python_source)
-    return python_source, entity_line_map
+    from .stage2.sentinel_mapper import (
+        map_entities_to_lines, insert_sentinels, flatten_entity_line_map,
+    )
+    from .stage2.stitch import rebuild_entity_line_map as _rebuild
+    entity_ranges = map_entities_to_lines(script_map, python_source, model=model)
+    python_source = insert_sentinels(python_source, entity_ranges)
+    # Re-derive map from sentinel-inserted source so line numbers match.
+    return python_source, flatten_entity_line_map(_rebuild(python_source))
 
 
 def _build_prompt(
@@ -264,7 +269,7 @@ def _assemble(
     sidecar_filename: str | None = None,
     script_relpath: str | None = None,
 ) -> str:
-    """Add header, entity sentinels, and data shim to the raw translation."""
+    """Add header and data shim to the raw translation."""
     entities = getattr(script_map, "entities", {}) or {}
     n_entities = len(entities)
     r_label = r_path or getattr(script_map, "source_file", "<R script>")
@@ -273,9 +278,6 @@ def _assemble(
         f"# Translated from {r_label} by r2py v{_r2py_version}\n"
         f"# Model: {model}  ScriptMap entities: {n_entities}"
     )
-
-    # Inject entity sentinel comments into the translated code.
-    python_code = _inject_sentinels(python_code, script_map)
 
     # Build data shim if needed.
     shim_needed = collect_shim_needed_names(script_map) if sidecar_filename else []
@@ -295,118 +297,3 @@ def _assemble(
     return "\n\n".join(parts) + "\n"
 
 
-def _inject_sentinels(python_code: str, script_map: "ScriptMap") -> str:
-    """Insert ``# r2py:entity:<id>`` sentinel comments into translated Python.
-
-    Uses heuristic matching: for each entity, look for its name in the Python
-    code (as an assignment target, function def, import, or function call) and
-    insert the sentinel on the line before the first match.
-
-    Entities that can't be matched get their sentinel appended at the end.
-    """
-    from .types import EntityKind
-    from .stage2.walker import topological_order
-
-    entities = getattr(script_map, "entities", {}) or {}
-    if not entities:
-        return python_code
-
-    lines = python_code.splitlines()
-    order = topological_order(entities)
-
-    # For each entity, find the best matching line.
-    # Track which lines already have a sentinel to avoid duplicates.
-    sentinel_inserts: dict[int, str] = {}  # line_index -> sentinel text
-    matched_eids: set[str] = set()
-    claimed_lines: set[int] = set()
-
-    for eid in order:
-        entity = entities[eid]
-        name = entity.name
-        kind = getattr(entity, "kind", None)
-
-        best_line = _find_entity_line(lines, name, kind, claimed_lines)
-        if best_line is not None:
-            sentinel_inserts[best_line] = f"# r2py:entity:{eid}"
-            matched_eids.add(eid)
-            claimed_lines.add(best_line)
-
-    # Build result with sentinels inserted before matched lines.
-    result: list[str] = []
-    for i, line in enumerate(lines):
-        if i in sentinel_inserts:
-            result.append(sentinel_inserts[i])
-        result.append(line)
-
-    # Append unmatched entities at the end.
-    unmatched = [eid for eid in order if eid not in matched_eids]
-    if unmatched:
-        for eid in unmatched:
-            result.append(f"# r2py:entity:{eid}")
-
-    return "\n".join(result)
-
-
-_IMPORT_RE = re.compile(r"^\s*(?:import|from)\s+")
-
-
-def _find_entity_line(
-    lines: list[str],
-    name: str,
-    kind,
-    claimed: set[int],
-) -> int | None:
-    """Find the line index where entity *name* first appears in *lines*."""
-    from .types import EntityKind
-
-    if not name:
-        return None
-
-    # Normalize: R uses . in names, Python uses _
-    py_name = name.replace(".", "_").replace("::", ".")
-    # Also try the raw name for exact matches
-    candidates = {py_name}
-    if py_name != name:
-        candidates.add(name)
-
-    # For function defs, look for `def name(`
-    if kind == EntityKind.FUNCTION_DEF:
-        for i, line in enumerate(lines):
-            if i in claimed:
-                continue
-            for n in candidates:
-                if re.search(rf"^\s*def\s+{re.escape(n)}\s*\(", line):
-                    return i
-        # Fall through to general search
-
-    # For library imports, look for import statements
-    if kind == EntityKind.LIBRARY_IMPORT:
-        for i, line in enumerate(lines):
-            if i in claimed:
-                continue
-            if not _IMPORT_RE.match(line):
-                continue
-            for n in candidates:
-                if n in line:
-                    return i
-        return None
-
-    # For variables, look for `name = ` assignment
-    if kind == EntityKind.VARIABLE:
-        for i, line in enumerate(lines):
-            if i in claimed:
-                continue
-            for n in candidates:
-                if re.search(rf"^{re.escape(n)}\s*=(?!=)", line):
-                    return i
-        # Fall through
-
-    # General: look for the name in any context
-    for i, line in enumerate(lines):
-        if i in claimed:
-            continue
-        for n in candidates:
-            if re.search(rf"\b{re.escape(n)}\b", line):
-                return i
-
-    return None

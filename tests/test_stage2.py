@@ -117,7 +117,7 @@ class TestSentinelAndRebuild(unittest.TestCase):
             "# r2py:entity:e1\n"
             "v1 = 2\n"
         )
-        return src, {"e0": (3, 4), "e1": (6, 7)}
+        return src, {"e0": [(3, 4)], "e1": [(6, 7)]}
 
     def test_sentinel_comments_present(self):
         src, _ = self._compose2()
@@ -139,7 +139,8 @@ class TestSentinelAndRebuild(unittest.TestCase):
     def test_sentinel_is_first_line_of_entity_range(self):
         src, lmap = self._compose2()
         lines = src.splitlines()
-        for eid, (start, _end) in lmap.items():
+        for eid, ranges in lmap.items():
+            start = ranges[0][0]
             self.assertIn(eid, lines[start - 1],
                           msg=f"Expected sentinel for {eid} at line {start}")
 

@@ -104,6 +104,7 @@ def run_loop(
     from .harness.tools import HarnessTools
     from .harness.agent import reason as _reason
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
+    from .stage2.sentinel_mapper import flatten_entity_line_map as _flatten
     from .harness.review import review_translation as _review
 
     script_id = hashlib.sha1(script_map.source.encode()).hexdigest()[:12]
@@ -114,7 +115,7 @@ def run_loop(
     # --- Seed translation -------------------------------------------------- #
     if seed_translation is not None:
         seed = seed_translation
-        entity_line_map = _rebuild(seed)
+        entity_line_map = _flatten(_rebuild(seed))
         if not entity_line_map:
             import warnings
             warnings.warn(
@@ -139,6 +140,7 @@ def run_loop(
 
     harness = HarnessTools(
         script_map, library,
+        model=model,
         data_compare=data_compare,
         timeout_s=timeout_s,
         sidecar_filename=_sidecar_fn or "",
@@ -186,10 +188,19 @@ def run_loop(
     best_decomp = seed_decomp
 
     # --- Additional seeds (lazy: only when seed 1 is below reseed threshold) #
-    if (seed_translation is None
-            and n_seeds > 1
-            and best_decomp.aggregate < score_threshold):
-        for seed_idx in range(2, n_seeds + 1):
+    # When resuming a translation that scored 0.0, regenerate all n_seeds
+    # from scratch — the existing file is no better than nothing.
+    _reseed_from_scratch = (seed_translation is not None
+                           and best_decomp.aggregate == 0.0)
+    if _reseed_from_scratch:
+        _reseed_range = range(1, n_seeds + 1)
+    elif seed_translation is None and n_seeds > 1:
+        _reseed_range = range(2, n_seeds + 1)
+    else:
+        _reseed_range = range(0)  # empty — no additional seeds
+
+    if _reseed_range and best_decomp.aggregate < score_threshold:
+        for seed_idx in _reseed_range:
             alt_seed, alt_elmap = _seed_translate(
                 script_map, library,
                 no_seeds=no_seeds, model=model,

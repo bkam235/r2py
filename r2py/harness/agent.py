@@ -167,9 +167,8 @@ def reason(
                 stall_count += 1
                 continue
 
-            sentinel_count = new_source.count("# r2py:entity:")
             source_lines = len(new_source.splitlines())
-            print(f"[Agent]   Rewrite: {source_lines} lines, {sentinel_count} entity sentinels")
+            print(f"[Agent]   Rewrite: {source_lines} lines")
 
             syntax_error = _check_syntax(new_source)
             if syntax_error:
@@ -213,7 +212,7 @@ def reason(
                     report = new_report if new_report.aggregate == best_score else report
                 else:
                     print(f"[Review]  PASSED")
-                    best_source = new_source
+                    best_source = harness.last_annotated_source or new_source
                     best_score = new_report.aggregate
                     report = new_report
                     stall_count = 0

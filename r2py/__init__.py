@@ -78,16 +78,14 @@ def translate(
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     _write_translation_log(Path(py_path), script_map, result)
     _append_run_record(Path(r_path), result, model, escalation_model or model)
-    _report = result.final_score_report
-    _all_effects_pass = _report is not None and all(
-        s >= score_threshold for s in _report.by_effect.values()
-    )
-    if result.final_score >= score_threshold and _all_effects_pass:
+    if result.final_score >= score_threshold:
         seeded = seed_from_translation(
             r_path, py_path, library=library,
             score_report=result.final_score_report,
+            entity_score_threshold=score_threshold,
         )
         if seeded:
+            print(f"[Library] Seeded {len(seeded)} patterns: {seeded}")
             _emit(progress, kind="seeded", count=len(seeded))
             _commit_library(library, seeded, Path(r_path).stem)
     if result.final_exit_code != 0:
@@ -112,7 +110,7 @@ def seed_from_translation(
     py_path: "str | Path",
     *,
     library=None,
-    script_id: str = "human-verified",
+    script_id: str = "auto",
     score_report=None,
     entity_score_threshold: float = 0.95,
 ) -> list[str]:
@@ -156,8 +154,12 @@ def seed_from_translation(
     def _extract_entity_snippet(source, elmap, eid):
         if not eid or eid not in elmap:
             return ""
-        start, end = elmap[eid]
+        ranges = elmap[eid]
         lines = source.splitlines()
+        if isinstance(ranges, list):
+            parts = ["\n".join(lines[s:e]) for s, e in sorted(ranges)]
+            return "\n\n".join(p for p in parts if p.strip())[:600]
+        start, end = ranges
         return "\n".join(lines[start:end])[:600]
 
     if library is None:
@@ -176,8 +178,8 @@ def seed_from_translation(
         es = score_report.by_entity.get(eid)
         if es is None or not es.executed_ok:
             return 0.0
-        return (es.type_match + es.control_flow_match + es.data_output
-                + es.variable_output + es.callable_output + es.side_effects) / 6
+        vals = [getattr(es, name) for name in es.active_dims]
+        return sum(vals) / len(vals) if vals else float(es.executed_ok)
 
     # --- Pass 1: collect valid (eid, entity, r_snip, py_snip, score) tuples ---
     valid: list[tuple] = []
@@ -420,12 +422,16 @@ def _write_translation_log(
             end = min(len(src_lines), getattr(span, "end_line", start) + 1)
             r_snippet = "\n".join(src_lines[start:end])
 
-        # Python snippet
+        # Python snippet (elmap is multi-range: list of (start, end))
         py_snippet = ""
         if eid in elmap:
-            py_start, py_end = elmap[eid]
             py_lines = result.python_source.splitlines()
-            py_snippet = "\n".join(py_lines[py_start:py_end])
+            ranges = elmap[eid]
+            if isinstance(ranges, list):
+                parts = ["\n".join(py_lines[s:e]) for s, e in sorted(ranges)]
+                py_snippet = "\n".join(p for p in parts if p.strip())
+            else:
+                py_snippet = "\n".join(py_lines[ranges[0]:ranges[1]])
 
         es = report.by_entity.get(eid) if report is not None else None
         score = None

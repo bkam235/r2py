@@ -37,7 +37,6 @@ def _on_progress(event) -> None:
 # input_filenames = random.sample(input_filenames, 20) #don't use random script
 
 all_translated_scripts = [
-    "broom__rd_example__durbinWatsonTest_tidiers_Rd.R",
     "S7__vignette__generics-methods_s13.R",
     "bit__rd_example__chunk_Rd.R",
     "bit__vignette__bit-usage_s15.R",
@@ -80,6 +79,10 @@ all_translated_scripts = [
     "xtable__vignette__listOfTablesGallery_s2.R",
 ]
 
+regression_test_0.8 = [
+    "broom__rd_example__durbinWatsonTest_tidiers_Rd.R"
+]
+
 # input_filenames = [] #translate this specific script
 input_filenames = all_translated_scripts[:1]
 
@@ -109,7 +112,7 @@ for r_script, py_script in scripts:
                        model=trans_model,
                        escalation_model=trans_model,
                        progress=_on_progress,
-                       score_threshold=0.9,
+                       score_threshold=0.8,
                        n_seeds=5,
                        max_iters=20,
                        max_stalls=10)

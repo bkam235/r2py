@@ -23,8 +23,7 @@ You respond with ONE action per turn as a JSON object on a single line:
 
 {"action": "rewrite", "new_source": "..."}
   Replace the entire Python translation. This is your primary action. \
-Use the R source, output comparisons, and pattern library to write correct Python. \
-Include # r2py:entity:<id> sentinel comments to preserve entity boundaries.
+Use the R source, output comparisons, and pattern library to write correct Python.
 
 {"action": "probe_r", "expression": "..."}
   Run an R expression to understand specific behavior you cannot determine \
@@ -47,7 +46,6 @@ Do not probe before your first rewrite attempt.
 - If a rewrite does not improve the score, DO NOT rewrite again with minor changes. \
 Instead, probe_r to understand what R actually outputs for the failing entities, \
 then rewrite with that knowledge. If you cannot improve further, use action "done".
-- When rewriting, preserve ALL entity sentinel comments (# r2py:entity:<id>).
 - When rewriting, preserve the data shim block (# r2py:data_shim:begin ... \
 # r2py:data_shim:end) exactly as-is. Do NOT replace it with hardcoded data \
 literals — the shim loads input datasets (like mtcars) at runtime.
@@ -104,7 +102,6 @@ ACTION: done
 - REWRITE FIRST. When the score is low, rewrite immediately.
 - Keep your analysis to 1-2 sentences. ALL your output tokens should go to code.
 - The rewrite MUST be the COMPLETE file. Never output just the first few entities.
-- Preserve ALL entity sentinel comments (# r2py:entity:<id>).
 - Preserve the data shim block (# r2py:data_shim:begin ... # r2py:data_shim:end) \
 exactly as-is. Do NOT replace it with hardcoded data literals.
 - Drop R scaffolding guards: withAutoprint, examplesIf, rlang::is_interactive(), \

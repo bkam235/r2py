@@ -265,13 +265,16 @@ if TYPE_CHECKING:
     from ..types import EntityId
 
 
-def rebuild_entity_line_map(source: str) -> dict[str, tuple[int, int]]:
+def rebuild_entity_line_map(source: str) -> dict[str, list[tuple[int, int]]]:
     """Rebuild entity_line_map by scanning for sentinel comments in *source*.
 
     Callers (seed.py's sentinel injection, apply_edit, the reasoning agent's
     rewrites) prepend or preserve ``# r2py:entity:<eid>`` markers; this
     function finds those sentinels and re-derives the (start, end) ranges after
     any edits that shift line numbers.
+
+    An entity may have multiple sentinels (e.g. a function definition and its
+    call site), producing multiple ranges per entity.
 
     Returns {} if no sentinels are present.
     """
@@ -285,7 +288,7 @@ def rebuild_entity_line_map(source: str) -> dict[str, tuple[int, int]]:
     if not sentinels:
         return {}
 
-    result: dict[str, tuple[int, int]] = {}
+    result: dict[str, list[tuple[int, int]]] = {}
     total_lines = len(lines)
     for idx, (sentinel_line, eid) in enumerate(sentinels):
         start = sentinel_line  # sentinel is the first line of the entity range
@@ -299,5 +302,5 @@ def rebuild_entity_line_map(source: str) -> dict[str, tuple[int, int]]:
             end = total_lines
             while end >= start and not lines[end - 1].strip():
                 end -= 1
-        result[eid] = (start, end)
+        result.setdefault(eid, []).append((start, end))
     return result

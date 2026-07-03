@@ -695,7 +695,8 @@ def verify(
     # line numbers (which reference the checkpointed script) map correctly.
     if entity_line_map:
         from ..stage2.stitch import rebuild_entity_line_map as _rebuild_elmap
-        cp_entity_line_map = _rebuild_elmap(py_source_checkpointed)
+        from ..stage2.sentinel_mapper import flatten_entity_line_map as _flatten
+        cp_entity_line_map = _flatten(_rebuild_elmap(py_source_checkpointed))
     else:
         cp_entity_line_map = None
 
