@@ -1,5 +1,8 @@
 {
   "by_key": {
+    "base:": [
+      "base.as.logical"
+    ],
     "broom:": [
       "broom.tidy"
     ],
@@ -8,6 +11,14 @@
     ]
   },
   "meta": {
+    "base.as.logical": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "base",
+      "ast_shape_hash": ""
+    },
     "broom.tidy": {
       "confidence": "tentative",
       "evidence_count": 0,
