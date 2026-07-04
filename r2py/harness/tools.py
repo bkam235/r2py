@@ -39,6 +39,7 @@ class HarnessTools:
         self._verify_kwargs = verify_kwargs or {}
         self._probe_count = 0
         self._docs_count = 0
+        self._docs_cache: dict[str, str] = {}
         self._probe_history: list[tuple[str, str]] = []
         self.last_annotated_source: str = ""
 
@@ -93,6 +94,86 @@ class HarnessTools:
         result = (bundle.stdout or "").strip()
         self._probe_history.append((r_expression, result))
         return result
+
+    def lookup_docs(self, package: str, topic: str, language: str = "python") -> str:
+        """Look up offline documentation for a package symbol.
+
+        language: "python" or "r"
+        package: dotted module path for Python (e.g. "shiny.ui") or package name for R
+        topic:   function/class name; empty string → list the module's public API
+        """
+        cache_key = f"{language.lower()}:{package}:{topic}"
+        if cache_key in self._docs_cache:
+            return self._docs_cache[cache_key]
+        if self._docs_count >= 5:
+            return "(docs lookup limit reached)"
+        self._docs_count += 1
+        if language.lower() == "r":
+            result = self._lookup_r_docs(package, topic)
+        else:
+            result = self._lookup_python_docs(package, topic)
+        self._docs_cache[cache_key] = result
+        return result
+
+    def _lookup_python_docs(self, package: str, topic: str) -> str:
+        import subprocess
+        import sys
+
+        def _pydoc(q: str) -> str:
+            r = subprocess.run(
+                [sys.executable, "-m", "pydoc", q],
+                capture_output=True, text=True, timeout=15,
+            )
+            return (r.stdout or r.stderr or "(no output)").strip()
+
+        query = f"{package}.{topic}".rstrip(".") if topic else package
+        out = _pydoc(query)
+
+        # When the exact query isn't found, probe the parent module so the model
+        # gets actionable context (e.g. bslib.popover fails → show bslib or shiny.ui).
+        if "no python documentation found" in out.lower() and "." in query:
+            parent = query.rsplit(".", 1)[0]
+            parent_out = _pydoc(parent)
+            if "no python documentation found" in parent_out.lower():
+                out += (
+                    f"\nPackage '{parent}' is also not installed in this Python "
+                    "environment. If this is an R package name, look for its Python "
+                    "equivalent — e.g. R's bslib → Python's shiny.ui; "
+                    "R's shiny → Python's shiny."
+                )
+            else:
+                out += f"\n\n--- '{parent}' is installed. Partial listing: ---\n{parent_out[:800]}"
+
+        return out[:3000]
+
+    def _lookup_r_docs(self, package: str, topic: str) -> str:
+        if topic:
+            expr = (
+                f'suppressPackageStartupMessages(library({package}))\n'
+                f'tryCatch(\n'
+                f'  paste(capture.output('
+                f'tools::Rd2txt(utils::help("{topic}", package="{package}")'
+                f')), collapse="\\n"),\n'
+                f'  error=function(e) paste("Error:", conditionMessage(e))\n'
+                f')'
+            )
+        else:
+            expr = (
+                f'suppressPackageStartupMessages(library({package}))\n'
+                f'cat(paste(sort(getNamespaceExports("{package}")), collapse=", "))\n'
+            )
+        import tempfile
+        from ..stage0.sandbox.r_sandbox import RSandbox
+        from ..types import EffectClass
+        sandbox = RSandbox()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            bundle = sandbox.run(
+                expr,
+                workdir=Path(tmpdir),
+                capture=frozenset({EffectClass.STDOUT}),
+                timeout_s=min(self._timeout_s, 20),
+            )
+        return (bundle.stdout or "(no output)").strip()[:3000]
 
     def lookup_patterns(self, entity_id: str, k: int = 3) -> list["Pattern"]:
         """Query pattern library for the given entity."""

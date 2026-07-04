@@ -31,6 +31,13 @@ from the source or patterns alone. Include library() calls for any packages \
 the script uses. Only probe when you have a specific question — never to \
 explore generally.
 
+{"action": "lookup_docs", "package": "shiny.ui", "topic": "popover", "language": "python"}
+  Look up offline documentation for a Python or R package symbol. Use this \
+when you need the correct API: function signature, parameters, or return type. \
+Set language to "python" or "r". For Python, package is the dotted module path \
+(e.g. "shiny.ui", "shiny.render", "bslib"). For R, package is the package name \
+(e.g. "bslib", "shiny"). Leave topic empty to list all public symbols in the module.
+
 {"action": "done"}
   Stop. Use when satisfied with the score or when further progress is unlikely.
 
@@ -43,6 +50,10 @@ Do not probe before your first rewrite attempt.
 - Focus on the WORST-scoring entities first.
 - Use the pattern library guidance and translation examples to inform your rewrite.
 - Probe only to debug specific mismatches AFTER a rewrite attempt, not before.
+- Use lookup_docs when Python crashes with ImportError or AttributeError — look up \
+the correct module path and function name before rewriting. Also use it when \
+translating R packages (bslib, shiny, ggplot2, etc.) and you are unsure of the \
+Python equivalent API.
 - If a rewrite does not improve the score, DO NOT rewrite again with minor changes. \
 Instead, probe_r to understand what R actually outputs for the failing entities, \
 then rewrite with that knowledge. If you cannot improve further, use action "done".
@@ -100,6 +111,11 @@ ACTION: probe_r
 expression_to_evaluate
 ```
 
+To LOOK UP Python or R package documentation:
+
+ACTION: lookup_docs
+{"package": "shiny.ui", "topic": "popover", "language": "python"}
+
 To STOP:
 
 ACTION: done
@@ -113,6 +129,8 @@ exactly as-is. Do NOT replace it with hardcoded data literals.
 - Drop R scaffolding guards: withAutoprint, examplesIf, rlang::is_interactive(), \
 rlang::is_installed() — remove the guard, translate the code inside unconditionally.
 - Focus on the WORST-scoring entities first, but include ALL entities in the rewrite.
+- Use lookup_docs when Python crashes with ImportError or AttributeError so you \
+know the correct module path and function name before rewriting.
 - If a rewrite does not improve the score, DO NOT rewrite again blindly. \
 Use probe_r to check what R actually outputs, then rewrite with that knowledge. \
 If you cannot improve further, use ACTION: done.

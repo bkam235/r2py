@@ -156,6 +156,25 @@ def reason(
             history.append(f"Step {step}: probe_r -> {result[:100]!r}")
             stall_count += 1
 
+        elif action_type == "lookup_docs":
+            package = action.get("package", "")
+            topic = action.get("topic", "")
+            language = action.get("language", "python")
+            if not package:
+                history.append(f"Step {step}: lookup_docs (missing package)")
+                continue
+            docs_before = harness._docs_count
+            try:
+                result = harness.lookup_docs(package, topic, language)
+            except Exception as exc:
+                result = f"ERROR: {exc}"
+            was_cached = harness._docs_count == docs_before
+            label = f"{language}::{package}" + (f"::{topic}" if topic else "")
+            print(f"[Agent]   Docs {label}: {result[:200]!r}")
+            cache_note = " (cached — you already looked this up; try a different query)" if was_cached else ""
+            history.append(f"Step {step}: lookup_docs {label}{cache_note} ->\n{result[:800]}")
+            stall_count += 1
+
         elif action_type == "rewrite":
             new_source = action.get("new_source", "")
             if not new_source.strip():
@@ -332,6 +351,36 @@ def _parse_action(raw: str) -> dict | None:
             r_match = _R_FENCE_RE.search(raw) or _FENCE_RE.search(raw)
             if r_match:
                 return {"action": "probe_r", "expression": r_match.group(1).strip()}
+        elif action_type in ("lookup_docs", "docs"):
+            # Accept JSON on its own line or in a fenced block after the tag
+            after_tag = raw[tag_match.end():]
+            for line in after_tag.splitlines():
+                line = line.strip()
+                if line.startswith("{"):
+                    try:
+                        params = json.loads(line)
+                        if isinstance(params, dict):
+                            return {
+                                "action": "lookup_docs",
+                                "package": params.get("package", ""),
+                                "topic": params.get("topic", ""),
+                                "language": params.get("language", "python"),
+                            }
+                    except json.JSONDecodeError:
+                        continue
+            json_match = _FENCE_RE.search(after_tag)
+            if json_match:
+                try:
+                    params = json.loads(json_match.group(1))
+                    if isinstance(params, dict):
+                        return {
+                            "action": "lookup_docs",
+                            "package": params.get("package", ""),
+                            "topic": params.get("topic", ""),
+                            "language": params.get("language", "python"),
+                        }
+                except json.JSONDecodeError:
+                    pass
 
     # 1) Try single-line JSON (fast path for well-behaved models)
     for line in raw.splitlines():
