@@ -63,6 +63,12 @@ statistic, Python must compute it too.
 - In Python, positional arguments must come BEFORE keyword arguments in every \
 function call. R allows named arguments before positional ones — reorder them \
 when translating. Code with this error will be rejected before verification.
+- Python reserved keywords (from, in, as, for, while, if, else, class, return, \
+import, lambda, pass, yield, ...) CANNOT be used as function parameter names or \
+keyword argument names. R uses `from`, `in`, `as` as parameter names freely \
+(e.g. chunk(from=1, to=100, by=10)). Rename them consistently in BOTH \
+function definitions AND all call sites (e.g. `from` → `from_val`, \
+`in` → `in_val`).
 """
 
 AGENT_SYSTEM_PROMPT_OLLAMA = """\
@@ -117,6 +123,12 @@ function, Python must call an equivalent function.
 - In Python, positional arguments must come BEFORE keyword arguments in every \
 function call. R allows named arguments before positional ones — reorder them \
 when translating.
+- Python reserved keywords (from, in, as, for, while, if, else, class, return, \
+import, lambda, pass, yield, ...) CANNOT be used as function parameter names or \
+keyword argument names. R uses `from`, `in`, `as` as parameter names freely \
+(e.g. chunk(from=1, to=100, by=10)). Rename them consistently in BOTH \
+function definitions AND all call sites (e.g. `from` → `from_val`, \
+`in` → `in_val`).
 """
 
 

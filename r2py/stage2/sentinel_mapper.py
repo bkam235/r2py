@@ -171,16 +171,30 @@ def _parse_response(
         result.setdefault(eid, []).append((start, end))
         all_ranges.append((eid, start, end))
 
-    # Validate: no cross-entity overlaps (same-entity ranges are allowed to be
-    # non-contiguous but must not overlap each other either).
+    # Resolve cross-entity overlaps: sort by start line, then clip each range so
+    # it ends just before the next one starts.  This handles the common failure
+    # where a small-model maps a helper entity (e.g. is_installed) to a huge
+    # range that spans later entities.  If clipping makes a range invalid
+    # (start > end) it is dropped.  Only raise if the LLM response was so
+    # broken that we'd end up with zero valid ranges.
     all_ranges.sort(key=lambda x: x[1])
+    overlaps_fixed = False
     for i in range(len(all_ranges) - 1):
-        eid_a, _, end_a = all_ranges[i]
+        eid_a, start_a, end_a = all_ranges[i]
         eid_b, start_b, _ = all_ranges[i + 1]
         if end_a >= start_b:
+            new_end_a = start_b - 1
+            all_ranges[i] = (eid_a, start_a, new_end_a)
+            overlaps_fixed = True
+
+    if overlaps_fixed:
+        result = {}
+        for eid, start, end in all_ranges:
+            if end >= start:
+                result.setdefault(eid, []).append((start, end))
+        if not result:
             raise SentinelMappingError(
-                f"Overlapping ranges: {eid_a} ends at {end_a}, "
-                f"{eid_b} starts at {start_b}"
+                "All entity ranges were eliminated while resolving overlaps"
             )
 
     return result

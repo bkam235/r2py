@@ -1,6 +1,7 @@
 """Depth-first AST walker: entity classification + §3.7 R-semantic annotations."""
 from __future__ import annotations
 
+import keyword as _keyword
 from collections import defaultdict
 
 from ..types import EntityId, EntityKind, EffectClass
@@ -392,6 +393,10 @@ _R_VECTOR_CONSTRUCTORS = frozenset({
     "numeric", "double", "single",
 })
 
+# Python keywords that cannot be used as argument names in Python but are valid
+# R parameter names.  Detected by Stage 1 so the translator can rename them.
+_PYTHON_KEYWORDS = frozenset(_keyword.kwlist) - {"True", "False", "None"}
+
 
 def _annotate_r_semantics(entities: dict[EntityId, Entity], ast_root: AstNode) -> None:
     """Scan AST and attach §3.7 semantic flags to relevant entities.
@@ -500,6 +505,17 @@ def _annotate_r_semantics(entities: dict[EntityId, Entity], ast_root: AstNode) -
                                 _flag_enclosing(node, entities_by_line, "vector_constructor")
                         elif child.kind in ("float", "integer", "identifier", "call"):
                             _flag_enclosing(node, entities_by_line, "vector_constructor")
+
+        # Python keyword as argument name: R uses identifiers like `from`, `in`,
+        # `as` as parameter names; these are Python reserved keywords and cause
+        # SyntaxError in the generated Python. Flag each offending keyword so the
+        # translator knows which names to rename consistently.
+        if kind == "argument":
+            name_node = node.child_by_field("name")
+            if name_node and name_node.text in _PYTHON_KEYWORDS:
+                # Flag with a per-keyword tag so the prompt can be specific.
+                _flag_enclosing(node, entities_by_line,
+                                f"python_keyword_arg:{name_node.text}")
 
 
 def _flag_enclosing(

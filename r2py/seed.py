@@ -11,6 +11,7 @@ from .stage2.stitch import (
     build_data_shim,
     collect_shim_needed_names,
     remove_shim_overrides,
+    sanitize_keyword_args,
 )
 from . import __version__ as _r2py_version
 
@@ -35,7 +36,15 @@ code always executes in R, so Python must execute it unconditionally too.
 5. In Python, positional arguments must come before keyword arguments in \
 every function call. R allows named arguments before positional ones — \
 reorder them when translating.
-6. Output ONLY the Python code — no explanation, no markdown fences.
+6. Python reserved keywords (from, in, as, for, while, if, else, class, \
+return, import, lambda, pass, yield, del, not, and, or, is, with, try, \
+except, raise, finally, global, nonlocal, async, await, break, continue, \
+def, elif, assert) CANNOT be used as function parameter names or keyword \
+argument names. R commonly uses `from`, `in`, `as` as parameter names \
+(e.g., chunk(from=1, to=100, by=10), seq(from=1, to=10)). Rename them \
+consistently in BOTH function definitions AND all call sites \
+(e.g., `from` → `from_val`, `in` → `in_val`, `as` → `as_val`).
+7. Output ONLY the Python code — no explanation, no markdown fences.
 """
 
 
@@ -64,6 +73,10 @@ def translate(
         raw = "# r2py: seed translation failed"
 
     python_code = _extract_python(raw)
+    python_code, kw_renamed = sanitize_keyword_args(python_code)
+    if kw_renamed:
+        print(f"[Seed]    Auto-fixed Python keywords as arg names: {kw_renamed}",
+              file=sys.stderr)
     python_source = _assemble(
         python_code, script_map, model,
         r_path=r_path,
@@ -72,9 +85,18 @@ def translate(
     )
     from .stage2.sentinel_mapper import (
         map_entities_to_lines, insert_sentinels, flatten_entity_line_map,
+        SentinelMappingError,
     )
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
-    entity_ranges = map_entities_to_lines(script_map, python_source, model=model)
+    try:
+        entity_ranges = map_entities_to_lines(script_map, python_source, model=model)
+    except SentinelMappingError as exc:
+        # Mapping failed even after retry + overlap resolution.  Continue without
+        # sentinels so the translation still runs; per-entity scoring will fall
+        # back to aggregate-only mode.
+        print(f"r2py: sentinel mapping failed, using aggregate-only scoring: {exc}",
+              file=sys.stderr)
+        entity_ranges = {}
     python_source = insert_sentinels(python_source, entity_ranges)
     # Re-derive map from sentinel-inserted source so line numbers match.
     return python_source, flatten_entity_line_map(_rebuild(python_source))
@@ -219,6 +241,17 @@ def collect_source_lookups(
 
 def format_entity_metadata(entities: dict) -> str:
     """Format resolved_call and function_metadata for the LLM prompt."""
+    # Pre-collect all python_keyword_arg flags per name across ALL entities so
+    # the dedup-by-name loop below still surfaces warnings even when the flag
+    # lives on a later entity with the same name.
+    kw_flags_by_name: dict[str, set[str]] = {}
+    for entity in entities.values():
+        flags = getattr(entity, "r_semantic_flags", [])
+        for f in flags:
+            if f.startswith("python_keyword_arg:"):
+                kw = f[len("python_keyword_arg:"):]
+                kw_flags_by_name.setdefault(entity.name, set()).add(kw)
+
     parts: list[str] = []
     seen_names: set[str] = set()
     for entity in entities.values():
@@ -242,6 +275,16 @@ def format_entity_metadata(entities: dict) -> str:
                 lines.append(f"  Formals: {formals_str}")
             if fm.methods:
                 lines.append(f"  S3 methods: {', '.join(fm.methods)}")
+
+        # Surface python_keyword_arg flags so the LLM knows which argument
+        # names clash with Python keywords before it even starts translating.
+        kw_flags = kw_flags_by_name.get(name, set())
+        if kw_flags:
+            unique_kws = sorted(kw_flags)
+            lines.append(
+                f"  WARNING: R uses Python keyword(s) as arg names: "
+                + ", ".join(f"`{k}` -> rename to `{k}_val`" for k in unique_kws)
+            )
 
         if lines:
             seen_names.add(name)

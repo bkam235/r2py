@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import ast as _ast
+import keyword as _keyword
 import re
 from typing import TYPE_CHECKING
 
@@ -304,3 +305,51 @@ def rebuild_entity_line_map(source: str) -> dict[str, list[tuple[int, int]]]:
                 end -= 1
         result.setdefault(eid, []).append((start, end))
     return result
+
+
+# ---------------------------------------------------------------------------
+# Python reserved-keyword sanitisation (§3.7 language-level invariant)
+# ---------------------------------------------------------------------------
+
+# Pre-compiled patterns: match `kw=` (but not `kw==`) for each Python keyword.
+# Built lazily on first call; shared across all calls in a process.
+_KW_KWARG_PATTERNS: dict[str, re.Pattern] = {}
+
+
+def sanitize_keyword_args(python_code: str) -> tuple[str, list[str]]:
+    """Rename Python reserved keywords used as function parameter/argument names.
+
+    R functions commonly use ``from``, ``in``, ``as``, ``class`` etc. as
+    parameter names (e.g. ``chunk(from=1, to=100, by=10)``,
+    ``seq(from=1, to=10)``).  In Python these are reserved keywords and
+    produce a ``SyntaxError`` when used on the left side of ``=`` in a
+    function call or definition.
+
+    This function renames offending keywords consistently throughout the
+    code: ``from=`` → ``from_val=``, ``in=`` → ``in_val=``, etc., covering
+    both function definitions (``def f(from=default)``) and call sites
+    (``f(from=value)``).
+
+    Returns ``(fixed_code, renamed_keywords)``.  ``renamed_keywords`` is the
+    sorted list of keywords that were replaced (empty when nothing changed).
+    """
+    # Skip constants that can legitimately appear as default values.
+    _SKIP = frozenset({"True", "False", "None"})
+
+    fixed = python_code
+    renamed: list[str] = []
+
+    for kw in sorted(_keyword.kwlist):
+        if kw in _SKIP:
+            continue
+        if kw not in _KW_KWARG_PATTERNS:
+            _KW_KWARG_PATTERNS[kw] = re.compile(
+                rf'\b{re.escape(kw)}\s*=(?!=)'
+            )
+        pat = _KW_KWARG_PATTERNS[kw]
+        if pat.search(fixed):
+            new_name = f"{kw}_val"
+            fixed = pat.sub(f"{new_name}=", fixed)
+            renamed.append(kw)
+
+    return fixed, renamed

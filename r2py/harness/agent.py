@@ -10,7 +10,7 @@ from ..stage2 import llm as _llm
 from ..stage2.llm import TruncatedResponseError
 from . import prompt as _prompt
 from .review import review_translation
-from ..stage2.stitch import DATA_SHIM_BEGIN as _SHIM_MARKER
+from ..stage2.stitch import DATA_SHIM_BEGIN as _SHIM_MARKER, sanitize_keyword_args
 
 if TYPE_CHECKING:
     from ..stage1.script_map import ScriptMap
@@ -170,13 +170,33 @@ def reason(
             source_lines = len(new_source.splitlines())
             print(f"[Agent]   Rewrite: {source_lines} lines")
 
+            # Auto-fix Python reserved keywords used as argument names before
+            # syntax-checking — the model frequently renames in definitions but
+            # forgets call sites (e.g. chunk(from=1) where `from` is a keyword).
+            new_source, kw_renamed = sanitize_keyword_args(new_source)
+            if kw_renamed:
+                print(f"[Agent]   Auto-fixed Python keywords as arg names: {kw_renamed}")
+
             syntax_error = _check_syntax(new_source)
             if syntax_error:
                 print(f"[Agent]   Syntax error: {syntax_error}")
                 stall_count += 1
+                # Give targeted hints for the two common R->Python syntax errors.
+                hint = ""
+                if "positional argument follows keyword argument" in syntax_error:
+                    hint = (" NOTE: In Python ALL positional arguments must come "
+                            "BEFORE keyword arguments in a function call. "
+                            "Move all non-`name=value` arguments to the front "
+                            "of every call, before any `name=value` pairs.")
+                elif "invalid syntax" in syntax_error:
+                    hint = (" NOTE: Python reserved keywords (from, in, as, class, "
+                            "return, import, for, while, if, else, lambda, ...) "
+                            "cannot be used as argument names. Rename them "
+                            "consistently in definitions AND call sites "
+                            "(e.g. `from` -> `from_val`).")
                 history.append(
                     f"Step {step}: rewrite REJECTED — Python syntax error: "
-                    f"{syntax_error}. Fix the error and rewrite."
+                    f"{syntax_error}.{hint} Fix the error and rewrite."
                 )
                 continue
 
