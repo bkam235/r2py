@@ -10,8 +10,17 @@
     "broom:": [
       "broom.tidy"
     ],
+    "bslib:": [
+      "bslib.popover"
+    ],
     ":": [
       "foo"
+    ],
+    "rlang:": [
+      "rlang.is-interactive"
+    ],
+    "shiny:": [
+      "shiny.shinyapp"
     ]
   },
   "meta": {
@@ -47,6 +56,14 @@
       "package": "broom",
       "ast_shape_hash": ""
     },
+    "bslib.popover": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "bslib",
+      "ast_shape_hash": ""
+    },
     "foo": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -54,7 +71,22 @@
       "seed": true,
       "package": "",
       "ast_shape_hash": ""
+    },
+    "rlang.is-interactive": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "rlang",
+      "ast_shape_hash": ""
+    },
+    "shiny.shinyapp": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "shiny",
+      "ast_shape_hash": ""
     }
-  },
-  "total_runs": 6
+  }
 }
