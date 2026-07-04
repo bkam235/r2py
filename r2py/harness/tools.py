@@ -38,6 +38,7 @@ class HarnessTools:
         self._sidecar_filename = sidecar_filename
         self._verify_kwargs = verify_kwargs or {}
         self._probe_count = 0
+        self._docs_count = 0
         self._probe_history: list[tuple[str, str]] = []
         self.last_annotated_source: str = ""
 

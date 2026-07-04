@@ -10,7 +10,11 @@ from ..stage2 import llm as _llm
 from ..stage2.llm import TruncatedResponseError
 from . import prompt as _prompt
 from .review import review_translation
-from ..stage2.stitch import DATA_SHIM_BEGIN as _SHIM_MARKER, sanitize_keyword_args
+from ..stage2.stitch import (
+    DATA_SHIM_BEGIN as _SHIM_MARKER,
+    reorder_positional_before_kwargs,
+    sanitize_keyword_args,
+)
 
 if TYPE_CHECKING:
     from ..stage1.script_map import ScriptMap
@@ -176,6 +180,9 @@ def reason(
             new_source, kw_renamed = sanitize_keyword_args(new_source)
             if kw_renamed:
                 print(f"[Agent]   Auto-fixed Python keywords as arg names: {kw_renamed}")
+            new_source, reordered = reorder_positional_before_kwargs(new_source)
+            if reordered:
+                print(f"[Agent]   Auto-fixed positional-after-keyword arg ordering")
 
             syntax_error = _check_syntax(new_source)
             if syntax_error:
@@ -210,10 +217,15 @@ def reason(
             print(f"[Agent]   Rewrite scored: {new_report.aggregate:.3f} "
                   f"(was {best_score:.3f}), "
                   f"exit_code={new_report.py_exit_code}")
+            crash_msg = ""
             if new_report.py_exit_code != 0 and new_report.feedback:
                 crash_fb = [fb for fb in new_report.feedback if fb.effect_class.value == "syntax"]
                 if crash_fb:
-                    print(f"[Agent]   Crash: {crash_fb[0].message[:200]}")
+                    # Prefer the traceback message over the generic exit-code message.
+                    detailed = [fb for fb in crash_fb
+                                if "Python crashed" in fb.message and len(fb.message) > 60]
+                    crash_msg = (detailed[0] if detailed else crash_fb[0]).message[:300]
+                    print(f"[Agent]   Crash: {crash_msg}")
 
             if new_report.aggregate > best_score:
                 # Code review gate: check for rule violations before adopting
@@ -240,8 +252,9 @@ def reason(
                         f"Step {step}: rewrite -> {new_report.aggregate:.3f} (ACCEPTED)")
             else:
                 stall_count += 1
+                crash_detail = f" Python error: {crash_msg}" if crash_msg else ""
                 history.append(
-                    f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count})")
+                    f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count}).{crash_detail}")
                 report = new_report if new_report.aggregate == best_score else report
 
         else:

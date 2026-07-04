@@ -353,3 +353,152 @@ def sanitize_keyword_args(python_code: str) -> tuple[str, list[str]]:
             renamed.append(kw)
 
     return fixed, renamed
+
+
+def reorder_positional_before_kwargs(code: str) -> tuple[str, bool]:
+    """Move keyword args (name=value) after positional args in function calls.
+
+    R allows mixed named/unnamed argument ordering; Python requires all
+    positional arguments before keyword arguments.  Applied as a deterministic
+    post-processor on all LLM outputs (alongside ``sanitize_keyword_args``).
+
+    Iterates until stable so nested violations are fixed from inside out.
+    Returns ``(fixed_code, was_changed)``.
+    """
+    import io
+    import tokenize as _tk
+
+    _WS = frozenset({_tk.NEWLINE, _tk.NL, _tk.INDENT, _tk.DEDENT, _tk.COMMENT})
+
+    def _one_pass(src: str) -> tuple[str, bool]:
+        lines = src.splitlines(True)
+        cum = [0]
+        for ln in lines:
+            cum.append(cum[-1] + len(ln))
+
+        def to_off(row: int, col: int) -> int:
+            return cum[row - 1] + col
+
+        try:
+            toks = [
+                (t.type, t.string, to_off(*t.start), to_off(*t.end))
+                for t in _tk.generate_tokens(io.StringIO(src).readline)
+                if t.type not in (_tk.ENCODING, _tk.ENDMARKER)
+            ]
+        except _tk.TokenError:
+            return src, False
+
+        n = len(toks)
+
+        def prev_sig(i: int) -> int:
+            j = i - 1
+            while j >= 0 and toks[j][0] in _WS:
+                j -= 1
+            return j
+
+        def close_of(oi: int) -> int:
+            d = 0
+            for k in range(oi, n):
+                if toks[k][0] == _tk.OP:
+                    if toks[k][1] in ('(', '[', '{'):
+                        d += 1
+                    elif toks[k][1] in (')', ']', '}'):
+                        d -= 1
+                        if d == 0:
+                            return k
+            return -1
+
+        def top_commas(a: int, b: int) -> list:
+            d, result = 0, []
+            for k in range(a + 1, b):
+                if toks[k][0] == _tk.OP:
+                    if toks[k][1] in ('(', '[', '{'):
+                        d += 1
+                    elif toks[k][1] in (')', ']', '}'):
+                        d -= 1
+                    elif toks[k][1] == ',' and d == 0:
+                        result.append(k)
+            return result
+
+        problems: list = []
+
+        for i in range(n):
+            if not (toks[i][0] == _tk.OP and toks[i][1] == '('):
+                continue
+            pi = prev_sig(i)
+            if pi < 0:
+                continue
+            pt, ps = toks[pi][0], toks[pi][1]
+            if not (pt == _tk.NAME or (pt == _tk.OP and ps in (')', ']'))):
+                continue
+
+            ci = close_of(i)
+            if ci < 0:
+                continue
+
+            commas = top_commas(i, ci)
+            if not commas:
+                continue
+
+            seps = [i] + commas + [ci]
+            ng = len(seps) - 1
+
+            def is_kw(b: int, _seps: list = seps) -> bool:
+                mv = [k for k in range(_seps[b] + 1, _seps[b + 1])
+                      if toks[k][0] not in _WS]
+                if len(mv) >= 2:
+                    t0, t1 = toks[mv[0]], toks[mv[1]]
+                    if (t0[0] == _tk.NAME and t1[0] == _tk.OP and t1[1] == '='
+                            and (len(mv) < 3 or toks[mv[2]][1] != '=')):
+                        return True
+                return False
+
+            flags = [is_kw(b) for b in range(ng)]
+
+            saw, needs = False, False
+            for f in flags:
+                if f:
+                    saw = True
+                elif saw:
+                    needs = True
+                    break
+            if not needs:
+                continue
+
+            pos_bs = [b for b, f in enumerate(flags) if not f]
+            kw_bs  = [b for b, f in enumerate(flags) if f]
+            order  = pos_bs + kw_bs
+
+            def arg_src(b: int, _seps: list = seps) -> str:
+                return src[toks[_seps[b]][3]:toks[_seps[b + 1]][2]].strip()
+
+            new_args = ', '.join(arg_src(b) for b in order)
+            open_off  = toks[i][2]
+            close_off = toks[ci][3]
+            problems.append((open_off, close_off, '(' + new_args + ')'))
+
+        if not problems:
+            return src, False
+
+        # Fix only innermost violations (not nested inside another problem).
+        # Outer calls are fixed in subsequent iterations.
+        innermost = [
+            (ps, pe, pt)
+            for ps, pe, pt in problems
+            if not any(qs < ps and pe < qe
+                       for qs, qe, _ in problems
+                       if (qs, qe) != (ps, pe))
+        ]
+
+        result = src
+        for start, end, txt in sorted(innermost, key=lambda r: -r[0]):
+            result = result[:start] + txt + result[end:]
+        return result, True
+
+    changed_overall = False
+    for _ in range(50):
+        code, changed = _one_pass(code)
+        if not changed:
+            break
+        changed_overall = True
+    return code, changed_overall

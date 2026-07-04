@@ -1,6 +1,7 @@
 """Stage 4 verifier orchestrator (§7.1, §7.4)."""
 from __future__ import annotations
 
+import ast as _ast
 import json as _json
 import re as _re
 import tempfile
@@ -601,7 +602,15 @@ def _inject_py_checkpoints(
         insert_idx = min(end_line, len(lines))  # insert after end_line (1-based → index)
         safe_eid = eid.replace("'", "\\'")
         checkpoint_line = f"_r2py_checkpoint('{safe_eid}')\n"
-        lines.insert(insert_idx, checkpoint_line)
+        candidate = lines[:insert_idx] + [checkpoint_line] + lines[insert_idx:]
+        try:
+            _ast.parse("".join(candidate))
+            lines = candidate
+        except SyntaxError:
+            # Insertion point is inside an open expression (entity range was clipped
+            # mid-expression by overlap resolution). Skip checkpoint to avoid
+            # corrupting the source; entity scoring falls back to global score.
+            pass
 
     # Baseline the namespace right before the first entity so that imports
     # and the data shim (which run earlier in the file) are excluded from

@@ -11,6 +11,7 @@ from .stage2.stitch import (
     build_data_shim,
     collect_shim_needed_names,
     remove_shim_overrides,
+    reorder_positional_before_kwargs,
     sanitize_keyword_args,
 )
 from . import __version__ as _r2py_version
@@ -76,6 +77,10 @@ def translate(
     python_code, kw_renamed = sanitize_keyword_args(python_code)
     if kw_renamed:
         print(f"[Seed]    Auto-fixed Python keywords as arg names: {kw_renamed}",
+              file=sys.stderr)
+    python_code, reordered = reorder_positional_before_kwargs(python_code)
+    if reordered:
+        print(f"[Seed]    Auto-fixed positional-after-keyword arg ordering",
               file=sys.stderr)
     python_source = _assemble(
         python_code, script_map, model,
