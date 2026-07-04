@@ -218,6 +218,23 @@ def format_patterns(patterns_by_entity: dict[str, list]) -> str:
     return "\n".join(parts) if parts else "(no patterns matched)"
 
 
+def _format_unavailable_packages(script_map: "ScriptMap") -> str:
+    """Return a comma-separated list of R packages from this script that have no
+    Python equivalent (i.e. are in _SKIP_PACKAGES)."""
+    try:
+        from ..stage0.sandbox.py_sandbox import _SKIP_PACKAGES
+    except Exception:
+        return ""
+    entities = getattr(script_map, "entities", {}) or {}
+    r_packages = {
+        getattr(e, "package", "")
+        for e in entities.values()
+        if getattr(e, "package", "")
+    }
+    unavailable = sorted(r_packages & _SKIP_PACKAGES)
+    return ", ".join(unavailable) if unavailable else ""
+
+
 def _format_data_vars(script_map: "ScriptMap") -> str:
     """Summarise the shape of R data variables available via the data shim."""
     from ..stage4.verifier import _get_r_bundle
@@ -287,6 +304,12 @@ def build_agent_turn(
     parts.append(format_entity_list(script_map))
     parts.append("")
 
+    unavail = _format_unavailable_packages(script_map)
+    if unavail:
+        parts.append("### Python packages unavailable for import (do not use these)")
+        parts.append(unavail)
+        parts.append("")
+
     data_info = _format_data_vars(script_map)
     if data_info:
         parts.append("### Data variables (loaded by the data shim)")
@@ -313,8 +336,19 @@ def build_agent_turn(
 
     if history:
         parts.append("### Previous actions this session")
-        for h in history[-5:]:
-            parts.append(h)
+        # lookup_docs results are pinned (always shown) — losing them causes the
+        # model to re-discover the same API on later steps, wasting budget.
+        # probe_r: last 3.  rewrite/other: last 5.
+        _is_lookup = lambda h: ": lookup_docs " in h
+        _is_probe  = lambda h: ": probe_r "   in h
+        lookup_idx = [i for i, h in enumerate(history) if _is_lookup(h)]
+        probe_idx  = [i for i, h in enumerate(history) if _is_probe(h)][-3:]
+        other_idx  = [i for i, h in enumerate(history)
+                      if not _is_lookup(h) and not _is_probe(h)][-5:]
+        selected = set(lookup_idx + probe_idx + other_idx)
+        for i, h in enumerate(history):
+            if i in selected:
+                parts.append(h)
         parts.append("")
 
     parts.append("What is your next action? (brief analysis, then action JSON)")

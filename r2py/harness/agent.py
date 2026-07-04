@@ -45,6 +45,7 @@ def reason(
 
     patterns_by_entity = _prefetch_patterns(harness, score_report)
     r_function_sources, entity_metadata = _prefetch_r_sources(script_map)
+    unavailable_packages = _get_unavailable_packages(script_map)
 
     is_ollama = model.startswith("ollama:")
     system_prompt = (
@@ -250,6 +251,7 @@ def reason(
                 # Code review gate: check for rule violations before adopting
                 passed, reason = review_translation(
                     r_source, new_source, script_map, model=model,
+                    unavailable_packages=unavailable_packages,
                 )
                 if not passed:
                     print(f"[Review]  FAILED: {reason}")
@@ -272,6 +274,7 @@ def reason(
             else:
                 stall_count += 1
                 crash_detail = f" Python error: {crash_msg}" if crash_msg else ""
+                crash_detail += _auto_lookup_on_crash(crash_msg, harness, new_source)
                 history.append(
                     f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count}).{crash_detail}")
                 report = new_report if new_report.aggregate == best_score else report
@@ -285,6 +288,29 @@ def reason(
 
     print(f"[Agent]   No improvement achieved (score={best_score:.3f})")
     return None
+
+
+_PKG_COLON_RE = re.compile(r"\b(\w+)::")
+
+
+def _get_unavailable_packages(script_map: "ScriptMap") -> list[str]:
+    """Return R package names used by this script that have no Python equivalent."""
+    try:
+        from ..stage0.sandbox.py_sandbox import _SKIP_PACKAGES
+    except Exception:
+        return []
+    # Collect from entity metadata
+    entities = getattr(script_map, "entities", {}) or {}
+    r_packages = {
+        getattr(e, "package", "")
+        for e in entities.values()
+        if getattr(e, "package", "")
+    }
+    # Also scan R source for pkg::func calls (covers packages used without library())
+    r_source = getattr(script_map, "source", "") or ""
+    r_packages.update(_PKG_COLON_RE.findall(r_source))
+    r_packages.discard("")
+    return sorted(r_packages & _SKIP_PACKAGES)
 
 
 def _prefetch_patterns(harness: "HarnessTools", report: "ScoreReport") -> dict:
@@ -461,6 +487,126 @@ def _parse_action(raw: str) -> dict | None:
             return {"action": "rewrite", "new_source": code}
 
     return None
+
+
+_IMPORT_ERROR_RE = re.compile(
+    r"(?:ImportError|ModuleNotFoundError): (?:cannot import name '(\w+)' from '([\w.]+)'|No module named '([\w.]+)')"
+)
+_ATTR_ERROR_RE = re.compile(
+    r"AttributeError: module '([\w.]+)' has no attribute '(\w+)'"
+)
+
+
+def _search_module_names(module: str, query: str) -> str:
+    """Search a Python module's public names for fuzzy matches against *query*.
+
+    Returns a compact string listing matches, or empty string on failure.
+    Uses substring and word-boundary matching so e.g. 'action_button' finds
+    'input_action_button'.
+    """
+    import subprocess
+    import sys
+    code = (
+        "import importlib\n"
+        f"_m = importlib.import_module({module!r})\n"
+        "_ns = getattr(_m, '__all__', None) or "
+        "[n for n in dir(_m) if not n.startswith('_')]\n"
+        f"_q = {query!r}.lower()\n"
+        "_qwords = set(_q.replace('-','_').split('_'))\n"
+        "hits = []\n"
+        "for n in sorted(_ns):\n"
+        "    nl = n.lower()\n"
+        "    nwords = set(nl.replace('-','_').split('_'))\n"
+        "    if _q in nl or _qwords & nwords:\n"
+        "        hits.append(n)\n"
+        "print('\\n'.join(hits[:30]))\n"
+    )
+    r = subprocess.run(
+        [sys.executable, "-c", code],
+        capture_output=True, text=True, timeout=10,
+    )
+    return r.stdout.strip() if r.returncode == 0 else ""
+
+
+def _search_alternative_module(module: str, name: str, py_source: str = "") -> str:
+    """When module has no match, search other modules the script uses.
+
+    Extracts import targets from the Python source and searches those.
+    Falls back to common submodules of top-level packages already imported.
+    """
+    # Extract all modules mentioned in import statements
+    candidates: set[str] = set()
+    for line in py_source.splitlines():
+        line = line.strip()
+        if line.startswith("from "):
+            parts = line.split()
+            if len(parts) >= 2:
+                candidates.add(parts[1])
+        elif line.startswith("import "):
+            for part in line[7:].split(","):
+                mod = part.strip().split(" as ")[0].strip()
+                if mod:
+                    candidates.add(mod)
+
+    # Also try common submodules of top-level packages
+    top_pkgs = {c.split(".")[0] for c in candidates}
+    for pkg in top_pkgs:
+        candidates.update([f"{pkg}.ui", f"{pkg}.render", f"{pkg}.reactive"])
+
+    candidates.discard(module)
+
+    for alt_mod in sorted(candidates):
+        matches = _search_module_names(alt_mod, name)
+        if matches:
+            return (
+                f"\n  [Auto-lookup] '{name}' not in {module}. "
+                f"Found in {alt_mod}: {matches.replace(chr(10), ', ')}"
+            )
+    return ""
+
+
+def _auto_lookup_on_crash(crash_msg: str, harness: "HarnessTools", py_source: str = "") -> str:
+    """When a crash is an import/attribute error, auto-lookup the module's docs.
+
+    Returns a docs string to append to the history, or empty string.
+    """
+    if not crash_msg:
+        return ""
+    m = _IMPORT_ERROR_RE.search(crash_msg)
+    if m:
+        name, module, missing_module = m.group(1), m.group(2), m.group(3)
+        if module and name:
+            # "cannot import name 'X' from 'Y'" → search Y for names like X
+            matches = _search_module_names(module, name)
+            if matches:
+                return (
+                    f"\n  [Auto-lookup] '{name}' not in {module}. "
+                    f"Similar names: {matches.replace(chr(10), ', ')}"
+                )
+            alt = _search_alternative_module(module, name, py_source)
+            if alt:
+                return alt
+            return f"\n  [Auto-lookup] '{name}' not in {module}, and no similar names found."
+        elif missing_module:
+            parent = missing_module.rsplit(".", 1)[0] if "." in missing_module else ""
+            if parent:
+                docs = harness.lookup_docs(parent, "", "python")
+                return f"\n  [Auto-lookup] '{missing_module}' not found. Parent '{parent}' exports:\n{docs[:1200]}"
+            return f"\n  [Auto-lookup] '{missing_module}' is not installed."
+    m = _ATTR_ERROR_RE.search(crash_msg)
+    if m:
+        module, attr = m.group(1), m.group(2)
+        matches = _search_module_names(module, attr)
+        if matches:
+            return (
+                f"\n  [Auto-lookup] '{attr}' not in {module}. "
+                f"Similar names: {matches.replace(chr(10), ', ')}"
+            )
+        alt = _search_alternative_module(module, attr, py_source)
+        if alt:
+            return alt
+        return f"\n  [Auto-lookup] '{attr}' not in {module}, no similar names found."
+    return ""
 
 
 def _check_syntax(source: str) -> str | None:

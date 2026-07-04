@@ -126,25 +126,55 @@ class HarnessTools:
             )
             return (r.stdout or r.stderr or "(no output)").strip()
 
-        query = f"{package}.{topic}".rstrip(".") if topic else package
-        out = _pydoc(query)
+        def _overview(mod: str) -> str:
+            """Compact listing: public names with brief signatures."""
+            code = (
+                "import importlib, inspect\n"
+                f"_m = importlib.import_module({mod!r})\n"
+                "_ns = sorted(getattr(_m, '__all__', None) or "
+                "[n for n in dir(_m) if not n.startswith('_')])\n"
+                "for _n in _ns:\n"
+                "    _o = getattr(_m, _n, None)\n"
+                "    try: print(_n + str(inspect.signature(_o))[:60])\n"
+                "    except: print(_n)\n"
+            )
+            r = subprocess.run(
+                [sys.executable, "-c", code],
+                capture_output=True, text=True, timeout=10,
+            )
+            return r.stdout.strip() if r.returncode == 0 else ""
 
-        # When the exact query isn't found, probe the parent module so the model
-        # gets actionable context (e.g. bslib.popover fails → show bslib or shiny.ui).
-        if "no python documentation found" in out.lower() and "." in query:
-            parent = query.rsplit(".", 1)[0]
-            parent_out = _pydoc(parent)
-            if "no python documentation found" in parent_out.lower():
-                out += (
-                    f"\nPackage '{parent}' is also not installed in this Python "
-                    "environment. If this is an R package name, look for its Python "
-                    "equivalent — e.g. R's bslib → Python's shiny.ui; "
-                    "R's shiny → Python's shiny."
-                )
+        # Always fetch the module overview — the model needs to know what's
+        # available in the module, not just whether a specific name exists.
+        overview = _overview(package)
+        if not overview:
+            # Package exists but exports nothing via __all__ / dir — fall back
+            # to pydoc (e.g. Python's bslib is a battery-storage stub).
+            pkg_pydoc = _pydoc(package)
+            if "no python documentation found" not in pkg_pydoc.lower():
+                overview = pkg_pydoc[:800]
+        overview_block = (
+            f"## {package} — available names:\n{overview[:1500]}" if overview else ""
+        )
+
+        if not topic:
+            # Module listing requested directly.
+            return (overview_block or _pydoc(package))[:3000]
+
+        # Specific function/class docs.
+        specific = _pydoc(f"{package}.{topic}")
+        if "no python documentation found" in specific.lower():
+            if overview_block:
+                specific = f"'{topic}' is not in '{package}'."
             else:
-                out += f"\n\n--- '{parent}' is installed. Partial listing: ---\n{parent_out[:800]}"
+                specific += (
+                    f"\n\nNote: '{package}' is not installed in this Python "
+                    "environment. If this is an R package name, look for its "
+                    "Python equivalent (e.g. R's bslib → shiny.ui)."
+                )
 
-        return out[:3000]
+        parts = [p for p in [overview_block, specific[:1500]] if p]
+        return "\n\n".join(parts)[:3000]
 
     def _lookup_r_docs(self, package: str, topic: str) -> str:
         if topic:

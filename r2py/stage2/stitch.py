@@ -385,7 +385,7 @@ def reorder_positional_before_kwargs(code: str) -> tuple[str, bool]:
                 for t in _tk.generate_tokens(io.StringIO(src).readline)
                 if t.type not in (_tk.ENCODING, _tk.ENDMARKER)
             ]
-        except _tk.TokenError:
+        except (_tk.TokenError, IndentationError):
             return src, False
 
         n = len(toks)

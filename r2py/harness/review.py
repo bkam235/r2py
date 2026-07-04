@@ -43,6 +43,10 @@ this is valid if R does the same thing
    - Literal values that also appear as literals in the R source code
    - Loading INPUT DATA (like mtcars) from a data file — input datasets are \
 not computed results
+   - Substituting None, a placeholder string, or an HTML/SVG literal for a \
+call to an R package that has no Python equivalent \
+(e.g. `bsicons::bs_icon("x")` → None or an SVG string is acceptable \
+when the `bsicons` package is unavailable in Python){unavailable_note}
 
 ## R source
 ```r
@@ -73,13 +77,24 @@ def review_translation(
     script_map: "ScriptMap | None" = None,
     *,
     model: str = _llm._DEFAULT_MODEL,
+    unavailable_packages: list[str] | None = None,
 ) -> tuple[bool, str]:
     """Review a Python translation for rule compliance.
 
     Returns (passed, reason) where reason is empty on pass or a brief
     explanation on failure.
     """
-    prompt = _REVIEW_PROMPT.format(r_source=r_source, py_source=py_source)
+    if unavailable_packages:
+        unavail_note = (
+            "\n   Specifically, these R packages are UNAVAILABLE in Python: "
+            + ", ".join(unavailable_packages)
+            + ". Any call to these packages may be replaced with a literal or None."
+        )
+    else:
+        unavail_note = ""
+    prompt = _REVIEW_PROMPT.format(
+        r_source=r_source, py_source=py_source, unavailable_note=unavail_note,
+    )
 
     try:
         raw = _llm.call(
@@ -109,5 +124,13 @@ def review_translation(
 
     passed = result.get("pass", True)
     reason = result.get("reason", "")
+
+    # Override false-positive rejections for unavailable packages.
+    # The LLM sometimes ignores the "not a violation" rule for these.
+    if not passed and unavailable_packages and reason:
+        reason_lower = reason.lower()
+        if any(pkg in reason_lower for pkg in unavailable_packages):
+            passed = True
+            reason = ""
 
     return bool(passed), str(reason)
