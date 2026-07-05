@@ -176,9 +176,17 @@ class TestHtmlComparator:
         assert r.verdict == "fail"
 
     def test_normalized_similarity(self):
-        # Tags stripped — text content the same
-        r = self.cmp.compare(["<div><p>hello</p></div>"], ["<span>hello</span>"])
+        # Same structure, minor whitespace/attr differences
+        r = self.cmp.compare(
+            ["<div><p class=\"a b\">hello</p></div>"],
+            ["<div><p class=\"b a\">hello</p></div>"],
+        )
         assert r.verdict == "pass"
+
+    def test_structural_mismatch(self):
+        # Different tag structure scores low even with same text
+        r = self.cmp.compare(["<div><p>hello</p></div>"], ["<span>hello</span>"])
+        assert r.score < 0.7
 
     def test_different_content(self):
         r = self.cmp.compare(["<p>aaaaaa</p>"], ["<p>zzzzzzz</p>"])

@@ -81,6 +81,7 @@ def run_loop(
     data_compare: str = "auto",
     no_seeds: bool = False,
     n_seeds: int = 1,
+    bare_seed: bool = True,
     output_dir: "Path | None" = None,
     checkpoint_path: "Path | None" = None,
     model: str = _LLM_DEFAULT_MODEL,
@@ -153,6 +154,7 @@ def run_loop(
             no_seeds=no_seeds, model=model,
             sidecar_filename=_sidecar_fn,
             script_relpath=_script_relpath,
+            bare=bare_seed,
         )
 
     entities = getattr(script_map, "entities", {})

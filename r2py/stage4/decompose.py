@@ -180,10 +180,21 @@ def make_score_table(
     stdout_result = comparator_results.get(EffectClass.STDOUT)
     stdout_score = stdout_result.score if stdout_result else float(executed_ok)
 
+    # When HTML is present and scores well, FILES/ENV are likely rendering
+    # artifacts (font downloads, internal options) — exclude from side_effects.
+    html_result = comparator_results.get(EffectClass.HTML)
+    html_dominant = (
+        html_result is not None
+        and html_result.score >= 0.7
+        and (html_result.explanation or "").startswith("html_content_compared:")
+    )
+    _skip_if_html = frozenset({EffectClass.FILES, EffectClass.ENV})
+
     side_scores = [
         comparator_results[ec].score
         for ec in _SIDE_EFFECT_CLASSES
         if ec in comparator_results
+        and not (html_dominant and ec in _skip_if_html)
     ]
     side_effects_score = sum(side_scores) / len(side_scores) if side_scores else 1.0
 

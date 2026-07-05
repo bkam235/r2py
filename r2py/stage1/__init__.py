@@ -11,7 +11,7 @@ from .coverage import CoverageTracker
 from .effects import SideEffect
 from .entities import AstNode, Entity, FunctionMetadata
 from .package_lookup import resolve_symbol
-from .runner import DEFAULT_CAPTURE, run_script, run_script_checkpointed, run_slice
+from .runner import DEFAULT_CAPTURE, run_script, run_script_checkpointed, run_slice, strip_r_guards
 from .script_map import BranchAnalysis, ScriptMap
 from .walker import walk
 

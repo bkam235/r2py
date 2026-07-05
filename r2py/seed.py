@@ -48,6 +48,14 @@ consistently in BOTH function definitions AND all call sites \
 7. Output ONLY the Python code — no explanation, no markdown fences.
 """
 
+_BARE_SYSTEM_PROMPT = """\
+Translate the R code to Python. Use real libraries (shiny, pandas, numpy, \
+plotnine). If a function has no Python equivalent, skip it or use a simple \
+substitute. Output only the Python code, nothing else.\
+"""
+
+_COMMENT_RE = re.compile(r"^#[^\n]*\n", re.MULTILINE)
+
 
 def translate(
     script_map: "ScriptMap",
@@ -58,17 +66,28 @@ def translate(
     script_relpath: str | None = None,
     no_seeds: bool = False,
     r_path: str = "",
+    bare: bool = False,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Translate an R script to Python via a single whole-file LLM call.
 
+    When bare=True, uses a minimal prompt with just the clean R code
+    (no pattern library, no metadata, no function source lookups).
     Returns (python_source, entity_line_map).
     """
-    r_source = script_map.source or ""
-    prompt_parts = _build_prompt(script_map, library, no_seeds=no_seeds)
-    messages = [{"role": "user", "content": "\n\n".join(prompt_parts)}]
+    from .stage1.runner import strip_r_guards
+
+    if bare:
+        r_clean = strip_r_guards(script_map.source or "")
+        r_clean = _COMMENT_RE.sub("", r_clean).strip()
+        messages = [{"role": "user", "content": f"```r\n{r_clean}\n```"}]
+        system_prompt = _BARE_SYSTEM_PROMPT
+    else:
+        prompt_parts = _build_prompt(script_map, library, no_seeds=no_seeds)
+        messages = [{"role": "user", "content": "\n\n".join(prompt_parts)}]
+        system_prompt = _SYSTEM_PROMPT
 
     try:
-        raw = _llm.call(messages, _SYSTEM_PROMPT, model=model)
+        raw = _llm.call(messages, system_prompt, model=model)
     except Exception as exc:
         print(f"r2py: seed LLM call failed: {exc}", file=sys.stderr)
         raw = "# r2py: seed translation failed"
@@ -114,9 +133,10 @@ def _build_prompt(
 ) -> list[str]:
     """Build the user prompt for whole-file translation."""
     from .types import EntityKind
+    from .stage1.runner import strip_r_guards
 
     parts: list[str] = []
-    r_source = script_map.source or ""
+    r_source = strip_r_guards(script_map.source or "")
 
     parts.append(f"Translate this R script into Python:\n\n```r\n{r_source}\n```")
 

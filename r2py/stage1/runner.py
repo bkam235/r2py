@@ -8,6 +8,96 @@ from pathlib import Path
 _R_IDENT_RE = _re.compile(r"^[a-zA-Z.][a-zA-Z0-9._]*$")
 _CRAWLER_PKG_RE = _re.compile(r"^#\s*package:\s*(\S+)", _re.MULTILINE)
 
+# ---------------------------------------------------------------------------
+# R guard stripping — removes interactive/example guards so code always runs
+# ---------------------------------------------------------------------------
+
+_GUARD_COND_STARTS = (
+    'rlang::is_interactive(',
+    'interactive(',
+    'FALSE',
+    'rlang::is_installed(',
+    'requireNamespace(',
+)
+
+
+def _is_guard_opening(stripped_line: str) -> bool:
+    """Return True if *stripped_line* opens a known R example guard."""
+    if not stripped_line.startswith('if'):
+        return False
+    after_if = stripped_line[2:].lstrip()
+    if not after_if.startswith('('):
+        return False
+    cond = after_if[1:].lstrip()
+    return any(cond.startswith(k) for k in _GUARD_COND_STARTS)
+
+
+def _extract_inline_body(stripped_line: str) -> str | None:
+    """Extract the body from a single-line if-guard (no braces)."""
+    after_if = stripped_line[2:].lstrip()
+    depth = 0
+    for idx, ch in enumerate(after_if):
+        if ch == '(':
+            depth += 1
+        elif ch == ')':
+            depth -= 1
+            if depth == 0:
+                body = after_if[idx + 1:].strip()
+                return body if body else None
+    return None
+
+
+def strip_r_guards(source: str) -> str:
+    """Strip R interactive/example guards and withAutoprint wrappers.
+
+    Removes if-guards (rlang::is_interactive, interactive, FALSE,
+    rlang::is_installed, requireNamespace) and withAutoprint / force wrappers
+    so the guarded code executes unconditionally in the sandbox.
+    """
+    lines = source.splitlines(keepends=True)
+    out: list[str] = []
+    guard_stack: list[int] = []
+    i = 0
+    while i < len(lines):
+        stripped = lines[i].lstrip()
+
+        if _is_guard_opening(stripped):
+            if '{' in stripped:
+                depth = stripped.count('{') - stripped.count('}')
+                if depth > 0:
+                    guard_stack.append(depth)
+                    i += 1
+                    continue
+                # Braces balanced on one line: extract body between braces.
+                m = _re.search(r'\{(.+)\}', stripped)
+                if m:
+                    body = m.group(1).strip()
+                    indent = lines[i][:len(lines[i]) - len(lines[i].lstrip())]
+                    nl = '\n' if lines[i].endswith('\n') else ''
+                    out.append(indent + body + nl)
+                i += 1
+                continue
+            else:
+                body = _extract_inline_body(stripped)
+                if body:
+                    indent = lines[i][:len(lines[i]) - len(lines[i].lstrip())]
+                    nl = '\n' if lines[i].endswith('\n') else ''
+                    out.append(indent + body + nl)
+                i += 1
+                continue
+
+        if guard_stack:
+            delta = lines[i].count('{') - lines[i].count('}')
+            guard_stack[-1] += delta
+            if guard_stack[-1] <= 0:
+                guard_stack.pop()
+                i += 1
+                continue
+
+        out.append(lines[i])
+        i += 1
+    return ''.join(out)
+
 from ..types import CaptureSpec, EffectBundle, EffectClass
 
 # Default capture spec used for full script runs.
@@ -17,6 +107,7 @@ DEFAULT_CAPTURE: CaptureSpec = frozenset({
     EffectClass.GRAPHICS,
     EffectClass.DATA,
     EffectClass.ENV,
+    EffectClass.HTML,
     EffectClass.WARNINGS,
 })
 
@@ -30,7 +121,7 @@ def run_script(
     from ..stage0.sandbox.r_sandbox import RSandbox
     from ..stage0.sandbox.isolation import TempWorkdir
 
-    source = r_path.read_text(encoding="utf-8")
+    source = strip_r_guards(r_path.read_text(encoding="utf-8"))
     with TempWorkdir() as workdir:
         sandbox = RSandbox()
         return sandbox.run(
@@ -87,7 +178,7 @@ def run_script_checkpointed(
         checkpoint_line = f'\n.r2py_cp("{safe_eid}")\n'
         lines.insert(insert_after + 1, checkpoint_line)
 
-    checkpointed_source = "".join(lines)
+    checkpointed_source = strip_r_guards("".join(lines))
 
     # If the script has crawler metadata naming its source package, pre-load
     # that package so its own examples can find their unexported symbols.
@@ -111,7 +202,7 @@ def run_script_checkpointed(
         except Exception:
             # If the checkpointed run fails, fall back to plain run.
             full_bundle = sandbox.run(
-                r_source,
+                strip_r_guards(r_source),
                 workdir=workdir,
                 capture=capture,
                 timeout_s=timeout_s,

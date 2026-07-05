@@ -23,6 +23,7 @@ def translate(
     data_compare: str = "auto",      # "auto" | "exact" | "embedding"
     no_seeds: bool = False,          # ignore seed:true patterns (§6.7 transfer experiment)
     n_seeds: int = 3,                # cheap seeds to try before agent escalation (best-of-N)
+    bare_seed: bool = True,          # first seed uses minimal prompt (no pattern library)
     output_dir: "str | Path | None" = None,  # if set, write edits.log.jsonl + library_diff.json
     progress=None,                   # callable(ProgressEvent) for progress reporting; None = silent
     resume: bool = False,            # if True and py_path exists, continue improving it; if False and py_path exists, warn
@@ -66,6 +67,7 @@ def translate(
         data_compare=data_compare,
         no_seeds=no_seeds,
         n_seeds=n_seeds,
+        bare_seed=bare_seed,
         output_dir=Path(output_dir) if output_dir is not None else None,
         checkpoint_path=Path(py_path),
         model=model,
@@ -78,11 +80,20 @@ def translate(
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     _write_translation_log(Path(py_path), script_map, result)
     _append_run_record(Path(r_path), result, model, escalation_model or model)
-    if result.final_score >= score_threshold:
+    # Lower the threshold for HTML-generating scripts where the aggregate
+    # is artificially deflated by DATA/STDOUT noise.
+    _effective_threshold = score_threshold
+    if result.final_score_report:
+        from .types import EffectClass as _EC
+        _html_score = result.final_score_report.by_effect.get(_EC.HTML, 0.0)
+        if _html_score >= 0.7:
+            _effective_threshold = min(score_threshold, 0.5)
+
+    if result.final_score >= _effective_threshold:
         seeded = seed_from_translation(
             r_path, py_path, library=library,
             score_report=result.final_score_report,
-            entity_score_threshold=score_threshold,
+            entity_score_threshold=_effective_threshold,
         )
         if seeded:
             print(f"[Library] Seeded {len(seeded)} patterns: {seeded}")

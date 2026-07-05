@@ -37,7 +37,8 @@ def reason(
 
     Returns (improved_source, score_report) or None if no improvement was achieved.
     """
-    r_source = getattr(script_map, "source", "") or ""
+    from ..stage1.runner import strip_r_guards
+    r_source = strip_r_guards(getattr(script_map, "source", "") or "")
     best_source = current_source
     best_score = score_report.aggregate
     report = score_report
@@ -237,14 +238,15 @@ def reason(
             print(f"[Agent]   Rewrite scored: {new_report.aggregate:.3f} "
                   f"(was {best_score:.3f}), "
                   f"exit_code={new_report.py_exit_code}")
-            crash_msg = ""
+            crash_msg = full_msg = ""
             if new_report.py_exit_code != 0 and new_report.feedback:
                 crash_fb = [fb for fb in new_report.feedback if fb.effect_class.value == "syntax"]
                 if crash_fb:
                     # Prefer the traceback message over the generic exit-code message.
                     detailed = [fb for fb in crash_fb
                                 if "Python crashed" in fb.message and len(fb.message) > 60]
-                    crash_msg = (detailed[0] if detailed else crash_fb[0]).message[:300]
+                    full_msg = (detailed[0] if detailed else crash_fb[0]).message
+                    crash_msg = full_msg[:300]
                     print(f"[Agent]   Crash: {crash_msg}")
 
             if new_report.aggregate > best_score:
@@ -274,7 +276,7 @@ def reason(
             else:
                 stall_count += 1
                 crash_detail = f" Python error: {crash_msg}" if crash_msg else ""
-                crash_detail += _auto_lookup_on_crash(crash_msg, harness, new_source)
+                crash_detail += _auto_lookup_on_crash(full_msg if crash_msg else "", harness, new_source)
                 history.append(
                     f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count}).{crash_detail}")
                 report = new_report if new_report.aggregate == best_score else report
@@ -521,10 +523,13 @@ def _search_module_names(module: str, query: str) -> str:
         "        hits.append(n)\n"
         "print('\\n'.join(hits[:30]))\n"
     )
-    r = subprocess.run(
-        [sys.executable, "-c", code],
-        capture_output=True, text=True, timeout=10,
-    )
+    try:
+        r = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True, text=True, timeout=15,
+        )
+    except subprocess.TimeoutExpired:
+        return ""
     return r.stdout.strip() if r.returncode == 0 else ""
 
 
@@ -565,6 +570,11 @@ def _search_alternative_module(module: str, name: str, py_source: str = "") -> s
     return ""
 
 
+_FROM_IMPORT_RE = re.compile(
+    r"from\s+([\w.]+)\s+import\s+(.+)"
+)
+
+
 def _auto_lookup_on_crash(crash_msg: str, harness: "HarnessTools", py_source: str = "") -> str:
     """When a crash is an import/attribute error, auto-lookup the module's docs.
 
@@ -576,7 +586,11 @@ def _auto_lookup_on_crash(crash_msg: str, harness: "HarnessTools", py_source: st
     if m:
         name, module, missing_module = m.group(1), m.group(2), m.group(3)
         if module and name:
-            # "cannot import name 'X' from 'Y'" → search Y for names like X
+            # Check ALL names in the import line, not just the one that failed.
+            corrections = _check_all_import_names(crash_msg, module, py_source)
+            if corrections:
+                return "\n  [Auto-lookup] Import corrections for " + module + ":\n" + corrections
+            # Fallback: search for the single failing name
             matches = _search_module_names(module, name)
             if matches:
                 return (
@@ -607,6 +621,84 @@ def _auto_lookup_on_crash(crash_msg: str, harness: "HarnessTools", py_source: st
             return alt
         return f"\n  [Auto-lookup] '{attr}' not in {module}, no similar names found."
     return ""
+
+
+def _check_all_import_names(crash_msg: str, module: str, py_source: str = "") -> str:
+    """Parse the import line from the traceback or source, check all names.
+
+    Returns a formatted string with corrections for wrong names, or empty string.
+    """
+    import subprocess, sys
+    # Try extracting from the traceback first
+    names: list[str] = []
+    im = _FROM_IMPORT_RE.search(crash_msg)
+    if im and im.group(1) == module:
+        names_str = im.group(2).strip().rstrip("\\")
+        names_str = names_str.strip("()")
+        names = [n.strip().rstrip(",") for n in names_str.split(",") if n.strip()]
+    # If traceback had a multi-line import (just "("), parse the Python source
+    if not names and py_source:
+        _imp_re = re.compile(
+            r"from\s+" + re.escape(module) + r"\s+import\s+\(([^)]+)\)",
+            re.DOTALL,
+        )
+        m2 = _imp_re.search(py_source)
+        if m2:
+            names = [n.strip().rstrip(",") for n in m2.group(1).replace("\n", ",").split(",") if n.strip()]
+        elif im and im.group(1) == module:
+            # Single-line fallback: re-search py_source for single-line import
+            m3 = re.search(r"from\s+" + re.escape(module) + r"\s+import\s+(.+)", py_source)
+            if m3:
+                names_str = m3.group(1).strip().rstrip("\\").strip("()")
+                names = [n.strip().rstrip(",") for n in names_str.split(",") if n.strip()]
+    if not names:
+        return ""
+    # Check which names exist; rank matches by word-set similarity
+    code = (
+        "import importlib, json\n"
+        f"_m = importlib.import_module({module!r})\n"
+        "_ns = set(getattr(_m, '__all__', None) or "
+        "[n for n in dir(_m) if not n.startswith('_')])\n"
+        f"names = {names!r}\n"
+        "result = {}\n"
+        "for n in names:\n"
+        "    if n not in _ns:\n"
+        "        q = n.lower()\n"
+        "        qwords = set(q.replace('-','_').split('_'))\n"
+        "        scored = []\n"
+        "        for x in _ns:\n"
+        "            xl = x.lower()\n"
+        "            xwords = set(xl.replace('-','_').split('_'))\n"
+        "            if qwords == xwords:\n"
+        "                scored.append((0, x))\n"
+        "            elif q in xl:\n"
+        "                scored.append((1, x))\n"
+        "            elif qwords & xwords and len(qwords & xwords) >= len(qwords) // 2 + 1:\n"
+        "                scored.append((2, x))\n"
+        "        scored.sort()\n"
+        "        result[n] = [x for _, x in scored[:5]]\n"
+        "print(json.dumps(result))\n"
+    )
+    try:
+        r = subprocess.run(
+            [sys.executable, "-c", code],
+            capture_output=True, text=True, timeout=20,
+        )
+        if r.returncode != 0:
+            return ""
+        import json
+        wrong_names = json.loads(r.stdout.strip())
+    except Exception:
+        return ""
+    if not wrong_names:
+        return ""
+    parts = []
+    for wrong, suggestions in wrong_names.items():
+        if suggestions:
+            parts.append(f"    {wrong} -> try: {', '.join(suggestions)}")
+        else:
+            parts.append(f"    {wrong} -> NOT FOUND in {module}")
+    return "\n".join(parts)
 
 
 def _check_syntax(source: str) -> str | None:

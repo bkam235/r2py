@@ -11,7 +11,7 @@ R_EPILOGUE = """\
 for (.r2py_v in ls(envir = .GlobalEnv)) {
   if (startsWith(.r2py_v, ".r2py_")) next
   .r2py_obj <- get(.r2py_v, envir = .GlobalEnv)
-  if (inherits(.r2py_obj, 'shiny.tag') || inherits(.r2py_obj, 'htmltools_tag')) {
+  if (inherits(.r2py_obj, 'shiny.tag') || inherits(.r2py_obj, 'shiny.tag.list') || inherits(.r2py_obj, 'htmltools_tag')) {
     tryCatch({
       .r2py_html_list[[.r2py_v]] <- as.character(
         htmltools::renderTags(.r2py_obj)$html
@@ -43,6 +43,14 @@ try:
             import plotly.graph_objects as _r2py_go
             if isinstance(_r2py_hv, _r2py_go.Figure):
                 _r2py_html_out[_r2py_hk] = _r2py_hv.to_html(full_html=False)
+                continue
+        except ImportError:
+            pass
+        # htmltools Tag / TagList (shiny UI objects)
+        try:
+            from htmltools._core import Tag as _r2py_Tag, TagList as _r2py_TagList
+            if isinstance(_r2py_hv, (_r2py_Tag, _r2py_TagList)):
+                _r2py_html_out[_r2py_hk] = str(_r2py_hv)
                 continue
         except ImportError:
             pass
