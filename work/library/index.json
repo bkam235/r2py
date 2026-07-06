@@ -16,6 +16,9 @@
     ":": [
       "foo"
     ],
+    "rlang:": [
+      "rlang.is-installed"
+    ],
     "shiny:": [
       "shiny.shinyapp"
     ]
@@ -67,6 +70,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "rlang.is-installed": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "rlang",
       "ast_shape_hash": ""
     },
     "shiny.shinyapp": {
