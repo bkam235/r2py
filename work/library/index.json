@@ -21,8 +21,16 @@
     "clock:": [
       "clock.date-build"
     ],
+    "dplyr:": [
+      "dplyr.filter"
+    ],
     ":": [
       "foo"
+    ],
+    "ggplot2:": [
+      "ggplot2.facet-wrap",
+      "ggplot2.geom-path",
+      "ggplot2.ggplot"
     ],
     "rlang:": [
       "rlang.is-installed"
@@ -104,12 +112,44 @@
       "package": "clock",
       "ast_shape_hash": ""
     },
+    "dplyr.filter": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "dplyr",
+      "ast_shape_hash": ""
+    },
     "foo": {
       "confidence": "tentative",
       "evidence_count": 0,
       "contradictions_count": 0,
       "seed": true,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "ggplot2.facet-wrap": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "ggplot2.geom-path": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "ggplot2.ggplot": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ggplot2",
       "ast_shape_hash": ""
     },
     "rlang.is-installed": {
