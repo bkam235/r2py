@@ -13,6 +13,9 @@
     "bslib:": [
       "bslib.popover"
     ],
+    "clock:": [
+      "clock.date-build"
+    ],
     ":": [
       "foo"
     ],
@@ -62,6 +65,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "bslib",
+      "ast_shape_hash": ""
+    },
+    "clock.date-build": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "clock",
       "ast_shape_hash": ""
     },
     "foo": {
