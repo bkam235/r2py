@@ -20,7 +20,7 @@ Translate R `as.logical` (FunctionCall from base) to Python. See verified exampl
 (none)
 
 ## Translation Examples
-- {"r_hash": "a6d27aa0", "r_snippet": "as.logical(w) # does not coerce back", "py_snippet": "print(w.astype(bool))", "score": 0.9, "script_id": "auto"}
+- {"r_hash": "a6d27aa0", "r_snippet": "as.logical(w) # does not coerce back", "py_snippet": "res_logical = w.astype(bool)\n# R's print: [1] TRUE\nprint(f\"[1] {'TRUE' if res_logical[0] else 'FALSE' if res_logical.size == 1 else res_logical}\")", "score": 1.0, "script_id": "auto"}
 
 ## Edit Examples
 (none)
