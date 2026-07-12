@@ -27,6 +27,11 @@
     ":": [
       "foo"
     ],
+    "forcats:": [
+      "forcats.lvls-expand",
+      "forcats.lvls-reorder",
+      "forcats.lvls-revalue"
+    ],
     "ggplot2:": [
       "ggplot2.facet-wrap",
       "ggplot2.geom-path",
@@ -126,6 +131,30 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "",
+      "ast_shape_hash": ""
+    },
+    "forcats.lvls-expand": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "forcats",
+      "ast_shape_hash": ""
+    },
+    "forcats.lvls-reorder": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "forcats",
+      "ast_shape_hash": ""
+    },
+    "forcats.lvls-revalue": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "forcats",
       "ast_shape_hash": ""
     },
     "ggplot2.facet-wrap": {
