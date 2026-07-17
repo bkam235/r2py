@@ -37,6 +37,15 @@
       "ggplot2.geom-path",
       "ggplot2.ggplot"
     ],
+    "googledrive:": [
+      "googledrive.drive-trash"
+    ],
+    "googlesheets4:": [
+      "googlesheets4.gs4-find",
+      "googlesheets4.gs4-has-token",
+      "googlesheets4.range-clear",
+      "googlesheets4.range-flood"
+    ],
     "rlang:": [
       "rlang.is-installed"
     ],
@@ -179,6 +188,46 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "googledrive.drive-trash": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "googledrive",
+      "ast_shape_hash": ""
+    },
+    "googlesheets4.gs4-find": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "googlesheets4",
+      "ast_shape_hash": ""
+    },
+    "googlesheets4.gs4-has-token": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "googlesheets4",
+      "ast_shape_hash": ""
+    },
+    "googlesheets4.range-clear": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "googlesheets4",
+      "ast_shape_hash": ""
+    },
+    "googlesheets4.range-flood": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "googlesheets4",
       "ast_shape_hash": ""
     },
     "rlang.is-installed": {
