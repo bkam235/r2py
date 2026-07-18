@@ -66,7 +66,11 @@ def analyze(
         _all_free_refs.update(_e.free_variable_refs)
     _uncaptured = _all_free_refs - set(main_bundle.data.keys())
     if _uncaptured:
-        _extra = _probe_inherited_vars(_uncaptured, timeout_s)
+        _imported_pkgs = [
+            _e.package for _e in entities.values()
+            if _e.kind == EntityKind.LIBRARY_IMPORT and _e.package
+        ]
+        _extra = _probe_inherited_vars(_uncaptured, timeout_s, packages=_imported_pkgs)
         main_bundle.data.update(_extra)
 
     # ── Step 4 + 6: branch extraction loop ──────────────────────────────────
@@ -326,7 +330,9 @@ def _collect_branch_nodes_rec(
         _collect_branch_nodes_rec(child, out, counter, entities)
 
 
-def _probe_inherited_vars(names: set[str], timeout_s: float) -> dict:
+def _probe_inherited_vars(
+    names: set[str], timeout_s: float, *, packages: list[str] | None = None,
+) -> dict:
     """Capture R values that exist on the search path but not in .GlobalEnv.
 
     For each name in *names*, if R can find it via ``exists(name, inherits=TRUE)``
@@ -334,14 +340,21 @@ def _probe_inherited_vars(names: set[str], timeout_s: float) -> dict:
     etc.) and it is not a function or environment, assign it into .GlobalEnv so
     the standard Stage 0 data-capture epilogue picks it up.
 
+    *packages* are loaded first so package-exported datasets (e.g. dplyr::storms)
+    are on the search path.
+
     Returns a dict of name → captured value (same format as EffectBundle.data).
     """
     if not names:
         return {}
 
+    lib_lines = ""
+    for pkg in (packages or []):
+        lib_lines += f'suppressPackageStartupMessages(library({pkg}))\n'
+
     r_names = "c(" + ", ".join(f'"{n}"' for n in sorted(names)) + ")"
     probe_source = f"""\
-for (.r2py_v in {r_names}) {{
+{lib_lines}for (.r2py_v in {r_names}) {{
   if (exists(.r2py_v, inherits = TRUE) && !.r2py_v %in% ls(envir = .GlobalEnv)) {{
     .r2py_obj <- get(.r2py_v, inherits = TRUE)
     if (!is.function(.r2py_obj) && !is.environment(.r2py_obj)) {{

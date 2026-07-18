@@ -37,20 +37,6 @@ def _on_progress(event) -> None:
 # input_filenames = random.sample(input_filenames, 20) #don't use random script
 
 all_translated_scripts = [
-    "bslib__rd_example__popover_Rd.R",
-    "cli__rd_example__cat_line_Rd.R",
-    "clock__rd_example__duration_spanning_seq_Rd.R",
-    "clock__vignette__clock_s4.R",
-    "dplyr__rd_example__all_equal_Rd.R",
-    "dplyr__rd_example__storms_Rd.R",
-    "dplyr__vignette__in-packages_s3.R",
-    "dplyr__vignette__two-table_s13.R",
-    "dplyr__vignette__window-functions_s11.R",
-    "forcats__rd_example__lvls_Rd.R",
-    "ggplot2__rd_example__facet_wrap_Rd.R",
-    "glue__vignette__wrappers_s1.R",
-    "googlesheets4__rd_example__range_flood_Rd.R",
-    "googlesheets4__rd_example__sheet_append_Rd.R",
     "haven__rd_example__print_labels_Rd.R",
     "modelr__rd_example__typical_Rd.R",
     "plyr__rd_example__splitter_a_Rd.R",
@@ -80,11 +66,24 @@ regression_test_08 = [
     "broom__rd_example__durbinWatsonTest_tidiers_Rd.R",
     "S7__vignette__generics-methods_s13.R",
     "bit__rd_example__chunk_Rd.R",
-    "bit__vignette__bit-usage_s15.R"
+    "bit__vignette__bit-usage_s15.R",
+    "bslib__rd_example__popover_Rd.R",
+    "clock__rd_example__duration_spanning_seq_Rd.R",
+    "clock__vignette__clock_s4.R",
+    "cli__rd_example__cat_line_Rd.R",
+    "dplyr__rd_example__all_equal_Rd.R",
+    "dplyr__vignette__in-packages_s3.R",
+    "dplyr__rd_example__storms_Rd.R",
+    "dplyr__vignette__two-table_s13.R",
+    "dplyr__vignette__window-functions_s11.R",
+    "forcats__rd_example__lvls_Rd.R",
+    "ggplot2__rd_example__facet_wrap_Rd.R",
+    "googlesheets4__rd_example__range_flood_Rd.R",
+    "googlesheets4__rd_example__sheet_append_Rd.R"
 ]
 
-# input_filenames = [] #translate this specific script
-input_filenames = all_translated_scripts[:1]
+# input_filenames = [""] #translate this specific script
+input_filenames = all_translated_scripts[:3]
 # input_filenames = regression_test_08
 
 
@@ -113,11 +112,11 @@ for r_script, py_script in scripts:
                        model=trans_model,
                        escalation_model=trans_model,
                        progress=_on_progress,
-                       score_threshold=0.6,
-                       n_seeds=3,
+                       score_threshold=0.8,
+                       n_bare_seeds=2,
+                       n_structured_seeds=2,
                        max_iters=20,
-                       max_stalls=10,
-                       bare_seed=True)
+                       max_stalls=10)
 
 # from r2py import seed_from_translation
 # seed_from_translation(

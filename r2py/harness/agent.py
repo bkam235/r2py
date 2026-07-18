@@ -238,16 +238,14 @@ def reason(
             print(f"[Agent]   Rewrite scored: {new_report.aggregate:.3f} "
                   f"(was {best_score:.3f}), "
                   f"exit_code={new_report.py_exit_code}")
-            crash_msg = full_msg = ""
+            crash_msg = ""
             if new_report.py_exit_code != 0 and new_report.feedback:
                 crash_fb = [fb for fb in new_report.feedback if fb.effect_class.value == "syntax"]
                 if crash_fb:
-                    # Prefer the traceback message over the generic exit-code message.
                     detailed = [fb for fb in crash_fb
                                 if "Python crashed" in fb.message and len(fb.message) > 60]
-                    full_msg = (detailed[0] if detailed else crash_fb[0]).message
-                    crash_msg = full_msg[:300]
-                    print(f"[Agent]   Crash: {crash_msg}")
+                    crash_msg = (detailed[0] if detailed else crash_fb[0]).message
+                    print(f"[Agent]   Crash: {crash_msg[:300]}")
 
             if new_report.aggregate > best_score:
                 # Code review gate: check for rule violations before adopting
@@ -276,7 +274,7 @@ def reason(
             else:
                 stall_count += 1
                 crash_detail = f" Python error: {crash_msg}" if crash_msg else ""
-                crash_detail += _auto_lookup_on_crash(full_msg if crash_msg else "", harness, new_source)
+                crash_detail += _auto_lookup_on_crash(crash_msg, harness, new_source)
                 history.append(
                     f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count}).{crash_detail}")
                 report = new_report if new_report.aggregate == best_score else report

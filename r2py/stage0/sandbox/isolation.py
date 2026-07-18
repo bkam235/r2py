@@ -34,7 +34,9 @@ _ALLOWED_ENV_VARS = frozenset({
 def scrub_env(base_env: dict[str, str] | None = None) -> dict[str, str]:
     """Return a clean subprocess env: only whitelisted vars, no dangerous overrides."""
     src = base_env if base_env is not None else dict(os.environ)
-    return {k: v for k, v in src.items() if k in _ALLOWED_ENV_VARS}
+    env = {k: v for k, v in src.items() if k in _ALLOWED_ENV_VARS}
+    env["PYTHONIOENCODING"] = "utf-8"
+    return env
 
 
 def _file_hash(path: Path) -> str:

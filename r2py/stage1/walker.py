@@ -69,13 +69,13 @@ _LITERAL_KINDS = frozenset({
 _ASSIGN_OPS = frozenset({"<-", "=", "<<-", "->", "->>"})
 
 
-def _visit(node: AstNode, ctx: _WalkContext) -> None:
+def _visit(node: AstNode, ctx: _WalkContext, *, is_statement: bool = False) -> None:
     """Dispatch on top-level node kinds; recurse into children for others."""
     kind = node.kind
 
     if kind == "program":
         for child in node.named_children():
-            _visit(child, ctx)
+            _visit(child, ctx, is_statement=True)
 
     elif kind == "binary_operator":
         _visit_binary_op(node, ctx)
@@ -94,7 +94,10 @@ def _visit(node: AstNode, ctx: _WalkContext) -> None:
 
     elif kind == "braced_expression":
         for child in node.named_children():
-            _visit(child, ctx)
+            _visit(child, ctx, is_statement=True)
+
+    elif kind == "identifier" and is_statement:
+        _visit_bare_identifier(node, ctx)
 
     else:
         # Recurse for anything else (e.g. parenthesized expressions)
@@ -316,6 +319,29 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
                     _visit_library_call(val, _call_name(val), ctx)
             elif child.kind == "call" and _call_name(child) in ("library", "require"):
                 _visit_library_call(child, _call_name(child), ctx)
+
+
+def _visit_bare_identifier(node: AstNode, ctx: _WalkContext) -> None:
+    """Handle a bare identifier at the top level (e.g. `storms`, `mtcars`).
+
+    In R, a bare name as a statement prints the object.  This creates an
+    entity so the data-shim mechanism can capture the value and the
+    translation reproduces the print.
+    """
+    name = node.text.strip("`\"")
+    if not name:
+        return
+    entity_id = ctx.fresh_id(name)
+    loc = _span(node, ctx.source_file)
+    free_refs = [name]
+    entity = Entity(
+        id=entity_id,
+        kind=EntityKind.VARIABLE,
+        name=name,
+        source_span=loc,
+        free_variable_refs=free_refs,
+    )
+    ctx.add(entity)
 
 
 def _visit_library_call(node: AstNode, fn_name: str, ctx: _WalkContext) -> None:

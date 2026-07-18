@@ -438,12 +438,16 @@ def _build_sidecar_payload(script_map) -> str:
     sidecar (loop._write_data_sidecar) and the in-sandbox copy stay in lockstep.
 
     Entity-named variables are excluded: they are computed results that Python
-    must reproduce, not input data.  Without this filter the agent can load
-    pre-computed answers from the sidecar instead of translating the computation.
+    must reproduce, not input data.  However, names that the data shim needs
+    (input datasets like ``storms``, ``mtcars``) are kept even if they share
+    a name with an entity.
     """
+    from ..stage2.stitch import collect_shim_needed_names
     data = getattr(get_r_bundle(script_map), "data", {}) or {}
     entity_names = set(getattr(script_map, "entities", {}) or {})
-    filtered = {k: v for k, v in data.items() if k not in entity_names}
+    shim_names = set(collect_shim_needed_names(script_map))
+    filtered = {k: v for k, v in data.items()
+                if k not in entity_names or k in shim_names}
     return serialize_bundle_data(filtered)
 
 

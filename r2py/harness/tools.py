@@ -42,6 +42,7 @@ class HarnessTools:
         self._docs_cache: dict[str, str] = {}
         self._probe_history: list[tuple[str, str]] = []
         self.last_annotated_source: str = ""
+        self._r_packages = _collect_r_packages(script_map)
 
     def verify(self, python_source: str) -> "ScoreReport":
         """Run Stage 4 verification, return full ScoreReport with comparisons."""
@@ -119,6 +120,19 @@ class HarnessTools:
         import subprocess
         import sys
 
+        r_pkg_warning = ""
+        top_level = package.split(".")[0]
+        if top_level in self._r_packages:
+            r_pkg_warning = (
+                f"CAUTION: '{top_level}' is also an R package used in this "
+                f"script. The Python package shown below may be completely "
+                f"unrelated (e.g. R's 'bit' is boolean indexing, Python's "
+                f"'bit' is a Bitcoin library). Verify that the API below "
+                f"actually matches the R functionality before using it. "
+                f"If unrelated, implement the R behavior with standard "
+                f"Python or well-known libraries (numpy, pandas, etc.).\n\n"
+            )
+
         def _pydoc(q: str) -> str:
             r = subprocess.run(
                 [sys.executable, "-m", "pydoc", q],
@@ -158,8 +172,8 @@ class HarnessTools:
         )
 
         if not topic:
-            # Module listing requested directly.
-            return (overview_block or _pydoc(package))[:3000]
+            result = (overview_block or _pydoc(package))[:3000]
+            return r_pkg_warning + result if r_pkg_warning else result
 
         # Specific function/class docs.
         specific = _pydoc(f"{package}.{topic}")
@@ -174,7 +188,8 @@ class HarnessTools:
                 )
 
         parts = [p for p in [overview_block, specific[:1500]] if p]
-        return "\n\n".join(parts)[:3000]
+        result = "\n\n".join(parts)[:3000]
+        return r_pkg_warning + result if r_pkg_warning else result
 
     def _lookup_r_docs(self, package: str, topic: str) -> str:
         if topic:
@@ -211,4 +226,17 @@ class HarnessTools:
         if entity is None:
             return []
         return self._library.retrieve(entity, k=k)
+
+
+def _collect_r_packages(script_map: "ScriptMap") -> set[str]:
+    """Return the set of R package names used by this script."""
+    entities = getattr(script_map, "entities", {}) or {}
+    pkgs = {
+        getattr(e, "package", "")
+        for e in entities.values()
+        if getattr(e, "package", "")
+    }
+    pkgs.discard("")
+    pkgs.discard("base")
+    return pkgs
 

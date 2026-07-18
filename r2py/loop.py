@@ -80,8 +80,8 @@ def run_loop(
     use_judge: bool = False,
     data_compare: str = "auto",
     no_seeds: bool = False,
-    n_seeds: int = 1,
-    bare_seed: bool = True,
+    n_bare_seeds: int = 3,
+    n_structured_seeds: int = 3,
     output_dir: "Path | None" = None,
     checkpoint_path: "Path | None" = None,
     model: str = _LLM_DEFAULT_MODEL,
@@ -113,18 +113,6 @@ def run_loop(
     if hasattr(library, "index") and hasattr(library.index, "increment_runs"):
         library.index.increment_runs()
 
-    # --- Seed translation -------------------------------------------------- #
-    if seed_translation is not None:
-        seed = seed_translation
-        entity_line_map = _flatten(_rebuild(seed))
-        if not entity_line_map:
-            import warnings
-            warnings.warn(
-                "resume: no r2py entity sentinels found in existing file — "
-                "entity-level targeting will be disabled for this run.",
-                stacklevel=2,
-            )
-
     _sidecar_fn = (
         f"{checkpoint_path.stem}.r2py_data.json"
         if checkpoint_path is not None else None
@@ -148,15 +136,6 @@ def run_loop(
         verify_kwargs=verify_kwargs,
     )
 
-    if seed_translation is None:
-        seed, entity_line_map = _seed_translate(
-            script_map, library,
-            no_seeds=no_seeds, model=model,
-            sidecar_filename=_sidecar_fn,
-            script_relpath=_script_relpath,
-            bare=bare_seed,
-        )
-
     entities = getattr(script_map, "entities", {})
     _need_bundles = output_dir is not None
 
@@ -166,69 +145,99 @@ def run_loop(
     if checkpoint_path is not None:
         _write_data_sidecar(checkpoint_path, script_map)
 
-    # --- Verify seed 1 ----------------------------------------------------- #
-    seed, seed_decomp = _verify_seed(
-        seed, entity_line_map, script_map, stage4,
-        data_compare, use_judge, _need_bundles, output_dir,
-        _sidecar_fn, _shim_expected_names, entities, verify_kwargs,
-    )
-
-    _emit(progress, kind="seed_done", score=seed_decomp.aggregate)
-
     r_source = getattr(script_map, "source", "") or ""
 
-    # Review seed for rule compliance — only if it would meet threshold
-    if seed_decomp.aggregate >= score_threshold:
-        _seed_passed, _seed_reason = _review(
-            r_source, seed, script_map, model=escalation_model,
-        )
-        if not _seed_passed:
-            print(f"[Review]  Seed FAILED code review: {_seed_reason}")
-            seed_decomp = _penalise_reviewed(seed_decomp)
-
-    best_source = seed
-    best_decomp = seed_decomp
-
-    # --- Additional seeds (lazy: only when seed 1 is below reseed threshold) #
-    # When resuming a translation that scored 0.0, regenerate all n_seeds
-    # from scratch — the existing file is no better than nothing.
-    _reseed_from_scratch = (seed_translation is not None
-                           and best_decomp.aggregate == 0.0)
-    if _reseed_from_scratch:
-        _reseed_range = range(1, n_seeds + 1)
-    elif seed_translation is None and n_seeds > 1:
-        _reseed_range = range(2, n_seeds + 1)
+    # --- Build seed schedule: interleave bare and structured seeds ---------- #
+    # Each entry is (label, bare_flag). First seed gets full verification;
+    # subsequent seeds only run when below threshold.
+    _seed_schedule: list[tuple[str, bool]] = []
+    if seed_translation is not None:
+        # Resuming — if score is 0.0 we'll regenerate below.
+        pass
     else:
-        _reseed_range = range(0)  # empty — no additional seeds
+        for i in range(max(n_bare_seeds, n_structured_seeds)):
+            if i < n_bare_seeds:
+                _seed_schedule.append((f"Bare {i+1}", True))
+            if i < n_structured_seeds:
+                _seed_schedule.append((f"Structured {i+1}", False))
 
-    if _reseed_range and best_decomp.aggregate < score_threshold:
-        for seed_idx in _reseed_range:
-            alt_seed, alt_elmap = _seed_translate(
-                script_map, library,
-                no_seeds=no_seeds, model=model,
-                sidecar_filename=_sidecar_fn,
-                script_relpath=_script_relpath,
+    # --- Generate and verify seeds ----------------------------------------- #
+    best_source: str = ""
+    best_decomp: "ScoreReport | None" = None
+    entity_line_map: dict = {}
+
+    if seed_translation is not None:
+        seed = seed_translation
+        entity_line_map = _flatten(_rebuild(seed))
+        if not entity_line_map:
+            import warnings
+            warnings.warn(
+                "resume: no r2py entity sentinels found in existing file — "
+                "entity-level targeting will be disabled for this run.",
+                stacklevel=2,
             )
-            alt_seed, alt_decomp = _verify_seed(
-                alt_seed, alt_elmap, script_map, stage4,
-                data_compare, use_judge, False, None,
-                _sidecar_fn, _shim_expected_names, entities, verify_kwargs,
-            )
-            print(f"[Seed {seed_idx}] score: {alt_decomp.aggregate:.3f}")
+        seed, seed_decomp = _verify_seed(
+            seed, entity_line_map, script_map, stage4,
+            data_compare, use_judge, _need_bundles, output_dir,
+            _sidecar_fn, _shim_expected_names, entities, verify_kwargs,
+        )
+        best_source = seed
+        best_decomp = seed_decomp
+        _emit(progress, kind="seed_done", score=seed_decomp.aggregate)
+        # If resumed translation is worthless, run the full schedule
+        if best_decomp.aggregate == 0.0:
+            for i in range(max(n_bare_seeds, n_structured_seeds)):
+                if i < n_bare_seeds:
+                    _seed_schedule.append((f"Bare {i+1}", True))
+                if i < n_structured_seeds:
+                    _seed_schedule.append((f"Structured {i+1}", False))
+
+    for seed_label, bare_flag in _seed_schedule:
+        if best_decomp is not None and best_decomp.aggregate >= score_threshold:
+            break
+
+        alt_seed, alt_elmap = _seed_translate(
+            script_map, library,
+            no_seeds=no_seeds, model=model,
+            sidecar_filename=_sidecar_fn,
+            script_relpath=_script_relpath,
+            bare=bare_flag,
+        )
+        alt_seed, alt_decomp = _verify_seed(
+            alt_seed, alt_elmap, script_map, stage4,
+            data_compare, use_judge,
+            _need_bundles and best_decomp is None, output_dir,
+            _sidecar_fn, _shim_expected_names, entities, verify_kwargs,
+        )
+
+        if best_decomp is None:
+            best_source = alt_seed
+            best_decomp = alt_decomp
+            entity_line_map = alt_elmap
+            _emit(progress, kind="seed_done", score=alt_decomp.aggregate)
+        else:
+            print(f"[Seed]    {seed_label} score: {alt_decomp.aggregate:.3f}")
             if alt_decomp.aggregate > best_decomp.aggregate:
                 if alt_decomp.aggregate >= score_threshold:
                     alt_passed, alt_reason = _review(
                         r_source, alt_seed, script_map, model=escalation_model,
                     )
                     if not alt_passed:
-                        print(f"[Review]  Seed {seed_idx} FAILED: {alt_reason}")
+                        print(f"[Review]  Seed {seed_label} FAILED: {alt_reason}")
                         alt_decomp = _penalise_reviewed(alt_decomp)
                 if alt_decomp.aggregate > best_decomp.aggregate:
                     best_source = alt_seed
                     best_decomp = alt_decomp
                     entity_line_map = alt_elmap
-            if best_decomp.aggregate >= score_threshold:
-                break
+
+    # Review best seed for rule compliance — only if it would meet threshold
+    if best_decomp.aggregate >= score_threshold:
+        _seed_passed, _seed_reason = _review(
+            r_source, best_source, script_map, model=escalation_model,
+        )
+        if not _seed_passed:
+            print(f"[Review]  Seed FAILED code review: {_seed_reason}")
+            best_decomp = _penalise_reviewed(best_decomp)
 
     score_history = [best_decomp]
 
@@ -399,8 +408,11 @@ def _write_data_sidecar(py_path: "Path", script_map: object) -> None:
     data = getattr(bundle, "data", {}) or {}
     if not data:
         return
+    from .stage2.stitch import collect_shim_needed_names
     entity_names = set(getattr(script_map, "entities", {}) or {})
-    filtered = {k: v for k, v in data.items() if k not in entity_names}
+    shim_names = set(collect_shim_needed_names(script_map))
+    filtered = {k: v for k, v in data.items()
+                if k not in entity_names or k in shim_names}
     if not filtered:
         return
     sidecar = py_path.with_name(f"{py_path.stem}.r2py_data.json")
