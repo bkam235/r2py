@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 150" width="500" height="150">
+  <defs>
+    <linearGradient id="grad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#60A5FA"/>
+      <stop offset="100%" stop-color="#EAB308"/>
+    </linearGradient>
+  </defs>
+  <path d="M 250 5 L 274 24 L 226 24 Z" fill="#60A5FA"/>
+  <path d="M 226 27 L 274 27 L 250 47 Z" fill="#EAB308"/>
+  <text x="250" y="99" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="62" font-weight="bold">
+    <tspan fill="#60A5FA">r</tspan><tspan fill="#94A3B8">2</tspan><tspan fill="#EAB308">py</tspan>
+  </text>
+  <rect x="150" y="114" width="200" height="2" rx="1" fill="url(#grad)" opacity="0.4"/>
+  <text x="250" y="140" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="13" fill="#94A3B8" letter-spacing="0.3">
+    execution-verified, self-improving R-to-Python translation
+  </text>
+</svg>

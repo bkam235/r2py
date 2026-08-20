@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=42"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "r2py"
+version = "0.2.0"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = [
+    "anthropic",
+    "tree-sitter",
+    "tree-sitter-language-pack",
+    "scikit-image",
+    "Pillow",
+]
+
+[project.optional-dependencies]
+rpy2   = ["rpy2"]
+models = ["lightgbm"]
+embed  = ["sentence-transformers>=2.2"]
+
+[project.scripts]
+r2py = "r2py.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["r2py*"]
