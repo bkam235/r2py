@@ -79,6 +79,9 @@
     ],
     "vctrs:": [
       "vctrs.vec-fill-missing"
+    ],
+    "withr:": [
+      "withr.with-locale"
     ]
   },
   "meta": {
@@ -368,6 +371,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "vctrs",
+      "ast_shape_hash": ""
+    },
+    "withr.with-locale": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "withr",
       "ast_shape_hash": ""
     }
   }
