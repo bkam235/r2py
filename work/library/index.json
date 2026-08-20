@@ -71,6 +71,11 @@
     ],
     "shiny:": [
       "shiny.shinyapp"
+    ],
+    "timeDate:": [
+      "timedate.easter",
+      "timedate.goodfriday",
+      "timedate.holiday"
     ]
   },
   "meta": {
@@ -328,6 +333,30 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "shiny",
+      "ast_shape_hash": ""
+    },
+    "timedate.easter": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "timeDate",
+      "ast_shape_hash": ""
+    },
+    "timedate.goodfriday": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "timeDate",
+      "ast_shape_hash": ""
+    },
+    "timedate.holiday": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "timeDate",
       "ast_shape_hash": ""
     }
   }
