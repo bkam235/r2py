@@ -46,6 +46,9 @@
       "googlesheets4.range-clear",
       "googlesheets4.range-flood"
     ],
+    "modelr:": [
+      "modelr.typical"
+    ],
     "rlang:": [
       "rlang.is-installed"
     ],
@@ -228,6 +231,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "googlesheets4",
+      "ast_shape_hash": ""
+    },
+    "modelr.typical": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "modelr",
       "ast_shape_hash": ""
     },
     "rlang.is-installed": {
