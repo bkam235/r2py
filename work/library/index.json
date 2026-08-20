@@ -85,6 +85,12 @@
     ],
     "xfun:": [
       "xfun.protect-math"
+    ],
+    "xtable:": [
+      "xtable.as.is",
+      "xtable.as.math",
+      "xtable.sanitize",
+      "xtable.sanitize.numbers"
     ]
   },
   "meta": {
@@ -390,6 +396,38 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "xfun",
+      "ast_shape_hash": ""
+    },
+    "xtable.as.is": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xtable",
+      "ast_shape_hash": ""
+    },
+    "xtable.as.math": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xtable",
+      "ast_shape_hash": ""
+    },
+    "xtable.sanitize": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xtable",
+      "ast_shape_hash": ""
+    },
+    "xtable.sanitize.numbers": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xtable",
       "ast_shape_hash": ""
     }
   }
