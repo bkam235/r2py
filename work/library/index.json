@@ -82,6 +82,9 @@
     ],
     "withr:": [
       "withr.with-locale"
+    ],
+    "xfun:": [
+      "xfun.protect-math"
     ]
   },
   "meta": {
@@ -379,6 +382,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "withr",
+      "ast_shape_hash": ""
+    },
+    "xfun.protect-math": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xfun",
       "ast_shape_hash": ""
     }
   }
