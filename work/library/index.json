@@ -49,6 +49,9 @@
     "modelr:": [
       "modelr.typical"
     ],
+    "prodlim:": [
+      "prodlim.row.match"
+    ],
     "rlang:": [
       "rlang.is-installed"
     ],
@@ -239,6 +242,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "modelr",
+      "ast_shape_hash": ""
+    },
+    "prodlim.row.match": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "prodlim",
       "ast_shape_hash": ""
     },
     "rlang.is-installed": {
