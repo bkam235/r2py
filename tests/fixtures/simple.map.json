@@ -1,0 +1,3127 @@
+{
+  "source": "library(stats)\n\n# Variable assignment\nx <- 42L\n\n# Constant\nPI <- 3.14159\n\n# NA usage (\u00a73.7 na_semantics)\nna_val <- NA\n\n# Function definition\nadd_one <- function(n) {\n  n + 1\n}\n\n# Function call with side-effect prediction (STDOUT)\nprint(add_one(x))\n\n# If/else \u2014 one branch not taken (false branch for branch_extractor)\nif (x > 100) {\n  cat(\"big\\n\")\n} else {\n  message(\"small\")\n}\n\n# super-assignment (\u00a73.7 super_assign)\ncounter <- 0L\nincrement <- function() {\n  counter <<- counter + 1L\n}\nincrement()\n\n# Indexing (\u00a73.7 indexing_1based)\nv <- c(1, 2, 3)\nfirst <- v[1]\n\n# write.csv predicted effect (FILES)\n# write.csv(data.frame(x = v), \"out.csv\")\n",
+  "ast_root": {
+    "kind": "program",
+    "text": "library(stats)\n\n# Variable assignment\nx <- 42L\n\n# Constant\nPI <- 3.14159\n\n# NA usage (\u00a73.7 na_semantics)\nna_val <- NA\n\n# Function definition\nadd_one <- function(n) {\n  n + 1\n}\n\n# Function call with side-effect prediction (STDOUT)\nprint(add_one(x))\n\n# If/else \u2014 one branch not taken (false branch for branch_extractor)\nif (x > 100) {\n  cat(\"big\\n\")\n} else {\n  message(\"small\")\n}\n\n# super-assignment (\u00a73.7 super_assign)\ncounter <- 0L\nincrement <- function() {\n  counter <<- counter + 1L\n}\nincrement()\n\n# Indexing (\u00a73.7 indexing_1based)\nv <- c(1, 2, 3)\nfirst <- v[1]\n\n# write.csv predicted effect (FILES)\n# write.csv(data.frame(x = v), \"out.csv\")\n",
+    "start": [
+      0,
+      0
+    ],
+    "end": [
+      39,
+      0
+    ],
+    "start_byte": 0,
+    "end_byte": 649,
+    "is_named": true,
+    "children": [
+      {
+        "kind": "call",
+        "text": "library(stats)",
+        "start": [
+          0,
+          0
+        ],
+        "end": [
+          0,
+          14
+        ],
+        "start_byte": 0,
+        "end_byte": 14,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "library",
+            "start": [
+              0,
+              0
+            ],
+            "end": [
+              0,
+              7
+            ],
+            "start_byte": 0,
+            "end_byte": 7,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "arguments",
+            "text": "(stats)",
+            "start": [
+              0,
+              7
+            ],
+            "end": [
+              0,
+              14
+            ],
+            "start_byte": 7,
+            "end_byte": 14,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "(",
+                "text": "(",
+                "start": [
+                  0,
+                  7
+                ],
+                "end": [
+                  0,
+                  8
+                ],
+                "start_byte": 7,
+                "end_byte": 8,
+                "is_named": false,
+                "children": []
+              },
+              {
+                "kind": "argument",
+                "text": "stats",
+                "start": [
+                  0,
+                  8
+                ],
+                "end": [
+                  0,
+                  13
+                ],
+                "start_byte": 8,
+                "end_byte": 13,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "identifier",
+                    "text": "stats",
+                    "start": [
+                      0,
+                      8
+                    ],
+                    "end": [
+                      0,
+                      13
+                    ],
+                    "start_byte": 8,
+                    "end_byte": 13,
+                    "is_named": true,
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": ")",
+                "text": ")",
+                "start": [
+                  0,
+                  13
+                ],
+                "end": [
+                  0,
+                  14
+                ],
+                "start_byte": 13,
+                "end_byte": 14,
+                "is_named": false,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "comment",
+        "text": "# Variable assignment",
+        "start": [
+          2,
+          0
+        ],
+        "end": [
+          2,
+          21
+        ],
+        "start_byte": 16,
+        "end_byte": 37,
+        "is_named": true,
+        "children": []
+      },
+      {
+        "kind": "binary_operator",
+        "text": "x <- 42L",
+        "start": [
+          3,
+          0
+        ],
+        "end": [
+          3,
+          8
+        ],
+        "start_byte": 38,
+        "end_byte": 46,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "x",
+            "start": [
+              3,
+              0
+            ],
+            "end": [
+              3,
+              1
+            ],
+            "start_byte": 38,
+            "end_byte": 39,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "<-",
+            "text": "<-",
+            "start": [
+              3,
+              2
+            ],
+            "end": [
+              3,
+              4
+            ],
+            "start_byte": 40,
+            "end_byte": 42,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "integer",
+            "text": "42L",
+            "start": [
+              3,
+              5
+            ],
+            "end": [
+              3,
+              8
+            ],
+            "start_byte": 43,
+            "end_byte": 46,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "L",
+                "text": "L",
+                "start": [
+                  3,
+                  7
+                ],
+                "end": [
+                  3,
+                  8
+                ],
+                "start_byte": 45,
+                "end_byte": 46,
+                "is_named": false,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "comment",
+        "text": "# Constant",
+        "start": [
+          5,
+          0
+        ],
+        "end": [
+          5,
+          10
+        ],
+        "start_byte": 48,
+        "end_byte": 58,
+        "is_named": true,
+        "children": []
+      },
+      {
+        "kind": "binary_operator",
+        "text": "PI <- 3.14159",
+        "start": [
+          6,
+          0
+        ],
+        "end": [
+          6,
+          13
+        ],
+        "start_byte": 59,
+        "end_byte": 72,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "PI",
+            "start": [
+              6,
+              0
+            ],
+            "end": [
+              6,
+              2
+            ],
+            "start_byte": 59,
+            "end_byte": 61,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "<-",
+            "text": "<-",
+            "start": [
+              6,
+              3
+            ],
+            "end": [
+              6,
+              5
+            ],
+            "start_byte": 62,
+            "end_byte": 64,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "float",
+            "text": "3.14159",
+            "start": [
+              6,
+              6
+            ],
+            "end": [
+              6,
+              13
+            ],
+            "start_byte": 65,
+            "end_byte": 72,
+            "is_named": true,
+            "children": []
+          }
+        ]
+      },
+      {
+        "kind": "comment",
+        "text": "# NA usage (\u00a73.7 na_semantics)",
+        "start": [
+          8,
+          0
+        ],
+        "end": [
+          8,
+          31
+        ],
+        "start_byte": 74,
+        "end_byte": 105,
+        "is_named": true,
+        "children": []
+      },
+      {
+        "kind": "binary_operator",
+        "text": "na_val <- NA",
+        "start": [
+          9,
+          0
+        ],
+        "end": [
+          9,
+          12
+        ],
+        "start_byte": 106,
+        "end_byte": 118,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "na_val",
+            "start": [
+              9,
+              0
+            ],
+            "end": [
+              9,
+              6
+            ],
+            "start_byte": 106,
+            "end_byte": 112,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "<-",
+            "text": "<-",
+            "start": [
+              9,
+              7
+            ],
+            "end": [
+              9,
+              9
+            ],
+            "start_byte": 113,
+            "end_byte": 115,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "na",
+            "text": "NA",
+            "start": [
+              9,
+              10
+            ],
+            "end": [
+              9,
+              12
+            ],
+            "start_byte": 116,
+            "end_byte": 118,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "NA",
+                "text": "NA",
+                "start": [
+                  9,
+                  10
+                ],
+                "end": [
+                  9,
+                  12
+                ],
+                "start_byte": 116,
+                "end_byte": 118,
+                "is_named": false,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "comment",
+        "text": "# Function definition",
+        "start": [
+          11,
+          0
+        ],
+        "end": [
+          11,
+          21
+        ],
+        "start_byte": 120,
+        "end_byte": 141,
+        "is_named": true,
+        "children": []
+      },
+      {
+        "kind": "binary_operator",
+        "text": "add_one <- function(n) {\n  n + 1\n}",
+        "start": [
+          12,
+          0
+        ],
+        "end": [
+          14,
+          1
+        ],
+        "start_byte": 142,
+        "end_byte": 176,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "add_one",
+            "start": [
+              12,
+              0
+            ],
+            "end": [
+              12,
+              7
+            ],
+            "start_byte": 142,
+            "end_byte": 149,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "<-",
+            "text": "<-",
+            "start": [
+              12,
+              8
+            ],
+            "end": [
+              12,
+              10
+            ],
+            "start_byte": 150,
+            "end_byte": 152,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "function_definition",
+            "text": "function(n) {\n  n + 1\n}",
+            "start": [
+              12,
+              11
+            ],
+            "end": [
+              14,
+              1
+            ],
+            "start_byte": 153,
+            "end_byte": 176,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "function",
+                "text": "function",
+                "start": [
+                  12,
+                  11
+                ],
+                "end": [
+                  12,
+                  19
+                ],
+                "start_byte": 153,
+                "end_byte": 161,
+                "is_named": false,
+                "children": []
+              },
+              {
+                "kind": "parameters",
+                "text": "(n)",
+                "start": [
+                  12,
+                  19
+                ],
+                "end": [
+                  12,
+                  22
+                ],
+                "start_byte": 161,
+                "end_byte": 164,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "(",
+                    "text": "(",
+                    "start": [
+                      12,
+                      19
+                    ],
+                    "end": [
+                      12,
+                      20
+                    ],
+                    "start_byte": 161,
+                    "end_byte": 162,
+                    "is_named": false,
+                    "children": []
+                  },
+                  {
+                    "kind": "parameter",
+                    "text": "n",
+                    "start": [
+                      12,
+                      20
+                    ],
+                    "end": [
+                      12,
+                      21
+                    ],
+                    "start_byte": 162,
+                    "end_byte": 163,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "identifier",
+                        "text": "n",
+                        "start": [
+                          12,
+                          20
+                        ],
+                        "end": [
+                          12,
+                          21
+                        ],
+                        "start_byte": 162,
+                        "end_byte": 163,
+                        "is_named": true,
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": ")",
+                    "text": ")",
+                    "start": [
+                      12,
+                      21
+                    ],
+                    "end": [
+                      12,
+                      22
+                    ],
+                    "start_byte": 163,
+                    "end_byte": 164,
+                    "is_named": false,
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "braced_expression",
+                "text": "{\n  n + 1\n}",
+                "start": [
+                  12,
+                  23
+                ],
+                "end": [
+                  14,
+                  1
+                ],
+                "start_byte": 165,
+                "end_byte": 176,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "{",
+                    "text": "{",
+                    "start": [
+                      12,
+                      23
+                    ],
+                    "end": [
+                      12,
+                      24
+                    ],
+                    "start_byte": 165,
+                    "end_byte": 166,
+                    "is_named": false,
+                    "children": []
+                  },
+                  {
+                    "kind": "binary_operator",
+                    "text": "n + 1",
+                    "start": [
+                      13,
+                      2
+                    ],
+                    "end": [
+                      13,
+                      7
+                    ],
+                    "start_byte": 169,
+                    "end_byte": 174,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "identifier",
+                        "text": "n",
+                        "start": [
+                          13,
+                          2
+                        ],
+                        "end": [
+                          13,
+                          3
+                        ],
+                        "start_byte": 169,
+                        "end_byte": 170,
+                        "is_named": true,
+                        "children": []
+                      },
+                      {
+                        "kind": "+",
+                        "text": "+",
+                        "start": [
+                          13,
+                          4
+                        ],
+                        "end": [
+                          13,
+                          5
+                        ],
+                        "start_byte": 171,
+                        "end_byte": 172,
+                        "is_named": false,
+                        "children": []
+                      },
+                      {
+                        "kind": "float",
+                        "text": "1",
+                        "start": [
+                          13,
+                          6
+                        ],
+                        "end": [
+                          13,
+                          7
+                        ],
+                        "start_byte": 173,
+                        "end_byte": 174,
+                        "is_named": true,
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "}",
+                    "text": "}",
+                    "start": [
+                      14,
+                      0
+                    ],
+                    "end": [
+                      14,
+                      1
+                    ],
+                    "start_byte": 175,
+                    "end_byte": 176,
+                    "is_named": false,
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "comment",
+        "text": "# Function call with side-effect prediction (STDOUT)",
+        "start": [
+          16,
+          0
+        ],
+        "end": [
+          16,
+          52
+        ],
+        "start_byte": 178,
+        "end_byte": 230,
+        "is_named": true,
+        "children": []
+      },
+      {
+        "kind": "call",
+        "text": "print(add_one(x))",
+        "start": [
+          17,
+          0
+        ],
+        "end": [
+          17,
+          17
+        ],
+        "start_byte": 231,
+        "end_byte": 248,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "print",
+            "start": [
+              17,
+              0
+            ],
+            "end": [
+              17,
+              5
+            ],
+            "start_byte": 231,
+            "end_byte": 236,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "arguments",
+            "text": "(add_one(x))",
+            "start": [
+              17,
+              5
+            ],
+            "end": [
+              17,
+              17
+            ],
+            "start_byte": 236,
+            "end_byte": 248,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "(",
+                "text": "(",
+                "start": [
+                  17,
+                  5
+                ],
+                "end": [
+                  17,
+                  6
+                ],
+                "start_byte": 236,
+                "end_byte": 237,
+                "is_named": false,
+                "children": []
+              },
+              {
+                "kind": "argument",
+                "text": "add_one(x)",
+                "start": [
+                  17,
+                  6
+                ],
+                "end": [
+                  17,
+                  16
+                ],
+                "start_byte": 237,
+                "end_byte": 247,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "call",
+                    "text": "add_one(x)",
+                    "start": [
+                      17,
+                      6
+                    ],
+                    "end": [
+                      17,
+                      16
+                    ],
+                    "start_byte": 237,
+                    "end_byte": 247,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "identifier",
+                        "text": "add_one",
+                        "start": [
+                          17,
+                          6
+                        ],
+                        "end": [
+                          17,
+                          13
+                        ],
+                        "start_byte": 237,
+                        "end_byte": 244,
+                        "is_named": true,
+                        "children": []
+                      },
+                      {
+                        "kind": "arguments",
+                        "text": "(x)",
+                        "start": [
+                          17,
+                          13
+                        ],
+                        "end": [
+                          17,
+                          16
+                        ],
+                        "start_byte": 244,
+                        "end_byte": 247,
+                        "is_named": true,
+                        "children": [
+                          {
+                            "kind": "(",
+                            "text": "(",
+                            "start": [
+                              17,
+                              13
+                            ],
+                            "end": [
+                              17,
+                              14
+                            ],
+                            "start_byte": 244,
+                            "end_byte": 245,
+                            "is_named": false,
+                            "children": []
+                          },
+                          {
+                            "kind": "argument",
+                            "text": "x",
+                            "start": [
+                              17,
+                              14
+                            ],
+                            "end": [
+                              17,
+                              15
+                            ],
+                            "start_byte": 245,
+                            "end_byte": 246,
+                            "is_named": true,
+                            "children": [
+                              {
+                                "kind": "identifier",
+                                "text": "x",
+                                "start": [
+                                  17,
+                                  14
+                                ],
+                                "end": [
+                                  17,
+                                  15
+                                ],
+                                "start_byte": 245,
+                                "end_byte": 246,
+                                "is_named": true,
+                                "children": []
+                              }
+                            ]
+                          },
+                          {
+                            "kind": ")",
+                            "text": ")",
+                            "start": [
+                              17,
+                              15
+                            ],
+                            "end": [
+                              17,
+                              16
+                            ],
+                            "start_byte": 246,
+                            "end_byte": 247,
+                            "is_named": false,
+                            "children": []
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": ")",
+                "text": ")",
+                "start": [
+                  17,
+                  16
+                ],
+                "end": [
+                  17,
+                  17
+                ],
+                "start_byte": 247,
+                "end_byte": 248,
+                "is_named": false,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "comment",
+        "text": "# If/else \u2014 one branch not taken (false branch for branch_extractor)",
+        "start": [
+          19,
+          0
+        ],
+        "end": [
+          19,
+          70
+        ],
+        "start_byte": 250,
+        "end_byte": 320,
+        "is_named": true,
+        "children": []
+      },
+      {
+        "kind": "if_statement",
+        "text": "if (x > 100) {\n  cat(\"big\\n\")\n} else {\n  message(\"small\")\n}",
+        "start": [
+          20,
+          0
+        ],
+        "end": [
+          24,
+          1
+        ],
+        "start_byte": 321,
+        "end_byte": 380,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "if",
+            "text": "if",
+            "start": [
+              20,
+              0
+            ],
+            "end": [
+              20,
+              2
+            ],
+            "start_byte": 321,
+            "end_byte": 323,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "(",
+            "text": "(",
+            "start": [
+              20,
+              3
+            ],
+            "end": [
+              20,
+              4
+            ],
+            "start_byte": 324,
+            "end_byte": 325,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "binary_operator",
+            "text": "x > 100",
+            "start": [
+              20,
+              4
+            ],
+            "end": [
+              20,
+              11
+            ],
+            "start_byte": 325,
+            "end_byte": 332,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "identifier",
+                "text": "x",
+                "start": [
+                  20,
+                  4
+                ],
+                "end": [
+                  20,
+                  5
+                ],
+                "start_byte": 325,
+                "end_byte": 326,
+                "is_named": true,
+                "children": []
+              },
+              {
+                "kind": ">",
+                "text": ">",
+                "start": [
+                  20,
+                  6
+                ],
+                "end": [
+                  20,
+                  7
+                ],
+                "start_byte": 327,
+                "end_byte": 328,
+                "is_named": false,
+                "children": []
+              },
+              {
+                "kind": "float",
+                "text": "100",
+                "start": [
+                  20,
+                  8
+                ],
+                "end": [
+                  20,
+                  11
+                ],
+                "start_byte": 329,
+                "end_byte": 332,
+                "is_named": true,
+                "children": []
+              }
+            ]
+          },
+          {
+            "kind": ")",
+            "text": ")",
+            "start": [
+              20,
+              11
+            ],
+            "end": [
+              20,
+              12
+            ],
+            "start_byte": 332,
+            "end_byte": 333,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "braced_expression",
+            "text": "{\n  cat(\"big\\n\")\n}",
+            "start": [
+              20,
+              13
+            ],
+            "end": [
+              22,
+              1
+            ],
+            "start_byte": 334,
+            "end_byte": 352,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "{",
+                "text": "{",
+                "start": [
+                  20,
+                  13
+                ],
+                "end": [
+                  20,
+                  14
+                ],
+                "start_byte": 334,
+                "end_byte": 335,
+                "is_named": false,
+                "children": []
+              },
+              {
+                "kind": "call",
+                "text": "cat(\"big\\n\")",
+                "start": [
+                  21,
+                  2
+                ],
+                "end": [
+                  21,
+                  14
+                ],
+                "start_byte": 338,
+                "end_byte": 350,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "identifier",
+                    "text": "cat",
+                    "start": [
+                      21,
+                      2
+                    ],
+                    "end": [
+                      21,
+                      5
+                    ],
+                    "start_byte": 338,
+                    "end_byte": 341,
+                    "is_named": true,
+                    "children": []
+                  },
+                  {
+                    "kind": "arguments",
+                    "text": "(\"big\\n\")",
+                    "start": [
+                      21,
+                      5
+                    ],
+                    "end": [
+                      21,
+                      14
+                    ],
+                    "start_byte": 341,
+                    "end_byte": 350,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "(",
+                        "text": "(",
+                        "start": [
+                          21,
+                          5
+                        ],
+                        "end": [
+                          21,
+                          6
+                        ],
+                        "start_byte": 341,
+                        "end_byte": 342,
+                        "is_named": false,
+                        "children": []
+                      },
+                      {
+                        "kind": "argument",
+                        "text": "\"big\\n\"",
+                        "start": [
+                          21,
+                          6
+                        ],
+                        "end": [
+                          21,
+                          13
+                        ],
+                        "start_byte": 342,
+                        "end_byte": 349,
+                        "is_named": true,
+                        "children": [
+                          {
+                            "kind": "string",
+                            "text": "\"big\\n\"",
+                            "start": [
+                              21,
+                              6
+                            ],
+                            "end": [
+                              21,
+                              13
+                            ],
+                            "start_byte": 342,
+                            "end_byte": 349,
+                            "is_named": true,
+                            "children": [
+                              {
+                                "kind": "\"",
+                                "text": "\"",
+                                "start": [
+                                  21,
+                                  6
+                                ],
+                                "end": [
+                                  21,
+                                  7
+                                ],
+                                "start_byte": 342,
+                                "end_byte": 343,
+                                "is_named": false,
+                                "children": []
+                              },
+                              {
+                                "kind": "string_content",
+                                "text": "big\\n",
+                                "start": [
+                                  21,
+                                  7
+                                ],
+                                "end": [
+                                  21,
+                                  12
+                                ],
+                                "start_byte": 343,
+                                "end_byte": 348,
+                                "is_named": true,
+                                "children": [
+                                  {
+                                    "kind": "escape_sequence",
+                                    "text": "\\n",
+                                    "start": [
+                                      21,
+                                      10
+                                    ],
+                                    "end": [
+                                      21,
+                                      12
+                                    ],
+                                    "start_byte": 346,
+                                    "end_byte": 348,
+                                    "is_named": true,
+                                    "children": []
+                                  }
+                                ]
+                              },
+                              {
+                                "kind": "\"",
+                                "text": "\"",
+                                "start": [
+                                  21,
+                                  12
+                                ],
+                                "end": [
+                                  21,
+                                  13
+                                ],
+                                "start_byte": 348,
+                                "end_byte": 349,
+                                "is_named": false,
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "kind": ")",
+                        "text": ")",
+                        "start": [
+                          21,
+                          13
+                        ],
+                        "end": [
+                          21,
+                          14
+                        ],
+                        "start_byte": 349,
+                        "end_byte": 350,
+                        "is_named": false,
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "}",
+                "text": "}",
+                "start": [
+                  22,
+                  0
+                ],
+                "end": [
+                  22,
+                  1
+                ],
+                "start_byte": 351,
+                "end_byte": 352,
+                "is_named": false,
+                "children": []
+              }
+            ]
+          },
+          {
+            "kind": "else",
+            "text": "else",
+            "start": [
+              22,
+              2
+            ],
+            "end": [
+              22,
+              6
+            ],
+            "start_byte": 353,
+            "end_byte": 357,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "braced_expression",
+            "text": "{\n  message(\"small\")\n}",
+            "start": [
+              22,
+              7
+            ],
+            "end": [
+              24,
+              1
+            ],
+            "start_byte": 358,
+            "end_byte": 380,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "{",
+                "text": "{",
+                "start": [
+                  22,
+                  7
+                ],
+                "end": [
+                  22,
+                  8
+                ],
+                "start_byte": 358,
+                "end_byte": 359,
+                "is_named": false,
+                "children": []
+              },
+              {
+                "kind": "call",
+                "text": "message(\"small\")",
+                "start": [
+                  23,
+                  2
+                ],
+                "end": [
+                  23,
+                  18
+                ],
+                "start_byte": 362,
+                "end_byte": 378,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "identifier",
+                    "text": "message",
+                    "start": [
+                      23,
+                      2
+                    ],
+                    "end": [
+                      23,
+                      9
+                    ],
+                    "start_byte": 362,
+                    "end_byte": 369,
+                    "is_named": true,
+                    "children": []
+                  },
+                  {
+                    "kind": "arguments",
+                    "text": "(\"small\")",
+                    "start": [
+                      23,
+                      9
+                    ],
+                    "end": [
+                      23,
+                      18
+                    ],
+                    "start_byte": 369,
+                    "end_byte": 378,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "(",
+                        "text": "(",
+                        "start": [
+                          23,
+                          9
+                        ],
+                        "end": [
+                          23,
+                          10
+                        ],
+                        "start_byte": 369,
+                        "end_byte": 370,
+                        "is_named": false,
+                        "children": []
+                      },
+                      {
+                        "kind": "argument",
+                        "text": "\"small\"",
+                        "start": [
+                          23,
+                          10
+                        ],
+                        "end": [
+                          23,
+                          17
+                        ],
+                        "start_byte": 370,
+                        "end_byte": 377,
+                        "is_named": true,
+                        "children": [
+                          {
+                            "kind": "string",
+                            "text": "\"small\"",
+                            "start": [
+                              23,
+                              10
+                            ],
+                            "end": [
+                              23,
+                              17
+                            ],
+                            "start_byte": 370,
+                            "end_byte": 377,
+                            "is_named": true,
+                            "children": [
+                              {
+                                "kind": "\"",
+                                "text": "\"",
+                                "start": [
+                                  23,
+                                  10
+                                ],
+                                "end": [
+                                  23,
+                                  11
+                                ],
+                                "start_byte": 370,
+                                "end_byte": 371,
+                                "is_named": false,
+                                "children": []
+                              },
+                              {
+                                "kind": "string_content",
+                                "text": "small",
+                                "start": [
+                                  23,
+                                  11
+                                ],
+                                "end": [
+                                  23,
+                                  16
+                                ],
+                                "start_byte": 371,
+                                "end_byte": 376,
+                                "is_named": true,
+                                "children": []
+                              },
+                              {
+                                "kind": "\"",
+                                "text": "\"",
+                                "start": [
+                                  23,
+                                  16
+                                ],
+                                "end": [
+                                  23,
+                                  17
+                                ],
+                                "start_byte": 376,
+                                "end_byte": 377,
+                                "is_named": false,
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      },
+                      {
+                        "kind": ")",
+                        "text": ")",
+                        "start": [
+                          23,
+                          17
+                        ],
+                        "end": [
+                          23,
+                          18
+                        ],
+                        "start_byte": 377,
+                        "end_byte": 378,
+                        "is_named": false,
+                        "children": []
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "kind": "}",
+                "text": "}",
+                "start": [
+                  24,
+                  0
+                ],
+                "end": [
+                  24,
+                  1
+                ],
+                "start_byte": 379,
+                "end_byte": 380,
+                "is_named": false,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "comment",
+        "text": "# super-assignment (\u00a73.7 super_assign)",
+        "start": [
+          26,
+          0
+        ],
+        "end": [
+          26,
+          39
+        ],
+        "start_byte": 382,
+        "end_byte": 421,
+        "is_named": true,
+        "children": []
+      },
+      {
+        "kind": "binary_operator",
+        "text": "counter <- 0L",
+        "start": [
+          27,
+          0
+        ],
+        "end": [
+          27,
+          13
+        ],
+        "start_byte": 422,
+        "end_byte": 435,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "counter",
+            "start": [
+              27,
+              0
+            ],
+            "end": [
+              27,
+              7
+            ],
+            "start_byte": 422,
+            "end_byte": 429,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "<-",
+            "text": "<-",
+            "start": [
+              27,
+              8
+            ],
+            "end": [
+              27,
+              10
+            ],
+            "start_byte": 430,
+            "end_byte": 432,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "integer",
+            "text": "0L",
+            "start": [
+              27,
+              11
+            ],
+            "end": [
+              27,
+              13
+            ],
+            "start_byte": 433,
+            "end_byte": 435,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "L",
+                "text": "L",
+                "start": [
+                  27,
+                  12
+                ],
+                "end": [
+                  27,
+                  13
+                ],
+                "start_byte": 434,
+                "end_byte": 435,
+                "is_named": false,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "binary_operator",
+        "text": "increment <- function() {\n  counter <<- counter + 1L\n}",
+        "start": [
+          28,
+          0
+        ],
+        "end": [
+          30,
+          1
+        ],
+        "start_byte": 436,
+        "end_byte": 490,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "increment",
+            "start": [
+              28,
+              0
+            ],
+            "end": [
+              28,
+              9
+            ],
+            "start_byte": 436,
+            "end_byte": 445,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "<-",
+            "text": "<-",
+            "start": [
+              28,
+              10
+            ],
+            "end": [
+              28,
+              12
+            ],
+            "start_byte": 446,
+            "end_byte": 448,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "function_definition",
+            "text": "function() {\n  counter <<- counter + 1L\n}",
+            "start": [
+              28,
+              13
+            ],
+            "end": [
+              30,
+              1
+            ],
+            "start_byte": 449,
+            "end_byte": 490,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "function",
+                "text": "function",
+                "start": [
+                  28,
+                  13
+                ],
+                "end": [
+                  28,
+                  21
+                ],
+                "start_byte": 449,
+                "end_byte": 457,
+                "is_named": false,
+                "children": []
+              },
+              {
+                "kind": "parameters",
+                "text": "()",
+                "start": [
+                  28,
+                  21
+                ],
+                "end": [
+                  28,
+                  23
+                ],
+                "start_byte": 457,
+                "end_byte": 459,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "(",
+                    "text": "(",
+                    "start": [
+                      28,
+                      21
+                    ],
+                    "end": [
+                      28,
+                      22
+                    ],
+                    "start_byte": 457,
+                    "end_byte": 458,
+                    "is_named": false,
+                    "children": []
+                  },
+                  {
+                    "kind": ")",
+                    "text": ")",
+                    "start": [
+                      28,
+                      22
+                    ],
+                    "end": [
+                      28,
+                      23
+                    ],
+                    "start_byte": 458,
+                    "end_byte": 459,
+                    "is_named": false,
+                    "children": []
+                  }
+                ]
+              },
+              {
+                "kind": "braced_expression",
+                "text": "{\n  counter <<- counter + 1L\n}",
+                "start": [
+                  28,
+                  24
+                ],
+                "end": [
+                  30,
+                  1
+                ],
+                "start_byte": 460,
+                "end_byte": 490,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "{",
+                    "text": "{",
+                    "start": [
+                      28,
+                      24
+                    ],
+                    "end": [
+                      28,
+                      25
+                    ],
+                    "start_byte": 460,
+                    "end_byte": 461,
+                    "is_named": false,
+                    "children": []
+                  },
+                  {
+                    "kind": "binary_operator",
+                    "text": "counter <<- counter + 1L",
+                    "start": [
+                      29,
+                      2
+                    ],
+                    "end": [
+                      29,
+                      26
+                    ],
+                    "start_byte": 464,
+                    "end_byte": 488,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "identifier",
+                        "text": "counter",
+                        "start": [
+                          29,
+                          2
+                        ],
+                        "end": [
+                          29,
+                          9
+                        ],
+                        "start_byte": 464,
+                        "end_byte": 471,
+                        "is_named": true,
+                        "children": []
+                      },
+                      {
+                        "kind": "<<-",
+                        "text": "<<-",
+                        "start": [
+                          29,
+                          10
+                        ],
+                        "end": [
+                          29,
+                          13
+                        ],
+                        "start_byte": 472,
+                        "end_byte": 475,
+                        "is_named": false,
+                        "children": []
+                      },
+                      {
+                        "kind": "binary_operator",
+                        "text": "counter + 1L",
+                        "start": [
+                          29,
+                          14
+                        ],
+                        "end": [
+                          29,
+                          26
+                        ],
+                        "start_byte": 476,
+                        "end_byte": 488,
+                        "is_named": true,
+                        "children": [
+                          {
+                            "kind": "identifier",
+                            "text": "counter",
+                            "start": [
+                              29,
+                              14
+                            ],
+                            "end": [
+                              29,
+                              21
+                            ],
+                            "start_byte": 476,
+                            "end_byte": 483,
+                            "is_named": true,
+                            "children": []
+                          },
+                          {
+                            "kind": "+",
+                            "text": "+",
+                            "start": [
+                              29,
+                              22
+                            ],
+                            "end": [
+                              29,
+                              23
+                            ],
+                            "start_byte": 484,
+                            "end_byte": 485,
+                            "is_named": false,
+                            "children": []
+                          },
+                          {
+                            "kind": "integer",
+                            "text": "1L",
+                            "start": [
+                              29,
+                              24
+                            ],
+                            "end": [
+                              29,
+                              26
+                            ],
+                            "start_byte": 486,
+                            "end_byte": 488,
+                            "is_named": true,
+                            "children": [
+                              {
+                                "kind": "L",
+                                "text": "L",
+                                "start": [
+                                  29,
+                                  25
+                                ],
+                                "end": [
+                                  29,
+                                  26
+                                ],
+                                "start_byte": 487,
+                                "end_byte": 488,
+                                "is_named": false,
+                                "children": []
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "}",
+                    "text": "}",
+                    "start": [
+                      30,
+                      0
+                    ],
+                    "end": [
+                      30,
+                      1
+                    ],
+                    "start_byte": 489,
+                    "end_byte": 490,
+                    "is_named": false,
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "call",
+        "text": "increment()",
+        "start": [
+          31,
+          0
+        ],
+        "end": [
+          31,
+          11
+        ],
+        "start_byte": 491,
+        "end_byte": 502,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "increment",
+            "start": [
+              31,
+              0
+            ],
+            "end": [
+              31,
+              9
+            ],
+            "start_byte": 491,
+            "end_byte": 500,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "arguments",
+            "text": "()",
+            "start": [
+              31,
+              9
+            ],
+            "end": [
+              31,
+              11
+            ],
+            "start_byte": 500,
+            "end_byte": 502,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "(",
+                "text": "(",
+                "start": [
+                  31,
+                  9
+                ],
+                "end": [
+                  31,
+                  10
+                ],
+                "start_byte": 500,
+                "end_byte": 501,
+                "is_named": false,
+                "children": []
+              },
+              {
+                "kind": ")",
+                "text": ")",
+                "start": [
+                  31,
+                  10
+                ],
+                "end": [
+                  31,
+                  11
+                ],
+                "start_byte": 501,
+                "end_byte": 502,
+                "is_named": false,
+                "children": []
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "comment",
+        "text": "# Indexing (\u00a73.7 indexing_1based)",
+        "start": [
+          33,
+          0
+        ],
+        "end": [
+          33,
+          34
+        ],
+        "start_byte": 504,
+        "end_byte": 538,
+        "is_named": true,
+        "children": []
+      },
+      {
+        "kind": "binary_operator",
+        "text": "v <- c(1, 2, 3)",
+        "start": [
+          34,
+          0
+        ],
+        "end": [
+          34,
+          15
+        ],
+        "start_byte": 539,
+        "end_byte": 554,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "v",
+            "start": [
+              34,
+              0
+            ],
+            "end": [
+              34,
+              1
+            ],
+            "start_byte": 539,
+            "end_byte": 540,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "<-",
+            "text": "<-",
+            "start": [
+              34,
+              2
+            ],
+            "end": [
+              34,
+              4
+            ],
+            "start_byte": 541,
+            "end_byte": 543,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "call",
+            "text": "c(1, 2, 3)",
+            "start": [
+              34,
+              5
+            ],
+            "end": [
+              34,
+              15
+            ],
+            "start_byte": 544,
+            "end_byte": 554,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "identifier",
+                "text": "c",
+                "start": [
+                  34,
+                  5
+                ],
+                "end": [
+                  34,
+                  6
+                ],
+                "start_byte": 544,
+                "end_byte": 545,
+                "is_named": true,
+                "children": []
+              },
+              {
+                "kind": "arguments",
+                "text": "(1, 2, 3)",
+                "start": [
+                  34,
+                  6
+                ],
+                "end": [
+                  34,
+                  15
+                ],
+                "start_byte": 545,
+                "end_byte": 554,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "(",
+                    "text": "(",
+                    "start": [
+                      34,
+                      6
+                    ],
+                    "end": [
+                      34,
+                      7
+                    ],
+                    "start_byte": 545,
+                    "end_byte": 546,
+                    "is_named": false,
+                    "children": []
+                  },
+                  {
+                    "kind": "argument",
+                    "text": "1",
+                    "start": [
+                      34,
+                      7
+                    ],
+                    "end": [
+                      34,
+                      8
+                    ],
+                    "start_byte": 546,
+                    "end_byte": 547,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "float",
+                        "text": "1",
+                        "start": [
+                          34,
+                          7
+                        ],
+                        "end": [
+                          34,
+                          8
+                        ],
+                        "start_byte": 546,
+                        "end_byte": 547,
+                        "is_named": true,
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "comma",
+                    "text": ",",
+                    "start": [
+                      34,
+                      8
+                    ],
+                    "end": [
+                      34,
+                      9
+                    ],
+                    "start_byte": 547,
+                    "end_byte": 548,
+                    "is_named": true,
+                    "children": []
+                  },
+                  {
+                    "kind": "argument",
+                    "text": "2",
+                    "start": [
+                      34,
+                      10
+                    ],
+                    "end": [
+                      34,
+                      11
+                    ],
+                    "start_byte": 549,
+                    "end_byte": 550,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "float",
+                        "text": "2",
+                        "start": [
+                          34,
+                          10
+                        ],
+                        "end": [
+                          34,
+                          11
+                        ],
+                        "start_byte": 549,
+                        "end_byte": 550,
+                        "is_named": true,
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "comma",
+                    "text": ",",
+                    "start": [
+                      34,
+                      11
+                    ],
+                    "end": [
+                      34,
+                      12
+                    ],
+                    "start_byte": 550,
+                    "end_byte": 551,
+                    "is_named": true,
+                    "children": []
+                  },
+                  {
+                    "kind": "argument",
+                    "text": "3",
+                    "start": [
+                      34,
+                      13
+                    ],
+                    "end": [
+                      34,
+                      14
+                    ],
+                    "start_byte": 552,
+                    "end_byte": 553,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "float",
+                        "text": "3",
+                        "start": [
+                          34,
+                          13
+                        ],
+                        "end": [
+                          34,
+                          14
+                        ],
+                        "start_byte": 552,
+                        "end_byte": 553,
+                        "is_named": true,
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": ")",
+                    "text": ")",
+                    "start": [
+                      34,
+                      14
+                    ],
+                    "end": [
+                      34,
+                      15
+                    ],
+                    "start_byte": 553,
+                    "end_byte": 554,
+                    "is_named": false,
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "binary_operator",
+        "text": "first <- v[1]",
+        "start": [
+          35,
+          0
+        ],
+        "end": [
+          35,
+          13
+        ],
+        "start_byte": 555,
+        "end_byte": 568,
+        "is_named": true,
+        "children": [
+          {
+            "kind": "identifier",
+            "text": "first",
+            "start": [
+              35,
+              0
+            ],
+            "end": [
+              35,
+              5
+            ],
+            "start_byte": 555,
+            "end_byte": 560,
+            "is_named": true,
+            "children": []
+          },
+          {
+            "kind": "<-",
+            "text": "<-",
+            "start": [
+              35,
+              6
+            ],
+            "end": [
+              35,
+              8
+            ],
+            "start_byte": 561,
+            "end_byte": 563,
+            "is_named": false,
+            "children": []
+          },
+          {
+            "kind": "subset",
+            "text": "v[1]",
+            "start": [
+              35,
+              9
+            ],
+            "end": [
+              35,
+              13
+            ],
+            "start_byte": 564,
+            "end_byte": 568,
+            "is_named": true,
+            "children": [
+              {
+                "kind": "identifier",
+                "text": "v",
+                "start": [
+                  35,
+                  9
+                ],
+                "end": [
+                  35,
+                  10
+                ],
+                "start_byte": 564,
+                "end_byte": 565,
+                "is_named": true,
+                "children": []
+              },
+              {
+                "kind": "arguments",
+                "text": "[1]",
+                "start": [
+                  35,
+                  10
+                ],
+                "end": [
+                  35,
+                  13
+                ],
+                "start_byte": 565,
+                "end_byte": 568,
+                "is_named": true,
+                "children": [
+                  {
+                    "kind": "[",
+                    "text": "[",
+                    "start": [
+                      35,
+                      10
+                    ],
+                    "end": [
+                      35,
+                      11
+                    ],
+                    "start_byte": 565,
+                    "end_byte": 566,
+                    "is_named": false,
+                    "children": []
+                  },
+                  {
+                    "kind": "argument",
+                    "text": "1",
+                    "start": [
+                      35,
+                      11
+                    ],
+                    "end": [
+                      35,
+                      12
+                    ],
+                    "start_byte": 566,
+                    "end_byte": 567,
+                    "is_named": true,
+                    "children": [
+                      {
+                        "kind": "float",
+                        "text": "1",
+                        "start": [
+                          35,
+                          11
+                        ],
+                        "end": [
+                          35,
+                          12
+                        ],
+                        "start_byte": 566,
+                        "end_byte": 567,
+                        "is_named": true,
+                        "children": []
+                      }
+                    ]
+                  },
+                  {
+                    "kind": "]",
+                    "text": "]",
+                    "start": [
+                      35,
+                      12
+                    ],
+                    "end": [
+                      35,
+                      13
+                    ],
+                    "start_byte": 567,
+                    "end_byte": 568,
+                    "is_named": false,
+                    "children": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "comment",
+        "text": "# write.csv predicted effect (FILES)",
+        "start": [
+          37,
+          0
+        ],
+        "end": [
+          37,
+          36
+        ],
+        "start_byte": 570,
+        "end_byte": 606,
+        "is_named": true,
+        "children": []
+      },
+      {
+        "kind": "comment",
+        "text": "# write.csv(data.frame(x = v), \"out.csv\")",
+        "start": [
+          38,
+          0
+        ],
+        "end": [
+          38,
+          41
+        ],
+        "start_byte": 607,
+        "end_byte": 648,
+        "is_named": true,
+        "children": []
+      }
+    ]
+  },
+  "entities": {
+    "import_stats": {
+      "id": "import_stats",
+      "kind": "LibraryImport",
+      "name": "stats",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 0,
+        "start_col": 0,
+        "end_line": 0,
+        "end_col": 14
+      },
+      "dependencies": [],
+      "predicted_effects": [
+        "env"
+      ],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": "stats"
+    },
+    "x": {
+      "id": "x",
+      "kind": "Constant",
+      "name": "x",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 3,
+        "start_col": 0,
+        "end_line": 3,
+        "end_col": 8
+      },
+      "dependencies": [],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "PI": {
+      "id": "PI",
+      "kind": "Constant",
+      "name": "PI",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 6,
+        "start_col": 0,
+        "end_line": 6,
+        "end_col": 13
+      },
+      "dependencies": [],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "na_val": {
+      "id": "na_val",
+      "kind": "Constant",
+      "name": "na_val",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 9,
+        "start_col": 0,
+        "end_line": 9,
+        "end_col": 12
+      },
+      "dependencies": [],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [
+        "na_semantics"
+      ],
+      "package": null
+    },
+    "add_one": {
+      "id": "add_one",
+      "kind": "FunctionDef",
+      "name": "add_one",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 12,
+        "start_col": 0,
+        "end_line": 14,
+        "end_col": 1
+      },
+      "dependencies": [],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "print": {
+      "id": "print",
+      "kind": "FunctionCall",
+      "name": "print",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 17,
+        "start_col": 0,
+        "end_line": 17,
+        "end_col": 17
+      },
+      "dependencies": [],
+      "predicted_effects": [
+        "stdout"
+      ],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "add_one_1": {
+      "id": "add_one_1",
+      "kind": "FunctionCall",
+      "name": "add_one",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 17,
+        "start_col": 6,
+        "end_line": 17,
+        "end_col": 16
+      },
+      "dependencies": [],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "cat": {
+      "id": "cat",
+      "kind": "FunctionCall",
+      "name": "cat",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 21,
+        "start_col": 2,
+        "end_line": 21,
+        "end_col": 14
+      },
+      "dependencies": [],
+      "predicted_effects": [
+        "stdout"
+      ],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "message": {
+      "id": "message",
+      "kind": "FunctionCall",
+      "name": "message",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 23,
+        "start_col": 2,
+        "end_line": 23,
+        "end_col": 18
+      },
+      "dependencies": [],
+      "predicted_effects": [
+        "warnings"
+      ],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "counter": {
+      "id": "counter",
+      "kind": "Constant",
+      "name": "counter",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 27,
+        "start_col": 0,
+        "end_line": 27,
+        "end_col": 13
+      },
+      "dependencies": [],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "increment": {
+      "id": "increment",
+      "kind": "FunctionDef",
+      "name": "increment",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 28,
+        "start_col": 0,
+        "end_line": 30,
+        "end_col": 1
+      },
+      "dependencies": [
+        {
+          "entity_id": "counter",
+          "kind": "Constant"
+        },
+        {
+          "entity_id": "counter",
+          "kind": "Constant"
+        }
+      ],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [
+        "super_assign"
+      ],
+      "package": null
+    },
+    "counter_1": {
+      "id": "counter_1",
+      "kind": "Variable",
+      "name": "counter",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 29,
+        "start_col": 2,
+        "end_line": 29,
+        "end_col": 26
+      },
+      "dependencies": [
+        {
+          "entity_id": "counter",
+          "kind": "Constant"
+        }
+      ],
+      "predicted_effects": [
+        "env"
+      ],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [
+        "super_assign"
+      ],
+      "package": null
+    },
+    "increment_1": {
+      "id": "increment_1",
+      "kind": "FunctionCall",
+      "name": "increment",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 31,
+        "start_col": 0,
+        "end_line": 31,
+        "end_col": 11
+      },
+      "dependencies": [],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "v": {
+      "id": "v",
+      "kind": "Variable",
+      "name": "v",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 34,
+        "start_col": 0,
+        "end_line": 34,
+        "end_col": 15
+      },
+      "dependencies": [],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [],
+      "package": null
+    },
+    "first": {
+      "id": "first",
+      "kind": "Variable",
+      "name": "first",
+      "source_span": {
+        "file": "tests\\fixtures\\simple.R",
+        "start_line": 35,
+        "start_col": 0,
+        "end_line": 35,
+        "end_col": 13
+      },
+      "dependencies": [
+        {
+          "entity_id": "v",
+          "kind": "Variable"
+        }
+      ],
+      "predicted_effects": [],
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      },
+      "r_semantic_flags": [
+        "indexing_1based"
+      ],
+      "package": null
+    }
+  },
+  "effects": [
+    {
+      "kind": "env",
+      "entity_id": "import_stats",
+      "is_predicted": true,
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      }
+    },
+    {
+      "kind": "stdout",
+      "entity_id": "print",
+      "is_predicted": true,
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      }
+    },
+    {
+      "kind": "stdout",
+      "entity_id": "cat",
+      "is_predicted": true,
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      }
+    },
+    {
+      "kind": "warnings",
+      "entity_id": "message",
+      "is_predicted": true,
+      "actual_bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.2554509000001417
+      }
+    }
+  ],
+  "branches": {
+    "branch_0": {
+      "branch_id": "branch_0",
+      "parent_entity_id": "",
+      "condition_text": "x > 100",
+      "was_executed": false,
+      "runnable_slice": "{\n  message(\"small\")\n}",
+      "bundle": {
+        "stdout": "",
+        "stderr": "Fehler in library(jsonlite) : es gibt kein Paket namens 'jsonlite'\r\nAusf\u00fchrung angehalten\r\n",
+        "files": {},
+        "graphics": [],
+        "data": {},
+        "html": [],
+        "env": {},
+        "warnings": [],
+        "rng_log": [],
+        "network_log": [],
+        "uncapturable": [],
+        "exit_code": 1,
+        "run_time_s": 0.24843440000040573
+      }
+    }
+  },
+  "external_sources": {},
+  "coverage": {
+    "total_nodes": 16,
+    "by_status": {
+      "analyzed": 15,
+      "dynamic": 0,
+      "branch-extracted": 1,
+      "unreachable": 0
+    },
+    "fraction_analyzed": 1.0
+  }
+}
