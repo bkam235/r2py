@@ -76,6 +76,9 @@
       "timedate.easter",
       "timedate.goodfriday",
       "timedate.holiday"
+    ],
+    "vctrs:": [
+      "vctrs.vec-fill-missing"
     ]
   },
   "meta": {
@@ -357,6 +360,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "timeDate",
+      "ast_shape_hash": ""
+    },
+    "vctrs.vec-fill-missing": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "vctrs",
       "ast_shape_hash": ""
     }
   }
