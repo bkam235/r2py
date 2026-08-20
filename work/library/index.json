@@ -52,6 +52,9 @@
     "prodlim:": [
       "prodlim.row.match"
     ],
+    "progressr:": [
+      "progressr.handlers"
+    ],
     "rlang:": [
       "rlang.is-installed"
     ],
@@ -250,6 +253,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "prodlim",
+      "ast_shape_hash": ""
+    },
+    "progressr.handlers": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "progressr",
       "ast_shape_hash": ""
     },
     "rlang.is-installed": {
