@@ -46,6 +46,10 @@
       "googlesheets4.range-clear",
       "googlesheets4.range-flood"
     ],
+    "graphics:": [
+      "graphics.filled.contour",
+      "graphics.image"
+    ],
     "modelr:": [
       "modelr.typical"
     ],
@@ -61,6 +65,9 @@
     ],
     "rlang:": [
       "rlang.is-installed"
+    ],
+    "shape:": [
+      "shape.graycol"
     ],
     "shiny:": [
       "shiny.shinyapp"
@@ -243,6 +250,22 @@
       "package": "googlesheets4",
       "ast_shape_hash": ""
     },
+    "graphics.filled.contour": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "graphics",
+      "ast_shape_hash": ""
+    },
+    "graphics.image": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "graphics",
+      "ast_shape_hash": ""
+    },
     "modelr.typical": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -289,6 +312,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "rlang",
+      "ast_shape_hash": ""
+    },
+    "shape.graycol": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "shape",
       "ast_shape_hash": ""
     },
     "shiny.shinyapp": {
