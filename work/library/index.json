@@ -55,6 +55,10 @@
     "progressr:": [
       "progressr.handlers"
     ],
+    "purrr:": [
+      "purrr.discard-at",
+      "purrr.keep-at"
+    ],
     "rlang:": [
       "rlang.is-installed"
     ],
@@ -261,6 +265,22 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "progressr",
+      "ast_shape_hash": ""
+    },
+    "purrr.discard-at": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "purrr",
+      "ast_shape_hash": ""
+    },
+    "purrr.keep-at": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "purrr",
       "ast_shape_hash": ""
     },
     "rlang.is-installed": {
