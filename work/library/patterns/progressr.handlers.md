@@ -21,6 +21,7 @@ Translate R `handlers` (FunctionCall from progressr) to Python. See verified exa
 
 ## Translation Examples
 - {"r_hash": "09443561", "r_snippet": "  handlers(\"rpushbullet\")", "py_snippet": "def handlers(handler_name):\n    pass\n\n    handlers(\"rpushbullet\")\n    \n    # with_progress({ y <- slow_sum(1:10) })", "score": 1.0, "script_id": "auto"}
+- {"r_hash": "50b78037", "r_snippet": "  handlers(\"rstudio\")", "py_snippet": "from tqdm import tqdm", "score": 1.0, "script_id": "auto"}
 
 ## Edit Examples
 (none)
