@@ -79,6 +79,12 @@
     "shiny:": [
       "shiny.shinyapp"
     ],
+    "sparsevctrs:": [
+      "sparsevctrs.sparse-addition-scalar",
+      "sparsevctrs.sparse-division-scalar",
+      "sparsevctrs.sparse-multiplication-scalar",
+      "sparsevctrs.sparse-subtraction-scalar"
+    ],
     "stringr:": [
       "stringr.str-count"
     ],
@@ -382,6 +388,38 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "shiny",
+      "ast_shape_hash": ""
+    },
+    "sparsevctrs.sparse-addition-scalar": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "sparsevctrs",
+      "ast_shape_hash": ""
+    },
+    "sparsevctrs.sparse-division-scalar": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "sparsevctrs",
+      "ast_shape_hash": ""
+    },
+    "sparsevctrs.sparse-multiplication-scalar": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "sparsevctrs",
+      "ast_shape_hash": ""
+    },
+    "sparsevctrs.sparse-subtraction-scalar": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "sparsevctrs",
       "ast_shape_hash": ""
     },
     "stringr.str-count": {
