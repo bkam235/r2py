@@ -1,0 +1,252 @@
+Translation log
+Final score: 0.805
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    df <- tibble(x = 1:5, w = c(0.1, 0.1, 0.1, 2, 2))
+  Python:
+    df = pd.DataFrame({'x': range(1, 6), 'w': [0.1, 0.1, 0.1, 2, 2]})
+    
+    # sample_n() -> slice_sample() ----------------------------------------------
+    # Was:
+
+============================================================
+Entity: sample_n
+  Name:  sample_n
+  Kind:  FunctionCall
+  Score: 0.753
+  side_effects:        0.753
+  executed_ok:       True
+
+  R:
+    sample_n(df, 3)
+  Python:
+    def sample_n(tbl, size, replace=False, weight=None):
+        """Superseded by slice_sample."""
+        # sample_n errors if size > length and replace=False
+        if not replace and size > len(tbl):
+            raise ValueError("sample_n() would error if n was bigger than the group size")
+        
+        return slice_sample(tbl, n=size, replace=replace, weight_by=weight)
+    print(sample_n(df, 3))
+
+============================================================
+Entity: sample_n_1
+  Name:  sample_n
+  Kind:  FunctionCall
+  Score: 0.799
+  side_effects:        0.799
+  executed_ok:       True
+
+  R:
+    sample_n(df, 10, replace = TRUE)
+  Python:
+    print(sample_n(df, 10, replace=True))
+
+============================================================
+Entity: sample_n_2
+  Name:  sample_n
+  Kind:  FunctionCall
+  Score: 0.766
+  side_effects:        0.766
+  executed_ok:       True
+
+  R:
+    sample_n(df, 3, weight = w)
+  Python:
+    print(sample_n(df, 3, weight='w'))
+    
+    # Now:
+
+============================================================
+Entity: slice_sample
+  Name:  slice_sample
+  Kind:  FunctionCall
+  Score: 0.784
+  side_effects:        0.784
+  executed_ok:       True
+
+  R:
+    slice_sample(df, n = 3)
+  Python:
+    def slice_sample(data, n=None, prop=None, weight_by=None, replace=False):
+        """
+        Equivalent to dplyr::slice_sample.
+        """
+        # Determine the number of rows to sample
+        if prop is not None:
+            sample_size = int(len(data) * prop)
+        elif n is not None:
+            sample_size = n
+        else:
+            raise ValueError("Either 'n' or 'prop' must be specified.")
+    
+        # Weights handling
+        weights = None
+        if weight_by is not None:
+            if isinstance(weight_by, str):
+                weights = data[weight_by]
+            else:
+                # Handle cases where weight_by might be a series/array passed explicitly
+                weights = weight_by
+    
+        # Handle case where n > length(df) and replace=False
+        # dplyr::slice_sample just returns all rows if n > size and replace=False
+        if not replace and sample_size > len(data):
+            sample_size = len(data)
+    
+        return data.sample(n=sample_size, replace=replace, weights=weights)
+    print(slice_sample(df, n=3))
+
+============================================================
+Entity: slice_sample_1
+  Name:  slice_sample
+  Kind:  FunctionCall
+  Score: 0.849
+  side_effects:        0.849
+  executed_ok:       True
+
+  R:
+    slice_sample(df, n = 10, replace = TRUE)
+  Python:
+    print(slice_sample(df, n=10, replace=True))
+
+============================================================
+Entity: slice_sample_2
+  Name:  slice_sample
+  Kind:  FunctionCall
+  Score: 0.753
+  side_effects:        0.753
+  executed_ok:       True
+
+  R:
+    slice_sample(df, n = 3, weight_by = w)
+  Python:
+    print(slice_sample(df, n=3, weight_by='w'))
+    
+    # Note that sample_n() would error if n was bigger than the group size
+    # slice_sample() will just use the available rows
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(sample_n(df, 10))
+  Python:
+    try:
+        sample_n(df, 10)
+    except ValueError as e:
+        print(f"Caught expected error: {e}")
+
+============================================================
+Entity: slice_sample_3
+  Name:  slice_sample
+  Kind:  FunctionCall
+  Score: 0.842
+  side_effects:        0.842
+  executed_ok:       True
+
+  R:
+    slice_sample(df, n = 10)
+  Python:
+    print(slice_sample(df, n=10))
+    
+    # sample_frac() -> slice_sample() -------------------------------------------
+    # Was:
+
+============================================================
+Entity: sample_frac
+  Name:  sample_frac
+  Kind:  FunctionCall
+  Score: 0.703
+  side_effects:        0.703
+  executed_ok:       True
+
+  R:
+    sample_frac(df, 0.25)
+  Python:
+    def sample_frac(tbl, size=1, replace=False, weight=None):
+        """Superseded by slice_sample."""
+        return slice_sample(tbl, prop=size, replace=replace, weight_by=weight)
+    
+    # Main script execution
+    print(sample_frac(df, 0.25))
+
+============================================================
+Entity: sample_frac_1
+  Name:  sample_frac
+  Kind:  FunctionCall
+  Score: 0.810
+  side_effects:        0.810
+  executed_ok:       True
+
+  R:
+    sample_frac(df, 2, replace = TRUE)
+  Python:
+    print(sample_frac(df, 2, replace=True))
+    
+    # Now:
+
+============================================================
+Entity: slice_sample_4
+  Name:  slice_sample
+  Kind:  FunctionCall
+  Score: 0.728
+  side_effects:        0.728
+  executed_ok:       True
+
+  R:
+    slice_sample(df, prop = 0.25)
+  Python:
+    print(slice_sample(df, prop=0.25))
+
+============================================================
+Entity: slice_sample_5
+  Name:  slice_sample
+  Kind:  FunctionCall
+  Score: 0.878
+  side_effects:        0.878
+  executed_ok:       True
+
+  R:
+    slice_sample(df, prop = 2, replace = TRUE)
+  Python:
+    print(slice_sample(df, prop=2, replace=True))

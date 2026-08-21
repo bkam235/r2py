@@ -1,0 +1,281 @@
+Translation log
+Final score: 0.852
+Data score:  0.684
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xtable))
+
+============================================================
+Entity: import_xtable
+  Name:  xtable
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xtable))
+
+============================================================
+Entity: insane
+  Name:  insane
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    insane <- c("&",">", ">","_","%","$","\\","#","^","~","{","}")
+  Python:
+    insane = np.array(["&", ">", ">", "_", "%", "$", "\\", "#", "^", "~", "{", "}"])
+    # names(insane) <- ...
+
+============================================================
+Entity: names(insane)
+  Name:  names(insane)
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    names(insane) <- c("Ampersand","Greater than","Less than",
+                       "Underscore","Percent","Dollar",
+                       "Backslash","Hash","Caret","Tilde",
+                       "Left brace","Right brace")
+  Python:
+    insane_names = ["Ampersand", "Greater than", "Less than", "Underscore", "Percent", 
+                    "Dollar", "Backslash", "Hash", "Caret", "Tilde", "Left brace", "Right brace"]
+
+============================================================
+Entity: sanitize
+  Name:  sanitize
+  Kind:  FunctionCall
+  Score: 0.985
+  side_effects:        0.985
+  executed_ok:       True
+
+  R:
+    sanitize(insane, type = "latex")
+  Python:
+    def sanitize(str_val, type_val="latex"):
+        """Implementation of xtable::sanitize"""
+        if isinstance(str_val, (list, np.ndarray)):
+            return np.array([sanitize(s, type_val) for s in str_val])
+        
+        if not isinstance(str_val, str):
+            str_val = str(str_val)
+    
+        if type_val == "latex":
+            result = str_val
+            result = result.replace("\\", "SANITIZE.BACKSLASH")
+            result = result.replace("$", r"\$")
+            result = result.replace(">", r"$>$")
+            result = result.replace("<", r"$<$")
+            result = result.replace("|", r"$|$")
+            result = result.replace("{", r"\{")
+            result = result.replace("}", r"\}")
+            result = result.replace("%", r"\%")
+            result = result.replace("&", r"\&")
+            result = result.replace("_", r"\_")
+            result = result.replace("#", r"\#")
+            result = result.replace("^", r"\verb|^|")
+            result = result.replace("~", r"\~{}")
+            result = result.replace("SANITIZE.BACKSLASH", r"$\backslash$")
+            return result
+        else:
+            result = str_val
+            result = result.replace("&", "&amp;")
+            result = result.replace(">", "&gt;")
+            result = result.replace("<", "&lt;")
+            return result
+    res_sanitize = sanitize(insane, type_val="latex")
+    r_print_named(res_sanitize, insane_names)
+    
+    # insane <- c("&",">","<")
+
+============================================================
+Entity: insane_1
+  Name:  insane
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    insane <- c("&",">","<")
+  Python:
+    insane_1 = np.array(["&", ">", "<"])
+    # names(insane) <- ...
+
+============================================================
+Entity: names(insane)_1
+  Name:  names(insane)
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    names(insane) <- c("Ampersand","Greater than","Less than")
+  Python:
+    insane_1_names = ["Ampersand", "Greater than", "Less than"]
+
+============================================================
+Entity: sanitize_1
+  Name:  sanitize
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sanitize(insane, type = "html")
+  Python:
+    res_sanitize_1 = sanitize(insane_1, type_val="html")
+    r_print_named(res_sanitize_1, insane_1_names)
+    
+    # x <- rnorm(10)
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- rnorm(10)
+  Python:
+    # (x is provided by data_shim)
+
+============================================================
+Entity: sanitize.numbers
+  Name:  sanitize.numbers
+  Kind:  FunctionCall
+  Score: 0.802
+  side_effects:        0.802
+  executed_ok:       True
+
+  R:
+    sanitize.numbers(x, "latex", TRUE)
+  Python:
+    def sanitize_numbers(str_val, type_val, math_style_negative=False, math_style_exponents=False):
+        """Implementation of xtable::sanitize.numbers"""
+        if not isinstance(str_val, (list, np.ndarray)):
+            str_val = [str_val]
+        else:
+            str_val = list(str_val)
+        
+        # R's as.character(x) for numbers doesn't truncate as aggressively as Python's str() or float formatting
+        # We use format(s, '.15g') to better mimic R's default number-to-string conversion
+        result = [format(s, '.15g') for s in str_val]
+        
+        if type_val == "latex":
+            if math_style_negative:
+                result = [s.replace("-", r"$-$") for s in result]
+            
+            if math_style_exponents:
+                # simplified logic for math_style_exponents=True
+                new_res = []
+                for s in result:
+                    # Match scientific notation e.g. 1.23e+10 or 1.23E+10
+                    m = re.match(r"([+-]?\d*\.?\d+)[eE]([+-]?\d+)", s)
+                    if m:
+                        base, exp = m.groups()
+                        new_res.append(f"${base} \\times 10^{{{exp}}}$")
+                    else:
+                        new_res.append(s)
+                result = new_res
+            return np.array(result)
+        else:
+            # html return is often just the numbers
+            return np.array([str(s) for s in str_val])
+    res_sn = sanitize_numbers(x, "latex", True)
+    # R prints: [1] "0.64..." "$-$0.06..."
+    # We use a custom print to match R's vector style
+    print("[1] " + " ".join([f'"{v}"' for v in res_sn]))
+
+============================================================
+Entity: sanitize.numbers_1
+  Name:  sanitize.numbers
+  Kind:  FunctionCall
+  Score: 0.766
+  side_effects:        0.766
+  executed_ok:       True
+
+  R:
+    sanitize.numbers(x*10^(10), "latex", TRUE, TRUE)
+  Python:
+    res_sn1 = sanitize_numbers(np.array(x)*10**10, "latex", True, True)
+    print("[1] " + " ".join([f'"{v}"' for v in res_sn1]))
+
+============================================================
+Entity: sanitize.numbers_2
+  Name:  sanitize.numbers
+  Kind:  FunctionCall
+  Score: 0.861
+  side_effects:        0.861
+  executed_ok:       True
+
+  R:
+    sanitize.numbers(x, "html", TRUE, TRUE)
+  Python:
+    res_sn2 = sanitize_numbers(x, "html", True, True)
+    # In R, sanitize.numbers(x, "html", ...) returns numeric vector if no changes, or char.
+    # The diff shows R produced: [1] 0.64798327 -0.06908603 ...
+    print("[1] " + " ".join([str(v) for v in res_sn2]))
+
+============================================================
+Entity: as.is
+  Name:  as.is
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    as.is(insane)
+  Python:
+    def as_is(str_val):
+        return str_val
+    res_asis = as_is(insane_1)
+    r_print_named(res_asis, insane_1_names)
+
+============================================================
+Entity: as.math
+  Name:  as.math
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    as.math("x10^10", ": mathematical expression")
+  Python:
+    def as_math(str_val, *args):
+        res = f"${str_val}$"
+        for arg in args:
+            res += str(arg)
+        return res
+    
+    # Execution logic
+    # insane <- c("&",">", ">","_","%","$","\\","#","^","~","{","}")
+    res_amath = as_math("x10^10", ": mathematical expression")
+    print(f'[1] "{res_amath}"')

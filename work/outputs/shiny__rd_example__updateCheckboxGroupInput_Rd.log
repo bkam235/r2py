@@ -1,0 +1,125 @@
+Translation log
+Final score: 0.250
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: interactive
+  Name:  interactive
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (interactive()) {
+
+============================================================
+Entity: ui
+  Name:  ui
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    ui <- fluidPage(
+      p("The first checkbox group controls the second"),
+      checkboxGroupInput("inCheckboxGroup", "Input checkbox",
+        c("Item A", "Item B", "Item C")),
+      checkboxGroupInput("inCheckboxGroup2", "Input checkbox 2",
+        c("Item A", "Item B", "Item C"))
+    )
+  Python:
+    app_ui = ui.page_fluid(
+        ui.p("The first checkbox group controls the second"),
+        ui.input_checkbox_group(
+            "inCheckboxGroup", 
+            "Input checkbox", 
+            choices=["Item A", "Item B", "Item C"]
+        ),
+        ui.input_checkbox_group(
+            "inCheckboxGroup2", 
+            "Input checkbox 2", 
+            choices=["Item A", "Item B", "Item C"]
+        )
+    )
+
+============================================================
+Entity: server
+  Name:  server
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    server <- function(input, output, session) {
+      observe({
+        x <- input$inCheckboxGroup
+    
+        # Can use character(0) to remove all choices
+        if (is.null(x))
+          x <- character(0)
+    
+        # Can also set the label and select items
+        updateCheckboxGroupInput(session, "inCheckboxGroup2",
+          label = paste("Checkboxgroup label", length(x)),
+          choices = x,
+          selected = x
+        )
+      })
+    }
+  Python:
+    def server(input_val, output_val, session):
+        @session.observe
+        def _():
+            x = input_val.inCheckboxGroup()
+    
+            # Can use empty list to remove all choices
+            if x is None:
+                x = []
+    
+            # Can also set the label and select items
+            ui.update_checkbox_group(
+                "inCheckboxGroup2",
+                label=f"Checkboxgroup label {len(x)}",
+                choices=x,
+                selected=x
+            )
+
+============================================================
+Entity: shinyApp
+  Name:  shinyApp
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    shinyApp(ui, server)
+  Python:
+    app = App(app_ui, server)

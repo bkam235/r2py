@@ -1,0 +1,273 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_broom
+  Name:  broom
+  Kind:  LibraryImport
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    if (rlang::is_installed(c("survival", "ggplot2"))) withAutoprint({ # examplesIf
+
+============================================================
+Entity: import_survival
+  Name:  survival
+  Kind:  LibraryImport
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    library(survival)
+
+============================================================
+Entity: sr
+  Name:  sr
+  Kind:  Variable
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    sr <- survreg(
+      Surv(futime, fustat) ~ ecog.ps + rx,
+      ovarian,
+      dist = "exponential"
+    )
+  Python:
+    aft = WeibullAFTFitter()
+    # In lifelines, the target columns are durations and event indicators
+    aft.fit(ovarian, duration_col='futime', event_col='fustat', formula="futime ~ ecog.ps + rx")
+    
+    # tidy() equivalent: summary of coefficients
+
+============================================================
+Entity: tidy
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    tidy(sr)
+  Python:
+    td = aft.summary[['coef', 'std err', 'p']]
+    td['conf_low'] = aft.confidence_interval_.iloc[:, 0]
+    td['conf_high'] = aft.confidence_interval_.iloc[:, 1]
+    td = td.reset_index()
+    
+    # augment() equivalent: predicted values
+
+============================================================
+Entity: augment
+  Name:  augment
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    augment(sr, ovarian)
+  Python:
+    augment_df = ovarian.copy()
+    augment_df['predict'] = aft.predict_expectation(ovarian)
+    
+    # glance() equivalent: model summary metrics
+
+============================================================
+Entity: glance
+  Name:  glance
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    glance(sr)
+  Python:
+    glance_df = pd.DataFrame({
+        'aic': [aft.AIC_],
+        'bic': [aft.BIC_],
+        'log_likelihood': [aft.log_likelihood_]
+    })
+    
+    # Plotting
+
+============================================================
+Entity: td
+  Name:  td
+  Kind:  Variable
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    td <- tidy(sr, conf.int = TRUE)
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    library(ggplot2)
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    ggplot(td, aes(estimate, term)) +
+  Python:
+    plot = (
+        ggplot(td, aes(x='coef', y='index'))
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+      geom_point() +
+  Python:
+        + geom_point()
+
+============================================================
+Entity: geom_errorbarh
+  Name:  geom_errorbarh
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+      geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0) +
+  Python:
+        + geom_errorbarh(aes(xmin='conf_low', xmax='conf_high'), height=0)
+
+============================================================
+Entity: geom_vline
+  Name:  geom_vline
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+      geom_vline(xintercept = 0)
+  Python:
+        + geom_vline(xintercept=0)
+    )
+    
+    print(td)
+    print(augment_df.head())
+    print(glance_df)
+    print(plot)

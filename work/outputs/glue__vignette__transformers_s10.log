@@ -1,0 +1,68 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(glue))
+
+============================================================
+Entity: import_glue
+  Name:  glue
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(glue))
+
+============================================================
+Entity: vv_transformer
+  Name:  vv_transformer
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    vv_transformer <- function(text, envir) {
+      regex <- "=$"
+      if (!grepl(regex, text)) {
+        return(identity_transformer(text, envir))
+      }
+    
+      text <- sub(regex, "", text)
+      res <- identity_transformer(text, envir)
+      n <- length(res)
+      res <- glue_collapse(res, sep = ", ")
+      if (n > 1) {
+        res <- c("[", res, "]")
+      }
+      glue_collapse(c(text, " = ", res))
+    }
+  Python:
+    def vv_transformer(text, envir):
+        regex = r"=$"
+        if not re.search(regex, text):
+            return identity_transformer(text, envir)
+    
+        # Remove the trailing '='
+        text_clean = re.sub(regex, "", text)
+        res = identity_transformer(text_clean, envir)
+        
+        n = len(res)
+        # Join elements with comma
+        res_str = ", ".join(map(str, res))
+        
+        if n > 1:
+            res_str = f"[{res_str}]"
+        
+        return f"{text_clean} = {res_str}"

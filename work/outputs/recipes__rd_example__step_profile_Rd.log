@@ -1,0 +1,549 @@
+Translation log
+Final score: 0.342
+Data score:  0.453
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_installed(c("modeldata", "ggplot2"))) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    data(Sacramento, package = "modeldata")
+  Python:
+    Sacramento = pd.DataFrame(Sacramento)
+    mtcars = pd.DataFrame(mtcars)
+
+============================================================
+Entity: recipe
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    recipe(~ city + price + beds, data = Sacramento) |>
+  Python:
+    sac_cols = ['city', 'price']
+
+============================================================
+Entity: step_profile
+  Name:  step_profile
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      step_profile(-beds, profile = beds) |>
+  Python:
+    def step_profile_implementation(df, profile_col, other_cols, grid_type='pctl', length=100):
+        """
+        Simulates recipes::step_profile.
+        R's step_profile creates a grid for the profile variable and
+        sets other variables to the value of the first row of the training data.
+        """
+        if grid_type == 'pctl':
+            # R's seq(0, 1, length.out = 6) is [0, 0.2, 0.4, 0.6, 0.8, 1]
+            # np.percentile handles this.
+            vals = np.percentile(df[profile_col], np.linspace(0, 100, length))
+        else:
+            vals = np.linspace(df[profile_col].min(), df[profile_col].max(), length)
+        
+        grid_df = pd.DataFrame({profile_col: vals})
+        
+        for col in other_cols:
+            # step_profile by default uses the first observation's value for other predictors
+            grid_df[col] = df[col].iloc[0]
+            
+        # Reorder columns to match R output: [other_cols, profile_col]
+        return grid_df[other_cols + [profile_col]]
+    
+    # Section 1: Sacramento
+    # recipe(~ city + price + beds, data = Sacramento) |> step_profile(-beds, profile = beds)
+
+============================================================
+Entity: prep
+  Name:  prep
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      prep(training = Sacramento) |>
+
+============================================================
+Entity: bake
+  Name:  bake
+  Kind:  FunctionCall
+  Score: 0.038
+  type_match:          0.035
+  control_flow_match:  0.035
+  data_output:         0.035
+  variable_output:     0.035
+  callable_output:     0.035
+  side_effects:        0.052
+  executed_ok:       True
+
+  R:
+      bake(new_data = NULL)
+  Python:
+    sac_result = step_profile_implementation(Sacramento, 'beds', sac_cols, grid_type='pctl', length=6)
+    print(sac_result.to_string(index=False))
+    
+    # Section 2: Linear Model
+    # lin_mod <- lm(mpg ~ poly(disp, 2) + cyl + hp, data = mtcars)
+    # poly(disp, 2) in R defaults to orthogonal polynomials. 
+    # For prediction on a grid, we can fit a standard polynomial model as it's mathematically equivalent
+    # to the orthogonal one for the purpose of generating predictions.
+
+============================================================
+Entity: lin_mod
+  Name:  lin_mod
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    lin_mod <- lm(mpg ~ poly(disp, 2) + cyl + hp, data = mtcars)
+  Python:
+    X_disp = mtcars['disp'].values
+    y = mtcars['mpg'].values
+    X_cyl = mtcars['cyl'].values
+    X_hp = mtcars['hp'].values
+    
+    # Construct design matrix with x, x^2, cyl, hp
+    X_poly = np.column_stack([X_disp, X_disp**2, X_cyl, X_hp])
+    lin_mod = LinearRegression().fit(X_poly, y)
+    
+    def predict_lin_mod(df):
+        X_p = np.column_stack([df['disp'].values, df['disp'].values**2, df['cyl'].values, df['hp'].values])
+        return lin_mod.predict(X_p)
+    
+    # Section 3: Grid vs Percentile
+    # disp_pctl
+
+============================================================
+Entity: disp_pctl
+  Name:  disp_pctl
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    disp_pctl <- recipe(~ disp + cyl + hp, data = mtcars) |>
+      step_profile(-disp, profile = disp) |>
+      prep(training = mtcars)
+
+============================================================
+Entity: recipe_1
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    disp_pctl <- recipe(~ disp + cyl + hp, data = mtcars) |>
+
+============================================================
+Entity: step_profile_1
+  Name:  step_profile
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      step_profile(-disp, profile = disp) |>
+
+============================================================
+Entity: prep_1
+  Name:  prep
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      prep(training = mtcars)
+
+============================================================
+Entity: disp_grid
+  Name:  disp_grid
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    disp_grid <- recipe(~ disp + cyl + hp, data = mtcars) |>
+      step_profile(
+        -disp,
+        profile = disp,
+        grid = list(pctl = FALSE, len = 100)
+      ) |>
+      prep(training = mtcars)
+
+============================================================
+Entity: recipe_2
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    disp_grid <- recipe(~ disp + cyl + hp, data = mtcars) |>
+
+============================================================
+Entity: step_profile_2
+  Name:  step_profile
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      step_profile(
+        -disp,
+        profile = disp,
+        grid = list(pctl = FALSE, len = 100)
+      ) |>
+
+============================================================
+Entity: prep_2
+  Name:  prep
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      prep(training = mtcars)
+
+============================================================
+Entity: grid_data
+  Name:  grid_data
+  Kind:  Variable
+  Score: 0.203
+  type_match:          0.005
+  control_flow_match:  1.000
+  data_output:         0.005
+  variable_output:     0.005
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    grid_data <- bake(disp_grid, new_data = NULL)
+  Python:
+    grid_data = step_profile_implementation(mtcars, 'disp', ['cyl', 'hp'], grid_type='grid', length=100)
+
+============================================================
+Entity: grid_data_1
+  Name:  grid_data
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    grid_data <- grid_data |>
+      mutate(
+        pred = predict(lin_mod, grid_data),
+        method = "grid"
+      )
+  Python:
+    grid_data['pred'] = predict_lin_mod(grid_data)
+    grid_data['method'] = 'grid'
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      mutate(
+        pred = predict(lin_mod, grid_data),
+        method = "grid"
+      )
+
+============================================================
+Entity: pctl_data
+  Name:  pctl_data
+  Kind:  Variable
+  Score: 0.203
+  type_match:          0.005
+  control_flow_match:  1.000
+  data_output:         0.005
+  variable_output:     0.005
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    pctl_data <- bake(disp_pctl, new_data = NULL)
+  Python:
+    pctl_data = step_profile_implementation(mtcars, 'disp', ['cyl', 'hp'], grid_type='pctl', length=100)
+
+============================================================
+Entity: pctl_data_1
+  Name:  pctl_data
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    pctl_data <- pctl_data |>
+      mutate(
+        pred = predict(lin_mod, pctl_data),
+        method = "percentile"
+      )
+  Python:
+    pctl_data['pred'] = predict_lin_mod(pctl_data)
+    pctl_data['method'] = 'percentile'
+    
+    # disp_grid
+
+============================================================
+Entity: mutate_1
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      mutate(
+        pred = predict(lin_mod, pctl_data),
+        method = "percentile"
+      )
+
+============================================================
+Entity: plot_data
+  Name:  plot_data
+  Kind:  Variable
+  Score: 0.208
+  type_match:          0.014
+  control_flow_match:  1.000
+  data_output:         0.014
+  variable_output:     0.014
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    plot_data <- bind_rows(grid_data, pctl_data)
+  Python:
+    plot_data = pd.concat([grid_data, pctl_data], ignore_index=True)
+    
+    # Section 4: Plotting
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(ggplot2)
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.444
+  type_match:          0.453
+  control_flow_match:  0.453
+  data_output:         0.453
+  variable_output:     0.453
+  callable_output:     0.453
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(plot_data, aes(x = disp, y = pred)) +
+  Python:
+    plot = (
+        ggplot(plot_data, aes(x='disp', y='pred'))
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.444
+  type_match:          0.453
+  control_flow_match:  0.453
+  data_output:         0.453
+  variable_output:     0.453
+  callable_output:     0.453
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_point(alpha = .5, cex = 1) +
+  Python:
+        + geom_point(alpha=0.5, size=1)
+
+============================================================
+Entity: facet_wrap
+  Name:  facet_wrap
+  Kind:  FunctionCall
+  Score: 0.444
+  type_match:          0.453
+  control_flow_match:  0.453
+  data_output:         0.453
+  variable_output:     0.453
+  callable_output:     0.453
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      facet_wrap(~method)
+  Python:
+        + facet_wrap('~method')
+    )
+    
+    print(plot)

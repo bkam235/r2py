@@ -1,0 +1,180 @@
+Translation log
+Final score: 0.878
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: GuideDescribe
+  Name:  GuideDescribe
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    GuideDescribe <- ggproto(
+      "GuideDescribe", Guide,
+      # Fields
+      elements  = list(text = "legend.text", margin = "legend.margin"),
+      hashables = rlang::exprs(key$.label),
+    
+      # Methods
+      build_title = function(...) zeroGrob(), # Turn off title
+    
+      build_labels = function(key, elements, params) {
+        labels <- key$.label
+        n <- length(labels)
+        labels <- paste0(paste0(labels[-n], collapse = ", "), ", and ", labels[n])
+        labels <- paste0("A guide showing ", labels, " categories")
+        element_grob(elements$text, label = labels, margin_x = TRUE, margin_y = TRUE)
+      },
+    
+      measure_grobs = function(grobs, params, elements) {
+        # Measuring in centimetres is the convention
+        width  <- grid::convertWidth(grid::grobWidth(grobs$labels), "cm", valueOnly = TRUE)
+        height <- grid::convertHeight(grid::grobHeight(grobs$labels), "cm", valueOnly = TRUE)
+        list(width = unit(width, "cm"), height = unit(height, "cm"))
+      },
+    
+      assemble_drawing = function(self, grobs, layout, sizes, params, elements) {
+        gt <- gtable::as.gtable(grobs$labels, width = sizes$width, height = sizes$height)
+        gt <- gtable::gtable_add_padding(gt, elements$margin)
+        gt
+      }
+    )
+  Python:
+    def format_labels_as_sentence(labels):
+        labels = list(labels)
+        if not labels:
+            return ""
+        if len(labels) == 1:
+            sentence = labels[0]
+        else:
+            sentence = ", ".join(labels[:-1]) + ", and " + labels[-1]
+        return f"A guide showing {sentence} categories"
+    
+    # Process the data to create a single combined label for the legend
+    df = mpg.copy()
+    unique_classes = df['class'].unique().tolist()
+    sentence_label = format_labels_as_sentence(unique_classes)
+    
+    # To mimic the custom guide, we create a dummy column for the legend 
+    # that contains the full sentence, while keeping the colors mapped to the original classes.
+    # However, plotnine's legend is driven by the scale. 
+    # The closest approximation in plotnine is to override the legend title or use a custom scale.
+
+============================================================
+Entity: guide_describe
+  Name:  guide_describe
+  Kind:  FunctionDef
+  Score: 0.784
+  type_match:          1.000
+  control_flow_match:  0.303
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    guide_describe <- function(position = NULL) {
+      new_guide(position = position, super = GuideDescribe)
+    }
+  Python:
+        + labs(color=sentence_label) # Using the label as the legend title
+        + theme(
+            legend_position='bottom',
+            legend_title=element_text(size=10),
+            legend_text=element_blank() # Hide individual category labels to mimic the R code
+        )
+    )
+    
+    print(plot)
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(mpg, aes(displ, hwy, colour = class)) +
+  Python:
+    plot = (
+        ggplot(df, aes(x='displ', y='hwy', color='class'))
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_point() +
+  Python:
+        + geom_point()
+
+============================================================
+Entity: guides
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      guides(colour = guide_describe("bottom"))

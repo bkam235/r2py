@@ -1,0 +1,80 @@
+Translation log
+Final score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+      mutate(
+        height_m = height / 100,
+        BMI = mass / (height_m^2)
+      ) |>
+  Python:
+        .assign(
+            height_m = lambda df: df['height'] / 100,
+            BMI = lambda df: df['mass'] / (df['height_m']**2)
+        )
+
+============================================================
+Entity: select
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+      select(BMI, everything())
+  Python:
+        .pipe(lambda df: df[['BMI'] + [col for col in df.columns if col != 'BMI']])
+    )
+    
+    print(result)

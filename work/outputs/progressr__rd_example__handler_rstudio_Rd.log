@@ -1,0 +1,95 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(progressr))
+
+============================================================
+Entity: import_progressr
+  Name:  progressr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(progressr))
+
+============================================================
+Entity: requireNamespace
+  Name:  requireNamespace
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+
+============================================================
+Entity: isAvailable
+  Name:  isAvailable
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (requireNamespace("rstudioapi", quietly = TRUE) && rstudioapi::isAvailable()) {
+
+============================================================
+Entity: handlers
+  Name:  handlers
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      handlers("rstudio")
+  Python:
+    from tqdm import tqdm
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+      with_progress({ y <- slow_sum(1:10) })
+  Python:
+    def slow_sum(data):
+        total = 0
+        # Using tqdm to emulate progressr's progress bar functionality
+        for i in tqdm(data, desc="Calculating sum"):
+            total += i
+        return total
+    
+    if __name__ == "__main__":
+        y = slow_sum(np.arange(1, 11))
+
+============================================================
+Entity: print
+  Name:  print
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+      print(y)
+  Python:
+        print(y)
