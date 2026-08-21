@@ -1,0 +1,79 @@
+Translation log
+Final score: 0.950
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: shinyServer
+  Name:  shinyServer
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    shinyServer(function(input, output, session) {
+      output$uppercase <- renderText({
+        toupper(input$message)
+      })
+    })
+  Python:
+    def server(input, output, session):
+
+============================================================
+Entity: output$uppercase
+  Name:  output$uppercase
+  Kind:  Variable
+  Score: 0.900
+  control_flow_match:  1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      output$uppercase <- renderText({
+        toupper(input$message)
+      })
+  Python:
+        @render.text
+        def uppercase():
+
+============================================================
+Entity: toupper
+  Name:  toupper
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+        toupper(input$message)
+  Python:
+            return input.message.upper()
+    
+    # It is also possible for a server.R file to simply return the function,
+    # without calling shinyServer().
+    # For example, the server.R file could contain just the following:
+    def server_alternative(input, output, session):
+        @render.text
+        def uppercase():
+            return input.message.upper()

@@ -1,0 +1,153 @@
+Translation log
+Final score: 0.347
+Data score:  0.351
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_broom
+  Name:  broom
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_installed("metafor")) withAutoprint({ # examplesIf
+
+============================================================
+Entity: import_metafor
+  Name:  metafor
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(metafor)
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    df <-
+      escalc(
+        measure = "RR",
+        ai = tpos,
+        bi = tneg,
+        ci = cpos,
+        di = cneg,
+        data = dat.bcg
+      )
+  Python:
+    df = df_input.copy()
+    # For RR, yi = log( (ai/(ai+bi)) / (ci/(ci+di)) )
+    # vi = 1/ai + 1/bi + 1/ci + 1/di
+    df['yi'] = np.log(
+        (df['tpos'] / (df['tpos'] + df['tneg'])) / 
+        (df['cpos'] / (df['cpos'] + df['cneg']))
+    )
+    df['vi'] = (1.0 / df['tpos']) + (1.0 / df['tneg']) + (1.0 / df['cpos']) + (1.0 / df['cneg'])
+
+============================================================
+Entity: meta_analysis
+  Name:  meta_analysis
+  Kind:  Variable
+  Score: 0.290
+  type_match:          0.053
+  control_flow_match:  1.000
+  data_output:         0.053
+  variable_output:     0.053
+  executed_ok:       True
+
+  R:
+    meta_analysis <- rma(yi, vi, data = df, method = "EB")
+  Python:
+    # rma(yi, vi, data = df, method = "EB")
+    yi = df['yi'].values
+    vi = df['vi'].values
+    w_fixed = 1.0 / vi
+    
+    # Calculate Q for variance estimation
+    sum_w_yi = np.sum(w_fixed * yi)
+    sum_w = np.sum(w_fixed)
+    weighted_mean_fixed = sum_w_yi / sum_w
+    
+    Q = np.sum(w_fixed * (yi - weighted_mean_fixed)**2)
+    
+    # EB (Empirical Bayes) in metafor for a simple model is often approximated 
+    # by the DerSimonian-Laird estimator for tau^2
+    df_q = len(yi) - 1
+    sum_w_sq = np.sum(w_fixed**2)
+    tau2 = max(0, (Q - df_q) / (sum_w - (sum_w_sq / sum_w)))
+    
+    # Random effects weights
+    w_random = 1.0 / (vi + tau2)
+    sum_w_rand = np.sum(w_random)
+    beta = np.sum(w_random * yi) / sum_w_rand
+    se = np.sqrt(1.0 / sum_w_rand)
+    zval = beta / se
+    pval = 2 * (1 - stats.norm.cdf(abs(zval)))
+    
+    meta_analysis = {
+        'beta': beta,
+        'se': se,
+        'zval': zval,
+        'pval': pval,
+        'tau2': tau2
+    }
+
+============================================================
+Entity: tidy
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    tidy(meta_analysis)
+  Python:
+    def tidy(model):
+        """Mimics broom::tidy for metafor rma objects"""
+        return pd.DataFrame({
+            'term': ['overall summary'],
+            'type': ['summary'],
+            'estimate': [model['beta']],
+            'std.error': [model['se']],
+            'statistic': [model['zval']],
+            'p.value': [model['pval']]
+        })
+    
+    # Execution
+    result = tidy(meta_analysis)
+    print(result)

@@ -1,0 +1,102 @@
+Translation log
+Final score: 0.894
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(purrr))
+
+============================================================
+Entity: import_purrr
+  Name:  purrr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(purrr))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- c(a = 1, b = 2, cat = 10, dog = 15, elephant = 5, e = 10)
+  Python:
+    x = pd.Series({'a': 1, 'b': 2, 'cat': 10, 'dog': 15, 'elephant': 5, 'e': 10})
+    
+    # keep_at(letters)
+
+============================================================
+Entity: keep_at
+  Name:  keep_at
+  Kind:  FunctionCall
+  Score: 0.833
+  side_effects:        0.833
+  executed_ok:       True
+
+  R:
+    x |> keep_at(letters)
+  Python:
+    print(x[x.index.isin(list(string.ascii_lowercase))])
+    
+    # discard_at(letters)
+
+============================================================
+Entity: discard_at
+  Name:  discard_at
+  Kind:  FunctionCall
+  Score: 0.900
+  side_effects:        0.900
+  executed_ok:       True
+
+  R:
+    x |> discard_at(letters)
+  Python:
+    print(x[~x.index.isin(list(string.ascii_lowercase))])
+    
+    # keep_at(\(x) nchar(x) == 3)
+
+============================================================
+Entity: keep_at_1
+  Name:  keep_at
+  Kind:  FunctionCall
+  Score: 0.842
+  side_effects:        0.842
+  executed_ok:       True
+
+  R:
+    x |> keep_at(\(x) nchar(x) == 3)
+  Python:
+    print(x[x.index.map(lambda x: len(x) == 3)])
+    
+    # discard_at(\(x) nchar(x) == 3)
+
+============================================================
+Entity: discard_at_1
+  Name:  discard_at
+  Kind:  FunctionCall
+  Score: 0.897
+  side_effects:        0.897
+  executed_ok:       True
+
+  R:
+    x |> discard_at(\(x) nchar(x) == 3)
+  Python:
+    print(x[~x.index.map(lambda x: len(x) == 3)])

@@ -1,0 +1,77 @@
+Translation log
+Final score: 0.800
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: print
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      observe({ print(input$x) })
+  Python:
+        print("input$x") 
+    )
+    
+    # Use local variant in a function
+    my_function()
+
+============================================================
+Entity: my_function
+  Name:  my_function
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    my_function <- function() {
+      localOtelCollect("none")
+      # Rest of function executes without telemetry
+      reactive({ input$y * 2 })
+    }
+  Python:
+    def my_function():
+        localOtelCollect("none")
+        # Rest of function executes without telemetry
+        # Note: In a real app, this would be inside a server function
+        # We use a lambda to mimic the reactive expression definition
+        return lambda input_y: input_y * 2
+    
+    # Simulate the first snippet: withOtelCollect("none", { ... })
+    withOtelCollect("none", lambda: 
+        # Code here won't generate telemetry
+        # Mimicking reactive({ input$x + 1 })
+        lambda input_x: input_x + 1
+    )
+    
+    # Simulate the second snippet: withOtelCollect("reactivity", { ... })
+    withOtelCollect("reactivity", lambda: 
+        # Reactive execution will be traced
+        # Mimicking observe({ print(input$x) })
+        # r2py:entity:print

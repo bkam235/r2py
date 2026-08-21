@@ -1,0 +1,69 @@
+Translation log
+Final score: 0.692
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: my_summarise
+  Name:  my_summarise
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    my_summarise <- function(.data, ...) {
+      .data |>
+        group_by(...) |>
+        summarise(mass = mean(mass, na.rm = TRUE), height = mean(height, na.rm = TRUE))
+    }
+  Python:
+    def my_summarise(data, *args):
+        return data.groupby(list(args), as_index=False)[['mass', 'height']].mean()
+
+============================================================
+Entity: my_summarise_1
+  Name:  my_summarise
+  Kind:  FunctionCall
+  Score: 0.665
+  side_effects:        0.665
+  executed_ok:       True
+
+  R:
+    starwars |> my_summarise(homeworld)
+  Python:
+    print(my_summarise(starwars, 'homeworld'))
+
+============================================================
+Entity: my_summarise_2
+  Name:  my_summarise
+  Kind:  FunctionCall
+  Score: 0.718
+  side_effects:        0.718
+  executed_ok:       True
+
+  R:
+    starwars |> my_summarise(sex, gender)
+  Python:
+    print(my_summarise(starwars, 'sex', 'gender'))

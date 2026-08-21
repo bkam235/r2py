@@ -1,0 +1,137 @@
+Translation log
+Final score: 0.959
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: import_stringr
+  Name:  stringr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: fruit
+  Name:  fruit
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    fruit <- c("apple", "banana", "pear", "pineapple")
+  Python:
+    fruit = ["apple", "banana", "pear", "pineapple"]
+    
+    # str_count(fruit, "a")
+
+============================================================
+Entity: str_count
+  Name:  str_count
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_count(fruit, "a")
+  Python:
+    print([s.count("a") for s in fruit])
+    
+    # str_count(fruit, "p")
+
+============================================================
+Entity: str_count_1
+  Name:  str_count
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_count(fruit, "p")
+  Python:
+    print([s.count("p") for s in fruit])
+    
+    # str_count(fruit, "e")
+
+============================================================
+Entity: str_count_2
+  Name:  str_count
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_count(fruit, "e")
+  Python:
+    print([s.count("e") for s in fruit])
+    
+    # str_count(fruit, c("a", "b", "p", "p"))
+    # R's str_count with a vector of patterns returns the count for the first match or combined; 
+    # however, typically in this context it behaves as an OR regex.
+
+============================================================
+Entity: str_count_3
+  Name:  str_count
+  Kind:  FunctionCall
+  Score: 0.714
+  side_effects:        0.714
+  executed_ok:       True
+
+  R:
+    str_count(fruit, c("a", "b", "p", "p"))
+  Python:
+    print([len(re.findall(r'[abp]', s)) for s in fruit])
+    
+    # str_count(c("a.", "...", ".a.a"), ".")
+    # In R, "." is a regex wildcard.
+
+============================================================
+Entity: str_count_4
+  Name:  str_count
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_count(c("a.", "...", ".a.a"), ".")
+  Python:
+    texts = ["a.", "...", ".a.a"]
+    print([len(re.findall(r'.', s)) for s in texts])
+    
+    # str_count(c("a.", "...", ".a.a"), fixed("."))
+    # fixed(".") treats the dot as a literal character.
+
+============================================================
+Entity: str_count_5
+  Name:  str_count
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_count(c("a.", "...", ".a.a"), fixed("."))
+  Python:
+    print([s.count(".") for s in texts])

@@ -1,0 +1,127 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(prodlim))
+
+============================================================
+Entity: import_prodlim
+  Name:  prodlim
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(prodlim))
+
+============================================================
+Entity: tab
+  Name:  tab
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    tab <- data.frame(num=1:26,abc=letters)
+  Python:
+    tab = pd.DataFrame({'num': range(1, 27), 'abc': list(string.ascii_lowercase)})
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- c(3,"c")
+  Python:
+    x = [3, "c"]
+
+============================================================
+Entity: row.match
+  Name:  row.match
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    row.match(x,tab)
+  Python:
+    def row_match(x, table, nomatch=np.nan):
+        if isinstance(table, np.ndarray):
+            table = pd.DataFrame(table)
+        
+        # If x is not a DataFrame (e.g., list, tuple, numpy array), convert to DataFrame
+        # R's as.data.frame(matrix(x, nrow=1)) creates a 1-row DF where elements of x are columns
+        if not isinstance(x, pd.DataFrame):
+            x = pd.DataFrame([x])
+        
+        # Convert rows to strings joined by \r to create unique identifiers for matching
+        # R's paste(..., sep="\r") across columns
+        cx = x.astype(str).apply(lambda row: "\r".join(row), axis=1)
+        ct = table.astype(str).apply(lambda row: "\r".join(row), axis=1)
+        
+        # Find the index of the first occurrence of cx in ct
+        # R match() returns 1-based indices
+        results = []
+        for val in cx:
+            try:
+                # Find first occurrence
+                pos = np.where(ct == val)[0][0] + 1
+                results.append(pos)
+            except IndexError:
+                results.append(nomatch)
+                
+        return np.array(results)
+    
+    # Main script
+    res1 = row_match(x, tab)
+    r_print_vec(res1)
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x <- data.frame(n=c(3,8),z=c("c","h"))
+  Python:
+    x = pd.DataFrame({'n': [3, 8], 'z': ["c", "h"]})
+
+============================================================
+Entity: row.match_1
+  Name:  row.match
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    row.match(x,tab)
+  Python:
+    res2 = row_match(x, tab)
+    r_print_vec(res2)

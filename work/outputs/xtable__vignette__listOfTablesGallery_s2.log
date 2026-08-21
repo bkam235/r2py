@@ -1,0 +1,45 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: import_xtable
+  Name:  xtable
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(xtable)
+
+============================================================
+Entity: options
+  Name:  options
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    options(xtable.floating = FALSE)
+
+============================================================
+Entity: options_1
+  Name:  options
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    options(xtable.timestamp = "")
+
+============================================================
+Entity: options_2
+  Name:  options
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    options(width = 60)

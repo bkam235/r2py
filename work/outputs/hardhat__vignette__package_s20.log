@@ -1,0 +1,155 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(hardhat))
+
+============================================================
+Entity: import_hardhat
+  Name:  hardhat
+  Kind:  LibraryImport
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(hardhat))
+
+============================================================
+Entity: model
+  Name:  model
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    model <- simple_lm(bill_length_mm ~ body_mass_g + species, penguins)
+  Python:
+    def simple_lm(formula, data):
+        model = ols(formula, data=data).fit()
+        # Store blueprint and model for emulation of hardhat structure
+        return {
+            "model": model,
+            "blueprint": formula,
+            "data": data
+        }
+        model = simple_lm("bill_length_mm ~ body_mass_g + species", penguins)
+    
+        # Forge predictors
+
+============================================================
+Entity: predictors
+  Name:  predictors
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    predictors <- forge(penguins, model$blueprint)$predictors
+  Python:
+    def forge(data, blueprint):
+        # Simplified version of forge to extract predictors
+        # In a real scenario, this would handle formula parsing
+        return {"predictors": data}
+        predictors = forge(penguins, model["blueprint"])["predictors"]
+    
+        # Valid call
+
+============================================================
+Entity: forge
+  Name:  forge
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    predictors <- forge(penguins, model$blueprint)$predictors
+
+============================================================
+Entity: predict_simple_lm_bridge
+  Name:  predict_simple_lm_bridge
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    predict_simple_lm_bridge("numeric", model, predictors)
+  Python:
+    def predict_simple_lm_bridge(type_check, model_obj, predictors):
+        # Emulating the hardhat bridge validation logic
+        if type_check != "numeric":
+            raise TypeError(f"Expected 'numeric', got '{type_check}'")
+        
+        # Use statsmodels prediction
+        model = model_obj["model"]
+        return model.predict(predictors["predictors"])
+    
+    try:
+        # Model fitting
+        print(predict_simple_lm_bridge("numeric", model, predictors))
+    
+        # Invalid call (should trigger the TypeError)
+
+============================================================
+Entity: predict_simple_lm_bridge_1
+  Name:  predict_simple_lm_bridge
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    predict_simple_lm_bridge("numer", model, predictors)
+  Python:
+        print(predict_simple_lm_bridge("numer", model, predictors))
+    except Exception as e:
+        print(e)

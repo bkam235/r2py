@@ -1,0 +1,114 @@
+Translation log
+Final score: 0.565
+Data score:  0.500
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: monday
+  Name:  monday
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    monday <- weekday(clock_weekdays$monday)
+  Python:
+    # In pandas, weekday() returns 0 for Monday. 
+    # To shift back to the previous Monday: date - timedelta(days=weekday)
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- as.Date(c("2019-01-01", "2019-02-01"))
+  Python:
+    x = pd.to_datetime(["2019-01-01", "2019-02-01"]).date
+    
+    # Shift to the most recent Monday
+
+============================================================
+Entity: date_shift
+  Name:  date_shift
+  Kind:  FunctionCall
+  Score: 0.616
+  side_effects:        0.616
+  executed_ok:       True
+
+  R:
+    date_shift(x, monday)
+  Python:
+    x_shifted = pd.to_datetime(x) - pd.to_timedelta(pd.to_datetime(x).weekday, unit='D')
+    print(x_shifted.date)
+    
+    # Define POSIXct equivalent with timezone
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    y <- as.POSIXct(
+      c("2019-01-01 02:30:30", "2019-02-01 05:20:22"), 
+      "America/New_York"
+    )
+  Python:
+    y = pd.to_datetime(
+        ["2019-01-01 02:30:30", "2019-02-01 05:20:22"]
+    ).tz_localize("America/New_York")
+    
+    # Shift to the most recent Monday while preserving time
+
+============================================================
+Entity: date_shift_1
+  Name:  date_shift
+  Kind:  FunctionCall
+  Score: 0.711
+  side_effects:        0.711
+  executed_ok:       True
+
+  R:
+    date_shift(y, monday)
+  Python:
+    y_shifted = y - pd.to_timedelta(y.weekday, unit='D')
+    print(y_shifted)

@@ -1,0 +1,142 @@
+Translation log
+Final score: 0.585
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(haven))
+
+============================================================
+Entity: import_haven
+  Name:  haven
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(haven))
+
+============================================================
+Entity: s1
+  Name:  s1
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    s1 <- labelled(c("M", "M", "F"), c(Male = "M", Female = "F"))
+  Python:
+    s1 = labelled(["M", "M", "F"], labels={"Male": "M", "Female": "F"})
+
+============================================================
+Entity: s2
+  Name:  s2
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    s2 <- labelled(c(1, 1, 2), c(Male = 1, Female = 2))
+  Python:
+    def labelled(x=None, labels=None, label=None):
+        """Create a labelled vector."""
+        if x is None:
+            x = []
+        return HavenLabelled(x, labels=labels, label=label)
+    
+    
+    def is_labelled(x):
+        """Check if object is labelled."""
+        return isinstance(x, HavenLabelled)
+    
+    
+    def format_tagged_na(x, digits=None):
+        """Format tagged NA values."""
+        if digits is None:
+            digits = 6
+        formatted = [f"{val:.{digits}g}" if not np.isnan(val) else "NA" for val in x]
+        return formatted
+    s2 = labelled([1, 1, 2], labels={"Male": 1, "Female": 2})
+
+============================================================
+Entity: labelled_df
+  Name:  labelled_df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    labelled_df <- tibble::tibble(s1, s2)
+  Python:
+    labelled_df = pd.DataFrame({
+        's1': s1.data,
+        's2': s2.data
+    })
+    
+    # Store labelled metadata
+    labelled_df_labelled = {
+        's1': s1,
+        's2': s2
+    }
+
+============================================================
+Entity: print_labels
+  Name:  print_labels
+  Kind:  FunctionCall
+  Score: 0.840
+  side_effects:        0.840
+  executed_ok:       True
+
+  R:
+      print_labels(labelled_df[[var]], var)
+  Python:
+    def print_labels(x, name=None):
+        """Print labels of a labelled vector."""
+        if not is_labelled(x):
+            raise ValueError("x must be a labelled vector.")
+        
+        labels = x.labels
+        if not labels:
+            return
+        
+        name_str = name if name is not None else ""
+        # Format: Labels:name (no space after colon)
+        print(f"Labels:{name_str}")
+        
+        label_values = list(labels.values())
+        label_names = list(labels.keys())
+        
+        # Create DataFrame with value and label columns
+        df = pd.DataFrame({
+            'value': label_values,
+            'label': label_names
+        })
+        
+        # Print with proper formatting (right-aligned values, left-aligned labels)
+        print(df.to_string(index=False))
+    
+    
+    # Main example code
+    for var in labelled_df.columns:
+        print_labels(labelled_df_labelled[var], var)

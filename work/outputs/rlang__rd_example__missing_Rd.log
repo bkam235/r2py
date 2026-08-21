@@ -1,0 +1,110 @@
+Translation log
+Final score: 0.800
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: import_rlang
+  Name:  rlang
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: typeof
+  Name:  typeof
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    typeof(NA)
+  Python:
+    def typeof(x):
+        if x is None:
+            return "NULL"
+        if isinstance(x, bool) or (isinstance(x, float) and np.isnan(x)):
+            # In R, NA is logically a logical type by default
+            return "logical"
+        if isinstance(x, int):
+            return "integer"
+        if isinstance(x, float):
+            return "double"
+        return type(x).__name__
+    
+    # Define rlang-style NA aliases
+    print(typeof(np.nan))
+
+============================================================
+Entity: typeof_1
+  Name:  typeof
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    typeof(na_lgl)
+  Python:
+    print(typeof(na_lgl))
+
+============================================================
+Entity: typeof_2
+  Name:  typeof
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    typeof(na_int)
+  Python:
+    print(typeof(na_int))
+    
+    # Note that while the base R missing symbols cannot be overwritten,
+    # that's not the case for rlang's aliases:
+
+============================================================
+Entity: na_dbl
+  Name:  na_dbl
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    na_dbl <- NA
+  Python:
+    na_dbl = np.nan
+
+============================================================
+Entity: typeof_3
+  Name:  typeof
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    typeof(na_dbl)
+  Python:
+    print(typeof(na_dbl))

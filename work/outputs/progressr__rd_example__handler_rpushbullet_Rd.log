@@ -1,0 +1,115 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(progressr))
+
+============================================================
+Entity: import_progressr
+  Name:  progressr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(progressr))
+
+============================================================
+Entity: pkg
+  Name:  pkg
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    pkg <- "RPushbullet"
+  Python:
+        pkg = "RPushbullet"
+        
+        # handlers("rpushbullet")
+
+============================================================
+Entity: requireNamespace
+  Name:  requireNamespace
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (requireNamespace(pkg, quietly = TRUE)) {
+  Python:
+    def requireNamespace(pkg, quietly=False):
+        return True
+
+============================================================
+Entity: handlers
+  Name:  handlers
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      handlers("rpushbullet")
+  Python:
+    def handlers(handler_name):
+        pass
+        handlers("rpushbullet")
+        
+        # with_progress({ y <- slow_sum(1:10) })
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+      with_progress({ y <- slow_sum(1:10) })
+  Python:
+    def slow_sum(iterable):
+        total = 0
+        for i in tqdm(iterable, desc="Processing"):
+            total += i
+        return total
+    
+    if __name__ == "__main__":
+        # suppressPackageStartupMessages(library(progressr))
+        import_progressr()
+        
+        # pkg <- "RPushbullet"
+        y = slow_sum(range(1, 11))
+        
+        # print(y)
+
+============================================================
+Entity: print
+  Name:  print
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+      print(y)
+  Python:
+        print(f"[1] {y}")

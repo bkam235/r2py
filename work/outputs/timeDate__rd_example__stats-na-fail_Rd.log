@@ -1,0 +1,148 @@
+Translation log
+Final score: 0.812
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(timeDate))
+
+============================================================
+Entity: import_timeDate
+  Name:  timeDate
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(timeDate))
+
+============================================================
+Entity: td
+  Name:  td
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    (td <- timeCalendar())
+  Python:
+    class TimeDateObject:
+        """Mimics the R timeDate class behavior."""
+        def __init__(self, data, fin_center="GMT"):
+            self.data = np.array(data, dtype=object)
+            self.fin_center = fin_center
+    
+        def __repr__(self):
+            # Mimics R's print output for timeCalendar:
+            #      GMT
+            #  [1] [2026-01-01] [2026-02-01] [2026-03-01] [2026-04-01] [2026-05-01]
+            #  [6] [2026-06-01] [2026-07-01] [2026-08-01] [2026-09-01] [2026-10-01]
+            # [11] [2026-11-01] [2026-12-01]
+            res = f"      {self.fin_center}\n"
+            for i in range(0, len(self.data), 5):
+                chunk = self.data[i:i+5]
+                # Format: [index] [val1] [val2] ...
+                # Indices: [1], [6], [11]
+                line_idx = i + 1
+                prefix = f" [{line_idx}] " if line_idx > 1 else f" [1] "
+                if line_idx >= 10:
+                    prefix = f"[{line_idx}] "
+                
+                formatted_vals = " ".join([f"[{str(x) if x is not None else 'NA'}]" for x in chunk])
+                res += f"{prefix}{formatted_vals}\n"
+            return res.strip()
+
+============================================================
+Entity: is.na
+  Name:  is.na
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    is.na(td)
+  Python:
+        def is_na(self):
+            return np.array([x is None for x in self.data])
+    is_na_td = td.is_na()
+    # R's is.na prints as: [1] FALSE FALSE ...
+    vals_na = "  ".join([str(x).upper() for x in is_na_td])
+    print(f"      [1] {vals_na}")
+    
+    # R: is.na(td) <- 2:3
+    td.set_na(range(2, 4))
+    
+    # R: td
+
+============================================================
+Entity: is.na(td)
+  Name:  is.na(td)
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    is.na(td) <- 2:3
+  Python:
+        def set_na(self, indices):
+            for idx in indices:
+                # R indices are 1-based
+                self.data[idx - 1] = None
+    
+    def timeCalendar():
+        # Default: current year (mocked to 2026 based on R output), months 1:12, day 1
+        year = 2026
+        dates = [f"{year}-{m:02d}-01" for m in range(1, 13)]
+        return TimeDateObject(dates)
+    
+    # R: (td <- timeCalendar())
+    td = timeCalendar()
+    print(td)
+    
+    # R: is.na(td)
+
+============================================================
+Entity: td_1
+  Name:  td
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    td
+  Python:
+    print(td)
+    
+    # R: is.na(td)
+
+============================================================
+Entity: is.na_1
+  Name:  is.na
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    is.na(td)
+  Python:
+    is_na_td_final = td.is_na()
+    vals_na_final = "  ".join([str(x).upper() for x in is_na_td_final])
+    print(f"      [1] {vals_na_final}")

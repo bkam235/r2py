@@ -1,0 +1,162 @@
+Translation log
+Final score: 0.850
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(sparsevctrs))
+
+============================================================
+Entity: import_sparsevctrs
+  Name:  sparsevctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(sparsevctrs))
+
+============================================================
+Entity: x_sparse
+  Name:  x_sparse
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x_sparse <- sparse_double(c(pi, 5, 0.1), c(2, 5, 10), 10)
+  Python:
+    class SparseVector:
+        def __init__(self, values: np.ndarray, positions: np.ndarray, length: int, default: float = 0.0):
+            # R positions are 1-indexed, Python are 0-indexed
+            self.values = np.asarray(values, dtype=float)
+            self.positions = np.asarray(positions, dtype=int) - 1 
+            self.length = length
+            self.default = default
+    
+        def to_dense(self):
+            res = np.full(self.length, self.default)
+            if self.values.size > 0:
+                res[self.positions] = self.values
+            return res
+    
+        def __repr__(self):
+            return f"SparseVector(values={self.values}, positions={self.positions + 1}, length={self.length}, default={self.default})"
+    
+    def sparse_double(values, positions, length, default=0.0):
+        return SparseVector(values, positions, length, default)
+    
+    def format_r_vector(vec):
+        """Helper to mimic R's print output for vectors."""
+        res = "      [1] "
+        for i, val in enumerate(vec):
+            res += f"{val:0.6f} "
+            if (i + 1) % 8 == 0 and (i + 1) < len(vec):
+                res += f"\n [{i + 9}] "
+        return res.strip()
+    x_sparse = sparse_double([np.pi, 5, 0.1], [2, 5, 10], 10)
+
+============================================================
+Entity: sparse_division_scalar
+  Name:  sparse_division_scalar
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sparse_division_scalar(x_sparse, 2)
+  Python:
+    def sparse_division_scalar(x: SparseVector, val: float):
+        if np.isnan(val):
+            return np.full(x.length, np.nan)
+        if val == 0:
+            return np.full(x.length, np.inf)
+        if val == 1:
+            return x.to_dense()
+        
+        new_values = x.values / val
+        return sparse_double(new_values, x.positions + 1, x.length, x.default).to_dense()
+    print(format_r_vector(sparse_division_scalar(x_sparse, 2)))
+
+============================================================
+Entity: sparse_multiplication_scalar
+  Name:  sparse_multiplication_scalar
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sparse_multiplication_scalar(x_sparse, 2)
+  Python:
+    def sparse_multiplication_scalar(x: SparseVector, val: float):
+        if np.isnan(val):
+            return np.full(x.length, np.nan)
+        if val == 1:
+            return x.to_dense()
+        if val == 0:
+            return sparse_double([], [], x.length, x.default).to_dense()
+        
+        new_values = x.values * val
+        return sparse_double(new_values, x.positions + 1, x.length, x.default).to_dense()
+    print(format_r_vector(sparse_multiplication_scalar(x_sparse, 2)))
+
+============================================================
+Entity: sparse_addition_scalar
+  Name:  sparse_addition_scalar
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sparse_addition_scalar(x_sparse, 2)
+  Python:
+    def sparse_addition_scalar(x: SparseVector, val: float):
+        if np.isnan(val):
+            return np.full(x.length, np.nan)
+        if val == 0:
+            return x.to_dense()
+        
+        new_values = x.values + val
+        new_default = x.default + val
+        return sparse_double(new_values, x.positions + 1, x.length, new_default).to_dense()
+    print(format_r_vector(sparse_addition_scalar(x_sparse, 2)))
+
+============================================================
+Entity: sparse_subtraction_scalar
+  Name:  sparse_subtraction_scalar
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sparse_subtraction_scalar(x_sparse, 2)
+  Python:
+    def sparse_subtraction_scalar(x: SparseVector, val: float):
+        if np.isnan(val):
+            return np.full(x.length, np.nan)
+        if val == 0:
+            return x.to_dense()
+        
+        new_values = x.values - val
+        new_default = x.default - val
+        return sparse_double(new_values, x.positions + 1, x.length, new_default).to_dense()
+    
+    # Main Execution
+    print(format_r_vector(sparse_subtraction_scalar(x_sparse, 2)))
