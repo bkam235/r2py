@@ -53,6 +53,9 @@
     "modelr:": [
       "modelr.typical"
     ],
+    "pillar:": [
+      "pillar.tbl-format-header"
+    ],
     "prodlim:": [
       "prodlim.row.match"
     ],
@@ -292,6 +295,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "modelr",
+      "ast_shape_hash": ""
+    },
+    "pillar.tbl-format-header": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "pillar",
       "ast_shape_hash": ""
     },
     "prodlim.row.match": {
