@@ -22,6 +22,7 @@ Translate R `filter` (FunctionCall from dplyr) to Python. See verified example b
 ## Translation Examples
 - {"r_hash": "00475275", "r_snippet": "arrange(wrong, year)", "py_snippet": "print(wrong.sort_values('year').reset_index(drop=True))\n\n# Right way: lag with ordering by year", "score": 0.9564, "script_id": "auto"}
 - {"r_hash": "82d5832d", "r_snippet": "    filter(year >= 2000) |>", "py_snippet": "filtered_storms = df_storms[df_storms['year'] >= 2000].copy()\n\n# In R: color = paste(year, name)\nfiltered_storms['color_label'] = filtered_storms['year'].astype(str) + \" \" + filtered_storms['name']", "score": 0.9, "script_id": "auto"}
+- {"r_hash": "f61434f0", "r_snippet": "slice_sample(df, n = 10, replace = TRUE)", "py_snippet": "print(slice_sample(df, n=10, replace=True))", "score": 0.8492, "script_id": "auto"}
 
 ## Edit Examples
 (none)
