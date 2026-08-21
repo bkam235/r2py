@@ -79,6 +79,9 @@
     "shiny:": [
       "shiny.shinyapp"
     ],
+    "stringr:": [
+      "stringr.str-count"
+    ],
     "timeDate:": [
       "timedate.easter",
       "timedate.goodfriday",
@@ -379,6 +382,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "shiny",
+      "ast_shape_hash": ""
+    },
+    "stringr.str-count": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "stringr",
       "ast_shape_hash": ""
     },
     "timedate.easter": {
