@@ -60,6 +60,9 @@
     "pillar:": [
       "pillar.tbl-format-header"
     ],
+    "plyr:": [
+      "plyr.splitter-d"
+    ],
     "prodlim:": [
       "prodlim.row.match"
     ],
@@ -332,6 +335,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "pillar",
+      "ast_shape_hash": ""
+    },
+    "plyr.splitter-d": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "plyr",
       "ast_shape_hash": ""
     },
     "prodlim.row.match": {
