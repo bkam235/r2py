@@ -95,6 +95,9 @@
     "stringr:": [
       "stringr.str-count"
     ],
+    "tidyselect:": [
+      "tidyselect.eval-relocate"
+    ],
     "timeDate:": [
       "timedate.easter",
       "timedate.goodfriday",
@@ -459,6 +462,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "stringr",
+      "ast_shape_hash": ""
+    },
+    "tidyselect.eval-relocate": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "tidyselect",
       "ast_shape_hash": ""
     },
     "timedate.easter": {
