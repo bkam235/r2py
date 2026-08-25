@@ -69,6 +69,10 @@
     "progressr:": [
       "progressr.handlers"
     ],
+    "ps:": [
+      "ps.ps-is-supported",
+      "ps.ps-wait"
+    ],
     "purrr:": [
       "purrr.discard-at",
       "purrr.keep-at"
@@ -359,6 +363,22 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "progressr",
+      "ast_shape_hash": ""
+    },
+    "ps.ps-is-supported": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ps",
+      "ast_shape_hash": ""
+    },
+    "ps.ps-wait": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ps",
       "ast_shape_hash": ""
     },
     "purrr.discard-at": {
