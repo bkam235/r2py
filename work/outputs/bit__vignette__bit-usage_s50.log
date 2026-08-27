@@ -1,0 +1,80 @@
+Translation log
+Final score: 0.500
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(bit))
+
+============================================================
+Entity: import_bit
+  Name:  bit
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(bit))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- sample(9, 9, TRUE)
+  Python:
+    # r2py:data_shim:begin
+    # import json as _r2py_shim_json
+    # from pathlib import Path as _r2py_shim_Path
+    # if '__file__' not in globals(): __file__ = 'work/outputs/bit__vignette__bit-usage_s50.py'
+    # _r2py_shim_data = _r2py_shim_json.loads((_r2py_shim_Path(__file__).parent / 'bit__vignette__bit-usage_s50.r2py_data.json').read_text(encoding='utf-8'))
+    # for _r2py_shim_n in ['x']:
+    #     if _r2py_shim_n in _r2py_shim_data:
+    #         globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]
+    # r2py:data_shim:end
+    
+    import numpy as np
+
+============================================================
+Entity: sort
+  Name:  sort
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sort(x)
+  Python:
+    print(np.sort(x))
+
+============================================================
+Entity: bit_sort
+  Name:  bit_sort
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    bit_sort(x)
+  Python:
+    # Note: bit_sort is a specific C-implemented function from the R 'bit' package.
+    # The standard Python equivalent for sorting is np.sort or sorted().
+    print(np.sort(x))

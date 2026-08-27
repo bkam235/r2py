@@ -1,0 +1,106 @@
+Translation log
+Final score: 0.850
+Data score:  0.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- as.Date("2019-01-01")
+  Python:
+    x = pd.to_datetime("2019-01-01")
+    
+    # date_format(x)
+
+============================================================
+Entity: date_format
+  Name:  date_format
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    date_format(x)
+  Python:
+    print(x.strftime('%Y-%m-%d'))
+    
+    # date_format(x, format = "year: %Y, month: %m, day: %d")
+
+============================================================
+Entity: date_format_1
+  Name:  date_format
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    date_format(x, format = "year: %Y, month: %m, day: %d")
+  Python:
+    print(x.strftime("year: %Y, month: %m, day: %d"))
+    
+    # date_format(x, format = "%A, %B %d, %Y")
+
+============================================================
+Entity: date_format_2
+  Name:  date_format
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    date_format(x, format = "%A, %B %d, %Y")
+  Python:
+    print(x.strftime("%A, %B %d, %Y"))
+    
+    # date_format(x, format = "%A, %B %d, %Y", locale = clock_locale("fr"))
+
+============================================================
+Entity: date_format_3
+  Name:  date_format
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    date_format(x, format = "%A, %B %d, %Y", locale = clock_locale("fr"))
+  Python:
+    try:
+        locale.setlocale(locale.LC_TIME, "fr_FR.UTF-8")
+        print(x.strftime("%A, %B %d, %Y"))
+    except locale.Error:
+        print("French locale not installed on this system")

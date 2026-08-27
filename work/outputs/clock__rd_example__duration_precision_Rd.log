@@ -1,0 +1,108 @@
+Translation log
+Final score: 0.858
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: duration_precision
+  Name:  duration_precision
+  Kind:  FunctionCall
+  Score: 0.962
+  side_effects:        0.962
+  executed_ok:       True
+
+  R:
+    duration_precision(duration_seconds(1))
+  Python:
+    class ClockDuration:
+        def __init__(self, values, precision):
+            self.values = np.array(values)
+            self.precision = precision
+    
+        def __repr__(self):
+            return f"ClockDuration({self.values}, precision={self.precision})"
+    
+    def precision_to_string(precision):
+        mapping = {
+            "PRECISION_NANOSECOND": "nanoseconds",
+            "PRECISION_SECOND": "seconds",
+            "PRECISION_QUARTER": "quarters"
+        }
+        return mapping.get(precision, str(precision))
+    
+    def duration_precision(x):
+        if isinstance(x, ClockDuration):
+            return precision_to_string(x.precision)
+        elif isinstance(x, list) or isinstance(x, np.ndarray):
+            # If it's a collection of ClockDurations
+            return [precision_to_string(item.precision) for item in x]
+        else:
+            raise TypeError(f"x must be a <clock_duration>, not {type(x)}")
+    
+    def duration_helper(n, precision):
+        # Convert input to array to support both single integers and sequences (like 1:5)
+        n_val = np.array(n)
+        if n_val.ndim == 0:
+            return ClockDuration(n_val.item(), precision)
+        else:
+            # In R, duration_quarters(1:5) returns a vector of durations
+            return [ClockDuration(val, precision) for val in n_val]
+    
+    def duration_seconds(n=0):
+        return duration_helper(n, "PRECISION_SECOND")
+    
+    def duration_nanoseconds(n=0):
+        return duration_helper(n, "PRECISION_NANOSECOND")
+    
+    def duration_quarters(n=0):
+        return duration_helper(n, "PRECISION_QUARTER")
+    
+    # Execution
+    print(duration_precision(duration_seconds(1)))
+
+============================================================
+Entity: duration_precision_1
+  Name:  duration_precision
+  Kind:  FunctionCall
+  Score: 0.976
+  side_effects:        0.976
+  executed_ok:       True
+
+  R:
+    duration_precision(duration_nanoseconds(2))
+  Python:
+    print(duration_precision(duration_nanoseconds(2)))
+
+============================================================
+Entity: duration_precision_2
+  Name:  duration_precision
+  Kind:  FunctionCall
+  Score: 0.637
+  side_effects:        0.637
+  executed_ok:       True
+
+  R:
+    duration_precision(duration_quarters(1:5))
+  Python:
+    print(duration_precision(duration_quarters(np.arange(1, 6))))

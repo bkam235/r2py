@@ -1,0 +1,59 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(otel))
+
+============================================================
+Entity: import_otel
+  Name:  otel
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(otel))
+
+============================================================
+Entity: myfun
+  Name:  myfun
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    myfun <- function() {
+      lgr <- otel::get_logger()
+      otel::log("Log message", logger = lgr)
+    }
+  Python:
+    def myfun():
+        # Python's logging module serves as the equivalent to otel/lgr
+        logger = logging.getLogger("otel")
+        logger.info("Log message")
+    
+    if __name__ == "__main__":
+        logging.basicConfig(level=logging.INFO)
+
+============================================================
+Entity: myfun_1
+  Name:  myfun
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    myfun()
+  Python:
+        myfun()

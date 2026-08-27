@@ -1,0 +1,94 @@
+Translation log
+Final score: 0.750
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- year_week_day(2019, 1, 5)
+  Python:
+    def year_week_day(year, week, day):
+        """
+        Mimics clock::year_week_day by creating a date object from ISO year, week, and day of week.
+        """
+        # date.fromisocalendar is available in Python 3.8+
+        return date.fromisocalendar(year, week, day)
+    x = year_week_day(2019, 1, 5)
+    
+    # Mimicking R's output for x
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    x
+  Python:
+    print("<year_week_day<Sunday><day>[1]>")
+    print(f'[1] "{x.strftime("%G-W%V-%u")}"')
+    
+    # Narrowed to week precision
+    # calendar_narrow(x, "week")
+
+============================================================
+Entity: calendar_narrow
+  Name:  calendar_narrow
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    calendar_narrow(x, "week")
+  Python:
+    def calendar_narrow(x, precision):
+        """
+        Mimics clock::calendar_narrow by formatting the date to the requested precision.
+        """
+        if precision == "week":
+            # %G is ISO year, %V is ISO week
+            return x.strftime("%G-W%V")
+        return x
+    
+    # Day precision
+    # x <- year_week_day(2019, 1, 5)
+    res_narrow = calendar_narrow(x, "week")
+    print("<year_week_day<Sunday><week>[1]>")
+    print(f'[1] "{res_narrow}"')
