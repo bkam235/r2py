@@ -1,0 +1,433 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(lava))
+
+============================================================
+Entity: import_lava
+  Name:  lava
+  Kind:  LibraryImport
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(lava))
+
+============================================================
+Entity: m
+  Name:  m
+  Kind:  Variable
+  Score: 0.467
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    m <- lvm();
+  Python:
+    model_m_spec = """
+
+============================================================
+Entity: regression(m)
+  Name:  regression(m)
+  Kind:  Formula
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    regression(m) <- c(y1,y2,y3) ~ eta; latent(m) <- ~eta
+
+============================================================
+Entity: c
+  Name:  c
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    regression(m) <- c(y1,y2,y3) ~ eta; latent(m) <- ~eta
+
+============================================================
+Entity: latent(m)
+  Name:  latent(m)
+  Kind:  Variable
+  Score: 0.467
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    regression(m) <- c(y1,y2,y3) ~ eta; latent(m) <- ~eta
+  Python:
+    eta =~ y1 + y2 + y3
+
+============================================================
+Entity: regression(m)_1
+  Name:  regression(m)
+  Kind:  Formula
+  Score: 0.633
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    regression(m) <- eta ~ x
+  Python:
+    eta ~ x
+    """
+    
+    # m2: y3 is also predicted by x
+
+============================================================
+Entity: m2
+  Name:  m2
+  Kind:  Variable
+  Score: 0.500
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    m2 <- regression(m, c(y3,eta) ~ x)
+  Python:
+    model_m2_spec = """
+    eta =~ y1 + y2 + y3
+    eta ~ x
+    y3 ~ x
+    """
+    
+    # Simulate data (Simplified manual simulation as semopy doesn't have a built-in sim() like lavaan)
+
+============================================================
+Entity: set.seed
+  Name:  set.seed
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    set.seed(1)
+  Python:
+    np.random.seed(1)
+
+============================================================
+Entity: d
+  Name:  d
+  Kind:  Variable
+  Score: 0.500
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    d <- sim(m,1000)
+  Python:
+    n = 1000
+    x = np.random.normal(0, 1, n)
+    eta = 0.5 * x + np.random.normal(0, 1, n)
+    y1 = 1.0 * eta + np.random.normal(0, 1, n)
+    y2 = 1.0 * eta + np.random.normal(0, 1, n)
+    y3 = 1.0 * eta + np.random.normal(0, 1, n)
+    
+    data = pd.DataFrame({'x': x, 'y1': y1, 'y2': y2, 'y3': y3})
+    
+    # Estimate Model 1
+
+============================================================
+Entity: e
+  Name:  e
+  Kind:  Variable
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    e <- estimate(m,d)
+  Python:
+    m = Model(model_m_spec)
+    m.fit(data)
+    e = m.inspect()
+    
+    # Estimate Model 2
+
+============================================================
+Entity: e2
+  Name:  e2
+  Kind:  Variable
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    e2 <- estimate(m2,d)
+  Python:
+    m2 = Model(model_m2_spec)
+    m2.fit(data)
+    e2 = m2.inspect()
+    
+    # In Python's semopy, 'compare' functions (LRT, Wald, Score) are not implemented as a single function.
+    # To perform the Likelihood Ratio Test (LRT):
+    # LRT = 2 * (LogLik_m2 - LogLik_m)
+
+============================================================
+Entity: compare
+  Name:  compare
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    compare(e)
+
+============================================================
+Entity: compare_1
+  Name:  compare
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    compare(e,e2) ## LRT, H0: y3<-x=0
+
+============================================================
+Entity: compare_2
+  Name:  compare
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    compare(e,scoretest=y3~x) ## Score-test, H0: y3~x=0
+
+============================================================
+Entity: compare_3
+  Name:  compare
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    compare(e2,par=c("y3~x")) ## Wald-test, H0: y3~x=0
+
+============================================================
+Entity: B
+  Name:  B
+  Kind:  Variable
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    B <- diag(2); colnames(B) <- c("y2~eta","y3~eta")
+
+============================================================
+Entity: colnames(B)
+  Name:  colnames(B)
+  Kind:  Variable
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    B <- diag(2); colnames(B) <- c("y2~eta","y3~eta")
+
+============================================================
+Entity: compare_4
+  Name:  compare
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    compare(e2,contrast=B,null=c(1,1))
+
+============================================================
+Entity: B_1
+  Name:  B
+  Kind:  Variable
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    B <- rep(0,length(coef(e2))); B[1:3] <- 1
+
+============================================================
+Entity: B[1:3]
+  Name:  B[1:3]
+  Kind:  Constant
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    B <- rep(0,length(coef(e2))); B[1:3] <- 1
+
+============================================================
+Entity: compare_5
+  Name:  compare
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    compare(e2,contrast=B)
+  Python:
+    coefs = e2['Estimate'].values
+    # Example: contrast check for y3~x
+    # Identify index of 'y3 ~ x' in e2
+    idx = e2[e2['lval'] == 'y3'].index[0] 
+    wald_stat = coefs[idx] / e2.loc[idx, 'Std. Err']
+    print(f"Wald Z-score for y3~x: {wald_stat}")
+
+============================================================
+Entity: compare_6
+  Name:  compare
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    compare(e,scoretest=list(y3~x,y2~x))
+  Python:
+    loglik_m = m.loglik
+    loglik_m2 = m2.loglik
+    lrt_stat = 2 * (loglik_m2 - loglik_m)
+    df_diff = 1 # difference in parameters (y3 ~ x)
+    
+    print(f"LRT Statistic: {lrt_stat}, df: {df_diff}")
+    
+    # Wald Test / Contrast logic:
+    # Manual extraction of coefficients for Wald-like comparison

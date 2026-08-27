@@ -1,0 +1,89 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xtable))
+
+============================================================
+Entity: import_xtable
+  Name:  xtable
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xtable))
+
+============================================================
+Entity: large
+  Name:  large
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    large <- function(x){
+      paste0('{\\Large{\\bfseries ', x, '}}')
+    }
+  Python:
+    def large(x):
+        return f'{{\\Large{{\\bfseries {x}}}}}'
+
+============================================================
+Entity: italic
+  Name:  italic
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    italic <- function(x){
+      paste0('{\\emph{ ', x, '}}')
+    }
+  Python:
+    def italic(x):
+        return f'{{\\emph{{ {x}}}}}'
+
+============================================================
+Entity: bold
+  Name:  bold
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    bold <- function(x){
+      paste0('{\\bfseries ', x, '}')
+    }
+  Python:
+    def bold(x):
+        return f'{{\\bfseries {x}}}'
+
+============================================================
+Entity: red
+  Name:  red
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    red <- function(x){
+      paste0('{\\color{red} ', x, '}')
+    }
+  Python:
+    def red(x):
+        return f'{{\\color{{red}} {x}}}'
