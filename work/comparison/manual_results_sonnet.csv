@@ -1,0 +1,11 @@
+timestamp,script,model,score,iterations,exit_code,stdout,data,env
+2026-08-28T06:57:07.808636+00:00,bit__rd_example__as_bit_Rd,manual,1.0000,0,0,0.0225,,
+2026-08-28T06:57:16.423209+00:00,broom__rd_example__tidy_mlm_Rd,manual,0.5250,0,0,0.0000,0.5000,0.0000
+2026-08-28T06:57:21.726075+00:00,crayon__rd_example__combine_styles_Rd,manual,0.8500,0,0,0.0000,0.0000,
+2026-08-28T06:57:27.118895+00:00,diffobj__rd_example__as_character-DiffSummary-method_Rd,manual,0.8000,0,0,0.0189,1.0000,0.0000
+2026-08-28T06:57:32.943091+00:00,gert__rd_example__git_repo_Rd,manual,0.5800,0,0,0.0000,0.0000,0.0000
+2026-08-28T06:57:41.489367+00:00,ggplot2__rd_example__ggplot_Rd,manual,0.1614,0,0,0.2574,0.0000,0.0000
+2026-08-28T06:57:49.984645+00:00,ggplot2__rd_example__stat_ecdf_Rd,manual,0.7106,0,0,0.2097,0.7108,0.0000
+2026-08-28T06:57:55.678967+00:00,httr2__rd_example__resp_content_type_Rd,manual,0.7137,0,0,0.0000,0.1579,0.0000
+2026-08-28T06:58:02.146163+00:00,tidyr__vignette__programming_s2,manual,0.0000,0,1,0.0000,,0.0000
+2026-08-28T06:58:07.554103+00:00,vctrs__vignette__s3-vector_s1,manual,1.0000,0,0,0.0000,,0.0000
