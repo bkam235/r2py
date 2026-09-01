@@ -92,6 +92,12 @@
       "sparsevctrs.sparse-multiplication-scalar",
       "sparsevctrs.sparse-subtraction-scalar"
     ],
+    "stringi:": [
+      "stringi.stri-detect-regex",
+      "stringi.stri-startswith-charclass",
+      "stringi.stri-startswith-coll",
+      "stringi.stri-startswith-fixed"
+    ],
     "stringr:": [
       "stringr.str-count"
     ],
@@ -457,6 +463,38 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "sparsevctrs",
+      "ast_shape_hash": ""
+    },
+    "stringi.stri-detect-regex": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "stringi",
+      "ast_shape_hash": ""
+    },
+    "stringi.stri-startswith-charclass": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "stringi",
+      "ast_shape_hash": ""
+    },
+    "stringi.stri-startswith-coll": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "stringi",
+      "ast_shape_hash": ""
+    },
+    "stringi.stri-startswith-fixed": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "stringi",
       "ast_shape_hash": ""
     },
     "stringr.str-count": {
