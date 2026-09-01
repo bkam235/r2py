@@ -82,7 +82,7 @@ function definitions AND all call sites (e.g. `from` → `from_val`, \
 `in` → `in_val`).
 """
 
-AGENT_SYSTEM_PROMPT_OLLAMA = """\
+AGENT_SYSTEM_PROMPT_OPENROUTER = """\
 You are an R-to-Python translation agent. Produce Python code that is \
 execution-equivalent to the R source.
 

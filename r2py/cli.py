@@ -133,7 +133,7 @@ def main() -> None:
     p_translate.add_argument("input", help="Input .R file")
     p_translate.add_argument("output", help="Output .py file")
     p_translate.add_argument("--model", default=_DEFAULT_MODEL,
-                             help="Model to use: Anthropic model ID or 'ollama:<name>' for local Ollama")
+                             help="Model to use: Anthropic model ID or 'openrouter:<model>' for OpenRouter")
     p_translate.add_argument("--max-iters", type=int, default=8, dest="max_iters")
     p_translate.add_argument("--score-threshold", type=float, default=0.85, dest="score_threshold")
     p_translate.add_argument("--use-judge", action="store_true", dest="use_judge",
