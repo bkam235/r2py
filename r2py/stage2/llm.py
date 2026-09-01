@@ -22,7 +22,7 @@ class TruncatedResponseError(RuntimeError):
 # Module-level client cache keyed by api_key so the underlying HTTP session
 # is reused across all entity calls within a translation run.
 _clients: dict[str, anthropic.Anthropic] = {}
-_ollama_clients: dict[str, object] = {}  # keyed by base_url; openai.OpenAI instances
+_openrouter_clients: dict[str, object] = {}  # openai.OpenAI instances keyed by api_key
 
 
 def _get_client() -> anthropic.Anthropic:
@@ -52,8 +52,8 @@ def call(
     Raises RuntimeError if ANTHROPIC_API_KEY is not set or the response is
     truncated (stop_reason == "max_tokens").
     """
-    if model.startswith("ollama:"):
-        return _call_ollama(messages, system, model=model[len("ollama:"):], max_tokens=max_tokens)
+    if model.startswith("openrouter:"):
+        return _call_openrouter(messages, system, model=model[len("openrouter:"):], max_tokens=max_tokens)
 
     client = _get_client()
 
@@ -92,26 +92,65 @@ def call(
     raise RuntimeError(f"LLM call failed after {_MAX_RETRIES} attempts: {last_exc}")
 
 
-def _call_ollama(
+_free_exhausted: set[str] = set()
+
+
+def _get_openrouter_client():
+    import openai
+
+    api_key = os.environ.get("OPENROUTER_API_KEY")
+    if not api_key:
+        raise RuntimeError(
+            "OPENROUTER_API_KEY environment variable is not set. "
+            "Export it before running the translator."
+        )
+
+    if api_key not in _openrouter_clients:
+        _openrouter_clients[api_key] = openai.OpenAI(
+            api_key=api_key,
+            base_url="https://openrouter.ai/api/v1",
+        )
+    return _openrouter_clients[api_key]
+
+
+def _call_openrouter(
     messages: list[dict],
     system: str,
     *,
     model: str,
     max_tokens: int,
 ) -> str:
-    """Call a local Ollama model via its OpenAI-compatible endpoint."""
+    """Call a model via the OpenRouter API (OpenAI-compatible).
+
+    Automatically tries the :free variant first. On rate-limit (429),
+    falls back to the paid model for the rest of the session.
+    """
     try:
         import openai
     except ImportError:
         raise RuntimeError(
-            "Ollama support requires the 'openai' package: pip install openai"
+            "OpenRouter support requires the 'openai' package: pip install openai"
         )
 
-    base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434") + "/v1"
-    if base_url not in _ollama_clients:
-        _ollama_clients[base_url] = openai.OpenAI(api_key="ollama", base_url=base_url)
-    client = _ollama_clients[base_url]
+    if not model.endswith(":free") and model not in _free_exhausted:
+        try:
+            return _openrouter_request(model + ":free", messages, system, max_tokens=max_tokens)
+        except openai.RateLimitError:
+            _free_exhausted.add(model)
+            print(f"[LLM]     Free tier rate-limited, switching to paid: {model}")
 
+    return _openrouter_request(model, messages, system, max_tokens=max_tokens)
+
+
+def _openrouter_request(
+    model: str,
+    messages: list[dict],
+    system: str,
+    *,
+    max_tokens: int,
+) -> str:
+    """Single OpenRouter request with retry."""
+    client = _get_openrouter_client()
     all_messages = [{"role": "system", "content": system}] + messages
 
     last_exc: Exception | None = None
@@ -126,20 +165,20 @@ def _call_ollama(
             if finish_reason == "length":
                 usage = getattr(response, "usage", None)
                 comp_tokens = getattr(usage, "completion_tokens", "?") if usage else "?"
-                print(f"[LLM]     Warning: Ollama response truncated at {comp_tokens} tokens (max_tokens={max_tokens})")
+                print(f"[LLM]     Warning: OpenRouter response truncated at {comp_tokens} tokens (max_tokens={max_tokens})")
             content = response.choices[0].message.content
             if content is None:
                 raise RuntimeError(
-                    f"Ollama returned null content "
+                    f"OpenRouter returned null content "
                     f"(finish_reason={response.choices[0].finish_reason!r}). "
                     "The model may have emitted a tool call or an empty response."
                 )
             return content
         except RuntimeError:
-            raise  # deterministic errors — do not retry
+            raise
         except Exception as exc:
             last_exc = exc
             wait = 2 ** attempt
             time.sleep(wait)
 
-    raise RuntimeError(f"Ollama call failed after {_MAX_RETRIES} attempts: {last_exc}")
+    raise RuntimeError(f"OpenRouter call failed after {_MAX_RETRIES} attempts: {last_exc}")

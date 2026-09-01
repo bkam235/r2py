@@ -48,9 +48,9 @@ def reason(
     r_function_sources, entity_metadata = _prefetch_r_sources(script_map)
     unavailable_packages = _get_unavailable_packages(script_map)
 
-    is_ollama = model.startswith("ollama:")
+    is_openrouter = model.startswith("openrouter:")
     system_prompt = (
-        _prompt.AGENT_SYSTEM_PROMPT_OLLAMA if is_ollama
+        _prompt.AGENT_SYSTEM_PROMPT_OPENROUTER if is_openrouter
         else _prompt.AGENT_SYSTEM_PROMPT
     )
 
@@ -361,7 +361,7 @@ def _parse_action(raw: str) -> dict | None:
 
     Handles single-line JSON, markdown-fenced blocks, and embedded JSON.
     """
-    # 0) Try ACTION: tag format (Ollama-friendly structured format)
+    # 0) Try ACTION: tag format (structured format for smaller models)
     tag_match = _ACTION_TAG_RE.search(raw)
     if tag_match:
         action_type = tag_match.group(1).lower()
@@ -420,7 +420,7 @@ def _parse_action(raw: str) -> dict | None:
         except json.JSONDecodeError:
             continue
 
-    # 2) Try markdown-fenced code blocks (common Ollama pattern)
+    # 2) Try markdown-fenced code blocks (common pattern for smaller models)
     for fence_match in _FENCE_RE.finditer(raw):
         block = fence_match.group(1).strip()
         try:
