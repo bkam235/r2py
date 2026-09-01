@@ -101,6 +101,9 @@
     "stringr:": [
       "stringr.str-count"
     ],
+    "testthat:": [
+      "testthat.expect-equal"
+    ],
     "tidyr:": [
       "tidyr.complete"
     ],
@@ -506,6 +509,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "stringr",
+      "ast_shape_hash": ""
+    },
+    "testthat.expect-equal": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "testthat",
       "ast_shape_hash": ""
     },
     "tidyr.complete": {

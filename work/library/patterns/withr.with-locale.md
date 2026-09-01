@@ -21,6 +21,7 @@ Translate R `with_locale` (FunctionCall from withr) to Python. See verified exam
 
 ## Translation Examples
 - {"r_hash": "e94e70f7", "r_snippet": "with_locale(new = c(\"LC_TIME\" = \"en_GB\"), format(ISOdate(2000, 1:12, 1), \"%B\"))", "py_snippet": "set_locale('en_GB')\nprint([d.strftime('%B') for d in dates])", "score": 1.0, "script_id": "auto"}
+- {"r_hash": "f8ee602c", "r_snippet": "  withr::local_seed(1234)", "py_snippet": "    random.seed(1234)", "score": 1.0, "script_id": "auto"}
 
 ## Edit Examples
 (none)
