@@ -95,6 +95,9 @@
     "stringr:": [
       "stringr.str-count"
     ],
+    "tidyr:": [
+      "tidyr.complete"
+    ],
     "tidyselect:": [
       "tidyselect.eval-relocate"
     ],
@@ -462,6 +465,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "stringr",
+      "ast_shape_hash": ""
+    },
+    "tidyr.complete": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "tidyr",
       "ast_shape_hash": ""
     },
     "tidyselect.eval-relocate": {
