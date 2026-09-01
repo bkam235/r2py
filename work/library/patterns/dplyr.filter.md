@@ -20,9 +20,9 @@ Translate R `filter` (FunctionCall from dplyr) to Python. See verified example b
 (none)
 
 ## Translation Examples
+- {"r_hash": "af581e99", "r_snippet": "mini_iris <- as_tibble(iris)[c(1, 2, 51, 52, 101, 102), ]", "py_snippet": "def as_tibble(x):\n    \"\"\"R's as_tibble basically converts to a tibble, which in Python is a DataFrame.\"\"\"\n    return pd.DataFrame(x)\n\n# Library imports (mocked as they are not available for import)\n# library(tidyr)\n# library(dplyr, warn.conflicts = FALSE)\n# library(purrr)\n\n# packageVersion(\"tidyr\")", "score": 1.0, "script_id": "auto"}
 - {"r_hash": "00475275", "r_snippet": "arrange(wrong, year)", "py_snippet": "print(wrong.sort_values('year').reset_index(drop=True))\n\n# Right way: lag with ordering by year", "score": 0.9564, "script_id": "auto"}
 - {"r_hash": "5e9acb5c", "r_snippet": "  select(1:3)", "py_snippet": "result = res.iloc[:, 0:3]\n# Note: The R code doesn't print the result of the pipeline, \n# but since the script ends with another glimpse, we just compute it.", "score": 0.9333, "script_id": "auto"}
-- {"r_hash": "fddfca61", "r_snippet": "glimpse(mtcars)", "py_snippet": "def glimpse(df):\n    \"\"\"Mimics dplyr::glimpse output.\"\"\"\n    rows = len(df)\n    cols = len(df.columns)\n    print(f\"Rows: {rows}\")\n    print(f\"Columns: {cols}\")\n    \n    for col in df.columns:\n        dtype = df[col].dtype\n        # Map numpy/pandas dtypes to R-like glimpses\n        if \"float\" in str(dtype):\n            r_type = \"<dbl>\"\n        elif \"int\" in str(dtype):\n            r_type = \"<int>\"\n        elif \"object\" in str(dtype):\n            r_type = \"<chr>\"\n        else:\n            r_type = f\"<{dtype}>\"\n            \n        # Get first few values\n        vals = df[col].head(10).tolist()\n", "score": 0.9333, "script_id": "auto"}
 
 ## Edit Examples
 (none)

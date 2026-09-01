@@ -112,6 +112,9 @@
       "timedate.goodfriday",
       "timedate.holiday"
     ],
+    "utils:": [
+      "utils.packageversion"
+    ],
     "vctrs:": [
       "vctrs.vec-fill-missing"
     ],
@@ -543,6 +546,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "timeDate",
+      "ast_shape_hash": ""
+    },
+    "utils.packageversion": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "utils",
       "ast_shape_hash": ""
     },
     "vctrs.vec-fill-missing": {
