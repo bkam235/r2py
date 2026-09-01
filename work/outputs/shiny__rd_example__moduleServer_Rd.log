@@ -1,0 +1,267 @@
+Translation log
+Final score: 0.250
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: counterUI
+  Name:  counterUI
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    counterUI <- function(id, label = "Counter") {
+      ns <- NS(id)
+      tagList(
+        actionButton(ns("button"), label = label),
+        verbatimTextOutput(ns("out"))
+      )
+    }
+  Python:
+    def counter_ui(id, label="Counter"):
+        return ui.div(
+            ui.input_action_button(id + "_button", label),
+            ui.output_text(id + "_out"),
+        )
+
+============================================================
+Entity: counterServer
+  Name:  counterServer
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    counterServer <- function(id) {
+      moduleServer(
+        id,
+        function(input, output, session) {
+          count <- reactiveVal(0)
+          observeEvent(input$button, {
+            count(count() + 1)
+          })
+          output$out <- renderText({
+            count()
+          })
+          count
+        }
+      )
+    }
+
+============================================================
+Entity: ui
+  Name:  ui
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    ui <- fluidPage(
+      counterUI("counter1", "Counter #1"),
+      counterUI("counter2", "Counter #2")
+    )
+  Python:
+    app_ui1 = ui.page_fluid(
+        counter_ui("counter1", "Counter #1"),
+        counter_ui("counter2", "Counter #2"),
+    )
+
+============================================================
+Entity: server
+  Name:  server
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    server <- function(input, output, session) {
+      counterServer("counter1")
+      counterServer("counter2")
+    }
+  Python:
+    def server1(input, output, session):
+        # Counter 1
+        btn1_fn, out1_fn, _ = create_counter_server("counter1")
+        @reactive.effect
+        @reactive.event(input.counter1_button)
+        def _(): btn1_fn()
+        
+        # Map the render function to the output id
+        @render.text
+        def counter1_out():
+            return out1_fn()
+    
+        # Counter 2
+        btn2_fn, out2_fn, _ = create_counter_server("counter2")
+        @reactive.effect
+        @reactive.event(input.counter2_button)
+        def __(): btn2_fn()
+        
+        @render.text
+        def counter2_out():
+            return out2_fn()
+    
+    # Example 2: Counter with Prefix
+
+============================================================
+Entity: interactive
+  Name:  interactive
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (interactive()) {
+
+============================================================
+Entity: shinyApp
+  Name:  shinyApp
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      shinyApp(ui, server)
+  Python:
+    app = App(app_ui2, server2)
+
+============================================================
+Entity: counterServer2
+  Name:  counterServer2
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    counterServer2 <- function(id, prefix = NULL) {
+      moduleServer(
+        id,
+        function(input, output, session) {
+          count <- reactiveVal(0)
+          observeEvent(input$button, {
+            count(count() + 1)
+          })
+          output$out <- renderText({
+            paste0(prefix, count())
+          })
+          count
+        }
+      )
+    }
+  Python:
+    def create_counter_server(id, prefix=""):
+        # In shiny-python, we use a closure or a class to simulate module server logic
+        # since there isn't a direct 1:1 'moduleServer' function.
+        
+        count = reactive.Value(0)
+    
+        @reactive.effect
+        @reactive.event(lambda: None) # Placeholder, logic handled by the button trigger
+        def increment():
+            pass # Logic handled inside the specific button callback below
+    
+        def handle_click():
+            count.set(count.get() + 1)
+    
+        @render.text
+        def output_text():
+            return f"{prefix}{count.get()}"
+    
+        return handle_click, output_text, count
+    
+    # Example 1: Multiple Counters
+
+============================================================
+Entity: ui_1
+  Name:  ui
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    ui <- fluidPage(
+      counterUI("counter", "Counter"),
+    )
+  Python:
+    app_ui2 = ui.page_fluid(
+        counter_ui("counter", "Counter"),
+    )
+
+============================================================
+Entity: server_1
+  Name:  server
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    server <- function(input, output, session) {
+      counterServer2("counter", "The current count is: ")
+    }
+  Python:
+    def server2(input, output, session):
+        btn_fn, out_fn, _ = create_counter_server("counter", prefix="The current count is: ")
+        
+        @reactive.effect
+        @reactive.event(input.counter_button)
+        def _():
+            btn_fn()
+    
+        @render.text
+        def counter_out():
+            return out_fn()
+    
+    # To run one of these:
+
+============================================================
+Entity: interactive_1
+  Name:  interactive
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (interactive()) {
+
+============================================================
+Entity: shinyApp_1
+  Name:  shinyApp
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      shinyApp(ui, server)

@@ -1,0 +1,97 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    ggplot(mtcars) +
+  Python:
+        ggplot(df) 
+
+============================================================
+Entity: geom_bar
+  Name:  geom_bar
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+      geom_bar(aes(mpg)) +
+  Python:
+        + geom_bar(mapping=aes(x='mpg')) 
+
+============================================================
+Entity: scale_x_binned
+  Name:  scale_x_binned
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+      scale_x_binned()
+  Python:
+    from plotnine import ggplot, aes, geom_bar, scale_x_binned
+    from plotnine.data import mtcars
+    
+    df = mtcars
+    
+    (
+        + scale_x_binned()
+    )

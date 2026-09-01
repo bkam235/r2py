@@ -1,0 +1,72 @@
+Translation log
+Final score: 0.824
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    df <- data.frame(x = FALSE)
+  Python:
+    df = pd.DataFrame({'x': [False]})
+
+============================================================
+Entity: df$y
+  Name:  df$y
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+        df$y <- data.frame(a = 1L, b = 2.5)
+  Python:
+    df['y'] = [pd.DataFrame({'a': [1], 'b': [2.5]})]
+    
+    # Python's equivalent to inspecting internal types/ptypes 
+    # is typically checking the dtypes or the objects themselves.
+
+============================================================
+Entity: vec_ptype_show
+  Name:  vec_ptype_show
+  Kind:  FunctionCall
+  Score: 0.648
+  side_effects:        0.648
+  executed_ok:       True
+
+  R:
+        vec_ptype_show(df)
+  Python:
+    print(df.dtypes)
+    print(df['y'].iloc[0])

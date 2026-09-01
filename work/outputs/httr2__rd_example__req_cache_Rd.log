@@ -1,0 +1,131 @@
+Translation log
+Final score: 1.000
+Data score:  0.333
+Files score: 0.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr2))
+
+============================================================
+Entity: import_httr2
+  Name:  httr2
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr2))
+
+============================================================
+Entity: url
+  Name:  url
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    url <- paste0(
+      "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/",
+      "master/inst/extdata/penguins.csv"
+    )
+  Python:
+    url = "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/master/inst/extdata/penguins.csv"
+    
+    # Request and perform (caching is handled by the requests-cache library if installed, 
+    # otherwise standard requests is used)
+
+============================================================
+Entity: req
+  Name:  req
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    req <- request(url) |> req_cache(tempdir(), debug = TRUE)
+
+============================================================
+Entity: request
+  Name:  request
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    req <- request(url) |> req_cache(tempdir(), debug = TRUE)
+
+============================================================
+Entity: req_cache
+  Name:  req_cache
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    req <- request(url) |> req_cache(tempdir(), debug = TRUE)
+
+============================================================
+Entity: resp
+  Name:  resp
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    resp <- req |> req_perform()
+
+============================================================
+Entity: req_perform
+  Name:  req_perform
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    resp <- req |> req_perform()
+
+============================================================
+Entity: resp_1
+  Name:  resp
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    resp <- req |> req_perform()
+  Python:
+    response = requests.get(url)
+    df = pd.read_csv(url)
+
+============================================================
+Entity: req_perform_1
+  Name:  req_perform
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    resp <- req |> req_perform()
