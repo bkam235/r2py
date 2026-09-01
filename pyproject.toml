@@ -9,6 +9,7 @@ requires-python = ">=3.10"
 license = "MIT"
 dependencies = [
     "anthropic",
+    "openai",
     "tree-sitter",
     "tree-sitter-language-pack",
     "scikit-image",

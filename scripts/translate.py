@@ -33,8 +33,8 @@ def _on_progress(event) -> None:
 
 
 # Iterate through input files for translation
-# input_filenames = next(walk(input_dir), (None, None, []))[2]
-# input_filenames = random.sample(input_filenames, 20) #don't use random script
+input_filenames = next(walk(input_dir), (None, None, []))[2]
+input_filenames = random.sample(input_filenames, 20) #don't use random script
 
 all_translated_scripts = [
     "haven__rd_example__print_labels_Rd.R",
@@ -83,7 +83,7 @@ regression_test_08 = [
 ]
 
 # input_filenames = [""] #translate this specific script
-input_filenames = all_translated_scripts
+# input_filenames = all_translated_scripts
 # input_filenames = regression_test_08
 
 
@@ -100,7 +100,7 @@ for r_script, py_script in scripts:
     print(f"{r_script}")
     print("############################")
     
-    trans_model = "ollama:gemma4:31b-cloud"
+    trans_model = "openrouter:google/gemma-4-31b-it"
     # trans_model = "claude-haiku-4-5"
     # trans_model = "claude-sonnet-4-6"
 

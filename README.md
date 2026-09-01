@@ -6,7 +6,7 @@
 </p>
 
 <p align="center">
-  An agentic R-to-Python transpiler harness that learns from its own mistakes.
+  An agentic R-to-Python transpiler that learns from its own mistakes.
   <br><br>
   <a href="#quick-start">Quick Start</a> · <a href="#usage">Usage</a> · <a href="architecture.md">Architecture</a>
 </p>
@@ -54,7 +54,7 @@ flowchart LR
 
 - Python 3.10+
 - [R](https://cloud.r-project.org/) (>= 4.4)
-- An [Anthropic API key](https://console.anthropic.com/) or a local [Ollama](https://ollama.ai/) instance
+- An [Anthropic API key](https://console.anthropic.com/) or an [OpenRouter API key](https://openrouter.ai/)
 
 ### Install
 
@@ -82,10 +82,10 @@ Create a `.env` file in the project root with your API key:
 ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Or use a local model instead:
+Or use a model via OpenRouter:
 
-```bash
-ollama pull gemma3:27b
+```
+OPENROUTER_API_KEY=sk-or-v1-...
 ```
 
 ### Translate
@@ -112,8 +112,8 @@ r2py translate input.R output.py \
   --max-iters 12 \
   --score-threshold 0.90
 
-# Use a local model
-r2py translate input.R output.py --model ollama:gemma3:27b
+# Use a model via OpenRouter
+r2py translate input.R output.py --model openrouter:google/gemma-4-31b-it
 
 # Browse the Pattern Library
 r2py library list
