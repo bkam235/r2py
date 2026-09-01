@@ -1,0 +1,189 @@
+Translation log
+Final score: 0.810
+Data score:  0.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(cli))
+
+============================================================
+Entity: import_cli
+  Name:  cli
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(cli))
+
+============================================================
+Entity: str
+  Name:  str
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    str <- paste0(
+      col_red("I am red---"),
+      col_green("and I am green-"),
+      style_underline("I underlined")
+    )
+  Python:
+    def col_red(text):
+        """Wraps text in ANSI red color codes."""
+        return f"\033[31m{text}\033[39m"
+    
+    def col_green(text):
+        """Wraps text in ANSI green color codes."""
+        return f"\033[32m{text}\033[39m"
+    
+    def style_underline(text):
+        """Wraps text in ANSI underline codes."""
+        return f"\033[4m{text}\033[24m"
+    str_val = (
+        col_red("I am red---") + 
+        col_green("and I am green-") + 
+        style_underline("I underlined")
+    )
+
+============================================================
+Entity: cat
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 0.884
+  side_effects:        0.884
+  executed_ok:       True
+
+  R:
+    cat(str, "\n")
+  Python:
+    print(str_val)
+    print()
+    
+    # split at dashes, keep color
+
+============================================================
+Entity: cat_1
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 0.879
+  side_effects:        0.879
+  executed_ok:       True
+
+  R:
+    cat(ansi_strsplit(str, "[-]+")[[1]], sep = "\n")
+  Python:
+    def ansi_strsplit(text, pattern):
+        """
+        Splits a string by a pattern while preserving ANSI escape sequences.
+        Mimics cli::ansi_strsplit.
+        """
+        if pattern == "":
+            return [list(text)]
+        
+        # Find positions of delimiters in the stripped (plain) text
+        plain_text = ansi_strip(text)
+        matches = list(re.finditer(pattern, plain_text))
+        
+        # Map plain text indices back to original text indices
+        # by iterating through the original and tracking ANSI sequences
+        mapping = []
+        current_plain_idx = 0
+        in_ansi = False
+        for i, char in enumerate(text):
+            if not in_ansi and char == '\x1b':
+                in_ansi = True
+                continue
+            if in_ansi:
+                if char == 'm' or char == 'K' or char == 'J': # Simplified ANSI end check
+                    in_ansi = False
+                continue
+            mapping.append(i)
+            current_plain_idx += 1
+    
+        # Split points in the original string
+        split_indices = []
+        for match in matches:
+            start = mapping[match.start()]
+            end = mapping[match.end() - 1] + 1 if match.end() <= len(mapping) else len(text)
+            split_indices.append((start, end))
+    
+        # Extract chunks between delimiters
+        chunks = []
+        last_end = 0
+        for start, end in split_indices:
+            chunks.append(text[last_end:start])
+            last_end = end
+        chunks.append(text[last_end:])
+        
+        return [chunks]
+    
+    # --- Example Execution ---
+    split_result = ansi_strsplit(str_val, "[-]+")[0]
+    for item in split_result:
+        print(item)
+    
+    # Translate strsplit(ansi_strip(str), "[-]+")
+
+============================================================
+Entity: strsplit
+  Name:  strsplit
+  Kind:  FunctionCall
+  Score: 0.986
+  side_effects:        0.986
+  executed_ok:       True
+
+  R:
+    strsplit(ansi_strip(str), "[-]+")
+  Python:
+    print(re.split("[-]+", ansi_strip(str_val)))
+    
+    # split to characters, keep color
+
+============================================================
+Entity: cat_2
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 0.866
+  side_effects:        0.866
+  executed_ok:       True
+
+  R:
+    cat(ansi_strsplit(str, "")[[1]], "\n", sep = " ")
+  Python:
+    char_split = ansi_strsplit(str_val, "")[0]
+    print(" ".join(char_split))
+    print()
+    
+    # Translate strsplit(ansi_strip(str), "")
+
+============================================================
+Entity: strsplit_1
+  Name:  strsplit
+  Kind:  FunctionCall
+  Score: 0.992
+  side_effects:        0.992
+  executed_ok:       True
+
+  R:
+    strsplit(ansi_strip(str), "")
+  Python:
+    def ansi_strip(text):
+        """Removes ANSI escape sequences from a string."""
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[JKmn])')
+        return ansi_escape.sub('', text)
+    print(list(ansi_strip(str_val)))

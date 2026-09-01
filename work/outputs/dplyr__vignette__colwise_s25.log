@@ -1,0 +1,77 @@
+Translation log
+Final score: 0.829
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    df <- tibble(x = 2, y = 4, z = 8)
+  Python:
+    df = pd.DataFrame({'x': [2], 'y': [4], 'z': [8]})
+    
+    # df |> mutate_all(~ .x / y)
+    # In pandas, applying a function to all columns and dividing by a specific column value
+    # Since y is a column in the dataframe, we divide all columns by the value of y.
+
+============================================================
+Entity: mutate_all
+  Name:  mutate_all
+  Kind:  FunctionCall
+  Score: 0.734
+  side_effects:        0.734
+  executed_ok:       True
+
+  R:
+    df |> mutate_all(~ .x / y)
+  Python:
+    df_mutate_all = df.apply(lambda x: x / df['y'])
+    print(df_mutate_all)
+    
+    # df |> mutate(across(everything(), ~ .x / y))
+    # This is functionally equivalent to the mutate_all call in this context.
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.752
+  side_effects:        0.752
+  executed_ok:       True
+
+  R:
+    df |> mutate(across(everything(), ~ .x / y))
+  Python:
+    df_mutate_across = df.assign(**{col: df[col] / df['y'] for col in df.columns})
+    print(df_mutate_across)

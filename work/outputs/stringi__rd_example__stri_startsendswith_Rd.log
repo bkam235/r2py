@@ -1,0 +1,147 @@
+Translation log
+Final score: 0.951
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringi))
+
+============================================================
+Entity: import_stringi
+  Name:  stringi
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringi))
+
+============================================================
+Entity: stri_startswith_charclass
+  Name:  stri_startswith_charclass
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_startswith_charclass(' trim me! ', '\\p{WSpace}')
+  Python:
+    # stri_startswith_charclass(' trim me! ', '\\p{WSpace}')
+    # \s matches any whitespace character
+    print(bool(re.match(r'\s', ' trim me! ')))
+
+============================================================
+Entity: stri_startswith_fixed
+  Name:  stri_startswith_fixed
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_startswith_fixed(c('a1', 'a2', 'b3', 'a4', 'c5'), 'a')
+  Python:
+    # stri_startswith_fixed(c('a1', 'a2', 'b3', 'a4', 'c5'), 'a')
+    data = ['a1', 'a2', 'b3', 'a4', 'c5']
+    print([s.startswith('a') for s in data])
+
+============================================================
+Entity: stri_detect_regex
+  Name:  stri_detect_regex
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_detect_regex(c('a1', 'a2', 'b3', 'a4', 'c5'), '^a')
+  Python:
+    # stri_detect_regex(c('a1', 'a2', 'b3', 'a4', 'c5'), '^a')
+    print([bool(re.search(r'^a', s)) for s in data])
+
+============================================================
+Entity: stri_startswith_fixed_1
+  Name:  stri_startswith_fixed
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_startswith_fixed('ababa', 'ba')
+  Python:
+    # stri_startswith_fixed('ababa', 'ba')
+    print('ababa'.startswith('ba'))
+
+============================================================
+Entity: stri_startswith_fixed_2
+  Name:  stri_startswith_fixed
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_startswith_fixed('ababa', 'ba', from=2)
+  Python:
+    # stri_startswith_fixed('ababa', 'ba', from_val=2)
+    # In R, from_val=2 is 1-indexed (the second character), so we slice from index 1
+    print('ababa'[1:].startswith('ba'))
+
+============================================================
+Entity: stri_startswith_coll
+  Name:  stri_startswith_coll
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_startswith_coll(c('a1', 'A2', 'b3', 'A4', 'C5'), 'a', strength=1)
+  Python:
+    # stri_startswith_coll(c('a1', 'A2', 'b3', 'A4', 'C5'), 'a', strength=1)
+    # strength=1 usually means case-insensitive
+    data_coll = ['a1', 'A2', 'b3', 'A4', 'C5']
+    print([s.lower().startswith('a') for s in data_coll])
+
+============================================================
+Entity: pat
+  Name:  pat
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    pat <- stri_paste('\u0635\u0644\u0649 \u0627\u0644\u0644\u0647 ',
+                      '\u0639\u0644\u064a\u0647 \u0648\u0633\u0644\u0645XYZ')
+  Python:
+    # pat <- stri_paste(...)
+    pat = '\u0635\u0644\u0649 \u0627\u0644\u0644\u0647 ' + '\u0639\u0644\u064a\u0647 \u0648\u0633\u0644\u0645XYZ'
+
+============================================================
+Entity: stri_endswith_coll
+  Name:  stri_endswith_coll
+  Kind:  FunctionCall
+  Score: 0.611
+  side_effects:        0.611
+  executed_ok:       True
+
+  R:
+    stri_endswith_coll('\ufdfa\ufdfa\ufdfaXYZ', pat, strength=1)
+  Python:
+    # stri_endswith_coll('\ufdfa\ufdfa\ufdfaXYZ', pat, strength=1)
+    print('\ufdfa\ufdfa\ufdfaXYZ'.lower().endswith(pat.lower()))
