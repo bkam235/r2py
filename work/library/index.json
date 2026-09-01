@@ -131,6 +131,14 @@
     "xfun:": [
       "xfun.protect-math"
     ],
+    "xml2:": [
+      "xml2.xml-child",
+      "xml2.xml-children",
+      "xml2.xml-contents",
+      "xml2.xml-length",
+      "xml2.xml-parent",
+      "xml2.xml-siblings"
+    ],
     "xtable:": [
       "xtable.as.is",
       "xtable.as.math",
@@ -609,6 +617,54 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "xfun",
+      "ast_shape_hash": ""
+    },
+    "xml2.xml-child": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xml2",
+      "ast_shape_hash": ""
+    },
+    "xml2.xml-children": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xml2",
+      "ast_shape_hash": ""
+    },
+    "xml2.xml-contents": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xml2",
+      "ast_shape_hash": ""
+    },
+    "xml2.xml-length": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xml2",
+      "ast_shape_hash": ""
+    },
+    "xml2.xml-parent": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xml2",
+      "ast_shape_hash": ""
+    },
+    "xml2.xml-siblings": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xml2",
       "ast_shape_hash": ""
     },
     "xtable.as.is": {
