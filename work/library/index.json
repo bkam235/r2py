@@ -36,6 +36,14 @@
       "forcats.lvls-reorder",
       "forcats.lvls-revalue"
     ],
+    "fs:": [
+      "fs.dir-create",
+      "fs.dir-delete",
+      "fs.file-create",
+      "fs.file-delete",
+      "fs.is-dir",
+      "fs.is-file"
+    ],
     "ggplot2:": [
       "ggplot2.facet-wrap",
       "ggplot2.geom-path",
@@ -273,6 +281,54 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "forcats",
+      "ast_shape_hash": ""
+    },
+    "fs.dir-create": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "fs",
+      "ast_shape_hash": ""
+    },
+    "fs.dir-delete": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "fs",
+      "ast_shape_hash": ""
+    },
+    "fs.file-create": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "fs",
+      "ast_shape_hash": ""
+    },
+    "fs.file-delete": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "fs",
+      "ast_shape_hash": ""
+    },
+    "fs.is-dir": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "fs",
+      "ast_shape_hash": ""
+    },
+    "fs.is-file": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "fs",
       "ast_shape_hash": ""
     },
     "ggplot2.facet-wrap": {

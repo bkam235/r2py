@@ -1,0 +1,26 @@
+---
+id: fs.dir-create
+package: fs
+confidence: tentative
+seed: true
+created: 2026-09-01
+last_review: 2026-09-01
+tie_count: 0
+---
+
+# fs.dir-create
+
+## Guidance
+Translate R `dir_create` (FunctionCall from fs) to Python. See verified example below — prefer it over guessing from the R source alone.
+
+## Evidence
+(none)
+
+## Contradictions
+(none)
+
+## Translation Examples
+- {"r_hash": "c9281030", "r_snippet": "dir_create(\"bar\")", "py_snippet": "os.mkdir(\"bar\")\n\n# is_dir(\"bar\")", "score": 0.8, "script_id": "auto"}
+
+## Edit Examples
+(none)
