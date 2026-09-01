@@ -54,6 +54,10 @@
       "graphics.filled.contour",
       "graphics.image"
     ],
+    "hardhat:": [
+      "hardhat.get-levels",
+      "hardhat.get-outcome-levels"
+    ],
     "modelr:": [
       "modelr.typical"
     ],
@@ -343,6 +347,22 @@
       "package": "graphics",
       "ast_shape_hash": ""
     },
+    "hardhat.get-levels": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "hardhat",
+      "ast_shape_hash": ""
+    },
+    "hardhat.get-outcome-levels": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "hardhat",
+      "ast_shape_hash": ""
+    },
     "modelr.typical": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -623,6 +643,5 @@
       "package": "xtable",
       "ast_shape_hash": ""
     }
-  },
-  "total_runs": 1
+  }
 }
