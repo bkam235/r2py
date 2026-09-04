@@ -140,6 +140,10 @@
     "tools:": [
       "tools.totitlecase"
     ],
+    "usethis:": [
+      "usethis.browse-github",
+      "usethis.ui-silence"
+    ],
     "utils:": [
       "utils.packageversion"
     ],
@@ -694,6 +698,22 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "tools",
+      "ast_shape_hash": ""
+    },
+    "usethis.browse-github": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "usethis",
+      "ast_shape_hash": ""
+    },
+    "usethis.ui-silence": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "usethis",
       "ast_shape_hash": ""
     },
     "utils.packageversion": {
