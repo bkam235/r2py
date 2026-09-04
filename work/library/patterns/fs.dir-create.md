@@ -21,6 +21,8 @@ Translate R `dir_create` (FunctionCall from fs) to Python. See verified example 
 
 ## Translation Examples
 - {"r_hash": "c9281030", "r_snippet": "dir_create(\"bar\")", "py_snippet": "os.mkdir(\"bar\")\n\n# is_dir(\"bar\")", "score": 0.8, "script_id": "auto"}
+- {"r_hash": "12d795fb", "r_snippet": "file_create(\"foo\")", "py_snippet": "with open(\"foo\", \"w\") as f:\n    pass\n\n# is_file(\"foo\")", "score": 0.8, "script_id": "auto"}
+- {"r_hash": "2a69ae5e", "r_snippet": "is_file(\"foo\")", "py_snippet": "print(os.path.isfile(\"foo\"))\n\n# try(dir_create(\"foo\"))", "score": 0.8, "script_id": "auto"}
 
 ## Edit Examples
 (none)
