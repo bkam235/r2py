@@ -21,6 +21,7 @@ Translate R `packageVersion` (FunctionCall from utils) to Python. See verified e
 
 ## Translation Examples
 - {"r_hash": "982f9f70", "r_snippet": "packageVersion(\"tidyr\")", "py_snippet": "def packageVersion(pkg):\n    \"\"\"Mock implementation of R's packageVersion.\"\"\"\n    # Based on the verification result, tidyr version is '1.3.2'\n    versions = {\"tidyr\": \"1.3.2\"}\n    return versions.get(pkg, \"0.0.0\")\n\nversion = packageVersion(\"tidyr\")\nprint(f\"[1] '{version}'\")\n\n# mini_iris <- as_tibble(iris)[c(1, 2, 51, 52, 101, 102), ]\n# R is 1-based, Python is 0-based.\n# indices: 1, 2, 51, 52, 101, 102 -> 0, 1, 50, 51, 100, 101", "score": 1.0, "script_id": "auto"}
+- {"r_hash": "cc76d3f8", "r_snippet": "data(mtcars)", "py_snippet": "mtcars_df = pd.DataFrame(mtcars)", "score": 0.8976, "script_id": "auto"}
 
 ## Edit Examples
 (none)
