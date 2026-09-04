@@ -127,6 +127,9 @@
       "timedate.goodfriday",
       "timedate.holiday"
     ],
+    "tools:": [
+      "tools.totitlecase"
+    ],
     "utils:": [
       "utils.packageversion"
     ],
@@ -641,6 +644,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "timeDate",
+      "ast_shape_hash": ""
+    },
+    "tools.totitlecase": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "tools",
       "ast_shape_hash": ""
     },
     "utils.packageversion": {
