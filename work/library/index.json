@@ -119,6 +119,10 @@
     "stringr:": [
       "stringr.str-count"
     ],
+    "systemfonts:": [
+      "systemfonts.add-fonts",
+      "systemfonts.clear-local-fonts"
+    ],
     "testthat:": [
       "testthat.expect-equal"
     ],
@@ -620,6 +624,22 @@
       "package": "stringr",
       "ast_shape_hash": ""
     },
+    "systemfonts.add-fonts": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "systemfonts",
+      "ast_shape_hash": ""
+    },
+    "systemfonts.clear-local-fonts": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "systemfonts",
+      "ast_shape_hash": ""
+    },
     "testthat.expect-equal": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -788,6 +808,5 @@
       "package": "xtable",
       "ast_shape_hash": ""
     }
-  },
-  "total_runs": 2
+  }
 }
