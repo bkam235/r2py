@@ -69,6 +69,9 @@
       "hardhat.get-levels",
       "hardhat.get-outcome-levels"
     ],
+    "lava:": [
+      "lava.na2x"
+    ],
     "modelr:": [
       "modelr.typical"
     ],
@@ -439,6 +442,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "hardhat",
+      "ast_shape_hash": ""
+    },
+    "lava.na2x": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "lava",
       "ast_shape_hash": ""
     },
     "modelr.typical": {
