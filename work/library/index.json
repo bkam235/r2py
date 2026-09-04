@@ -13,6 +13,9 @@
     "bslib:": [
       "bslib.popover"
     ],
+    "cellranger:": [
+      "cellranger.a1-to-r1c1"
+    ],
     "cli:": [
       "cli.cat-bullet",
       "cli.cat-line",
@@ -196,6 +199,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "bslib",
+      "ast_shape_hash": ""
+    },
+    "cellranger.a1-to-r1c1": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "cellranger",
       "ast_shape_hash": ""
     },
     "cli.cat-bullet": {
