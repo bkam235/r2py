@@ -113,7 +113,7 @@ for r_script, py_script in scripts:
                            model=trans_model,
                            escalation_model=trans_model,
                            progress=_on_progress,
-                           score_threshold=0.8,
+                           score_threshold=0.85,
                            n_bare_seeds=2,
                            n_structured_seeds=2,
                            max_iters=20,
