@@ -105,18 +105,22 @@ for r_script, py_script in scripts:
     # trans_model = "claude-sonnet-4-6"
 
 
-    result = translate(r_script,
-                       py_script,
-                       library=lib,
-                       resume=True,
-                       model=trans_model,
-                       escalation_model=trans_model,
-                       progress=_on_progress,
-                       score_threshold=0.8,
-                       n_bare_seeds=2,
-                       n_structured_seeds=2,
-                       max_iters=20,
-                       max_stalls=10)
+    try:
+        result = translate(r_script,
+                           py_script,
+                           library=lib,
+                           resume=True,
+                           model=trans_model,
+                           escalation_model=trans_model,
+                           progress=_on_progress,
+                           score_threshold=0.8,
+                           n_bare_seeds=2,
+                           n_structured_seeds=2,
+                           max_iters=20,
+                           max_stalls=10)
+    except Exception as exc:
+        print(f"SKIPPED: {exc}")
+        continue
 
 # from r2py import seed_from_translation
 # seed_from_translation(

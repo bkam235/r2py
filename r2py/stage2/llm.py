@@ -92,11 +92,20 @@ def call(
     raise RuntimeError(f"LLM call failed after {_MAX_RETRIES} attempts: {last_exc}")
 
 
-_free_exhausted: set[str] = set()
-
-
-def _get_openrouter_client():
-    import openai
+def _call_openrouter(
+    messages: list[dict],
+    system: str,
+    *,
+    model: str,
+    max_tokens: int,
+) -> str:
+    """Call a model via the OpenRouter API (OpenAI-compatible)."""
+    try:
+        import openai
+    except ImportError:
+        raise RuntimeError(
+            "OpenRouter support requires the 'openai' package: pip install openai"
+        )
 
     api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
@@ -110,47 +119,8 @@ def _get_openrouter_client():
             api_key=api_key,
             base_url="https://openrouter.ai/api/v1",
         )
-    return _openrouter_clients[api_key]
+    client = _openrouter_clients[api_key]
 
-
-def _call_openrouter(
-    messages: list[dict],
-    system: str,
-    *,
-    model: str,
-    max_tokens: int,
-) -> str:
-    """Call a model via the OpenRouter API (OpenAI-compatible).
-
-    Automatically tries the :free variant first. On rate-limit (429),
-    falls back to the paid model for the rest of the session.
-    """
-    try:
-        import openai
-    except ImportError:
-        raise RuntimeError(
-            "OpenRouter support requires the 'openai' package: pip install openai"
-        )
-
-    if not model.endswith(":free") and model not in _free_exhausted:
-        try:
-            return _openrouter_request(model + ":free", messages, system, max_tokens=max_tokens)
-        except openai.RateLimitError:
-            _free_exhausted.add(model)
-            print(f"[LLM]     Free tier rate-limited, switching to paid: {model}")
-
-    return _openrouter_request(model, messages, system, max_tokens=max_tokens)
-
-
-def _openrouter_request(
-    model: str,
-    messages: list[dict],
-    system: str,
-    *,
-    max_tokens: int,
-) -> str:
-    """Single OpenRouter request with retry."""
-    client = _get_openrouter_client()
     all_messages = [{"role": "system", "content": system}] + messages
 
     last_exc: Exception | None = None

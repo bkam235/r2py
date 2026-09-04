@@ -81,6 +81,10 @@ def _compare_callable_meta(
 
     r_attrs = r_meta.get("attributes", {})
     py_attrs = py_meta.get("attributes", {})
+    if not isinstance(r_attrs, dict):
+        r_attrs = {}
+    if not isinstance(py_attrs, dict):
+        py_attrs = {}
     if r_attrs and py_attrs:
         common_keys = set(r_attrs.keys()) & set(py_attrs.keys())
         if common_keys:

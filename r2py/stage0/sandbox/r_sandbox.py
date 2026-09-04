@@ -42,12 +42,23 @@ _MISSING_PKG_RE = re.compile(
     r"(?:there is no package called|es gibt kein Paket namens)\s+['\"]([^'\"]+)['\"]",
     re.IGNORECASE,
 )
+# Matches rlang::check_installed() / recipes-style errors:
+#   "1 package (kernlab) is needed for this step but is not installed."
+_MISSING_PKG_CHECK_RE = re.compile(
+    r"packages?\s+\(([^)]+)\)\s+(?:is|are)\s+needed\b.*?not installed",
+    re.IGNORECASE,
+)
 
 
 def _missing_package(stderr: str) -> str | None:
     """Return the first missing R package name found in stderr, or None."""
     m = _MISSING_PKG_RE.search(stderr)
-    return m.group(1) if m else None
+    if m:
+        return m.group(1)
+    m = _MISSING_PKG_CHECK_RE.search(stderr)
+    if m:
+        return m.group(1).split(",")[0].strip()
+    return None
 
 
 def _auto_install(pkg: str) -> None:

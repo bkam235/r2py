@@ -255,11 +255,13 @@ def seed_from_translation(
                     touched.append(matched.id)
                 continue
 
-        # No package-matched pattern — create a seed (seed=True bypasses the
-        # evidence-count gate so it is immediately retrievable).
-        # Use entity_name (not eid) for the ID so the pattern is named after
-        # the R concept, not the script-local entity numbering.
-        raw_id = f"{entity_pkg}.{entity_name}" if entity_pkg else entity_name
+        # No package-matched pattern — create a new seed pattern.
+        # Skip packageless entities: without a package, the entity is a
+        # script-local variable (e.g. "foo", "x") not a reusable R concept.
+        if not entity_pkg:
+            continue
+
+        raw_id = f"{entity_pkg}.{entity_name}"
         base_id = re.sub(r"[^a-z0-9.\-]", "-", raw_id.lower())[:60]
         pat_id = base_id
         suffix = 0

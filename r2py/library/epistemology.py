@@ -156,7 +156,18 @@ def review(store: "PatternStore", index: "PatternIndex") -> list[str]:
                 f" example(s) from {pid}"
             )
 
-    # Rule 6: consolidate numeric-suffix duplicates.
+    # Rule 6: archive packageless seed patterns.
+    # Entities without a package attribution are script-local artifacts
+    # (e.g. "foo", "x"), not reusable R concepts.
+    patterns = store.load_all()
+    for pid, pat in patterns.items():
+        if pat.package or not pat.seed:
+            continue
+        if pid in set(index.all_ids()):
+            index.remove(pid)
+            log.append(f"archived {pid}: packageless seed (script-local name)")
+
+    # Rule 7: consolidate numeric-suffix duplicates.
     # Patterns like `with-locale`, `with-locale-1`, `with-locale-2` arise when
     # the recording mechanism creates one pattern per entity for a function
     # called multiple times.  Merge all into the canonical (base-name) pattern,
