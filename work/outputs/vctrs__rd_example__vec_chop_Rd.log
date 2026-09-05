@@ -1,0 +1,257 @@
+Translation log
+Final score: 0.892
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: vec_chop
+  Name:  vec_chop
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_chop(1:5)
+  Python:
+    def vec_chop(x, indices=None, sizes=None):
+        is_df = isinstance(x, pd.DataFrame)
+        
+        if sizes is not None:
+            s_list = list(sizes)
+            edges = np.cumsum(s_list)
+            start = 0
+            chunks = []
+            for end in edges:
+                if is_df:
+                    chunks.append(x.iloc[start:end])
+                else:
+                    arr = np.array(x)
+                    chunks.append(arr[start:end])
+                start = end
+            return chunks
+        elif indices is not None:
+            chunks = []
+            for idx_range in indices:
+                idx_arr = np.array(list(idx_range)) - 1
+                if is_df:
+                    chunks.append(x.iloc[idx_arr])
+                else:
+                    arr = np.array(x)
+                    chunks.append(arr[idx_arr])
+            return chunks
+        else:
+            # R's vec_chop(x) without indices/sizes chops into individual elements
+            if is_df:
+                return [x.iloc[[i]] for i in range(len(x))]
+            else:
+                arr = np.array(x)
+                return [arr[[i]] for i in range(len(arr))]
+    res0 = vec_chop(range(1, 6))
+    for i, chunk in enumerate(res0, 1):
+        print(f" [[{i}]]\n{r_print_vector(chunk)}")
+    
+    # vec_chop(1:5, indices = list(1:2, 3:5))
+
+============================================================
+Entity: vec_chop_1
+  Name:  vec_chop
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_chop(1:5, indices = list(1:2, 3:5))
+  Python:
+    res1 = vec_chop(range(1, 6), indices=[range(1, 3), range(3, 6)])
+    for i, chunk in enumerate(res1, 1):
+        print(f" [[{i}]]\n{r_print_vector(chunk)}")
+    
+    # vec_chop(1:5, sizes = c(2, 3))
+
+============================================================
+Entity: vec_chop_2
+  Name:  vec_chop
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_chop(1:5, sizes = c(2, 3))
+  Python:
+    res2 = vec_chop(range(1, 6), sizes=[2, 3])
+    for i, chunk in enumerate(res2, 1):
+        print(f" [[{i}]]\n{r_print_vector(chunk)}")
+    
+    # vec_chop(mtcars, indices = list(1:3, 4:6))
+
+============================================================
+Entity: vec_chop_3
+  Name:  vec_chop
+  Kind:  FunctionCall
+  Score: 0.781
+  side_effects:        0.781
+  executed_ok:       True
+
+  R:
+    vec_chop(mtcars, indices = list(1:3, 4:6))
+  Python:
+    mtcars_df = pd.DataFrame(mtcars)
+    res3 = vec_chop(mtcars_df, indices=[range(1, 4), range(4, 7)])
+    for i, chunk in enumerate(res3, 1):
+        print(f" [[{i}]]\n{chunk}\n")
+    
+    # df <- data_frame(...)
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    df <- data_frame(
+      g = c(2, 5, 5, 6, 6, 6, 6, 8, 9, 9),
+      x = 1:10
+    )
+  Python:
+    df = pd.DataFrame({
+        'g': [2, 5, 5, 6, 6, 6, 6, 8, 9, 9],
+        'x': range(1, 11)
+    })
+
+============================================================
+Entity: vec_chop_4
+  Name:  vec_chop
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_chop(df, sizes = vec_run_sizes(df$g))
+  Python:
+    def vec_run_sizes(s):
+        s_arr = np.array(s)
+        if len(s_arr) == 0: return []
+        diffs = np.where(s_arr[1:] != s_arr[:-1])[0]
+        runs = np.concatenate(([0], diffs + 1, [len(s_arr)]))
+        return np.diff(runs).tolist()
+    res4 = vec_chop(df, sizes=vec_run_sizes(df['g']))
+    for i, chunk in enumerate(res4, 1):
+        # R prints data frames with index reset to 1 per chunk
+        chunk_reset = chunk.reset_index(drop=True)
+        chunk_reset.index = chunk_reset.index + 1
+        print(f" [[{i}]]\n{chunk_reset}\n")
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- list(c(1, 2, 1), c(3, 1), 5, double())
+  Python:
+    # x is from shim
+
+============================================================
+Entity: x_flat
+  Name:  x_flat
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x_flat <- vec_c(!!!x)
+  Python:
+    def vec_c(*args):
+        flat = []
+        for arg in args:
+            if isinstance(arg, (list, np.ndarray, pd.Series)):
+                flat.extend(arg)
+            else:
+                if arg is not None:
+                    flat.append(arg)
+        return np.array(flat)
+    x_flat = vec_c(*x)
+
+============================================================
+Entity: x_flat_1
+  Name:  x_flat
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x_flat <- x_flat + max(x_flat)
+
+============================================================
+Entity: max
+  Name:  max
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    x_flat <- x_flat + max(x_flat)
+  Python:
+    x_flat = x_flat + np.max(x_flat) if x_flat.size > 0 else x_flat
+
+============================================================
+Entity: vec_chop_5
+  Name:  vec_chop
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_chop(x_flat, sizes = list_sizes(x))
+  Python:
+    def list_sizes(x):
+        return [len(i) if isinstance(i, (list, np.ndarray, pd.Series)) else (1 if i is not None and not (isinstance(i, float) and np.isnan(i)) else 0) for i in x]
+    
+    # vec_chop(1:5)
+    res5 = vec_chop(x_flat, sizes=list_sizes(x))
+    for i, chunk in enumerate(res5, 1):
+        print(f" [[{i}]]\n{r_print_vector(chunk)}")

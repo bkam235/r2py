@@ -1,0 +1,130 @@
+Translation log
+Final score: 0.250
+Data score:  0.000
+Files score: 0.000
+Iterations:  1
+
+============================================================
+Entity: interactive
+  Name:  interactive
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (interactive()) withAutoprint({ # examplesIf
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(shiny)
+
+============================================================
+Entity: import_bslib
+  Name:  bslib
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(bslib)
+
+============================================================
+Entity: ui
+  Name:  ui
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    ui <- page_sidebar(
+      sidebar = sidebar(
+        open = "always",
+        input_task_button("resample", "Resample"),
+      ),
+      verbatimTextOutput("summary")
+    )
+  Python:
+    app_ui = ui.page_sidebar(
+        ui.sidebar(
+            ui.input_task_button("resample", "Resample"),
+            open="always"
+        ),
+        ui.output_text_verbatim("summary"),
+    )
+
+============================================================
+Entity: server
+  Name:  server
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    server <- function(input, output, session) {
+      sample <- eventReactive(input$resample, ignoreNULL=FALSE, {
+        Sys.sleep(2)  # Make this artificially slow
+        rnorm(100)
+      })
+    
+      output$summary <- renderPrint({
+        summary(sample())
+      })
+    }
+  Python:
+    def server(input, output, session):
+        # eventReactive(input$resample, ignoreNULL=FALSE, ...)
+        # reactive.event creates a reactive calculation that triggers when the specified input changes
+        @reactive.event(input.resample)
+        def sample_data():
+            import time
+            time.sleep(2)  # Make this artificially slow
+            return np.random.randn(100)
+    
+        @output
+        @render.text
+        def summary():
+            # R's summary(numeric_vector) output:
+            # Min. 1st Qu.  Median Mean 3rd Qu. Max.
+            data = sample_data()
+            
+            # Compute R-equivalent summary statistics
+            s_min = np.min(data)
+            s_1st = np.percentile(data, 25)
+            s_med = np.median(data)
+            s_mean = np.mean(data)
+            s_3rd = np.percentile(data, 75)
+            s_max = np.max(data)
+            
+            # Format string to match R's output style for numeric vectors
+            res = (
+                f"Min. 1st Qu.  Median Mean 3rd Qu. Max.\n"
+                f"{s_min:g} {s_1st:g} {s_med:g} {s_mean:g} {s_3rd:g} {s_max:g}"
+            )
+            return res
+
+============================================================
+Entity: shinyApp
+  Name:  shinyApp
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    shinyApp(ui, server)
+  Python:
+    app = App(app_ui, server)

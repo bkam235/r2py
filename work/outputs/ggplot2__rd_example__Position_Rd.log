@@ -1,0 +1,159 @@
+Translation log
+Final score: 0.874
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: PositionRank
+  Name:  PositionRank
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    PositionRank <- ggproto(
+      "PositionRank", Position,
+      # Fields
+      required_aes = c("x", "y"),
+      # Methods
+      setup_params = function(self, data) list(width = self$width),
+      compute_panel = function(data, params, scales) {
+        width <- params$width
+        if (is.null(width)) {
+          width <- resolution(data$x, zero = FALSE, TRUE) * 0.4
+        }
+        rank   <- stats::ave(data$y, data$group, FUN = rank)
+        rank   <- scales::rescale(rank, to = c(-width, width) / 2)
+        data$x <- data$x + rank
+        data
+      }
+    )
+
+============================================================
+Entity: position_rank
+  Name:  position_rank
+  Kind:  FunctionDef
+  Score: 0.784
+  type_match:          1.000
+  control_flow_match:  0.303
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    position_rank <- function(width = NULL) {
+      ggproto(NULL, PositionRank, width = width)
+    }
+  Python:
+    def position_rank(df, x_col, y_col, group_col, width=0.5):
+        """
+        Python implementation of a rank-based jitter/position adjustment.
+        Since plotnine does not allow custom Position objects like ggplot2, 
+        we preprocess the data.
+        """
+        df = df.copy()
+        
+        # Calculate rank within each group
+        # rank() returns 1-based ranks; we subtract the mean and scale it
+        df['rank'] = df.groupby(group_col)[y_col].rank(method='average')
+        
+        # Rescale rank to be centered around 0 within the specified width
+        # Formula: (rank - mean) / range * width
+        def rescale(series, width):
+            if series.max() == series.min():
+                return 0
+            return ((series - series.mean()) / (series.max() - series.min())) * width
+    
+        df['x_offset'] = df.groupby(group_col)['rank'].transform(lambda x: rescale(x, width))
+        
+        # In plotnine, x is often categorical. To add offsets, 
+        # we must convert the categorical x to numeric indices.
+        categories = df[x_col].unique()
+        cat_map = {cat: i for i, cat in enumerate(categories)}
+        df['x_numeric'] = df[x_col].map(cat_map) + df['x_offset']
+        
+        return df
+    
+    # Prepare the data
+    df_ranked = position_rank(mpg, 'drv', 'displ', 'drv', width=0.5)
+    
+    # Plot using the adjusted numeric x values
+    # Note: we use a custom scale for x to keep the original labels
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(mpg, aes(drv, displ)) +
+  Python:
+    plot = (
+        ggplot(df_ranked, aes(x='x_numeric', y='displ')) 
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_point(position = position_rank(width = 0.5))
+  Python:
+        + geom_point()
+    )
+    
+    print(plot)

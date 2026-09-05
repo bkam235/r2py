@@ -1,0 +1,252 @@
+Translation log
+Final score: 0.911
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xml2))
+
+============================================================
+Entity: import_xml2
+  Name:  xml2
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xml2))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- read_xml("<foo> <bar><boo /></bar> <baz/> </foo>")
+  Python:
+    x = etree.fromstring("<foo> <bar><boo /></bar> <baz/> </foo>")
+    
+    # xml_children(x)
+
+============================================================
+Entity: xml_children
+  Name:  xml_children
+  Kind:  FunctionCall
+  Score: 0.970
+  side_effects:        0.970
+  executed_ok:       True
+
+  R:
+    xml_children(x)
+  Python:
+    children = list(x)
+    print_nodeset(children)
+    
+    # xml_children(xml_children(x))
+    # In R, xml_children(nodeset) returns a flattened nodeset of all children
+
+============================================================
+Entity: xml_children_1
+  Name:  xml_children
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    xml_children(xml_children(x))
+  Python:
+    all_grand_children = []
+    for child in children:
+        all_grand_children.extend(list(child))
+    print_nodeset(all_grand_children)
+    
+    # xml_siblings(xml_children(x)[[1]])
+    # xml_siblings in R returns siblings of the node, excluding itself.
+
+============================================================
+Entity: xml_siblings
+  Name:  xml_siblings
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    xml_siblings(xml_children(x)[[1]])
+  Python:
+    first_child = children[0]
+    siblings = [sib for sib in x if sib != first_child]
+    print_nodeset(siblings)
+    
+    # xml_parent(xml_children(x))
+    # R's xml_parent on a nodeset returns a nodeset of unique parents.
+
+============================================================
+Entity: xml_parent
+  Name:  xml_parent
+  Kind:  FunctionCall
+  Score: 0.942
+  side_effects:        0.942
+  executed_ok:       True
+
+  R:
+    xml_parent(xml_children(x))
+  Python:
+    parents = []
+    seen = set()
+    for child in children:
+        p = child.getparent()
+        if p is not None and p not in seen:
+            parents.append(p)
+            seen.add(p)
+    print_nodeset(parents)
+    
+    # Mixed content
+    # x <- read_xml("<foo> a <b/> c <d>e</d> f</foo>")
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x <- read_xml("<foo> a <b/> c <d>e</d> f</foo>")
+  Python:
+    x = etree.fromstring("<foo> a <b/> c <d>e</d> f</foo>")
+    
+    # xml_children(x)
+
+============================================================
+Entity: xml_children_2
+  Name:  xml_children
+  Kind:  FunctionCall
+  Score: 0.970
+  side_effects:        0.970
+  executed_ok:       True
+
+  R:
+    xml_children(x)
+  Python:
+    children_mixed = list(x)
+    print_nodeset(children_mixed)
+    
+    # xml_contents(x)
+    # xml_contents returns all child nodes including text nodes.
+
+============================================================
+Entity: xml_contents
+  Name:  xml_contents
+  Kind:  FunctionCall
+  Score: 0.971
+  side_effects:        0.971
+  executed_ok:       True
+
+  R:
+    xml_contents(x)
+  Python:
+    contents = x.xpath("node()")
+    print_nodeset(contents)
+    
+    # xml_length(x)
+    # By default, xml_length counts elements only.
+
+============================================================
+Entity: xml_length
+  Name:  xml_length
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    xml_length(x)
+  Python:
+    print(f"[1] {len(list(x))}")
+    
+    # xml_length(x, only_elements = FALSE)
+
+============================================================
+Entity: xml_length_1
+  Name:  xml_length
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    xml_length(x, only_elements = FALSE)
+  Python:
+    print(f"[1] {len(x.xpath('node()'))}")
+    
+    # xml_child makes it easier to select specific children
+    # xml_child(x)
+
+============================================================
+Entity: xml_child
+  Name:  xml_child
+  Kind:  FunctionCall
+  Score: 0.944
+  side_effects:        0.944
+  executed_ok:       True
+
+  R:
+    xml_child(x)
+  Python:
+    child_1 = x[0] if len(x) > 0 else None
+    print(f"{{xml_node}}\n{format_node(child_1)}")
+    
+    # xml_child(x, 2)
+
+============================================================
+Entity: xml_child_1
+  Name:  xml_child
+  Kind:  FunctionCall
+  Score: 0.889
+  side_effects:        0.889
+  executed_ok:       True
+
+  R:
+    xml_child(x, 2)
+  Python:
+    child_2 = x[1] if len(x) > 1 else None
+    print(f"{{xml_node}}\n{format_node(child_2)}")
+    
+    # xml_child(x, "baz")
+    # This looks for a direct child with the tag "baz"
+
+============================================================
+Entity: xml_child_2
+  Name:  xml_child
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    xml_child(x, "baz")
+  Python:
+    res = x.xpath("./baz")
+    child_baz = res[0] if res else None
+    if child_baz is None:
+        print(f"{{xml_missing}}\n<NA>")
+    else:
+        print(f"{{xml_node}}\n{format_node(child_baz)}")

@@ -1,0 +1,75 @@
+Translation log
+Final score: 0.625
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: import_stringr
+  Name:  stringr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Constant
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- "ABCDEF"
+  Python:
+    x = "ABCDEF"
+    
+    # str_sub(x, 1, 3) <- "x"
+    # R's str_sub is 1-indexed. 1 to 3 corresponds to indices 0 to 3 in Python slicing (exclusive end).
+    # We replace the first 3 characters with "x".
+    # r2py:entity:str_sub(x, 1, 3)
+    x = "x" + x[3:]
+    
+    # x
+
+============================================================
+Entity: str_sub(x, 1, 3)
+  Name:  str_sub(x, 1, 3)
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    str_sub(x, 1, 3) <- "x"
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    x
+  Python:
+    print(x)

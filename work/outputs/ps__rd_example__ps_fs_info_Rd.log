@@ -1,0 +1,115 @@
+Translation log
+Final score: 0.542
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: import_ps
+  Name:  ps
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: ps_is_supported
+  Name:  ps_is_supported
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: is_cran_check
+  Name:  is_cran_check
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+  Python:
+    try:
+        # The R code checks ps_is_supported() and is_cran_check()
+        # In Python, the 'psutil' library (which the R 'ps' package wraps) 
+        # is generally supported on all major platforms.
+        # The R check is equivalent to verifying the environment.
+        
+        # ps_fs_info in R provides filesystem information for given paths.
+        # The equivalent in Python (psutil) is psutil.disk_partitions() 
+        # or os.statvfs / shutil.disk_usage.
+        # However, the specific 'ps' R package 'ps_fs_info' provides 
+        # details like mount points and FS types.
+        
+        import psutil
+
+============================================================
+Entity: ps_fs_info
+  Name:  ps_fs_info
+  Kind:  FunctionCall
+  Score: 0.542
+  side_effects:        0.542
+  executed_ok:       True
+
+  R:
+    ps_fs_info(c("/", "~", "."))
+  Python:
+        def ps_fs_info(paths=["/"]):
+            results = []
+            # Normalize paths similar to normalizePath(mustWork=True)
+            for path in paths:
+                try:
+                    abs_path = os.path.abspath(os.path.expanduser(path))
+                    # psutil.disk_partitions(all=False) gets mounted partitions
+                    partitions = psutil.disk_partitions(all=False)
+                    
+                    # Find the partition that contains the given path
+                    # This mimics the R logic of mapping a path to its mount point
+                    matching_part = None
+                    for part in partitions:
+                        if abs_path.startswith(part.mountpoint):
+                            matching_part = part
+                    
+                    if matching_part:
+                        results.append({
+                            "path": path,
+                            "mountpoint": matching_part.mountpoint,
+                            "device": matching_part.device,
+                            "fstype": matching_part.fstype,
+                            "opts": matching_part.opts
+                        })
+                    else:
+                        # Fallback for paths that might not be in disk_partitions list
+                        results.append({
+                            "path": path,
+                            "mountpoint": None,
+                            "device": None,
+                            "fstype": None,
+                            "opts": None
+                        })
+                except Exception:
+                    continue
+            
+            import pandas as pd
+            return pd.DataFrame(results)
+    
+        # Execute the example: ps_fs_info(c("/", "~", "."))
+        print(ps_fs_info(["/", "~", "."]))
+    
+    except ImportError:
+        pass

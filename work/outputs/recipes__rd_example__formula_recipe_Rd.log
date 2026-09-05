@@ -1,0 +1,150 @@
+Translation log
+Final score: 0.517
+Data score:  0.500
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 0.720
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.500
+  variable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: formula
+  Name:  formula
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    formula(recipe(Species + Sepal.Length ~ ., data = iris) |> prep())
+  Python:
+    # Equivalent to: recipe(Species + Sepal.Length ~ ., data = iris) |> prep()
+    # In Python, we define the target and features explicitly
+    X = df.drop(columns=['Species'])
+    y = df['Species']
+
+============================================================
+Entity: iris_rec
+  Name:  iris_rec
+  Kind:  Variable
+  Score: 0.320
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    iris_rec <- recipe(Species ~ ., data = iris) |>
+      step_center(all_numeric()) |>
+      prep()
+
+============================================================
+Entity: recipe
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    iris_rec <- recipe(Species ~ ., data = iris) |>
+  Python:
+    # Equivalent to: recipe(Species ~ ., data = iris) |> step_center(all_numeric()) |> prep()
+    # step_center in recipes centers the data (subtracts the mean)
+
+============================================================
+Entity: step_center
+  Name:  step_center
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      step_center(all_numeric()) |>
+  Python:
+    scaler = StandardScaler(with_std=False) 
+    numeric_cols = X.select_dtypes(include=[np.number]).columns
+    X_centered = X.copy()
+
+============================================================
+Entity: prep
+  Name:  prep
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      prep()
+  Python:
+    X_centered[numeric_cols] = scaler.fit_transform(X[numeric_cols])
+
+============================================================
+Entity: formula_1
+  Name:  formula
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    formula(iris_rec)
+  Python:
+    # Printing the 'formula' equivalent (the feature names and target)
+    print(f"Target: Species")
+    print(f"Features: {list(X.columns)}")
