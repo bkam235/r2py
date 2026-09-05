@@ -107,6 +107,7 @@ def run_loop(
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
     from .stage2.sentinel_mapper import flatten_entity_line_map as _flatten
     from .harness.review import review_translation as _review
+    from .harness.audit import static_audit as _audit, format_audit_for_agent as _fmt_audit
 
     script_id = hashlib.sha1(script_map.source.encode()).hexdigest()[:12]
 
@@ -251,6 +252,20 @@ def run_loop(
     # --- Escalate to reasoning agent --------------------------------------- #
     _emit(progress, kind="agent_start", iteration=0, score=best_decomp.aggregate)
 
+    # Static structural audit of best seed — feed findings to the agent.
+    audit_feedback = ""
+    try:
+        from .stage1.runner import strip_r_guards
+        _audit_r = strip_r_guards(r_source)
+        findings = _audit(_audit_r, best_source, script_map, model=escalation_model)
+        if findings:
+            audit_feedback = _fmt_audit(findings)
+            print(f"[Audit]   Found {len(findings)} structural issue(s)")
+        else:
+            print("[Audit]   No structural issues found")
+    except Exception as exc:
+        print(f"[Audit]   Audit failed (non-fatal): {exc}")
+
     agent_result = _reason(
         current_source=best_source,
         score_report=best_decomp,
@@ -260,6 +275,7 @@ def run_loop(
         max_steps=max_iters,
         score_threshold=score_threshold,
         max_stalls=max_stalls,
+        audit_feedback=audit_feedback,
     )
 
     if agent_result is not None:
