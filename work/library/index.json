@@ -98,6 +98,9 @@
     "rlang:": [
       "rlang.is-installed"
     ],
+    "scales:": [
+      "scales.demo-discrete"
+    ],
     "shape:": [
       "shape.graycol"
     ],
@@ -538,6 +541,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "rlang",
+      "ast_shape_hash": ""
+    },
+    "scales.demo-discrete": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "scales",
       "ast_shape_hash": ""
     },
     "shape.graycol": {
