@@ -78,6 +78,11 @@
     "lava:": [
       "lava.na2x"
     ],
+    "lubridate:": [
+      "lubridate.dmy",
+      "lubridate.mdy",
+      "lubridate.ymd"
+    ],
     "modelr:": [
       "modelr.typical"
     ],
@@ -497,6 +502,30 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "lava",
+      "ast_shape_hash": ""
+    },
+    "lubridate.dmy": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "lubridate",
+      "ast_shape_hash": ""
+    },
+    "lubridate.mdy": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "lubridate",
+      "ast_shape_hash": ""
+    },
+    "lubridate.ymd": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "lubridate",
       "ast_shape_hash": ""
     },
     "modelr.typical": {
