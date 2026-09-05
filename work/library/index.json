@@ -24,6 +24,9 @@
     "clock:": [
       "clock.date-build"
     ],
+    "crayon:": [
+      "crayon.col-align"
+    ],
     "data.table:": [
       "data.table.setkey",
       "data.table.tables"
@@ -253,6 +256,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "clock",
+      "ast_shape_hash": ""
+    },
+    "crayon.col-align": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "crayon",
       "ast_shape_hash": ""
     },
     "data.table.setkey": {
