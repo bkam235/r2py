@@ -68,6 +68,9 @@
       "graphics.filled.contour",
       "graphics.image"
     ],
+    "grDevices:": [
+      "grdevices.devasknewpage"
+    ],
     "hardhat:": [
       "hardhat.get-levels",
       "hardhat.get-outcome-levels"
@@ -97,6 +100,10 @@
     "purrr:": [
       "purrr.discard-at",
       "purrr.keep-at"
+    ],
+    "RColorBrewer:": [
+      "rcolorbrewer.display.brewer.all",
+      "rcolorbrewer.display.brewer.pal"
     ],
     "recipes:": [
       "recipes.bake",
@@ -460,6 +467,14 @@
       "package": "graphics",
       "ast_shape_hash": ""
     },
+    "grdevices.devasknewpage": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "grDevices",
+      "ast_shape_hash": ""
+    },
     "hardhat.get-levels": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -554,6 +569,22 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "purrr",
+      "ast_shape_hash": ""
+    },
+    "rcolorbrewer.display.brewer.all": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "RColorBrewer",
+      "ast_shape_hash": ""
+    },
+    "rcolorbrewer.display.brewer.pal": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "RColorBrewer",
       "ast_shape_hash": ""
     },
     "recipes.bake": {
