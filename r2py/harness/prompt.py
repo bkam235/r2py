@@ -195,7 +195,10 @@ def format_entity_list(script_map: "ScriptMap") -> str:
     for eid, entity in entities.items():
         name = getattr(entity, "name", eid)
         kind = getattr(getattr(entity, "kind", None), "value", "?")
-        parts.append(f"  {eid}: {name} ({kind})")
+        flags = [f for f in getattr(entity, "r_semantic_flags", [])
+                 if not f.startswith("python_keyword_arg:")]
+        suffix = f" [R: {', '.join(flags)}]" if flags else ""
+        parts.append(f"  {eid}: {name} ({kind}){suffix}")
     return "\n".join(parts)
 
 
@@ -333,6 +336,17 @@ def build_agent_turn(
         parts.append("### Function metadata (from R introspection)")
         parts.append(entity_metadata)
         parts.append("")
+
+    # R construct warnings — include on step 1 only (static).
+    if step == 1:
+        from ..construct_catalog import format_construct_notes
+        construct_notes = format_construct_notes(
+            getattr(script_map, "entities", {}) or {}
+        )
+        if construct_notes:
+            parts.append("### R construct warnings (language-level pitfalls)")
+            parts.append(construct_notes)
+            parts.append("")
 
     if history:
         parts.append("### Previous actions this session")
