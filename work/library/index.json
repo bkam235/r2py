@@ -98,6 +98,13 @@
       "purrr.discard-at",
       "purrr.keep-at"
     ],
+    "recipes:": [
+      "recipes.bake",
+      "recipes.recipe",
+      "recipes.step-dummy",
+      "recipes.step-ordinalscore",
+      "recipes.tidy"
+    ],
     "rlang:": [
       "rlang.is-installed"
     ],
@@ -115,6 +122,9 @@
       "sparsevctrs.sparse-division-scalar",
       "sparsevctrs.sparse-multiplication-scalar",
       "sparsevctrs.sparse-subtraction-scalar"
+    ],
+    "stats:": [
+      "stats.model.matrix"
     ],
     "stringi:": [
       "stringi.stri-detect-regex",
@@ -546,6 +556,46 @@
       "package": "purrr",
       "ast_shape_hash": ""
     },
+    "recipes.bake": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "recipes",
+      "ast_shape_hash": ""
+    },
+    "recipes.recipe": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "recipes",
+      "ast_shape_hash": ""
+    },
+    "recipes.step-dummy": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "recipes",
+      "ast_shape_hash": ""
+    },
+    "recipes.step-ordinalscore": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "recipes",
+      "ast_shape_hash": ""
+    },
+    "recipes.tidy": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "recipes",
+      "ast_shape_hash": ""
+    },
     "rlang.is-installed": {
       "confidence": "tentative",
       "evidence_count": 0,
@@ -608,6 +658,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "sparsevctrs",
+      "ast_shape_hash": ""
+    },
+    "stats.model.matrix": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "stats",
       "ast_shape_hash": ""
     },
     "stringi.stri-detect-regex": {
