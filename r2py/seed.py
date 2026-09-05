@@ -183,6 +183,15 @@ def _build_prompt(
             "## Function metadata (from R introspection):\n" + metadata_text
         )
 
+    # Surface R-semantic construct warnings for pitfalls in this script.
+    from .construct_catalog import format_construct_notes
+    construct_notes = format_construct_notes(entities)
+    if construct_notes:
+        parts.append(
+            "## R construct warnings (language-level pitfalls in this script):\n"
+            + construct_notes
+        )
+
     return parts
 
 

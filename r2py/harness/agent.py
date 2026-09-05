@@ -32,6 +32,7 @@ def reason(
     max_steps: int = 20,
     score_threshold: float = 0.9,
     max_stalls: int = 3,
+    audit_feedback: str = "",
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -43,6 +44,8 @@ def reason(
     best_score = score_report.aggregate
     report = score_report
     history: list[str] = []
+    if audit_feedback:
+        history.append(audit_feedback)
 
     patterns_by_entity = _prefetch_patterns(harness, score_report)
     r_function_sources, entity_metadata = _prefetch_r_sources(script_map)
@@ -256,13 +259,25 @@ def reason(
                 if not passed:
                     print(f"[Review]  FAILED: {reason}")
                     stall_count += 1
+                    # Include a trimmed copy of the rejected source so the
+                    # agent can see exactly what was hardcoded and avoid
+                    # re-inventing the same approach.
+                    rejected_snippet = new_source
+                    if len(rejected_snippet) > 1500:
+                        rejected_snippet = rejected_snippet[:1500] + "\n... (truncated)"
                     history.append(
                         f"Step {step}: rewrite -> {new_report.aggregate:.3f} "
                         f"(REJECTED by review: {reason}). "
                         "Your code contains hardcoded values — you must COMPUTE "
-                        "results, not copy expected output as literals."
+                        "results, not copy expected output as literals.\n"
+                        "Rejected code:\n```python\n"
+                        f"{rejected_snippet}\n```"
                     )
-                    report = new_report if new_report.aggregate == best_score else report
+                    # Show the rejected rewrite's comparisons on the next
+                    # turn so the agent sees which parts were correct vs.
+                    # hardcoded, rather than falling back to the stale seed
+                    # comparisons.
+                    report = new_report
                 else:
                     print(f"[Review]  PASSED")
                     best_source = harness.last_annotated_source or new_source
