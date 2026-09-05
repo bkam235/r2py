@@ -31,6 +31,9 @@
       "data.table.setkey",
       "data.table.tables"
     ],
+    "dbplyr:": [
+      "dbplyr.build-sql"
+    ],
     "dplyr:": [
       "dplyr.filter"
     ],
@@ -302,6 +305,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "data.table",
+      "ast_shape_hash": ""
+    },
+    "dbplyr.build-sql": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "dbplyr",
       "ast_shape_hash": ""
     },
     "dplyr.filter": {
