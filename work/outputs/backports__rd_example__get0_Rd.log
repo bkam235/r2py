@@ -1,0 +1,104 @@
+Translation log
+Final score: 0.906
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(backports))
+
+============================================================
+Entity: import_backports
+  Name:  backports
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(backports))
+
+============================================================
+Entity: bp_get0
+  Name:  bp_get0
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    bp_get0 = getFromNamespace("get0", "backports")
+  Python:
+    def get0(name, ifnotfound=None):
+        """
+        Substitute for R's get0: retrieves the value of a variable by its name
+        from the global scope.
+        """
+        return globals().get(name, ifnotfound)
+    
+    # bp_get0("a")
+
+============================================================
+Entity: bp_get0_1
+  Name:  bp_get0
+  Kind:  FunctionCall
+  Score: 0.625
+  side_effects:        0.625
+  executed_ok:       True
+
+  R:
+    bp_get0("a")
+  Python:
+    print(get0("a"))
+    
+    # bp_get0("a", ifnotfound = 0)
+
+============================================================
+Entity: bp_get0_2
+  Name:  bp_get0
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    bp_get0("a", ifnotfound = 0)
+  Python:
+    print(get0("a", ifnotfound=0))
+
+============================================================
+Entity: foo
+  Name:  foo
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    foo = 12
+  Python:
+    foo = 12
+    # bp_get0("foo")
+
+============================================================
+Entity: bp_get0_3
+  Name:  bp_get0
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    bp_get0("foo")
+  Python:
+    print(get0("foo"))

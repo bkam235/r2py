@@ -1,0 +1,117 @@
+Translation log
+Final score: 0.614
+Data score:  0.500
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(numDeriv))
+
+============================================================
+Entity: import_numDeriv
+  Name:  numDeriv
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(numDeriv))
+
+============================================================
+Entity: func2
+  Name:  func2
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    func2 <- function(x) c(sin(x), cos(x))
+  Python:
+    def func2(x):
+        # R's c(sin(x), cos(x)) returns a vector. 
+        # If x is a vector, sin(x) is element-wise.
+        # The jacobian(func2, x) in R with x as a vector treats func2 as 
+        # returning a vector of length 2*len(x) or behaves specifically 
+        # based on how numDeriv handles the return.
+        # In the example x = c(0, 2*pi), func2(x) = c(sin(0), sin(2*pi), cos(0), cos(2*pi))
+        # However, based on R's output [,1] 1 0, [,2] 0 1, the Jacobian is 
+        # actually calculating the derivatives of the vector-valued function.
+        return np.concatenate([np.sin(x), np.cos(x)])
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+       x <- (0:1)*2*pi
+  Python:
+    x = np.arange(2) * 2 * np.pi
+
+============================================================
+Entity: jacobian
+  Name:  jacobian
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+       jacobian(func2, x)
+  Python:
+    def jacobian(func, x, method="real"):
+        if method == "complex":
+            # Complex step differentiation for high precision
+            # f'(x) approx Im(f(x + i*h)) / h
+            h = 1e-100
+            n = len(x)
+            # Determine output size
+            f0 = func(x)
+            m = len(f0)
+            jac = np.zeros((m, n))
+            for j in range(n):
+                x_complex = np.array(x, dtype=complex)
+                x_complex[j] += complex(0, h)
+                f_complex = func(x_complex)
+                jac[:, j] = np.imag(f_complex) / h
+            return jac
+        else:
+            # Use numdifftools for the real case
+            # numdifftools.Jacobian returns a function that computes the Jacobian
+            jac_func = numdifftools.Jacobian(func)
+            return jac_func(x)
+    
+    # Real Jacobian
+    res_real = jacobian(func2, x)
+    print(res_real)
+    
+    # Complex Jacobian
+
+============================================================
+Entity: jacobian_1
+  Name:  jacobian
+  Kind:  FunctionCall
+  Score: 0.793
+  side_effects:        0.793
+  executed_ok:       True
+
+  R:
+       jacobian(func2, x, "complex")
+  Python:
+    res_complex = jacobian(func2, x, method="complex")
+    print(res_complex)

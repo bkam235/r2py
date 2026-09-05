@@ -1,0 +1,256 @@
+Translation log
+Final score: 0.921
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyselect))
+
+============================================================
+Entity: import_tidyselect
+  Name:  tidyselect
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyselect))
+
+============================================================
+Entity: poke_vars
+  Name:  poke_vars
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    poke_vars(letters)
+  Python:
+    def poke_vars(vars_val):
+        if vars_val is not None:
+            vars_val = vars_validate(vars_val)
+        old = vars_env["selected"]
+        vars_env["selected"] = vars_val
+        return old
+    poke_vars(letters)
+
+============================================================
+Entity: peek_vars
+  Name:  peek_vars
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    peek_vars()
+  Python:
+    def peek_vars(fn_name=None):
+        x = vars_env["selected"]
+        if x is None:
+            name = f"`{fn_name}()`" if fn_name else "Selection helpers"
+            raise RuntimeError(f"{name} must be used within a *selecting* function.")
+        return x
+    print(peek_vars())
+    
+    # Now that the variables are registered, the helpers can figure out
+    # the locations of elements within the variable vector:
+
+============================================================
+Entity: all_of
+  Name:  all_of
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    all_of(c("d", "z"))
+  Python:
+    def all_of(x):
+        vars_val = peek_vars(fn_name="all_of")
+        # R's all_of returns indices (1-based).
+        if isinstance(x, str):
+            x = [x]
+        
+        indices = []
+        for item in x:
+            try:
+                indices.append(vars_val.index(item) + 1)
+            except ValueError:
+                raise IndexError(f"Column {item} not found in variables")
+        return indices
+    print(all_of(["d", "z"]))
+    
+    # In a function be sure to restore the previous variables.
+
+============================================================
+Entity: fn
+  Name:  fn
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    fn <- function(vars) {
+      old <- poke_vars(vars)
+      on.exit(poke_vars(old))
+    
+      all_of("d")
+    }
+  Python:
+    def fn_custom(vars_val):
+        old = poke_vars(vars_val)
+        try:
+            return all_of("d")
+        finally:
+            poke_vars(old)
+
+============================================================
+Entity: fn_1
+  Name:  fn
+  Kind:  FunctionCall
+  Score: 0.722
+  side_effects:        0.722
+  executed_ok:       True
+
+  R:
+    fn(letters)
+  Python:
+    print(fn_custom(letters))
+    # letters[3:5] in R is indices 3, 4, 5 (1-based).
+    # In Python, letters[2:5] gives a list of 3 elements.
+
+============================================================
+Entity: fn_2
+  Name:  fn
+  Kind:  FunctionCall
+  Score: 0.722
+  side_effects:        0.722
+  executed_ok:       True
+
+  R:
+    fn(letters[3:5])
+  Python:
+    print(fn_custom(letters[2:5]))
+    
+    # The previous variables are still registered after fn() was
+    # called:
+
+============================================================
+Entity: peek_vars_1
+  Name:  peek_vars
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    peek_vars()
+  Python:
+    print(peek_vars())
+    
+    
+    # It is recommended to use the scoped variant as it restores the
+    # state automatically when the function returns:
+
+============================================================
+Entity: fn_3
+  Name:  fn
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    fn <- function(vars) {
+      scoped_vars(vars)
+      starts_with("r")
+    }
+  Python:
+    def starts_with(match, ignore_case=True):
+        vars_val = peek_vars(fn_name="starts_with")
+        if isinstance(match, str):
+            match = [match]
+        
+        indices = []
+        for m in match:
+            for i, v in enumerate(vars_val):
+                v_check = v.lower() if ignore_case else v
+                m_check = m.lower() if ignore_case else m
+                if v_check.startswith(m_check):
+                    indices.append(i + 1)
+        return indices
+    
+    @contextmanager
+    def scoped_vars(vars_val):
+        old = poke_vars(vars_val)
+        try:
+            yield
+        finally:
+            poke_vars(old)
+    def fn_scoped(vars_val):
+        with scoped_vars(vars_val):
+            return starts_with("r")
+
+============================================================
+Entity: fn_4
+  Name:  fn
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    fn(c("red", "blue", "rose"))
+  Python:
+    print(fn_scoped(["red", "blue", "rose"]))
+    
+    # The with_vars() helper makes it easy to pass an expression that
+    # should be evaluated in a variable context.
+
+============================================================
+Entity: fn_5
+  Name:  fn
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    fn <- function(expr) {
+      vars <- c("red", "blue", "rose")
+      with_vars(vars, expr)
+    }
+  Python:
+    def with_vars(vars_val, expr_fn):
+        with scoped_vars(vars_val):
+            return expr_fn()
+    
+    # --- Main script translation ---
+    def fn_with(expr_fn):
+        vars_list = ["red", "blue", "rose"]
+        return with_vars(vars_list, expr_fn)
+
+============================================================
+Entity: fn_6
+  Name:  fn
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    fn(starts_with("r"))
+  Python:
+    print(fn_with(lambda: starts_with("r")))

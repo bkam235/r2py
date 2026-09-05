@@ -1,0 +1,161 @@
+Translation log
+Final score: 0.322
+Data score:  0.358
+Files score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(future.apply))
+
+============================================================
+Entity: import_future.apply
+  Name:  future.apply
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(future.apply))
+
+============================================================
+Entity: import_datasets
+  Name:  datasets
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(datasets) ## warpbreaks
+
+============================================================
+Entity: import_stats
+  Name:  stats
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(stats)    ## lm()
+
+============================================================
+Entity: y0
+  Name:  y0
+  Kind:  Variable
+  Score: 0.358
+  type_match:          0.144
+  control_flow_match:  1.000
+  data_output:         0.144
+  variable_output:     0.144
+  executed_ok:       True
+
+  R:
+    y0 <- by(warpbreaks, warpbreaks[,"tension"],
+             function(x) lm(breaks ~ wool, data = x))
+  Python:
+    def fit_model(group):
+        """Equivalent to lm(breaks ~ wool, data = x)"""
+        # R's lm handles categorical variables; ols from statsmodels.formula.api does the same.
+        model = ols('breaks ~ wool', data=group).fit()
+        
+        # To match R's output structure in the verification (coefficients, residuals, fitted)
+        return {
+            'coefficients': model.params.to_dict(),
+            'residuals': model.resid.to_dict(),
+            'fitted': model.fittedvalues.to_dict()
+        }
+    
+    def run_analysis():
+        global y0, y1, y2
+    
+        # r2py:entity:y0
+        # by(warpbreaks, warpbreaks[,"tension"], ...)
+        # Returns a named list (dict in Python) where keys are the levels of the factor
+        groups = df.groupby('tension')
+        y0 = {name: fit_model(group) for name, group in groups}
+
+============================================================
+Entity: plan
+  Name:  plan
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    plan(multisession)
+  Python:
+        # r2py:entity:plan
+        # plan(multisession) is a configuration for future_by
+        # In Python, we simulate this with ProcessPoolExecutor
+
+============================================================
+Entity: y1
+  Name:  y1
+  Kind:  Variable
+  Score: 0.358
+  type_match:          0.144
+  control_flow_match:  1.000
+  data_output:         0.144
+  variable_output:     0.144
+  executed_ok:       True
+
+  R:
+    y1 <- future_by(warpbreaks, warpbreaks[,"tension"],
+                    function(x) lm(breaks ~ wool, data = x))
+  Python:
+        # r2py:entity:y1
+        # future_by(warpbreaks, warpbreaks[,"tension"], ...)
+        with ProcessPoolExecutor() as executor:
+            # Map the fit_model function to each group
+            group_list = list(groups) # [(name, group), ...]
+            # executor.map expects a function and an iterable of arguments
+            # Since fit_model takes 1 arg, we pass the group
+            results = list(executor.map(fit_model, [g for n, g in group_list]))
+            y1 = {name: result for (name, group), result in zip(group_list, results)}
+
+============================================================
+Entity: plan_1
+  Name:  plan
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    plan(sequential)
+  Python:
+        # r2py:entity:plan_1
+        # plan(sequential)
+
+============================================================
+Entity: y2
+  Name:  y2
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    y2 <- future_by(warpbreaks, warpbreaks[,"tension"],
+                    function(x) lm(breaks ~ wool, data = x))
+  Python:
+        # r2py:entity:y2
+        # future_by (sequential) is essentially just a loop
+        y2 = {name: fit_model(group) for name, group in groups}
+    
+    if __name__ == '__main__':
+        run_analysis()

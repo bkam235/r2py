@@ -1,0 +1,72 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(backports))
+
+============================================================
+Entity: import_backports
+  Name:  backports
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(backports))
+
+============================================================
+Entity: bp_...elt
+  Name:  bp_...elt
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    bp_...elt = getFromNamespace("...elt", "backports")
+  Python:
+    def dot_elt(n, *args):
+        """
+        Mimics the functionality of backports::...elt,
+        which typically returns the n-th element of the dots.
+        """
+        if n < 1 or n > len(args):
+            raise IndexError("Element index out of range")
+        return args[n - 1]
+
+============================================================
+Entity: foo
+  Name:  foo
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    foo = function(n, ...) bp_...elt(n)
+  Python:
+    def foo(n, *args):
+        return dot_elt(n, *args)
+
+============================================================
+Entity: foo_1
+  Name:  foo
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    foo(n = 2, "a", "b", "c")
+  Python:
+    print(foo(2, "a", "b", "c"))

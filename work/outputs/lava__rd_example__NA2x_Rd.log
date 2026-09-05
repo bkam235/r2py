@@ -1,0 +1,77 @@
+Translation log
+Final score: 0.825
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(lava))
+
+============================================================
+Entity: import_lava
+  Name:  lava
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(lava))
+
+============================================================
+Entity: x2NA
+  Name:  x2NA
+  Kind:  FunctionCall
+  Score: 0.750
+  side_effects:        0.750
+  executed_ok:       True
+
+  R:
+    x2NA(1:10, 1:5)
+  Python:
+    def x2NA(s, x=0):
+        """
+        Translates to Python using pandas/numpy to handle NA (NaN) values.
+        """
+        s_arr = np.array(s)
+        x_arr = np.array(x)
+        # Replace values in s that are present in x with NaN
+        res = np.where(np.isin(s_arr, x_arr), np.nan, s_arr)
+        return res
+    print(x2NA(np.arange(1, 11), np.arange(1, 6)))
+    
+    # R: NA2x(x2NA(c(1:10), 5), 5)
+    # Note: c(1:10) is the sequence 1 to 10. 
+    # The R code x2NA(c(1:10), 5) replaces any 5 in 1:10 with NA.
+    # Then NA2x replaces that NA back with 5.
+
+============================================================
+Entity: NA2x
+  Name:  NA2x
+  Kind:  FunctionCall
+  Score: 0.900
+  side_effects:        0.900
+  executed_ok:       True
+
+  R:
+    NA2x(x2NA(c(1:10),5),5)##'
+  Python:
+    def NA2x(s, x=0):
+        """
+        Translates to Python using pandas/numpy to replace NaNs with x.
+        """
+        s_arr = np.array(s)
+        # Replace NaN values with x
+        res = np.where(np.isnan(s_arr), x, s_arr)
+        return res
+    
+    # Main script translation
+    # R: x2NA(1:10, 1:5)
+    res_x2na = x2NA(np.arange(1, 11), 5)
+    print(NA2x(res_x2na, 5))

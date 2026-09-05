@@ -1,0 +1,317 @@
+Translation log
+Final score: 0.762
+Data score:  0.753
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: import_tidyr
+  Name:  tidyr
+  Kind:  LibraryImport
+  Score: 0.861
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.753
+  variable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: stocks
+  Name:  stocks
+  Kind:  Variable
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    stocks <- tibble(
+      time = as.Date("2009-01-01") + 0:9,
+      X = rnorm(10, 0, 1),
+      Y = rnorm(10, 0, 2),
+      Z = rnorm(10, 0, 4)
+    )
+  Python:
+    np.random.seed(42) 
+    stocks = pd.DataFrame({
+        'time': [datetime(2009, 1, 1) + timedelta(days=i) for i in range(10)],
+        'X': np.random.normal(0, 1, 10),
+        'Y': np.random.normal(0, 2, 10),
+        'Z': np.random.normal(0, 4, 10)
+    })
+    print(stocks.to_string(index=False))
+    
+    # gather(stock, price, -time)
+
+============================================================
+Entity: stocksm
+  Name:  stocksm
+  Kind:  Variable
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    stocksm <- stocks |> gather(stock, price, -time)
+
+============================================================
+Entity: gather
+  Name:  gather
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    stocksm <- stocks |> gather(stock, price, -time)
+  Python:
+    stocksm = stocks.melt(id_vars=['time'], var_name='stock', value_name='price')
+    
+    # stocksm |> spread(stock, price)
+    # In R, spread(stock, price) uses the remaining columns as the index.
+
+============================================================
+Entity: spread
+  Name:  spread
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    stocksm |> spread(stock, price)
+  Python:
+    res_spread1 = stocksm.pivot(index='time', columns='stock', values='price').reset_index()
+    res_spread1.columns.name = None
+    print(res_spread1.to_string(index=False))
+    
+    # stocksm |> spread(time, price)
+
+============================================================
+Entity: spread_1
+  Name:  spread
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    stocksm |> spread(time, price)
+  Python:
+    res_spread2 = stocksm.pivot(index='stock', columns='time', values='price').reset_index()
+    res_spread2.columns.name = None
+    print(res_spread2.to_string(index=False))
+    
+    # Spread and gather are complements
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 0.516
+  type_match:          0.260
+  control_flow_match:  1.000
+  data_output:         0.260
+  variable_output:     0.260
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    df <- tibble(x = c("a", "b"), y = c(3, 4), z = c(5, 6))
+  Python:
+    df = pd.DataFrame({'x': ["a", "b"], 'y': [3, 4], 'z': [5, 6]})
+    
+    # df |> spread(x, y)
+    # x is the key, y is the value. z is the implicit id.
+
+============================================================
+Entity: spread_2
+  Name:  spread
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      spread(x, y) |>
+  Python:
+    res_spread3 = df.pivot(index='z', columns='x', values='y')
+    
+    # gather("x", "y", a:b, na.rm = TRUE)
+    # This gathers columns 'a' and 'b' into 'x' and 'y'.
+
+============================================================
+Entity: gather_1
+  Name:  gather
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      gather("x", "y", a:b, na.rm = TRUE)
+  Python:
+    res_gather = res_spread3.reset_index().melt(id_vars=['z'], var_name='x', value_name='y').dropna()
+    # The R code gather("x", "y", a:b) means a:b are the columns to pivot. 
+    # The 'z' column is dropped because it wasn't specified in the gather range.
+    res_gather = res_gather[['x', 'y']]
+    print(res_gather.to_string(index=False))
+    
+    # Use 'convert = TRUE' to produce variables of mixed type
+
+============================================================
+Entity: df_1
+  Name:  df
+  Kind:  Variable
+  Score: 0.516
+  type_match:          0.260
+  control_flow_match:  1.000
+  data_output:         0.260
+  variable_output:     0.260
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    df <- tibble(
+      row = rep(c(1, 51), each = 3),
+      var = rep(c("Sepal.Length", "Species", "Species_num"), 2),
+      value = c(5.1, "setosa", 1, 7.0, "versicolor", 2)
+    )
+  Python:
+    df_mixed = pd.DataFrame({
+        'row': np.repeat([1, 51], 3),
+        'var': np.tile(["Sepal.Length", "Species", "Species_num"], 2),
+        'value': [5.1, "setosa", 1, 7.0, "versicolor", 2]
+    })
+    
+    # df |> spread(var, value) |> str()
+
+============================================================
+Entity: spread_3
+  Name:  spread
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    df |> spread(var, value) |> str()
+  Python:
+    res_no_conv = df_mixed.pivot(index='row', columns='var', values='value').reset_index()
+    res_no_conv.columns.name = None
+
+============================================================
+Entity: str
+  Name:  str
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    df |> spread(var, value) |> str()
+  Python:
+    print(res_no_conv.info())
+    
+    # df |> spread(var, value, convert = TRUE) |> str()
+
+============================================================
+Entity: spread_4
+  Name:  spread
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    df |> spread(var, value, convert = TRUE) |> str()
+  Python:
+    res_conv = df_mixed.pivot(index='row', columns='var', values='value').reset_index()
+    res_conv.columns.name = None
+    # convert=TRUE in tidyr is like infer_objects() + cast.
+    # pandas' convert_dtypes() handles the "convert=TRUE" logic.
+    res_conv = res_conv.infer_objects().convert_dtypes()
+
+============================================================
+Entity: str_1
+  Name:  str
+  Kind:  FunctionCall
+  Score: 0.761
+  type_match:          0.753
+  control_flow_match:  0.753
+  data_output:         0.753
+  variable_output:     0.753
+  callable_output:     0.753
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    df |> spread(var, value, convert = TRUE) |> str()
+  Python:
+    print(res_conv.info())

@@ -1,0 +1,44 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(lifecycle))
+
+============================================================
+Entity: import_lifecycle
+  Name:  lifecycle
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(lifecycle))
+
+============================================================
+Entity: add_two
+  Name:  add_two
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    add_two <- function(x, y, na.rm = TRUE) {
+      sum(x, y, na.rm = na.rm)
+    }
+  Python:
+    def add_two(x, y, na_rm=True):
+        if na_rm:
+            return np.nansum([x, y])
+        else:
+            return np.sum([x, y])

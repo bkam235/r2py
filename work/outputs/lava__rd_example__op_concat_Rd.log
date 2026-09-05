@@ -1,0 +1,105 @@
+Translation log
+Final score: 0.833
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(lava))
+
+============================================================
+Entity: import_lava
+  Name:  lava
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(lava))
+
+============================================================
+Entity: matrix
+  Name:  matrix
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    matrix(rnorm(25),5)%++%matrix(rnorm(25),5)
+  Python:
+    def compose_op(a, b):
+        if isinstance(a, np.ndarray) and isinstance(b, np.ndarray):
+            # For matrices, lava's %++% performs block diagonal concatenation
+            return block_diag(a, b)
+        elif isinstance(a, str) and isinstance(b, str):
+            return a + b
+        elif callable(a) and callable(b):
+            # Function composition: (f %++% g)(x) = f(g(x))
+            return lambda x: a(b(x))
+        else:
+            return a + b
+    
+    # Block diagonal
+    # matrix(rnorm(25),5)%++%matrix(rnorm(25),5)
+
+============================================================
+Entity: matrix_1
+  Name:  matrix
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    matrix(rnorm(25),5)%++%matrix(rnorm(25),5)
+  Python:
+    mat1 = np.random.randn(5, 5)
+    mat2 = np.random.randn(5, 5)
+    res_mat = compose_op(mat1, mat2)
+    print(res_mat)
+    
+    # String concatenation
+    # "Hello "%++%" World"
+    res_str = compose_op("Hello ", " World")
+    print(f'[1] "{res_str}"')
+    
+    # Function composition
+    # f <- log %++% exp
+
+============================================================
+Entity: f
+  Name:  f
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    f <- log %++% exp
+  Python:
+    f = compose_op(np.log, np.exp)
+    
+    # f(2)
+
+============================================================
+Entity: f_1
+  Name:  f
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    f(2)
+  Python:
+    res_val = f(2)
+    # R prints result of log(exp(2)) as 2
+    print(f'[1] {int(round(res_val)) if np.isclose(res_val, round(res_val)) else res_val}')

@@ -1,0 +1,67 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringi))
+
+============================================================
+Entity: import_stringi
+  Name:  stringi
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringi))
+
+============================================================
+Entity: stri_trans_char
+  Name:  stri_trans_char
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_trans_char('id.123', '.', '_')
+  Python:
+    def stri_trans_char(text, old, new):
+        table = str.maketrans(old, new)
+        return text.translate(table)
+    print(stri_trans_char('id.123', '.', '_'))
+
+============================================================
+Entity: stri_trans_char_1
+  Name:  stri_trans_char
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_trans_char('babaab', 'ab', '01')
+  Python:
+    print(stri_trans_char('babaab', 'ab', '01'))
+
+============================================================
+Entity: stri_trans_char_2
+  Name:  stri_trans_char
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_trans_char('GCUACGGAGCUUCGGAGCUAG', 'ACGT', 'TGCA')
+  Python:
+    print(stri_trans_char('GCUACGGAGCUUCGGAGCUAG', 'ACGT', 'TGCA'))

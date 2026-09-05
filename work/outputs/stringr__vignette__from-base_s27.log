@@ -1,0 +1,122 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: import_stringr
+  Name:  stringr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: dog
+  Name:  dog
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    dog <- "The quick brown dog"
+  Python:
+    dog = "The quick brown dog"
+
+============================================================
+Entity: toupper
+  Name:  toupper
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    toupper(dog)
+  Python:
+    print(dog.upper())
+
+============================================================
+Entity: tolower
+  Name:  tolower
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    tolower(dog)
+  Python:
+    print(dog.lower())
+
+============================================================
+Entity: toTitleCase
+  Name:  toTitleCase
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    tools::toTitleCase(dog)
+  Python:
+    print(dog.title())
+    
+    # The stringr equivalents in Python are the built-in string methods
+
+============================================================
+Entity: str_to_upper
+  Name:  str_to_upper
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_to_upper(dog)
+  Python:
+    print(dog.upper())
+
+============================================================
+Entity: str_to_lower
+  Name:  str_to_lower
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_to_lower(dog)
+  Python:
+    print(dog.lower())
+
+============================================================
+Entity: str_to_title
+  Name:  str_to_title
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_to_title(dog)
+  Python:
+    print(dog.title())

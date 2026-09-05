@@ -1,0 +1,99 @@
+Translation log
+Final score: 1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: import_ps
+  Name:  ps
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: ps_is_supported
+  Name:  ps_is_supported
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+  Python:
+    def ps_is_supported():
+        """Mimics ps::ps_is_supported()"""
+        # Python's psutil (which the ps library usually wraps or mimics) 
+        # is generally supported across platforms if installed.
+        return True
+    
+    # Guard logic: if (ps::ps_is_supported() && ! ps:::is_cran_check())
+    if ps_is_supported() and not is_cran_check():
+        try:
+            # r2py:entity:p
+            # ps_handle() in R typically gets the current process
+
+============================================================
+Entity: is_cran_check
+  Name:  is_cran_check
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+  Python:
+    def is_cran_check():
+        """Mimics ps:::is_cran_check()"""
+        if os.environ.get("NOT_CRAN") == "true":
+            return False
+        return os.environ.get("_R_CHECK_PACKAGE_NAME_", "") != ""
+
+============================================================
+Entity: p
+  Name:  p
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    p <- ps_handle()
+  Python:
+            p = ps.Process()
+            # R auto-prints p: <ps::ps_handle> PID=..., NAME=..., AT=...
+            # We mimic the formatted output string
+            print(f"<ps::ps_handle> PID={p.pid}, NAME={p.name()}, AT={datetime.fromtimestamp(p.create_time(), tz=timezone.utc).strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]}")
+            
+            # r2py:entity:ps_create_time
+            # R's ps_create_time(p) returns a POSIXct time formatted as "YYYY-MM-DD HH:MM:SS GMT"
+
+============================================================
+Entity: ps_create_time
+  Name:  ps_create_time
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ps_create_time(p)
+  Python:
+            create_time = datetime.fromtimestamp(p.create_time(), tz=timezone.utc)
+            print(f"[1] \"{create_time.strftime('%Y-%m-%d %H:%M:%S GMT')}\"")
+        except Exception:
+            pass

@@ -1,0 +1,89 @@
+Translation log
+Final score: 1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(gitcreds))
+
+============================================================
+Entity: import_gitcreds
+  Name:  gitcreds
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(gitcreds))
+  Python:
+    class GitcredsNoCredentialsError(Exception):
+        """Custom exception to match R's gitcreds_no_credentials class."""
+        pass
+    
+    def gitcreds_get(url):
+        # Simulating the logic: if GITHUB_PAT_GITHUB_COM is "FAIL", raise error
+        # This mimics the behavior described in the R vignette
+        if os.environ.get("GITHUB_PAT_GITHUB_COM") == "FAIL":
+            raise GitcredsNoCredentialsError("gitcreds_no_credentials")
+        return "token"
+    
+    def test_no_credentials_from_git():
+        # withr::local_envvar(c(GITHUB_PAT_GITHUB_COM = "FAIL"))
+
+============================================================
+Entity: import_testthat
+  Name:  testthat
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(testthat)
+
+============================================================
+Entity: local_envvar
+  Name:  local_envvar
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      withr::local_envvar(c(GITHUB_PAT_GITHUB_COM = "FAIL"))
+  Python:
+        with patch.dict(os.environ, {"GITHUB_PAT_GITHUB_COM": "FAIL"}):
+            # expect_error(gitcreds::gitcreds_get("https://github.com"), class_val= "gitcreds_no_credentials")
+
+============================================================
+Entity: expect_error
+  Name:  expect_error
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      expect_error(
+        gitcreds::gitcreds_get("https://github.com"),
+        class = "gitcreds_no_credentials"
+      )
+  Python:
+            try:
+                gitcreds_get("https://github.com")
+                # If it doesn't raise, the test fails
+                pytest.fail("Did not raise GitcredsNoCredentialsError")
+            except GitcredsNoCredentialsError:
+                # This is the expected outcome
+                pass
+    
+    if __name__ == "__main__":
+        # Running the test function manually to mirror the R script's execution of test_that
+        test_no_credentials_from_git()

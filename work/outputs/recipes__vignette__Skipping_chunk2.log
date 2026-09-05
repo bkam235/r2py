@@ -1,0 +1,245 @@
+Translation log
+Final score: 0.517
+Data score:  0.500
+Iterations:  1
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 0.720
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.500
+  variable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    library(recipes)
+
+============================================================
+Entity: car_recipe
+  Name:  car_recipe
+  Kind:  Variable
+  Score: 0.320
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    car_recipe <- recipe(mpg ~ ., data = mtcars) |>
+      step_log(disp, skip = TRUE) |>
+      step_center(all_numeric_predictors()) |>
+      prep(training = mtcars)
+
+============================================================
+Entity: recipe
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    car_recipe <- recipe(mpg ~ ., data = mtcars) |>
+  Python:
+    # mpg ~ . means mpg is target, others are predictors
+    target = 'mpg'
+    predictors = [col for col in mtcars.columns if col != target]
+
+============================================================
+Entity: step_log
+  Name:  step_log
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      step_log(disp, skip = TRUE) |>
+  Python:
+    # step_log(disp, skip = TRUE) means 'disp' is identified but not transformed.
+    # In recipes, if a step is skipped, the column remains in the data but is not modified.
+    skipped_cols = ['disp']
+
+============================================================
+Entity: step_center
+  Name:  step_center
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      step_center(all_numeric_predictors()) |>
+  Python:
+    # all_numeric_predictors() includes all predictors since all in mtcars (except mpg) are numeric.
+    # step_center centers the data (subtracts mean).
+    numeric_predictors = [col for col in predictors if mtcars[col].dtype in [np.float64, np.int64]]
+
+============================================================
+Entity: prep
+  Name:  prep
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      prep(training = mtcars)
+  Python:
+    # Prep calculates the means for centering.
+    scaler = StandardScaler(with_mean=True, with_std=False)
+    scaler.fit(mtcars[numeric_predictors])
+
+============================================================
+Entity: bake
+  Name:  bake
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    bake(car_recipe, new_data = NULL)   |> head() |> select(disp, hp)
+  Python:
+    # Define a bake function to mimic the behavior of recipes::bake
+    def bake(recipe_scaler, new_data=None):
+        if new_data is None:
+            # bake(recipe, new_data = NULL) returns processed training data
+            data = mtcars.copy()
+        else:
+            # bake(recipe, new_data = mtcars) returns processed new_data
+            data = new_data.copy()
+        
+        # Apply centering to numeric predictors
+        data[numeric_predictors] = recipe_scaler.transform(data[numeric_predictors])
+        
+        # Note: step_log(disp, skip=TRUE) means disp is NOT transformed.
+        # If we were doing a log, we would do it here. Since skip=TRUE, we do nothing.
+        
+        return data
+    
+    # First call: bake(car_recipe, new_data = NULL) |> head() |> select(disp, hp)
+    res1 = bake(scaler, new_data=None)
+
+============================================================
+Entity: head
+  Name:  head
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    bake(car_recipe, new_data = NULL)   |> head() |> select(disp, hp)
+  Python:
+    res1_head = res1.head(6)
+
+============================================================
+Entity: select
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    bake(car_recipe, new_data = NULL)   |> head() |> select(disp, hp)
+  Python:
+    print(res1_head[['disp', 'hp']])
+    
+    # Second call: bake(car_recipe, new_data = mtcars) |> head() |> select(disp, hp)
+
+============================================================
+Entity: bake_1
+  Name:  bake
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    bake(car_recipe, new_data = mtcars) |> head() |> select(disp, hp)
+  Python:
+    res2 = bake(scaler, new_data=mtcars)
+
+============================================================
+Entity: head_1
+  Name:  head
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    bake(car_recipe, new_data = mtcars) |> head() |> select(disp, hp)
+  Python:
+    res2_head = res2.head(6)
+
+============================================================
+Entity: select_1
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.517
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    bake(car_recipe, new_data = mtcars) |> head() |> select(disp, hp)
+  Python:
+    print(res2_head[['disp', 'hp']])

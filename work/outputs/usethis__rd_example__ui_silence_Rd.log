@@ -1,0 +1,51 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(usethis))
+
+============================================================
+Entity: import_usethis
+  Name:  usethis
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(usethis))
+
+============================================================
+Entity: browse_github
+  Name:  browse_github
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    browse_github("usethis")
+  Python:
+    webbrowser.open("https://github.com/rstudio/usethis")
+
+============================================================
+Entity: ui_silence
+  Name:  ui_silence
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    ui_silence(
+      browse_github("usethis")
+    )
+  Python:
+    webbrowser.open("https://github.com/rstudio/usethis")

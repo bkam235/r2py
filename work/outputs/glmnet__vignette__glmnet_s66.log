@@ -1,0 +1,83 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(glmnet))
+
+============================================================
+Entity: import_glmnet
+  Name:  glmnet
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(glmnet))
+
+============================================================
+Entity: uvar
+  Name:  uvar
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    uvar <- function(x, means = FALSE) {
+      # if means = TRUE, the means and variances are returned, 
+      # otherwise just the variances
+      m <- colMeans(x)
+      n <- nrow(x)
+      x <- x - outer(rep(1,n),m)
+      v <- colSums(x^2) / (n - 1)
+      if (means) list(mean = m, var = v) else v
+    }
+  Python:
+    def uvar(x, means=False):
+        # x is expected to be a pandas DataFrame or numpy array
+        if isinstance(x, pd.DataFrame):
+            m = x.mean()
+            v = x.var()
+        else:
+            m = np.mean(x, axis=0)
+            v = np.var(x, axis=0, ddof=1)
+            
+        if means:
+            return {"mean": m, "var": v}
+        else:
+            return v
+
+============================================================
+Entity: vfilter
+  Name:  vfilter
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    vfilter <- function(q = 0.3) {
+      function(x,...) {
+        v <- uvar(x)
+        which(v < quantile(v, q))
+      }
+    }
+  Python:
+    def vfilter(q=0.3):
+        def filter_func(x, *args, **kwargs):
+            v = uvar(x)
+            # Convert to numpy array to handle indexing/quantile similarly to R
+            v_values = v.values if hasattr(v, 'values') else v
+            threshold = np.quantile(v_values, q)
+            return np.where(v_values < threshold)[0]
+        return filter_func

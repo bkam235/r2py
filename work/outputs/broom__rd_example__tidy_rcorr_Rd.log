@@ -1,0 +1,312 @@
+Translation log
+Final score: 0.444
+Data score:  0.500
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_broom
+  Name:  broom
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_Hmisc
+  Name:  Hmisc
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(Hmisc)
+
+============================================================
+Entity: mat
+  Name:  mat
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    mat <- replicate(52, rnorm(100))
+  Python:
+    np.random.seed(42) 
+    mat_vals = np.random.randn(100, 52)
+    
+    # r2py:entity:mat[sample(length(mat), 2000)]
+    # R: mat[sample(length(mat), 2000)] <- NA
+    # In R, mat is indexed linearly.
+    # r2py:entity:mat[sample(length(mat), 2000)]
+    flat_mat = mat_vals.flatten()
+    indices = np.random.choice(flat_mat.size, 2000, replace=False)
+    flat_mat[indices] = np.nan
+    mat = flat_mat.reshape(100, 52)
+    
+    # R: colnames(mat) <- c(LETTERS, letters)
+
+============================================================
+Entity: mat[sample(length(mat), 2000)]
+  Name:  mat[sample(length(mat), 2000)]
+  Kind:  Constant
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    mat[sample(length(mat), 2000)] <- NA
+
+============================================================
+Entity: colnames(mat)
+  Name:  colnames(mat)
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    colnames(mat) <- c(LETTERS, letters)
+  Python:
+    cols = list(LETTERS) + list(letters)
+    df = pd.DataFrame(mat, columns=cols)
+    
+    # Hmisc::rcorr computes pairwise correlations and p-values
+    # it returns a list with 'r' (correlations) and 'p' (p-values)
+
+============================================================
+Entity: rc
+  Name:  rc
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    rc <- rcorr(mat)
+  Python:
+    def rcorr_mimic(data):
+        col_names = data.columns
+        n_cols = len(col_names)
+        r_mat = np.full((n_cols, n_cols), np.nan)
+        p_mat = np.full((n_cols, n_cols), np.nan)
+        n_mat = np.full((n_cols, n_cols), np.nan)
+        
+        for i in range(n_cols):
+            for j in range(i, n_cols):
+                v1 = data.iloc[:, i]
+                v2 = data.iloc[:, j]
+                mask = v1.notna() & v2.notna()
+                n = mask.sum()
+                n_mat[i, j] = n_mat[j, i] = n
+                if n > 1:
+                    r, p = pearsonr(v1[mask], v2[mask])
+                    r_mat[i, j] = r_mat[j, i] = r
+                    p_mat[i, j] = p_mat[j, i] = p
+                elif n == 1:
+                    # Pearsonr with n=1 is undefined/NaN
+                    pass
+        return {'r': r_mat, 'p': p_mat, 'n': n_mat, 'columns': col_names}
+    
+    rc = rcorr_mimic(df)
+    
+    # broom::tidy(rcorr_result) returns a long-format tibble of correlations
+
+============================================================
+Entity: td
+  Name:  td
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    td <- tidy(rc)
+  Python:
+    def tidy_rcorr(rc_result):
+        results = []
+        cols = rc_result['columns']
+        r_mat = rc_result['r']
+        p_mat = rc_result['p']
+        n_mat = rc_result['n']
+        
+        # tidy.rcorr only returns the lower triangle (excluding diagonal)
+        # order is column 2, then column 1
+        for i in range(len(cols)):
+            for j in range(i):
+                # R's tidy(rcorr) produces: column1 (j+1), column2 (i+1)
+                # where column1 is the "column" being compared against others
+                # Actually, looking at the R output: B A, C A, C B...
+                # it's the lower triangle: row i, col j
+                results.append({
+                    'column1': cols[i],
+                    'column2': cols[j],
+                    'estimate': r_mat[i, j],
+                    'n': int(n_mat[i, j]) if not np.isnan(n_mat[i, j]) else np.nan,
+                    'p.value': p_mat[i, j]
+                })
+        return pd.DataFrame(results)
+    
+    td = tidy_rcorr(rc)
+    print(td)
+    
+    # Visualizations
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(ggplot2)
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.483
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(td, aes(p.value)) +
+  Python:
+    hist_plot = (
+        ggplot(td, aes(x='p.value')) 
+
+============================================================
+Entity: geom_histogram
+  Name:  geom_histogram
+  Kind:  FunctionCall
+  Score: 0.483
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_histogram(binwidth = .1)
+  Python:
+        + geom_histogram(binwidth=0.1)
+    )
+    print(hist_plot)
+
+============================================================
+Entity: ggplot_1
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.483
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(td, aes(estimate, p.value)) +
+  Python:
+    scatter_plot = (
+        ggplot(td, aes(x='estimate', y='p.value')) 
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.483
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_point() +
+  Python:
+        + geom_point() 
+
+============================================================
+Entity: scale_y_log10
+  Name:  scale_y_log10
+  Kind:  FunctionCall
+  Score: 0.483
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      scale_y_log10()
+  Python:
+        + scale_y_log10()
+    )
+    print(scatter_plot)

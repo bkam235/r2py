@@ -1,0 +1,135 @@
+Translation log
+Final score: 0.828
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(cellranger))
+
+============================================================
+Entity: import_cellranger
+  Name:  cellranger
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(cellranger))
+
+============================================================
+Entity: A1_to_R1C1
+  Name:  A1_to_R1C1
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    A1_to_R1C1("$A$1")
+  Python:
+    def a1_to_r1c1(coords, strict=True):
+        """
+        Translates Excel-style A1 notation to R1C1 coordinates.
+        """
+        def convert(cell):
+            if pd.isna(cell) or not isinstance(cell, str):
+                return np.nan
+            
+            # Matches pattern like A1 or A$1 or $A$1
+            match = re.match(r'^(\$)?([A-Z]+)(\$)?(\d+)$', cell)
+            if not match:
+                return np.nan
+            
+            col_str, row_str = match.group(2), match.group(4)
+            
+            # Convert column letters to number (A=1, B=2, etc.)
+            col_num = 0
+            for char in col_str:
+                col_num = col_num * 26 + (ord(char) - ord('A') + 1)
+            
+            # Determine referencing style (Relative vs Absolute)
+            # R1C1 format: R[row]C[col]. Adding $ makes it absolute.
+            row_ref = f"R{row_str}" if match.group(3) == "$" else f"R[{row_str}]"
+            col_ref = f"C{col_num}" if match.group(1) == "$" else f"C[{col_num}]"
+            
+            return f"{row_ref}{col_ref}"
+    
+        # Handle vector/list input
+        if isinstance(coords, (list, pd.Series, np.ndarray)):
+            results = [convert(c) for c in coords]
+            
+            # Simulating R's strict behavior: check if any failed to match
+            if strict and any(res is np.nan for res in results):
+                import warnings
+                warnings.warn("Some coordinates could not be parsed strictly.")
+                
+            return results
+        else:
+            res = convert(coords)
+            if strict and res is np.nan:
+                import warnings
+                warnings.warn("Coordinate could not be parsed strictly.")
+            return res
+    
+    # Tests
+    print(a1_to_r1c1("$A$1"))
+
+============================================================
+Entity: A1_to_R1C1_1
+  Name:  A1_to_R1C1
+  Kind:  FunctionCall
+  Score: 0.700
+  side_effects:        0.700
+  executed_ok:       True
+
+  R:
+    A1_to_R1C1("A1")                 ## raises a warning, returns NA
+  Python:
+    print(a1_to_r1c1("A1"))                    # raises warning, returns nan
+
+============================================================
+Entity: A1_to_R1C1_2
+  Name:  A1_to_R1C1
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    A1_to_R1C1("A1", strict = FALSE) ## unless strict = FALSE
+  Python:
+    print(a1_to_r1c1("A1", strict=False))      # no warning
+
+============================================================
+Entity: A1_to_R1C1_3
+  Name:  A1_to_R1C1
+  Kind:  FunctionCall
+  Score: 0.625
+  side_effects:        0.625
+  executed_ok:       True
+
+  R:
+    A1_to_R1C1(c("A1", "B$4")) ## raises a warning, includes an NA, because
+  Python:
+    print(a1_to_r1c1(["A1", "B$4"]))          # raises warning, contains nan
+
+============================================================
+Entity: A1_to_R1C1_4
+  Name:  A1_to_R1C1
+  Kind:  FunctionCall
+  Score: 0.812
+  side_effects:        0.812
+  executed_ok:       True
+
+  R:
+    A1_to_R1C1(c("A1", "B$4"), strict = FALSE) ## mixed ref always returns NA
+  Python:
+    print(a1_to_r1c1(["A1", "B$4"], strict=False))

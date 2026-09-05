@@ -1,0 +1,90 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- as.POSIXct("2019-01-01 23:00:00", "America/New_York")
+  Python:
+    tz_ny = pytz.timezone("America/New_York")
+    x = tz_ny.localize(datetime.strptime("2019-01-01 23:00:00", "%Y-%m-%d %H:%M:%S"))
+    
+    # as.Date(x, tz = date_time_zone(x))
+
+============================================================
+Entity: as.Date
+  Name:  as.Date
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    as.Date(x, tz = date_time_zone(x))
+  Python:
+    def date_time_zone(x):
+        """
+        Extracts the time zone from a datetime-like object.
+        In Python, this is the tzinfo attribute.
+        """
+        if x.tzinfo is None:
+            return ""
+        return str(x.tzinfo)
+    def as_date(x, tz=None):
+        """
+        Translates as.Date logic.
+        R's as.Date with a specified tz converts the POSIXct time to the date 
+        that would be observed in that specific time zone.
+        """
+        # Convert the datetime object to the specified time zone
+        target_tz = pytz.timezone(tz) if tz else pytz.UTC
+        
+        # Localize/convert to the target timezone
+        if x.tzinfo is None:
+            # If naive, assume UTC or treat as local and then convert
+            x_localized = pytz.UTC.localize(x)
+        else:
+            x_localized = x.astimezone(target_tz)
+            
+        # Convert to the target timezone if it wasn't already
+        x_in_tz = x_localized.astimezone(target_tz)
+        
+        # Return the date component
+        return x_in_tz.date()
+    
+    # x <- as.POSIXct("2019-01-01 23:00:00", "America/New_York")
+    result = as_date(x, tz=date_time_zone(x))
+    print(result)
