@@ -132,6 +132,9 @@
     "rlang:": [
       "rlang.is-installed"
     ],
+    "S7:": [
+      "s7.prop"
+    ],
     "scales:": [
       "scales.demo-discrete"
     ],
@@ -722,6 +725,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "rlang",
+      "ast_shape_hash": ""
+    },
+    "s7.prop": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "S7",
       "ast_shape_hash": ""
     },
     "scales.demo-discrete": {
