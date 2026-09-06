@@ -22,6 +22,7 @@ Translate R `drive_trash` (ExternalSymbol from googledrive) to Python. See verif
 ## Translation Examples
 - {"r_hash": "4b66320d", "r_snippet": "  googledrive::drive_trash()", "py_snippet": "def drive_trash(file: dict) -> None:\n    \"\"\"Move a file to trash.\"\"\"\n    print(f\"Moving {file.get('name', 'file')} to trash\")\n\n    drive_trash(file_info)", "score": 1.0, "script_id": "auto"}
 - {"r_hash": "218e5648", "r_snippet": "if (drive_has_token()) withAutoprint({ # examplesIf", "py_snippet": "def drive_has_token():\n    \"\"\"Checks if a Google Drive token is available.\"\"\"\n    # Simulating that a token exists to enter the if block, as per R example intent\n    return True\n\n# r2py:entity:three_files (helper function)", "score": 1.0, "script_id": "auto"}
+- {"r_hash": "877bc9ac", "r_snippet": "drive_deauth()", "py_snippet": "def drive_deauth():\n    \"\"\"Deauthorizes the drive session.\"\"\"\n    # In a real scenario, this would clear tokens.\n    pass\n\ndrive_deauth()", "score": 1.0, "script_id": "auto"}
 
 ## Edit Examples
 (none)
