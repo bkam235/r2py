@@ -81,6 +81,9 @@
       "hardhat.get-levels",
       "hardhat.get-outcome-levels"
     ],
+    "httpuv:": [
+      "httpuv.ipfamily"
+    ],
     "httr2:": [
       "httr2.req-perform",
       "httr2.resp-body-raw",
@@ -525,6 +528,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "hardhat",
+      "ast_shape_hash": ""
+    },
+    "httpuv.ipfamily": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "httpuv",
       "ast_shape_hash": ""
     },
     "httr2.req-perform": {
