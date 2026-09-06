@@ -81,6 +81,12 @@
       "hardhat.get-levels",
       "hardhat.get-outcome-levels"
     ],
+    "httr2:": [
+      "httr2.req-perform",
+      "httr2.resp-body-raw",
+      "httr2.resp-body-string",
+      "httr2.resp-has-body"
+    ],
     "lava:": [
       "lava.na2x"
     ],
@@ -516,6 +522,38 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "hardhat",
+      "ast_shape_hash": ""
+    },
+    "httr2.req-perform": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "httr2",
+      "ast_shape_hash": ""
+    },
+    "httr2.resp-body-raw": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "httr2",
+      "ast_shape_hash": ""
+    },
+    "httr2.resp-body-string": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "httr2",
+      "ast_shape_hash": ""
+    },
+    "httr2.resp-has-body": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "httr2",
       "ast_shape_hash": ""
     },
     "lava.na2x": {
