@@ -20,7 +20,9 @@ Translate R `xml_child` (FunctionCall from xml2) to Python. See verified example
 (none)
 
 ## Translation Examples
-- {"r_hash": "efb6925e", "r_snippet": "xml_child(x)", "py_snippet": "child_1 = x[0] if len(x) > 0 else None\nprint(f\"{{xml_node}}\\n{format_node(child_1)}\")\n\n# xml_child(x, 2)", "score": 0.9444, "script_id": "auto"}
+- {"r_hash": "d5725421", "r_snippet": "xml_siblings(xml_children(x)[[1]])", "py_snippet": "first_child = children[0]\nsiblings = [sib for sib in x if sib != first_child]\nprint_nodeset(siblings)\n\n# xml_parent(xml_children(x))\n# R's xml_parent on a nodeset returns a nodeset of unique parents.", "score": 1.0, "script_id": "auto"}
+- {"r_hash": "2bc3df5d", "r_snippet": "xml_length(x)", "py_snippet": "print(f\"[1] {len(list(x))}\")\n\n# xml_length(x, only_elements = FALSE)", "score": 1.0, "script_id": "auto"}
+- {"r_hash": "a08edbc2", "r_snippet": "xml_contents(x)", "py_snippet": "contents = x.xpath(\"node()\")\nprint_nodeset(contents)\n\n# xml_length(x)\n# By default, xml_length counts elements only.", "score": 0.9714, "script_id": "auto"}
 
 ## Edit Examples
 (none)
