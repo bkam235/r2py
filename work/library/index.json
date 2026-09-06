@@ -58,6 +58,9 @@
       "ggplot2.geom-path",
       "ggplot2.ggplot"
     ],
+    "gitcreds:": [
+      "gitcreds.gitcreds-cache-envvar"
+    ],
     "googledrive:": [
       "googledrive.drive-trash"
     ],
@@ -425,6 +428,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "gitcreds.gitcreds-cache-envvar": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "gitcreds",
       "ast_shape_hash": ""
     },
     "googledrive.drive-trash": {
