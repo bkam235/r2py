@@ -34,6 +34,9 @@
     "dbplyr:": [
       "dbplyr.build-sql"
     ],
+    "diagram:": [
+      "diagram.plotweb"
+    ],
     "dplyr:": [
       "dplyr.filter"
     ],
@@ -328,6 +331,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "dbplyr",
+      "ast_shape_hash": ""
+    },
+    "diagram.plotweb": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "diagram",
       "ast_shape_hash": ""
     },
     "dplyr.filter": {
