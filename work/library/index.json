@@ -40,6 +40,9 @@
     "dplyr:": [
       "dplyr.filter"
     ],
+    "fansi:": [
+      "fansi.normalize-state"
+    ],
     ":": [
       "foo"
     ],
@@ -347,6 +350,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "dplyr",
+      "ast_shape_hash": ""
+    },
+    "fansi.normalize-state": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "fansi",
       "ast_shape_hash": ""
     },
     "foo": {
