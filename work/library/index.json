@@ -43,6 +43,9 @@
     "fansi:": [
       "fansi.normalize-state"
     ],
+    "farver:": [
+      "farver.decode-colour"
+    ],
     ":": [
       "foo"
     ],
@@ -358,6 +361,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "fansi",
+      "ast_shape_hash": ""
+    },
+    "farver.decode-colour": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "farver",
       "ast_shape_hash": ""
     },
     "foo": {
