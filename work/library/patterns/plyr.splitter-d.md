@@ -20,6 +20,7 @@ Translate R `splitter_d` (ExternalSymbol from plyr) to Python. See verified exam
 (none)
 
 ## Translation Examples
+- {"r_hash": "28790d79", "r_snippet": "is.discrete(c(\"a\", \"b\", \"c\"))", "py_snippet": "print(is_discrete([\"a\", \"b\", \"c\"]))", "score": 1.0, "script_id": "auto"}
 - {"r_hash": "1be97275", "r_snippet": "plyr:::splitter_d(mtcars, .(cyl))", "py_snippet": "def splitter_d(data, variables, drop=True):\n    \"\"\"\n    Python equivalent of plyr:::splitter_d.\n    \"\"\"\n    if isinstance(variables, str):\n        vars_list = [variables]\n    elif isinstance(variables, (list, tuple)):\n        vars_list = list(variables)\n    else:\n        vars_list = list(variables)\n    \n    df = data.copy()\n    \n    # Determine levels for each variable\n    all_levels = []\n    for var in vars_list:\n        if isinstance(df[var].dtype, pd.CategoricalDtype):\n            all_levels.append(df[var].cat.categories.tolist())\n        else:\n            # For non-categorical, get unique ", "score": 0.999, "script_id": "auto"}
 
 ## Edit Examples
