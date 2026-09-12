@@ -169,7 +169,10 @@ def _build_prompt(
         if getattr(e, "kind", None) == EntityKind.LIBRARY_IMPORT and e.package
     ]
     if imported_pkgs:
-        source_parts = collect_source_lookups(entities, imported_pkgs)
+        source_parts = collect_source_lookups(
+            entities, imported_pkgs,
+            entity_bundles=getattr(script_map, "entity_bundles", {}),
+        )
         if source_parts:
             parts.append(
                 "## R function source (for reference — translate the logic, "
@@ -198,6 +201,7 @@ def _build_prompt(
 def collect_source_lookups(
     entities: dict,
     imported_pkgs: list[str],
+    entity_bundles: dict | None = None,
 ) -> list[str]:
     """Look up R source for all package symbols referenced by entities.
 
@@ -208,8 +212,17 @@ def collect_source_lookups(
 
     When an entity has entity.package set, looks up source in that specific
     package first before searching all imported packages.
+
+    entity_bundles: per-entity EffectBundle deltas (ScriptMap.entity_bundles).
+    When an entity's captured stdout contains real R source echoed by a
+    construct like example()/demo() (see stage1.runner.extract_echoed_source),
+    that recovered source is used instead of a generic function-definition
+    lookup for its free_variable_refs -- the actual worked example, not the
+    package's (often huge and unhelpful) implementation of the referenced
+    symbol.
     """
     from .types import EntityKind
+    from .stage1.runner import extract_echoed_source
 
     try:
         from .stage1.package_lookup import (
@@ -229,6 +242,39 @@ def collect_source_lookups(
     seen: set[str] = set()
     # (name, packages_to_search) pairs — package-specific lookups first
     lookups: list[tuple[str, list[str]]] = []
+
+    # Recover real source for example()/demo()/similar echoing calls first,
+    # so their free_variable_refs (the topic(s) they were called with) are
+    # marked `seen` before the generic loop below tries to look them up as
+    # ordinary function definitions.
+    echo_parts: list[str] = []
+    for eid, entity in entities.items():
+        eb = (entity_bundles or {}).get(eid)
+        if eb is None:
+            continue
+        echoed = extract_echoed_source(getattr(eb, "stdout", "") or "")
+        if not echoed:
+            continue
+        # Label with the call's topic argument(s), not just its name -- a
+        # script commonly has several calls sharing the same name (e.g.
+        # example(estimate), example(constrain), example(zigreg) all being
+        # entities named "example"). Without the topic, multiple recovered
+        # blocks are indistinguishable and the model can't reliably map each
+        # one back to its specific call site in the visible R source.
+        topics = getattr(entity, "free_variable_refs", None) or []
+        label = f"{entity.name}({', '.join(topics)})" if topics else entity.name
+        echo_parts.append(
+            f"### `{label}` (real source, captured during execution)\n"
+            f"```r\n{echoed}\n```"
+        )
+        # Suppress the generic loop's lookups for both this call itself (e.g.
+        # `example` -- otherwise it would separately fetch utils::example's
+        # own unhelpful implementation) and its topic argument(s) (e.g.
+        # `estimate` -- otherwise it would fetch that function's generic
+        # definition instead of the worked example we just recovered).
+        seen.add(entity.name)
+        for ref in getattr(entity, "free_variable_refs", []) or []:
+            seen.add(ref)
 
     # Collect all identifiers from the script as S3 class hints — when a
     # UseMethod generic is found, only fetch methods whose class suffix
@@ -270,7 +316,7 @@ def collect_source_lookups(
             source = None
         if source:
             parts.append(f"### `{name}`\n```r\n{source}\n```")
-    return parts
+    return echo_parts + parts
 
 
 def format_entity_metadata(entities: dict) -> str:

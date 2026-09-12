@@ -376,6 +376,7 @@ def _append_run_record(
         "exit_code": result.final_exit_code,
         "entity_count": len(report.by_entity) if report else 0,
         "by_effect": by_effect,
+        "infra_crash": report.infra_crash if report else False,
         "model": model,
         "escalation_model": escalation_model,
     }
@@ -410,6 +411,9 @@ def _write_translation_log(
         *([f"Data score:  {data_score:.3f}"] if data_score is not None else []),
         *([f"Files score: {files_score:.3f}"] if files_score is not None else []),
         f"Iterations:  {result.iterations}",
+        *(["INFRA CRASH: Python failed to run because of r2py's own "
+           "instrumentation (checkpoint/shim injection), not the "
+           "candidate translation itself."] if report is not None and report.infra_crash else []),
         "",
     ]
 

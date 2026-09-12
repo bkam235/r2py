@@ -621,8 +621,23 @@ def _inject_py_checkpoints(
     # the first entity's checkpoint delta.
     first_start = sorted_pairs[0][1][0] if sorted_pairs else None
     if first_start is not None:
+        baseline_line = "_r2py_prev_ns = set(k for k in globals() if not k.startswith('_r2py'))\n"
         baseline_idx = min(first_start - 1, len(lines))  # 1-based → 0-based insert
-        lines.insert(baseline_idx, "_r2py_prev_ns = set(k for k in globals() if not k.startswith('_r2py'))\n")
+        # The naive index can land inside an open expression (e.g. a chained
+        # `result = (\n df\n .assign(...)\n)` pipeline, where the first entity
+        # starts mid-chain rather than at a top-level statement boundary).
+        # Walk backward to the nearest earlier line where insertion keeps the
+        # source parseable — index 0 is always safe unless the source was
+        # already broken before this function ran, in which case we leave it
+        # untouched rather than force an insertion.
+        while baseline_idx >= 0:
+            candidate = lines[:baseline_idx] + [baseline_line] + lines[baseline_idx:]
+            try:
+                _ast.parse("".join(candidate))
+                lines = candidate
+                break
+            except SyntaxError:
+                baseline_idx -= 1
 
     return "".join(lines), ordered_eids
 
@@ -794,6 +809,19 @@ def verify(
                 score=0.0,
             ))
 
+    # Diagnostic: distinguish a crash caused by r2py's own instrumentation
+    # (checkpoint injection / data-shim activation) from a genuine bug in the
+    # candidate translation. Conservative by construction: only fires when the
+    # untouched candidate parses cleanly but the sandbox raised a SyntaxError,
+    # which can only come from a transformation r2py applied to the source.
+    infra_crash = False
+    if py_bundle.exit_code != 0 and py_bundle.stderr and "SyntaxError" in py_bundle.stderr:
+        try:
+            _ast.parse(candidate)
+            infra_crash = True
+        except SyntaxError:
+            pass
+
     # RC2: surface crash traceback as feedback so Stage 3 knows what line failed.
     # Target the feedback to the entity that caused the crash (via crash attribution)
     # so _weak_first prioritises it. Fall back to all entities if unattributable.
@@ -868,6 +896,7 @@ def verify(
             comparisons=comparisons,
             py_exit_code=py_bundle.exit_code,
             py_entity_bundles=py_entity_bundles or {},
+            infra_crash=infra_crash,
         )
         if return_bundle:
             return report, py_bundle
@@ -977,6 +1006,7 @@ def verify(
         comparisons=comparisons,
         py_exit_code=py_bundle.exit_code,
         py_entity_bundles=py_entity_bundles or {},
+        infra_crash=infra_crash,
     )
     if return_bundle:
         return report, py_bundle

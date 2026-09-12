@@ -238,9 +238,18 @@ def _format_unavailable_packages(script_map: "ScriptMap") -> str:
     return ", ".join(unavailable) if unavailable else ""
 
 
-def _format_data_vars(script_map: "ScriptMap") -> str:
-    """Summarise the shape of R data variables available via the data shim."""
+def _format_data_vars(script_map: "ScriptMap", sidecar_filename: str = "") -> str:
+    """Summarise the R data variables actually covered by the data shim.
+
+    Gated by collect_shim_needed_names(), NOT just "any captured variable" --
+    a script can have plenty of captured data (leftover locals from a dynamic
+    run, e.g. an example()/demo() call) that no shim loads because nothing in
+    the script references them by name. Describing those as "available via
+    the shim" misleads the agent into writing code to load data that was
+    never wired up for it, guessing at a plausible-but-wrong sidecar filename.
+    """
     from ..stage4.verifier import _get_r_bundle
+    from ..stage2.stitch import collect_shim_needed_names, build_data_shim
     try:
         r_bundle = _get_r_bundle(script_map)
     except Exception:
@@ -248,10 +257,13 @@ def _format_data_vars(script_map: "ScriptMap") -> str:
     data = r_bundle.data
     if not data:
         return ""
-    entity_names = set(getattr(script_map, "entities", {}) or {})
+    shim_needed = collect_shim_needed_names(script_map)
+    if not shim_needed:
+        return ""
     parts: list[str] = []
-    for name, val in data.items():
-        if name in entity_names:
+    for name in shim_needed:
+        val = data.get(name)
+        if val is None:
             continue
         if isinstance(val, dict):
             keys = list(val.keys())
@@ -264,6 +276,19 @@ def _format_data_vars(script_map: "ScriptMap") -> str:
             parts.append(f"  {name}: list, length {len(val)}")
         else:
             parts.append(f"  {name}: {type(val).__name__}")
+    if not parts:
+        return ""
+    if sidecar_filename:
+        shim_text = build_data_shim(shim_needed, sidecar_filename)
+        if shim_text:
+            parts.append("")
+            parts.append(
+                "  If this block is missing from your translation, add it "
+                "EXACTLY as follows -- do not alter the filename or names:"
+            )
+            parts.append("  ```python")
+            parts.extend(f"  {line}" for line in shim_text.splitlines())
+            parts.append("  ```")
     return "\n".join(parts)
 
 
@@ -279,6 +304,7 @@ def build_agent_turn(
     patterns_by_entity: dict[str, list] | None = None,
     r_function_sources: list[str] | None = None,
     entity_metadata: str | None = None,
+    sidecar_filename: str = "",
 ) -> list[dict]:
     """Build the messages for one agent reasoning turn."""
     parts = []
@@ -313,7 +339,7 @@ def build_agent_turn(
         parts.append(unavail)
         parts.append("")
 
-    data_info = _format_data_vars(script_map)
+    data_info = _format_data_vars(script_map, sidecar_filename=sidecar_filename)
     if data_info:
         parts.append("### Data variables (loaded by the data shim)")
         parts.append(data_info)

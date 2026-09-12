@@ -163,6 +163,7 @@ class ScoreReport:
     comparisons:  list[ComparisonDetail]         = field(default_factory=list)
     py_exit_code: int                            = 0
     py_entity_bundles: dict[EntityId, EffectBundle] = field(default_factory=dict)
+    infra_crash:  bool                           = False
 
 
 # ---------------------------------------------------------------------------

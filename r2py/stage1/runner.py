@@ -280,6 +280,13 @@ def run_script_checkpointed(
 # prepended at call time by build_r_checkpoint_preamble() so both paths share
 # one central implementation from stage0.effects.data.
 _R_CHECKPOINT_BODY = r"""
+# Force a known, unique prompt for interactive-style echoing constructs
+# (example(), demo(), source(..., echo=TRUE)) so their real source -- which
+# R echoes to stdout by default -- can be recovered downstream by searching
+# for this marker (see extract_echoed_source()). A no-op for ordinary
+# scripts: plain top-level statements are never echoed via this path.
+options(prompt = ">>>R2PY_SRC_ECHO<<<> ", continue = ">>>R2PY_SRC_ECHO<<<+ ")
+
 .r2py_prev_vars <- character(0)
 .r2py_plot_count <- 0L
 .r2py_prev_fig_count <- 0L
@@ -440,6 +447,39 @@ def build_r_checkpoint_preamble() -> str:
     """
     from ..stage0.effects.data import build_r_serializer_fn as _build_serializer
     return _build_serializer() + _R_CHECKPOINT_BODY
+
+
+# Marker installed via options(prompt=..., continue=...) in _R_CHECKPOINT_BODY.
+_ECHO_MARKER = ">>>R2PY_SRC_ECHO<<<"
+
+
+def extract_echoed_source(stdout: str) -> str | None:
+    """Recover R source echoed via example()/demo()/source(echo=TRUE)-style
+    interactive sourcing.
+
+    R echoes each line of source it evaluates this way, prefixed by
+    ``getOption("prompt")`` (or ``getOption("continue")`` for a continuation
+    line) -- optionally preceded by a construct-specific prefix, e.g.
+    example()'s truncated-topic prefix ("estimt> "). The checkpoint preamble
+    overrides both options to a unique marker, so any line containing it is
+    a source-echo line regardless of what (if anything) precedes the marker;
+    lines without it are plain printed output, not source, and are dropped.
+
+    Returns None if the marker never appears -- the common case for scripts
+    that don't use one of these constructs.
+    """
+    if not stdout or _ECHO_MARKER not in stdout:
+        return None
+    lines: list[str] = []
+    for line in stdout.splitlines():
+        idx = line.find(_ECHO_MARKER)
+        if idx == -1:
+            continue
+        rest = line[idx + len(_ECHO_MARKER):]
+        if rest[:2] in ("> ", "+ "):
+            rest = rest[2:]
+        lines.append(rest)
+    return "\n".join(lines) if lines else None
 
 
 def run_slice(

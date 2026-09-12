@@ -90,6 +90,7 @@ def reason(
             patterns_by_entity=patterns_by_entity,
             r_function_sources=r_function_sources,
             entity_metadata=entity_metadata,
+            sidecar_filename=getattr(harness, "_sidecar_filename", ""),
         )
 
         truncated = False
@@ -355,7 +356,10 @@ def _prefetch_r_sources(
     source_parts: list[str] = []
     if imported_pkgs:
         try:
-            source_parts = collect_source_lookups(entities, imported_pkgs)
+            source_parts = collect_source_lookups(
+                entities, imported_pkgs,
+                entity_bundles=getattr(script_map, "entity_bundles", {}),
+            )
         except Exception:
             pass
 

@@ -36,54 +36,16 @@ def _on_progress(event) -> None:
 input_filenames = next(walk(input_dir), (None, None, []))[2]
 input_filenames = random.sample(input_filenames, 20) #don't use random script
 
-all_translated_scripts = [
-    "haven__rd_example__print_labels_Rd.R",
-    "modelr__rd_example__typical_Rd.R",
-    "plyr__rd_example__splitter_a_Rd.R",
-    "prodlim__rd_example__row_match_Rd.R",
-    "progressr__rd_example__handler_rpushbullet_Rd.R",
-    "purrr__rd_example__keep_at_Rd.R",
-    "purrr__rd_example__lift_Rd.R",
-    "recipes__rd_example__step_profile_Rd.R",
-    "recipes__vignette__Roles_s1.R",
-    "rlang__rd_example__catch_cnd_Rd.R",
-    "rlang__rd_example__missing_Rd.R",
-    "shape__rd_example__greycol_Rd.R",
-    "shiny__rd_example__withOtelCollect_Rd.R",
-    "timeDate__rd_example__holiday_Rd.R",
-    "timeDate__rd_example__stats-na-fail_Rd.R",
-    "vctrs__rd_example__vec_fill_missing_Rd.R",
-    "vctrs__vignette__type-size_s21.R",
-    "withr__rd_example__with_locale_Rd.R",
-    "xfun__rd_example__cache_rds_Rd.R",
-    "xfun__rd_example__protect_math_Rd.R",
-    "xtable__rd_example__sanitize_Rd.R",
-    "xtable__rd_example__xtableFtable_Rd.R",
-    "xtable__vignette__listOfTablesGallery_s2.R",
-]
-
-regression_test_08 = [
-    "broom__rd_example__durbinWatsonTest_tidiers_Rd.R",
-    "S7__vignette__generics-methods_s13.R",
-    "bit__rd_example__chunk_Rd.R",
-    "bit__vignette__bit-usage_s15.R",
-    "bslib__rd_example__popover_Rd.R",
-    "clock__rd_example__duration_spanning_seq_Rd.R",
-    "clock__vignette__clock_s4.R",
-    "cli__rd_example__cat_line_Rd.R",
-    "dplyr__rd_example__all_equal_Rd.R",
-    "dplyr__vignette__in-packages_s3.R",
-    "dplyr__rd_example__storms_Rd.R",
-    "dplyr__vignette__two-table_s13.R",
-    "dplyr__vignette__window-functions_s11.R",
-    "forcats__rd_example__lvls_Rd.R",
-    "ggplot2__rd_example__facet_wrap_Rd.R",
-    "googlesheets4__rd_example__range_flood_Rd.R",
-    "googlesheets4__rd_example__sheet_append_Rd.R"
+hard_scripts = [
+    #"dplyr__vignette__dplyr_s16.R",
+    #"ggplot2__rd_example__scale_binned_Rd.R",
+    #"hardhat__vignette__package_s20.R",
+    "lava__demo__estimation.R"
+    #"vctrs__vignette__stability_s13.R"
 ]
 
 # input_filenames = [""] #translate this specific script
-# input_filenames = all_translated_scripts
+input_filenames = hard_scripts
 # input_filenames = regression_test_08
 
 
@@ -109,7 +71,7 @@ for r_script, py_script in scripts:
         result = translate(r_script,
                            py_script,
                            library=lib,
-                           resume=True,
+                           resume=False,
                            model=trans_model,
                            escalation_model=trans_model,
                            progress=_on_progress,

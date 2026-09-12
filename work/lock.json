@@ -9,7 +9,10 @@
     "repr": "unknown",
     "dtplyr": "unknown",
     "Hmisc": "unknown",
-    "usethis": "unknown"
+    "usethis": "unknown",
+    "ellipsis": "unknown",
+    "vars": "unknown",
+    "profvis": "unknown"
   },
   "py": {
     "babel": "2.18.0",
@@ -37,6 +40,16 @@
     "icu": "0.0.1",
     "imblearn": "0.0",
     "iris": "1.0.7",
-    "deepdiff": "9.1.0"
+    "deepdiff": "9.1.0",
+    "colorbrewer": "0.3",
+    "crayon": "0.4",
+    "pyreadr": "0.5.6",
+    "grapheme": "0.6.0",
+    "diagram": "0.2.28",
+    "sqlalchemy": "2.0.52",
+    "isodate": "0.7.2",
+    "pandas_market_calendars": "5.4.0",
+    "mlbench": "0.0.3",
+    "vctrs": "0.3.0"
   }
 }

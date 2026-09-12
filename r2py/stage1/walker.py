@@ -68,6 +68,11 @@ _LITERAL_KINDS = frozenset({
 # Assignment operators recognised as top-level assignments.
 _ASSIGN_OPS = frozenset({"<-", "=", "<<-", "->", "->>"})
 
+# Pipe operators: native `|>` and magrittr `%>%`. Both parse as a
+# binary_operator with the same lhs/rhs field shape (magrittr's is a `special`
+# operator token, but _find_op/child_by_field treat it identically to `|>`).
+_PIPE_OPS = frozenset({"|>", "%>%"})
+
 
 def _visit(node: AstNode, ctx: _WalkContext, *, is_statement: bool = False) -> None:
     """Dispatch on top-level node kinds; recurse into children for others."""
@@ -112,10 +117,66 @@ def _visit_binary_op(node: AstNode, ctx: _WalkContext) -> None:
 
     if op_text in _ASSIGN_OPS:
         _visit_assignment(node, op_text, ctx)
+    elif op_text in _PIPE_OPS:
+        _visit_pipe(node, ctx)
     else:
         # Non-assignment binary op — recurse both sides.
         for child in node.named_children():
             _visit(child, ctx)
+
+
+def _visit_pipe(node: AstNode, ctx: _WalkContext) -> None:
+    """Handle a pipe expression (`|>` or `%>%`).
+
+    The rhs is always the next call in the chain. The lhs is either a nested
+    pipe, a call, an already-defined local, or -- the case this exists for --
+    a bare identifier that is never assigned anywhere in the script (e.g.
+    `starwars |> mutate(...)`, where `starwars` is a package-provided
+    dataset). A bare, undefined identifier has no children to recurse into,
+    so without this it is silently dropped: _visit's dispatch only routes a
+    bare identifier through _visit_bare_identifier when is_statement=True,
+    which a pipe (a non-assignment binary operator) never sets on its
+    children. Route it into the rhs call's free_variable_refs instead,
+    mirroring how _visit_assignment already captures the same kind of
+    reference via _collect_identifiers when the pipe result IS assigned.
+    """
+    lhs = node.child_by_field("lhs")
+    rhs = node.child_by_field("rhs")
+
+    extra_ref = _pipe_source_identifier(lhs, ctx) if lhs is not None else None
+
+    if lhs is not None:
+        _visit(lhs, ctx)
+
+    if rhs is None:
+        return
+    if rhs.kind == "call":
+        _visit_call(rhs, ctx, extra_free_refs=[extra_ref] if extra_ref else None)
+    else:
+        _visit(rhs, ctx)
+
+
+def _pipe_source_identifier(node: AstNode, ctx: _WalkContext) -> str | None:
+    """Unwrap a (possibly nested) pipe lhs down to an unresolved bare identifier.
+
+    Returns the name if *node* is a bare identifier not already defined as an
+    entity in this script, recursing through nested pipes to reach the head
+    of the chain. Returns None for anything else (a call, an already-defined
+    local, a literal, ...) -- those are already handled correctly by the
+    normal visit and must not be reported as free references.
+    """
+    if node.kind == "identifier":
+        name = node.text.strip("`\"")
+        if name and name not in ctx.entities:
+            return name
+        return None
+    if node.kind == "binary_operator":
+        op = _find_op(node)
+        if op is not None and op.text in _PIPE_OPS:
+            inner_lhs = node.child_by_field("lhs")
+            if inner_lhs is not None:
+                return _pipe_source_identifier(inner_lhs, ctx)
+    return None
 
 
 def _visit_assignment(node: AstNode, op: str, ctx: _WalkContext) -> None:
@@ -226,8 +287,20 @@ def _visit_assignment(node: AstNode, op: str, ctx: _WalkContext) -> None:
             _visit(child, ctx)
 
 
-def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
-    """Classify a bare function call (not on the LHS of an assignment)."""
+def _visit_call(
+    node: AstNode,
+    ctx: _WalkContext,
+    extra_free_refs: list[str] | None = None,
+) -> None:
+    """Classify a bare function call (not on the LHS of an assignment).
+
+    extra_free_refs: additional free-variable-ref names to merge in that
+    weren't found in this call's own argument list -- used by _visit_pipe to
+    attribute an unresolved pipe-head identifier (e.g. `starwars |> mutate(...)`)
+    to the call it feeds into. Ignored by the library()/require() and
+    transparent-wrapper early-return branches below, since piping data into
+    those is not a meaningful R pattern.
+    """
     fn_name = _call_name(node)
     if fn_name is None:
         return
@@ -291,6 +364,10 @@ def _visit_call(node: AstNode, ctx: _WalkContext) -> None:
                 for _ident in _collect_identifiers(_target):
                     if _ident not in ctx.entities and _ident not in free_refs:
                         free_refs.append(_ident)
+
+    for _extra in (extra_free_refs or []):
+        if _extra not in ctx.entities and _extra not in free_refs:
+            free_refs.append(_extra)
 
     entity = Entity(
         id=entity_id,
