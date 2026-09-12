@@ -181,6 +181,9 @@
     "testthat:": [
       "testthat.expect-equal"
     ],
+    "tibble:": [
+      "tibble.as-tibble"
+    ],
     "tidyr:": [
       "tidyr.complete"
     ],
@@ -905,6 +908,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "testthat",
+      "ast_shape_hash": ""
+    },
+    "tibble.as-tibble": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "tibble",
       "ast_shape_hash": ""
     },
     "tidyr.complete": {
