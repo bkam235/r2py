@@ -15,6 +15,9 @@
     "rlang:": [
       "rlang.expr"
     ],
+    "roxygen2:": [
+      "roxygen2.roclet-find"
+    ],
     "stats:": [
       "stats.formula"
     ],
@@ -77,6 +80,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "rlang",
+      "ast_shape_hash": ""
+    },
+    "roxygen2.roclet-find": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "roxygen2",
       "ast_shape_hash": ""
     },
     "stats.formula": {
