@@ -7,8 +7,16 @@
     "gargle:": [
       "gargle.field-mask"
     ],
+    "recipes:": [
+      "recipes.prep",
+      "recipes.recipe",
+      "recipes.step-center"
+    ],
     "rlang:": [
       "rlang.expr"
+    ],
+    "stats:": [
+      "stats.formula"
     ],
     "xfun:": [
       "xfun.valid-syntax"
@@ -39,12 +47,44 @@
       "package": "gargle",
       "ast_shape_hash": ""
     },
+    "recipes.prep": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "recipes",
+      "ast_shape_hash": ""
+    },
+    "recipes.recipe": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "recipes",
+      "ast_shape_hash": ""
+    },
+    "recipes.step-center": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "recipes",
+      "ast_shape_hash": ""
+    },
     "rlang.expr": {
       "confidence": "tentative",
       "evidence_count": 0,
       "contradictions_count": 0,
       "seed": true,
       "package": "rlang",
+      "ast_shape_hash": ""
+    },
+    "stats.formula": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "stats",
       "ast_shape_hash": ""
     },
     "xfun.valid-syntax": {
