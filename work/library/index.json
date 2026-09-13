@@ -4,6 +4,11 @@
       "base.c",
       "base.options"
     ],
+    "cli:": [
+      "cli.cat-bullet",
+      "cli.cat-line",
+      "cli.cat-rule"
+    ],
     "dplyr:": [
       "dplyr.slice-max",
       "dplyr.top-frac",
@@ -54,6 +59,30 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "base",
+      "ast_shape_hash": ""
+    },
+    "cli.cat-bullet": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "cli",
+      "ast_shape_hash": ""
+    },
+    "cli.cat-line": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "cli",
+      "ast_shape_hash": ""
+    },
+    "cli.cat-rule": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "cli",
       "ast_shape_hash": ""
     },
     "dplyr.slice-max": {
