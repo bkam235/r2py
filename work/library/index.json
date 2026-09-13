@@ -7,6 +7,9 @@
     "gargle:": [
       "gargle.field-mask"
     ],
+    "rlang:": [
+      "rlang.expr"
+    ],
     "xfun:": [
       "xfun.valid-syntax"
     ]
@@ -34,6 +37,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "gargle",
+      "ast_shape_hash": ""
+    },
+    "rlang.expr": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "rlang",
       "ast_shape_hash": ""
     },
     "xfun.valid-syntax": {
