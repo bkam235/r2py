@@ -4,6 +4,11 @@
       "base.c",
       "base.options"
     ],
+    "dplyr:": [
+      "dplyr.slice-max",
+      "dplyr.top-frac",
+      "dplyr.top-n"
+    ],
     "gargle:": [
       "gargle.field-mask"
     ],
@@ -40,6 +45,30 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "base",
+      "ast_shape_hash": ""
+    },
+    "dplyr.slice-max": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "dplyr",
+      "ast_shape_hash": ""
+    },
+    "dplyr.top-frac": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "dplyr",
+      "ast_shape_hash": ""
+    },
+    "dplyr.top-n": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "dplyr",
       "ast_shape_hash": ""
     },
     "gargle.field-mask": {
