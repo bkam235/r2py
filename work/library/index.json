@@ -20,6 +20,9 @@
     "gargle:": [
       "gargle.field-mask"
     ],
+    "ps:": [
+      "ps.ps-username"
+    ],
     "readr:": [
       "readr.locale"
     ],
@@ -129,6 +132,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "gargle",
+      "ast_shape_hash": ""
+    },
+    "ps.ps-username": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ps",
       "ast_shape_hash": ""
     },
     "readr.locale": {
