@@ -23,8 +23,14 @@
     "roxygen2:": [
       "roxygen2.roclet-find"
     ],
+    "sparsevctrs:": [
+      "sparsevctrs.sparse-character"
+    ],
     "stats:": [
       "stats.formula"
+    ],
+    "utils:": [
+      "utils.str"
     ],
     "vctrs:": [
       "vctrs.vec-size-common"
@@ -122,12 +128,28 @@
       "package": "roxygen2",
       "ast_shape_hash": ""
     },
+    "sparsevctrs.sparse-character": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "sparsevctrs",
+      "ast_shape_hash": ""
+    },
     "stats.formula": {
       "confidence": "tentative",
       "evidence_count": 0,
       "contradictions_count": 0,
       "seed": true,
       "package": "stats",
+      "ast_shape_hash": ""
+    },
+    "utils.str": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "utils",
       "ast_shape_hash": ""
     },
     "vctrs.vec-size-common": {
