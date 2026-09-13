@@ -26,6 +26,9 @@
     "stats:": [
       "stats.formula"
     ],
+    "vctrs:": [
+      "vctrs.vec-size-common"
+    ],
     "xfun:": [
       "xfun.valid-syntax"
     ]
@@ -125,6 +128,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "stats",
+      "ast_shape_hash": ""
+    },
+    "vctrs.vec-size-common": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "vctrs",
       "ast_shape_hash": ""
     },
     "xfun.valid-syntax": {
