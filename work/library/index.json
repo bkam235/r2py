@@ -41,6 +41,9 @@
     "roxygen2:": [
       "roxygen2.roclet-find"
     ],
+    "shiny:": [
+      "shiny.isolate"
+    ],
     "sparsevctrs:": [
       "sparsevctrs.sparse-character"
     ],
@@ -208,6 +211,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "roxygen2",
+      "ast_shape_hash": ""
+    },
+    "shiny.isolate": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "shiny",
       "ast_shape_hash": ""
     },
     "sparsevctrs.sparse-character": {
