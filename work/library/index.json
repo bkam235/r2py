@@ -6,6 +6,9 @@
     ],
     "gargle:": [
       "gargle.field-mask"
+    ],
+    "xfun:": [
+      "xfun.valid-syntax"
     ]
   },
   "meta": {
@@ -31,6 +34,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "gargle",
+      "ast_shape_hash": ""
+    },
+    "xfun.valid-syntax": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "xfun",
       "ast_shape_hash": ""
     }
   }
