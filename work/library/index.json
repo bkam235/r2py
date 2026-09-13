@@ -9,6 +9,9 @@
       "cli.cat-line",
       "cli.cat-rule"
     ],
+    "clock:": [
+      "clock.date-shift"
+    ],
     "dplyr:": [
       "dplyr.slice-max",
       "dplyr.top-frac",
@@ -86,6 +89,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "cli",
+      "ast_shape_hash": ""
+    },
+    "clock.date-shift": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "clock",
       "ast_shape_hash": ""
     },
     "dplyr.slice-max": {
