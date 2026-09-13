@@ -20,6 +20,10 @@
     "gargle:": [
       "gargle.field-mask"
     ],
+    "lubridate:": [
+      "lubridate.quarter",
+      "lubridate.semester"
+    ],
     "ps:": [
       "ps.ps-username"
     ],
@@ -132,6 +136,22 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "gargle",
+      "ast_shape_hash": ""
+    },
+    "lubridate.quarter": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "lubridate",
+      "ast_shape_hash": ""
+    },
+    "lubridate.semester": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "lubridate",
       "ast_shape_hash": ""
     },
     "ps.ps-username": {
