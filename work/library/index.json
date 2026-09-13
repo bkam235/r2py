@@ -17,6 +17,9 @@
     "gargle:": [
       "gargle.field-mask"
     ],
+    "readr:": [
+      "readr.locale"
+    ],
     "recipes:": [
       "recipes.prep",
       "recipes.recipe",
@@ -115,6 +118,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "gargle",
+      "ast_shape_hash": ""
+    },
+    "readr.locale": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "readr",
       "ast_shape_hash": ""
     },
     "recipes.prep": {
