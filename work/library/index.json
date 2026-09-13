@@ -3,6 +3,9 @@
     "base:": [
       "base.c",
       "base.options"
+    ],
+    "gargle:": [
+      "gargle.field-mask"
     ]
   },
   "meta": {
@@ -20,6 +23,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "base",
+      "ast_shape_hash": ""
+    },
+    "gargle.field-mask": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "gargle",
       "ast_shape_hash": ""
     }
   }
