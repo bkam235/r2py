@@ -39,7 +39,13 @@ def reason(
     Returns (improved_source, score_report) or None if no improvement was achieved.
     """
     from ..stage1.runner import strip_r_guards
+    from ..seed import expand_echoed_calls
     r_source = strip_r_guards(getattr(script_map, "source", "") or "")
+    entities = getattr(script_map, "entities", {}) or {}
+    entity_bundles = getattr(script_map, "entity_bundles", {}) or {}
+    r_source, expanded_eids = expand_echoed_calls(
+        r_source, entities, entity_bundles,
+    )
     best_source = current_source
     best_score = score_report.aggregate
     report = score_report
@@ -48,7 +54,9 @@ def reason(
         history.append(audit_feedback)
 
     patterns_by_entity = _prefetch_patterns(harness, score_report)
-    r_function_sources, entity_metadata = _prefetch_r_sources(script_map)
+    r_function_sources, entity_metadata = _prefetch_r_sources(
+        script_map, skip_eids=expanded_eids,
+    )
     unavailable_packages = _get_unavailable_packages(script_map)
 
     is_openrouter = model.startswith("openrouter:")
@@ -341,6 +349,7 @@ def _prefetch_patterns(harness: "HarnessTools", report: "ScoreReport") -> dict:
 
 def _prefetch_r_sources(
     script_map: "ScriptMap",
+    skip_eids: set[str] | None = None,
 ) -> "tuple[list[str], str]":
     """Compute R source lookups and entity metadata once before the agent loop."""
     from ..types import EntityKind
@@ -359,6 +368,7 @@ def _prefetch_r_sources(
             source_parts = collect_source_lookups(
                 entities, imported_pkgs,
                 entity_bundles=getattr(script_map, "entity_bundles", {}),
+                skip_eids=skip_eids,
             )
         except Exception:
             pass

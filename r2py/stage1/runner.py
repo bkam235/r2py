@@ -482,6 +482,27 @@ def extract_echoed_source(stdout: str) -> str | None:
     return "\n".join(lines) if lines else None
 
 
+def strip_echoed_source(stdout: str) -> str:
+    """Remove example()/demo()/source(echo=TRUE)-style echoed source lines,
+    keeping only genuine printed output.
+
+    R's captured stdout for these constructs is a mix of echoed source and
+    real output (see extract_echoed_source). That echoed source is not
+    output a translation should ever reproduce -- it is R printing back the
+    code it is about to run, not a result. Ground-truth stdout used for
+    scoring or shown to the agent as "what R printed" must have it removed;
+    otherwise a model rationally chasing a stdout-match score will print the
+    echoed transcript back verbatim instead of computing real results.
+
+    A no-op when the marker never appears (the common case).
+    """
+    if not stdout or _ECHO_MARKER not in stdout:
+        return stdout
+    return "\n".join(
+        line for line in stdout.splitlines() if _ECHO_MARKER not in line
+    )
+
+
 def run_slice(
     r_source: str,
     capture: CaptureSpec = DEFAULT_CAPTURE,

@@ -12,7 +12,7 @@ load_dotenv(Path(__file__).parent.parent / ".env", override=True)
 
 lib = get_library()  # one shared library
 # reset_library(library=lib) # keep seeds, wipe learned patterns
-# reset_library(library=lib, keep_seeds=False) #wipe everything
+reset_library(library=lib, keep_seeds=False) #wipe everything
 
 input_dir = r".\work\inputs\harvested"
 output_dir = r".\work\outputs"

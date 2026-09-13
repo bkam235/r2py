@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import ast as _ast
+import dataclasses as _dataclasses
 import json as _json
 import re as _re
 import tempfile
@@ -713,6 +714,19 @@ def verify(
     # --- Run candidate in Python sandbox ---
     r_bundle = _get_r_bundle(script_map)
 
+    # Ground-truth stdout must never include R's own echo of source it ran
+    # (example()/demo()/source(echo=TRUE) -- see stage1.runner.extract_echoed_source).
+    # That echo is not a result a translation should reproduce; showing it as
+    # "what R printed" invites the model to print the echoed transcript back
+    # verbatim to chase a stdout-match score instead of computing real output.
+    # Strip it here, on a copy -- script_map.entity_bundles itself must keep
+    # the raw (marker-containing) stdout, since seed.py/agent.py's
+    # collect_source_lookups() needs it to recover the real source.
+    from ..stage1.runner import strip_echoed_source as _strip_echoed_source
+    r_bundle = _dataclasses.replace(
+        r_bundle, stdout=_strip_echoed_source(r_bundle.stdout)
+    )
+
     # Determine which effects were actually captured in R so we capture the same in Python
     capture = _ALL_CAPTURE
 
@@ -755,8 +769,13 @@ def verify(
             )
             py_entity_bundles = _collect_py_checkpoints(_wd, cp_eids)
 
-    # R per-entity bundles from Stage 1's checkpointed run.
-    r_entity_bundles: dict[str, EffectBundle] = getattr(script_map, "entity_bundles", {})
+    # R per-entity bundles from Stage 1's checkpointed run. Copy with echoed
+    # source stripped from stdout (see note above) -- script_map.entity_bundles
+    # itself is left untouched for collect_source_lookups()'s use.
+    r_entity_bundles: dict[str, EffectBundle] = {
+        eid: _dataclasses.replace(eb, stdout=_strip_echoed_source(eb.stdout))
+        for eid, eb in (getattr(script_map, "entity_bundles", {}) or {}).items()
+    }
 
     # --- Compare bundles ---
     comparator_results = _compare_bundles(r_bundle, py_bundle, data_compare, rtol, atol)

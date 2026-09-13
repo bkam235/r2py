@@ -46,12 +46,17 @@ argument names. R commonly uses `from`, `in`, `as` as parameter names \
 consistently in BOTH function definitions AND all call sites \
 (e.g., `from` → `from_val`, `in` → `in_val`, `as` → `as_val`).
 7. Output ONLY the Python code — no explanation, no markdown fences.
+8. Write ALL code at the top/module level. Do NOT wrap the translation inside \
+function definitions (def ...) or class definitions. The R original executes \
+at the top level, so your Python must too — every variable assignment must \
+be a module-level statement, not hidden inside a function body.
 """
 
 _BARE_SYSTEM_PROMPT = """\
 Translate the R code to Python. Use real libraries (shiny, pandas, numpy, \
 plotnine). If a function has no Python equivalent, skip it or use a simple \
-substitute. Output only the Python code, nothing else.\
+substitute. Write all code at the top/module level — do NOT wrap in function \
+definitions. Output only the Python code, nothing else.\
 """
 
 _COMMENT_RE = re.compile(r"^#[^\n]*\n", re.MULTILINE)
@@ -126,6 +131,40 @@ def translate(
     return python_source, flatten_entity_line_map(_rebuild(python_source))
 
 
+def expand_echoed_calls(
+    r_source: str,
+    entities: dict,
+    entity_bundles: dict,
+) -> tuple[str, set[str]]:
+    """Replace example()/demo() calls with their actual recovered R source.
+
+    Returns (expanded_source, set_of_expanded_entity_ids).  Processes
+    entities bottom-up so line-number shifts don't affect earlier entities.
+    """
+    from .stage1.runner import extract_echoed_source as _extract
+
+    expanded_eids: set[str] = set()
+    r_lines = r_source.splitlines()
+    for eid, entity in reversed(list(entities.items())):
+        eb = entity_bundles.get(eid)
+        if eb is None:
+            continue
+        echoed = _extract(getattr(eb, "stdout", "") or "")
+        if not echoed:
+            continue
+        span = getattr(entity, "source_span", None)
+        if span is None:
+            continue
+        start = max(0, span.start_line)
+        end = min(len(r_lines), span.end_line + 1)
+        topics = getattr(entity, "free_variable_refs", None) or []
+        label = f"{entity.name}({', '.join(topics)})" if topics else entity.name
+        header = f"# -- {label}: actual code executed --"
+        r_lines[start:end] = [header] + echoed.splitlines()
+        expanded_eids.add(eid)
+    return "\n".join(r_lines), expanded_eids
+
+
 def _build_prompt(
     script_map: "ScriptMap",
     library: "PatternLibrary",
@@ -137,13 +176,20 @@ def _build_prompt(
 
     parts: list[str] = []
     r_source = strip_r_guards(script_map.source or "")
+    entities = getattr(script_map, "entities", {}) or {}
 
-    parts.append(f"Translate this R script into Python:\n\n```r\n{r_source}\n```")
+    entity_bundles = getattr(script_map, "entity_bundles", {}) or {}
+    r_source_expanded, expanded_eids = expand_echoed_calls(
+        r_source, entities, entity_bundles,
+    )
+
+    parts.append(
+        f"Translate this R script into Python:\n\n```r\n{r_source_expanded}\n```"
+    )
 
     # Collect pattern library guidance for entities in this script.
     patterns_seen: set[str] = set()
     pattern_parts: list[str] = []
-    entities = getattr(script_map, "entities", {}) or {}
     for entity in entities.values():
         matches = library.retrieve(entity, k=2, no_seeds=no_seeds)
         for pat in matches:
@@ -171,7 +217,8 @@ def _build_prompt(
     if imported_pkgs:
         source_parts = collect_source_lookups(
             entities, imported_pkgs,
-            entity_bundles=getattr(script_map, "entity_bundles", {}),
+            entity_bundles=entity_bundles,
+            skip_eids=expanded_eids,
         )
         if source_parts:
             parts.append(
@@ -202,6 +249,7 @@ def collect_source_lookups(
     entities: dict,
     imported_pkgs: list[str],
     entity_bundles: dict | None = None,
+    skip_eids: set[str] | None = None,
 ) -> list[str]:
     """Look up R source for all package symbols referenced by entities.
 
@@ -249,6 +297,13 @@ def collect_source_lookups(
     # ordinary function definitions.
     echo_parts: list[str] = []
     for eid, entity in entities.items():
+        if skip_eids and eid in skip_eids:
+            # Already expanded inline in the R source shown to the model;
+            # still mark topic refs as seen to suppress generic lookups.
+            seen.add(entity.name)
+            for ref in getattr(entity, "free_variable_refs", []) or []:
+                seen.add(ref)
+            continue
         eb = (entity_bundles or {}).get(eid)
         if eb is None:
             continue

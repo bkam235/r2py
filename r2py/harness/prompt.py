@@ -71,6 +71,11 @@ logic as the R source — not print literal strings or assign pre-computed value
 to match the expected output. Hardcoded translations will be detected and rejected. \
 If R calls a function, Python must call an equivalent function. If R computes a \
 statistic, Python must compute it too.
+- Write ALL code at the top/module level. Do NOT wrap the translation inside \
+function definitions (def ...) or class definitions. The R original runs at the \
+top level, so Python must too — every variable assignment must be a module-level \
+statement, not inside a function body. The verification system captures module \
+globals; code inside functions will not be detected and will score zero.
 - In Python, positional arguments must come BEFORE keyword arguments in every \
 function call. R allows named arguments before positional ones — reorder them \
 when translating. Code with this error will be rejected before verification.
@@ -138,6 +143,10 @@ If you cannot improve further, use ACTION: done.
 - NEVER hardcode output values. Your Python must COMPUTE results the same way \
 R does — not print literal strings or assign pre-computed values. If R calls a \
 function, Python must call an equivalent function.
+- Write ALL code at the top/module level. Do NOT wrap the translation inside \
+function definitions (def ...). The R original runs at the top level, so Python \
+must too — variable assignments must be module-level statements. The verification \
+system captures module globals; code inside functions scores zero.
 - In Python, positional arguments must come BEFORE keyword arguments in every \
 function call. R allows named arguments before positional ones — reorder them \
 when translating.
@@ -350,8 +359,9 @@ def build_agent_turn(
         parts.append(format_patterns(patterns_by_entity))
         parts.append("")
 
-    # R function source — include on step 1 only (doesn't change between turns).
-    if step == 1 and r_function_sources:
+    # R function source — included on every step so the agent can reference
+    # the real code when diagnosing mismatches on later iterations.
+    if r_function_sources:
         parts.append(
             "### R function source (translate the logic, don't hardcode values)")
         parts.append("\n\n".join(r_function_sources))

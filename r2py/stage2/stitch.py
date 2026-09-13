@@ -30,6 +30,7 @@ _NON_TRANSLATABLE_SOURCE_CALLS: frozenset[str] = frozenset({
     "read.csv", "read.csv2", "read.table", "read.delim", "read.delim2",
     "readRDS", "readLines", "scan", "load",
     "Sys.getenv", "Sys.time", "Sys.Date", "Sys.timezone",
+    "example", "demo",
 })
 
 # Compile once: match the first call expression in an entity's R source.
@@ -176,8 +177,8 @@ def collect_shim_needed_names(script_map: "ScriptMap") -> list[str]:
             if ref in captured:
                 needed.add(ref)
 
-    # (2) Names defined by RNG/read entities — overridden by R-captured values
-    # at test time so equivalence doesn't fail on PRNG divergence.
+    # (2) Names defined by RNG/read entities — overridden by R-captured
+    # values at test time so equivalence doesn't fail on PRNG divergence.
     r_source = getattr(script_map, "source", "") or ""
     r_lines = r_source.splitlines() if r_source else []
     for e in entities.values():
