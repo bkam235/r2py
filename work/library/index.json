@@ -63,6 +63,10 @@
     "vctrs:": [
       "vctrs.vec-size-common"
     ],
+    "withr:": [
+      "withr.defer",
+      "withr.deferred-run"
+    ],
     "xfun:": [
       "xfun.valid-syntax"
     ]
@@ -282,6 +286,22 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "vctrs",
+      "ast_shape_hash": ""
+    },
+    "withr.defer": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "withr",
+      "ast_shape_hash": ""
+    },
+    "withr.deferred-run": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "withr",
       "ast_shape_hash": ""
     },
     "xfun.valid-syntax": {
