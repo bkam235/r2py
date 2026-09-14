@@ -21,6 +21,7 @@ Translate R `expr` (FunctionCall from rlang) to Python. See verified example bel
 
 ## Translation Examples
 - {"r_hash": "b7ba29e1", "r_snippet": "expr(1 + 1)", "py_snippet": "def expr(x):\n    # In a real rlang translation, this would capture the AST.\n    # Here we simulate the representation for the specific examples.\n    if x == 1 + 1:\n        return Expr(\"1 + 1\")\n    return Expr(x)\n\ndef sym(x):\n    return Expr(x, is_sym=True)\n\ndef syms(x):\n    return [sym(i) for i in x]\n\nexpr_res1 = expr(1 + 1)\nprint(expr_res1)\n\n# expr(toupper(letters))\n# In R, this is an unevaluated call. ", "score": 1.0, "script_id": "auto"}
+- {"r_hash": "7ec2f855", "r_snippet": "get_env(fn)", "py_snippet": "def get_env(obj, default=None):\n    \"\"\"Translates get_env logic.\"\"\"\n    # Closure functions\n    if isinstance(obj, types.FunctionType):\n        if hasattr(obj, \"_r_env\"):\n            return obj._r_env\n        return current_env()\n    \n    # RFunction wrapper (simulating closure with env)\n    if isinstance(obj, RFunction):\n        return obj.env\n\n    # Quosures (dicts with 'env')\n    if isinstance(obj, dict) and \"env\" in obj:\n        return obj[\"env\"]\n    \n    # Formulas\n    if isinstance(obj, RFormula):\n        return obj.env if obj.env is not None else default\n\n    # Environments\n    if isins", "score": 1.0, "script_id": "auto"}
 
 ## Edit Examples
 (none)
