@@ -12,6 +12,9 @@
     "clock:": [
       "clock.date-shift"
     ],
+    "data.table:": [
+      "data.table.melt"
+    ],
     "dplyr:": [
       "dplyr.slice-max",
       "dplyr.top-frac",
@@ -136,6 +139,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "clock",
+      "ast_shape_hash": ""
+    },
+    "data.table.melt": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "data.table",
       "ast_shape_hash": ""
     },
     "dplyr.slice-max": {
