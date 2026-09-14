@@ -20,6 +20,10 @@
     "gargle:": [
       "gargle.field-mask"
     ],
+    "graphics:": [
+      "graphics.axis",
+      "graphics.matplot"
+    ],
     "httr2:": [
       "httr2.with-verbosity"
     ],
@@ -142,6 +146,22 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "gargle",
+      "ast_shape_hash": ""
+    },
+    "graphics.axis": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "graphics",
+      "ast_shape_hash": ""
+    },
+    "graphics.matplot": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "graphics",
       "ast_shape_hash": ""
     },
     "httr2.with-verbosity": {
