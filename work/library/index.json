@@ -72,6 +72,9 @@
     "stats:": [
       "stats.formula"
     ],
+    "stringi:": [
+      "stringi.stri-duplicated"
+    ],
     "utils:": [
       "utils.str"
     ],
@@ -357,6 +360,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "stats",
+      "ast_shape_hash": ""
+    },
+    "stringi.stri-duplicated": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "stringi",
       "ast_shape_hash": ""
     },
     "utils.str": {
