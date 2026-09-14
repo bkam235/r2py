@@ -21,6 +21,7 @@ Translate R `ps_username` (FunctionCall from ps) to Python. See verified example
 
 ## Translation Examples
 - {"r_hash": "e7467889", "r_snippet": "ps_username(p)", "py_snippet": "create_time = p.create_time()\nimport datetime\ndt = datetime.datetime.fromtimestamp(create_time).strftime('%Y-%m-%d %H:%M:%S.%f')\nhandle_str = f\"<ps::ps_handle> PID={p.pid}, NAME={p.name()}, AT={dt}\"\n\nusername_val = p.username()\nprint(handle_str)\nprint(f'[1] \"{username_val}\"')", "score": 0.9187, "script_id": "auto"}
+- {"r_hash": "a312b11d", "r_snippet": "ps_fs_mount_point(\".\")", "py_snippet": "mount_point = None\nfor partition in psutil.disk_partitions():\n    if os.path.abspath(\".\") .startswith(partition.mountpoint):\n        mount_point = partition.mountpoint\n        break\n\nprint(mount_point)", "score": 0.9, "script_id": "auto"}
 
 ## Edit Examples
 (none)
