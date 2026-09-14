@@ -21,6 +21,7 @@ Translate R `date_shift` (FunctionCall from clock) to Python. See verified examp
 
 ## Translation Examples
 - {"r_hash": "51a625d4", "r_snippet": "date_shift(x, monday)", "py_snippet": "def date_shift(x, target, which=\"next\", boundary=\"keep\"):\n    \"\"\"\n    Shifts date to the next/previous occurrence of the target weekday.\n    target: based on R output, if target=2 is Monday, then target-1 is pandas weekday.\n    \"\"\"\n    # Adjusted target for pandas: if R's Monday is 2, then target 2 -> pandas 0.\n    pandas_target = target - 2 if target >= 2 else 6 \n    # Correction: If R target is 2 for Monday, then pandas_target = target - 2.\n    # Let's be more robust:\n    # R target 2 -> pandas 0 (Mon)\n    # R target 3 -> pandas 1 (Tue)\n    # R target 1 -> pandas 6 (Sun)\n    # Wait, if R pro", "score": 1.0, "script_id": "auto"}
+- {"r_hash": "39bc521a", "r_snippet": "x %>% add_days(1)", "py_snippet": "    # add_days(1) equivalent\n    print(x + pd.Timedelta(days=1))\nexcept Exception as e:\n    print(e)", "score": 0.9667, "script_id": "auto"}
 
 ## Edit Examples
 (none)
