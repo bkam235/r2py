@@ -20,6 +20,13 @@
     "gargle:": [
       "gargle.field-mask"
     ],
+    "ggplot2:": [
+      "ggplot2.geom-point",
+      "ggplot2.geom-tile",
+      "ggplot2.guides",
+      "ggplot2.scale-fill-continuous",
+      "ggplot2.scale-size"
+    ],
     "graphics:": [
       "graphics.axis",
       "graphics.matplot"
@@ -158,6 +165,46 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "gargle",
+      "ast_shape_hash": ""
+    },
+    "ggplot2.geom-point": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "ggplot2.geom-tile": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "ggplot2.guides": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "ggplot2.scale-fill-continuous": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ggplot2",
+      "ast_shape_hash": ""
+    },
+    "ggplot2.scale-size": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "ggplot2",
       "ast_shape_hash": ""
     },
     "graphics.axis": {
