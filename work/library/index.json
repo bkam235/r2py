@@ -27,6 +27,9 @@
     "httr2:": [
       "httr2.with-verbosity"
     ],
+    "knitr:": [
+      "knitr.engine-output"
+    ],
     "lubridate:": [
       "lubridate.quarter",
       "lubridate.semester"
@@ -174,6 +177,14 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "httr2",
+      "ast_shape_hash": ""
+    },
+    "knitr.engine-output": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "knitr",
       "ast_shape_hash": ""
     },
     "lubridate.quarter": {
