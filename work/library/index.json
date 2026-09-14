@@ -24,6 +24,11 @@
       "graphics.axis",
       "graphics.matplot"
     ],
+    "haven:": [
+      "haven.is-tagged-na",
+      "haven.na-tag",
+      "haven.print-tagged-na"
+    ],
     "httr2:": [
       "httr2.with-verbosity"
     ],
@@ -169,6 +174,30 @@
       "contradictions_count": 0,
       "seed": true,
       "package": "graphics",
+      "ast_shape_hash": ""
+    },
+    "haven.is-tagged-na": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "haven",
+      "ast_shape_hash": ""
+    },
+    "haven.na-tag": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "haven",
+      "ast_shape_hash": ""
+    },
+    "haven.print-tagged-na": {
+      "confidence": "tentative",
+      "evidence_count": 0,
+      "contradictions_count": 0,
+      "seed": true,
+      "package": "haven",
       "ast_shape_hash": ""
     },
     "httr2.with-verbosity": {
