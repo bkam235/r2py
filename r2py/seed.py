@@ -50,13 +50,20 @@ consistently in BOTH function definitions AND all call sites \
 function definitions (def ...) or class definitions. The R original executes \
 at the top level, so your Python must too — every variable assignment must \
 be a module-level statement, not hidden inside a function body.
+9. Preserve R variable names in your translation. If R assigns `d <- sim(m, 1000)`, \
+Python must use `d = ...` (same name), not `data` or `df`.
+10. Translate ALL sections of the R source — do not skip any part. If an R \
+package has no Python equivalent, use numpy/pandas/scipy to approximate the \
+computation and produce variables with the same names and similar types \
+(DataFrames for data frames, dicts for named lists, etc.).
 """
 
 _BARE_SYSTEM_PROMPT = """\
 Translate the R code to Python. Use real libraries (shiny, pandas, numpy, \
-plotnine). If a function has no Python equivalent, skip it or use a simple \
-substitute. Write all code at the top/module level — do NOT wrap in function \
-definitions. Output only the Python code, nothing else.\
+plotnine). If a function has no Python equivalent, use numpy/pandas/scipy to \
+approximate it. Write all code at the top/module level — do NOT wrap in \
+function definitions. Preserve R variable names (d, m, g, etc.). Translate \
+ALL sections — do not skip any. Output only the Python code, nothing else.\
 """
 
 _COMMENT_RE = re.compile(r"^#[^\n]*\n", re.MULTILINE)

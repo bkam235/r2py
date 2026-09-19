@@ -76,6 +76,11 @@ function definitions (def ...) or class definitions. The R original runs at the 
 top level, so Python must too — every variable assignment must be a module-level \
 statement, not inside a function body. The verification system captures module \
 globals; code inside functions will not be detected and will score zero.
+- Preserve R variable names. If R assigns `d <- sim(m, 1000)`, Python must use \
+`d = ...` (same name), not `data` or `df`. The verifier compares by variable name.
+- Translate ALL sections of the R source. If an R package has no Python equivalent, \
+use numpy/pandas/scipy to approximate the computation and produce variables with \
+the same names and similar types (DataFrames for data frames, dicts for named lists).
 - In Python, positional arguments must come BEFORE keyword arguments in every \
 function call. R allows named arguments before positional ones — reorder them \
 when translating. Code with this error will be rejected before verification.
@@ -147,6 +152,10 @@ function, Python must call an equivalent function.
 function definitions (def ...). The R original runs at the top level, so Python \
 must too — variable assignments must be module-level statements. The verification \
 system captures module globals; code inside functions scores zero.
+- Preserve R variable names. If R assigns `d <- sim(m, 1000)`, Python must use \
+`d = ...` (same name). The verifier compares by variable name.
+- Translate ALL sections. If an R package has no Python equivalent, use \
+numpy/pandas/scipy to approximate it with variables of the same names and types.
 - In Python, positional arguments must come BEFORE keyword arguments in every \
 function call. R allows named arguments before positional ones — reorder them \
 when translating.

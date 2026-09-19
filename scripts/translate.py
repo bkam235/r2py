@@ -12,7 +12,7 @@ load_dotenv(Path(__file__).parent.parent / ".env", override=True)
 
 lib = get_library()  # one shared library
 # reset_library(library=lib) # keep seeds, wipe learned patterns
-reset_library(library=lib, keep_seeds=False) #wipe everything
+# reset_library(library=lib, keep_seeds=False) #wipe everything
 
 input_dir = r".\work\inputs\harvested"
 output_dir = r".\work\outputs"
@@ -34,7 +34,7 @@ def _on_progress(event) -> None:
 
 # Iterate through input files for translation
 input_filenames = next(walk(input_dir), (None, None, []))[2]
-input_filenames = random.sample(input_filenames, 20) #don't use random script
+input_filenames = random.sample(input_filenames, 100) #don't use random script
 
 hard_scripts = [
     #"dplyr__vignette__dplyr_s16.R",
@@ -45,7 +45,7 @@ hard_scripts = [
 ]
 
 # input_filenames = [""] #translate this specific script
-input_filenames = hard_scripts
+# input_filenames = hard_scripts
 # input_filenames = regression_test_08
 
 
@@ -71,11 +71,11 @@ for r_script, py_script in scripts:
         result = translate(r_script,
                            py_script,
                            library=lib,
-                           resume=False,
+                           resume=True,
                            model=trans_model,
                            escalation_model=trans_model,
                            progress=_on_progress,
-                           score_threshold=0.85,
+                           score_threshold=0.9,
                            n_bare_seeds=2,
                            n_structured_seeds=2,
                            max_iters=20,

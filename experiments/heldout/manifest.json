@@ -1,0 +1,1767 @@
+{
+  "protocol": {
+    "seed": 20260919,
+    "n_heldout": 60,
+    "n_train": 227,
+    "reps": 3,
+    "translate": {
+      "model": "openrouter:google/gemma-4-31b-it",
+      "score_threshold": 0.9,
+      "n_bare_seeds": 2,
+      "n_structured_seeds": 2,
+      "max_iters": 20,
+      "max_stalls": 10,
+      "timeout_s": 60,
+      "data_compare": "auto"
+    },
+    "primary_test": {
+      "name": "wilcoxon_signed_rank",
+      "before": "empty",
+      "after": "full",
+      "alternative": "greater",
+      "alpha": 0.05,
+      "zero_method": "wilcox"
+    }
+  },
+  "pool_dir": "work/inputs/harvested",
+  "pool_size": 3988,
+  "checkpoints": {
+    "empty": 0,
+    "half": 113,
+    "full": 227
+  },
+  "stratum_quotas": {
+    "data_wrangling": 10,
+    "date_time": 10,
+    "graphics": 10,
+    "html": 10,
+    "stats_objects": 10,
+    "other": 10
+  },
+  "heldout": [
+    {
+      "script": "purrr__vignette__purrr_s3.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "9f62c791d4b403ea2a66a0f61f6b076a74266a2c212a3ea408f4cace73654429"
+    },
+    {
+      "script": "blob__rd_example__blob_Rd.R",
+      "package": "blob",
+      "stratum": "data_wrangling",
+      "sha256": "c2d7e3a53472d47608a145be3820b972d2ad729f44c062583192166ca23a978e"
+    },
+    {
+      "script": "magrittr__rd_example__aliases_Rd.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "923d23696964e9478bdfdfb0e3461cf087da142325bf9b680b18a301d018dd37"
+    },
+    {
+      "script": "tidyr__vignette__tidy-data_s3.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "e6ecb144edcb3fe0864058d253801fbc894e9b247d1158d8a88426995008851f"
+    },
+    {
+      "script": "rematch__rd_example__re_match_Rd.R",
+      "package": "rematch",
+      "stratum": "data_wrangling",
+      "sha256": "3fe9cdf849b1ac672cfa0f11eec75eb47193ec080bf5b672e3561033c685c8b5"
+    },
+    {
+      "script": "utf8__rd_example__utf8_print_Rd.R",
+      "package": "utf8",
+      "stratum": "data_wrangling",
+      "sha256": "3d8f93b35ab12c3b0e7860bfd0a6f20d1efb2e07863ed3653258747daca11ba9"
+    },
+    {
+      "script": "sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "adcef77a800c84aed0326ba21ffe50b4fe8832899975472501b1b025c8fa1b19"
+    },
+    {
+      "script": "dplyr__vignette__colwise_chunk17.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "ce35aeb0f69416f8113512328c5f0bf009431a8e53041847aa9dfd417ba48889"
+    },
+    {
+      "script": "reshape2__rd_example__melt_array_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "b3e324b4ea22dd080bf27dd9205787713aae8e43b28a5ba2daa568536e17f4d3"
+    },
+    {
+      "script": "vctrs__rd_example__new_date_Rd.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "03975763dec7774f108cb801f3cc98332be5caf92f7d5792c14a61625ca4ae49"
+    },
+    {
+      "script": "lubridate__vignette__lubridate_s18.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "be2810b34f3b3ec23e7032f1a2a16aec6fe8b32ecd9bcf7705ba39fe4e2b4102"
+    },
+    {
+      "script": "timeDate__rd_example__earlyCloseNYSE_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "b770305a84c285991b585ee7d60f9523ae3bbc3bb2536822850fb3e019014947"
+    },
+    {
+      "script": "hms__rd_example__hms_Rd.R",
+      "package": "hms",
+      "stratum": "date_time",
+      "sha256": "ed2b95bf84bf82677507fc670bcdc0f4ae485ba083a01238ffbb1fb3858a4b6e"
+    },
+    {
+      "script": "clock__rd_example__zoned_time_info_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "c5b9b5df55c90bf998338bf317e22a343e72aa92c93b7d65e1c4ee7204f8c0cf"
+    },
+    {
+      "script": "timechange__rd_example__time_add_Rd.R",
+      "package": "timechange",
+      "stratum": "date_time",
+      "sha256": "aa720f4fc850ce6e13af94080fe7b68d0fa2472d959f750139291f1d2eeda7e3"
+    },
+    {
+      "script": "lubridate__vignette__lubridate_s19.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "5702c0f8f9713df6a2847b2e33542663ecd03a99b79175b9584d81f494098ae0"
+    },
+    {
+      "script": "timeDate__rd_example__base-sample_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "bfda1cfca8541b8d44492e14896f0f8e3b4a9a079ddce2b5aa7fead640f776cc"
+    },
+    {
+      "script": "hms__rd_example__round_hms_Rd.R",
+      "package": "hms",
+      "stratum": "date_time",
+      "sha256": "2cd57ad4cf8a9e5ac36c01ca77db4227fdc7efe96da0fcb3837a591f3ed2d35e"
+    },
+    {
+      "script": "clock__vignette__faq_s28.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "c4a30d7b39395133b813209e56af65bcf79df98c9d8af9e1cf5e1693d2b4aec2"
+    },
+    {
+      "script": "timechange__rd_example__time_update_Rd.R",
+      "package": "timechange",
+      "stratum": "date_time",
+      "sha256": "7845a4313889396a4a020bcb53c3e562c5d48ca5251705b0f20a95f79321335e"
+    },
+    {
+      "script": "shape__rd_example__femmecol_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "0d921543bc01b5c3bbbc6cd5c7c419ed1c316e8cbc58c3fa473bad4a2e63f462"
+    },
+    {
+      "script": "textshaping__vignette__c_interface.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "c878957abb2e23f3ff6204919c490211a6d88c68b5a19f264181af933ac997c1"
+    },
+    {
+      "script": "isoband__rd_example__isobands_Rd.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "ab75c8316955022a34a5c924ba4a3b86295db6280c3116c469985aa0425644e5"
+    },
+    {
+      "script": "ggplot2__rd_example__aes_linetype_size_shape_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "e1e5c9ced573708970f63b7c382940ba26c34e048bcd21ce5dfcb17f06963e51"
+    },
+    {
+      "script": "ragg__rd_example__agg_png_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "742b413c2cf60e16053564d58765c6b90a5d6d730d41a6fb0be4c13ef97d3e43"
+    },
+    {
+      "script": "systemfonts__rd_example__font_feature_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "32ba3c9ddb535c5001b0022ecbf180da539b2f3d2186fc8bd1a40ba976657dac"
+    },
+    {
+      "script": "gtable__rd_example__gtable_show_layout_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "92aff234114cb986cf11155ab5fee5de2e77b01f83742af9662e73c2838cc48f"
+    },
+    {
+      "script": "RColorBrewer__rd_example__ColorBrewer_Rd.R",
+      "package": "RColorBrewer",
+      "stratum": "graphics",
+      "sha256": "14945dff09a7f0b57de36bdbbddf7fe557b293d4765dbdd4db79042b2d9bce19"
+    },
+    {
+      "script": "diagram__rd_example__diagram_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "00c42e790b92454038f79ad6ce13aa9ddcd37dd883fb0828a6d0c630f5a14463"
+    },
+    {
+      "script": "farver__rd_example__decode_colour_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "646c34166e069c1e632965aa7ceb7b669ea51f9bbc823122aa5df7bb0510f4b2"
+    },
+    {
+      "script": "shiny__rd_example__httpResponse_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "be40bc3b088559ee0631a0ba2d0e0d01bee11bdd1ad37d94510f72d64fcb27d8"
+    },
+    {
+      "script": "highr__rd_example__hilight_Rd.R",
+      "package": "highr",
+      "stratum": "html",
+      "sha256": "a63cda19be480989ec40aa6f9ab78914e191212039853e4aa4ea4475c839b9b1"
+    },
+    {
+      "script": "rmarkdown__rd_example__output_format_dependency_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "a9d619af097e5a872a34ba4211e38d600c788c5ef9f9774cd92fb0c2fe1eb0e9"
+    },
+    {
+      "script": "xml2__rd_example__xml_cdata_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "af1b75cc1191e0abb2f48aaf5b8f89a9a7343acc1411d32de4a38509e9cad64f"
+    },
+    {
+      "script": "sass__rd_example__sass_layer_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "1996e7b8f6fb7538f50a2bd443edfc5aeec953c34cae57c996637c808e1bd450"
+    },
+    {
+      "script": "htmlwidgets__vignette__develop_advanced_chunk6.R",
+      "package": "htmlwidgets",
+      "stratum": "html",
+      "sha256": "e11c8ba04914f18b1560eeb07f4740267d2a52e8b69c11d3d55e066a3c1c54df"
+    },
+    {
+      "script": "htmltools__rd_example__capturePlot_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "b2f5f0f4c95cd0bc99466df17f186836a8661382c76fe8fbc0838ed87a9505cb"
+    },
+    {
+      "script": "bslib__rd_example__layout_columns_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "f908d6b2ee13db505f279471f9605e100d3678a34fe907d226b57ee8e0ee83fb"
+    },
+    {
+      "script": "rvest__vignette__rvest_s9.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "013fff10a60e6482ca929188b92e1803b94863b96b0890244a43f640457efc18"
+    },
+    {
+      "script": "downlit__rd_example__downlit_md_path_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "c03303cd9775518f1d0dd85e8af2b9c682c50febb84c26c25a2c3c8b7811e0fe"
+    },
+    {
+      "script": "caret__rd_example__createDataPartition_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "5a180d3541f212e77d6b331b83c0b24e70da924f2186a313799a05bbce4e16ae"
+    },
+    {
+      "script": "lava__vignette__influencefunction_s34.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "89db545361f9e0714fa30639dc5c2c3e0183c4d8811d208e5f4cd25b44aba3a2"
+    },
+    {
+      "script": "pROC__rd_example__geom_polygon_auc_roc_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "6f8b44e4ccc7cb1005796dc3dc7aef466c22c88a999bbc3d616320857762d6d1"
+    },
+    {
+      "script": "broom__rd_example__glance_factanal_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "28a1205c37bdbc152719f0d4084889b3e69fbac7acad2665cf598000f9732121"
+    },
+    {
+      "script": "ranger__rd_example__predict_ranger_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "4dfce7081e7d3c27d16e41313c5fa356cf11656f001234cc4e1fe9c19c183281"
+    },
+    {
+      "script": "proxy__rd_example__dist_Rd.R",
+      "package": "proxy",
+      "stratum": "stats_objects",
+      "sha256": "bab4c71a560701226c22eceb06b69079c1f807708ca8c26ec6cedb6b448ef139"
+    },
+    {
+      "script": "prodlim__rd_example__predict_prodlim_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "5721c39ed9ec07e47f550117444be72b594d8a2d5733485043afda3b181ea946"
+    },
+    {
+      "script": "recipes__rd_example__step_integer_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "57ff5d7f0dfa99d26d30991b43cf769257b4dd233b952a871f861367627ba966"
+    },
+    {
+      "script": "e1071__rd_example__hamming_window_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "c0d1060a3843862a4b51201932f17ca0c54e09970852e73cfaf69dfc08d7c232"
+    },
+    {
+      "script": "ModelMetrics__rd_example__ppv_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "0a1bfa75e673d20fb7e363b1e38754dc63161b7515a48dd66907b485d2eabde1"
+    },
+    {
+      "script": "cachem__rd_example__cache_layered_Rd.R",
+      "package": "cachem",
+      "stratum": "other",
+      "sha256": "0a9478171500c2472596d70e47b1592693d8882c17818b214de94a40ccc41630"
+    },
+    {
+      "script": "tinytex__rd_example__tlmgr_Rd.R",
+      "package": "tinytex",
+      "stratum": "other",
+      "sha256": "8536a818a6a8c39e666c76950e81c0a0c6a9c936860fd0569821294a081f5b70"
+    },
+    {
+      "script": "openssl__rd_example__base64_encode_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "4615d39fa964a938fb71baff8c4f42deb82255fe71dbec7082bda69e6348c458"
+    },
+    {
+      "script": "googledrive__rd_example__drive_create_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "5932790c0004a260087d68ca82f5647872a4fbc4ae0e5c82dd799e5da1d2894d"
+    },
+    {
+      "script": "fansi__rd_example__make_styles_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "b2dc36892295a016474a788fe955e9ba34493343d699c6b3f632e98c51f6874d"
+    },
+    {
+      "script": "prettyunits__rd_example__pretty_bytes_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "4f695eba7dc5928ed8c32914b251c22aa902d6116a1bbc8a583c0ad601834be7"
+    },
+    {
+      "script": "base64enc__rd_example__base64_Rd.R",
+      "package": "base64enc",
+      "stratum": "other",
+      "sha256": "9b8cc6728834bdc5236037ae25f4be57ceb6fa3e5303510b1dab977c56431da3"
+    },
+    {
+      "script": "conflicted__rd_example__conflicts_prefer_Rd.R",
+      "package": "conflicted",
+      "stratum": "other",
+      "sha256": "d5e65dedf1f6dd66e337d2438a3c6b050797feb2ce3056d61d661d9895f1c5e4"
+    },
+    {
+      "script": "sessioninfo__rd_example__package_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "c251ff744c9569be94b56a1473427431f7bd8d44e6512c62e82c457a90f5721a"
+    },
+    {
+      "script": "uuid__rd_example__UUID_Rd.R",
+      "package": "uuid",
+      "stratum": "other",
+      "sha256": "272925c598801c4229626a400a90d74b07ad50f16f5ee68eba22014cb65f6bf9"
+    }
+  ],
+  "train": [
+    {
+      "script": "httpuv__rd_example__ipFamily_Rd.R",
+      "package": "httpuv",
+      "stratum": "other",
+      "sha256": "5d26b7ea882e7b0b01ddd72f3eeb65a33e4f0971c539de32ed48884d510e7728"
+    },
+    {
+      "script": "systemfonts__vignette__systemfonts_s1.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "22b6add516e0d5339269855339ac5211af9f3ee0bacc8736e5d938068a277ecc"
+    },
+    {
+      "script": "vroom__rd_example__vroom_str_Rd.R",
+      "package": "vroom",
+      "stratum": "data_wrangling",
+      "sha256": "6f052f62233113b6cc2dc5952c2b7367e73a5428f17f1cc9ee593083e354647f"
+    },
+    {
+      "script": "fansi__rd_example__unhandled_ctl_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "0d8e532f51ebb67d82424aba0c2ee154b5359a44d4338eabffec1e34bd303079"
+    },
+    {
+      "script": "ggplot2__vignette__extending-ggplot2_s24.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "5cec2f39512ffbf8b9d5b60d4385811deb9a25f273e91d8f9da335ed3fab510c"
+    },
+    {
+      "script": "gargle__vignette__auth-from-web_s1.R",
+      "package": "gargle",
+      "stratum": "other",
+      "sha256": "c518d992694a46694e5b3d873a2e01b7f3f1daef53ac70b0985403c4798b5a1c"
+    },
+    {
+      "script": "stringi__rd_example__stri_list2matrix_Rd.R",
+      "package": "stringi",
+      "stratum": "data_wrangling",
+      "sha256": "d5327f8bd072de9539feede2706735855966f44448589c97efd4ccee5063c84f"
+    },
+    {
+      "script": "glmnet__vignette__glmnet_s67.R",
+      "package": "glmnet",
+      "stratum": "stats_objects",
+      "sha256": "6167717bfcd058de9b3773486df71fc609ff4d6d2d40310d50e9d1ef078e579d"
+    },
+    {
+      "script": "purrr__rd_example__map2_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "28b9856b15ab9e4b7f0adf0c406c9be440b79e1fcd1b4a5efecb1e03dad57d48"
+    },
+    {
+      "script": "dplyr__rd_example__do_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "9c47d5e550d6b49c6eab20d52517dcb3b653c09fbc8fc3c4f9bf2d8d0d7e4e67"
+    },
+    {
+      "script": "gargle__vignette__gargle-auth-in-client-package_chunk11.R",
+      "package": "gargle",
+      "stratum": "other",
+      "sha256": "264ac450cb28c810fca4fa53a5b61ff5d37bc86d4f9ec39b4a3ee7a779561209"
+    },
+    {
+      "script": "googledrive__rd_example__shortcut_create_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "c237f61f36d41465145284fc1ed97e9715aa9791a3857ece97c6b28b6f1678ed"
+    },
+    {
+      "script": "fansi__rd_example__state_at_end_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "04869d69f01362459daf117343a352befeb3b2400ea4e1c9fdaef99757b75f83"
+    },
+    {
+      "script": "tidyr__vignette__programming_s1.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "7303d32becf1e169a563f7f9294edcf24d7158f29ee4c3a7b095555caf723c6e"
+    },
+    {
+      "script": "broom__vignette__broom_s11.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "ee20097f99c498a41b54a699b225b0be1a2a912c13ab247d4616378fa0ce3ab8"
+    },
+    {
+      "script": "dplyr__rd_example__select_all_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "56f4045264619e5a91b5d7b1b629f40b3fc929f60360185d554412c0011f03a9"
+    },
+    {
+      "script": "progressr__rd_example__handler_rstudio_Rd.R",
+      "package": "progressr",
+      "stratum": "other",
+      "sha256": "7a97b5d0d0a367ae4bb81b3dd972d3c977f7cc6f4b32daa8f99c56f4b43207b5"
+    },
+    {
+      "script": "bit64__rd_example__prank_Rd.R",
+      "package": "bit64",
+      "stratum": "data_wrangling",
+      "sha256": "2b45f00b61de6ce27ae2cdd7aeb208797aa6a3450cacda538c3ee1852ca00a11"
+    },
+    {
+      "script": "data.table__rd_example__timetaken_Rd.R",
+      "package": "data.table",
+      "stratum": "data_wrangling",
+      "sha256": "0cf198ba8486a6853a68ada5b84df7edac8518047dab126043c4a5e34bc4d8d4"
+    },
+    {
+      "script": "pillar__rd_example__ctl_new_pillar_list_Rd.R",
+      "package": "pillar",
+      "stratum": "other",
+      "sha256": "3627e0eacf28f0f092d0afe768116cb2ab81be4b8d055767ee3b94fc7a1c3b1d"
+    },
+    {
+      "script": "caret__rd_example__bag_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "8b8d2e514e1e9548058713a78584382f19036e38be8b504d639b34e6460e0609"
+    },
+    {
+      "script": "shiny__rd_example__registerInputHandler_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "ac77ae3e73e88c70661867163a0ae309c40eb4018911e4847d5402a55f5a1570"
+    },
+    {
+      "script": "httr2__rd_example__req_perform_sequential_Rd.R",
+      "package": "httr2",
+      "stratum": "other",
+      "sha256": "6fcc03bf2dc547aa0828a7b461d85815814d52e2ad6127a7361f55d1bd2f13e5"
+    },
+    {
+      "script": "data.table__rd_example__tables_Rd.R",
+      "package": "data.table",
+      "stratum": "data_wrangling",
+      "sha256": "774bcbfef4f07899968f66c175450ffd1fd5b72ef732c4a6aae9fd3517f53353"
+    },
+    {
+      "script": "httpuv__rd_example__runStaticServer_Rd.R",
+      "package": "httpuv",
+      "stratum": "other",
+      "sha256": "a87b26a559fff8e097a71e6f5d08fcbe34fbe49c6736067bc615386fbecb8a10"
+    },
+    {
+      "script": "DBI__rd_example__rownames_Rd.R",
+      "package": "DBI",
+      "stratum": "data_wrangling",
+      "sha256": "1e87efa4506f2631ecb5e770fcb88058b09e6619041545cf8b0d7e88bc660d5f"
+    },
+    {
+      "script": "tidyr__vignette__tidy-data_s9.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "12db6ad986f2303beae4cc0e8d6362bd6347f3baeb06f44ffc4c7fb285b2018f"
+    },
+    {
+      "script": "purrr__rd_example__modify_tree_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "cabf50eadb28388ed558a8845ae9d153b62b8aac6ee6facccf2a78bd55e511c0"
+    },
+    {
+      "script": "listenv__rd_example__listenv_Rd.R",
+      "package": "listenv",
+      "stratum": "other",
+      "sha256": "8c3132f565a64bec7f6efb9a9324af2b8317be2697017751462d129a727e1317"
+    },
+    {
+      "script": "rlang__rd_example__exec_Rd.R",
+      "package": "rlang",
+      "stratum": "other",
+      "sha256": "421c7dee389878ec35e45ededcd4bd924657fd056f8fe9ff090d298845161dee"
+    },
+    {
+      "script": "prodlim__rd_example__crModel_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "c10461e8a54e11d44eb3b6914740a8a678d54ca8d7831a12cae95ba3f2c673b5"
+    },
+    {
+      "script": "shape__rd_example__filledellipse_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "1f9f3fc482686cbf827c53c8d35194b163f2305765deee4320af08e88da7377d"
+    },
+    {
+      "script": "data.table__vignette__datatable-sd-usage_s2.R",
+      "package": "data.table",
+      "stratum": "data_wrangling",
+      "sha256": "8313a3745182dc34aa5b3394d7afd3313a618151662376b2fc622008d682ff1e"
+    },
+    {
+      "script": "clock__rd_example__seq_clock_time_point_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "37c1bc6429788b348f2d5fb553555fc599f25b37a4ec5f7740838aaec0db8475"
+    },
+    {
+      "script": "dbplyr__rd_example__escape_Rd.R",
+      "package": "dbplyr",
+      "stratum": "data_wrangling",
+      "sha256": "1688a2a96cfb19458241b0d0aa5bae3227735af9b0095a4cdb974e03bbc6219d"
+    },
+    {
+      "script": "xfun__rd_example__rstudio_type_Rd.R",
+      "package": "xfun",
+      "stratum": "other",
+      "sha256": "f693d3d672cbf865d74c31734cefd0f192925f258c5eb0b8d85d0a6c2f6c2409"
+    },
+    {
+      "script": "httr2__rd_example__req_get_headers_Rd.R",
+      "package": "httr2",
+      "stratum": "other",
+      "sha256": "8a789c3ad9df11c1c2c5db302b37b928b9de7b15eb945432d3bed21a2a475e47"
+    },
+    {
+      "script": "testthat__vignette__custom-expectation_s4.R",
+      "package": "testthat",
+      "stratum": "other",
+      "sha256": "012592288f1159acf317cd8199a00e62339fb9f235543d7a11237f13936374bf"
+    },
+    {
+      "script": "forcats__rd_example__fct_Rd.R",
+      "package": "forcats",
+      "stratum": "data_wrangling",
+      "sha256": "2cfc614c87f16b3b94106f9a54731d06a0ffb77b5cebbb9dff0e922180f5208e"
+    },
+    {
+      "script": "recipes__vignette__recipes_chunk1.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "5ddb3aed13df12418cb07c91c205bdb301ab7d3cbd5baa1b4ba5aa10f4b0e522"
+    },
+    {
+      "script": "recipes__rd_example__check_cols_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "3801a50cad1254041f0e6ac2cb8e351d70a73382d8f1417e44e4c984aba2960c"
+    },
+    {
+      "script": "hardhat__vignette__package_s7.R",
+      "package": "hardhat",
+      "stratum": "stats_objects",
+      "sha256": "6806ff605cf968a55d467395e6ec6cb69631d936fba8b90e1055461d9e5c0a2d"
+    },
+    {
+      "script": "ggplot2__rd_example__get_alt_text_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "df3e09b5a0dbd67677403073fd3a6877e5b084d24d0f173c55b319af5a53ba2e"
+    },
+    {
+      "script": "withr__rd_example__withr_Rd.R",
+      "package": "withr",
+      "stratum": "other",
+      "sha256": "7ffac957dfa937236a7881b3ae85a99fdb05d1c5d38f1f6c400fa60948e5caff"
+    },
+    {
+      "script": "recipes__rd_example__step_spline_monotone_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "69fe16f777679a9150f1b61da3f73c81164a1a814a8de59416b0828cefce55a9"
+    },
+    {
+      "script": "recipes__rd_example__step_spline_convex_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "f18f67f675b68ddb85f4e35413691d31ef132f8a7f38f3a9615c2aa1c558f032"
+    },
+    {
+      "script": "cli__rd_example__hash_animal_Rd.R",
+      "package": "cli",
+      "stratum": "other",
+      "sha256": "21dec59ff5638a11ba536c6bb7f093c760b48925c80a645a200b2d4de80dc7e0"
+    },
+    {
+      "script": "data.table__rd_example__nafill_Rd.R",
+      "package": "data.table",
+      "stratum": "data_wrangling",
+      "sha256": "0c579894f92e15e601feb307df0d33bf597045d55052ec0c797b958f5ff6ac72"
+    },
+    {
+      "script": "caret__rd_example__calibration_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "7df0e66d76cba46913b9e5ab0c01f48f6d9b84f220fa2dfdc4c035ce1a930fcb"
+    },
+    {
+      "script": "backports__rd_example__removeSource_Rd.R",
+      "package": "backports",
+      "stratum": "other",
+      "sha256": "1f1fbf890ef72ea2f245c9a0d39264689fc6ee6a9d5d0e4c192097566e817390"
+    },
+    {
+      "script": "clock__rd_example__date-shifting_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "327095d2c80e3d120e1d47dca0d623da79a0c6898aff1c546f8deaa9321dbcb2"
+    },
+    {
+      "script": "gert__rd_example__git_commit_Rd.R",
+      "package": "gert",
+      "stratum": "other",
+      "sha256": "13d829cb1577bf920351786549573aa5fca005634680c0a4e08262994554a922"
+    },
+    {
+      "script": "hardhat__rd_example__weighted_table_Rd.R",
+      "package": "hardhat",
+      "stratum": "stats_objects",
+      "sha256": "56a7330f4a9c57bcff1e8a14fa51d599a2b31bc59e1476a672c757358b266a1d"
+    },
+    {
+      "script": "hardhat__rd_example__default_xy_blueprint_Rd.R",
+      "package": "hardhat",
+      "stratum": "stats_objects",
+      "sha256": "70dc96ab48b7b26bd2aef15fafe7ef99735dbb26980e9df6f0910f99055a7879"
+    },
+    {
+      "script": "DBI__rd_example__dbFetch_Rd.R",
+      "package": "DBI",
+      "stratum": "data_wrangling",
+      "sha256": "8615c05ddb8fafc9292fa8234f383e9802ff919fb0c57a727359c6ae4a0a1b04"
+    },
+    {
+      "script": "diagram__rd_example__selfarrow_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "91fc2892bc1818ead992164b878b2f66037ee792e795971035386ee7d0d31184"
+    },
+    {
+      "script": "htmltools__rd_example__plotTag_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "c514373d12a8a85c5b02b47771d936f3aefec475732b4d2235dcdbf310a7f8a1"
+    },
+    {
+      "script": "testthat__rd_example__expect_no_error_Rd.R",
+      "package": "testthat",
+      "stratum": "other",
+      "sha256": "c2a7644a51304326232c1f3054c1f3bea0572d8afd898d0de0e37a818c1db0d4"
+    },
+    {
+      "script": "recipes__rd_example__step_interact_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "d1c446171c0da0a080d58b17d1770720a0b6d1d8696a028a0dd4d085219657d4"
+    },
+    {
+      "script": "gh__rd_example__gh_whoami_Rd.R",
+      "package": "gh",
+      "stratum": "other",
+      "sha256": "c20cbd93dbdb556decb068deb2983d0ec3994d81e56735cb92978caaadc6fe45"
+    },
+    {
+      "script": "ggplot2__vignette__extending-ggplot2_s11.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "9f47bc5b19e0a4d6e49f870bf92126d0c96909d003d68e3bc0a82b1e157794ff"
+    },
+    {
+      "script": "clock__rd_example__as_naive_time_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "f74d01e619db49910219205ebb33dd9a00b2f18f68fd69785ade5566345f5884"
+    },
+    {
+      "script": "DBI__rd_example__DBI-package_Rd.R",
+      "package": "DBI",
+      "stratum": "data_wrangling",
+      "sha256": "985a1f63e7b515d569691f767d62690ea49e72d9856022b5dcdd6c7dcbfbb564"
+    },
+    {
+      "script": "usethis__rd_example__git_sitrep_Rd.R",
+      "package": "usethis",
+      "stratum": "other",
+      "sha256": "e743b0c2b6223545020d421a5b6c4f79962888153b7bab2de5e89b12c7bd01cf"
+    },
+    {
+      "script": "shiny__rd_example__fluidPage_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "0a0f3b87ffeebe9f4bdca7ad3f5f42b8b03bf063594f4338b559f633b56716a1"
+    },
+    {
+      "script": "htmltools__rd_example__tagList_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "2b87a873effcae849303c53089a811e9b498be3bebbb6b8b8c2f243dbd6a43d1"
+    },
+    {
+      "script": "DBI__rd_example__DBIConnection-class_Rd.R",
+      "package": "DBI",
+      "stratum": "data_wrangling",
+      "sha256": "1f00bad34f4da214dabfa05ed9d45db59c77ec0bfc73c16d3f8ee11f8e428a84"
+    },
+    {
+      "script": "testthat__vignette__third-edition_s9.R",
+      "package": "testthat",
+      "stratum": "other",
+      "sha256": "9d7997c847e2f0f110dbfbcec25217deb2964bab8e5c1f8518ebc4c5ce9889fb"
+    },
+    {
+      "script": "clock__vignette__clock_s33.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "d908b8d85395dbd20c985c86c3a0f2facdcd440472a72d3c8eddf6617368d293"
+    },
+    {
+      "script": "glmnet__vignette__glmnetFamily_s1.R",
+      "package": "glmnet",
+      "stratum": "stats_objects",
+      "sha256": "e7eb987932524f4b1ca08cd959d3931917a3f4f97d0ba90c9e4e799befe1083a"
+    },
+    {
+      "script": "DBI__rd_example__sqlParseVariables_Rd.R",
+      "package": "DBI",
+      "stratum": "data_wrangling",
+      "sha256": "2763e071c2416bbbbe0f9b80e023aec4316eee0e06380151eafe2dc7a6a892b2"
+    },
+    {
+      "script": "vctrs__vignette__type-size_s30.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "17c413fceabb9e4a29cb7048b8378111653e2ec109783ce76f277eb9917eab5e"
+    },
+    {
+      "script": "prodlim__rd_example__stopTime_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "d29a606a503434cca050b780cdda2ff8aaba7332506c72c16338038d620b6a06"
+    },
+    {
+      "script": "rlang__rd_example__switch_type_Rd.R",
+      "package": "rlang",
+      "stratum": "other",
+      "sha256": "2e1d01ecacdcee9237613d86c2d265cdd4479c20dfa720a1e86165546f2db63c"
+    },
+    {
+      "script": "backports__rd_example__isNamespaceLoaded_Rd.R",
+      "package": "backports",
+      "stratum": "other",
+      "sha256": "4a7b1fd65bfb69f791b79c06c0aac4b05ef2a32236e24680071c6d6329d53364"
+    },
+    {
+      "script": "ps__rd_example__ps_tty_size_Rd.R",
+      "package": "ps",
+      "stratum": "other",
+      "sha256": "9fceb01e0c3af45bc0f1ddc8e0dfdbeb1f5ef7395d7ec7ce854237429997a6d8"
+    },
+    {
+      "script": "googlesheets4__rd_example__gs4_scopes_Rd.R",
+      "package": "googlesheets4",
+      "stratum": "other",
+      "sha256": "bfca94fe8e1c1ad5ac8a67abc82ef088640d60c7abba927c9999f70dffae15e9"
+    },
+    {
+      "script": "googlesheets4__rd_example__gs4_formula_Rd.R",
+      "package": "googlesheets4",
+      "stratum": "other",
+      "sha256": "0c9ec0500184edbb793b48946742a09126724baf0aa7f361007d66a0c61f6825"
+    },
+    {
+      "script": "ggplot2__vignette__extending-ggplot2_s12.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "368e15bed89ceca259a87b40b20c2522f352584c0417cc895770c6944fa2da50"
+    },
+    {
+      "script": "rlang__rd_example__is_named_Rd.R",
+      "package": "rlang",
+      "stratum": "other",
+      "sha256": "e96e0dcb370dec00ae927b5ab5733bb24a38cec17371620a6c70b2cdeed5597f"
+    },
+    {
+      "script": "crayon__rd_example__col_substring_Rd.R",
+      "package": "crayon",
+      "stratum": "other",
+      "sha256": "77e19ea27572e0faf5a166be14673d9ca9b6964a8a436de0b0c0a79b9e429139"
+    },
+    {
+      "script": "curl__vignette__intro_s6.R",
+      "package": "curl",
+      "stratum": "other",
+      "sha256": "572e48b6fffd63681c7e5aa3d47125874789eb68eafac0f11fdcf00ad85a0a90"
+    },
+    {
+      "script": "recipes__rd_example__tidy_recipe_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "0005d45cfba6b280e49f95818de85eea16aeba04dbd10efed0c5dd5f42e442f5"
+    },
+    {
+      "script": "httr__rd_example__POST_Rd.R",
+      "package": "httr",
+      "stratum": "other",
+      "sha256": "73a76f9a1d37d4e81a1e40d22d0b3cf2c23d862d6cd35adeda770cf1b3e12eac"
+    },
+    {
+      "script": "recipes__rd_example__check_new_values_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "e9563a776b73e6ca06577417a6cb8ef146e987db1d21b9bf466adf6b185f1ba2"
+    },
+    {
+      "script": "dtplyr__rd_example__distinct_dtplyr_step_Rd.R",
+      "package": "dtplyr",
+      "stratum": "data_wrangling",
+      "sha256": "354dcedeadbcff858dd70821477e0e0280b816d6bcd87c8699ff8d0748bc349a"
+    },
+    {
+      "script": "ggplot2__rd_example__scale_type_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "25718a0a5575bf9d0a1d18ee664e19a440825ced545abb3f60ec6eb00247c5a9"
+    },
+    {
+      "script": "otel__rd_example__is_tracing_enabled_Rd.R",
+      "package": "otel",
+      "stratum": "other",
+      "sha256": "116ac7ad3a1b10fa0cb92c42f974a85f9d278d1da51a96b971b1998c8e886234"
+    },
+    {
+      "script": "clock__rd_example__clock_labels_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "eb9ab349f1ec35405a1a2e37aa002bb204c54a74757f5a4c2d96ef7368aa7323"
+    },
+    {
+      "script": "rlang__rd_example__are_na_Rd.R",
+      "package": "rlang",
+      "stratum": "other",
+      "sha256": "bd68c9aeb3352faff2a710d76ba19b8a1d9b4a5c711757289907f4a0d4bb1316"
+    },
+    {
+      "script": "broom__vignette__broom_and_dplyr_chunk1.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "ebbe88d33dca36ae08453b2d7ea814de42d4395eaa818759d30db00dd292ed79"
+    },
+    {
+      "script": "clock__vignette__faq_s3.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "b97060f52943ea09e141d293dc7161ff46ef9f3d6b5dbebb7fbc2d206530b4c2"
+    },
+    {
+      "script": "parallelly__rd_example__freeCores_Rd.R",
+      "package": "parallelly",
+      "stratum": "other",
+      "sha256": "170c45a4972d5b21aea5c754f32c2cd272e0c00cdb17d5b357af7f5c82aa4bac"
+    },
+    {
+      "script": "vctrs__rd_example__vec_proxy_compare_Rd.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "3216400389fab24852714de68300f5940a7e7e26ff7e473ca880fb74039fd0de"
+    },
+    {
+      "script": "withr__vignette__withr_chunk17.R",
+      "package": "withr",
+      "stratum": "other",
+      "sha256": "ad8d6ebde369b910f1f4d944002bf40817f5e598868e11357e3a476f5fa959ab"
+    },
+    {
+      "script": "clock__vignette__recipes_s36.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "4ecbc2882f03416f66a025ff788d99b323d5676f9af07e97943b2b093ef2a9ec"
+    },
+    {
+      "script": "pak__rd_example__sysreqs_db_list_Rd.R",
+      "package": "pak",
+      "stratum": "other",
+      "sha256": "0afac2e335d075fcee3c2e1047121ab6a1fd3ba27c9e867fad5c7f0779e9e2e3"
+    },
+    {
+      "script": "pkgdown__rd_example__test-dont_Rd.R",
+      "package": "pkgdown",
+      "stratum": "html",
+      "sha256": "c6d1cce00662233414a269e85867da0b59a215f7d3b44f6d970babd7df31f347"
+    },
+    {
+      "script": "ids__rd_example__uuid_Rd.R",
+      "package": "ids",
+      "stratum": "other",
+      "sha256": "45b44be0cb0f16c9d89f1c43c2a18ec0a43e275158e3cd3681f14e8aea0aa0e8"
+    },
+    {
+      "script": "profvis__rd_example__profvis_Rd.R",
+      "package": "profvis",
+      "stratum": "other",
+      "sha256": "8f711d7cdb25b44f128e2bb76208735fd4228a5ab71b82a7d7fe904ee0170f53"
+    },
+    {
+      "script": "recipes__rd_example__step_depth_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "f8b6b5c42652b7f0eef7feceeff9334e1a5409296212439a45c1ed24bdf0656b"
+    },
+    {
+      "script": "shiny__rd_example__fixedPage_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "580d8ac93e7d4d3f8652a52b200871f1694b045c4233e17eb11f330cc0285b89"
+    },
+    {
+      "script": "S7__vignette__compatibility_s4.R",
+      "package": "S7",
+      "stratum": "other",
+      "sha256": "73202e8fc843d0f206f970675c5793c822c0f295c18715442ac24c47dca5a7f3"
+    },
+    {
+      "script": "gargle__rd_example__gargle_options_Rd.R",
+      "package": "gargle",
+      "stratum": "other",
+      "sha256": "cebf8cffde9f14367e477251e03aca43483a4d2e9e0027abaf3beb626b54220a"
+    },
+    {
+      "script": "testthat__rd_example__try_again_Rd.R",
+      "package": "testthat",
+      "stratum": "other",
+      "sha256": "c57e9524073cf5182535bd19bde0298429bd207e639b663af08338347740f066"
+    },
+    {
+      "script": "lifecycle__vignette__communicate_s7.R",
+      "package": "lifecycle",
+      "stratum": "other",
+      "sha256": "921ef7ae78a4ae1e29971331eb63df935ddbc044973de1a9835d6c6f4cdefb3d"
+    },
+    {
+      "script": "sparsevctrs__vignette__design_chunk1.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "e7cda218091dea7ac19d2506ea60cea9a325d2f615c203c8db1c91dbd0552a44"
+    },
+    {
+      "script": "stringr__vignette__locale-sensitive_s6.R",
+      "package": "stringr",
+      "stratum": "data_wrangling",
+      "sha256": "33f52f5b5e1f7c5dabd7968b6ae216838cda405ff10f79fd07fc66ad1a7012c3"
+    },
+    {
+      "script": "ggplot2__vignette__ggplot2-in-packages_s15.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "0c62fa2b9ea887f3b308e523c8486d02c1f5576c9535fa48e46a6f73a778bf58"
+    },
+    {
+      "script": "broom__rd_example__augment_pam_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "d7f652bf34020581ab5cf12f30275d8a867e645404657db34cfe2b0a12097da3"
+    },
+    {
+      "script": "ggplot2__vignette__ggplot2_s10.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "7efdd0758f3a7e1329a3610b833138363c4b85377019584c34e7def33c88ed72"
+    },
+    {
+      "script": "dplyr__vignette__programming_s12.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "2eb0a4bc87a9f7a1f106af5a58164d74f6081abb2e74b07a90fd3d6311ee71f5"
+    },
+    {
+      "script": "gtable__vignette__profiling_s1.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "a45a962f59f339aebf1673dc0dd754a66579190af463f8a2484f05d5d14db03c"
+    },
+    {
+      "script": "tidyr__vignette__pivot_s40.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "700d46220a61a912d0339caa1484570a21ba1196a823701474761cd1b296fdd1"
+    },
+    {
+      "script": "stringr__vignette__regular-expressions_s29.R",
+      "package": "stringr",
+      "stratum": "data_wrangling",
+      "sha256": "7198cdcad68a29b3b90d83c267169379b42addf87520af9f62b7fb7b65b3e89e"
+    },
+    {
+      "script": "ggplot2__vignette__ggplot2-in-packages_s13.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "292b3134d400df59a965805f90587f620973705bcf8a04ad93007cd334b52c58"
+    },
+    {
+      "script": "diffobj__vignette__diffobj_s8.R",
+      "package": "diffobj",
+      "stratum": "other",
+      "sha256": "80123a37d12285f986f1dec1232ba08d9f6a54363943c366b310d75f61b94c70"
+    },
+    {
+      "script": "shiny__rd_example__reactiveFileReader_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "83d56218d041ffbb662e956993e304aaf6ecf18994cf7ebc88bddda16f707207"
+    },
+    {
+      "script": "lava__vignette__nonlinear_s1.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "53859bfd50072d4b7c9b2873226cfb04eeaa2162d569a644feae16cff9185d1c"
+    },
+    {
+      "script": "data.table__vignette__datatable-keys-fast-subset_s5.R",
+      "package": "data.table",
+      "stratum": "data_wrangling",
+      "sha256": "7df522c074d97308d41ae4b7bdd64335f3208db16d41c0bf7c3cf74a5a398ee2"
+    },
+    {
+      "script": "broom__rd_example__glance_svyglm_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "6cf23c9d7ab4c18db19014b51aa8ef81423a79ed1aebf79a2d4c67f0bbeae8e4"
+    },
+    {
+      "script": "pillar__rd_example__format_glimpse_Rd.R",
+      "package": "pillar",
+      "stratum": "other",
+      "sha256": "500fbd4b7856a147d624e058a27b5a2fb2ad02761e8cfe5f372608fee05f33d3"
+    },
+    {
+      "script": "shiny__rd_example__renderDataTable_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "f9f51aee19436f5f20ac432c4a826b54e9c1b9da12d217ffd113e1a6a93a8dfd"
+    },
+    {
+      "script": "tidyr__rd_example__pivot_wider_spec_Rd.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "d846f6831ecf3c59f1491ac16ddcc367128b67f3477269be9e62c6dec4f05088"
+    },
+    {
+      "script": "vctrs__rd_example__list_of_transpose_Rd.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "1641c0faaa2364bb2d48cfdbdc141a5d036642be6c2e814d5b3259f67c6b54d9"
+    },
+    {
+      "script": "caret__rd_example__BoxCoxTrans_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "25f32d117c90efceb8fc544161cf366d8ffa6a11ca6525bae381ff4acebee8b3"
+    },
+    {
+      "script": "recipes__rd_example__recipes_ptype_validate_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "418781016511a329b80d6c1229b74ac0deb4a3fbc51730171980648eb19a15d2"
+    },
+    {
+      "script": "stringr__vignette__locale-sensitive_s2.R",
+      "package": "stringr",
+      "stratum": "data_wrangling",
+      "sha256": "7bc438e66340dfc0adef0640d8d67fbb8be84bf7e1c7a901fcdeb3561f84bb06"
+    },
+    {
+      "script": "clock__rd_example__clock-getters_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "22371e3850ad55110a78c54ed14051593a020da7d0ec82914af1d27556452ee9"
+    },
+    {
+      "script": "dplyr__vignette__recoding-replacing_s3.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "c55740d2cacf6afaec4be806adc16bab11506d77d826a2b45adcc12a9c46d34f"
+    },
+    {
+      "script": "broom__rd_example__tidy_binDesign_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "0a9feff121aa7a0085cd61c8cda36ada3b2c3984627c5c863ddd9c4f0274b537"
+    },
+    {
+      "script": "rversions__rd_example__rtools_versions_Rd.R",
+      "package": "rversions",
+      "stratum": "other",
+      "sha256": "f565cece5959e47fc542d28cde5c1f8da1fe613b792fd686b9e9b2bfef2f47cb"
+    },
+    {
+      "script": "plyr__rd_example__progress_tk_Rd.R",
+      "package": "plyr",
+      "stratum": "data_wrangling",
+      "sha256": "2ed8b18d96ce9573a7295e8cb2a35819437c306b2b4c4f1ec474db49c44fd5f0"
+    },
+    {
+      "script": "vctrs__rd_example__missing_Rd.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "12582c159fca5128fe9e1cade3afd5ff47667a6b566840a9f6bd5499714865a4"
+    },
+    {
+      "script": "clock__rd_example__year-week-day-setters_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "f86f06d1477354c76b83cf6fbaf2eace11efa2de731905abe1c2f4101c1957eb"
+    },
+    {
+      "script": "progressr__rd_example__handler_beepr_Rd.R",
+      "package": "progressr",
+      "stratum": "other",
+      "sha256": "60c8dfcb08311ecb9e8b8d6f1ea121aaaa58e1f2bc4db4834ac33d5d4fc6c30e"
+    },
+    {
+      "script": "ids__rd_example__proquint_Rd.R",
+      "package": "ids",
+      "stratum": "other",
+      "sha256": "1ae3979ab0ff180cc82ed1ea758c4ee33c579450d297fbb38a85a182b250b72e"
+    },
+    {
+      "script": "memoise__rd_example__has_cache_Rd.R",
+      "package": "memoise",
+      "stratum": "other",
+      "sha256": "aa25b51126558f2ef54396ed06f85ff6ffda62319551d6f4b20ac207c108c6d8"
+    },
+    {
+      "script": "modelr__rd_example__fit_with_Rd.R",
+      "package": "modelr",
+      "stratum": "stats_objects",
+      "sha256": "2aea98c81e8befdc27cad409ffda9b1c95458303024504127af32efaf248d0fe"
+    },
+    {
+      "script": "S7__rd_example__props_Rd.R",
+      "package": "S7",
+      "stratum": "other",
+      "sha256": "57a90c4909dcdfc3d328957195b859077a543f1fc614136804b72dea339ece1f"
+    },
+    {
+      "script": "clock__vignette__faq_s33.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "9fc43aeb3fa0b62c289d0b28c3274d0cca9c4a7dc7baa655d892fd6a5341bb49"
+    },
+    {
+      "script": "vroom__vignette__vroom_s8.R",
+      "package": "vroom",
+      "stratum": "data_wrangling",
+      "sha256": "581077e2b9280c6b33626f0ba21a1bbf1a260e988487840d593c436ffdadda80"
+    },
+    {
+      "script": "vctrs__vignette__s3-vector_s77.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "f9e66e8cfee800a9517e117b91d342a949631163ef49512e7cf33003b9dd42c5"
+    },
+    {
+      "script": "S7__vignette__generics-methods_s19.R",
+      "package": "S7",
+      "stratum": "other",
+      "sha256": "1561ca0f9e312c2be211850296c1d1a324016434e01f999e4b6d220b4014ed0f"
+    },
+    {
+      "script": "otel__rd_example__get_logger_Rd.R",
+      "package": "otel",
+      "stratum": "other",
+      "sha256": "a2d7f7aaea8efd87e157954481617d2389f12662de940ed6d9d7c673c13749a1"
+    },
+    {
+      "script": "shiny__rd_example__moduleServer_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "fa489d2eab2707216bde3861f08878a8e2dff59dfe7666c0559801ec27c21849"
+    },
+    {
+      "script": "clock__vignette__clock_s34.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "c6552be895b50b2a765f48bfbda98d70dde35750ff6b40b72dc8fca5f4a143d2"
+    },
+    {
+      "script": "parallelly__rd_example__availableWorkers_Rd.R",
+      "package": "parallelly",
+      "stratum": "other",
+      "sha256": "2d0f2c8427b43af3204e4239e9daca5b34ae8316f6f44c3bb2b15e9d4839d139"
+    },
+    {
+      "script": "cpp11__vignette__motivations_s4.R",
+      "package": "cpp11",
+      "stratum": "other",
+      "sha256": "6999ac7a0ca7f7939e54b3c3af7ff4ef30f6b3af516d6b28cc99ec47047de5de"
+    },
+    {
+      "script": "recipes__rd_example__discretize_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "9e4619d36da09f57ad058cdca6ffba03265eb5871e6e8bd0596b01a991ab88ef"
+    },
+    {
+      "script": "vctrs__vignette__pillar_s4.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "8d815e767712430f4ad258bd5635cfcbd9055ada928b2454dba177a3b932754a"
+    },
+    {
+      "script": "S7__vignette__classes-objects_s13.R",
+      "package": "S7",
+      "stratum": "other",
+      "sha256": "5df7e237366aa13fe8ea40c05688f5d4950af2ba9c4c827e605a290651211d6e"
+    },
+    {
+      "script": "clock__vignette__recipes_s70.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "7b801ee0223f1dc14b26c5d33bba02c6f940914f7533ff15fdd67595cf82cc10"
+    },
+    {
+      "script": "scales__rd_example__label_pvalue_Rd.R",
+      "package": "scales",
+      "stratum": "graphics",
+      "sha256": "3ec8706e62a69dd9fe2a33fc88ff7db319836ceeec4211a1b41bc6a773d6828e"
+    },
+    {
+      "script": "otel__rd_example__otel_histogram_Rd.R",
+      "package": "otel",
+      "stratum": "other",
+      "sha256": "92ae006c503155d3a372695b7f36baba9cc326ee68d4198c090e7c83a2648861"
+    },
+    {
+      "script": "ggplot2__vignette__extending-ggplot2_s27.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "908729d146dc10b4f77d805f3537b9ea8255673112c45108e1ebdd2ddc2eed69"
+    },
+    {
+      "script": "progressr__rd_example__handler_notifier_Rd.R",
+      "package": "progressr",
+      "stratum": "other",
+      "sha256": "70a6db5d884061dcd732c897e191a2674915227903c0d22729acdfbeea628430"
+    },
+    {
+      "script": "pkgload__rd_example__pkgtest_Rd.R",
+      "package": "pkgload",
+      "stratum": "other",
+      "sha256": "5aab230f98ad6de0dd7fbfdc94f7319ff63c119d9f3aa4a6cb7e9ab8928bce0b"
+    },
+    {
+      "script": "shape__rd_example__filledcylinder_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "0a9222bd6e074b902d21a04fbc4f49a25cd5f8b5a3ef72b075f4a5497762ebe0"
+    },
+    {
+      "script": "diffobj__vignette__diffobj_s16.R",
+      "package": "diffobj",
+      "stratum": "other",
+      "sha256": "5aa4ab6990d4eb414caced2a72ef1532e787637a5a8fb48e7ac969d140d87bea"
+    },
+    {
+      "script": "vctrs__rd_example__vec_locate_sorted_groups_Rd.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "7b0f5915a940d3a6ca06f62481b04b85eeac5c693e18fd7795c09f48c0bcc736"
+    },
+    {
+      "script": "curl__rd_example__file_writer_Rd.R",
+      "package": "curl",
+      "stratum": "other",
+      "sha256": "5fbf582f7f471c95d34eadb20a02fef296c04eb1fe2b1fd75f988dc2c4df455d"
+    },
+    {
+      "script": "vctrs__vignette__s3-vector_s52.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "00b8b26c39a82d6aa22cba3f0e2cb4201b33b2c209bed57facbf5359555e0586"
+    },
+    {
+      "script": "rlang__rd_example__missing_arg_Rd.R",
+      "package": "rlang",
+      "stratum": "other",
+      "sha256": "c4e6b9116e3a3bf6fa69c7dbb8782a137a1cb432ba264a48ff231ac86b04a3cb"
+    },
+    {
+      "script": "parallelly__rd_example__makeClusterMPI_Rd.R",
+      "package": "parallelly",
+      "stratum": "other",
+      "sha256": "4e75c0c0b7ff8a3972ca1e1a5e6b15c5f9d9d4ff5ae8dda54929fb433d97e990"
+    },
+    {
+      "script": "dplyr__vignette__programming_chunk10.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "0de55d12ee214b0a0c5eb95fd861e5713795856257ca29af7800260790af4d61"
+    },
+    {
+      "script": "pillar__rd_example__get_extent_Rd.R",
+      "package": "pillar",
+      "stratum": "other",
+      "sha256": "2839df67645585766f84edcdd8cb7af58ad045ad36b58f5185c181cf5ccd8293"
+    },
+    {
+      "script": "tidyr__rd_example__uncount_Rd.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "54890522b58b1d766f12067da2ae47aab9675ef55ce27058bf4eb5071577c361"
+    },
+    {
+      "script": "recipes__rd_example__step_shuffle_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "60d78ff01446eeb7c8ec229548b4608d7a6f3b01307e13fc11cc2bf551055427"
+    },
+    {
+      "script": "ModelMetrics__rd_example__mauc_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "c67f637cd33b29a5fdef4986adc137b7a61a4f9edd9aaa9d96ba16a5ecebdfa9"
+    },
+    {
+      "script": "rlang__rd_example__raw_deparse_str_Rd.R",
+      "package": "rlang",
+      "stratum": "other",
+      "sha256": "ebbf3a4022b770daf3fc720cbad97a089f81bb51ad45315e6a99ec9f27fa654a"
+    },
+    {
+      "script": "withr__vignette__withr_s6.R",
+      "package": "withr",
+      "stratum": "other",
+      "sha256": "2735f99ce838326b1124cd3944e15346dd842ac77dd06a38d2e5db6b41f2f5a9"
+    },
+    {
+      "script": "progressr__rd_example__withProgressShiny_Rd.R",
+      "package": "progressr",
+      "stratum": "other",
+      "sha256": "c07c936d648090cfe5dd12f1d13325969a3879c5ea2d5c91d02245446258467d"
+    },
+    {
+      "script": "ggplot2__vignette__extending-ggplot2_s2.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "43272f065e60fd0d5fff888161e3b906d53b87b800634f62e67cc5976df52fb5"
+    },
+    {
+      "script": "dplyr__rd_example__mutate_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "62f0c1f3088e98cf3ce3fa558189e91c118b9e408c695505bf8fde59da9e9010"
+    },
+    {
+      "script": "vctrs__vignette__s3-vector_s7.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "f5cb7f6e29aae90ad1ae4e068d9ebab862faa273480ddaae585893c9c4b8d59f"
+    },
+    {
+      "script": "clock__rd_example__year_month_day_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "b984840ac8df20a437ba431a943e815d5b8b835c4c03bd73825377ca26eba028"
+    },
+    {
+      "script": "dtplyr__rd_example__lazy_dt_Rd.R",
+      "package": "dtplyr",
+      "stratum": "data_wrangling",
+      "sha256": "c6f103f1c098a046386446110d3b19c09aa5a6198d945d4d7409b99fd91fc970"
+    },
+    {
+      "script": "pROC__rd_example__aSAH_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "f41567e44763d6141c0df32ab7a6b2a2ad554c109123672538865bd418031dd4"
+    },
+    {
+      "script": "bit__vignette__bit-usage_s13.R",
+      "package": "bit",
+      "stratum": "data_wrangling",
+      "sha256": "badd51efdda56b3fe2eb8d3656c1eb3dbc9e4fce923ebf51cc88381d7b166daf"
+    },
+    {
+      "script": "dplyr__vignette__window-functions_s8.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "1d5b455b086c27960523f142eb4c6e1ccf4c93505b1c5f5abe16de5296ceb295"
+    },
+    {
+      "script": "dplyr__rd_example__group_by_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "098d6426f36bf81d41e0bbadfb8e40495523dc9c7d96486b1a314ff1390ed61d"
+    },
+    {
+      "script": "dplyr__vignette__recoding-replacing_s6.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "187c37138c921aada7fe22feb3d23c176025814d2887621ae454c9d8ebfdb1f4"
+    },
+    {
+      "script": "prodlim__rd_example__backGround_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "76cfb232bb63736be903508fdeb24e91433b468efc8c0984156d80a8d6810834"
+    },
+    {
+      "script": "crayon__rd_example__start_crayon_Rd.R",
+      "package": "crayon",
+      "stratum": "other",
+      "sha256": "bead589f68409f14dd787a7eff68ea6890d5d621aeb8abb3769d13af925c55ad"
+    },
+    {
+      "script": "jsonlite__vignette__json-aaquickstart_s7.R",
+      "package": "jsonlite",
+      "stratum": "data_wrangling",
+      "sha256": "5706b0369ef0b0bbcf55a57516b6cdd35b4bf34268a09ab345e544c76d411e41"
+    },
+    {
+      "script": "xtable__vignette__OtherPackagesGallery_s2.R",
+      "package": "xtable",
+      "stratum": "html",
+      "sha256": "541cd502d18ff3aebbaa0c4145150272ddfe583363c4e071c034d98defebaa8b"
+    },
+    {
+      "script": "data.table__rd_example__fctr_Rd.R",
+      "package": "data.table",
+      "stratum": "data_wrangling",
+      "sha256": "32b5a36e8af30a8124d943d49a6560f0fbbe005876f2dd8e88cbbd5cdfb72113"
+    },
+    {
+      "script": "dplyr__rd_example__reframe_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "1ba4a49219141b64a41c17bf9cc043bd3630bc796fb4382b2a62ef4f91b6dd49"
+    },
+    {
+      "script": "dplyr__vignette__colwise_s5.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "abe8627f12948b04345033e3a5e40449ae97aeaae659d5d439bc7e6e90d9aaa8"
+    },
+    {
+      "script": "dplyr__vignette__programming_chunk7.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "ab79beb677c682d24f6739092532476f0c09f9410afefab9e17565b389a6445e"
+    },
+    {
+      "script": "bit__rd_example__in_bitwhich_Rd.R",
+      "package": "bit",
+      "stratum": "data_wrangling",
+      "sha256": "0686e015f190728b2de10786a6d75f9d1b8f12aae56c852486352ef8cb7b03e1"
+    },
+    {
+      "script": "tidyr__vignette__in-packages_s2.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "abc987d05e339c137fc819aad16debc7119ffffe92a71a21905ff313b5465f4a"
+    },
+    {
+      "script": "bit64__rd_example__sort_integer64_Rd.R",
+      "package": "bit64",
+      "stratum": "data_wrangling",
+      "sha256": "5dc20ebd28744dcfd4541387f4c39565fe8e89224039e7521a9944780fbd7244"
+    },
+    {
+      "script": "data.table__rd_example__rowid_Rd.R",
+      "package": "data.table",
+      "stratum": "data_wrangling",
+      "sha256": "e0cf3c2ad3e63adb6fe4fc9c40a426a08220575ad5fdab8d88f8eddaa356e474"
+    },
+    {
+      "script": "stringi__rd_example__stri_join_Rd.R",
+      "package": "stringi",
+      "stratum": "data_wrangling",
+      "sha256": "b54d0d07dad14a13c2767fadad3aca7292902bee99f2ca5e6f7318536703b4b1"
+    },
+    {
+      "script": "broom__rd_example__tidy_lavaan_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "c676a7bdb959d1bc54ae633f3cdb7a3abe21f9c01eebc7f9a8934f3f1abe7d1d"
+    },
+    {
+      "script": "gtable__rd_example__gtable_add_cols_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "5aef1b7af476d52784fb6ac074f9d0c38158d7add6ab996a69b703457e9f5f46"
+    },
+    {
+      "script": "miniUI__rd_example__miniButtonBlock_Rd.R",
+      "package": "miniUI",
+      "stratum": "html",
+      "sha256": "74018e59516ff452e66e38bfa4bceeabce1a966ed417fb7e7893bb725b36760b"
+    },
+    {
+      "script": "dplyr__rd_example__order_by_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "a9b501340348492afbaaf96274df4452f9fa268c6f4ca20744f02681a7fb7650"
+    },
+    {
+      "script": "crayon__rd_example__concat_Rd.R",
+      "package": "crayon",
+      "stratum": "other",
+      "sha256": "31f6437f8a93c6a2aa4b024d625c453c628ee05986be08a2dfb177dd4c4ba0a2"
+    },
+    {
+      "script": "testthat__vignette__challenging-tests_s4.R",
+      "package": "testthat",
+      "stratum": "other",
+      "sha256": "72a30e3d04d44728cd5954842bf875e296ce271be6c66190f8311f9c8308db3b"
+    },
+    {
+      "script": "ps__rd_example__ps_wait_Rd.R",
+      "package": "ps",
+      "stratum": "other",
+      "sha256": "3709f8dbcc0d2995e611571a5ec24334188b2f7b6efdf8a1bbeedbb73c07e380"
+    },
+    {
+      "script": "ggplot2__rd_example__scale_hue_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "61fe79aa194ec306f996e731b7647d733318a42448b6a12772f9abcce65b9738"
+    },
+    {
+      "script": "modelr__rd_example__permute_Rd.R",
+      "package": "modelr",
+      "stratum": "stats_objects",
+      "sha256": "b43d1c6501cd4226ec0fe1a6190a0c543cbd15088e6d7affe487e9c101241e0c"
+    },
+    {
+      "script": "httr2__rd_example__resp_link_url_Rd.R",
+      "package": "httr2",
+      "stratum": "other",
+      "sha256": "53c83315743055636cbc8c61dfd52fe0a35a839c72bc1dd7923c992821fb6b2c"
+    },
+    {
+      "script": "dplyr__vignette__programming_s10.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "c4d6d9bf73e4ecec848bb3deff5e835def46aae5a72c0eafbe67ce5fe65aa5b5"
+    },
+    {
+      "script": "shape__rd_example__getellipse_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "96f6a07f7dd2d6f42806c02f398e0d268f5bca895a9f683a1414cb5b76c9e758"
+    },
+    {
+      "script": "recipes__rd_example__step_impute_median_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "3c013ee5b6c26f41227b2773c25c5879d46b02279db3d56c378b7eed1ad66882"
+    },
+    {
+      "script": "stringi__rd_example__stri_trans_casemap_Rd.R",
+      "package": "stringi",
+      "stratum": "data_wrangling",
+      "sha256": "dc317d4cde0d8be3fb52168ef94c90b4e352bfadfaf3132efea62d62d75a88ab"
+    },
+    {
+      "script": "fansi__rd_example__normalize_state_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "d7f036c9be4c56378a3f178486af949cd32e50e844e9f5c86caedd82129e6ad3"
+    },
+    {
+      "script": "vctrs__vignette__s3-vector_s60.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "fd0df02e26a004f6c3e44b117b48c287a81fade934dd27fef7796d0fa98a662d"
+    },
+    {
+      "script": "vctrs__rd_example__vec_duplicate_Rd.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "2655aba96b7b2ba215bdaafb1cfc89f4ea0fe9797dea58b8fa38ec5697c07079"
+    },
+    {
+      "script": "bit__rd_example__bit_Rd.R",
+      "package": "bit",
+      "stratum": "data_wrangling",
+      "sha256": "0a2336740141a29699ac717658a2ab81de37ea0fad73467ccfbe9c59f6ef0d63"
+    },
+    {
+      "script": "jsonlite__vignette__json-aaquickstart_s9.R",
+      "package": "jsonlite",
+      "stratum": "data_wrangling",
+      "sha256": "27c093e44b0c6a0bd687aad7209ab306e9daba9af365d442d5a244d9db15c43e"
+    },
+    {
+      "script": "caret__rd_example__histogram_train_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "defe27521e91f34f4394387cc08cc6628656a7f99a0bf157cbdb0fa0c6a8d509"
+    },
+    {
+      "script": "backports__rd_example__warningCondition_Rd.R",
+      "package": "backports",
+      "stratum": "other",
+      "sha256": "8071977fd7a2eb513de5551262eff5b8a4d1ba3e35c77532b86d383799e10a9b"
+    },
+    {
+      "script": "otel__rd_example__otel_logger_Rd.R",
+      "package": "otel",
+      "stratum": "other",
+      "sha256": "5ce3fc608751d6c0a58aaf285b05bb5dccc4f1074d47b6b4871233c8b7f59602"
+    },
+    {
+      "script": "httr2__rd_example__resp_check_content_type_Rd.R",
+      "package": "httr2",
+      "stratum": "other",
+      "sha256": "0eb44b5e84675994bdf1fe8a9e5fdf2461d31d6f944d8946c4b3fe6ffdb3aac8"
+    },
+    {
+      "script": "clock__rd_example__as_year_month_day_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "a3da482b62b6f0d99e342d3304af999ece493717eac778bebd0d005e100e67be"
+    },
+    {
+      "script": "e1071__rd_example__matchControls_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "594ede71735428d36b74496b3fe1c5d018d3cf384301ca3708e1a3a08f1e89e9"
+    },
+    {
+      "script": "lubridate__rd_example__duration_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "2c8b26cab34839eeca55d722210bd08cd2bf1ebc11528d58ded4449477bd9b11"
+    },
+    {
+      "script": "ModelMetrics__rd_example__rmse_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "752e0e5cb690a2b433c9073ae48052f4f39b4b09a38a8a2770797d35ccfe8606"
+    },
+    {
+      "script": "lifecycle__vignette__manage_s1.R",
+      "package": "lifecycle",
+      "stratum": "other",
+      "sha256": "43e1593d5fac0fdca39001b56a43c8530ed8c1532985c8a78cd5129d27213b12"
+    },
+    {
+      "script": "knitr__rd_example__fig_chunk_Rd.R",
+      "package": "knitr",
+      "stratum": "html",
+      "sha256": "eb31726bf7ab0f9f494f94f657e3a0516a6fd9ffe58de9e9eaf6c9a787066639"
+    },
+    {
+      "script": "clock__rd_example__iso-year-week-day-count-between_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "494ea2bce424bf1acaea4980063af5269737dc4997c3b0d25510f4384ce4892a"
+    },
+    {
+      "script": "testthat__rd_example__logical-expectations_Rd.R",
+      "package": "testthat",
+      "stratum": "other",
+      "sha256": "6eb8c09a52b77b46a0056574d65e460925c5bc3f39b1ac24aaf47f2b601a303a"
+    }
+  ]
+}
