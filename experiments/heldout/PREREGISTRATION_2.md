@@ -6,7 +6,7 @@
 document (`work/heldout/` did not exist). It stays in the repository unedited.
 **Commit at registration:** harness `5a2b026daa0a` (hash of `r2py/**/*.py` except
 `r2py/heldout.py` and `r2py/stage0/r_env/`, computed by `heldout.harness_hash()`);
-commit: `<fill in after committing>`
+commit: `fe0b824eb61c6d675a26b11acafa8b86bef8c7f6` (harness, manifest, runner)
 
 ## Why a second registration
 
