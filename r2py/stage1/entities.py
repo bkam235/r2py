@@ -72,6 +72,15 @@ class Entity:
     actual_bundle: EffectBundle | None = None
     # §3.7 R-semantic annotation tags, e.g. "na_semantics", "super_assign"
     r_semantic_flags: list[str] = field(default_factory=list)
+    # Base-R functions called anywhere inside this entity (nested calls included), as
+    # "<package>::<name>", e.g. "base::paste", "utils::head". The entity's own `name` is only
+    # the outermost call, so this is the key for knowledge that transfers across packages.
+    base_r_calls: list[str] = field(default_factory=list)
+    # For an assignment `x <- f(...)`: the function f called directly on the right-hand side,
+    # and its package (from `pkg::f`, base R, or Stage 1's R probe; None when unresolved).
+    # An assignment has no package of its own, so this is what keys its pattern.
+    rhs_call_name: str | None = None
+    rhs_call_package: str | None = None
     # Set for LIBRARY_IMPORT and EXTERNAL_SYMBOL entities.
     package: str | None = None
     # Identifiers referenced in this entity's source that are not defined anywhere

@@ -11,7 +11,7 @@ from pathlib import Path
 import pytest
 
 from r2py.library.pattern import (
-    EvidenceEntry, Pattern, from_markdown, to_markdown,
+    EvidenceEntry, Pattern, from_markdown, pattern_id, to_markdown,
 )
 from r2py.library.store import PatternStore
 from r2py.library.index import PatternIndex
@@ -224,33 +224,54 @@ class TestPatternIndex:
 # ---------------------------------------------------------------------------
 
 class TestRetrieval:
+    """Retrieval is an exact (package, function) lookup with no fallback."""
+
     def _setup(self, tmp_path):
         store = PatternStore(tmp_path)
         index = PatternIndex(tmp_path)
         return store, index
 
-    def test_package_first(self, tmp_path):
+    def test_returns_only_the_pattern_for_this_function(self, tmp_path):
         store, index = self._setup(tmp_path)
         store.save(_make_pattern("dplyr.a", package="dplyr", seed=True))
+        store.save(_make_pattern("dplyr.b", package="dplyr", seed=True))
         store.save(_make_pattern("base.a", package="base", seed=True))
         index.rebuild(store)
-        entity = _FakeEntity(package="dplyr")
-        results = retrieve(entity, k=5, store=store, index=index)
-        ids = [p.id for p in results]
-        assert "dplyr.a" in ids
-        if "base.a" in ids:
-            assert ids.index("dplyr.a") < ids.index("base.a")
+        results = retrieve(_FakeEntity(package="dplyr", name="a"), k=5, store=store, index=index)
+        assert [p.id for p in results] == ["dplyr.a"]
+
+    def test_no_fallback_to_other_functions_or_packages(self, tmp_path):
+        store, index = self._setup(tmp_path)
+        store.save(_make_pattern("dplyr.a", package="dplyr", seed=True))
+        store.save(_make_pattern("base.c", package="base", seed=True))
+        index.rebuild(store)
+        # Same package, different function; different package, same name; unknown package.
+        assert retrieve(_FakeEntity(package="dplyr", name="zzz"), 5, store, index) == []
+        assert retrieve(_FakeEntity(package="stats", name="a"), 5, store, index) == []
+        assert retrieve(_FakeEntity(package="nopkg", name="c"), 5, store, index) == []
+
+    def test_packageless_or_nameless_entity_gets_nothing(self, tmp_path):
+        store, index = self._setup(tmp_path)
+        store.save(_make_pattern("base.c", package="base", seed=True))
+        index.rebuild(store)
+        assert retrieve(_FakeEntity(package="", name="c"), 5, store, index) == []
+        assert retrieve(_FakeEntity(package="base", name=""), 5, store, index) == []
+
+    def test_id_normalisation_matches_seeding(self, tmp_path):
+        store, index = self._setup(tmp_path)
+        store.save(_make_pattern(pattern_id("withr", "with_locale"), package="withr", seed=True))
+        index.rebuild(store)
+        assert pattern_id("withr", "with_locale") == "withr.with-locale"
+        results = retrieve(_FakeEntity(package="withr", name="with_locale"), 3, store, index)
+        assert [p.id for p in results] == ["withr.with-locale"]
 
     def test_excludes_contradicted(self, tmp_path):
         store, index = self._setup(tmp_path)
         store.save(_make_pattern("base.bad", package="base", confidence="contradicted"))
         store.save(_make_pattern("base.good", package="base", seed=True))
         index.rebuild(store)
-        entity = _FakeEntity(package="base")
-        results = retrieve(entity, k=5, store=store, index=index)
-        ids = [p.id for p in results]
-        assert "base.bad" not in ids
-        assert "base.good" in ids
+        assert retrieve(_FakeEntity(package="base", name="bad"), 5, store, index) == []
+        assert [p.id for p in retrieve(_FakeEntity(package="base", name="good"), 5, store, index)] == ["base.good"]
 
     def test_no_seeds_filter(self, tmp_path):
         store, index = self._setup(tmp_path)
@@ -261,20 +282,22 @@ class TestRetrieval:
                             EvidenceEntry("s2", 0.8, "exact", "v")]
         store.save(learned)
         index.rebuild(store)
-        entity = _FakeEntity(package="base")
-        results = retrieve(entity, k=5, store=store, index=index, no_seeds=True)
-        ids = [p.id for p in results]
-        assert "base.seed" not in ids
-        assert "base.learned" in ids
+        assert retrieve(_FakeEntity(package="base", name="seed"), 5, store, index, no_seeds=True) == []
+        got = retrieve(_FakeEntity(package="base", name="learned"), 5, store, index, no_seeds=True)
+        assert [p.id for p in got] == ["base.learned"]
 
-    def test_k_limit(self, tmp_path):
+    def test_unproven_non_seed_pattern_is_withheld(self, tmp_path):
+        store, index = self._setup(tmp_path)
+        store.save(_make_pattern("base.weak", package="base", seed=False))
+        index.rebuild(store)
+        assert retrieve(_FakeEntity(package="base", name="weak"), 5, store, index) == []
+
+    def test_at_most_one_pattern_whatever_k(self, tmp_path):
         store, index = self._setup(tmp_path)
         for i in range(10):
-            store.save(_make_pattern(f"base.p{i}", package="base"))
+            store.save(_make_pattern(f"base.p{i}", package="base", seed=True))
         index.rebuild(store)
-        entity = _FakeEntity(package="base")
-        results = retrieve(entity, k=3, store=store, index=index)
-        assert len(results) <= 3
+        assert len(retrieve(_FakeEntity(package="base", name="p3"), k=10, store=store, index=index)) == 1
 
     def test_empty_library_returns_empty(self, tmp_path):
         store, index = self._setup(tmp_path)
@@ -486,9 +509,8 @@ class TestPatternLibrary:
         lib = get_library(tmp_path)
         lib.store.save(_make_pattern("base.foo", package="base", seed=True))
         lib.index.rebuild(lib.store)
-        entity = _FakeEntity(package="base")
-        results = lib.retrieve(entity, k=3)
-        assert any(p.id == "base.foo" for p in results)
+        results = lib.retrieve(_FakeEntity(package="base", name="foo"), k=3)
+        assert [p.id for p in results] == ["base.foo"]
 
     def test_record_evidence_via_facade(self, tmp_path):
         lib = get_library(tmp_path)

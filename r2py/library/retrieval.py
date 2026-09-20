@@ -1,12 +1,10 @@
-"""Pattern retrieval: package-first, AST-shape second, token-similarity last (§6.4)."""
+"""Pattern retrieval: the pattern for exactly this (package, function), or nothing (§6.4)."""
 from __future__ import annotations
 
 import hashlib
-from itertools import groupby
 from typing import TYPE_CHECKING
 
-from .pattern import Pattern
-from ..types import PatternId
+from .pattern import EditExample, Pattern, correction_functions, pattern_id, pattern_key
 
 if TYPE_CHECKING:
     from .store import PatternStore
@@ -20,78 +18,33 @@ def retrieve(
     index: "PatternIndex",
     no_seeds: bool = False,
 ) -> list[Pattern]:
-    """Return at most k patterns relevant to entity.
+    """Return the pattern for this entity's (package, function), if the library has one.
 
-    Ranking (§6.4):
-    1. Filter to patterns matching entity.package (or all packages if entity has none).
-    2. Within that set, rank by AST-shape similarity (token overlap of entity kind).
-    3. Tie-break by raw token similarity of guidance text vs entity name.
-    Excludes contradicted patterns and (when no_seeds=True) seed patterns.
+    Patterns are keyed by ``pattern_id(package, function)`` and an entity's key is given by
+    ``pattern_key``, so this is a direct lookup. There is deliberately no fallback: a pattern
+    for some other function is noise in the prompt, not guidance. Excludes contradicted
+    patterns and (when no_seeds=True) seed patterns. ``k`` and ``index`` are unused (at most
+    one pattern can match); they stay so the facade and the callers keep one signature.
     """
-    package = getattr(entity, "package", None) or ""
-    entity_name = getattr(entity, "name", "") or ""
-    entity_kind = _entity_kind_str(entity)
-
-    # Step 1: gather candidate IDs by package.
-    # When the entity's package has no dedicated patterns (common for R-only
-    # packages like withr where Python patterns live under package=""), fall
-    # back to the full empty-package bucket so general-purpose patterns are
-    # still retrieved.
-    if package:
-        candidate_ids = index.lookup(package)
-        if not candidate_ids:
-            candidate_ids = index.all_ids()
-    else:
-        candidate_ids = index.all_ids()
-
-    if not candidate_ids:
+    key = pattern_key(entity)
+    if key is None:
         return []
+    pat = store.get(pattern_id(*key))
+    return [pat] if pat is not None and _usable(pat, no_seeds) else []
 
-    # Step 2: load and filter
-    candidates: list[Pattern] = []
-    for pid in candidate_ids:
-        pat = store.get(pid)
-        if pat is None:
-            continue
-        if pat.confidence == "contradicted":
-            continue
-        if no_seeds and pat.seed:
-            continue
-        # Tentative patterns need at least 2 genuine improvements (score > 0)
-        # before they are shown to Stage 2/3. Tie interactions (tracked in
-        # tie_count) do not count — they carry no positive signal. Seeds are
-        # always kept regardless of evidence count.
-        if pat.confidence == "tentative" and not pat.seed:
-            real_evidence = sum(1 for e in pat.evidence if e.score > 0.0)
-            if real_evidence < 2:
-                continue
-        candidates.append(pat)
 
-    if not candidates:
-        return []
-
-    # Step 3: rank
-    def score(pat: Pattern) -> tuple[int, float]:
-        # Tier 1: exact package match (0) vs wildcard fallback (1)
-        pkg_tier = 0 if pat.package == package else 1
-        # Tier 2: AST-shape token overlap (negated for descending sort)
-        shape_sim = -_token_overlap(entity_kind, pat.id)
-        return (pkg_tier, shape_sim)
-
-    candidates.sort(key=score)
-
-    # Tie-break by guidance token similarity to entity name
-    # (stable sort preserves prior ordering within tied groups)
-    def tiebreak(pat: Pattern) -> float:
-        return -_token_overlap(entity_name, pat.guidance)
-
-    # Group by (pkg_tier, shape_sim) and within each group sort by tiebreak
-    result: list[Pattern] = []
-    for _, group in groupby(candidates, key=score):
-        group_list = sorted(group, key=tiebreak)
-        result.extend(group_list)
-
-    return result[:k]
+def _usable(pat: Pattern, no_seeds: bool) -> bool:
+    """Whether a pattern may be shown to the translator."""
+    if pat.confidence == "contradicted":
+        return False
+    if no_seeds and pat.seed:
+        return False
+    # Tentative patterns need at least 2 genuine improvements (score > 0) before they
+    # are shown to Stage 2/3. Tie interactions (tracked in tie_count) do not count —
+    # they carry no positive signal. Seeds are always kept regardless of evidence count.
+    if pat.confidence == "tentative" and not pat.seed:
+        return sum(1 for e in pat.evidence if e.score > 0.0) >= 2
+    return True
 
 
 def entity_ast_shape_hash(entity: object) -> str:
@@ -130,3 +83,52 @@ def _token_overlap(a: str, b: str) -> float:
     if not toks_a or not toks_b:
         return 0.0
     return len(toks_a & toks_b) / len(toks_a | toks_b)
+
+
+def retrieve_corrections(
+    base_r_calls: list[str],
+    store: "PatternStore",
+    k: int = 1,
+    no_seeds: bool = False,
+) -> list[EditExample]:
+    """Verified wrong-then-corrected pairs for the base-R functions an entity calls.
+
+    Each correction is stored on the pattern of every base-R function it involves, so the
+    functions an entity calls are the (cross-package) key. Ranked by how many of the entity's
+    functions the correction involves, then by its score gain; a correction found under
+    several functions is returned once.
+    """
+    keys = set(correction_functions(base_r_calls))
+    found: dict[tuple, EditExample] = {}
+    for qualified in sorted(keys):
+        package, fn = qualified.split("::")
+        pat = store.get(pattern_id(package, fn))
+        if pat is None or not _usable(pat, no_seeds):
+            continue
+        for ex in pat.edit_examples:
+            found[(ex.script_id, ex.r_snippet, ex.new_code)] = ex
+    ranked = sorted(found.values(), key=lambda ex: (
+        -len(keys & set(ex.functions)), -ex.score_delta, ex.script_id, ex.r_snippet))
+    return ranked[:k]
+
+
+def retrieve_base_patterns(
+    entity: object,
+    store: "PatternStore",
+    no_seeds: bool = False,
+) -> list[Pattern]:
+    """Patterns for the base-R functions called anywhere inside an entity.
+
+    Base R is shared by every package, so each such pattern holds verified statements from any
+    script that used the function; its first example is the most focused one. The function
+    that keys the entity itself is left to ``retrieve``.
+    """
+    key = pattern_key(entity)
+    own_id = pattern_id(*key) if key else None
+    found: list[Pattern] = []
+    for qualified in correction_functions(getattr(entity, "base_r_calls", None) or []):
+        pid = pattern_id(*qualified.split("::"))
+        pat = store.get(pid) if pid != own_id else None
+        if pat is not None and pat.translation_examples and _usable(pat, no_seeds):
+            found.append(pat)
+    return found

@@ -247,10 +247,11 @@ def run_loop(
         _emit(progress, kind="done", score=best_decomp.aggregate, iteration=0)
         if checkpoint_path is not None and best_decomp.py_exit_code == 0:
             _delete_checkpoints(checkpoint_path, 0)
-        return _make_result(best_source, best_decomp, 0, score_history)
+        return _make_result(best_source, best_decomp, 0, score_history, best_source)
 
     # --- Escalate to reasoning agent --------------------------------------- #
     _emit(progress, kind="agent_start", iteration=0, score=best_decomp.aggregate)
+    seed_source = best_source
 
     # Static structural audit of best seed — feed findings to the agent.
     audit_feedback = ""
@@ -293,11 +294,11 @@ def run_loop(
     if checkpoint_path is not None and best_decomp.py_exit_code == 0:
         _delete_checkpoints(checkpoint_path, 0)
 
-    return _make_result(best_source, best_decomp, 1, score_history)
+    return _make_result(best_source, best_decomp, 1, score_history, seed_source)
 
 
 def _make_result(
-    source: str, decomp, iterations: int, score_history: list,
+    source: str, decomp, iterations: int, score_history: list, seed_source: str,
 ) -> TranslateResult:
     return TranslateResult(
         python_source=source,
@@ -306,6 +307,7 @@ def _make_result(
         score_history=score_history,
         final_exit_code=decomp.py_exit_code,
         final_score_report=decomp,
+        seed_source=seed_source,
     )
 
 

@@ -3,9 +3,11 @@
 Run the steps in order:
 
     python scripts/run_heldout.py select            # writes experiments/heldout/manifest.json
-    python scripts/run_heldout.py train             # builds empty/half/full library checkpoints
-    python scripts/run_heldout.py score             # scores held-out set at every checkpoint
+    python scripts/run_heldout.py check-llm         # one tiny request: does the provider pin resolve?
+    python scripts/run_heldout.py train             # builds the library, snapshotting every checkpoint
+    python scripts/run_heldout.py score --workers 3 # scores held-out set at every checkpoint (3 processes)
     python scripts/run_heldout.py analyze           # paired Wilcoxon + trend test
+    python scripts/run_heldout.py status            # progress of train/score (from another terminal too)
 
 Commit the manifest BEFORE running train/score. train and score are resumable.
 Score after training has finished (not before) so that the checkpoints are compared
@@ -31,6 +33,7 @@ WORKDIR = "work/heldout"
 
 
 def main() -> int:
+    sys.stdout.reconfigure(line_buffering=True)  # progress lines must appear at once, even in a log file
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--manifest", default=MANIFEST)
@@ -41,17 +44,27 @@ def main() -> int:
     p = sub.add_parser("select", help="draw the held-out and training sets")
     p.add_argument("--pool", default=ho.DEFAULT_POOL)
     p.add_argument("--n-heldout", type=int, default=ho.DEFAULT_PROTOCOL["n_heldout"])
-    p.add_argument("--n-train", type=int, default=ho.DEFAULT_PROTOCOL["n_train"])
+    p.add_argument("--per-package", type=int, default=ho.DEFAULT_PROTOCOL["per_package"],
+                   help="training scripts drawn per held-out package")
+    p.add_argument("--n-intervals", type=int, default=ho.DEFAULT_PROTOCOL["n_intervals"],
+                   help="checkpoints every 1/N of the training set")
     p.add_argument("--reps", type=int, default=ho.DEFAULT_PROTOCOL["reps"])
     p.add_argument("--seed", type=int, default=ho.DEFAULT_PROTOCOL["seed"])
     p.add_argument("--force", action="store_true", help="overwrite an existing manifest")
 
+    sub.add_parser("check-llm", help="send one request with the pinned LLM settings")
+
     sub.add_parser("train", help="build the library on the training set")
 
     p = sub.add_parser("score", help="score the held-out set at each checkpoint")
-    p.add_argument("--checkpoints", nargs="+", default=["empty", "half", "full"])
+    p.add_argument("--checkpoints", nargs="+", default=None,
+                   help="default: every checkpoint in the manifest")
+    p.add_argument("--workers", type=int, default=1,
+                   help="scoring processes run side by side (default: %(default)s)")
 
     sub.add_parser("analyze", help="run the pre-specified tests on scores.jsonl")
+
+    sub.add_parser("status", help="show training and scoring progress")
 
     args = parser.parse_args()
     manifest_path = ROOT / args.manifest
@@ -61,10 +74,13 @@ def main() -> int:
         if manifest_path.exists() and not args.force:
             print(f"{manifest_path} exists; refusing to overwrite (--force to override)")
             return 1
-        m = ho.select(args.pool, n_heldout=args.n_heldout, n_train=args.n_train,
-                      reps=args.reps, seed=args.seed)
+        m = ho.select(args.pool, n_heldout=args.n_heldout, per_package=args.per_package,
+                      n_intervals=args.n_intervals, reps=args.reps, seed=args.seed)
         ho.write_manifest(m, manifest_path)
-        print(f"pool={m['pool_size']}  held-out={len(m['heldout'])}  train={len(m['train'])}")
+        print(f"pool={m['pool_size']}  held-out={len(m['heldout'])}  train={len(m['train'])} "
+              f"from {len(m['train_packages'])} packages ({args.per_package} per package)")
+        if m["uncovered_packages"]:
+            print(f"  held-out packages with no spare script to train on: {m['uncovered_packages']}")
         for s, quota in m["stratum_quotas"].items():
             pkgs = sorted({e["package"] for e in m["heldout"] if e["stratum"] == s})
             print(f"  {s:<15} {quota:>2} scripts from {len(pkgs)} packages")
@@ -72,14 +88,18 @@ def main() -> int:
         return 0
 
     manifest = ho.load_manifest(manifest_path)
-    if args.cmd == "train":
+    if args.cmd == "check-llm":
+        ho.check_llm(manifest)
+    elif args.cmd == "train":
         ho.train(manifest, workdir)
     elif args.cmd == "score":
-        ho.score(manifest, workdir, args.checkpoints)
+        ho.score(manifest, workdir, args.checkpoints or list(manifest["checkpoints"]), workers=args.workers)
     elif args.cmd == "analyze":
-        result = ho.analyze(manifest, workdir / "scores.jsonl")
+        result = ho.analyze(manifest, workdir / "scores.jsonl", workdir / "checkpoints" / "full")
         (workdir / "analysis.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
-        print(ho.format_report(result))
+        print(ho.format_report(result, manifest))
+    elif args.cmd == "status":
+        print(ho.format_progress(ho.progress(manifest, workdir)))
     return 0
 
 

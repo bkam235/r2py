@@ -482,16 +482,20 @@ def _probe_function_metadata(
 ) -> None:
     """Probe formals(), methods(), and getAnywhere()$where for function-call entities.
 
-    Populates entity.function_metadata in place.  Degrades gracefully: on any
-    failure the entity keeps function_metadata=None.
+    Populates entity.function_metadata in place.  Also resolves the package of the function
+    called on the right-hand side of an assignment (entity.rhs_call_package) from the same
+    probe.  Degrades gracefully: on any failure the entity keeps function_metadata=None and
+    the assignment stays unresolved.
     """
     import json as _json
 
     targets: list[tuple[str, Entity]] = []
     for eid, entity in entities.items():
-        if entity.kind not in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL):
-            continue
-        targets.append((eid, entity))
+        is_call = entity.kind in (EntityKind.FUNCTION_CALL, EntityKind.EXTERNAL_SYMBOL)
+        is_unresolved_assignment = (entity.kind == EntityKind.VARIABLE
+                                    and entity.rhs_call_name and not entity.rhs_call_package)
+        if is_call or is_unresolved_assignment:
+            targets.append((eid, entity))
 
     if not targets:
         return
@@ -513,7 +517,7 @@ def _probe_function_metadata(
 
     seen_names: set[str] = set()
     for eid, entity in targets:
-        fn_name = entity.name
+        fn_name = _probed_name(entity)
         if fn_name in seen_names:
             continue
         seen_names.add(fn_name)
@@ -571,13 +575,31 @@ def _probe_function_metadata(
         # Find the function name for this eid and store by name.
         for target_eid, entity in targets:
             if target_eid == eid:
-                name_to_meta[entity.name] = fm
+                name_to_meta[_probed_name(entity)] = fm
                 break
 
     # Assign to all matching entities (multiple call sites for the same function).
     for eid, entity in targets:
-        if entity.name in name_to_meta:
-            entity.function_metadata = name_to_meta[entity.name]
+        fm = name_to_meta.get(_probed_name(entity))
+        if fm is None:
+            continue
+        if entity.kind == EntityKind.VARIABLE:
+            entity.rhs_call_package = _first_attached_package(fm.where)
+        else:
+            entity.function_metadata = fm
+
+
+def _probed_name(entity: Entity) -> str:
+    """The function name to probe: the entity's own for a call, its right-hand call for an assignment."""
+    return entity.rhs_call_name if entity.kind == EntityKind.VARIABLE else entity.name
+
+
+def _first_attached_package(where: list[str]) -> str | None:
+    """The first "package:X" of a getAnywhere()$where result, as "X"."""
+    for w in where or []:
+        if w.startswith("package:"):
+            return w[len("package:"):]
+    return None
 
 
 def _backfill_package_from_metadata(entities: dict[str, Entity]) -> None:
@@ -594,10 +616,7 @@ def _backfill_package_from_metadata(entities: dict[str, Entity]) -> None:
         fm = entity.function_metadata
         if fm is None or not fm.where:
             continue
-        for w in fm.where:
-            if w.startswith("package:"):
-                entity.package = w[len("package:"):]
-                break
+        entity.package = _first_attached_package(fm.where)
 
 
 def _merge_dynamic_effects(

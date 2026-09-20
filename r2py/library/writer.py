@@ -9,7 +9,8 @@ from datetime import date
 from typing import TYPE_CHECKING
 
 from .pattern import (
-    EditExample, EvidenceEntry, Pattern, TranslationExample, r_snippet_hash,
+    EditExample, EvidenceEntry, MAX_PY_SNIPPET, MAX_R_SNIPPET, Pattern, TranslationExample,
+    clip_snippet, r_snippet_hash,
 )
 from ..types import Edit
 
@@ -64,8 +65,8 @@ def record_evidence(
         if r_snippet and py_snippet:
             _add_translation_example(pat, TranslationExample(
                 r_hash=r_snippet_hash(r_snippet),
-                r_snippet=r_snippet[:300],
-                py_snippet=py_snippet[:600],
+                r_snippet=clip_snippet(r_snippet, MAX_R_SNIPPET),
+                py_snippet=clip_snippet(py_snippet, MAX_PY_SNIPPET),
                 score=max(0.0, score_delta),
                 script_id=script_id,
             ))
@@ -196,20 +197,31 @@ def _run_epistemology(store: "PatternStore", index: "PatternIndex") -> None:
 
 
 def _add_translation_example(pat: Pattern, ex: "TranslationExample") -> None:
-    """Add a TranslationExample to pat, deduplicating by r_hash and capping at 3."""
+    """Add a TranslationExample to pat, deduplicating by r_hash and keeping the best 3.
+
+    Best means most focused (fewest base-R calls in the statement), then highest score.
+    Prompts show the first, so an example dominated by other functions never displaces one
+    that is about the function itself.
+    """
     for i, e in enumerate(pat.translation_examples):
         if e.r_hash == ex.r_hash:
             if ex.score > e.score:
                 pat.translation_examples[i] = ex
             return
     pat.translation_examples.append(ex)
-    pat.translation_examples.sort(key=lambda e: -e.score)
+    pat.translation_examples.sort(key=lambda e: (e.n_calls, -e.score))
     pat.translation_examples = pat.translation_examples[:3]
 
 
 
 def _add_edit_example(pat: Pattern, ex: "EditExample") -> None:
-    """Add an EditExample to pat, capping at 5 per failure_class (highest delta kept)."""
+    """Add an EditExample to pat, capping at 5 per failure_class (highest delta kept).
+
+    The same correction (same script, statement and corrected code) is stored once.
+    """
+    if any((e.script_id, e.r_snippet, e.new_code) == (ex.script_id, ex.r_snippet, ex.new_code)
+           for e in pat.edit_examples):
+        return
     same = [e for e in pat.edit_examples if e.failure_class == ex.failure_class]
     other = [e for e in pat.edit_examples if e.failure_class != ex.failure_class]
     same.append(ex)

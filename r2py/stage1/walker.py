@@ -1,8 +1,11 @@
 """Depth-first AST walker: entity classification + §3.7 R-semantic annotations."""
 from __future__ import annotations
 
+import json
 import keyword as _keyword
+import re
 from collections import defaultdict
+from pathlib import Path
 
 from ..types import EntityId, EntityKind, EffectClass
 from .coverage import CoverageTracker
@@ -500,6 +503,60 @@ _R_VECTOR_CONSTRUCTORS = frozenset({
 # R parameter names.  Detected by Stage 1 so the translator can rename them.
 _PYTHON_KEYWORDS = frozenset(_keyword.kwlist) - {"True", "False", "None"}
 
+# Functions exported by the packages R attaches by default, keyed by package
+# (scripts/gen_base_exports.py). A name exported by several packages belongs to the first.
+_BASE_EXPORTS: dict[str, set[str]] = {
+    pkg: set(names)
+    for pkg, names in json.loads(
+        Path(__file__).with_name("base_exports.json").read_text(encoding="utf-8")
+    )["packages"].items()
+}
+_BASE_PACKAGE_OF: dict[str, str] = {}
+for _pkg, _names in _BASE_EXPORTS.items():
+    for _name in sorted(_names):
+        _BASE_PACKAGE_OF.setdefault(_name, _pkg)
+
+# Calls that only load code or are syntax: they say nothing about what an entity does.
+_NOT_BEHAVIOURAL_CALLS = frozenset({
+    "library", "require", "requireNamespace", "loadNamespace",
+    "suppressPackageStartupMessages", "return",
+})
+
+_CALLEE = re.compile(r"^(?:([A-Za-z.][A-Za-z0-9._]*)::)?([A-Za-z.][A-Za-z0-9._]*)$")
+
+
+def _callee(node: AstNode) -> tuple[str | None, str] | None:
+    """(qualifier, name) of a call node calling a plain or ``pkg::``-qualified function.
+
+    None for anything else (``x$f()``, ``(function() 1)()``, ...) and for calls that only
+    load code or are syntax (``library()``, ``return()``).
+    """
+    fn_node = node.child_by_field("function")
+    if fn_node is None:
+        return None
+    m = _CALLEE.match(fn_node.text.strip())
+    if not m or m.group(2) in _NOT_BEHAVIOURAL_CALLS:
+        return None
+    return m.group(1), m.group(2)
+
+
+def _base_r_call(node: AstNode, defined: set[str]) -> str | None:
+    """"<package>::<name>" if this call node calls a base-R function, else None.
+
+    ``pkg::fn`` counts only when pkg is a base package; a plain name only when the script has
+    not defined a function of that name itself.
+    """
+    callee = _callee(node)
+    if callee is None:
+        return None
+    qualifier, name = callee
+    if qualifier:
+        return f"{qualifier}::{name}" if name in _BASE_EXPORTS.get(qualifier, ()) else None
+    if name in defined:
+        return None
+    pkg = _BASE_PACKAGE_OF.get(name)
+    return f"{pkg}::{name}" if pkg else None
+
 
 def _annotate_r_semantics(entities: dict[EntityId, Entity], ast_root: AstNode) -> None:
     """Scan AST and attach §3.7 semantic flags to relevant entities.
@@ -518,8 +575,25 @@ def _annotate_r_semantics(entities: dict[EntityId, Entity], ast_root: AstNode) -
         for line in range(sp.start_line, sp.end_line + 1):
             entities_by_line[line].append(entity)
 
+    defined = {e.name for e in entities.values() if e.kind == EntityKind.FUNCTION_DEF}
+
     for node in all_nodes:
         kind = node.kind
+
+        # Base-R functions called anywhere inside an entity (nested calls included).
+        if kind == "call":
+            qualified = _base_r_call(node, defined)
+            if qualified:
+                _attach_base_call(node, entities_by_line, qualified)
+
+        # `x <- f(...)`: the assignment has no package; f keys its pattern.
+        if kind == "binary_operator":
+            op = _find_op(node)
+            rhs_node = node.child_by_field("rhs")
+            if op and op.text in {"<-", "=", "<<-"} and rhs_node is not None and rhs_node.kind == "call":
+                callee = _callee(rhs_node)
+                if callee is not None:
+                    _set_rhs_call(node, callee, entities_by_line, defined)
 
         # 1-based indexing: subscript `[` calls
         if kind == "subset" or (kind == "call" and node.text.startswith("[")):
@@ -619,6 +693,35 @@ def _annotate_r_semantics(entities: dict[EntityId, Entity], ast_root: AstNode) -
                 # Flag with a per-keyword tag so the prompt can be specific.
                 _flag_enclosing(node, entities_by_line,
                                 f"python_keyword_arg:{name_node.text}")
+
+
+def _set_rhs_call(
+    node: AstNode,
+    callee: tuple[str | None, str],
+    entities_by_line: dict[int, list[Entity]],
+    defined: set[str],
+) -> None:
+    """Record the right-hand call on the variable entity that this assignment defines."""
+    qualifier, name = callee
+    if not qualifier and name in defined:
+        return  # a function the script defines itself: no library pattern can key it
+    package = qualifier or _BASE_PACKAGE_OF.get(name)  # else left for Stage 1's R probe
+    row, col = node.start
+    for entity in entities_by_line.get(row, []):
+        sp = entity.source_span
+        if entity.kind == EntityKind.VARIABLE and (sp.start_line, sp.start_col) == (row, col):
+            entity.rhs_call_name, entity.rhs_call_package = name, package
+
+
+def _attach_base_call(
+    node: AstNode,
+    entities_by_line: dict[int, list[Entity]],
+    qualified: str,
+) -> None:
+    """Record a base-R call on every entity whose span contains this node's row."""
+    for entity in entities_by_line.get(node.start[0], []):
+        if qualified not in entity.base_r_calls:
+            entity.base_r_calls.append(qualified)
 
 
 def _flag_enclosing(

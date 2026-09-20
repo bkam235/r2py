@@ -234,8 +234,8 @@ def format_patterns(patterns_by_entity: dict[str, list]) -> str:
             if pat.guidance:
                 parts.append(f"    Guidance: {pat.guidance[:300]}")
             for ex in pat.translation_examples[:2]:
-                parts.append(f"    Example R:  {ex.r_snippet[:200]}")
-                parts.append(f"    Example Py: {ex.py_snippet[:300]}")
+                parts.append(f"    Example R:  {ex.r_snippet}")
+                parts.append(f"    Example Py: {ex.py_snippet}")
     return "\n".join(parts) if parts else "(no patterns matched)"
 
 

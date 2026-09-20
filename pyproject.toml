@@ -27,3 +27,6 @@ r2py = "r2py.cli:main"
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["r2py*"]
+
+[tool.setuptools.package-data]
+r2py = ["stage1/base_exports.json"]

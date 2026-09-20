@@ -1,27 +1,39 @@
 """Held-out experiment: does a trained Pattern Library help on unseen scripts?
 
-Protocol (steps 1-6):
+Protocol:
 
-1. ``select``  — fix a stratified held-out set (never used to train the library)
-   plus an ordered training set, and write both to a manifest with content hashes.
-2. ``train``   — build the library from empty on the training set only, snapshotting
-   it at the ``empty`` / ``half`` / ``full`` checkpoints.
-3. ``score``   — score every held-out script under every checkpoint, ``reps`` times.
-   Each run gets a throwaway copy of the checkpoint, so held-out scripts can never
-   teach the library (or each other).
-4. ``analyze`` — pair by script, average over reps, one-sided Wilcoxon signed-rank on
-   (full - empty); Page's trend test over empty < half < full is secondary.
+1. ``select``  — fix a stratified held-out set (never used to train the library) and an
+   ordered training set drawn from the packages the held-out set contains, and write both to
+   a manifest with content hashes.
+2. ``train``   — build the library from empty on the training set only, snapshotting it at
+   evenly spaced checkpoints (``empty``, ``f1of8`` ... ``full``).
+3. ``score``   — score every held-out script under every checkpoint, ``reps`` times, in a
+   randomised order. Each run gets a throwaway copy of the checkpoint, so held-out scripts
+   can never teach the library (or each other).
+4. ``analyze`` — pair by script and average over reps. PRIMARY: one-sided Wilcoxon
+   signed-rank on (full - empty) of the mean score over the targetable entities, i.e. those
+   the full library could tell the translator something about. The whole-script aggregate is
+   secondary; a trend test across all checkpoints goes with each.
+
+``status`` reports progress from the result files; train and score print it after every run.
 """
 from __future__ import annotations
 
 import hashlib
 import json
 import math
+import multiprocessing
+import os
 import random
 import shutil
+import sys
 import tempfile
+import time
+from collections import Counter
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
+from types import SimpleNamespace
 
 ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_POOL = "work/inputs/harvested"
@@ -59,7 +71,8 @@ _STRATUM_OF_PACKAGE = {pkg: s for s, pkgs in STRATA.items() for pkg in pkgs}
 DEFAULT_PROTOCOL = {
     "seed": 20260919,
     "n_heldout": 60,
-    "n_train": 227,
+    "per_package": 6,  # training scripts drawn per held-out package (fewer if it has fewer spare)
+    "n_intervals": 4,  # checkpoints at every 1/4 of the training set (5 including empty)
     "reps": 3,
     # Mirrors the settings in scripts/translate.py.
     "translate": {
@@ -74,12 +87,25 @@ DEFAULT_PROTOCOL = {
     },
     "primary_test": {
         "name": "wilcoxon_signed_rank",
+        # Primary: mean score over the entities the trained library could tell the translator
+        # something about (see analyze); the whole-script aggregate is secondary.
+        "endpoint": "targetable_entity_mean",
         "before": "empty",
         "after": "full",
         "alternative": "greater",
         "alpha": 0.05,
         "zero_method": "wilcox",
     },
+}
+
+# Forced onto every OpenRouter request, in training and scoring alike (see pinned_llm).
+# temperature 1.0 is OpenRouter's documented default, i.e. what unpinned runs already used.
+# The provider pin fixes the weights/quantisation (and provider-side defaults such as top_p)
+# behind the model string, which otherwise routes across ~12 providers.
+LLM_SETTINGS = {
+    "temperature": 1.0,
+    "provider": {"only": ["novita/bf16"], "allow_fallbacks": False},
+    "request_timeout_s": 300,  # a stalled request fails (and is retried by the harness), not hangs
 }
 
 
@@ -96,11 +122,16 @@ def _sha256(path: Path) -> str:
 
 
 def harness_hash() -> str:
-    """Hash of all r2py source, so a mid-experiment code change is detectable."""
+    """Hash of the translation harness (r2py source except this module and the bundled
+    R environment), so a mid-experiment change to it is detectable. Line endings are
+    normalised so the value is the same for a Windows checkout and for the git blobs."""
     h = hashlib.sha256()
-    for p in sorted((ROOT / "r2py").rglob("*.py")):
-        h.update(p.relative_to(ROOT).as_posix().encode())
-        h.update(p.read_bytes())
+    files = {p.relative_to(ROOT).as_posix(): p for p in (ROOT / "r2py").rglob("*.py")}
+    for rel in sorted(files):
+        if rel == "r2py/heldout.py" or rel.startswith("r2py/stage0/r_env/"):
+            continue
+        h.update(rel.encode())
+        h.update(files[rel].read_bytes().replace(b"\r\n", b"\n"))
     return h.hexdigest()[:12]
 
 
@@ -121,11 +152,18 @@ def select(
     pool_dir: str | Path = DEFAULT_POOL,
     *,
     n_heldout: int = DEFAULT_PROTOCOL["n_heldout"],
-    n_train: int = DEFAULT_PROTOCOL["n_train"],
+    per_package: int = DEFAULT_PROTOCOL["per_package"],
+    n_intervals: int = DEFAULT_PROTOCOL["n_intervals"],
     reps: int = DEFAULT_PROTOCOL["reps"],
     seed: int = DEFAULT_PROTOCOL["seed"],
 ) -> dict:
-    """Draw the held-out and training sets from pool_dir and return the manifest."""
+    """Draw the held-out and training sets from pool_dir and return the manifest.
+
+    The held-out set is stratified by domain and spread across packages. The training set
+    comes only from packages that appear in the held-out set: up to ``per_package`` scripts
+    of each, drawn at random and interleaved package by package, so every checkpoint holds a
+    proportional share of every package.
+    """
     pool_path = Path(pool_dir)
     if not pool_path.is_absolute():
         pool_path = ROOT / pool_path
@@ -147,25 +185,53 @@ def select(
         heldout += _draw_spread(rng, by_stratum[stratum], quota)
 
     remaining = sorted(set(pool) - set(heldout))
-    if len(remaining) < n_train:
-        raise ValueError(f"only {len(remaining)} scripts left for training, need {n_train}")
-    train = rng.sample(remaining, n_train)
+    held_packages = sorted({package_of(n) for n in heldout})
+    spare = {p: [n for n in remaining if package_of(n) == p] for p in held_packages}
+    train_rng = random.Random(f"{seed}:train")  # independent of the held-out draw above
+    queues = {p: train_rng.sample(v, min(per_package, len(v))) for p, v in spare.items() if v}
+    train = _interleave(train_rng, queues)
+    if len(train) < n_intervals:
+        raise ValueError(f"{len(train)} training scripts is too few for {n_intervals} checkpoint intervals")
 
     def entry(name: str) -> dict:
         return {"script": name, "package": package_of(name),
                 "stratum": stratum_of(name), "sha256": _sha256(pool_path / name)}
 
-    protocol = {**DEFAULT_PROTOCOL, "seed": seed, "n_heldout": n_heldout,
-                "n_train": n_train, "reps": reps}
+    protocol = {**DEFAULT_PROTOCOL, "seed": seed, "n_heldout": n_heldout, "per_package": per_package,
+                "n_train": len(train), "n_intervals": n_intervals, "reps": reps}
     return {
         "protocol": protocol,
         "pool_dir": str(pool_dir),
         "pool_size": len(pool),
-        "checkpoints": {"empty": 0, "half": n_train // 2, "full": n_train},
+        "checkpoints": _checkpoints(len(train), n_intervals),
         "stratum_quotas": quotas,
+        "train_packages": {p: len(q) for p, q in sorted(queues.items())},
+        "uncovered_packages": [p for p in held_packages if not spare[p]],  # no spare script to train on
         "heldout": [entry(n) for n in heldout],
         "train": [entry(n) for n in train],
     }
+
+
+def _interleave(rng: random.Random, queues: dict[str, list[str]]) -> list[str]:
+    """Round-robin over packages (order reshuffled each round): any prefix of the result
+    holds a proportional share of every package."""
+    order: list[str] = []
+    for r in range(max((len(q) for q in queues.values()), default=0)):
+        pkgs = sorted(p for p, q in queues.items() if r < len(q))
+        rng.shuffle(pkgs)
+        order += [queues[p][r] for p in pkgs]
+    return order
+
+
+def _checkpoints(n_train: int, k: int) -> dict[str, int]:
+    """Ordered {name: number of training scripts seen}: empty, k-1 evenly spaced, full."""
+    def name(i: int) -> str:
+        return "half" if 2 * i == k else f"f{i}of{k}"
+
+    cps = {"empty": 0}
+    cps.update({name(i): (n_train * i + k // 2) // k for i in range(1, k)})
+    cps["full"] = n_train
+    return cps
 
 
 def _draw_spread(rng: random.Random, by_pkg: dict[str, list[str]], k: int) -> list[str]:
@@ -213,19 +279,55 @@ def verify_inputs(manifest: dict, entries: list[dict]) -> None:
 # One translation — same path as r2py.translate(), minus its library side effects
 # ---------------------------------------------------------------------------
 
+def entity_score(es) -> float:
+    """An entity's score as the verifier averages it: its active dimensions, 0 if it did not run."""
+    if not es.executed_ok:
+        return 0.0
+    vals = [getattr(es, d) for d in es.active_dims]
+    return sum(vals) / len(vals) if vals else 1.0
+
+
+def _entity_records(script_map, report) -> list[dict]:
+    """Per scored entity: how it scored, and what the library could say about it.
+
+    ``key`` is the id of the pattern keying the entity (its own call, or an assignment's
+    right-hand call) and ``calls`` the ids of the informative base-R functions inside it.
+    The analysis decides from these, and the trained library alone, which entities the
+    translator could have been told something about.
+    """
+    from r2py.library.pattern import correction_functions, pattern_id, pattern_key
+    from r2py.types import EntityKind
+
+    records = []
+    for eid, entity in script_map.entities.items():
+        es = report.by_entity.get(eid) if report is not None else None
+        if es is None or entity.kind == EntityKind.LIBRARY_IMPORT:
+            continue
+        key = pattern_key(entity)
+        records.append({
+            "id": eid, "name": entity.name,
+            "key": pattern_id(*key) if key else None,
+            "calls": [pattern_id(*q.split("::")) for q in correction_functions(entity.base_r_calls)],
+            "score": entity_score(es),
+        })
+    return records
+
+
 def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool):
     """analyze -> run_loop, then (only if learn) seed the library.
 
-    r2py.translate() also seeds unconditionally, git-commits the library, and appends
-    to run_history.jsonl; none of that belongs in an experiment.
+    Returns (result, per-entity records). r2py.translate() also seeds unconditionally,
+    git-commits the library, and appends to run_history.jsonl; none of that belongs in an
+    experiment.
     """
     from r2py import seed_from_translation
     from r2py.loop import run_loop
     from r2py.stage1 import analyze
 
     py_path.parent.mkdir(parents=True, exist_ok=True)
+    script_map = analyze(r_path)
     result = run_loop(
-        analyze(r_path), lib,
+        script_map, lib,
         max_iters=cfg["max_iters"],
         score_threshold=cfg["score_threshold"],
         data_compare=cfg["data_compare"],
@@ -243,8 +345,10 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
             r_path, py_path, library=lib, script_id=r_path.stem,
             score_report=result.final_score_report,
             entity_score_threshold=cfg["score_threshold"],
+            seed_source=result.seed_source,
+            seed_score_report=result.score_history[0] if result.score_history else None,
         )
-    return result
+    return result, _entity_records(script_map, result.final_score_report)
 
 
 def _append_jsonl(path: Path, row: dict) -> None:
@@ -264,13 +368,110 @@ def _now() -> str:
 
 
 # ---------------------------------------------------------------------------
+# Fixed LLM settings — applied from outside so the frozen harness stays byte-identical
+# ---------------------------------------------------------------------------
+
+RATE_LIMIT_TRIES = 5     # 429s are waited out (5, 10, 20, 40 s) before the harness sees an error
+RATE_LIMIT_WAIT_S = 5.0
+
+
+class _PinnedClient:
+    """Proxy for an openai client that forces settings onto every chat request."""
+
+    def __init__(self, inner, settings: dict, served: Counter) -> None:
+        self._inner, self._settings, self._served = inner, settings, served
+        self.chat = SimpleNamespace(completions=SimpleNamespace(create=self._create))
+
+    def _create(self, **kw):
+        import openai
+
+        extra = dict(kw.pop("extra_body", None) or {})
+        extra["provider"] = self._settings["provider"]
+        kw["temperature"] = self._settings["temperature"]
+        kw.setdefault("timeout", self._settings["request_timeout_s"])
+        for attempt in range(RATE_LIMIT_TRIES):
+            try:
+                resp = self._inner.chat.completions.create(extra_body=extra, **kw)
+                break
+            except openai.RateLimitError:
+                if attempt == RATE_LIMIT_TRIES - 1:
+                    raise
+                time.sleep(RATE_LIMIT_WAIT_S * 2 ** attempt)  # parallel workers back off, not fail
+        self._served[getattr(resp, "provider", None)] += 1  # OpenRouter reports who answered
+        return resp
+
+
+@contextmanager
+def pinned_llm(model: str, settings: dict = LLM_SETTINGS):
+    """Force ``settings`` onto all OpenRouter requests the harness makes; yields a
+    Counter of the providers that actually served them.
+
+    Only OpenRouter models are supported: refusing anything else is deliberate, since
+    an unenforced setting would silently give an unfixed experiment.
+    """
+    import openai
+    from r2py.stage2 import llm
+
+    if not model.startswith("openrouter:"):
+        raise ValueError(f"cannot pin LLM settings for {model!r}: only openrouter: models are supported")
+    served: Counter = Counter()
+    real = openai.OpenAI
+    llm._openrouter_clients.clear()  # drop any unpinned client cached earlier in this process
+    openai.OpenAI = lambda *a, **kw: _PinnedClient(real(*a, **kw), settings, served)
+    try:
+        yield served
+    finally:
+        openai.OpenAI = real
+        llm._openrouter_clients.clear()
+
+
+def check_llm(manifest: dict, *, log=print) -> None:
+    """One tiny pinned request, to confirm the key works and the provider pin resolves."""
+    from r2py.stage2 import llm
+
+    model = manifest["protocol"]["translate"]["model"]
+    with pinned_llm(model) as served:
+        reply = llm.call([{"role": "user", "content": "Reply with the single word OK."}],
+                        "You are terse.", model=model, max_tokens=16)
+    log(f"reply={reply!r}  served by: {dict(served)}  settings: {LLM_SETTINGS}")
+
+
+# ---------------------------------------------------------------------------
+# Progress — printed after every run, and recomputable from the result files
+# ---------------------------------------------------------------------------
+
+MAX_ATTEMPTS = 2  # a run that errors is retried once, then recorded as failed
+
+
+def _fmt_duration(seconds: float) -> str:
+    h, rest = divmod(int(seconds), 3600)
+    m, s = divmod(rest, 60)
+    return f"{h}h{m:02d}m" if h else f"{m}m{s:02d}s"
+
+
+def _progress_line(phase: str, done: int, total: int, durations: list[float], workers: int = 1) -> str:
+    """e.g. "[train 12/268 4%] last 3m10s | avg 5m02s | active 1h01m | ETA 21h30m".
+
+    ETA counts run time only (pauses between sessions are not part of it). With several
+    workers, avg is still the time of one run, while active time and ETA are wall-clock.
+    """
+    avg = sum(durations) / len(durations) if durations else 0.0
+    last = durations[-1] if durations else 0.0
+    return (f"[{phase} {done}/{total} {100 * done / total if total else 100:.0f}%] last {_fmt_duration(last)}"
+            f" | avg {_fmt_duration(avg)} | active {_fmt_duration(sum(durations) / workers)}"
+            f" | ETA {_fmt_duration(avg * (total - done) / workers)}")
+
+
+# ---------------------------------------------------------------------------
 # Step 2 — train
 # ---------------------------------------------------------------------------
 
 def train(manifest: dict, workdir: str | Path, *, log=print) -> None:
     """Build the library from empty on the training set, snapshotting each checkpoint.
 
-    Resumable: scripts already recorded in train_progress.jsonl are skipped.
+    Resumable: a script is finished once it has a successful row in train_progress.jsonl, or
+    MAX_ATTEMPTS failed ones. A failing script is retried at once, so the checkpoints stay
+    a clean prefix of the training order.
     """
     from r2py.library import PatternLibrary
 
@@ -280,94 +481,232 @@ def train(manifest: dict, workdir: str | Path, *, log=print) -> None:
     pool = _pool_path(manifest)
     ckpt_dir = workdir / "checkpoints"
     progress_path = workdir / "train_progress.jsonl"
-    done = {r["script"] for r in _read_jsonl(progress_path)}
+    rows = _read_jsonl(progress_path)
+    attempts = Counter(r["script"] for r in rows)
+    ok = {r["script"] for r in rows if "error" not in r}
+    durations = [r["seconds"] for r in rows if "seconds" in r]
 
+    def finished(script: str) -> bool:
+        return script in ok or attempts[script] >= MAX_ATTEMPTS
+
+    total = len(manifest["train"])
+    n_done = sum(1 for e in manifest["train"] if finished(e["script"]))
     counts = {n: c for n, c in manifest["checkpoints"].items() if c > 0}
     if not (ckpt_dir / "empty").exists():
-        if done:
+        if rows:
             raise RuntimeError("training already started but the empty checkpoint is missing")
         PatternLibrary(ckpt_dir / "empty")  # creates the empty store + index
 
     lib = PatternLibrary(workdir / "lib_live")
-    for i, e in enumerate(manifest["train"], start=1):
-        if e["script"] not in done:
-            log(f"[train {i}/{len(manifest['train'])}] {e['script']}")
-            row = {"script": e["script"], "index": i, "timestamp": _now()}
-            try:
-                r = _translate_once(pool / e["script"],
-                                    workdir / "train_outputs" / (Path(e["script"]).stem + ".py"),
-                                    lib, cfg, learn=True)
-                row.update(score=r.final_score, patterns=len(lib.index.all_ids()))
-            except Exception as exc:
-                row["error"] = f"{type(exc).__name__}: {exc}"
-                log(f"  ERROR: {row['error']}")
-            _append_jsonl(progress_path, row)
-        for name, count in counts.items():
-            if i == count and not (ckpt_dir / name).exists():
-                shutil.copytree(workdir / "lib_live", ckpt_dir / name)
-                log(f"checkpoint {name!r} at {i} scripts ({len(lib.index.all_ids())} patterns)")
+    log(f"train: {n_done}/{total} already finished, {total - n_done} to go")
+    with pinned_llm(cfg["model"]) as served:
+        for i, e in enumerate(manifest["train"], start=1):
+            script = e["script"]
+            while not finished(script):
+                log(f"[train {i}/{total}] starting {script} (attempt {attempts[script] + 1})")
+                row = {"script": script, "index": i, "attempt": attempts[script] + 1,
+                       "timestamp": _now(), "llm": LLM_SETTINGS}
+                started = time.monotonic()
+                try:
+                    r, _ = _translate_once(pool / script,
+                                           workdir / "train_outputs" / (Path(script).stem + ".py"),
+                                           lib, cfg, learn=True)
+                    row.update(score=r.final_score, patterns=len(lib.index.all_ids()))
+                except Exception as exc:
+                    row["error"] = f"{type(exc).__name__}: {exc}"
+                    log(f"  ERROR: {row['error']}")
+                row["seconds"] = round(time.monotonic() - started, 1)
+                _append_jsonl(progress_path, row)
+                attempts[script] += 1
+                durations.append(row["seconds"])
+                if "error" not in row:
+                    ok.add(script)
+                if finished(script):
+                    n_done += 1
+                    result = (f"score {row['score']:.3f}, {row['patterns']} patterns"
+                              if "error" not in row else "FAILED after retries")
+                    log(_progress_line("train", n_done, total, durations) + f" | {script}: {result}")
+            for name, count in counts.items():
+                if i == count and not (ckpt_dir / name).exists():
+                    shutil.copytree(workdir / "lib_live", ckpt_dir / name)
+                    log(f"checkpoint {name!r} at {i} scripts ({len(lib.index.all_ids())} patterns)")
+    log(f"providers that served this session: {dict(served)}")
 
 
 # ---------------------------------------------------------------------------
 # Step 3 — score (with repetitions)
 # ---------------------------------------------------------------------------
 
+def score_order(manifest: dict, checkpoints: list[str], rep: int) -> list[tuple[dict, str]]:
+    """Randomised run order for one rep: scripts shuffled, and each script's checkpoints
+    shuffled, so a script's paired runs stay adjacent in time but no checkpoint is
+    systematically first. Seeded from the protocol seed, so it is reproducible and a
+    resumed run continues the same sequence."""
+    rng = random.Random(f"{manifest['protocol']['seed']}:score:{rep}")
+    order: list[tuple[dict, str]] = []
+    for e in rng.sample(manifest["heldout"], len(manifest["heldout"])):
+        order += [(e, cp) for cp in rng.sample(checkpoints, len(checkpoints))]
+    return order
+
+
+def read_scores(scores_path: str | Path) -> list[dict]:
+    """Rows of scores.jsonl plus those of the per-worker files (scores.w<i>.jsonl) beside it."""
+    scores_path = Path(scores_path)
+    rows = _read_jsonl(scores_path)
+    for extra in sorted(scores_path.parent.glob(scores_path.stem + ".w*" + scores_path.suffix)):
+        rows += _read_jsonl(extra)
+    return rows
+
+
+def _claim(claims: Path, rep: int, cp: str, script: str) -> bool:
+    """Take a run for this worker; exactly one process can succeed for a given run."""
+    try:
+        os.close(os.open(claims / f"{rep}__{cp}__{script}", os.O_CREAT | os.O_EXCL | os.O_WRONLY))
+        return True
+    except FileExistsError:
+        return False
+
+
+def _score_loop(manifest: dict, workdir: Path, checkpoints: list[str], *, out: Path,
+                claims: Path | None, worker: int | None, workers: int, log) -> None:
+    """Score runs in randomised order (see score_order), appending rows to ``out``.
+
+    With ``claims`` set, several such loops share the work: each takes the next unclaimed
+    run, so the order is the same and the runs are simply spread over the workers."""
+    from r2py.library import PatternLibrary
+
+    cfg = manifest["protocol"]["translate"]
+    pool = _pool_path(manifest)
+    scores_path = workdir / "scores.jsonl"
+    total = manifest["protocol"]["reps"] * len(manifest["heldout"]) * len(checkpoints)
+    lib_hashes = {cp: library_hash(workdir / "checkpoints" / cp) for cp in checkpoints}
+    hh = harness_hash()
+
+    def tally() -> tuple[set, list[float], dict[str, list[float]]]:
+        rows = read_scores(scores_path)
+        running: dict[str, list[float]] = {}
+        for r in rows:
+            if "score" in r and r["checkpoint"] in checkpoints:
+                running.setdefault(r["checkpoint"], []).append(r["score"])
+        return ({(r["checkpoint"], r["script"], r["rep"]) for r in rows},
+                [r["seconds"] for r in rows if "seconds" in r], running)
+
+    done, durations, _ = tally()
+    n_done = sum(1 for d in done if d[0] in checkpoints)
+    if worker is None:
+        log(f"score: {n_done}/{total} already done, {total - n_done} to go")
+
+    with pinned_llm(cfg["model"]) as served:
+        for rep in range(manifest["protocol"]["reps"]):
+            for e, cp in score_order(manifest, checkpoints, rep):
+                if (cp, e["script"], rep) in done:
+                    continue
+                if claims is not None and not _claim(claims, rep, cp, e["script"]):
+                    continue
+                log(f"[score rep{rep}] starting {cp} | {e['script']}")
+                row = {"checkpoint": cp, "script": e["script"], "rep": rep,
+                       "order_seed": f"{manifest['protocol']['seed']}:score:{rep}",
+                       "library_hash": lib_hashes[cp], "harness_hash": hh,
+                       "model": cfg["model"], "llm": LLM_SETTINGS, "timestamp": _now()}
+                if worker is not None:
+                    row["worker"] = worker
+                started = time.monotonic()
+                for attempt in range(1, MAX_ATTEMPTS + 1):
+                    row.pop("error", None)
+                    # Fresh copy per run: whatever the loop writes is discarded.
+                    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+                        shutil.copytree(workdir / "checkpoints" / cp, Path(tmp) / "lib")
+                        try:
+                            r, entities = _translate_once(
+                                pool / e["script"],
+                                workdir / "outputs" / cp / f"rep{rep}" / (Path(e["script"]).stem + ".py"),
+                                PatternLibrary(Path(tmp) / "lib"), cfg, learn=False)
+                            report = r.final_score_report
+                            row.update(
+                                score=r.final_score, iterations=r.iterations,
+                                exit_code=r.final_exit_code,
+                                infra_crash=bool(report.infra_crash) if report else False,
+                                by_effect={ec.value: s for ec, s in report.by_effect.items()}
+                                if report else {},
+                                entities=entities)
+                            break
+                        except Exception as exc:
+                            row["error"] = f"{type(exc).__name__}: {exc}"
+                            log(f"  ERROR (attempt {attempt}/{MAX_ATTEMPTS}): {row['error']}")
+                row["attempts"] = attempt
+                row["seconds"] = round(time.monotonic() - started, 1)
+                _append_jsonl(out, row)
+                done, durations, running = tally()  # includes the other workers' runs
+                n_done = sum(1 for d in done if d[0] in checkpoints)
+                result = f"{row['score']:.3f}" if "score" in row else "FAILED after retries"
+                log(_progress_line("score", n_done, total, durations, workers)
+                    + f" | {cp} {e['script']} rep{rep}: {result}")
+                if n_done % 20 == 0:
+                    log("  running means: " + "  ".join(
+                        f"{c} {sum(v) / len(v):.3f} (n={len(v)})" for c, v in running.items()))
+    who = "this session" if worker is None else f"worker {worker}"
+    log(f"providers that served {who}: {dict(served)}")
+
+
+def _score_worker(manifest: dict, workdir: str, checkpoints: list[str], worker: int, workers: int) -> None:
+    """Entry point of one scoring process (must be importable for multiprocessing 'spawn')."""
+    sys.stdout.reconfigure(line_buffering=True)
+    workdir = Path(workdir)
+    _score_loop(manifest, workdir, checkpoints, out=workdir / f"scores.w{worker}.jsonl",
+                claims=workdir / "claims", worker=worker, workers=workers,
+                log=lambda msg: print(f"[w{worker}] {msg}"))
+
+
 def score(
     manifest: dict,
     workdir: str | Path,
     checkpoints: list[str],
     *,
+    workers: int = 1,
     log=print,
 ) -> None:
     """Score each held-out script under each checkpoint, ``reps`` times.
 
-    Order is rep -> script -> checkpoint so a script's paired runs are adjacent in
-    time; model drift between weeks then cannot masquerade as a library effect.
-    Resumable: (checkpoint, script, rep) triples already in scores.jsonl are skipped.
-    """
-    from r2py.library import PatternLibrary
+    Order is rep -> script -> checkpoint (each shuffled, see score_order) so a script's
+    paired runs are adjacent in time; model drift between weeks then cannot masquerade
+    as a library effect. Resumable: (checkpoint, script, rep) triples already in the score
+    files are skipped. A run that errors is retried once before its error row is written.
 
+    ``workers`` > 1 runs that many processes over the same order, each taking the next
+    unclaimed run and writing its own scores.w<i>.jsonl. Runs are independent of each other
+    (throwaway library copy, own temp dirs), so this changes only how long the experiment takes.
+    """
     workdir = Path(workdir)
     verify_inputs(manifest, manifest["heldout"])
-    cfg = manifest["protocol"]["translate"]
-    pool = _pool_path(manifest)
-    scores_path = workdir / "scores.jsonl"
-    done = {(r["checkpoint"], r["script"], r["rep"]) for r in _read_jsonl(scores_path)}
     lib_hashes = {}
     for cp in checkpoints:
         if not (workdir / "checkpoints" / cp).exists():
             raise FileNotFoundError(f"checkpoint {cp!r} not found — run train first")
         lib_hashes[cp] = library_hash(workdir / "checkpoints" / cp)
-    hh = harness_hash()
 
-    for rep in range(manifest["protocol"]["reps"]):
-        for e in manifest["heldout"]:
-            for cp in checkpoints:
-                if (cp, e["script"], rep) in done:
-                    continue
-                log(f"[score rep{rep}] {cp} | {e['script']}")
-                row = {"checkpoint": cp, "script": e["script"], "rep": rep,
-                       "library_hash": lib_hashes[cp], "harness_hash": hh,
-                       "model": cfg["model"], "timestamp": _now()}
-                # Fresh copy per run: whatever the loop writes is discarded.
-                with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
-                    shutil.copytree(workdir / "checkpoints" / cp, Path(tmp) / "lib")
-                    try:
-                        r = _translate_once(
-                            pool / e["script"],
-                            workdir / "outputs" / cp / f"rep{rep}" / (Path(e["script"]).stem + ".py"),
-                            PatternLibrary(Path(tmp) / "lib"), cfg, learn=False)
-                        report = r.final_score_report
-                        row.update(
-                            score=r.final_score, iterations=r.iterations,
-                            exit_code=r.final_exit_code,
-                            infra_crash=bool(report.infra_crash) if report else False,
-                            by_effect={ec.value: s for ec, s in report.by_effect.items()}
-                            if report else {})
-                    except Exception as exc:
-                        row["error"] = f"{type(exc).__name__}: {exc}"
-                        log(f"  ERROR: {row['error']}")
-                _append_jsonl(scores_path, row)
+    if workers <= 1:
+        _score_loop(manifest, workdir, checkpoints, out=workdir / "scores.jsonl",
+                    claims=None, worker=None, workers=1, log=log)
+    else:
+        claims = workdir / "claims"
+        shutil.rmtree(claims, ignore_errors=True)  # claims only mean something within one session
+        claims.mkdir(parents=True)
+        ctx = multiprocessing.get_context("spawn")
+        procs = [ctx.Process(target=_score_worker, args=(manifest, str(workdir), checkpoints, i, workers))
+                 for i in range(workers)]
+        log(f"score: {workers} workers")
+        try:
+            for p in procs:
+                p.start()
+            for p in procs:
+                p.join()
+        finally:
+            for p in procs:
+                if p.is_alive():
+                    p.terminate()
+        bad = [i for i, p in enumerate(procs) if p.exitcode != 0]
+        if bad:
+            raise RuntimeError(f"scoring workers {bad} exited abnormally; rerun to resume")
 
     # Guard: the snapshots must still be byte-identical to when scoring began.
     for cp, h in lib_hashes.items():
@@ -390,70 +729,168 @@ def per_script_means(rows: list[dict]) -> dict[str, dict[str, float]]:
     return {cp: {sc: sum(v) / len(v) for sc, v in d.items()} for cp, d in acc.items()}
 
 
-def analyze(manifest: dict, scores_path: str | Path) -> dict:
-    """Pre-specified primary test plus the secondary three-checkpoint trend test."""
+# The one statement every Rd example starts with: the model already gets it right, and it would
+# make nearly every script "targetable". Left out of every entity endpoint.
+BOILERPLATE_ENTITIES = frozenset({"suppressPackageStartupMessages"})
+
+
+def targetable_ids(library_dir: str | Path) -> set[str]:
+    """Ids of the patterns in a library that hold a verified translation example, i.e. what
+    the translator can be shown. Defined by the trained library alone, never by held-out scores."""
+    from r2py.library.store import PatternStore
+
+    return {pid for pid, p in PatternStore(Path(library_dir)).load_all().items() if p.translation_examples}
+
+
+def is_targetable(entity: dict, ids: set[str]) -> bool:
+    """Could the library have told the translator something about this entity? Its own
+    function has a pattern, or a base-R function it calls has one."""
+    return entity["key"] in ids or any(c in ids for c in entity["calls"])
+
+
+def _entity_means(rows: list[dict]) -> tuple[dict, dict]:
+    """({checkpoint: {script: {entity id: mean score over reps}}}, {script: {entity id: record}})."""
+    acc: dict = {}
+    meta: dict = {}
+    for r in rows:
+        for e in r.get("entities") or []:
+            if e["name"] in BOILERPLATE_ENTITIES:
+                continue
+            acc.setdefault(r["checkpoint"], {}).setdefault(r["script"], {}).setdefault(e["id"], []).append(e["score"])
+            meta.setdefault(r["script"], {})[e["id"]] = e
+    means = {cp: {s: {eid: sum(v) / len(v) for eid, v in ents.items()} for s, ents in d.items()}
+             for cp, d in acc.items()}
+    return means, meta
+
+
+def _endpoint(ent_means: dict, meta: dict, ids: set[str], checkpoints: list[str], *,
+              targetable: bool) -> dict[str, dict[str, float]]:
+    """{checkpoint: {script: mean entity score}} over the entities (targetable, or all the others)
+    that were scored under EVERY listed checkpoint, so each script is compared on the same entities."""
+    out: dict[str, dict[str, float]] = {cp: {} for cp in checkpoints}
+    if not checkpoints:
+        return out
+    for s in set.intersection(*(set(ent_means.get(cp, {})) for cp in checkpoints)):
+        eids = [e for e in set.intersection(*(set(ent_means[cp][s]) for cp in checkpoints))
+                if is_targetable(meta[s][e], ids) == targetable]
+        for cp in checkpoints:
+            if eids:
+                out[cp][s] = sum(ent_means[cp][s][e] for e in eids) / len(eids)
+    return out
+
+
+def _trend(means: dict[str, dict[str, float]], order: list[str]) -> dict | None:
+    """Page's trend test over the checkpoints in ``order``, script as the block; None if fewer than 3."""
+    from scipy import stats
+
+    order = [c for c in order if c in means]
+    if len(order) < 3:
+        return None
+    scripts = [s for s in means[order[0]] if all(s in means[c] for c in order)]
+    rows_k = [[means[c][s] for c in order] for s in scripts]
+    out = {
+        "checkpoints": order, "n": len(scripts),
+        "n_monotone_nondecreasing": sum(all(a <= b for a, b in zip(r, r[1:])) for r in rows_k),
+        "n_strictly_increasing": sum(all(a < b for a, b in zip(r, r[1:])) for r in rows_k),
+        "mean_by_checkpoint": {c: _mean([means[c][s] for s in scripts]) for c in order},
+    }
+    if len(scripts) > 1:
+        res = stats.page_trend_test(rows_k)
+        out.update(page_L=float(res.statistic), p_value=float(res.pvalue))
+    return out
+
+
+def _paired_stats(before: dict[str, float], after: dict[str, float], manifest: dict) -> dict:
+    """Paired one-sided Wilcoxon signed-rank on per-script (after - before), plus effect sizes."""
     from scipy import stats
 
     spec = manifest["protocol"]["primary_test"]
-    rows = _read_jsonl(Path(scores_path))
-    means = per_script_means(rows)
-    before, after = spec["before"], spec["after"]
     stratum = {e["script"]: e["stratum"] for e in manifest["heldout"]}
-    scripts = [e["script"] for e in manifest["heldout"]
-               if e["script"] in means.get(before, {}) and e["script"] in means.get(after, {})]
-    diffs = [means[after][s] - means[before][s] for s in scripts]
+    scripts = [e["script"] for e in manifest["heldout"] if e["script"] in before and e["script"] in after]
+    diffs = [after[s] - before[s] for s in scripts]
     n = len(diffs)
-
     out: dict = {
-        "n_heldout": len(manifest["heldout"]), "n_paired": n,
-        "n_excluded": len(manifest["heldout"]) - n,
-        "n_errored_runs": sum(1 for r in rows if "error" in r),
-        "n_infra_crash_runs": sum(1 for r in rows if r.get("infra_crash")),
-        "harness_hashes": sorted({r["harness_hash"] for r in rows}),
-        "mean_before": sum(means[before][s] for s in scripts) / n if n else None,
-        "mean_after": sum(means[after][s] for s in scripts) / n if n else None,
-        "mean_diff": sum(diffs) / n if n else None,
-        "median_diff": _median(diffs),
-        "n_improved": sum(d > 0 for d in diffs),
-        "n_worse": sum(d < 0 for d in diffs),
+        "n_paired": n,
+        "mean_before": _mean([before[s] for s in scripts]),
+        "mean_after": _mean([after[s] for s in scripts]),
+        "mean_diff": _mean(diffs), "median_diff": _median(diffs),
+        "n_improved": sum(d > 0 for d in diffs), "n_worse": sum(d < 0 for d in diffs),
         "n_tied": sum(d == 0 for d in diffs),
     }
     if n > 1:
-        mean = out["mean_diff"]
-        out["se_diff"] = math.sqrt(sum((d - mean) ** 2 for d in diffs) / (n - 1) / n)
-
-    out["primary"] = {**spec, "statistic": None, "p_value": None,
-                      "significant": None, "n_nonzero": sum(d != 0 for d in diffs)}
-    if out["primary"]["n_nonzero"] == 0:
-        out["primary"]["p_value"] = 1.0  # scipy refuses an all-zero difference vector
+        out["se_diff"] = math.sqrt(sum((d - out["mean_diff"]) ** 2 for d in diffs) / (n - 1) / n)
+    test = {"alternative": spec["alternative"], "zero_method": spec["zero_method"], "alpha": spec["alpha"],
+            "statistic": None, "p_value": None, "p_value_two_sided": None, "rank_biserial": None,
+            "significant": None, "n_nonzero": sum(d != 0 for d in diffs)}
+    if test["n_nonzero"] == 0:
+        test.update(p_value=1.0, p_value_two_sided=1.0)  # scipy refuses an all-zero difference vector
     elif n > 0:
-        res = stats.wilcoxon(diffs, alternative=spec["alternative"],
-                             zero_method=spec["zero_method"])
-        out["primary"].update(statistic=float(res.statistic), p_value=float(res.pvalue))
-    if out["primary"]["p_value"] is not None:
-        out["primary"]["significant"] = out["primary"]["p_value"] < spec["alpha"]
-
+        res = stats.wilcoxon(diffs, alternative=spec["alternative"], zero_method=spec["zero_method"])
+        two = stats.wilcoxon(diffs, alternative="two-sided", zero_method=spec["zero_method"])
+        test.update(statistic=float(res.statistic), p_value=float(res.pvalue),
+                    p_value_two_sided=float(two.pvalue), rank_biserial=_rank_biserial(diffs))
+    if test["p_value"] is not None:
+        test["significant"] = test["p_value"] < spec["alpha"]
+    out["test"] = test
     out["by_stratum"] = {
         s: {"n": len(d), "mean_diff": sum(d) / len(d)}
         for s in ALL_STRATA
         if (d := [x for sc, x in zip(scripts, diffs) if stratum[sc] == s])
     }
-
-    # Secondary (step 5): trend across empty < half < full, script as the block.
-    order = [c for c in ("empty", "half", "full") if c in means]
-    if len(order) == 3:
-        trio = [s for s in scripts if s in means["half"]]
-        rows3 = [[means[c][s] for c in order] for s in trio]
-        out["trend"] = {
-            "n": len(trio),
-            "n_monotone_nondecreasing": sum(r[0] <= r[1] <= r[2] for r in rows3),
-            "n_strictly_increasing": sum(r[0] < r[1] < r[2] for r in rows3),
-            "n_decreasing_somewhere": sum(r[0] > r[1] or r[1] > r[2] for r in rows3),
-        }
-        if len(trio) > 1:
-            res = stats.page_trend_test(rows3)
-            out["trend"].update(page_L=float(res.statistic), p_value=float(res.pvalue))
     return out
+
+
+def analyze(manifest: dict, scores_path: str | Path, library_dir: str | Path | None = None) -> dict:
+    """The pre-specified tests.
+
+    PRIMARY: mean score over the *targetable* entities (those the trained library at
+    ``library_dir`` could tell the translator something about), paired by script, full vs
+    empty. CONTROL: the same for all other entities. SECONDARY: the whole-script aggregate
+    score, the endpoint registered originally. Each also gets a trend test over all checkpoints.
+    """
+    spec = manifest["protocol"]["primary_test"]
+    before, after = spec["before"], spec["after"]
+    rows = read_scores(scores_path)
+    script_means = per_script_means(rows)
+    out: dict = {
+        "n_heldout": len(manifest["heldout"]),
+        "n_errored_runs": sum(1 for r in rows if "error" in r),
+        "n_infra_crash_runs": sum(1 for r in rows if r.get("infra_crash")),
+        "harness_hashes": sorted({r["harness_hash"] for r in rows}),
+        "llm_settings": sorted({json.dumps(r["llm"], sort_keys=True) for r in rows if "llm" in r}),
+        "script_aggregate": {
+            **_paired_stats(script_means.get(before, {}), script_means.get(after, {}), manifest),
+            "trend": _trend(script_means, list(manifest["checkpoints"])),
+        },
+        "primary": None, "control": None, "share_targetable": None,
+    }
+    if library_dir is None:
+        return out
+    ids = targetable_ids(library_dir)
+    ent_means, meta = _entity_means(rows)
+    pair = _endpoint(ent_means, meta, ids, [before, after], targetable=True)
+    rest = _endpoint(ent_means, meta, ids, [before, after], targetable=False)
+    order = [c for c in manifest["checkpoints"] if c in ent_means]
+    every = _endpoint(ent_means, meta, ids, order, targetable=True)
+    out["primary"] = {**_paired_stats(pair[before], pair[after], manifest), "trend": _trend(every, order)}
+    out["control"] = _paired_stats(rest[before], rest[after], manifest)
+    entities = [e for d in meta.values() for e in d.values()]
+    out["share_targetable"] = _mean([is_targetable(e, ids) for e in entities])
+    return out
+
+
+def _rank_biserial(diffs: list[float]) -> float:
+    """Matched-pairs rank-biserial correlation: (W+ - W-) / (W+ + W-), zero diffs dropped."""
+    from scipy.stats import rankdata
+
+    nz = [d for d in diffs if d != 0]
+    ranks = rankdata([abs(d) for d in nz])
+    pos = sum(r for r, d in zip(ranks, nz) if d > 0)
+    return (2 * pos - sum(ranks)) / sum(ranks)
+
+
+def _mean(xs: list[float]) -> float | None:
+    return sum(xs) / len(xs) if xs else None
 
 
 def _median(xs: list[float]) -> float | None:
@@ -464,34 +901,111 @@ def _median(xs: list[float]) -> float | None:
     return s[m] if len(s) % 2 else (s[m - 1] + s[m]) / 2
 
 
-def format_report(a: dict) -> str:
-    p = a["primary"]
+def _block(title: str, r: dict | None, spec: dict) -> list[str]:
+    if r is None:
+        return [f"{title}: not computed (needs the full-checkpoint library)"]
+    lines = [f"{title}: {r['n_paired']} paired scripts"]
+    if not r["n_paired"]:
+        return lines
+    t = r["test"]
+    lines += [
+        f"  mean {spec['before']} {r['mean_before']:.3f}  ->  {spec['after']} {r['mean_after']:.3f}   "
+        f"diff {r['mean_diff']:+.3f}" + (f" (SE {r['se_diff']:.3f})" if "se_diff" in r else "")
+        + f"   median {r['median_diff']:+.3f}",
+        f"  improved / tied / worse: {r['n_improved']} / {r['n_tied']} / {r['n_worse']}",
+    ]
+    if t["p_value"] is not None:
+        verdict = "significant" if t["significant"] else "not significant"
+        lines.append(f"  Wilcoxon ({t['alternative']}, zero_method={t['zero_method']}): p={t['p_value']:.4f} "
+                     f"at alpha={t['alpha']} -> {verdict} (n_nonzero={t['n_nonzero']}); "
+                     f"two-sided p={t['p_value_two_sided']:.4f}"
+                     + (f"; rank-biserial r={t['rank_biserial']:+.3f}" if t["rank_biserial"] is not None else ""))
+    for s, v in r["by_stratum"].items():
+        lines.append(f"    {s:<15} n={v['n']:<3} mean diff {v['mean_diff']:+.3f}  (descriptive)")
+    tr = r.get("trend")
+    if tr:
+        curve = "  ".join(f"{c}={v:.3f}" for c, v in tr["mean_by_checkpoint"].items())
+        lines.append(f"  by checkpoint: {curve}")
+        lines.append(f"  trend over {len(tr['checkpoints'])} checkpoints, n={tr['n']}: non-decreasing "
+                     f"{tr['n_monotone_nondecreasing']}, strictly increasing {tr['n_strictly_increasing']}"
+                     + (f", Page L p={tr['p_value']:.4f}" if "p_value" in tr else ""))
+    return lines
+
+
+def format_report(a: dict, manifest: dict) -> str:
+    spec = manifest["protocol"]["primary_test"]
     lines = [
-        f"Paired scripts: {a['n_paired']} of {a['n_heldout']} "
-        f"({a['n_excluded']} excluded: no valid score at both checkpoints)",
-        f"Errored runs: {a['n_errored_runs']}   infra-crash runs: {a['n_infra_crash_runs']}",
+        f"Held-out scripts: {a['n_heldout']}   errored runs: {a['n_errored_runs']}   "
+        f"infra-crash runs: {a['n_infra_crash_runs']}",
         f"Harness hashes seen: {', '.join(a['harness_hashes']) or '-'}"
         + ("   <-- MORE THAN ONE" if len(a["harness_hashes"]) > 1 else ""),
+        f"LLM settings seen: {'; '.join(a['llm_settings']) or '-'}"
+        + ("   <-- MORE THAN ONE" if len(a["llm_settings"]) > 1 else ""),
     ]
-    if a["n_paired"]:
-        lines += [
-            f"Mean score {p['before']}: {a['mean_before']:.3f}   {p['after']}: {a['mean_after']:.3f}",
-            f"Mean diff: {a['mean_diff']:+.3f}"
-            + (f" (SE {a['se_diff']:.3f})" if "se_diff" in a else "")
-            + f"   median: {a['median_diff']:+.3f}",
-            f"Improved / tied / worse: {a['n_improved']} / {a['n_tied']} / {a['n_worse']}",
-        ]
-    if p["p_value"] is not None:
-        verdict = "significant" if p["significant"] else "not significant"
-        lines.append(
-            f"PRIMARY  Wilcoxon signed-rank ({p['alternative']}, zero_method={p['zero_method']}): "
-            f"p={p['p_value']:.4f} at alpha={p['alpha']} -> {verdict} (n_nonzero={p['n_nonzero']})")
-    for s, v in a["by_stratum"].items():
-        lines.append(f"  {s:<15} n={v['n']:<3} mean diff {v['mean_diff']:+.3f}  (descriptive)")
-    if "trend" in a:
-        t = a["trend"]
-        lines.append(
-            f"SECONDARY trend (empty<half<full), n={t['n']}: monotone {t['n_monotone_nondecreasing']}, "
-            f"strictly increasing {t['n_strictly_increasing']}, non-monotone {t['n_decreasing_somewhere']}"
-            + (f", Page L p={t['p_value']:.4f}" if "p_value" in t else ""))
+    if a["share_targetable"] is not None:
+        lines.append(f"Share of scored entities the trained library could say something about: {a['share_targetable']:.0%}")
+    lines += [""] + _block("PRIMARY   targetable-entity mean", a["primary"], spec)
+    lines += [""] + _block("CONTROL   other entities (descriptive; the library had nothing for them)", a["control"], spec)
+    lines += [""] + _block("SECONDARY whole-script aggregate score", a["script_aggregate"], spec)
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Progress summary (behind `status`)
+# ---------------------------------------------------------------------------
+
+def progress(manifest: dict, workdir: str | Path) -> dict:
+    """Where training and scoring stand, computed from the result files alone, so it works from
+    another terminal or after a crash."""
+    workdir = Path(workdir)
+    t_rows = _read_jsonl(workdir / "train_progress.jsonl")
+    attempts = Counter(r["script"] for r in t_rows)
+    ok = {r["script"] for r in t_rows if "error" not in r}
+    finished = {s for s in attempts if s in ok or attempts[s] >= MAX_ATTEMPTS}
+    s_rows = read_scores(workdir / "scores.jsonl")
+    checkpoints = list(manifest["checkpoints"])
+    by_cp: dict[str, list[float]] = {}
+    for r in s_rows:
+        if "score" in r:
+            by_cp.setdefault(r["checkpoint"], []).append(r["score"])
+    return {
+        "train": {
+            "done": len(finished), "total": len(manifest["train"]), "failed": len(finished - ok),
+            "durations": [r["seconds"] for r in t_rows if "seconds" in r],
+            "patterns": next((r["patterns"] for r in reversed(t_rows) if "patterns" in r), None),
+            "last": t_rows[-1]["timestamp"] if t_rows else None,
+        },
+        "score": {
+            "done": len({(r["checkpoint"], r["script"], r["rep"]) for r in s_rows}),
+            "total": manifest["protocol"]["reps"] * len(manifest["heldout"]) * len(checkpoints),
+            "errors": sum(1 for r in s_rows if "error" in r),
+            "durations": [r["seconds"] for r in s_rows if "seconds" in r],
+            "by_checkpoint": {c: {"n": len(v), "mean": sum(v) / len(v)}
+                              for c, v in by_cp.items() if c in manifest["checkpoints"]},
+            "last": s_rows[-1]["timestamp"] if s_rows else None,
+            # parallel sessions: the workers seen among the most recent runs
+            "workers": max(1, len({r["worker"] for r in s_rows[-30:] if r.get("worker") is not None})),
+        },
+    }
+
+
+def format_progress(p: dict) -> str:
+    def stage(name: str, s: dict, extra: str) -> list[str]:
+        d = s["durations"]
+        avg = sum(d) / len(d) if d else 0.0
+        head = (f"{name}: {s['done']}/{s['total']} ({100 * s['done'] / s['total'] if s['total'] else 100:.0f}%)"
+                f"{extra}")
+        if not d:
+            return [head + "   (not started)"]
+        w = s.get("workers", 1)
+        return [head, f"  avg {_fmt_duration(avg)}/run | active {_fmt_duration(sum(d) / w)} | "
+                      f"ETA {_fmt_duration(avg * (s['total'] - s['done']) / w)} | last run started {s['last']}"
+                      + (f" | {w} workers" if w > 1 else "")]
+
+    t, s = p["train"], p["score"]
+    lines = stage("Training", t, f"   failed: {t['failed']}   patterns: {t['patterns']}")
+    lines += stage("Scoring", s, f"   errored runs: {s['errors']}")
+    if s["by_checkpoint"]:
+        lines.append("  mean score so far: " + "  ".join(
+            f"{c} {v['mean']:.3f} (n={v['n']})" for c, v in s["by_checkpoint"].items()))
     return "\n".join(lines)

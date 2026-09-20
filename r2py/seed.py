@@ -66,6 +66,11 @@ function definitions. Preserve R variable names (d, m, g, etc.). Translate \
 ALL sections — do not skip any. Output only the Python code, nothing else.\
 """
 
+# At most this many verified fixes are shown per script (the highest score gains).
+_MAX_FIXES_IN_PROMPT = 5
+# At most this many base-R usage examples are shown per script (the most focused ones).
+_MAX_BASE_PATTERNS_IN_PROMPT = 8
+
 _COMMENT_RE = re.compile(r"^#[^\n]*\n", re.MULTILINE)
 
 
@@ -198,7 +203,9 @@ def _build_prompt(
     patterns_seen: set[str] = set()
     pattern_parts: list[str] = []
     for entity in entities.values():
-        matches = library.retrieve(entity, k=2, no_seeds=no_seeds)
+        # A pattern that holds only corrections has nothing to show here (see below).
+        matches = [p for p in library.retrieve(entity, k=2, no_seeds=no_seeds)
+                   if getattr(p, "translation_examples", [])]
         for pat in matches:
             if pat.id in patterns_seen:
                 continue
@@ -206,14 +213,63 @@ def _build_prompt(
             entry = f"**{pat.id}** ({pat.confidence}): {pat.guidance.strip()}"
             for ex in getattr(pat, "translation_examples", [])[:1]:
                 entry += (
-                    f"\n  R: `{ex.r_snippet[:200]}`"
-                    f"\n  Python: `{ex.py_snippet[:300]}`"
+                    f"\n  R: `{ex.r_snippet}`"
+                    f"\n  Python: `{ex.py_snippet}`"
                 )
             pattern_parts.append(entry)
     if pattern_parts:
         parts.append(
             "## Translation patterns (follow these):\n" + "\n\n".join(pattern_parts)
         )
+
+    # Base-R usage: for base-R functions called inside this script's statements, a verified
+    # statement from any script that used the function (the most focused one). Base R is
+    # shared by every package, so this transfers across packages.
+    if getattr(library, "show_base_patterns", False) is True:
+        base_patterns: dict = {}
+        for entity in entities.values():
+            if getattr(entity, "kind", None) == EntityKind.LIBRARY_IMPORT:
+                continue
+            for pat in library.retrieve_base_patterns(entity, no_seeds=no_seeds):
+                if pat.id not in patterns_seen:
+                    base_patterns.setdefault(pat.id, pat)
+        best_patterns = sorted(base_patterns.values(),
+                               key=lambda p: (p.translation_examples[0].n_calls, p.id))
+        best_patterns = best_patterns[:_MAX_BASE_PATTERNS_IN_PROMPT]
+        if best_patterns:
+            patterns_seen.update(p.id for p in best_patterns)
+            parts.append(
+                "## Base-R usage (verified statements that use these functions; they may call "
+                "other functions too):\n"
+                + "\n\n".join(
+                    f"**{p.id}**\n  R: `{p.translation_examples[0].r_snippet}`\n"
+                    f"  Python: `{p.translation_examples[0].py_snippet}`"
+                    for p in best_patterns
+                )
+            )
+
+    # Verified fixes: for base-R functions this script calls, cases where a first translation
+    # was wrong and a corrected one scored higher. Base R is shared by every package, so a fix
+    # found in one package's script applies here.
+    if getattr(library, "show_corrections", False) is True:
+        fixes: dict = {}
+        for entity in entities.values():
+            if getattr(entity, "kind", None) == EntityKind.LIBRARY_IMPORT:
+                continue
+            for fix in library.retrieve_corrections(entity, k=1, no_seeds=no_seeds):
+                fixes.setdefault((fix.script_id, fix.r_snippet, fix.new_code), fix)
+        best = sorted(fixes.values(), key=lambda f: -f.score_delta)[:_MAX_FIXES_IN_PROMPT]
+        if best:
+            parts.append(
+                "## Verified fixes (a first translation of similar R code was wrong; the corrected "
+                "version scored higher — avoid the same mistake):\n"
+                + "\n\n".join(
+                    f"**R** (calls {', '.join(f.functions)}; fixed: {f.failure_class}):\n"
+                    f"`{f.r_snippet}`\n  First attempt (wrong): `{f.old_code}`\n"
+                    f"  Corrected: `{f.new_code}`"
+                    for f in best
+                )
+            )
 
     # Collect R source lookups for all package symbols referenced by entities.
     imported_pkgs: list[str] = [

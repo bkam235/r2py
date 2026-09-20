@@ -85,6 +85,8 @@ def translate(
             r_path, py_path, library=library,
             score_report=result.final_score_report,
             entity_score_threshold=score_threshold,
+            seed_source=result.seed_source,
+            seed_score_report=result.score_history[0] if result.score_history else None,
         )
         if seeded:
             print(f"[Library] Seeded {len(seeded)} patterns: {seeded}")
@@ -115,14 +117,23 @@ def seed_from_translation(
     script_id: str = "auto",
     score_report=None,
     entity_score_threshold: float = 0.95,
+    seed_source: "str | None" = None,
+    seed_score_report=None,
 ) -> list[str]:
     """Seed the Pattern Library with entity-level examples from a known-good Python file.
 
     For each entity in the R script whose Python translation in py_path is
     non-trivial (not a bare `pass` stub):
-      - Finds the best-matching existing pattern and attaches a TranslationExample.
-      - When no same-package pattern exists, creates a new seed pattern so the
-        example is retrievable on the next run.
+      - Attaches a TranslationExample to the pattern of the entity's own function,
+        creating it on first sight.
+      - Also attaches it to the pattern of every base-R function called anywhere inside the
+        entity (once per script, from the most focused statement), so base-R knowledge is
+        shared across packages.
+      - If seed_source and seed_score_report (the translation before the agent rewrote
+        it, and its score report) are given, and the entity scored higher after the
+        rewrite: also stores the wrong-then-corrected pair as an EditExample on the
+        pattern of every base-R function the entity calls, so the fix transfers to any
+        package that uses those functions.
 
     Returns a list of pattern IDs that were created or updated.
 
@@ -130,13 +141,15 @@ def seed_from_translation(
     into the library, so future translations of similar scripts benefit immediately
     from Stage 2 rather than having to rediscover the solution through editing.
     """
-    import re
     from datetime import date
     from pathlib import Path
     from .stage1 import analyze as _analyze
     from .library import get_library
-    from .library.pattern import Pattern, TranslationExample, r_snippet_hash
-    from .library.writer import _add_translation_example
+    from .library.pattern import (
+        MAX_PY_SNIPPET, MAX_R_SNIPPET, EditExample, Pattern, TranslationExample, clip_snippet,
+        correction_functions, pattern_id, pattern_key, r_snippet_hash,
+    )
+    from .library.writer import _add_edit_example, _add_translation_example
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
 
     from collections import defaultdict
@@ -151,7 +164,7 @@ def seed_from_translation(
         lines = source.splitlines()
         start = getattr(span, "start_line", 0)
         end = min(len(lines), getattr(span, "end_line", start) + 1)
-        return "\n".join(lines[start:end])[:300]
+        return clip_snippet("\n".join(lines[start:end]), MAX_R_SNIPPET)
 
     def _extract_entity_snippet(source, elmap, eid):
         if not eid or eid not in elmap:
@@ -160,9 +173,9 @@ def seed_from_translation(
         lines = source.splitlines()
         if isinstance(ranges, list):
             parts = ["\n".join(lines[s:e]) for s, e in sorted(ranges)]
-            return "\n\n".join(p for p in parts if p.strip())[:600]
+            return clip_snippet("\n\n".join(p for p in parts if p.strip()), MAX_PY_SNIPPET)
         start, end = ranges
-        return "\n".join(lines[start:end])[:600]
+        return clip_snippet("\n".join(lines[start:end]), MAX_PY_SNIPPET)
 
     if library is None:
         library = get_library()
@@ -174,14 +187,17 @@ def seed_from_translation(
 
     from .types import EntityKind as _EK
 
-    def _entity_score(eid):
-        if score_report is None:
-            return 1.0
-        es = score_report.by_entity.get(eid)
+    def _score_in(report, eid):
+        es = report.by_entity.get(eid)
         if es is None or not es.executed_ok:
             return 0.0
         vals = [getattr(es, name) for name in es.active_dims]
         return sum(vals) / len(vals) if vals else float(es.executed_ok)
+
+    def _entity_score(eid):
+        if score_report is None:
+            return 1.0
+        return _score_in(score_report, eid)
 
     # --- Pass 1: collect valid (eid, entity, r_snip, py_snip, score) tuples ---
     valid: list[tuple] = []
@@ -202,20 +218,22 @@ def seed_from_translation(
             continue
         valid.append((eid, entity, r_snip, py_snip, escore))
 
-    # --- Pass 2: group by entity name ----------------------------------------
-    # When multiple entities share the same name (e.g. 7× with_locale), we want
-    # ONE pattern for the concept, not N patterns for N call sites.
+    # --- Pass 2: group by (package, function) ---------------------------------
+    # When multiple entities are the same function (e.g. 7× with_locale), we want
+    # ONE example for the concept, not N for N call sites — the same key the
+    # library uses for its patterns (a call is keyed by itself, an assignment
+    # `x <- f(...)` by f; entities without a key, e.g. plain variables, teach nothing here).
     # Pick the "definer" — the entity whose py_snip contains `def <name>(` —
     # as the representative. Fall back to the first entity in declaration order.
-    by_name: dict[str, list[tuple]] = defaultdict(list)
+    by_key: dict[tuple[str, str], list[tuple]] = defaultdict(list)
     for item in valid:
-        eid, entity, r_snip, py_snip, escore = item
-        name = getattr(entity, "name", eid) or eid
-        by_name[name].append(item)
+        key = pattern_key(item[1])
+        if key is not None:
+            by_key[key].append(item)
 
-    # Build the de-duplicated list: one representative per entity name.
+    # Build the de-duplicated list: one representative per (package, function).
     representatives: list[tuple] = []
-    for name, group in by_name.items():
+    for (_pkg, name), group in by_key.items():
         if len(group) == 1:
             representatives.append(group[0])
         else:
@@ -226,73 +244,123 @@ def seed_from_translation(
             )
             representatives.append(definer)
 
-    # --- Pass 3: attach or create one pattern per representative --------------
+    # --- Pass 3: attach or create one pattern per function --------------------
     touched: list[str] = []
-    created_ids: set[str] = set()
 
     for eid, entity, r_snip, py_snip, escore in representatives:
-        entity_pkg = getattr(entity, "package", "") or ""
-        entity_name = getattr(entity, "name", eid) or eid
+        entity_pkg, entity_name = pattern_key(entity)
 
         ex = TranslationExample(
             r_hash=r_snippet_hash(r_snip),
-            r_snippet=r_snip[:300],
-            py_snippet=py_snip[:600],
+            r_snippet=r_snip,
+            py_snippet=py_snip,
             score=escore,
             script_id=script_id,
+            n_calls=len(correction_functions(getattr(entity, "base_r_calls", None) or [])),
         )
 
-        # Prefer an existing package-matched pattern.
-        patterns = library.retrieve(entity, k=3)
-        matched = next((p for p in patterns if p.package == entity_pkg), None)
-
-        if matched:
-            pat = library.store.get(matched.id)
-            if pat is not None:
-                _add_translation_example(pat, ex)
-                library.store.save(pat)
-                if matched.id not in touched:
-                    touched.append(matched.id)
-                continue
-
-        # No package-matched pattern — create a new seed pattern.
-        # Skip packageless entities: without a package, the entity is a
-        # script-local variable (e.g. "foo", "x") not a reusable R concept.
-        if not entity_pkg:
-            continue
-
-        raw_id = f"{entity_pkg}.{entity_name}"
-        base_id = re.sub(r"[^a-z0-9.\-]", "-", raw_id.lower())[:60]
-        pat_id = base_id
-        suffix = 0
-        while library.store.get(pat_id) is not None or pat_id in created_ids:
-            suffix += 1
-            pat_id = f"{base_id}-{suffix}"
-
-        kind_str = getattr(getattr(entity, "kind", None), "value", "entity")
-        pkg_display = entity_pkg or "base R"
-        guidance = (
-            f"Translate R `{entity_name}` ({kind_str} from {pkg_display}) to Python. "
-            f"See verified example below — prefer it over guessing from the R source alone."
-        )
-        pat = Pattern(
-            id=pat_id,
-            package=entity_pkg,
-            confidence="tentative",
-            seed=True,
-            guidance=guidance,
-            created=date.today().isoformat(),
-            last_review=date.today().isoformat(),
-        )
+        # One pattern per (package, function): add the example to it if it exists,
+        # otherwise create it. An example for one function never lands on another's.
+        pat_id = pattern_id(entity_pkg, entity_name)
+        pat = library.store.get(pat_id)
+        if pat is None:
+            # An assignment `x <- f(...)` teaches how to translate the call to f.
+            kind_str = ("FunctionCall" if getattr(entity, "rhs_call_name", None)
+                        else getattr(getattr(entity, "kind", None), "value", "entity"))
+            pat = Pattern(
+                id=pat_id,
+                package=entity_pkg,
+                confidence="tentative",
+                seed=True,
+                guidance=(
+                    f"Translate R `{entity_name}` ({kind_str} from {entity_pkg}) to Python. "
+                    f"See verified example below — prefer it over guessing from the R source alone."
+                ),
+                created=date.today().isoformat(),
+                last_review=date.today().isoformat(),
+            )
         _add_translation_example(pat, ex)
         library.store.save(pat)
-        created_ids.add(pat_id)
-        touched.append(pat_id)
+        if pat_id not in touched:
+            touched.append(pat_id)
+
+    # --- Pass 3b: base-R functions called inside entities ----------------------------
+    # Base R is shared by every package, so a verified statement that calls a base function
+    # is an example of that function for any script. It goes on that function's pattern,
+    # once per script, taken from the statement most focused on it (fewest other base calls).
+    focused: dict[str, tuple] = {}
+    for eid, entity, r_snip, py_snip, escore in valid:
+        functions = correction_functions(getattr(entity, "base_r_calls", None) or [])
+        for qualified in functions:
+            pat_id = pattern_id(*qualified.split("::"))
+            if pat_id not in focused or len(functions) < focused[pat_id][0]:
+                focused[pat_id] = (len(functions), qualified, r_snip, py_snip, escore)
+    for pat_id, (n_calls, qualified, r_snip, py_snip, escore) in focused.items():
+        package, fn = qualified.split("::")
+        pat = library.store.get(pat_id)
+        if pat is None:
+            pat = Pattern(
+                id=pat_id, package=package, confidence="tentative", seed=True,
+                guidance=(f"Translate R `{fn}` from {package} to Python. The verified example "
+                          f"below uses it inside a statement that may call other functions too."),
+                created=date.today().isoformat(), last_review=date.today().isoformat(),
+            )
+        _add_translation_example(pat, TranslationExample(
+            r_hash=r_snippet_hash(r_snip), r_snippet=r_snip, py_snippet=py_snip,
+            score=escore, script_id=script_id, n_calls=n_calls,
+        ))
+        library.store.save(pat)
+        if pat_id not in touched:
+            touched.append(pat_id)
+
+    # --- Pass 4: corrections ----------------------------------------------------
+    # An entity the agent had to fix teaches more than one the model got right first time.
+    # Its wrong-then-corrected pair goes on the pattern of every base-R function it calls
+    # (key: shared by all packages), so the fix transfers across packages.
+    if seed_source and seed_score_report is not None and score_report is not None:
+        seed_elmap = _rebuild(seed_source)
+        for eid, entity, r_snip, py_snip, escore in valid:
+            functions = correction_functions(getattr(entity, "base_r_calls", None) or [])
+            seed_es = seed_score_report.by_entity.get(eid)
+            final_es = score_report.by_entity.get(eid)
+            if not functions or seed_es is None or final_es is None:
+                continue
+            gain = escore - _score_in(seed_score_report, eid)
+            old_code = _extract_entity_snippet(seed_source, seed_elmap, eid)
+            if gain <= 0 or not old_code.strip() or old_code.strip() == py_snip.strip():
+                continue
+            correction = EditExample(
+                failure_class=_dominant_gain(seed_es, final_es),
+                old_code=old_code, new_code=py_snip, score_delta=gain,
+                script_id=script_id, r_snippet=r_snip, functions=functions,
+            )
+            for qualified in functions:
+                package, fn = qualified.split("::")
+                pat_id = pattern_id(package, fn)
+                pat = library.store.get(pat_id)
+                if pat is None:
+                    pat = Pattern(
+                        id=pat_id, package=package, confidence="tentative", seed=True,
+                        guidance=f"Verified fixes for R `{fn}` from {package}; see the corrections below.",
+                        created=date.today().isoformat(), last_review=date.today().isoformat(),
+                    )
+                _add_edit_example(pat, correction)
+                library.store.save(pat)
+                if pat_id not in touched:
+                    touched.append(pat_id)
 
     if touched:
         library.index.rebuild(library.store)
 
     return touched
+
+
+def _dominant_gain(seed_es, final_es) -> str:
+    """The score dimension an entity improved most (or "crash" if the seed did not run)."""
+    if not seed_es.executed_ok:
+        return "crash"
+    gains = {d: getattr(final_es, d) - getattr(seed_es, d) for d in final_es.active_dims}
+    return max(gains, key=gains.get) if gains else "unknown"
 
 
 def reset_library(library=None, keep_seeds: bool = True) -> int:

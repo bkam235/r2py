@@ -2,7 +2,8 @@
   "protocol": {
     "seed": 20260919,
     "n_heldout": 60,
-    "n_train": 227,
+    "per_package": 6,
+    "n_intervals": 4,
     "reps": 3,
     "translate": {
       "model": "openrouter:google/gemma-4-31b-it",
@@ -16,19 +17,23 @@
     },
     "primary_test": {
       "name": "wilcoxon_signed_rank",
+      "endpoint": "targetable_entity_mean",
       "before": "empty",
       "after": "full",
       "alternative": "greater",
       "alpha": 0.05,
       "zero_method": "wilcox"
-    }
+    },
+    "n_train": 256
   },
   "pool_dir": "work/inputs/harvested",
   "pool_size": 3988,
   "checkpoints": {
     "empty": 0,
-    "half": 113,
-    "full": 227
+    "f1of4": 64,
+    "half": 128,
+    "f3of4": 192,
+    "full": 256
   },
   "stratum_quotas": {
     "data_wrangling": 10,
@@ -38,6 +43,65 @@
     "stats_objects": 10,
     "other": 10
   },
+  "train_packages": {
+    "ModelMetrics": 6,
+    "base64enc": 1,
+    "broom": 6,
+    "bslib": 6,
+    "caret": 6,
+    "clock": 6,
+    "diagram": 6,
+    "downlit": 5,
+    "dplyr": 6,
+    "e1071": 6,
+    "fansi": 6,
+    "farver": 6,
+    "ggplot2": 6,
+    "googledrive": 6,
+    "gtable": 6,
+    "highr": 1,
+    "hms": 1,
+    "htmltools": 6,
+    "htmlwidgets": 4,
+    "isoband": 6,
+    "lava": 6,
+    "lubridate": 6,
+    "magrittr": 6,
+    "openssl": 6,
+    "pROC": 6,
+    "prettyunits": 5,
+    "prodlim": 6,
+    "proxy": 3,
+    "purrr": 6,
+    "ragg": 6,
+    "ranger": 4,
+    "recipes": 6,
+    "reshape2": 5,
+    "rmarkdown": 6,
+    "rvest": 6,
+    "sass": 6,
+    "sessioninfo": 5,
+    "shape": 6,
+    "shiny": 6,
+    "sparsevctrs": 6,
+    "systemfonts": 6,
+    "textshaping": 5,
+    "tidyr": 6,
+    "timeDate": 6,
+    "timechange": 1,
+    "tinytex": 1,
+    "utf8": 4,
+    "uuid": 1,
+    "vctrs": 6,
+    "xml2": 6
+  },
+  "uncovered_packages": [
+    "RColorBrewer",
+    "blob",
+    "cachem",
+    "conflicted",
+    "rematch"
+  ],
   "heldout": [
     {
       "script": "purrr__vignette__purrr_s3.R",
@@ -402,694 +466,28 @@
   ],
   "train": [
     {
-      "script": "httpuv__rd_example__ipFamily_Rd.R",
-      "package": "httpuv",
-      "stratum": "other",
-      "sha256": "5d26b7ea882e7b0b01ddd72f3eeb65a33e4f0971c539de32ed48884d510e7728"
-    },
-    {
-      "script": "systemfonts__vignette__systemfonts_s1.R",
-      "package": "systemfonts",
+      "script": "isoband__vignette__isoband1_chunk1.R",
+      "package": "isoband",
       "stratum": "graphics",
-      "sha256": "22b6add516e0d5339269855339ac5211af9f3ee0bacc8736e5d938068a277ecc"
+      "sha256": "cb09965b9712df536361826222e3b713cde4e5e6fcd65dfa317c3244d2363ad1"
     },
     {
-      "script": "vroom__rd_example__vroom_str_Rd.R",
-      "package": "vroom",
-      "stratum": "data_wrangling",
-      "sha256": "6f052f62233113b6cc2dc5952c2b7367e73a5428f17f1cc9ee593083e354647f"
-    },
-    {
-      "script": "fansi__rd_example__unhandled_ctl_Rd.R",
-      "package": "fansi",
+      "script": "base64enc__rd_example__dataURI_Rd.R",
+      "package": "base64enc",
       "stratum": "other",
-      "sha256": "0d8e532f51ebb67d82424aba0c2ee154b5359a44d4338eabffec1e34bd303079"
+      "sha256": "de1e958d62fb55a635f355b783b728fa817daa050b3723e9e1c5a53c96883742"
     },
     {
-      "script": "ggplot2__vignette__extending-ggplot2_s24.R",
-      "package": "ggplot2",
-      "stratum": "graphics",
-      "sha256": "5cec2f39512ffbf8b9d5b60d4385811deb9a25f273e91d8f9da335ed3fab510c"
-    },
-    {
-      "script": "gargle__vignette__auth-from-web_s1.R",
-      "package": "gargle",
-      "stratum": "other",
-      "sha256": "c518d992694a46694e5b3d873a2e01b7f3f1daef53ac70b0985403c4798b5a1c"
-    },
-    {
-      "script": "stringi__rd_example__stri_list2matrix_Rd.R",
-      "package": "stringi",
-      "stratum": "data_wrangling",
-      "sha256": "d5327f8bd072de9539feede2706735855966f44448589c97efd4ccee5063c84f"
-    },
-    {
-      "script": "glmnet__vignette__glmnet_s67.R",
-      "package": "glmnet",
-      "stratum": "stats_objects",
-      "sha256": "6167717bfcd058de9b3773486df71fc609ff4d6d2d40310d50e9d1ef078e579d"
-    },
-    {
-      "script": "purrr__rd_example__map2_Rd.R",
-      "package": "purrr",
-      "stratum": "data_wrangling",
-      "sha256": "28b9856b15ab9e4b7f0adf0c406c9be440b79e1fcd1b4a5efecb1e03dad57d48"
-    },
-    {
-      "script": "dplyr__rd_example__do_Rd.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "9c47d5e550d6b49c6eab20d52517dcb3b653c09fbc8fc3c4f9bf2d8d0d7e4e67"
-    },
-    {
-      "script": "gargle__vignette__gargle-auth-in-client-package_chunk11.R",
-      "package": "gargle",
-      "stratum": "other",
-      "sha256": "264ac450cb28c810fca4fa53a5b61ff5d37bc86d4f9ec39b4a3ee7a779561209"
-    },
-    {
-      "script": "googledrive__rd_example__shortcut_create_Rd.R",
-      "package": "googledrive",
-      "stratum": "other",
-      "sha256": "c237f61f36d41465145284fc1ed97e9715aa9791a3857ece97c6b28b6f1678ed"
-    },
-    {
-      "script": "fansi__rd_example__state_at_end_Rd.R",
-      "package": "fansi",
-      "stratum": "other",
-      "sha256": "04869d69f01362459daf117343a352befeb3b2400ea4e1c9fdaef99757b75f83"
-    },
-    {
-      "script": "tidyr__vignette__programming_s1.R",
-      "package": "tidyr",
-      "stratum": "data_wrangling",
-      "sha256": "7303d32becf1e169a563f7f9294edcf24d7158f29ee4c3a7b095555caf723c6e"
-    },
-    {
-      "script": "broom__vignette__broom_s11.R",
-      "package": "broom",
-      "stratum": "stats_objects",
-      "sha256": "ee20097f99c498a41b54a699b225b0be1a2a912c13ab247d4616378fa0ce3ab8"
-    },
-    {
-      "script": "dplyr__rd_example__select_all_Rd.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "56f4045264619e5a91b5d7b1b629f40b3fc929f60360185d554412c0011f03a9"
-    },
-    {
-      "script": "progressr__rd_example__handler_rstudio_Rd.R",
-      "package": "progressr",
-      "stratum": "other",
-      "sha256": "7a97b5d0d0a367ae4bb81b3dd972d3c977f7cc6f4b32daa8f99c56f4b43207b5"
-    },
-    {
-      "script": "bit64__rd_example__prank_Rd.R",
-      "package": "bit64",
-      "stratum": "data_wrangling",
-      "sha256": "2b45f00b61de6ce27ae2cdd7aeb208797aa6a3450cacda538c3ee1852ca00a11"
-    },
-    {
-      "script": "data.table__rd_example__timetaken_Rd.R",
-      "package": "data.table",
-      "stratum": "data_wrangling",
-      "sha256": "0cf198ba8486a6853a68ada5b84df7edac8518047dab126043c4a5e34bc4d8d4"
-    },
-    {
-      "script": "pillar__rd_example__ctl_new_pillar_list_Rd.R",
-      "package": "pillar",
-      "stratum": "other",
-      "sha256": "3627e0eacf28f0f092d0afe768116cb2ab81be4b8d055767ee3b94fc7a1c3b1d"
-    },
-    {
-      "script": "caret__rd_example__bag_Rd.R",
-      "package": "caret",
-      "stratum": "stats_objects",
-      "sha256": "8b8d2e514e1e9548058713a78584382f19036e38be8b504d639b34e6460e0609"
-    },
-    {
-      "script": "shiny__rd_example__registerInputHandler_Rd.R",
-      "package": "shiny",
-      "stratum": "html",
-      "sha256": "ac77ae3e73e88c70661867163a0ae309c40eb4018911e4847d5402a55f5a1570"
-    },
-    {
-      "script": "httr2__rd_example__req_perform_sequential_Rd.R",
-      "package": "httr2",
-      "stratum": "other",
-      "sha256": "6fcc03bf2dc547aa0828a7b461d85815814d52e2ad6127a7361f55d1bd2f13e5"
-    },
-    {
-      "script": "data.table__rd_example__tables_Rd.R",
-      "package": "data.table",
-      "stratum": "data_wrangling",
-      "sha256": "774bcbfef4f07899968f66c175450ffd1fd5b72ef732c4a6aae9fd3517f53353"
-    },
-    {
-      "script": "httpuv__rd_example__runStaticServer_Rd.R",
-      "package": "httpuv",
-      "stratum": "other",
-      "sha256": "a87b26a559fff8e097a71e6f5d08fcbe34fbe49c6736067bc615386fbecb8a10"
-    },
-    {
-      "script": "DBI__rd_example__rownames_Rd.R",
-      "package": "DBI",
-      "stratum": "data_wrangling",
-      "sha256": "1e87efa4506f2631ecb5e770fcb88058b09e6619041545cf8b0d7e88bc660d5f"
-    },
-    {
-      "script": "tidyr__vignette__tidy-data_s9.R",
-      "package": "tidyr",
-      "stratum": "data_wrangling",
-      "sha256": "12db6ad986f2303beae4cc0e8d6362bd6347f3baeb06f44ffc4c7fb285b2018f"
-    },
-    {
-      "script": "purrr__rd_example__modify_tree_Rd.R",
-      "package": "purrr",
-      "stratum": "data_wrangling",
-      "sha256": "cabf50eadb28388ed558a8845ae9d153b62b8aac6ee6facccf2a78bd55e511c0"
-    },
-    {
-      "script": "listenv__rd_example__listenv_Rd.R",
-      "package": "listenv",
-      "stratum": "other",
-      "sha256": "8c3132f565a64bec7f6efb9a9324af2b8317be2697017751462d129a727e1317"
-    },
-    {
-      "script": "rlang__rd_example__exec_Rd.R",
-      "package": "rlang",
-      "stratum": "other",
-      "sha256": "421c7dee389878ec35e45ededcd4bd924657fd056f8fe9ff090d298845161dee"
-    },
-    {
-      "script": "prodlim__rd_example__crModel_Rd.R",
-      "package": "prodlim",
-      "stratum": "stats_objects",
-      "sha256": "c10461e8a54e11d44eb3b6914740a8a678d54ca8d7831a12cae95ba3f2c673b5"
-    },
-    {
-      "script": "shape__rd_example__filledellipse_Rd.R",
-      "package": "shape",
-      "stratum": "graphics",
-      "sha256": "1f9f3fc482686cbf827c53c8d35194b163f2305765deee4320af08e88da7377d"
-    },
-    {
-      "script": "data.table__vignette__datatable-sd-usage_s2.R",
-      "package": "data.table",
-      "stratum": "data_wrangling",
-      "sha256": "8313a3745182dc34aa5b3394d7afd3313a618151662376b2fc622008d682ff1e"
-    },
-    {
-      "script": "clock__rd_example__seq_clock_time_point_Rd.R",
+      "script": "clock__rd_example__posixt-group_Rd.R",
       "package": "clock",
       "stratum": "date_time",
-      "sha256": "37c1bc6429788b348f2d5fb553555fc599f25b37a4ec5f7740838aaec0db8475"
+      "sha256": "7ec7a94f4b7f4f45dfac93c5ff80b0f566827ea80ce09f9dc46f097b776e866d"
     },
     {
-      "script": "dbplyr__rd_example__escape_Rd.R",
-      "package": "dbplyr",
-      "stratum": "data_wrangling",
-      "sha256": "1688a2a96cfb19458241b0d0aa5bae3227735af9b0095a4cdb974e03bbc6219d"
-    },
-    {
-      "script": "xfun__rd_example__rstudio_type_Rd.R",
-      "package": "xfun",
-      "stratum": "other",
-      "sha256": "f693d3d672cbf865d74c31734cefd0f192925f258c5eb0b8d85d0a6c2f6c2409"
-    },
-    {
-      "script": "httr2__rd_example__req_get_headers_Rd.R",
-      "package": "httr2",
-      "stratum": "other",
-      "sha256": "8a789c3ad9df11c1c2c5db302b37b928b9de7b15eb945432d3bed21a2a475e47"
-    },
-    {
-      "script": "testthat__vignette__custom-expectation_s4.R",
-      "package": "testthat",
-      "stratum": "other",
-      "sha256": "012592288f1159acf317cd8199a00e62339fb9f235543d7a11237f13936374bf"
-    },
-    {
-      "script": "forcats__rd_example__fct_Rd.R",
-      "package": "forcats",
-      "stratum": "data_wrangling",
-      "sha256": "2cfc614c87f16b3b94106f9a54731d06a0ffb77b5cebbb9dff0e922180f5208e"
-    },
-    {
-      "script": "recipes__vignette__recipes_chunk1.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "5ddb3aed13df12418cb07c91c205bdb301ab7d3cbd5baa1b4ba5aa10f4b0e522"
-    },
-    {
-      "script": "recipes__rd_example__check_cols_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "3801a50cad1254041f0e6ac2cb8e351d70a73382d8f1417e44e4c984aba2960c"
-    },
-    {
-      "script": "hardhat__vignette__package_s7.R",
-      "package": "hardhat",
-      "stratum": "stats_objects",
-      "sha256": "6806ff605cf968a55d467395e6ec6cb69631d936fba8b90e1055461d9e5c0a2d"
-    },
-    {
-      "script": "ggplot2__rd_example__get_alt_text_Rd.R",
-      "package": "ggplot2",
-      "stratum": "graphics",
-      "sha256": "df3e09b5a0dbd67677403073fd3a6877e5b084d24d0f173c55b319af5a53ba2e"
-    },
-    {
-      "script": "withr__rd_example__withr_Rd.R",
-      "package": "withr",
-      "stratum": "other",
-      "sha256": "7ffac957dfa937236a7881b3ae85a99fdb05d1c5d38f1f6c400fa60948e5caff"
-    },
-    {
-      "script": "recipes__rd_example__step_spline_monotone_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "69fe16f777679a9150f1b61da3f73c81164a1a814a8de59416b0828cefce55a9"
-    },
-    {
-      "script": "recipes__rd_example__step_spline_convex_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "f18f67f675b68ddb85f4e35413691d31ef132f8a7f38f3a9615c2aa1c558f032"
-    },
-    {
-      "script": "cli__rd_example__hash_animal_Rd.R",
-      "package": "cli",
-      "stratum": "other",
-      "sha256": "21dec59ff5638a11ba536c6bb7f093c760b48925c80a645a200b2d4de80dc7e0"
-    },
-    {
-      "script": "data.table__rd_example__nafill_Rd.R",
-      "package": "data.table",
-      "stratum": "data_wrangling",
-      "sha256": "0c579894f92e15e601feb307df0d33bf597045d55052ec0c797b958f5ff6ac72"
-    },
-    {
-      "script": "caret__rd_example__calibration_Rd.R",
-      "package": "caret",
-      "stratum": "stats_objects",
-      "sha256": "7df0e66d76cba46913b9e5ab0c01f48f6d9b84f220fa2dfdc4c035ce1a930fcb"
-    },
-    {
-      "script": "backports__rd_example__removeSource_Rd.R",
-      "package": "backports",
-      "stratum": "other",
-      "sha256": "1f1fbf890ef72ea2f245c9a0d39264689fc6ee6a9d5d0e4c192097566e817390"
-    },
-    {
-      "script": "clock__rd_example__date-shifting_Rd.R",
-      "package": "clock",
+      "script": "timechange__rd_example__time-zones_Rd.R",
+      "package": "timechange",
       "stratum": "date_time",
-      "sha256": "327095d2c80e3d120e1d47dca0d623da79a0c6898aff1c546f8deaa9321dbcb2"
-    },
-    {
-      "script": "gert__rd_example__git_commit_Rd.R",
-      "package": "gert",
-      "stratum": "other",
-      "sha256": "13d829cb1577bf920351786549573aa5fca005634680c0a4e08262994554a922"
-    },
-    {
-      "script": "hardhat__rd_example__weighted_table_Rd.R",
-      "package": "hardhat",
-      "stratum": "stats_objects",
-      "sha256": "56a7330f4a9c57bcff1e8a14fa51d599a2b31bc59e1476a672c757358b266a1d"
-    },
-    {
-      "script": "hardhat__rd_example__default_xy_blueprint_Rd.R",
-      "package": "hardhat",
-      "stratum": "stats_objects",
-      "sha256": "70dc96ab48b7b26bd2aef15fafe7ef99735dbb26980e9df6f0910f99055a7879"
-    },
-    {
-      "script": "DBI__rd_example__dbFetch_Rd.R",
-      "package": "DBI",
-      "stratum": "data_wrangling",
-      "sha256": "8615c05ddb8fafc9292fa8234f383e9802ff919fb0c57a727359c6ae4a0a1b04"
-    },
-    {
-      "script": "diagram__rd_example__selfarrow_Rd.R",
-      "package": "diagram",
-      "stratum": "graphics",
-      "sha256": "91fc2892bc1818ead992164b878b2f66037ee792e795971035386ee7d0d31184"
-    },
-    {
-      "script": "htmltools__rd_example__plotTag_Rd.R",
-      "package": "htmltools",
-      "stratum": "html",
-      "sha256": "c514373d12a8a85c5b02b47771d936f3aefec475732b4d2235dcdbf310a7f8a1"
-    },
-    {
-      "script": "testthat__rd_example__expect_no_error_Rd.R",
-      "package": "testthat",
-      "stratum": "other",
-      "sha256": "c2a7644a51304326232c1f3054c1f3bea0572d8afd898d0de0e37a818c1db0d4"
-    },
-    {
-      "script": "recipes__rd_example__step_interact_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "d1c446171c0da0a080d58b17d1770720a0b6d1d8696a028a0dd4d085219657d4"
-    },
-    {
-      "script": "gh__rd_example__gh_whoami_Rd.R",
-      "package": "gh",
-      "stratum": "other",
-      "sha256": "c20cbd93dbdb556decb068deb2983d0ec3994d81e56735cb92978caaadc6fe45"
-    },
-    {
-      "script": "ggplot2__vignette__extending-ggplot2_s11.R",
-      "package": "ggplot2",
-      "stratum": "graphics",
-      "sha256": "9f47bc5b19e0a4d6e49f870bf92126d0c96909d003d68e3bc0a82b1e157794ff"
-    },
-    {
-      "script": "clock__rd_example__as_naive_time_Rd.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "f74d01e619db49910219205ebb33dd9a00b2f18f68fd69785ade5566345f5884"
-    },
-    {
-      "script": "DBI__rd_example__DBI-package_Rd.R",
-      "package": "DBI",
-      "stratum": "data_wrangling",
-      "sha256": "985a1f63e7b515d569691f767d62690ea49e72d9856022b5dcdd6c7dcbfbb564"
-    },
-    {
-      "script": "usethis__rd_example__git_sitrep_Rd.R",
-      "package": "usethis",
-      "stratum": "other",
-      "sha256": "e743b0c2b6223545020d421a5b6c4f79962888153b7bab2de5e89b12c7bd01cf"
-    },
-    {
-      "script": "shiny__rd_example__fluidPage_Rd.R",
-      "package": "shiny",
-      "stratum": "html",
-      "sha256": "0a0f3b87ffeebe9f4bdca7ad3f5f42b8b03bf063594f4338b559f633b56716a1"
-    },
-    {
-      "script": "htmltools__rd_example__tagList_Rd.R",
-      "package": "htmltools",
-      "stratum": "html",
-      "sha256": "2b87a873effcae849303c53089a811e9b498be3bebbb6b8b8c2f243dbd6a43d1"
-    },
-    {
-      "script": "DBI__rd_example__DBIConnection-class_Rd.R",
-      "package": "DBI",
-      "stratum": "data_wrangling",
-      "sha256": "1f00bad34f4da214dabfa05ed9d45db59c77ec0bfc73c16d3f8ee11f8e428a84"
-    },
-    {
-      "script": "testthat__vignette__third-edition_s9.R",
-      "package": "testthat",
-      "stratum": "other",
-      "sha256": "9d7997c847e2f0f110dbfbcec25217deb2964bab8e5c1f8518ebc4c5ce9889fb"
-    },
-    {
-      "script": "clock__vignette__clock_s33.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "d908b8d85395dbd20c985c86c3a0f2facdcd440472a72d3c8eddf6617368d293"
-    },
-    {
-      "script": "glmnet__vignette__glmnetFamily_s1.R",
-      "package": "glmnet",
-      "stratum": "stats_objects",
-      "sha256": "e7eb987932524f4b1ca08cd959d3931917a3f4f97d0ba90c9e4e799befe1083a"
-    },
-    {
-      "script": "DBI__rd_example__sqlParseVariables_Rd.R",
-      "package": "DBI",
-      "stratum": "data_wrangling",
-      "sha256": "2763e071c2416bbbbe0f9b80e023aec4316eee0e06380151eafe2dc7a6a892b2"
-    },
-    {
-      "script": "vctrs__vignette__type-size_s30.R",
-      "package": "vctrs",
-      "stratum": "data_wrangling",
-      "sha256": "17c413fceabb9e4a29cb7048b8378111653e2ec109783ce76f277eb9917eab5e"
-    },
-    {
-      "script": "prodlim__rd_example__stopTime_Rd.R",
-      "package": "prodlim",
-      "stratum": "stats_objects",
-      "sha256": "d29a606a503434cca050b780cdda2ff8aaba7332506c72c16338038d620b6a06"
-    },
-    {
-      "script": "rlang__rd_example__switch_type_Rd.R",
-      "package": "rlang",
-      "stratum": "other",
-      "sha256": "2e1d01ecacdcee9237613d86c2d265cdd4479c20dfa720a1e86165546f2db63c"
-    },
-    {
-      "script": "backports__rd_example__isNamespaceLoaded_Rd.R",
-      "package": "backports",
-      "stratum": "other",
-      "sha256": "4a7b1fd65bfb69f791b79c06c0aac4b05ef2a32236e24680071c6d6329d53364"
-    },
-    {
-      "script": "ps__rd_example__ps_tty_size_Rd.R",
-      "package": "ps",
-      "stratum": "other",
-      "sha256": "9fceb01e0c3af45bc0f1ddc8e0dfdbeb1f5ef7395d7ec7ce854237429997a6d8"
-    },
-    {
-      "script": "googlesheets4__rd_example__gs4_scopes_Rd.R",
-      "package": "googlesheets4",
-      "stratum": "other",
-      "sha256": "bfca94fe8e1c1ad5ac8a67abc82ef088640d60c7abba927c9999f70dffae15e9"
-    },
-    {
-      "script": "googlesheets4__rd_example__gs4_formula_Rd.R",
-      "package": "googlesheets4",
-      "stratum": "other",
-      "sha256": "0c9ec0500184edbb793b48946742a09126724baf0aa7f361007d66a0c61f6825"
-    },
-    {
-      "script": "ggplot2__vignette__extending-ggplot2_s12.R",
-      "package": "ggplot2",
-      "stratum": "graphics",
-      "sha256": "368e15bed89ceca259a87b40b20c2522f352584c0417cc895770c6944fa2da50"
-    },
-    {
-      "script": "rlang__rd_example__is_named_Rd.R",
-      "package": "rlang",
-      "stratum": "other",
-      "sha256": "e96e0dcb370dec00ae927b5ab5733bb24a38cec17371620a6c70b2cdeed5597f"
-    },
-    {
-      "script": "crayon__rd_example__col_substring_Rd.R",
-      "package": "crayon",
-      "stratum": "other",
-      "sha256": "77e19ea27572e0faf5a166be14673d9ca9b6964a8a436de0b0c0a79b9e429139"
-    },
-    {
-      "script": "curl__vignette__intro_s6.R",
-      "package": "curl",
-      "stratum": "other",
-      "sha256": "572e48b6fffd63681c7e5aa3d47125874789eb68eafac0f11fdcf00ad85a0a90"
-    },
-    {
-      "script": "recipes__rd_example__tidy_recipe_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "0005d45cfba6b280e49f95818de85eea16aeba04dbd10efed0c5dd5f42e442f5"
-    },
-    {
-      "script": "httr__rd_example__POST_Rd.R",
-      "package": "httr",
-      "stratum": "other",
-      "sha256": "73a76f9a1d37d4e81a1e40d22d0b3cf2c23d862d6cd35adeda770cf1b3e12eac"
-    },
-    {
-      "script": "recipes__rd_example__check_new_values_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "e9563a776b73e6ca06577417a6cb8ef146e987db1d21b9bf466adf6b185f1ba2"
-    },
-    {
-      "script": "dtplyr__rd_example__distinct_dtplyr_step_Rd.R",
-      "package": "dtplyr",
-      "stratum": "data_wrangling",
-      "sha256": "354dcedeadbcff858dd70821477e0e0280b816d6bcd87c8699ff8d0748bc349a"
-    },
-    {
-      "script": "ggplot2__rd_example__scale_type_Rd.R",
-      "package": "ggplot2",
-      "stratum": "graphics",
-      "sha256": "25718a0a5575bf9d0a1d18ee664e19a440825ced545abb3f60ec6eb00247c5a9"
-    },
-    {
-      "script": "otel__rd_example__is_tracing_enabled_Rd.R",
-      "package": "otel",
-      "stratum": "other",
-      "sha256": "116ac7ad3a1b10fa0cb92c42f974a85f9d278d1da51a96b971b1998c8e886234"
-    },
-    {
-      "script": "clock__rd_example__clock_labels_Rd.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "eb9ab349f1ec35405a1a2e37aa002bb204c54a74757f5a4c2d96ef7368aa7323"
-    },
-    {
-      "script": "rlang__rd_example__are_na_Rd.R",
-      "package": "rlang",
-      "stratum": "other",
-      "sha256": "bd68c9aeb3352faff2a710d76ba19b8a1d9b4a5c711757289907f4a0d4bb1316"
-    },
-    {
-      "script": "broom__vignette__broom_and_dplyr_chunk1.R",
-      "package": "broom",
-      "stratum": "stats_objects",
-      "sha256": "ebbe88d33dca36ae08453b2d7ea814de42d4395eaa818759d30db00dd292ed79"
-    },
-    {
-      "script": "clock__vignette__faq_s3.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "b97060f52943ea09e141d293dc7161ff46ef9f3d6b5dbebb7fbc2d206530b4c2"
-    },
-    {
-      "script": "parallelly__rd_example__freeCores_Rd.R",
-      "package": "parallelly",
-      "stratum": "other",
-      "sha256": "170c45a4972d5b21aea5c754f32c2cd272e0c00cdb17d5b357af7f5c82aa4bac"
-    },
-    {
-      "script": "vctrs__rd_example__vec_proxy_compare_Rd.R",
-      "package": "vctrs",
-      "stratum": "data_wrangling",
-      "sha256": "3216400389fab24852714de68300f5940a7e7e26ff7e473ca880fb74039fd0de"
-    },
-    {
-      "script": "withr__vignette__withr_chunk17.R",
-      "package": "withr",
-      "stratum": "other",
-      "sha256": "ad8d6ebde369b910f1f4d944002bf40817f5e598868e11357e3a476f5fa959ab"
-    },
-    {
-      "script": "clock__vignette__recipes_s36.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "4ecbc2882f03416f66a025ff788d99b323d5676f9af07e97943b2b093ef2a9ec"
-    },
-    {
-      "script": "pak__rd_example__sysreqs_db_list_Rd.R",
-      "package": "pak",
-      "stratum": "other",
-      "sha256": "0afac2e335d075fcee3c2e1047121ab6a1fd3ba27c9e867fad5c7f0779e9e2e3"
-    },
-    {
-      "script": "pkgdown__rd_example__test-dont_Rd.R",
-      "package": "pkgdown",
-      "stratum": "html",
-      "sha256": "c6d1cce00662233414a269e85867da0b59a215f7d3b44f6d970babd7df31f347"
-    },
-    {
-      "script": "ids__rd_example__uuid_Rd.R",
-      "package": "ids",
-      "stratum": "other",
-      "sha256": "45b44be0cb0f16c9d89f1c43c2a18ec0a43e275158e3cd3681f14e8aea0aa0e8"
-    },
-    {
-      "script": "profvis__rd_example__profvis_Rd.R",
-      "package": "profvis",
-      "stratum": "other",
-      "sha256": "8f711d7cdb25b44f128e2bb76208735fd4228a5ab71b82a7d7fe904ee0170f53"
-    },
-    {
-      "script": "recipes__rd_example__step_depth_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "f8b6b5c42652b7f0eef7feceeff9334e1a5409296212439a45c1ed24bdf0656b"
-    },
-    {
-      "script": "shiny__rd_example__fixedPage_Rd.R",
-      "package": "shiny",
-      "stratum": "html",
-      "sha256": "580d8ac93e7d4d3f8652a52b200871f1694b045c4233e17eb11f330cc0285b89"
-    },
-    {
-      "script": "S7__vignette__compatibility_s4.R",
-      "package": "S7",
-      "stratum": "other",
-      "sha256": "73202e8fc843d0f206f970675c5793c822c0f295c18715442ac24c47dca5a7f3"
-    },
-    {
-      "script": "gargle__rd_example__gargle_options_Rd.R",
-      "package": "gargle",
-      "stratum": "other",
-      "sha256": "cebf8cffde9f14367e477251e03aca43483a4d2e9e0027abaf3beb626b54220a"
-    },
-    {
-      "script": "testthat__rd_example__try_again_Rd.R",
-      "package": "testthat",
-      "stratum": "other",
-      "sha256": "c57e9524073cf5182535bd19bde0298429bd207e639b663af08338347740f066"
-    },
-    {
-      "script": "lifecycle__vignette__communicate_s7.R",
-      "package": "lifecycle",
-      "stratum": "other",
-      "sha256": "921ef7ae78a4ae1e29971331eb63df935ddbc044973de1a9835d6c6f4cdefb3d"
-    },
-    {
-      "script": "sparsevctrs__vignette__design_chunk1.R",
-      "package": "sparsevctrs",
-      "stratum": "data_wrangling",
-      "sha256": "e7cda218091dea7ac19d2506ea60cea9a325d2f615c203c8db1c91dbd0552a44"
-    },
-    {
-      "script": "stringr__vignette__locale-sensitive_s6.R",
-      "package": "stringr",
-      "stratum": "data_wrangling",
-      "sha256": "33f52f5b5e1f7c5dabd7968b6ae216838cda405ff10f79fd07fc66ad1a7012c3"
-    },
-    {
-      "script": "ggplot2__vignette__ggplot2-in-packages_s15.R",
-      "package": "ggplot2",
-      "stratum": "graphics",
-      "sha256": "0c62fa2b9ea887f3b308e523c8486d02c1f5576c9535fa48e46a6f73a778bf58"
-    },
-    {
-      "script": "broom__rd_example__augment_pam_Rd.R",
-      "package": "broom",
-      "stratum": "stats_objects",
-      "sha256": "d7f652bf34020581ab5cf12f30275d8a867e645404657db34cfe2b0a12097da3"
-    },
-    {
-      "script": "ggplot2__vignette__ggplot2_s10.R",
-      "package": "ggplot2",
-      "stratum": "graphics",
-      "sha256": "7efdd0758f3a7e1329a3610b833138363c4b85377019584c34e7def33c88ed72"
-    },
-    {
-      "script": "dplyr__vignette__programming_s12.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "2eb0a4bc87a9f7a1f106af5a58164d74f6081abb2e74b07a90fd3d6311ee71f5"
-    },
-    {
-      "script": "gtable__vignette__profiling_s1.R",
-      "package": "gtable",
-      "stratum": "graphics",
-      "sha256": "a45a962f59f339aebf1673dc0dd754a66579190af463f8a2484f05d5d14db03c"
-    },
-    {
-      "script": "tidyr__vignette__pivot_s40.R",
-      "package": "tidyr",
-      "stratum": "data_wrangling",
-      "sha256": "700d46220a61a912d0339caa1484570a21ba1196a823701474761cd1b296fdd1"
-    },
-    {
-      "script": "stringr__vignette__regular-expressions_s29.R",
-      "package": "stringr",
-      "stratum": "data_wrangling",
-      "sha256": "7198cdcad68a29b3b90d83c267169379b42addf87520af9f62b7fb7b65b3e89e"
+      "sha256": "073eed725b3b0d4bc7c76d1b89e8200bee8095667c88d29a10b72923221835ed"
     },
     {
       "script": "ggplot2__vignette__ggplot2-in-packages_s13.R",
@@ -1098,298 +496,184 @@
       "sha256": "292b3134d400df59a965805f90587f620973705bcf8a04ad93007cd334b52c58"
     },
     {
-      "script": "diffobj__vignette__diffobj_s8.R",
-      "package": "diffobj",
-      "stratum": "other",
-      "sha256": "80123a37d12285f986f1dec1232ba08d9f6a54363943c366b310d75f61b94c70"
-    },
-    {
-      "script": "shiny__rd_example__reactiveFileReader_Rd.R",
-      "package": "shiny",
-      "stratum": "html",
-      "sha256": "83d56218d041ffbb662e956993e304aaf6ecf18994cf7ebc88bddda16f707207"
-    },
-    {
-      "script": "lava__vignette__nonlinear_s1.R",
-      "package": "lava",
-      "stratum": "stats_objects",
-      "sha256": "53859bfd50072d4b7c9b2873226cfb04eeaa2162d569a644feae16cff9185d1c"
-    },
-    {
-      "script": "data.table__vignette__datatable-keys-fast-subset_s5.R",
-      "package": "data.table",
+      "script": "vctrs__vignette__type-size_s23.R",
+      "package": "vctrs",
       "stratum": "data_wrangling",
-      "sha256": "7df522c074d97308d41ae4b7bdd64335f3208db16d41c0bf7c3cf74a5a398ee2"
+      "sha256": "b9f5d03ef8c6f5271f5aa8da378cbd5c9a7dfa92f09f5de0a42fef1b95e4649c"
     },
     {
-      "script": "broom__rd_example__glance_svyglm_Rd.R",
-      "package": "broom",
-      "stratum": "stats_objects",
-      "sha256": "6cf23c9d7ab4c18db19014b51aa8ef81423a79ed1aebf79a2d4c67f0bbeae8e4"
+      "script": "gtable__rd_example__bind_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "f27d113d376d96941a210b5593e81368fb2a5ed703e1d9689972aa7d88d4e890"
     },
     {
-      "script": "pillar__rd_example__format_glimpse_Rd.R",
-      "package": "pillar",
-      "stratum": "other",
-      "sha256": "500fbd4b7856a147d624e058a27b5a2fb2ad02761e8cfe5f372608fee05f33d3"
-    },
-    {
-      "script": "shiny__rd_example__renderDataTable_Rd.R",
-      "package": "shiny",
+      "script": "highr__vignette__highr-custom_s2.R",
+      "package": "highr",
       "stratum": "html",
-      "sha256": "f9f51aee19436f5f20ac432c4a826b54e9c1b9da12d217ffd113e1a6a93a8dfd"
+      "sha256": "796828b7ed54e383afc99809178f9d84128d94f4dd63a9c5de29a860760371b1"
     },
     {
-      "script": "tidyr__rd_example__pivot_wider_spec_Rd.R",
+      "script": "proxy__rd_example__registry_Rd.R",
+      "package": "proxy",
+      "stratum": "stats_objects",
+      "sha256": "cf8b5f14310989805ff317a6cbe0e6442568606a880e6080a9443991d035eab6"
+    },
+    {
+      "script": "lubridate__rd_example__date_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "bc47da294e801e217a50221dbd667139082fabd86f611862940a995e47c943b6"
+    },
+    {
+      "script": "magrittr__rd_example__pipe-eager_Rd.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "73d9340ef83b67318c62853242c6c8da00a996e87cc75bca7e05709c5ef17f55"
+    },
+    {
+      "script": "systemfonts__rd_example__shape_string_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "94cbb55599ff539adf8a6fcd4ff298596691a4f5f5b05c6e5f29e20690a68e48"
+    },
+    {
+      "script": "rvest__vignette__rvest_s17.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "0bbb057530e9ff339684f10be977150fd62cbbab18f556ad76715a2d63b0b5a4"
+    },
+    {
+      "script": "googledrive__rd_example__drive_about_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "9abda2b2d6ba7abca4e34eacdb5456dad02f7ca1c0ee43198af81726ac7b8f5a"
+    },
+    {
+      "script": "htmltools__rd_example__tagQuery_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "a61e84efb6d0b2d488f0a4e8a0ff5c5ec580556944781a61d80c8876df826077"
+    },
+    {
+      "script": "openssl__rd_example__encrypt_envelope_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "eb0ce4a7dd1f30bc2e10880860eace62d2a7dc337a9796dc9b5b003bf68a0a9c"
+    },
+    {
+      "script": "ModelMetrics__rd_example__tnr_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "bc61e900d6db93e8492eb892312516dfe06227a8f0a115f6d7250ef58065f8bf"
+    },
+    {
+      "script": "purrr__vignette__purrr_s10.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "da54b391518e8999b8cac82e855d2a086fb96d8c8a4b1e1dee7e4010472564c4"
+    },
+    {
+      "script": "recipes__vignette__Roles_chunk11.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "9e52ec0346663e3ac9490f299a64c12c95bb7fe8c3a31ce725c96eba112c4409"
+    },
+    {
+      "script": "tidyr__rd_example__separate_rows_Rd.R",
       "package": "tidyr",
       "stratum": "data_wrangling",
-      "sha256": "d846f6831ecf3c59f1491ac16ddcc367128b67f3477269be9e62c6dec4f05088"
+      "sha256": "2c2d344081a87ea2d656193dd9347a8af31eb00b86acf2cb200d44bf3a8e55f1"
     },
     {
-      "script": "vctrs__rd_example__list_of_transpose_Rd.R",
-      "package": "vctrs",
+      "script": "pROC__rd_example__plot_ci_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "db22ef818cc9c1b8d4d5fb5840d0438a4e3a388398c1d05364778b86576cac22"
+    },
+    {
+      "script": "e1071__rd_example__sigmoid_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "45ee6f5f3e0672b167d83c385def625f1831a66072f6ff52f90cea74cbcdb579"
+    },
+    {
+      "script": "uuid__rd_example__UUIDgenerate_Rd.R",
+      "package": "uuid",
+      "stratum": "other",
+      "sha256": "b21e3933ef02ef57ece08e436eda2e69b519f774bb5286817e3033ae0f5c172b"
+    },
+    {
+      "script": "ranger__rd_example__hshrink_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "9cb0a39806b218af16924633df816cf753d122637ce76f33580bc59a53ec3853"
+    },
+    {
+      "script": "utf8__rd_example__utf8_format_Rd.R",
+      "package": "utf8",
       "stratum": "data_wrangling",
-      "sha256": "1641c0faaa2364bb2d48cfdbdc141a5d036642be6c2e814d5b3259f67c6b54d9"
+      "sha256": "28a4a484903af9a043af722acd5da305f5f44ffd82c12434d4bc197b293d2a3e"
     },
     {
-      "script": "caret__rd_example__BoxCoxTrans_Rd.R",
+      "script": "farver__rd_example__native_encoding_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "b2bc90e32f438fbfbfbedcca209dbfd478676ed797461a27c5240aacfaa942d8"
+    },
+    {
+      "script": "prodlim__rd_example__row_match_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "a84ec8ec606773688cb5e248dc97c2c76646d8743b3741eb9fde8a33f56eecb8"
+    },
+    {
+      "script": "sessioninfo__rd_example__external_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "195dcd5a3c81c20dd86cb0325c72fbc9009c39da856b9dd8a4bf3dc79599a67f"
+    },
+    {
+      "script": "sparsevctrs__rd_example__sparse_logical_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "7ff4add56e22b05582471153d7bd94f02ac2da024444367c6a6614091474ab8a"
+    },
+    {
+      "script": "bslib__rd_example__bs_get_variables_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "3cef44f704f814db775dd9a0590852ace50a4a0017de2f23e993d93f0a4f6f14"
+    },
+    {
+      "script": "caret__rd_example__lift_Rd.R",
       "package": "caret",
       "stratum": "stats_objects",
-      "sha256": "25f32d117c90efceb8fc544161cf366d8ffa6a11ca6525bae381ff4acebee8b3"
+      "sha256": "1ed3744cd0c128dee7381bcfb589f553dcc347503cbf381b93b15c5c2417497a"
     },
     {
-      "script": "recipes__rd_example__recipes_ptype_validate_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "418781016511a329b80d6c1229b74ac0deb4a3fbc51730171980648eb19a15d2"
-    },
-    {
-      "script": "stringr__vignette__locale-sensitive_s2.R",
-      "package": "stringr",
-      "stratum": "data_wrangling",
-      "sha256": "7bc438e66340dfc0adef0640d8d67fbb8be84bf7e1c7a901fcdeb3561f84bb06"
-    },
-    {
-      "script": "clock__rd_example__clock-getters_Rd.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "22371e3850ad55110a78c54ed14051593a020da7d0ec82914af1d27556452ee9"
-    },
-    {
-      "script": "dplyr__vignette__recoding-replacing_s3.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "c55740d2cacf6afaec4be806adc16bab11506d77d826a2b45adcc12a9c46d34f"
-    },
-    {
-      "script": "broom__rd_example__tidy_binDesign_Rd.R",
-      "package": "broom",
-      "stratum": "stats_objects",
-      "sha256": "0a9feff121aa7a0085cd61c8cda36ada3b2c3984627c5c863ddd9c4f0274b537"
-    },
-    {
-      "script": "rversions__rd_example__rtools_versions_Rd.R",
-      "package": "rversions",
-      "stratum": "other",
-      "sha256": "f565cece5959e47fc542d28cde5c1f8da1fe613b792fd686b9e9b2bfef2f47cb"
-    },
-    {
-      "script": "plyr__rd_example__progress_tk_Rd.R",
-      "package": "plyr",
-      "stratum": "data_wrangling",
-      "sha256": "2ed8b18d96ce9573a7295e8cb2a35819437c306b2b4c4f1ec474db49c44fd5f0"
-    },
-    {
-      "script": "vctrs__rd_example__missing_Rd.R",
-      "package": "vctrs",
-      "stratum": "data_wrangling",
-      "sha256": "12582c159fca5128fe9e1cade3afd5ff47667a6b566840a9f6bd5499714865a4"
-    },
-    {
-      "script": "clock__rd_example__year-week-day-setters_Rd.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "f86f06d1477354c76b83cf6fbaf2eace11efa2de731905abe1c2f4101c1957eb"
-    },
-    {
-      "script": "progressr__rd_example__handler_beepr_Rd.R",
-      "package": "progressr",
-      "stratum": "other",
-      "sha256": "60c8dfcb08311ecb9e8b8d6f1ea121aaaa58e1f2bc4db4834ac33d5d4fc6c30e"
-    },
-    {
-      "script": "ids__rd_example__proquint_Rd.R",
-      "package": "ids",
-      "stratum": "other",
-      "sha256": "1ae3979ab0ff180cc82ed1ea758c4ee33c579450d297fbb38a85a182b250b72e"
-    },
-    {
-      "script": "memoise__rd_example__has_cache_Rd.R",
-      "package": "memoise",
-      "stratum": "other",
-      "sha256": "aa25b51126558f2ef54396ed06f85ff6ffda62319551d6f4b20ac207c108c6d8"
-    },
-    {
-      "script": "modelr__rd_example__fit_with_Rd.R",
-      "package": "modelr",
-      "stratum": "stats_objects",
-      "sha256": "2aea98c81e8befdc27cad409ffda9b1c95458303024504127af32efaf248d0fe"
-    },
-    {
-      "script": "S7__rd_example__props_Rd.R",
-      "package": "S7",
-      "stratum": "other",
-      "sha256": "57a90c4909dcdfc3d328957195b859077a543f1fc614136804b72dea339ece1f"
-    },
-    {
-      "script": "clock__vignette__faq_s33.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "9fc43aeb3fa0b62c289d0b28c3274d0cca9c4a7dc7baa655d892fd6a5341bb49"
-    },
-    {
-      "script": "vroom__vignette__vroom_s8.R",
-      "package": "vroom",
-      "stratum": "data_wrangling",
-      "sha256": "581077e2b9280c6b33626f0ba21a1bbf1a260e988487840d593c436ffdadda80"
-    },
-    {
-      "script": "vctrs__vignette__s3-vector_s77.R",
-      "package": "vctrs",
-      "stratum": "data_wrangling",
-      "sha256": "f9e66e8cfee800a9517e117b91d342a949631163ef49512e7cf33003b9dd42c5"
-    },
-    {
-      "script": "S7__vignette__generics-methods_s19.R",
-      "package": "S7",
-      "stratum": "other",
-      "sha256": "1561ca0f9e312c2be211850296c1d1a324016434e01f999e4b6d220b4014ed0f"
-    },
-    {
-      "script": "otel__rd_example__get_logger_Rd.R",
-      "package": "otel",
-      "stratum": "other",
-      "sha256": "a2d7f7aaea8efd87e157954481617d2389f12662de940ed6d9d7c673c13749a1"
-    },
-    {
-      "script": "shiny__rd_example__moduleServer_Rd.R",
-      "package": "shiny",
-      "stratum": "html",
-      "sha256": "fa489d2eab2707216bde3861f08878a8e2dff59dfe7666c0559801ec27c21849"
-    },
-    {
-      "script": "clock__vignette__clock_s34.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "c6552be895b50b2a765f48bfbda98d70dde35750ff6b40b72dc8fca5f4a143d2"
-    },
-    {
-      "script": "parallelly__rd_example__availableWorkers_Rd.R",
-      "package": "parallelly",
-      "stratum": "other",
-      "sha256": "2d0f2c8427b43af3204e4239e9daca5b34ae8316f6f44c3bb2b15e9d4839d139"
-    },
-    {
-      "script": "cpp11__vignette__motivations_s4.R",
-      "package": "cpp11",
-      "stratum": "other",
-      "sha256": "6999ac7a0ca7f7939e54b3c3af7ff4ef30f6b3af516d6b28cc99ec47047de5de"
-    },
-    {
-      "script": "recipes__rd_example__discretize_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "9e4619d36da09f57ad058cdca6ffba03265eb5871e6e8bd0596b01a991ab88ef"
-    },
-    {
-      "script": "vctrs__vignette__pillar_s4.R",
-      "package": "vctrs",
-      "stratum": "data_wrangling",
-      "sha256": "8d815e767712430f4ad258bd5635cfcbd9055ada928b2454dba177a3b932754a"
-    },
-    {
-      "script": "S7__vignette__classes-objects_s13.R",
-      "package": "S7",
-      "stratum": "other",
-      "sha256": "5df7e237366aa13fe8ea40c05688f5d4950af2ba9c4c827e605a290651211d6e"
-    },
-    {
-      "script": "clock__vignette__recipes_s70.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "7b801ee0223f1dc14b26c5d33bba02c6f940914f7533ff15fdd67595cf82cc10"
-    },
-    {
-      "script": "scales__rd_example__label_pvalue_Rd.R",
-      "package": "scales",
+      "script": "ragg__rd_example__agg_webp_anim_Rd.R",
+      "package": "ragg",
       "stratum": "graphics",
-      "sha256": "3ec8706e62a69dd9fe2a33fc88ff7db319836ceeec4211a1b41bc6a773d6828e"
+      "sha256": "ce1da297a723dcb68d347f36853446d168bebed7ce04575ec7040ec849add80a"
     },
     {
-      "script": "otel__rd_example__otel_histogram_Rd.R",
-      "package": "otel",
+      "script": "fansi__rd_example__substr_ctl_Rd.R",
+      "package": "fansi",
       "stratum": "other",
-      "sha256": "92ae006c503155d3a372695b7f36baba9cc326ee68d4198c090e7c83a2648861"
+      "sha256": "df74fedbde980fcf7d997ac11ba8ee2f438f064d1c61e1572eff8cd2d525aafc"
     },
     {
-      "script": "ggplot2__vignette__extending-ggplot2_s27.R",
-      "package": "ggplot2",
-      "stratum": "graphics",
-      "sha256": "908729d146dc10b4f77d805f3537b9ea8255673112c45108e1ebdd2ddc2eed69"
-    },
-    {
-      "script": "progressr__rd_example__handler_notifier_Rd.R",
-      "package": "progressr",
-      "stratum": "other",
-      "sha256": "70a6db5d884061dcd732c897e191a2674915227903c0d22729acdfbeea628430"
-    },
-    {
-      "script": "pkgload__rd_example__pkgtest_Rd.R",
-      "package": "pkgload",
-      "stratum": "other",
-      "sha256": "5aab230f98ad6de0dd7fbfdc94f7319ff63c119d9f3aa4a6cb7e9ab8928bce0b"
-    },
-    {
-      "script": "shape__rd_example__filledcylinder_Rd.R",
-      "package": "shape",
-      "stratum": "graphics",
-      "sha256": "0a9222bd6e074b902d21a04fbc4f49a25cd5f8b5a3ef72b075f4a5497762ebe0"
-    },
-    {
-      "script": "diffobj__vignette__diffobj_s16.R",
-      "package": "diffobj",
-      "stratum": "other",
-      "sha256": "5aa4ab6990d4eb414caced2a72ef1532e787637a5a8fb48e7ac969d140d87bea"
-    },
-    {
-      "script": "vctrs__rd_example__vec_locate_sorted_groups_Rd.R",
-      "package": "vctrs",
+      "script": "reshape2__rd_example__melt_list_Rd.R",
+      "package": "reshape2",
       "stratum": "data_wrangling",
-      "sha256": "7b0f5915a940d3a6ca06f62481b04b85eeac5c693e18fd7795c09f48c0bcc736"
+      "sha256": "40d293bad8557da354c473af3d7fc0bb49d86ac8bc1b543b6911340c1d6c91ab"
     },
     {
-      "script": "curl__rd_example__file_writer_Rd.R",
-      "package": "curl",
+      "script": "tinytex__rd_example__check_installed_Rd.R",
+      "package": "tinytex",
       "stratum": "other",
-      "sha256": "5fbf582f7f471c95d34eadb20a02fef296c04eb1fe2b1fd75f988dc2c4df455d"
-    },
-    {
-      "script": "vctrs__vignette__s3-vector_s52.R",
-      "package": "vctrs",
-      "stratum": "data_wrangling",
-      "sha256": "00b8b26c39a82d6aa22cba3f0e2cb4201b33b2c209bed57facbf5359555e0586"
-    },
-    {
-      "script": "rlang__rd_example__missing_arg_Rd.R",
-      "package": "rlang",
-      "stratum": "other",
-      "sha256": "c4e6b9116e3a3bf6fa69c7dbb8782a137a1cb432ba264a48ff231ac86b04a3cb"
-    },
-    {
-      "script": "parallelly__rd_example__makeClusterMPI_Rd.R",
-      "package": "parallelly",
-      "stratum": "other",
-      "sha256": "4e75c0c0b7ff8a3972ca1e1a5e6b15c5f9d9d4ff5ae8dda54929fb433d97e990"
+      "sha256": "0d0ec74d548570497743ba8e26836f60de3cc0433a44a56149959c4fa9302347"
     },
     {
       "script": "dplyr__vignette__programming_chunk10.R",
@@ -1398,250 +682,52 @@
       "sha256": "0de55d12ee214b0a0c5eb95fd861e5713795856257ca29af7800260790af4d61"
     },
     {
-      "script": "pillar__rd_example__get_extent_Rd.R",
-      "package": "pillar",
-      "stratum": "other",
-      "sha256": "2839df67645585766f84edcdd8cb7af58ad045ad36b58f5185c181cf5ccd8293"
+      "script": "shiny__rd_example__observe_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "17372018d5b8a8d66005ce208f2a88f5573df44cd64070079c8036bb98826728"
     },
     {
-      "script": "tidyr__rd_example__uncount_Rd.R",
-      "package": "tidyr",
-      "stratum": "data_wrangling",
-      "sha256": "54890522b58b1d766f12067da2ae47aab9675ef55ce27058bf4eb5071577c361"
+      "script": "xml2__rd_example__xml_dtd_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "cbf6c0e711a486a151397b57da20a34c1294f868dc66109d0d4a582a619320cb"
     },
     {
-      "script": "recipes__rd_example__step_shuffle_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "60d78ff01446eeb7c8ec229548b4608d7a6f3b01307e13fc11cc2bf551055427"
-    },
-    {
-      "script": "ModelMetrics__rd_example__mauc_Rd.R",
-      "package": "ModelMetrics",
-      "stratum": "stats_objects",
-      "sha256": "c67f637cd33b29a5fdef4986adc137b7a61a4f9edd9aaa9d96ba16a5ecebdfa9"
-    },
-    {
-      "script": "rlang__rd_example__raw_deparse_str_Rd.R",
-      "package": "rlang",
-      "stratum": "other",
-      "sha256": "ebbf3a4022b770daf3fc720cbad97a089f81bb51ad45315e6a99ec9f27fa654a"
-    },
-    {
-      "script": "withr__vignette__withr_s6.R",
-      "package": "withr",
-      "stratum": "other",
-      "sha256": "2735f99ce838326b1124cd3944e15346dd842ac77dd06a38d2e5db6b41f2f5a9"
-    },
-    {
-      "script": "progressr__rd_example__withProgressShiny_Rd.R",
-      "package": "progressr",
-      "stratum": "other",
-      "sha256": "c07c936d648090cfe5dd12f1d13325969a3879c5ea2d5c91d02245446258467d"
-    },
-    {
-      "script": "ggplot2__vignette__extending-ggplot2_s2.R",
-      "package": "ggplot2",
-      "stratum": "graphics",
-      "sha256": "43272f065e60fd0d5fff888161e3b906d53b87b800634f62e67cc5976df52fb5"
-    },
-    {
-      "script": "dplyr__rd_example__mutate_Rd.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "62f0c1f3088e98cf3ce3fa558189e91c118b9e408c695505bf8fde59da9e9010"
-    },
-    {
-      "script": "vctrs__vignette__s3-vector_s7.R",
-      "package": "vctrs",
-      "stratum": "data_wrangling",
-      "sha256": "f5cb7f6e29aae90ad1ae4e068d9ebab862faa273480ddaae585893c9c4b8d59f"
-    },
-    {
-      "script": "clock__rd_example__year_month_day_Rd.R",
-      "package": "clock",
+      "script": "hms__rd_example__parse_hms_Rd.R",
+      "package": "hms",
       "stratum": "date_time",
-      "sha256": "b984840ac8df20a437ba431a943e815d5b8b835c4c03bd73825377ca26eba028"
+      "sha256": "72d6ad28aff9bde5efa7f55937376cb57c94a852995e9cd661fb08827170bc3b"
     },
     {
-      "script": "dtplyr__rd_example__lazy_dt_Rd.R",
-      "package": "dtplyr",
-      "stratum": "data_wrangling",
-      "sha256": "c6f103f1c098a046386446110d3b19c09aa5a6198d945d4d7409b99fd91fc970"
-    },
-    {
-      "script": "pROC__rd_example__aSAH_Rd.R",
-      "package": "pROC",
-      "stratum": "stats_objects",
-      "sha256": "f41567e44763d6141c0df32ab7a6b2a2ad554c109123672538865bd418031dd4"
-    },
-    {
-      "script": "bit__vignette__bit-usage_s13.R",
-      "package": "bit",
-      "stratum": "data_wrangling",
-      "sha256": "badd51efdda56b3fe2eb8d3656c1eb3dbc9e4fce923ebf51cc88381d7b166daf"
-    },
-    {
-      "script": "dplyr__vignette__window-functions_s8.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "1d5b455b086c27960523f142eb4c6e1ccf4c93505b1c5f5abe16de5296ceb295"
-    },
-    {
-      "script": "dplyr__rd_example__group_by_Rd.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "098d6426f36bf81d41e0bbadfb8e40495523dc9c7d96486b1a314ff1390ed61d"
-    },
-    {
-      "script": "dplyr__vignette__recoding-replacing_s6.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "187c37138c921aada7fe22feb3d23c176025814d2887621ae454c9d8ebfdb1f4"
-    },
-    {
-      "script": "prodlim__rd_example__backGround_Rd.R",
-      "package": "prodlim",
-      "stratum": "stats_objects",
-      "sha256": "76cfb232bb63736be903508fdeb24e91433b468efc8c0984156d80a8d6810834"
-    },
-    {
-      "script": "crayon__rd_example__start_crayon_Rd.R",
-      "package": "crayon",
+      "script": "prettyunits__rd_example__pretty_ms_Rd.R",
+      "package": "prettyunits",
       "stratum": "other",
-      "sha256": "bead589f68409f14dd787a7eff68ea6890d5d621aeb8abb3769d13af925c55ad"
+      "sha256": "dc470dc658a647e059c61bb356a2a14cba08b991c4deb75d5467ac8edb50d30a"
     },
     {
-      "script": "jsonlite__vignette__json-aaquickstart_s7.R",
-      "package": "jsonlite",
-      "stratum": "data_wrangling",
-      "sha256": "5706b0369ef0b0bbcf55a57516b6cdd35b4bf34268a09ab345e544c76d411e41"
-    },
-    {
-      "script": "xtable__vignette__OtherPackagesGallery_s2.R",
-      "package": "xtable",
+      "script": "sass__rd_example__sass_options_Rd.R",
+      "package": "sass",
       "stratum": "html",
-      "sha256": "541cd502d18ff3aebbaa0c4145150272ddfe583363c4e071c034d98defebaa8b"
+      "sha256": "e70fa45a5d9f1ed9eef0e82e7d2640601ac413d02e61b1ace38e371190ea0a0a"
     },
     {
-      "script": "data.table__rd_example__fctr_Rd.R",
-      "package": "data.table",
-      "stratum": "data_wrangling",
-      "sha256": "32b5a36e8af30a8124d943d49a6560f0fbbe005876f2dd8e88cbbd5cdfb72113"
-    },
-    {
-      "script": "dplyr__rd_example__reframe_Rd.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "1ba4a49219141b64a41c17bf9cc043bd3630bc796fb4382b2a62ef4f91b6dd49"
-    },
-    {
-      "script": "dplyr__vignette__colwise_s5.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "abe8627f12948b04345033e3a5e40449ae97aeaae659d5d439bc7e6e90d9aaa8"
-    },
-    {
-      "script": "dplyr__vignette__programming_chunk7.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "ab79beb677c682d24f6739092532476f0c09f9410afefab9e17565b389a6445e"
-    },
-    {
-      "script": "bit__rd_example__in_bitwhich_Rd.R",
-      "package": "bit",
-      "stratum": "data_wrangling",
-      "sha256": "0686e015f190728b2de10786a6d75f9d1b8f12aae56c852486352ef8cb7b03e1"
-    },
-    {
-      "script": "tidyr__vignette__in-packages_s2.R",
-      "package": "tidyr",
-      "stratum": "data_wrangling",
-      "sha256": "abc987d05e339c137fc819aad16debc7119ffffe92a71a21905ff313b5465f4a"
-    },
-    {
-      "script": "bit64__rd_example__sort_integer64_Rd.R",
-      "package": "bit64",
-      "stratum": "data_wrangling",
-      "sha256": "5dc20ebd28744dcfd4541387f4c39565fe8e89224039e7521a9944780fbd7244"
-    },
-    {
-      "script": "data.table__rd_example__rowid_Rd.R",
-      "package": "data.table",
-      "stratum": "data_wrangling",
-      "sha256": "e0cf3c2ad3e63adb6fe4fc9c40a426a08220575ad5fdab8d88f8eddaa356e474"
-    },
-    {
-      "script": "stringi__rd_example__stri_join_Rd.R",
-      "package": "stringi",
-      "stratum": "data_wrangling",
-      "sha256": "b54d0d07dad14a13c2767fadad3aca7292902bee99f2ca5e6f7318536703b4b1"
-    },
-    {
-      "script": "broom__rd_example__tidy_lavaan_Rd.R",
-      "package": "broom",
-      "stratum": "stats_objects",
-      "sha256": "c676a7bdb959d1bc54ae633f3cdb7a3abe21f9c01eebc7f9a8934f3f1abe7d1d"
-    },
-    {
-      "script": "gtable__rd_example__gtable_add_cols_Rd.R",
-      "package": "gtable",
-      "stratum": "graphics",
-      "sha256": "5aef1b7af476d52784fb6ac074f9d0c38158d7add6ab996a69b703457e9f5f46"
-    },
-    {
-      "script": "miniUI__rd_example__miniButtonBlock_Rd.R",
-      "package": "miniUI",
+      "script": "htmlwidgets__vignette__develop_advanced_chunk5.R",
+      "package": "htmlwidgets",
       "stratum": "html",
-      "sha256": "74018e59516ff452e66e38bfa4bceeabce1a966ed417fb7e7893bb725b36760b"
+      "sha256": "c73177c020b2a9be76daccb84a69685d9b46efa0a8f9c4bcdbebdcb511fa74a5"
     },
     {
-      "script": "dplyr__rd_example__order_by_Rd.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "a9b501340348492afbaaf96274df4452f9fa268c6f4ca20744f02681a7fb7650"
+      "script": "timeDate__rd_example__timeDate-Calendar_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "c2ffd969c341b7848a2210f2ae8f8801619b4b42c9725dbf014c90445ae27238"
     },
     {
-      "script": "crayon__rd_example__concat_Rd.R",
-      "package": "crayon",
-      "stratum": "other",
-      "sha256": "31f6437f8a93c6a2aa4b024d625c453c628ee05986be08a2dfb177dd4c4ba0a2"
-    },
-    {
-      "script": "testthat__vignette__challenging-tests_s4.R",
-      "package": "testthat",
-      "stratum": "other",
-      "sha256": "72a30e3d04d44728cd5954842bf875e296ce271be6c66190f8311f9c8308db3b"
-    },
-    {
-      "script": "ps__rd_example__ps_wait_Rd.R",
-      "package": "ps",
-      "stratum": "other",
-      "sha256": "3709f8dbcc0d2995e611571a5ec24334188b2f7b6efdf8a1bbeedbb73c07e380"
-    },
-    {
-      "script": "ggplot2__rd_example__scale_hue_Rd.R",
-      "package": "ggplot2",
+      "script": "diagram__rd_example__textmulti_Rd.R",
+      "package": "diagram",
       "stratum": "graphics",
-      "sha256": "61fe79aa194ec306f996e731b7647d733318a42448b6a12772f9abcce65b9738"
-    },
-    {
-      "script": "modelr__rd_example__permute_Rd.R",
-      "package": "modelr",
-      "stratum": "stats_objects",
-      "sha256": "b43d1c6501cd4226ec0fe1a6190a0c543cbd15088e6d7affe487e9c101241e0c"
-    },
-    {
-      "script": "httr2__rd_example__resp_link_url_Rd.R",
-      "package": "httr2",
-      "stratum": "other",
-      "sha256": "53c83315743055636cbc8c61dfd52fe0a35a839c72bc1dd7923c992821fb6b2c"
-    },
-    {
-      "script": "dplyr__vignette__programming_s10.R",
-      "package": "dplyr",
-      "stratum": "data_wrangling",
-      "sha256": "c4d6d9bf73e4ecec848bb3deff5e835def46aae5a72c0eafbe67ce5fe65aa5b5"
+      "sha256": "97670537d098876e0b4f6ed16a6e88acc7ce5095a83bc4636263615dfe23f230"
     },
     {
       "script": "shape__rd_example__getellipse_Rd.R",
@@ -1650,16 +736,826 @@
       "sha256": "96f6a07f7dd2d6f42806c02f398e0d268f5bca895a9f683a1414cb5b76c9e758"
     },
     {
-      "script": "recipes__rd_example__step_impute_median_Rd.R",
-      "package": "recipes",
-      "stratum": "stats_objects",
-      "sha256": "3c013ee5b6c26f41227b2773c25c5879d46b02279db3d56c378b7eed1ad66882"
+      "script": "rmarkdown__rd_example__pkg_file_lua_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "248e04353079636617bb2cbf078a9a38926517784c3bd6351d4d1b1285e27206"
     },
     {
-      "script": "stringi__rd_example__stri_trans_casemap_Rd.R",
-      "package": "stringi",
+      "script": "downlit__rd_example__highlight_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "3d3734338270b411595f34f6ad278f2687b489e8be16c6083f64f9c8f2e702fa"
+    },
+    {
+      "script": "broom__rd_example__tidy_binWidth_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "f2272ed8938ffedbaf050444bf5ca06e28780f050fa2a4b8f04c3ffade1f2e12"
+    },
+    {
+      "script": "lava__rd_example__fplot_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "d293d1d436f5331fc833fef1a2f620bd3bf9de18c74e8c5e499a9cef08c5e4e2"
+    },
+    {
+      "script": "textshaping__vignette__c_interface_chunk1.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "43f6afb365ac0d496aec980a027fd31c1b32d12388604cbf19e9f7d071853eb8"
+    },
+    {
+      "script": "recipes__rd_example__step_YeoJohnson_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "235259c86027f802adf64e017abf65dbc3577e6208c6c24d2888d0394b9ca49c"
+    },
+    {
+      "script": "htmlwidgets__rd_example__JS_Rd.R",
+      "package": "htmlwidgets",
+      "stratum": "html",
+      "sha256": "028b9078811bad1ef99c317f7db47c20ef3b7e70e5b908f2da21df9f7e5c1e68"
+    },
+    {
+      "script": "purrr__rd_example__attr_getter_Rd.R",
+      "package": "purrr",
       "stratum": "data_wrangling",
-      "sha256": "dc317d4cde0d8be3fb52168ef94c90b4e352bfadfaf3132efea62d62d75a88ab"
+      "sha256": "235ef5515eb90d2751188b6e95505c8732ed2cff4427abf1b834f186d51a046c"
+    },
+    {
+      "script": "googledrive__rd_example__drive_cp_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "d93c53fc802fadd6abd8894d46efda75a615f3e22bbe53e020df352210e00103"
+    },
+    {
+      "script": "fansi__rd_example__state_at_end_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "04869d69f01362459daf117343a352befeb3b2400ea4e1c9fdaef99757b75f83"
+    },
+    {
+      "script": "bslib__rd_example__layout_column_wrap_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "c7ab8db3e5a13f0940ae8a885b787655eca8a5e9b1d0d35dcaf9b81d1b6b803e"
+    },
+    {
+      "script": "caret__vignette__caret_s3.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "8bae9a77234a46c27d13a21952b8eb809def147d9bcdb39d296dcd8a3d3f11e7"
+    },
+    {
+      "script": "utf8__rd_example__utf8_encode_Rd.R",
+      "package": "utf8",
+      "stratum": "data_wrangling",
+      "sha256": "7620a685313d2c81813dd6e7a8ff0a0ee9ece4ded1718833b9f3973fe115b92f"
+    },
+    {
+      "script": "shape__rd_example__Arrowhead_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "93b0f09a0cf626e4c7c29879b22d458b2cdad8e7bf82e34db54bc8b8de4877b6"
+    },
+    {
+      "script": "downlit__rd_example__evaluate_and_highlight_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "c160dfb1894715d330169891322d4523a7fd639a2e28fd0009570e48faf3e112"
+    },
+    {
+      "script": "pROC__rd_example__coords_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "03f25decf68cfa41029b3a4703b77c8515bb4beb44b24b6c31d2ce3d88984b4c"
+    },
+    {
+      "script": "proxy__rd_example__rowSums_dist_Rd.R",
+      "package": "proxy",
+      "stratum": "stats_objects",
+      "sha256": "979a908ea1756267e0c55b749de64b500eee1f9d7838411321615c0651dad76e"
+    },
+    {
+      "script": "diagram__rd_example__textround_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "b4ed9b0af2838de9bca58143f7d70548c6ff5207fb58ee8255c987331cb346c9"
+    },
+    {
+      "script": "ggplot2__rd_example__position_jitterdodge_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "2d81e86e1ae52a7c1be5619c70214cbdea0f8aadb4bf5dd9082065043cff44c8"
+    },
+    {
+      "script": "prettyunits__rd_example__time_ago_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "4cc2fb1c099ed0a5fc80d7ee21f107e296a087c27d4dd2260710560a0638e87e"
+    },
+    {
+      "script": "openssl__rd_example__keygen_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "0f10ccab0382e761ef429eeba3caf7e5bf3e748b116515eabc315a9625c359e5"
+    },
+    {
+      "script": "htmltools__rd_example__tagAppendAttributes_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "f1d3f45afdc8fc7567155e5fa83ab47dcf77e717ec1521dabc640300abe101d1"
+    },
+    {
+      "script": "xml2__rd_example__xml_children_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "80715597d9a5bd65c1c001dcb9e526dc45e8c9f896c45c5b93aa6b3522ca9d38"
+    },
+    {
+      "script": "reshape2__rd_example__parse_formula_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "757e8eeed15ef2049e2b3f13848e45cf19f1a2e893fdb4b318f8204a9f4faebf"
+    },
+    {
+      "script": "sparsevctrs__rd_example__sparse_which_na_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "0432434f5f2eb14628f4ab519a432b4938bb16c8a4441cd708d3ae00de2b5873"
+    },
+    {
+      "script": "sessioninfo__rd_example__session_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "fbb3f926f3b5ee1afda79cb28feb2280d3a0d299507312eb7c3df08e38b6d85a"
+    },
+    {
+      "script": "sass__rd_example__sass_import_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "8faed1b68eb33c4bcc0d05d317d2e941c64191377b7cfb058c96485266e185af"
+    },
+    {
+      "script": "timeDate__rd_example__timeDate-midnightStandard_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "3d6ee449bf84e7769126c51ac93256e2db678409a4855f5f2397bfa4f20ff9a0"
+    },
+    {
+      "script": "shiny__rd_example__isolate_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "c0bc81deffe21ae7d4e33f655fd1daa4346e663dd355b4ace556a809170a90b0"
+    },
+    {
+      "script": "prodlim__rd_example__as_data_table_prodlim_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "676794ab82f91df8c9bab84fa42fb618cd788ff8b9167b9f20b01ed265d83b61"
+    },
+    {
+      "script": "dplyr__vignette__dplyr_s21.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "d001a931367fd6e7c9cd278c63fc560cf1145460fbf8900026fea7cd68dd799c"
+    },
+    {
+      "script": "gtable__rd_example__gtable_add_grob_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "d3b93751ea5bbe9bf2a754ffa7075f97ccdf5f076a40e4e9b2804f0a624c4fd0"
+    },
+    {
+      "script": "rvest__vignette__rvest_s7.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "526b3fd9d1fe51f52968a1b05578c3534c637a2a0347831da09d6043644faab5"
+    },
+    {
+      "script": "textshaping__rd_example__plot_shape_Rd.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "9b0b7b033f2b2d2b9ec926b308a2467747421221bbd8b4045d261d856d206edb"
+    },
+    {
+      "script": "systemfonts__rd_example__glyph_raster_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "8012abdcfca6ea93676fb07870e3f442a12ffc482d5ee5e1bcc3149eee79cf6e"
+    },
+    {
+      "script": "magrittr__vignette__tradeoffs_s12.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "be0393bb2f77ecf9684991d44e5240d7f6f13e6bee2278e0132e9390aeccb043"
+    },
+    {
+      "script": "ragg__rd_example__agg_ppm_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "8c3a33005fd80294cbd3f870ec729f4875178ff8f654ea8a36445a402181e27f"
+    },
+    {
+      "script": "vctrs__vignette__s3-vector_s6.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "590c9d24417c9b6ff6283b460e4fb2f3091b537762dc47c765b3ae8dc4b2ce4f"
+    },
+    {
+      "script": "clock__rd_example__seq_clock_time_point_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "37c1bc6429788b348f2d5fb553555fc599f25b37a4ec5f7740838aaec0db8475"
+    },
+    {
+      "script": "ModelMetrics__rd_example__mse_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "80355920661632abae68387910b4d66d1a62d1ac14538ddca0823ed6ec139937"
+    },
+    {
+      "script": "lubridate__vignette__lubridate_s2.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "6664a8e56a674d1ade68c0208fd40e6b00f35beb82ad3f63d2d6ffa74583cb9a"
+    },
+    {
+      "script": "rmarkdown__vignette__lua-filters_s1.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "05467b63f382ab9f6b488c9bbc09cdb82ca59020913eed00d0ac2b4f9fa79d13"
+    },
+    {
+      "script": "broom__vignette__broom_chunk6.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "65428ec955f544cc2b872bbff90d174789527243e0abfbb3610d572e364cd982"
+    },
+    {
+      "script": "farver__rd_example__manip_channel_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "b0482185729d559636bf08fec253aaec81b4a1bdc9cd946c745ff8300e30ceeb"
+    },
+    {
+      "script": "isoband__vignette__isoband1_s5.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "aa99f053fd55892611653e0e5fcab3ed334b8966fe2fd25913ab91dce59f8cce"
+    },
+    {
+      "script": "ranger__rd_example__importance_pvalues_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "2e6b2830f22eefa14a79fdd67cb9a9f2881cbbc6be444d2023b527f9ff8ada38"
+    },
+    {
+      "script": "e1071__rd_example__read_matrix_csr_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "17735104adbcf7d4bd9595e946f0559df45e9727fdd5ead0daab7baa7c518009"
+    },
+    {
+      "script": "tidyr__vignette__pivot_s18.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "7693db3d1e3f762ac767c2997b76a287f258b22e67f484dcaec4282aeb6babd9"
+    },
+    {
+      "script": "lava__rd_example__csplit_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "0c0c504fd1eab34b6a4a4703efd8e414617dcaf994202e978694aa50a1484a48"
+    },
+    {
+      "script": "lava__vignette__nonlinear_s1.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "53859bfd50072d4b7c9b2873226cfb04eeaa2162d569a644feae16cff9185d1c"
+    },
+    {
+      "script": "diagram__rd_example__textempty_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "7c31910a6ef916b5ba234c264d9c97e431004fecacd59f6b0294d89578fa9b89"
+    },
+    {
+      "script": "rvest__rd_example__html_attr_Rd.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "5ff47d2414c0e4c94c307231dc8a9bab6a6241d6d8d75312755f652a6cb63b95"
+    },
+    {
+      "script": "shiny__rd_example__resourcePaths_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "26a39fc61a9909288c279643cef369d088ebe03710b77f93b31a3cebe6748432"
+    },
+    {
+      "script": "fansi__rd_example__strsplit_ctl_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "88a8336c39c4fa9afb64b091d543714ca959792e2a7c50ef0c20ed918155bc73"
+    },
+    {
+      "script": "rmarkdown__rd_example__pandoc_args_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "86caecf82f9ba4288546d007be68746813dea61d3051478fa913adf9286c91e8"
+    },
+    {
+      "script": "tidyr__vignette__tidy-data_s9.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "12db6ad986f2303beae4cc0e8d6362bd6347f3baeb06f44ffc4c7fb285b2018f"
+    },
+    {
+      "script": "gtable__rd_example__gtable_add_padding_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "7cb02c5223791a7f98bd3884574d6a7a395ee5eadec6cf11ab5f9f4db895305e"
+    },
+    {
+      "script": "prettyunits__rd_example__pretty_sec_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "0adfc36d8ae6de5c701ac50cf3e78f12e81a2ba4531acd11611ebe2d35198d3d"
+    },
+    {
+      "script": "magrittr__vignette__magrittr_s1.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "644465009ba73dc1d8546f8ccdda948cb76bcd28a0f155a63912989dbb966d22"
+    },
+    {
+      "script": "ggplot2__rd_example__geom_bin_2d_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "d8ca218b08ed10efef9a7ea398bc557ef5bb4addce570301da90f2139571b065"
+    },
+    {
+      "script": "proxy__vignette__overview.R",
+      "package": "proxy",
+      "stratum": "stats_objects",
+      "sha256": "ae4e9d5814d660b99cede35997819878d10f7a55b5c309567fcc9a0e24472a16"
+    },
+    {
+      "script": "ModelMetrics__rd_example__gini_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "1a4ee1f58509299e44512bb79adc201b4bb23a418b45d962b8133240d2a0b46c"
+    },
+    {
+      "script": "reshape2__rd_example__cast_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "a2553ca814bdf5603dc1f81b7d4b7d89ed3efcb1050a68351d80568abdcca44b"
+    },
+    {
+      "script": "sparsevctrs__vignette__design_s1.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "0ffa269f430de6decdd406ead143e730f3e0317e331db01ce5eb611b50425ee0"
+    },
+    {
+      "script": "shape__rd_example__plotcircle_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "e022b7b6d60cb01d15afcc64707886034f487d06068cecb9a969b8b3c5cd7525"
+    },
+    {
+      "script": "bslib__rd_example__bs_global_theme_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "626fa6ae752cf5affc7512e6d6d0470a335a9c404b5c65dec768be32132b8ade"
+    },
+    {
+      "script": "farver__rd_example__as_white_ref_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "a3b8c128110a29950483e84b2699bfc0b170ad51f3e90e46796b1b31528702c0"
+    },
+    {
+      "script": "e1071__rd_example__boxplot_bclust_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "a2186566988c1e542fa6c45a8a78c7e7c578ee4808aafd8cab4cfdbbdb5e8a63"
+    },
+    {
+      "script": "clock__vignette__clock_s13.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "dab20bb272669436f28cf663e9a5fae66b22235bbcfbba31e4511129c1d3a85e"
+    },
+    {
+      "script": "sass__rd_example__as_sass_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "0feefcc37c83a6a8b9e757759eb6625036790520a41e5b2581d84867e068ad47"
+    },
+    {
+      "script": "caret__rd_example__preProcess_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "71fbfc3c46c4e3256c35342712e4945a8196daa3bdc10e08d26eb7f2c15bb20e"
+    },
+    {
+      "script": "broom__rd_example__augment_survreg_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "090dabfda6ab10ae7d782ac99439daaaf9f7fe9ed2b6c814aca6606b19d8d09c"
+    },
+    {
+      "script": "googledrive__rd_example__shortcut_resolve_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "952064e5a05944e63930276869d2d2fb1f35623223e86f86eec95b1d7f101b72"
+    },
+    {
+      "script": "htmltools__rd_example__parseCssColors_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "78dca0cbb8e9c124a8f7ecc3558f653481c17b82d4c2ff52d385c7798e7b2a02"
+    },
+    {
+      "script": "purrr__rd_example__keep_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "13a67d67287ddc83c89d7e546bdf8521f9278ce2c9c623b087f2e2ede26d7204"
+    },
+    {
+      "script": "htmlwidgets__vignette__develop_advanced_chunk8.R",
+      "package": "htmlwidgets",
+      "stratum": "html",
+      "sha256": "dc87701adcb8e25cf3f77b1cd6879684f85a38131153d4c04557b9a2d732f2dc"
+    },
+    {
+      "script": "timeDate__rd_example__timeDate-Sequence_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "1470d43b370ef380e03f0f0d4a185c67bded872fc6a074d78b1fd1fb096781e8"
+    },
+    {
+      "script": "sessioninfo__rd_example__session_diff_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "e6a75b137fdf3c1813dec4154c3e230202ae748ce9e2e34918e8e1b124361782"
+    },
+    {
+      "script": "textshaping__rd_example__shape_text_Rd.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "540e85ba45eedeb49f8386d226ea0f9028af2666ba0cdc0cbdb136fcb1db3f80"
+    },
+    {
+      "script": "recipes__rd_example__step_filter_missing_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "4de4336cae745f41cb14dfb5f5c9e7c336e2d599abd87f4760254cf3e2ce1859"
+    },
+    {
+      "script": "lubridate__rd_example__hms_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "4e075334ef7d32693d968b73deb790c41272c27a321bf91246fb074ff54d19c0"
+    },
+    {
+      "script": "ragg__rd_example__agg_capture_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "950a5624e20a1a086e53bad40678f3e940a0460a5ff3cb1d98423010c8079abb"
+    },
+    {
+      "script": "ranger__rd_example__csrf_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "1ab1deb4bb700ff16bbc232864bc2a434dbdec9c883fcb1df22abebeba684884"
+    },
+    {
+      "script": "isoband__vignette__isoband1_s4.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "8855f5d1cabfba4f06925e4f368497a83ebd0b8b56816fdec89be46e6e4cf314"
+    },
+    {
+      "script": "pROC__rd_example__lines_roc_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "57b5ba36ff792c47c714fadde06510aa03db5db2682006cf98b8d3484e86d197"
+    },
+    {
+      "script": "vctrs__vignette__type-size_s17.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "44824dbf7302c2a425cdb906288c56c217e3b648225104f33a2ab8ccb0bcf2c1"
+    },
+    {
+      "script": "systemfonts__vignette__fonts_basics_chunk1.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "b20a14f90db2085ae0ee882f9d3f0fd2ec4e32a4eb724de842f8d084fcb0e0df"
+    },
+    {
+      "script": "openssl__rd_example__ec_dh_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "a72bbfb4dcf3d4a18c62c10568dce140704f63670b3f8d25a2f9f0af6981b109"
+    },
+    {
+      "script": "prodlim__rd_example__backGround_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "76cfb232bb63736be903508fdeb24e91433b468efc8c0984156d80a8d6810834"
+    },
+    {
+      "script": "utf8__rd_example__utf8_width_Rd.R",
+      "package": "utf8",
+      "stratum": "data_wrangling",
+      "sha256": "b50748691b55f35b16f312830059a5e5f07318893b3cd21e3bf56ae072758137"
+    },
+    {
+      "script": "xml2__rd_example__xml_attr_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "2ec8761462a3a702921fe4d1db906a3b095e7f77ada9abc00444576920316612"
+    },
+    {
+      "script": "downlit__rd_example__href_topic_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "d82c717c617407169bf46cdc22a7b24ed7db11fbc493c66a7b041f9b5c438ea7"
+    },
+    {
+      "script": "dplyr__rd_example__glimpse_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "721dbcba8ab19f8c2fc096e0af49021b9ccc1d2dcf173232de6e1e8c3a41e996"
+    },
+    {
+      "script": "textshaping__rd_example__lorem_text_Rd.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "64ba6a564ea8ec8e03403dc3bcbda54de2972024f996786a640fa5934c69fa00"
+    },
+    {
+      "script": "bslib__rd_example__page_fillable_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "dc58ae33f45366dba75cb77b5927e8e6815f4fe5790478d9b8c96e7129059520"
+    },
+    {
+      "script": "downlit__rd_example__autolink_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "512183f5d3dc2bf214390f2320ae61ba57e5a393b51cbc21fac0be29d23f9e6e"
+    },
+    {
+      "script": "openssl__vignette__bignum_s2.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "1c650da15c4bf6f8652c5c834f26fe42bd330865338efbf50e87c06860b84620"
+    },
+    {
+      "script": "htmlwidgets__rd_example__htmlwidgets-shiny_Rd.R",
+      "package": "htmlwidgets",
+      "stratum": "html",
+      "sha256": "82a4d1d3ad3008aa7bda37d6b7e1faa765822d8640150eed10a25b2e054c7bf9"
+    },
+    {
+      "script": "shape__rd_example__filledmultigonal_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "093670b392b8f2c115564872e3bf26cd1650a9b6d3e1df87ce411f23f612d196"
+    },
+    {
+      "script": "caret__rd_example__modelLookup_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "1ab421c439c0eb60ba4df9a0f01bf90561659c341b4136c8d5673de79c91d63c"
+    },
+    {
+      "script": "gtable__rd_example__gtable_add_cols_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "5aef1b7af476d52784fb6ac074f9d0c38158d7add6ab996a69b703457e9f5f46"
+    },
+    {
+      "script": "htmltools__rd_example__tagAddRenderHook_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "18ff3ad9587a735bace76c25f0fa3fd1ad8677d8b027784db8b3b270e6bcd74b"
+    },
+    {
+      "script": "timeDate__rd_example__methods-mathOps_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "cf832241c9d96fc3c119d3fbee3adbb2adf998530807970f652fa0f1bf6c8e75"
+    },
+    {
+      "script": "rvest__rd_example__html_table_Rd.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "b0a776d18cd08e0974ee1727486e86dc3bdce64c16147c25098f01ffef3c0da6"
+    },
+    {
+      "script": "lubridate__rd_example__period_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "aceaa269553641147746d0808a9c3d11e286f81c0033049c96daa0f90f595016"
+    },
+    {
+      "script": "sass__rd_example__output_template_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "ecba227fae3d74e83db0044d2f815017c6aab94abe4046e8cef9dc1f52a5b71b"
+    },
+    {
+      "script": "isoband__vignette__isoband3_s2.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "9b74d6dfdc2c7d6240a194c850dc908a8de0934cc8db15a394ff83ec5da1c896"
+    },
+    {
+      "script": "sparsevctrs__rd_example__sparse_lag_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "d80fc2a78ad8897751985b9a1f63022da833e23c43273c8cfb910f5e099c1592"
+    },
+    {
+      "script": "ggplot2__vignette__ggplot2-in-packages_s8.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "2bf6c65bd941d5c010f547a27e79c5475aaa194fe88d80e671424e4cdbeb4c2f"
+    },
+    {
+      "script": "xml2__rd_example__xml_type_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "1d2c19c83874199a688695ce2aa6f46197d2b47c77655737f4e827dccfeb23bd"
+    },
+    {
+      "script": "vctrs__vignette__s3-vector_s76.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "f7acf43a41ff62c802d2aa0b069cbf478d10cd282120d6fb76e9a5f34bee40be"
+    },
+    {
+      "script": "shiny__rd_example__actionButton_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "ef37cb43d895c4872259ecb94e294d13f4f04e96f340a4c18420a32e6fbcbfeb"
+    },
+    {
+      "script": "googledrive__rd_example__dribble-checks_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "a492bd67588e4ee45a6292a57580fda28f37f4d39082e6d3e8118afddc48af56"
+    },
+    {
+      "script": "reshape2__rd_example__colsplit_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "eec015d3a4f423dbb4c04db1cdae7eec9d0c40e11c51293e77ec47e3d20168b8"
+    },
+    {
+      "script": "pROC__rd_example__aSAH_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "f41567e44763d6141c0df32ab7a6b2a2ad554c109123672538865bd418031dd4"
+    },
+    {
+      "script": "broom__rd_example__augment_felm_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "89a139523acd2292b8c21c9590adea45451cc9bce6d3b383ab75d2890fdd6c7d"
+    },
+    {
+      "script": "e1071__rd_example__write_svm_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "82ecdd37f18c743c5f82f5d142c348fe42f5f16d55c751c6261810b4c41959ac"
+    },
+    {
+      "script": "utf8__rd_example__output_utf8_Rd.R",
+      "package": "utf8",
+      "stratum": "data_wrangling",
+      "sha256": "11a64aea71fbe3ec23a7487250f44e6516e947e440f680d6e77c890d9314c4aa"
+    },
+    {
+      "script": "prettyunits__rd_example__pretty_num_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "0e42a52a379a2862620155d39318a0eafa3f9fe6adc562d6f6b75f05b8dca24d"
+    },
+    {
+      "script": "farver__rd_example__convert_colour_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "45a48bda7cd369342592e6956d05c47e44ebff51cac7a9215ca549492bb40dbf"
+    },
+    {
+      "script": "sessioninfo__rd_example__python_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "175bf1b538b96b7f1b6aa6cddd1ae338332dd40cda44c51bb06640cd5f08e8de"
+    },
+    {
+      "script": "magrittr__vignette__tradeoffs_s1.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "6a2b86f883763c9c5fb0165aeecc0d5640cd11a1ff5867944e13e68a9b86bfec"
+    },
+    {
+      "script": "rmarkdown__rd_example__pandoc_available_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "fa4adcd9b5d1ac85283a61092e52ced273f4ff5729c32ffcaef8f8dcaddb56dd"
+    },
+    {
+      "script": "clock__vignette__recipes_s68.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "97b9cada2f9aa7c0635053e2dde30092c17048161308aa5d979876cde76ca25f"
+    },
+    {
+      "script": "lava__rd_example__scheffe_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "8578cdd0da4aacb848e565ff0f03bd628d9a753f77c23d5fd9843b4da9bff961"
+    },
+    {
+      "script": "ModelMetrics__rd_example__logLoss_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "9e2bdabc1eb4792da88ea9bdd6433ccac2345e061e2e839ad9a5e0e9050c773e"
+    },
+    {
+      "script": "dplyr__vignette__recoding-replacing_s22.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "881a2a52f0e94ad80a08cff9e16a6b6bc19694ebe833d82a80b028293321adb1"
+    },
+    {
+      "script": "ragg__rd_example__agg_webp_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "e532db5a605d18345845a0e82a78d1592321ace178c8ddd5ffefd077718012a9"
+    },
+    {
+      "script": "fansi__vignette__sgr-in-rmd_s6.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "1b7ce93da8e3079fc475f7a964677087155eb88e9aad4c1dd83175ab9c4ed271"
+    },
+    {
+      "script": "ranger__rd_example__deforest_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "0bd080659473fee0aac0f1942e8c85f2112545bddf93cfacfcfc0dfaeb899056"
+    },
+    {
+      "script": "tidyr__rd_example__complete_Rd.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "d22ee322724c72055c9e0a18b51644cc5075b80fdb9da9a6cd1d7a5fa0d4c925"
+    },
+    {
+      "script": "diagram__rd_example__coordinates_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "c98fdc1939570d86e3e4af8e2bca9bfdbd67d89f2faadf2613bcc5b97b8ea5e1"
+    },
+    {
+      "script": "recipes__rd_example__step_rm_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "1a0ebdfea84d53032218e264a267c7e15c08cb58c713b0b7941ad362e1c52dad"
+    },
+    {
+      "script": "prodlim__rd_example__plotIllnessDeathModel_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "b20a2569adeef98d78db477eac9e44b8ab83ebe86ef23ae1a45defb817dffeb7"
+    },
+    {
+      "script": "purrr__rd_example__slowly_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "62903a235bbe53c45e29a858d3c02c47804483595c73b62fad143ae2ca8ebb7d"
+    },
+    {
+      "script": "systemfonts__rd_example__register_variant_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "31d335649ba194778d63b129895b63ac6f571abfa16aac9c42f3f93ca54609ec"
+    },
+    {
+      "script": "shiny__rd_example__modalDialog_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "a702e36ef0f0cd377dc234a262324e112726bdf371f597043f9c1b17bcc83f83"
     },
     {
       "script": "fansi__rd_example__normalize_state_Rd.R",
@@ -1668,70 +1564,298 @@
       "sha256": "d7f036c9be4c56378a3f178486af949cd32e50e844e9f5c86caedd82129e6ad3"
     },
     {
-      "script": "vctrs__vignette__s3-vector_s60.R",
-      "package": "vctrs",
-      "stratum": "data_wrangling",
-      "sha256": "fd0df02e26a004f6c3e44b117b48c287a81fade934dd27fef7796d0fa98a662d"
+      "script": "ggplot2__rd_example__stat_summary_2d_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "3d348b48faafa6e291e87b48035fbfc6c8514095226553cc8ba5d65b81807399"
     },
     {
-      "script": "vctrs__rd_example__vec_duplicate_Rd.R",
-      "package": "vctrs",
-      "stratum": "data_wrangling",
-      "sha256": "2655aba96b7b2ba215bdaafb1cfc89f4ea0fe9797dea58b8fa38ec5697c07079"
-    },
-    {
-      "script": "bit__rd_example__bit_Rd.R",
-      "package": "bit",
-      "stratum": "data_wrangling",
-      "sha256": "0a2336740141a29699ac717658a2ab81de37ea0fad73467ccfbe9c59f6ef0d63"
-    },
-    {
-      "script": "jsonlite__vignette__json-aaquickstart_s9.R",
-      "package": "jsonlite",
-      "stratum": "data_wrangling",
-      "sha256": "27c093e44b0c6a0bd687aad7209ab306e9daba9af365d442d5a244d9db15c43e"
-    },
-    {
-      "script": "caret__rd_example__histogram_train_Rd.R",
-      "package": "caret",
-      "stratum": "stats_objects",
-      "sha256": "defe27521e91f34f4394387cc08cc6628656a7f99a0bf157cbdb0fa0c6a8d509"
-    },
-    {
-      "script": "backports__rd_example__warningCondition_Rd.R",
-      "package": "backports",
-      "stratum": "other",
-      "sha256": "8071977fd7a2eb513de5551262eff5b8a4d1ba3e35c77532b86d383799e10a9b"
-    },
-    {
-      "script": "otel__rd_example__otel_logger_Rd.R",
-      "package": "otel",
-      "stratum": "other",
-      "sha256": "5ce3fc608751d6c0a58aaf285b05bb5dccc4f1074d47b6b4871233c8b7f59602"
-    },
-    {
-      "script": "httr2__rd_example__resp_check_content_type_Rd.R",
-      "package": "httr2",
-      "stratum": "other",
-      "sha256": "0eb44b5e84675994bdf1fe8a9e5fdf2461d31d6f944d8946c4b3fe6ffdb3aac8"
-    },
-    {
-      "script": "clock__rd_example__as_year_month_day_Rd.R",
-      "package": "clock",
-      "stratum": "date_time",
-      "sha256": "a3da482b62b6f0d99e342d3304af999ece493717eac778bebd0d005e100e67be"
-    },
-    {
-      "script": "e1071__rd_example__matchControls_Rd.R",
+      "script": "e1071__rd_example__matchClasses_Rd.R",
       "package": "e1071",
       "stratum": "stats_objects",
-      "sha256": "594ede71735428d36b74496b3fe1c5d018d3cf384301ca3708e1a3a08f1e89e9"
+      "sha256": "57d1d368d2cfb4b7aa2bc0ed1237293c593bbe0c7e5c6152c5468eb79bba2a40"
     },
     {
-      "script": "lubridate__rd_example__duration_Rd.R",
+      "script": "sparsevctrs__rd_example__coerce-vector_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "9d363f427156362c8055c9ff0bfdfad4584014c7e368d05820aed030c183601b"
+    },
+    {
+      "script": "prettyunits__rd_example__vague_dt_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "6eb7269a1d60d6f62fcdb8fd6dd2b741d3becd25a63d7c77d2377914542a76cd"
+    },
+    {
+      "script": "isoband__rd_example__plot_iso_Rd.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "72ba1a8a47b3e57c0f7b1a1f957fc87f1afaa454db299f69100da653857a830a"
+    },
+    {
+      "script": "magrittr__vignette__magrittr_s11.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "f55bbd34c5997597799a7e8a36f9457f7e08a69cb83e6ed4ebd2513304820d20"
+    },
+    {
+      "script": "clock__rd_example__time-point-rounding_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "fe4a4170c836d538eb4bb0bd26928d02b99f28bf5edbc89d7097cee186f6637a"
+    },
+    {
+      "script": "farver__rd_example__encode_colour_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "13c40538a32ede8c2090081afff595b5495b0647873aa785d26e3a118da74573"
+    },
+    {
+      "script": "diagram__rd_example__selfarrow_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "91fc2892bc1818ead992164b878b2f66037ee792e795971035386ee7d0d31184"
+    },
+    {
+      "script": "htmltools__rd_example__builder_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "31bd447f6d8524f43539b2ca1a7048f8d1f4c273339d0105680f27e111729bdc"
+    },
+    {
+      "script": "lubridate__rd_example__within-interval_Rd.R",
       "package": "lubridate",
       "stratum": "date_time",
-      "sha256": "2c8b26cab34839eeca55d722210bd08cd2bf1ebc11528d58ded4449477bd9b11"
+      "sha256": "f015fd4c926e38bb67f1e78d4e56120b9048294e049534df3f01c4cb6aea719c"
+    },
+    {
+      "script": "ModelMetrics__rd_example__auc_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "4a9f17d1f21939ec07cdba83c90f34aa3ccac819af7693b574a9c011aa297896"
+    },
+    {
+      "script": "openssl__rd_example__certificates_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "8e64dc24efaf46870850ad057ffef48bf6f9ac55c3aad5d849d0a5a52e66022c"
+    },
+    {
+      "script": "xml2__rd_example__xml_name_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "47e209357ea191f11118e88a71ae85a8e90e9dc9284c7b5f9aeafd5d2f224a8d"
+    },
+    {
+      "script": "timeDate__rd_example__calendar-isBizday_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "bfa4eba3ec28c37413a6906e6028a00653b9faed50428915daf1ceca722d4302"
+    },
+    {
+      "script": "lava__rd_example__covariance_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "caebb54cdd20caac976b003a382523563450de6eee0bdbc45fa6625527c11de4"
+    },
+    {
+      "script": "googledrive__rd_example__drive_read_string_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "fd5867c8a6fced7f5ae65cbee52efe5652d95fd113840779a041c976fd07449e"
+    },
+    {
+      "script": "ragg__rd_example__agg_tiff_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "d9ccf755ccd4f73d9d42f0bde674e47c979bea3c286fa73f22681bcbbbd7e5c6"
+    },
+    {
+      "script": "textshaping__rd_example__get_font_features_Rd.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "f491dd303f3ade12c530861857ec5f486f8fefe6d6be5d7156c5b26ac783753f"
+    },
+    {
+      "script": "shape__rd_example__Arrows_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "1ab33d8112185a0883e85747980d709a7c8a09f88c385435705a4a9bc2a8d94c"
+    },
+    {
+      "script": "caret__rd_example__update_train_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "bbb4b297550bc09df92cd21dc3af6b3bf7bc25d12c8099a3374aab152921bc8a"
+    },
+    {
+      "script": "sass__vignette__sass_s1.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "4618236847b42380643baf87e28350565103a6f36682d0497eaae4e7b2a194e8"
+    },
+    {
+      "script": "dplyr__rd_example__storms_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "e5600612181cabe231adf5dce629d8649bb183199cde4c62adee4dbc3f98d448"
+    },
+    {
+      "script": "sessioninfo__rd_example__platform_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "571ccd3b361ea1cb44179b509739ff4deada6fda446479d808ca2ce3cfd6e1be"
+    },
+    {
+      "script": "broom__rd_example__augment_drc_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "e43c60a4a19ad6db3f16c0d4ce4d1e9b7de229769c080ff018a92f224fac2bd8"
+    },
+    {
+      "script": "reshape2__rd_example__melt_data_frame_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "7403d26ae99cdbe878d0b62a55877f7a486a3ef69f797b5564c54fa58a6965ad"
+    },
+    {
+      "script": "pROC__rd_example__print_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "b9e625f8647fe3288eb19cc13c605354a8d0d840477c8e0eca00da04455052f0"
+    },
+    {
+      "script": "bslib__rd_example__page_sidebar_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "c511c4b5d98aa3fc218d7f72e05a4b9cbc27188497f948fd81b2bd380c946012"
+    },
+    {
+      "script": "vctrs__rd_example__vec_cast_Rd.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "1d4bc19b4ed77bb32b2005cc64eb29464cf0768d0ce2f4ec388a0cd45711dd49"
+    },
+    {
+      "script": "prodlim__rd_example__summary_prodlim_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "b332652bbbda133bdb23ae6412ce078fbb4a868f28e2f9d718a4fe20d90a2958"
+    },
+    {
+      "script": "gtable__rd_example__gtable_add_space_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "aed79d6cac7c29470f235f93561410a7d1f51809b9dfbd64dde439548a1f90c9"
+    },
+    {
+      "script": "downlit__rd_example__downlit_html_path_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "385d1d169180942ffcfaab2c1c7e18e1b32d2a7d4a218deb2a602dc8f4940a9b"
+    },
+    {
+      "script": "rmarkdown__rd_example__includes_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "f37e5144d09120ef99b02e4d8caa8c7a0a0547d2eee86428761f47c567a986ab"
+    },
+    {
+      "script": "systemfonts__rd_example__match_fonts_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "ac756333fbf272b59a0088c5570d16d109f2529af5da947490f541e2af5c6fcd"
+    },
+    {
+      "script": "recipes__rd_example__step_kpca_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "695e5880b4732be3e5b77ff68844bf3f374fb7db34d0b429b673260d91c96cde"
+    },
+    {
+      "script": "purrr__rd_example__invoke_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "41f6544d82f966353a34367e18fd974d2ea43d6426f364d314533c94c5659fbe"
+    },
+    {
+      "script": "rvest__rd_example__html_element_Rd.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "0b274601f593b9c947f482abb5ce5430ca17cb1d6e4a678e7d3be7ade1d853ae"
+    },
+    {
+      "script": "tidyr__rd_example__chop_Rd.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "c44ae7d319e8726a34db62cafe03b573e01fdd5b54b2999d67fe7aaf8a1dd661"
+    },
+    {
+      "script": "purrr__rd_example__chuck_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "e30184ba9d76c457d46607da59ec4b79c05ed9561829ac8ed2bba543dd728502"
+    },
+    {
+      "script": "e1071__rd_example__predict_svm_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "448c48fa4f5d1e40bea8cbb65e6b968c5c034abdef02c50558fccfa0408fa514"
+    },
+    {
+      "script": "broom__rd_example__augment_loess_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "e0bef4580ba4bce81413771c116c3deefd4e5608d0cb51188cdaf822217fcdee"
+    },
+    {
+      "script": "isoband__vignette__isoband1_s1.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "0f97fe2efee4fbf92eee1d1f207ec2c78efbb26845b3d84fbb07033a59ab972c"
+    },
+    {
+      "script": "openssl__rd_example__aes_cbc_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "c5e1bf3acc7185befe677cfff3aabea6e5139a42b70a5e46514fe6b35cfed6bd"
+    },
+    {
+      "script": "ggplot2__vignette__ggplot2-in-packages_s6.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "0307416c96d43689350b393a975e0b2dc79d7ce0bece170c2a37ec7f78f9d432"
+    },
+    {
+      "script": "lubridate__rd_example__leap_year_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "63db182c7bfa293758795d89f7a30ebbf96b1269082c444717dcd3e479173558"
+    },
+    {
+      "script": "vctrs__vignette__type-size_s29.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "3c7c8031d1af4b109fff9c9737893250941dc8afc2f6a500a42e1bb3690c4867"
+    },
+    {
+      "script": "systemfonts__vignette__c_interface_s1.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "78501d93f1ec05e7f1e8bf5231e1bd98724f34819499826becf3acb08b551997"
+    },
+    {
+      "script": "shape__rd_example__plotellipse_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "e42c46046cb3b8a86eee045ccaa75599e0b98d410a9e54ded3476b1b85388b2d"
+    },
+    {
+      "script": "bslib__rd_example__value_box_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "b808b694836d68e16b3231cf8bcabf5c218873767983fc66d63c0ba795a25bf8"
     },
     {
       "script": "ModelMetrics__rd_example__rmse_Rd.R",
@@ -1740,28 +1864,142 @@
       "sha256": "752e0e5cb690a2b433c9073ae48052f4f39b4b09a38a8a2770797d35ccfe8606"
     },
     {
-      "script": "lifecycle__vignette__manage_s1.R",
-      "package": "lifecycle",
-      "stratum": "other",
-      "sha256": "43e1593d5fac0fdca39001b56a43c8530ed8c1532985c8a78cd5129d27213b12"
-    },
-    {
-      "script": "knitr__rd_example__fig_chunk_Rd.R",
-      "package": "knitr",
+      "script": "htmltools__rd_example__htmlPreserve_Rd.R",
+      "package": "htmltools",
       "stratum": "html",
-      "sha256": "eb31726bf7ab0f9f494f94f657e3a0516a6fd9ffe58de9e9eaf6c9a787066639"
+      "sha256": "7e0df3dc388fd6b643c8d9d9c9e637d211a7364d6461e25cbbbe77fb632dcf43"
     },
     {
-      "script": "clock__rd_example__iso-year-week-day-count-between_Rd.R",
+      "script": "tidyr__vignette__pivot_s4.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "9f38c86839cf6de067c39c15035e67131f89f9c034d1c6321507701d5b5ab116"
+    },
+    {
+      "script": "sparsevctrs__rd_example__sparse_replace_na_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "7ceee87f1ab34e31835bda6eacac0173570e167dba112bbe49438d4de3a76d03"
+    },
+    {
+      "script": "pROC__rd_example__multiclass_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "27221c80bbf23efee7c22369a9b25ba6cd8c7e515a2070f8fa8d136b119230a7"
+    },
+    {
+      "script": "diagram__rd_example__splitarrow_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "562b18c3b16de2ce24d4b6dcc6787c6e3f9af583f26f551f501bfe8ee770517a"
+    },
+    {
+      "script": "farver__rd_example__compare_colour_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "13bbff49c4aee2811d46cf33c58a19438716af7b29a902e5c82ecf973faa8b24"
+    },
+    {
+      "script": "sass__rd_example__sass_file_cache_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "86ec1924c914b83642194ac22e3a646c679d2021a0c72214a795a8d11bcf4a18"
+    },
+    {
+      "script": "caret__rd_example__knn3_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "d333586c95e143fa1717e7aac094001fd5e7fa00da905350116575c955ada80f"
+    },
+    {
+      "script": "lava__demo__inference.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "95992e7d84a74522fac0121bb5002456111207682427cdcc0aff941a8504d676"
+    },
+    {
+      "script": "ragg__rd_example__agg_jpeg_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "c9b50e76962d23d1f0e36d1d31ace2913d2eccbc7bbb63cf887d51bcb734fa6e"
+    },
+    {
+      "script": "fansi__rd_example__strwrap_ctl_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "593e9dcf0ecc069e6e7124ffdfd6e901f90bb1f333f610629bccb4203a88c6a4"
+    },
+    {
+      "script": "googledrive__rd_example__drive_download_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "40bdfdaf0c0fb219dd836aa5b09e3bf89caee1ca4ab81092c3f55721b2cca7c9"
+    },
+    {
+      "script": "xml2__vignette__modification_s7.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "9d18b68aaa2e6533668ed31b249fa1a2eb10776a89f027bee46733c8d1d29fc1"
+    },
+    {
+      "script": "rvest__rd_example__html_children_Rd.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "d7240ccc3fb9743acf7e3a94450cc91f4b63a1c0434bcb15f16590afc34292b5"
+    },
+    {
+      "script": "gtable__rd_example__gtable_trim_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "8d239f164bbfbbbfe57666db1030cb4f2eabc6dc955f1440c0cfeab334005cf5"
+    },
+    {
+      "script": "dplyr__vignette__rowwise_s36.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "1870e9933aa938e60d8ccb8c24e97ada8462126bf69fb321bd516cfc58e1f362"
+    },
+    {
+      "script": "shiny__rd_example__updateRadioButtons_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "26a937a71bfd491832722c3ed56601121978eda1b5e15e9189cf3a23ab552b00"
+    },
+    {
+      "script": "recipes__rd_example__discretize_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "9e4619d36da09f57ad058cdca6ffba03265eb5871e6e8bd0596b01a991ab88ef"
+    },
+    {
+      "script": "rmarkdown__vignette__lua-filters_s3.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "80a5ee0d77bc7e0c6bdce4aca196d45ecb1a38f946f0d31c8f74bb22d2a17e8d"
+    },
+    {
+      "script": "clock__rd_example__iso-year-week-day-getters_Rd.R",
       "package": "clock",
       "stratum": "date_time",
-      "sha256": "494ea2bce424bf1acaea4980063af5269737dc4997c3b0d25510f4384ce4892a"
+      "sha256": "fcfdb43c9c95d7ae3988be727ae295c17d0316bd5967f00c6c80ee75485353a3"
     },
     {
-      "script": "testthat__rd_example__logical-expectations_Rd.R",
-      "package": "testthat",
-      "stratum": "other",
-      "sha256": "6eb8c09a52b77b46a0056574d65e460925c5bc3f39b1ac24aaf47f2b601a303a"
+      "script": "prodlim__rd_example__Hist_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "900a95bc0937170c45e3baea5dfddb097d7c7d19ef5f8a3d979a1986940ff287"
+    },
+    {
+      "script": "magrittr__vignette__tradeoffs_s25.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "9b45b25b0eeda8953348ca944ac5d8971eb2276047f9a445c2b0ef8555af77c1"
+    },
+    {
+      "script": "timeDate__rd_example__timeDate-finCenter_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "4a2206296c6f88b7af3382296c199381f1a0415dd5949e11eca8e3f7869216f4"
     }
   ]
 }

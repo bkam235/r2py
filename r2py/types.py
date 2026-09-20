@@ -180,6 +180,9 @@ class TranslateResult:
     pattern_contradictions_added: list[PatternId]     = field(default_factory=list)
     final_exit_code:              int                 = 0
     final_score_report:           "ScoreReport | None" = None
+    # The best seed translation, before the reasoning agent rewrote it. Compared with
+    # python_source it shows what the agent corrected. score_history[0] is its report.
+    seed_source:                  str                 = ""
 
 
 # ---------------------------------------------------------------------------

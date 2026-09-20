@@ -100,6 +100,35 @@ class TestZeroIters(unittest.TestCase):
         assert result.python_source in ("x = 1",)
 
 
+class TestSeedSourceKept(unittest.TestCase):
+    """The result keeps the seed translation, so what the agent corrected can be compared."""
+
+    def test_seed_kept_when_the_agent_improves_it(self):
+        with patch(_S2, return_value=("seed", {})), \
+             patch(_S4, return_value=_sr(0.4)), \
+             patch(_AGENT, return_value=("improved", _sr(0.9))), \
+             patch(_EP, return_value=[]):
+            result = run_loop(SM, _mock_lib(), score_threshold=0.85)
+        assert (result.seed_source, result.python_source) == ("seed", "improved")
+        assert result.score_history[0].aggregate == 0.4  # the seed's own report
+
+    def test_seed_kept_when_the_agent_does_not_help(self):
+        with patch(_S2, return_value=("seed", {})), \
+             patch(_S4, return_value=_sr(0.4)), \
+             patch(_AGENT, return_value=None), \
+             patch(_EP, return_value=[]):
+            result = run_loop(SM, _mock_lib(), score_threshold=0.85)
+        assert result.seed_source == result.python_source == "seed"
+
+    def test_seed_is_the_final_translation_on_the_cheap_path(self):
+        with patch(_S2, return_value=("x = 1", {})), \
+             patch(_S4, return_value=_sr(0.95)), \
+             patch(_AGENT), \
+             patch(_EP, return_value=[]):
+            result = run_loop(SM, _mock_lib(), score_threshold=0.9)
+        assert result.seed_source == result.python_source == "x = 1"
+
+
 class TestTranslatePyPathWritten(unittest.TestCase):
     """translate() writes the Python source to py_path."""
 
@@ -120,6 +149,7 @@ class TestTranslatePyPathWritten(unittest.TestCase):
         try:
             with patch("r2py.stage1.analyze") as mock_analyze, \
                  patch("r2py.library.get_library"), \
+                 patch("r2py._append_run_record"), \
                  patch("r2py.loop.run_loop", return_value=fake_result):
                 mock_analyze.return_value = ScriptMap(source="x <- 1")
                 result = translate(r_path, py_path)

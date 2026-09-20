@@ -23,29 +23,94 @@ class EvidenceEntry:
     variable:          str
 
 
+# Size limits of a stored TranslationExample. What is stored is what the prompts show, so
+# these bound the prompt cost. Measured on 1,396 verified entities: median R snippet is 31
+# characters (2% exceed 200), median Python 104 (24% exceeded the old 300-character display
+# cap, 12% the old 600 storage cap); at 1000/2000 only 2% are clipped.
+MAX_R_SNIPPET = 1000
+MAX_PY_SNIPPET = 2000
+
+
+def clip_snippet(text: str, limit: int) -> str:
+    """Cut *text* to at most ~``limit`` characters at a line boundary, marking the cut.
+
+    A hard slice can end mid-statement, which shows the model broken code.
+    """
+    if len(text) <= limit:
+        return text
+    head = text[:limit]
+    if "\n" in head:
+        head = head.rsplit("\n", 1)[0]
+    return head + "\n# ..."
+
+
 @dataclass
 class TranslationExample:
     """A verified (R snippet → Python snippet) pair attached to a Pattern."""
     r_hash:     str    # sha256[:8] of r_snippet — dedup key
-    r_snippet:  str    # R source, capped at 300 chars
-    py_snippet: str    # verified Python, capped at 600 chars
+    r_snippet:  str    # R source, clipped to MAX_R_SNIPPET
+    py_snippet: str    # verified Python, clipped to MAX_PY_SNIPPET
     score:      float  # entity score when recorded
     script_id:  str
+    # How many informative base-R calls the statement makes (correction_functions): fewer means
+    # the example is more focused on the function it is shown for. A pattern keeps and shows
+    # its most focused examples first.
+    n_calls:    int = 0
 
 
 @dataclass
 class EditExample:
     """A verified before→after edit pair, keyed by the failure class it fixed."""
-    failure_class: str    # EffectClass.value of the dominant failure at edit time
-    old_code:      str    # before snippet, capped at 300 chars
-    new_code:      str    # after snippet, capped at 300 chars
+    failure_class: str    # what the edit improved: the dominant score dimension, or "crash"
+    old_code:      str    # the wrong first attempt
+    new_code:      str    # the corrected, verified version
     score_delta:   float
     script_id:     str
+    # The R statement this correction is about, and the base-R functions it calls
+    # ("base::paste"). The same example is stored on the pattern of each such function.
+    r_snippet:     str = ""
+    functions:     list[str] = field(default_factory=list)
 
 
 def r_snippet_hash(r_snippet: str) -> str:
     """Return an 8-char hex hash of an R snippet — used as a dedup key."""
     return hashlib.sha256(r_snippet.encode()).hexdigest()[:8]
+
+
+def pattern_id(package: str, name: str) -> str:
+    """Id of the pattern for one function: ``<package>.<name>``, made file-safe.
+
+    Seeding and retrieval both use this, so a pattern is found by exactly the
+    (package, function) it was created for.
+    """
+    return re.sub(r"[^a-z0-9.\-]", "-", f"{package}.{name}".lower())[:60]
+
+
+# Base-R calls found in nearly every entity: as a correction's key they would match everything.
+UBIQUITOUS_BASE_CALLS = frozenset({"c", "list"})
+
+
+def pattern_key(entity: object) -> tuple[str, str] | None:
+    """The (package, function) that keys this entity's pattern, or None if it has no key.
+
+    A call is keyed by its own package and name; an assignment ``x <- f(...)`` by the function
+    f on its right-hand side (Stage 1 records it). ``c()`` and ``list()`` key nothing: they are
+    in nearly every assignment, so an example for them would be arbitrary.
+    """
+    rhs = getattr(entity, "rhs_call_name", None)
+    if rhs:
+        package = getattr(entity, "rhs_call_package", None) or ""
+        if not package or (package == "base" and rhs in UBIQUITOUS_BASE_CALLS):
+            return None
+        return package, rhs
+    package = getattr(entity, "package", None) or ""
+    name = getattr(entity, "name", "") or ""
+    return (package, name) if package and name else None
+
+
+def correction_functions(base_r_calls: list[str]) -> list[str]:
+    """The base-R calls ("base::paste") of an entity that are specific enough to key a correction."""
+    return [q for q in base_r_calls if q.split("::")[-1] not in UBIQUITOUS_BASE_CALLS]
 
 
 @dataclass
@@ -144,7 +209,7 @@ def to_markdown(p: Pattern) -> str:
             lines.append("- " + json.dumps({
                 "r_hash": ex.r_hash, "r_snippet": ex.r_snippet,
                 "py_snippet": ex.py_snippet, "score": round(ex.score, 4),
-                "script_id": ex.script_id,
+                "script_id": ex.script_id, "n_calls": ex.n_calls,
             }, ensure_ascii=False))
     else:
         lines.append("(none)")
@@ -154,7 +219,8 @@ def to_markdown(p: Pattern) -> str:
             lines.append("- " + json.dumps({
                 "failure_class": ex.failure_class, "old_code": ex.old_code,
                 "new_code": ex.new_code, "score_delta": round(ex.score_delta, 4),
-                "script_id": ex.script_id,
+                "script_id": ex.script_id, "r_snippet": ex.r_snippet,
+                "functions": ex.functions,
             }, ensure_ascii=False))
     else:
         lines.append("(none)")
@@ -269,6 +335,7 @@ def _parse_body(
                 py_snippet=d.get("py_snippet", ""),
                 score=float(d.get("score", 0.0)),
                 script_id=d.get("script_id", ""),
+                n_calls=int(d.get("n_calls", 0)),
             ))
         except (json.JSONDecodeError, KeyError, ValueError):
             continue
@@ -288,6 +355,8 @@ def _parse_body(
                 new_code=d.get("new_code", ""),
                 score_delta=float(d.get("score_delta", 0.0)),
                 script_id=d.get("script_id", ""),
+                r_snippet=d.get("r_snippet", ""),
+                functions=d.get("functions", []),
             ))
         except (json.JSONDecodeError, KeyError, ValueError):
             continue

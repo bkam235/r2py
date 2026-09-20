@@ -28,6 +28,10 @@ class PatternLibrary:
         self._learned_retrieval: bool = False
         self._reranker_model: object = None
         self._models_loaded: bool = False
+        # Show verified fixes for the base-R functions an entity calls (on by default).
+        self.show_corrections: bool = True
+        # Show verified examples of the base-R functions called inside entities (on by default).
+        self.show_base_patterns: bool = True
 
     @property
     def learned_retrieval(self) -> bool:
@@ -66,6 +70,20 @@ class PatternLibrary:
                 from . import reranker as _reranker
                 candidates = _reranker.rerank(entity, candidates, self._reranker_model)
         return candidates
+
+    def retrieve_base_patterns(self, entity: object, no_seeds: bool = False) -> list[Pattern]:
+        """Patterns for the base-R functions called inside this entity (see retrieval)."""
+        return _retrieval.retrieve_base_patterns(entity, self.store, no_seeds=no_seeds)
+
+    def retrieve_corrections(
+        self,
+        entity: object,
+        k: int = 1,
+        no_seeds: bool = False,
+    ) -> list:
+        """Verified fixes for the base-R functions this entity calls (see retrieval)."""
+        return _retrieval.retrieve_corrections(
+            getattr(entity, "base_r_calls", None) or [], self.store, k, no_seeds=no_seeds)
 
     # ------------------------------------------------------------------ #
     # Write path (Stage 4 / loop — routed through writer)                 #
