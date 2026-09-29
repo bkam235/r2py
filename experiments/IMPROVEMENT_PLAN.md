@@ -1,5 +1,43 @@
 # Improvement plan — harness changes after the current scoring run
 
+**Implementation status (2026-09-29):** applied in the working tree, uncommitted — patches 01-04,
+Stage 0a (per-entity `active_dims` / `dim_scores` / `executed_ok` / `uncomparable` in
+`_entity_records`), Stage 0d (review retries, 2048 tokens, fails **closed**, truncated rejections
+still reject, outcomes counted in `review_stats`), Stage 2b-1 (fixers run in shadow mode via
+`stitch.shadow_autofix`; buckets and review failures land in each progress/score row),
+Stage 2b-2 (syntax gate parses the shim-activated source; verifier dumps the assembled file on a
+runtime SyntaxError), Stage 2b-3 (429 backoff 5->7 tries, `traceback` stored on error rows so the
+RecursionError is diagnosable next time — its cause is NOT yet known, no fix attempted; R-only
+names added to the pip skip list), Stage 3 (`replace_entity` action: `stitch.splice_entity`, parser,
+loop branch, OpenRouter prompt; multi-span entities are refused, imports go inline).
+**0b investigated, not decided** (`scripts/diagnose_comparators.py`, equivalent R/Python pairs
+through the real sandboxes): **env** scores a *correct* translation 0.00 whenever R's diff holds an
+R-internal option — `library(ggplot2|dplyr|cli)` alone sets `option:callr.condition_handler_cli_message`
+— because Python can never emit `option:*` keys (structural bug in comparator+capture). **files**
+scored 1.00 on an equivalent write (no bug found). **graphics** scored 0.887 for an equivalent
+`plot(1:3)` (discriminating, just harsh; the real zeros are likely ggplot-vs-matplotlib mismatches,
+undiagnosed). **0b decided (env):** `option:*` keys are dropped from both sides in `EnvComparator`; graphics and files unchanged. Scores before/after this change are not comparable (0c).
+**Graphics (0b, second comparator) done:** every R page is now recorded (`%03d`, one device
+segment per entity checkpoint; per-entity bundles carry all pages) and each page on both sides gets a
+*content fingerprint* (`stage0.effects.graphics`: point/line data, bar heights, polygon/segment/image
+counts, text). R base graphics are read from `recordPlot()` (needs `dev.control("enable")`, which the old
+capture never set), ggplot from `ggplot_build(last_plot())`, matplotlib from artists. The comparator
+pairs pages in order and compares fingerprints; **SSIM is no longer scored** (it measured white space:
+empty axes 0.896 vs correct 0.888). Known limits: grid/lattice non-ggplot pages fingerprint as null and
+are skipped; R legends add rects/segments; R default labels are ignored by a regex heuristic; extra
+polygon/segment artists in Python are penalised. Graphics scores before/after are not comparable (0c).
+**Graphics corpus + null rate:** `experiments/graphics_corpus/` holds 43 labelled R-vs-Python pairs
+(16 correct incl. styled/zero-based/noise variants, 27 wrong: off value, dropped points, wrong type,
+empty, swapped axes, wrong labels, wrong order); `evaluate.py` scores them and `tests/test_graphics_corpus.py`
+guards it. It exposed three comparator defects, fixed: one wrong value in eight passed (verdict threshold
+0.9 -> 0.99), right values in the wrong order scored 1.0 (ordered comparison, 0.85 credit for unordered),
+and per-panel index shifts failed (series-aware x shift). Caveat: the comparator was tuned on this
+same corpus, so its perfect separation is in-sample. `scripts/graphics_null_report.py` on the 60
+held-out scripts: 9 plot (82 R pages), 91% of pages fingerprint usably (base 65%, ggplot 27%, null 9%);
+Python side 74/74 pages fingerprinted; page count matches R in only 5 of 9 translations.
+**Not done:** 0c, Stage 4+. Suite: 674 pass; the 4 pre-existing failures remain.
+Original status line follows.
+
 **Status:** nothing here is applied. The first experiment is **finished, analysed and written up**
 (`experiments/heldout/RESULTS.md`; primary test p = 0.0569, H0 not rejected), so the harness is no
 longer frozen. `harness_hash` is `5a2b026daa0a` at the time of writing.

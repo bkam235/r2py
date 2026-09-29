@@ -116,19 +116,17 @@ def _compare_entity_bundles(
         r_eb.stdout, py_eb.stdout
     )
 
-    # GRAPHICS — prefer SSIM on real PNG snapshots when both sides have them;
-    # otherwise fall back to count-only matching. (Per-entity bundles may carry
-    # either: list[bytes] from the snapshot path, or an int count when the
-    # snapshot failed or was absent.)
+    # GRAPHICS — compare content fingerprints when both sides have them, else page counts.
+    # (Per-entity bundles carry list[bytes] pages, or an int count when the snapshot failed.)
     r_graphics = r_eb.graphics or []
     py_graphics = py_eb.graphics or []
 
-    def _has_real_bytes(g) -> bool:
-        return isinstance(g, list) and any(isinstance(b, (bytes, bytearray)) and b for b in g)
-
-    if _has_real_bytes(r_graphics) and _has_real_bytes(py_graphics):
+    if r_eb.graphics_meta and py_eb.graphics_meta:
+        # Content fingerprints: compare what was plotted, not how it rendered.
         results[EffectClass.GRAPHICS] = COMPARATORS[EffectClass.GRAPHICS].compare(
-            r_graphics, py_graphics
+            r_graphics if isinstance(r_graphics, list) else [],
+            py_graphics if isinstance(py_graphics, list) else [],
+            r_eb.graphics_meta, py_eb.graphics_meta,
         )
     else:
         r_count = r_graphics if isinstance(r_graphics, int) else len(r_graphics)

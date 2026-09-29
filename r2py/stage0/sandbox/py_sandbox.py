@@ -32,7 +32,7 @@ _SKIP_PACKAGES: set[str] = {
     "rlang", "tibble", "stringr", "forcats", "readr", "lubridate",
     "broom", "tidyverse", "devtools", "testthat", "usethis",
     "data.table", "caret", "mlr", "mlr3", "glue",
-    "bsicons",
+    "bsicons", "modeldata", "googledrive", "shinyapp",
 }
 
 
@@ -46,7 +46,7 @@ def _missing_module(stderr: str) -> str | None:
 
 
 def _auto_install_py(pkg: str) -> None:
-    if pkg in _SKIP_PACKAGES:
+    if pkg in _SKIP_PACKAGES or pkg.startswith('_'):  # `_curses` etc. are not installable names
         print(f"[r2py] Skipping install of '{pkg}' (known unavailable)")
         return
     from ..env.package_installer import install
@@ -189,6 +189,7 @@ class PySandbox:
         if EffectClass.GRAPHICS in capture:
             collected = _graphics_effects.collect(workdir)
             bundle.graphics = collected["graphics"]
+            bundle.graphics_meta = collected["graphics_meta"]
 
         if EffectClass.DATA in capture:
             collected = _data_effects.collect(workdir)

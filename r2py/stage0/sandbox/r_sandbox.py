@@ -268,6 +268,7 @@ class RSandbox:
         if EffectClass.GRAPHICS in capture:
             collected = _graphics_effects.collect(workdir)
             bundle.graphics = collected["graphics"]
+            bundle.graphics_meta = collected["graphics_meta"]
 
         if EffectClass.DATA in capture:
             collected = _data_effects.collect(workdir)

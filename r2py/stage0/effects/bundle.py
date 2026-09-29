@@ -22,6 +22,7 @@ def to_json(bundle: EffectBundle) -> dict:
         "stderr": bundle.stderr,
         "files": bundle.files,
         "graphics": [base64.b64encode(b).decode() for b in bundle.graphics],
+        "graphics_meta": bundle.graphics_meta,
         "data": bundle.data,
         "html": bundle.html,
         "env": bundle.env,
@@ -42,6 +43,7 @@ def from_json(d: dict) -> EffectBundle:
         stderr=d.get("stderr", ""),
         files=d.get("files", {}),
         graphics=[base64.b64decode(s) for s in d.get("graphics", [])],
+        graphics_meta=d.get("graphics_meta", []),
         data=d.get("data", {}),
         html=d.get("html", []),
         env=d.get("env", {}),
@@ -77,6 +79,7 @@ def merge(bundles: list[EffectBundle]) -> EffectBundle:
         merged.stderr += b.stderr
         merged.files.update(b.files)
         merged.graphics.extend(b.graphics)
+        merged.graphics_meta.extend(b.graphics_meta)
         merged.data.update(b.data)
         merged.html.extend(b.html)
         merged.env.update(b.env)

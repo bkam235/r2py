@@ -101,7 +101,8 @@ def _compare_bundles(
 
     # GRAPHICS
     results[EffectClass.GRAPHICS] = COMPARATORS[EffectClass.GRAPHICS].compare(
-        r_bundle.graphics, py_bundle.graphics
+        r_bundle.graphics, py_bundle.graphics,
+        r_bundle.graphics_meta, py_bundle.graphics_meta,
     )
 
     # DATA — uses configurable data_compare + tolerance
@@ -173,7 +174,7 @@ def _build_feedback(
             py_has_bytes = isinstance(py_g, list) and any(
                 isinstance(b, (bytes, bytearray)) and b for b in py_g
             )
-            if not (r_has_bytes or py_has_bytes):
+            if not (r_has_bytes or py_has_bytes or r_eb.graphics_meta or py_eb.graphics_meta):
                 continue
             eb_results = _compare_entity_bundles(r_eb, py_eb)
             g_result = eb_results.get(EffectClass.GRAPHICS)
@@ -487,14 +488,11 @@ def _r2py_checkpoint(eid):
 
     safe_eid = eid.replace('/', '_').replace(':', '_')
 
-    # Snapshot the newest figure so the per-entity comparator can run SSIM
-    # rather than just count-match.
+    # Save every new figure (PNG + content fingerprint) as this entity's snapshot and into
+    # the run-wide record; the epilogue only sees figures still open at the end.
     if graphics_delta == 1 and _plt is not None:
         try:
-            _new_fn = max(_plt.get_fignums())
-            _new_fig = _plt.figure(_new_fn)
-            _new_fig.set_size_inches(8, 6)
-            _new_fig.savefig(f'_r2py_cp_plot_{safe_eid}.png', dpi=100)
+            _r2py_flush_figs(safe_eid)
         except Exception:
             pass
 
@@ -662,18 +660,15 @@ def _collect_py_checkpoints(
             # JSON null/array can appear when no new variables were captured; normalise.
             if not isinstance(raw_data, dict):
                 raw_data = {}
-            plot_path = workdir / f"_r2py_cp_plot_{safe_eid}.png"
-            if plot_path.exists():
-                try:
-                    graphics_field: object = [plot_path.read_bytes()]
-                except OSError:
-                    graphics_field = cp.get("graphics", 0)
-            else:
-                graphics_field = cp.get("graphics", 0)
+            from ..stage0.effects import graphics as _gfx
+            pages = _gfx._read_pages(sorted(workdir.glob(f"_r2py_cp_plot_{safe_eid}__*.png")))
+            graphics_field: object = pages if pages else cp.get("graphics", 0)
+            graphics_meta = _gfx.read_meta(workdir / f"_r2py_cp_gfx_{safe_eid}.json")
             eb = EffectBundle(
                 data=raw_data,
                 stdout=cp.get("stdout", "") or "",
                 graphics=graphics_field,  # type: ignore[arg-type]
+                graphics_meta=graphics_meta,
             )
             eb.uncapturable.extend(cp.get("uncapturable", []))
             result[eid] = eb
@@ -768,6 +763,13 @@ def verify(
                 sidecar_files=sidecar_files,
             )
             py_entity_bundles = _collect_py_checkpoints(_wd, cp_eids)
+
+    if any(t in (py_bundle.stderr or "") for t in ("SyntaxError", "IndentationError")):
+        # The syntax gate should make this impossible; keep the evidence if it isn't.
+        import hashlib as _hl
+        dump = Path(tempfile.gettempdir()) / f"r2py_syntax_{_hl.sha1(py_source_activated.encode()).hexdigest()[:10]}.py"
+        dump.write_text(py_source_activated, encoding="utf-8")
+        print(f"[Verify]  runtime SyntaxError; assembled source saved to {dump}")
 
     # R per-entity bundles from Stage 1's checkpointed run. Copy with echoed
     # source stripped from stdout (see note above) -- script_map.entity_bundles

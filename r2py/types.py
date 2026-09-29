@@ -78,6 +78,8 @@ class EffectBundle:
     stderr:       str                    = ""
     files:        dict[str, str]         = field(default_factory=dict)   # path → sha256 hex
     graphics:     list[bytes]            = field(default_factory=list)   # PNG bytes per figure
+    # Content fingerprint per figure (stage0.effects.graphics); None where extraction failed.
+    graphics_meta: list                  = field(default_factory=list)
     data:         dict[str, object]      = field(default_factory=dict)   # var name → value
     html:         list[str]              = field(default_factory=list)   # rendered HTML strings
     env:          dict[str, object]      = field(default_factory=dict)   # options/envvar diff
