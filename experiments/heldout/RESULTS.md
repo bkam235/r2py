@@ -219,3 +219,40 @@ not the retrieval mechanism, is the binding constraint.
    effects of this size. Either raise targetability well above 20% or increase the held-out set.
 5. **Do not lower the pattern-inclusion threshold** as a coverage fix — see Stage 5 of
    `experiments/IMPROVEMENT_PLAN.md` for why, and for the version that is testable.
+
+## Measurement note (added 2026-09-29, after the analysis was closed)
+
+This is **not a re-analysis**. The registered result above stands as written. It records what was
+learned about the measuring instrument afterwards, and which numbers can be compared with later runs.
+
+**What was found about the instrument** (`experiments/IMPROVEMENT_PLAN.md`, Stage 0, and the smoke
+test of 2026-09-29):
+
+- **`env` could not score a correct translation** whenever R's session diff held an R-internal
+  option (loading `ggplot2`, `dplyr` or `cli` sets one) or Python's held a library variable
+  (`KMP_DUPLICATE_LIB_OK`). It is now scored on what R changed, excluding `options()`.
+- **`graphics` compared one R page against every Python figure** (R kept only its last page), so any
+  multi-page script scored exactly 0, and the image comparison it fell back on could not tell a right
+  plot from a wrong one (an empty axis outscored the correct plot). Pages are now paired and compared
+  by plotted content.
+- **The anti-hardcoding review passed on LLM error and on truncated output.** It now retries and
+  fails closed. How many first-run translations this admitted is unknown: the outcome was not logged.
+- **Auto-fixers silently repaired 328 mistakes** and the syntax gate checked a different file from
+  the one that ran. Both are changed.
+- **Entities with no active dimension score 1.0 by construction.** Per-entity `active_dims` were not
+  recorded in the first run, so the share cannot be measured there. In a 12-script smoke test with the
+  current harness it was **29 of 137 entities (21%)**, and 55% of all entities scoring exactly 1.0.
+  That figure is indicative only: a different harness, translations and script set.
+
+**What this does and does not change.** The primary endpoint averages *entity* scores over targetable
+entities, so vacuous entities and instrument failures in `env`/`graphics` add a constant or a
+downward shift that does not depend on the library. They can dilute an effect, not create one, so
+they do not turn the null into evidence for or against the mechanism. They do mean the "23 informative
+pairs" is, if anything, an upper bound on the effective sample. Whether the endpoint was mostly pinned
+in the first run cannot be determined from stored data.
+
+**Comparable across the change:** the training statistics (34% gate pass rate, 112 h, 45% worsening
+rewrites, 155 patterns, one example for 131 of them), the targetability figures (20% targetable, 91.8%
+structural ceiling) and the data-completeness counts. **Not comparable:** any score. Scores before and
+after the `env`, `graphics` and review changes measure different things, and a later run must not be
+pooled with or differenced against this one without saying so.
