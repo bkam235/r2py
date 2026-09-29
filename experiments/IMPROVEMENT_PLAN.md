@@ -48,7 +48,18 @@ construction (55% of all entities scoring exactly 1.0 are vacuous); `executed_ok
 0 failed, 0 unavailable. Shadow fixers: 3 `invalid->valid` saves in 12 scripts. Graphics 0.0 on
 ggplot2/pROC/isoband: plotnine plots never render at top level (0 Python pages) -- a translation gap,
 not a measurement bug. Agent budget exhausted in 9 of 12 scripts.
-**Not done:** 0c, Stage 4+. Suite: 674 pass; the 4 pre-existing failures remain.
+**Since then:** Stage 4 Phase 0 done (`ScoreReport.excluded` = R class + Python type of each data
+entity left out of scoring; per-run `excluded` rows; adapter worklist in `analyze` and the smoke
+summary; checked live: `lm` -> `statsmodels...RegressionResultsWrapper`). Stage 0c done (measurement
+note appended to `RESULTS.md`; nothing re-analysed). `scripts/analyze_train_log.py` reproduces the
+Measurement table's baseline from the run's files (matches: 1.39 patterns/h, 34% at threshold, 16/39/45%
+rewrites, 17% catastrophic, 227 syntax rejections, 84.5% single-example). Note its "scripts
+contributing" is 26% (library grew), not the 34% the table lists, which is the gate pass rate.
+Shim fixes confirmed live on `caret`/`e1071` (0 runtime SyntaxErrors, previously 3).
+**Not done:** Stage 4 Phase 1+ (adapters), Stages 5-6 (gated on the re-measure below), the
+RecursionError (needs a traceback from a real run: rows now keep one). Nothing left that can be
+built and checked without a real scoring run.
+**Superseded status text follows.** Not done (earlier): 0c, Stage 4+. Suite: 674 pass; the 4 pre-existing failures remain.
 Original status line follows.
 
 **Status:** nothing here is applied. The first experiment is **finished, analysed and written up**
