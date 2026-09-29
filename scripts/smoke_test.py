@@ -33,6 +33,10 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from dotenv import load_dotenv  # noqa: E402
+
+load_dotenv(ROOT / ".env", override=True)  # as scripts/run_heldout.py does
+
 # Scripts whose R run draws plots (from scripts/graphics_null_report.py on the held-out set).
 PLOTTING = [
     "ggplot2__rd_example__aes_linetype_size_shape_Rd.R",
