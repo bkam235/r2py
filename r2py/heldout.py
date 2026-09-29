@@ -28,6 +28,7 @@ import random
 import shutil
 import sys
 import tempfile
+import threading
 import time
 import traceback
 from collections import Counter
@@ -107,7 +108,8 @@ DEFAULT_PROTOCOL = {
 LLM_SETTINGS = {
     "temperature": 1.0,
     "provider": {"only": ["novita/bf16"], "allow_fallbacks": False},
-    "request_timeout_s": 300,  # a stalled request fails (and is retried by the harness), not hangs
+    "request_timeout_s": 300,  # per network read
+    "request_deadline_s": 420,  # whole request, wall clock (see _with_deadline); llm.py retries it
 }
 
 
@@ -397,6 +399,31 @@ RATE_LIMIT_TRIES = 7     # 429s are waited out (5, 10, 20, 40, 80, 160 s; upstre
 RATE_LIMIT_WAIT_S = 5.0
 
 
+def _with_deadline(fn, deadline_s: float):
+    """Run ``fn`` but give up after ``deadline_s`` seconds of wall clock.
+
+    The client's own ``timeout`` is per network read; OpenRouter keeps a slow request alive
+    with keepalive bytes, so a stalled call never tripped it (a smoke test sat 85 minutes on
+    one request).  The abandoned worker thread is left to die with its connection.
+    """
+    box: dict = {}
+
+    def run():
+        try:
+            box["result"] = fn()
+        except BaseException as exc:  # re-raised in the caller
+            box["error"] = exc
+
+    t = threading.Thread(target=run, daemon=True)
+    t.start()
+    t.join(deadline_s)
+    if t.is_alive():
+        raise TimeoutError(f"LLM request exceeded {deadline_s:.0f}s wall clock")
+    if "error" in box:
+        raise box["error"]
+    return box["result"]
+
+
 class _PinnedClient:
     """Proxy for an openai client that forces settings onto every chat request."""
 
@@ -413,7 +440,9 @@ class _PinnedClient:
         kw.setdefault("timeout", self._settings["request_timeout_s"])
         for attempt in range(RATE_LIMIT_TRIES):
             try:
-                resp = self._inner.chat.completions.create(extra_body=extra, **kw)
+                resp = _with_deadline(
+                    lambda: self._inner.chat.completions.create(extra_body=extra, **kw),
+                    self._settings["request_deadline_s"])
                 break
             except openai.RateLimitError:
                 if attempt == RATE_LIMIT_TRIES - 1:

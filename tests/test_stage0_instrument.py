@@ -65,3 +65,14 @@ class TestEnvIgnoresROptions(unittest.TestCase):
         self.assertEqual(c.compare({"option:callr.x": 1}, {}).score, 1.0)
         self.assertEqual(c.compare({"option:digits": 4, "envvar:A": "1"}, {"envvar:A": "1"}).score, 1.0)
         self.assertEqual(c.compare({"envvar:A": "1"}, {}).score, 0.0)
+
+
+class TestRequestDeadline(unittest.TestCase):
+    def test_a_stalled_call_is_abandoned_and_errors_and_results_pass_through(self):
+        import time
+        from r2py import heldout as ho
+        with self.assertRaises(TimeoutError):
+            ho._with_deadline(lambda: time.sleep(5), 0.1)
+        self.assertEqual(ho._with_deadline(lambda: 7, 5), 7)
+        with self.assertRaises(ValueError):
+            ho._with_deadline(lambda: (_ for _ in ()).throw(ValueError("x")), 5)
