@@ -100,6 +100,9 @@ def summarise(rows: list[dict], log: str) -> str:
     out += ["", f"entity records: {len(ents)} ({with_dims} with active_dims)"]
     pinned = sum(1 for e in ents if e.get("active_dims") == [])
     out.append(f"entities with no active dimensions: {pinned}")
+    from r2py.heldout import excluded_worklist
+    wl = excluded_worklist(rows)
+    out.append(f"excluded data entities: {sum(n for _, n in wl)}; worklist {wl[:5]}")
     gm = [r for r in rows if "graphics" in r.get("by_effect", {})]
     out.append(f"scripts with graphics scored: {len(gm)}"
                + (f"; mean {sum(r['by_effect']['graphics'] for r in gm) / len(gm):.2f}" if gm else ""))

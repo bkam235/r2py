@@ -682,6 +682,7 @@ def _score_loop(manifest: dict, workdir: Path, checkpoints: list[str], *, out: P
                                 infra_crash=bool(report.infra_crash) if report else False,
                                 by_effect={ec.value: s for ec, s in report.by_effect.items()}
                                 if report else {},
+                                excluded=report.excluded if report else [],
                                 entities=entities)
                             break
                         except Exception as exc:
@@ -896,6 +897,17 @@ def _paired_stats(before: dict[str, float], after: dict[str, float], manifest: d
     return out
 
 
+def excluded_worklist(rows: list[dict]) -> list[tuple[tuple[str, str], int]]:
+    """Data entities left out of scoring, grouped by (R class, Python type), most common first.
+
+    A developer worklist for serialisation adapters: a group is one adapter that would bring
+    those variables back into the comparison (Stage 4 Phase 0).  Not shown to the agent --
+    the correct translation of ``glm()`` *is* a statsmodels object, so it cannot fix this.
+    """
+    counts = Counter((x.get("r_class", ""), x.get("py_type", "")) for r in rows for x in r.get("excluded") or [])
+    return counts.most_common()
+
+
 def analyze(manifest: dict, scores_path: str | Path, library_dir: str | Path | None = None,
             checkpoints: list[str] | None = None) -> dict:
     """The pre-specified tests.
@@ -940,6 +952,7 @@ def analyze(manifest: dict, scores_path: str | Path, library_dir: str | Path | N
     out["control"] = _paired_stats(rest[before], rest[after], manifest)
     entities = [e for d in meta.values() for e in d.values()]
     out["share_targetable"] = _mean([is_targetable(e, ids) for e in entities])
+    out["excluded_worklist"] = excluded_worklist(rows)
     return out
 
 
@@ -1011,6 +1024,10 @@ def format_report(a: dict, manifest: dict) -> str:
     lines += [""] + _block("PRIMARY   targetable-entity mean", a["primary"], spec)
     lines += [""] + _block("CONTROL   other entities (descriptive; the library had nothing for them)", a["control"], spec)
     lines += [""] + _block("SECONDARY whole-script aggregate score", a["script_aggregate"], spec)
+    wl = a.get("excluded_worklist") or []
+    if wl:
+        lines += ["", "Data entities excluded from scoring (adapter worklist: R class -> Python type):"]
+        lines += [f"  {n:4d}  {rc or '?'} -> {pt or '?'}" for (rc, pt), n in wl[:10]]
     return "\n".join(lines)
 
 

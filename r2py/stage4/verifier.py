@@ -514,6 +514,7 @@ def _r2py_checkpoint(eid):
     g = globals()
     new_vars = {}
     uncapturable_vars = []
+    uncapturable_types = {}
     for k, v in g.items():
         if k.startswith('_r2py') or k in _r2py_prev_ns:
             continue
@@ -559,18 +560,21 @@ def _r2py_checkpoint(eid):
             _r2py_serialized, _r2py_ok = _r2py_try_serialize(k, v)
             if not _r2py_ok:
                 uncapturable_vars.append(k)
+                uncapturable_types[k] = f"{type(v).__module__}.{type(v).__qualname__}"
                 continue
             if isinstance(_r2py_serialized, dict) and '__r2py_callable_meta__' in _r2py_serialized:
                 _r2py_serialized = {_k: _v for _k, _v in _r2py_serialized.items() if _k != '__r2py_callable_meta__'}
             new_vars[k] = _r2py_serialized
         except Exception:
             uncapturable_vars.append(k)
+            uncapturable_types[k] = f"{type(v).__module__}.{type(v).__qualname__}"
 
     try:
         with open(f'_r2py_cp_{safe_eid}.json', 'w', encoding='utf-8') as _f:
             _r2py_json.dump({'data': new_vars, 'stdout': stdout_delta,
                              'graphics': graphics_delta,
-                             'uncapturable': uncapturable_vars}, _f)
+                             'uncapturable': uncapturable_vars,
+                             'uncapturable_types': uncapturable_types}, _f)
     except Exception:
         pass
 
@@ -672,6 +676,7 @@ def _collect_py_checkpoints(
                 graphics_meta=graphics_meta,
             )
             eb.uncapturable.extend(cp.get("uncapturable", []))
+            eb.uncapturable_types.update(cp.get("uncapturable_types", {}))
             result[eid] = eb
         except Exception:
             continue
@@ -1024,6 +1029,16 @@ def verify(
         py_entity_bundles=py_entity_bundles or None,
     )
 
+    # Stage 4 Phase 0: which R objects could not be compared, with both sides' types.
+    py_types: dict[str, str] = {}
+    for eb in (py_entity_bundles or {}).values():
+        py_types.update(eb.uncapturable_types)
+    r_classes = {var: info.get("class", "")
+                 for vars_ in (getattr(script_map, "entity_types", None) or {}).values()
+                 for var, info in vars_.items() if isinstance(info, dict)}
+    excluded = [{"var": n, "r_class": r_classes.get(n, ""), "py_type": py_types.get(n, "")}
+                for n in sorted(set(r_bundle.data) & set(py_bundle.uncapturable))]
+
     report = ScoreReport(
         aggregate=aggregate,
         by_entity=score_table,
@@ -1034,6 +1049,7 @@ def verify(
         py_exit_code=py_bundle.exit_code,
         py_entity_bundles=py_entity_bundles or {},
         infra_crash=infra_crash,
+        excluded=excluded,
     )
     if return_bundle:
         return report, py_bundle

@@ -88,6 +88,8 @@ class EffectBundle:
     network_log:  list[tuple]            = field(default_factory=list)   # (verb, target, hash)
     # Never silently empty — D2: every uncapturable call site must be named here.
     uncapturable: list[str]              = field(default_factory=list)
+    # var name -> "module.Qualname" of the Python object that could not be serialised.
+    uncapturable_types: dict[str, str]   = field(default_factory=dict)
     exit_code:    int                    = 0
     run_time_s:   float                  = 0.0
     preamble_lines: int                  = 0   # lines before source in _r2py_script.py (for crash attribution)
@@ -166,6 +168,9 @@ class ScoreReport:
     py_exit_code: int                            = 0
     py_entity_bundles: dict[EntityId, EffectBundle] = field(default_factory=dict)
     infra_crash:  bool                           = False
+    # Data entities left out of the comparison because Python could not serialise them:
+    # [{"var", "r_class", "py_type"}] -- an adapter worklist, not agent feedback (Stage 4 Phase 0).
+    excluded:     list[dict]                     = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------

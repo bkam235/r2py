@@ -87,3 +87,13 @@ class TestEnvIgnoresPythonLibraryExtras(unittest.TestCase):
         self.assertEqual(c.compare({"envvar:A": "1"}, {"envvar:A": "1", "envvar:KMP": "T"}).score, 1.0)
         self.assertEqual(c.compare({"envvar:A": "1"}, {"envvar:KMP": "T"}).score, 0.0)
         self.assertEqual(c.compare({"envvar:A": "1"}, {"envvar:A": "2"}).score, 0.0)
+
+
+class TestExcludedWorklist(unittest.TestCase):
+    def test_groups_by_r_class_and_python_type_most_common_first(self):
+        from r2py import heldout as ho
+        rows = [{"excluded": [{"var": "m", "r_class": "lm", "py_type": "statsmodels.X"},
+                              {"var": "g", "r_class": "glm", "py_type": "statsmodels.Y"}]},
+                {"excluded": [{"var": "m2", "r_class": "lm", "py_type": "statsmodels.X"}]}, {}]
+        self.assertEqual(ho.excluded_worklist(rows),
+                         [(("lm", "statsmodels.X"), 2), (("glm", "statsmodels.Y"), 1)])
