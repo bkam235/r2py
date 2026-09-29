@@ -6,7 +6,10 @@ import re
 
 from . import llm as _llm
 
-_SENTINEL_RE = re.compile(r"^# r2py:entity:\S+$")
+# Leading whitespace allowed: the model sometimes indents a copied sentinel to match a
+# continuation line; _check_syntax already ignores indented ones, so the runner must too
+# (an indented sentinel after a backslash continuation is a runtime SyntaxError).
+_SENTINEL_RE = re.compile(r"^\s*# r2py:entity:\S+$")
 
 
 class SentinelMappingError(RuntimeError):

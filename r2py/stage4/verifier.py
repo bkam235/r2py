@@ -423,8 +423,9 @@ def _activate_data_shim(source: str) -> tuple[str, bool]:
         body_commented = m.group(2)
         end = m.group(3)
         # Strip a leading ``# `` from each body line (re-activate).
+        # r2py markers (entity sentinels the line mapper put inside the block) stay comments.
         activated_lines = [
-            line[2:] if line.startswith("# ") else line
+            line[2:] if line.startswith("# ") and not line.startswith("# r2py:") else line
             for line in body_commented.splitlines()
         ]
         return begin + "\n".join(activated_lines) + "\n" + end
@@ -725,8 +726,16 @@ def verify(
     # Determine which effects were actually captured in R so we capture the same in Python
     capture = _ALL_CAPTURE
 
+    # Activate the data-loading shim (Option A) in the source we hand to the
+    # sandbox.  The on-disk artifact stays commented-out; this rewrite affects
+    # only the in-memory copy used for equivalence testing.  It must happen BEFORE
+    # checkpoints are injected: activation keeps line numbers, and injection checks
+    # that each insertion parses -- against the shim's real (uncommented) code, so a
+    # checkpoint can no longer land inside the shim's `for`/`if` body.
+    py_source_shimmed, has_shim = _activate_data_shim(candidate)
+
     # Inject per-entity checkpoint calls into the Python source (Option 2 scoring).
-    py_source_checkpointed, cp_eids = _inject_py_checkpoints(candidate, entity_line_map or {})
+    py_source_checkpointed, cp_eids = _inject_py_checkpoints(py_source_shimmed, entity_line_map or {})
 
     # Rebuild entity_line_map from the checkpointed source so crash attribution
     # line numbers (which reference the checkpointed script) map correctly.
@@ -737,10 +746,7 @@ def verify(
     else:
         cp_entity_line_map = None
 
-    # Activate the data-loading shim (Option A) in the source we hand to the
-    # sandbox.  The on-disk artifact stays commented-out; this rewrite affects
-    # only the in-memory copy used for equivalence testing.
-    py_source_activated, has_shim = _activate_data_shim(py_source_checkpointed)
+    py_source_activated = py_source_checkpointed
     sidecar_files: dict[str, str] | None = None
     if has_shim and sidecar_filename:
         payload = _build_sidecar_payload(script_map)
@@ -755,7 +761,7 @@ def verify(
         )
         py_entity_bundles = _collect_py_checkpoints(workdir, cp_eids)
     else:
-        with tempfile.TemporaryDirectory() as _tmpdir:
+        with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as _tmpdir:
             _wd = Path(_tmpdir)
             py_bundle = sandbox.run(
                 py_source_activated, workdir=_wd, capture=capture,

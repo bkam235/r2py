@@ -1,4 +1,4 @@
-"""Environment comparator — exact JSON diff (§7.3)."""
+"""Environment comparator — exact JSON diff of what R changed (§7.3)."""
 from __future__ import annotations
 
 from ...types import ComparatorResult, EffectClass
@@ -15,6 +15,10 @@ class EnvComparator:
 
     def compare(self, r_effect: dict, py_effect: dict) -> ComparatorResult:
         r_effect, py_effect = _comparable(r_effect), _comparable(py_effect)
+        # Only what R changed must be reproduced.  Python-only changes are library side effects
+        # (importing numpy/sklearn sets KMP_DUPLICATE_LIB_OK, KMP_INIT_AT_FORK; sys_path grows)
+        # that R can never show, so they must not fail a correct translation.
+        py_effect = {k: v for k, v in py_effect.items() if k in r_effect}
         if r_effect == py_effect:
             return ComparatorResult(
                 effect_class=EffectClass.ENV,

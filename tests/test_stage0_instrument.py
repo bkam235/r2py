@@ -76,3 +76,14 @@ class TestRequestDeadline(unittest.TestCase):
         self.assertEqual(ho._with_deadline(lambda: 7, 5), 7)
         with self.assertRaises(ValueError):
             ho._with_deadline(lambda: (_ for _ in ()).throw(ValueError("x")), 5)
+
+
+
+class TestEnvIgnoresPythonLibraryExtras(unittest.TestCase):
+    def test_python_only_changes_do_not_fail_but_missing_r_changes_do(self):
+        from r2py.stage4.comparators.env import EnvComparator
+        c = EnvComparator()
+        self.assertEqual(c.compare({}, {"envvar:KMP_DUPLICATE_LIB_OK": True, "sys_path": ["/x"]}).score, 1.0)
+        self.assertEqual(c.compare({"envvar:A": "1"}, {"envvar:A": "1", "envvar:KMP": "T"}).score, 1.0)
+        self.assertEqual(c.compare({"envvar:A": "1"}, {"envvar:KMP": "T"}).score, 0.0)
+        self.assertEqual(c.compare({"envvar:A": "1"}, {"envvar:A": "2"}).score, 0.0)

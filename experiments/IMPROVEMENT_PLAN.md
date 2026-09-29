@@ -35,6 +35,19 @@ and per-panel index shifts failed (series-aware x shift). Caveat: the comparator
 same corpus, so its perfect separation is in-sample. `scripts/graphics_null_report.py` on the 60
 held-out scripts: 9 plot (82 R pages), 91% of pages fingerprint usably (base 65%, ggplot 27%, null 9%);
 Python side 74/74 pages fingerprinted; page count matches R in only 5 of 9 translations.
+**Smoke test (2026-09-29, 12 scripts, 4 workers, `work/smoke/20260929_162051`)** found and fixed:
+(1) a request stalled 85 min because the client timeout is per-read -> 420 s wall-clock deadline per
+LLM request (likely also the unexplained ~107 min steps); (2) the 4 runtime SyntaxErrors: seeds had
+entity sentinels/checkpoints landing inside the data shim, which activation then un-commented (shim now
+activated BEFORE checkpoint injection, r2py markers stay comments) plus indented sentinels the runner
+did not strip; (3) env still scored 0 on Python-only library side effects (KMP_*, sys_path) -> only
+what R changed must be reproduced; (4) tempdir cleanup PermissionError killed a whole script.
+Stage 0a answer: 29 of 137 entity records (21%) have NO active dimensions, so they score 1.0 by
+construction (55% of all entities scoring exactly 1.0 are vacuous); `executed_ok` was true for all.
+`replace_entity` was used 1 of 41 times (refused: multi-span entity). Anti-hardcoding review: 9 passed,
+0 failed, 0 unavailable. Shadow fixers: 3 `invalid->valid` saves in 12 scripts. Graphics 0.0 on
+ggplot2/pROC/isoband: plotnine plots never render at top level (0 Python pages) -- a translation gap,
+not a measurement bug. Agent budget exhausted in 9 of 12 scripts.
 **Not done:** 0c, Stage 4+. Suite: 674 pass; the 4 pre-existing failures remain.
 Original status line follows.
 
