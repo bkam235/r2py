@@ -64,11 +64,36 @@ Does this Python translation contain hardcoded COMPUTED VALUES? \
 Answer with a JSON object:
 
 {{"pass": true}}   — if the translation computes its results correctly
-{{"pass": false, "reason": "brief explanation of what is hardcoded"}}  — \
+{{"pass": false, "reason": "one sentence, under 40 words"}}  — \
 if you found hardcoded computed values
 
 Return ONLY the JSON object, nothing else.
 """
+
+
+# Counts of review outcomes that did not yield a verdict, for the run record.
+review_stats = {"llm_error": 0, "parse_error": 0, "unavailable": 0}
+
+_REVIEW_TRIES = 3
+REVIEW_UNAVAILABLE = "review unavailable (LLM error or unparseable verdict)"
+
+
+def _parse_verdict(raw: str) -> dict | None:
+    """Parse the reviewer's JSON verdict; recover a rejection from truncated JSON."""
+    raw = raw.strip()
+    if raw.startswith("```"):
+        m = re.search(r'```(?:json)?\s*\n(.*?)```', raw, re.DOTALL)
+        if m:
+            raw = m.group(1).strip()
+    try:
+        result = json.loads(raw)
+    except json.JSONDecodeError:
+        # A verbose rejection cut off mid-string is still a rejection.
+        if re.search(r'"pass"\s*:\s*false', raw):
+            m = re.search(r'"reason"\s*:\s*"(.*)', raw, re.DOTALL)
+            return {"pass": False, "reason": (m.group(1) if m else "")[:500] + " (truncated)"}
+        return None
+    return result if isinstance(result, dict) and "pass" in result else None
 
 
 def review_translation(
@@ -96,33 +121,32 @@ def review_translation(
         r_source=r_source, py_source=py_source, unavailable_note=unavail_note,
     )
 
-    try:
-        raw = _llm.call(
-            [{"role": "user", "content": prompt}],
-            _REVIEW_SYSTEM,
-            model=model,
-            max_tokens=512,
-        )
-    except Exception as exc:
-        print(f"[Review]  LLM call failed: {exc}")
-        return True, ""  # fail-open
+    result = None
+    for attempt in range(1, _REVIEW_TRIES + 1):
+        try:
+            raw = _llm.call(
+                [{"role": "user", "content": prompt}],
+                _REVIEW_SYSTEM,
+                model=model,
+                max_tokens=2048,
+            )
+        except Exception as exc:
+            print(f"[Review]  LLM call failed (attempt {attempt}): {exc}")
+            review_stats["llm_error"] += 1
+            continue
+        result = _parse_verdict(raw)
+        if result is not None:
+            break
+        print(f"[Review]  Unusable review response (attempt {attempt}): {raw.strip()[:200]!r}")
+        review_stats["parse_error"] += 1
 
-    raw = raw.strip()
-    if raw.startswith("```"):
-        m = re.search(r'```(?:json)?\s*\n(.*?)```', raw, re.DOTALL)
-        if m:
-            raw = m.group(1).strip()
+    if result is None:
+        # Fail closed: a hardcoded translation copies R's output and scores high,
+        # so admitting an unreviewed one inflates scores invisibly.
+        review_stats["unavailable"] += 1
+        return False, REVIEW_UNAVAILABLE
 
-    try:
-        result = json.loads(raw)
-    except json.JSONDecodeError:
-        print(f"[Review]  Could not parse review response: {raw[:200]!r}")
-        return True, ""  # fail-open
-
-    if not isinstance(result, dict):
-        return True, ""
-
-    passed = result.get("pass", True)
+    passed = result["pass"]
     reason = result.get("reason", "")
 
     # Override false-positive rejections for unavailable packages.

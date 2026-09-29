@@ -308,6 +308,25 @@ def rebuild_entity_line_map(source: str) -> dict[str, list[tuple[int, int]]]:
     return result
 
 
+def splice_entity(source: str, eid: str, body: str) -> tuple[str | None, str]:
+    """Replace one entity's body in *source*, leaving every other line untouched.
+
+    The entity's own ``# r2py:entity:<eid>`` sentinel line is kept; lines after it up to
+    the entity's end are replaced by *body*.  Returns ``(new_source, "")`` or
+    ``(None, reason)``.  An entity with several sentinels (a definition and its call
+    sites) is refused: which span to replace would be a guess.
+    """
+    spans = rebuild_entity_line_map(source).get(eid)
+    if not spans:
+        return None, f"unknown entity {eid!r} (no '# r2py:entity:{eid}' line in the current translation)"
+    if len(spans) > 1:
+        return None, f"entity {eid!r} has {len(spans)} separate spans; use a full rewrite for it"
+    start, end = spans[0]
+    fragment = [l for l in body.splitlines() if not _SENTINEL_RE.match(l)]
+    lines = source.splitlines()
+    return "\n".join(lines[:start] + fragment + lines[end:]) + "\n", ""
+
+
 # ---------------------------------------------------------------------------
 # Python reserved-keyword sanitisation (§3.7 language-level invariant)
 # ---------------------------------------------------------------------------
@@ -503,3 +522,41 @@ def reorder_positional_before_kwargs(code: str) -> tuple[str, bool]:
             break
         changed_overall = True
     return code, changed_overall
+
+
+shadow_log: list[dict] = []
+
+
+def _parses(code: str) -> bool:
+    try:
+        _ast.parse("\n".join(l for l in code.splitlines() if not l.lstrip().startswith("# r2py:")))
+        return True
+    except SyntaxError:
+        return False
+
+
+def shadow_autofix(code: str, site: str) -> None:
+    """Observe what the auto-fixers WOULD do, without applying them.
+
+    Runs each fixer on a copy and records into ``shadow_log`` whether it turned invalid
+    source valid (a genuine save), left valid source valid (unnecessary), broke valid
+    source, or left invalid source invalid.  The caller keeps the original source.
+    """
+    before_ok = _parses(code)
+    for name, fixer in (("sanitize_keyword_args", sanitize_keyword_args),
+                        ("reorder_positional_before_kwargs", reorder_positional_before_kwargs)):
+        try:
+            fixed, changed = fixer(code)
+            if not changed:
+                continue
+            after_ok = _parses(fixed)
+        except Exception:
+            continue
+        bucket = f"{'valid' if before_ok else 'invalid'}->{'valid' if after_ok else 'invalid'}"
+        shadow_log.append({"fixer": name, "site": site, "bucket": bucket})
+
+
+def drain_shadow_log() -> list[dict]:
+    out = list(shadow_log)
+    shadow_log.clear()
+    return out

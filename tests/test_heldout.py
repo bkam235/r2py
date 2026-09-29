@@ -157,11 +157,15 @@ class TestEntityRecords(unittest.TestCase):
             "e4": SimpleNamespace(name="q", package=None, kind=EntityKind.VARIABLE, base_r_calls=[]),
         })
         es = lambda ok: SimpleNamespace(executed_ok=ok, active_dims=frozenset({"d"}), d=0.8)
-        report = SimpleNamespace(by_entity={"e1": es(True), "e2": es(True), "e3": es(False)})  # e4 not scored
+        report = SimpleNamespace(by_entity={"e1": es(True), "e2": es(True), "e3": es(False)},
+                                 uncomparable=["e3"])  # e4 not scored
         recs = {r["id"]: r for r in ho._entity_records(script_map, report)}
         self.assertEqual(set(recs), {"e1", "e3"})  # imports and unscored entities left out
         self.assertEqual(recs["e1"], {"id": "e1", "name": "x", "key": "base.paste",
-                                      "calls": ["base.paste"], "score": 0.8})  # c() is not informative
+                                      "calls": ["base.paste"], "score": 0.8,  # c() is not informative
+                                      "active_dims": ["d"], "dim_scores": {"d": 0.8},
+                                      "executed_ok": True, "uncomparable": False})
+        self.assertTrue(recs["e3"]["uncomparable"])
         self.assertEqual((recs["e3"]["key"], recs["e3"]["score"]), ("dplyr.mutate", 0.0))
 
     def test_no_records_without_a_report(self):
@@ -193,12 +197,13 @@ class TestTranslateOnce(unittest.TestCase):
         self.assertEqual(result.final_score, 0.7)
         self.assertEqual(records, [])
 
-    def test_learn_seeds_library_only_at_or_above_threshold(self):
+    def test_learn_seeds_library_from_every_script_entity_threshold_filters(self):
         _, seed = self._run(learn=True, score=0.95)
         seed.assert_called_once()
         self.assertEqual(seed.call_args.kwargs["script_id"], "a__b__c")
+        # No script-level gate (patch 01): seed_from_translation filters per entity.
         _, seed = self._run(learn=True, score=0.5)
-        seed.assert_not_called()
+        seed.assert_called_once()
 
     def test_scoring_never_seeds_library(self):
         _, seed = self._run(learn=False, score=1.0)

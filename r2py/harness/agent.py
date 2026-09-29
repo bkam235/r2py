@@ -4,16 +4,17 @@ from __future__ import annotations
 import ast
 import json
 import re
+import time
 from typing import TYPE_CHECKING
 
 from ..stage2 import llm as _llm
 from ..stage2.llm import TruncatedResponseError
 from . import prompt as _prompt
-from .review import review_translation
+from .review import REVIEW_UNAVAILABLE, review_translation
 from ..stage2.stitch import (
     DATA_SHIM_BEGIN as _SHIM_MARKER,
-    reorder_positional_before_kwargs,
-    sanitize_keyword_args,
+    shadow_autofix,
+    splice_entity,
 )
 
 if TYPE_CHECKING:
@@ -32,6 +33,7 @@ def reason(
     max_steps: int = 20,
     score_threshold: float = 0.9,
     max_stalls: int = 3,
+    budget_s: float | None = None,
     audit_feedback: str = "",
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
@@ -69,8 +71,16 @@ def reason(
           f"threshold={score_threshold}, max_steps={max_steps})")
 
     stall_count = 0
+    # Wall-clock, not step count: the worst script of the first training run burned
+    # 10.7h in only 6 rewrites, so a step limit never reached it.
+    deadline = time.monotonic() + budget_s if budget_s else None
 
     for step in range(1, max_steps + 1):
+        if deadline is not None and time.monotonic() >= deadline:
+            print(f"[Agent]   Wall-clock budget ({budget_s / 60:.0f} min) exhausted "
+                  f"after {step - 1} steps, stopping with score {best_score:.3f}")
+            break
+
         if report.aggregate >= score_threshold:
             print(f"[Agent]   Score {report.aggregate:.3f} >= threshold, stopping")
             break
@@ -189,11 +199,19 @@ def reason(
             history.append(f"Step {step}: lookup_docs {label}{cache_note} ->\n{result[:800]}")
             stall_count += 1
 
-        elif action_type == "rewrite":
+        elif action_type in ("rewrite", "replace_entity"):
             new_source = action.get("new_source", "")
             if not new_source.strip():
-                history.append(f"Step {step}: rewrite (empty source)")
+                history.append(f"Step {step}: {action_type} (empty source)")
                 continue
+
+            if action_type == "replace_entity":
+                # Splice into the best version so untouched lines stay byte-identical.
+                new_source, splice_err = splice_entity(best_source, action.get("entity", ""), new_source)
+                if new_source is None:
+                    print(f"[Agent]   replace_entity refused: {splice_err}")
+                    history.append(f"Step {step}: replace_entity REFUSED — {splice_err}.")
+                    continue  # not a stall: nothing was verified
 
             if _SHIM_MARKER in best_source and _SHIM_MARKER not in new_source:
                 print(f"[Agent]   Rewrite dropped data shim block — rejecting")
@@ -207,15 +225,9 @@ def reason(
             source_lines = len(new_source.splitlines())
             print(f"[Agent]   Rewrite: {source_lines} lines")
 
-            # Auto-fix Python reserved keywords used as argument names before
-            # syntax-checking — the model frequently renames in definitions but
-            # forgets call sites (e.g. chunk(from=1) where `from` is a keyword).
-            new_source, kw_renamed = sanitize_keyword_args(new_source)
-            if kw_renamed:
-                print(f"[Agent]   Auto-fixed Python keywords as arg names: {kw_renamed}")
-            new_source, reordered = reorder_positional_before_kwargs(new_source)
-            if reordered:
-                print(f"[Agent]   Auto-fixed positional-after-keyword arg ordering")
+            # The auto-fixers are observed, not applied: a silent fix is feedback the
+            # agent never sees. Their would-be effect goes to the run record.
+            shadow_autofix(new_source, "agent")
 
             syntax_error = _check_syntax(new_source)
             if syntax_error:
@@ -228,7 +240,12 @@ def reason(
                             "BEFORE keyword arguments in a function call. "
                             "Move all non-`name=value` arguments to the front "
                             "of every call, before any `name=value` pairs.")
-                elif "invalid syntax" in syntax_error:
+                elif "f-string" in syntax_error and "backslash" in syntax_error:
+                    hint = (" NOTE: The target runtime is CPython 3.10, where an "
+                            "f-string expression may not contain a backslash. "
+                            "Bind the value first (e.g. `nl = chr(10)` then "
+                            "`f\"{s.split(nl)}\"`) instead of inlining the escape.")
+                elif "invalid syntax" in syntax_error and "data shim" not in syntax_error:
                     hint = (" NOTE: Python reserved keywords (from, in, as, class, "
                             "return, import, for, while, if, else, lambda, ...) "
                             "cannot be used as argument names. Rename them "
@@ -274,6 +291,14 @@ def reason(
                     rejected_snippet = new_source
                     if len(rejected_snippet) > 1500:
                         rejected_snippet = rejected_snippet[:1500] + "\n... (truncated)"
+                    if reason == REVIEW_UNAVAILABLE:
+                        history.append(
+                            f"Step {step}: rewrite -> {new_report.aggregate:.3f} "
+                            "(not adopted: the anti-hardcoding review could not run). "
+                            "Resubmit the same approach."
+                        )
+                        report = new_report
+                        continue
                     history.append(
                         f"Step {step}: rewrite -> {new_report.aggregate:.3f} "
                         f"(REJECTED by review: {reason}). "
@@ -299,8 +324,26 @@ def reason(
                 stall_count += 1
                 crash_detail = f" Python error: {crash_msg}" if crash_msg else ""
                 crash_detail += _auto_lookup_on_crash(crash_msg, harness, new_source)
-                history.append(
-                    f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count}).{crash_detail}")
+                catastrophic = (best_score - new_report.aggregate) >= CATASTROPHIC_DROP or (
+                    new_report.aggregate == 0.0 and best_score > 0.0
+                )
+                if catastrophic:
+                    # The loop always prompts with best_source, so the bad rewrite is
+                    # already discarded — but the agent could not tell, and kept
+                    # iterating on the broken variant it thought was current.
+                    print(f"[Agent]   Catastrophic rewrite ({best_score:.3f} -> "
+                          f"{new_report.aggregate:.3f}) — discarded, reverted to best")
+                    history.append(
+                        f"Step {step}: rewrite -> {new_report.aggregate:.3f} DISCARDED "
+                        f"(score fell from {best_score:.3f}). It has been REVERTED: the "
+                        "Python source shown above is the previous, better version, NOT "
+                        "your last rewrite. Do not resend that rewrite. Change ONLY the "
+                        "statements named as failing and keep every other line "
+                        f"byte-identical.{crash_detail}"
+                    )
+                else:
+                    history.append(
+                        f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count}).{crash_detail}")
                 report = new_report if new_report.aggregate == best_score else report
 
         else:
@@ -313,6 +356,10 @@ def reason(
     print(f"[Agent]   No improvement achieved (score={best_score:.3f})")
     return None
 
+
+# A rewrite that loses this much score (or crashes a working translation) is
+# reported to the agent as discarded, so it stops iterating on a broken variant.
+CATASTROPHIC_DROP = 0.25
 
 _PKG_COLON_RE = re.compile(r"\b(\w+)::")
 
@@ -383,6 +430,7 @@ _PY_FENCE_RE = re.compile(r'```python\s*\n(.*?)```', re.DOTALL)
 _PY_FENCE_OPEN_RE = re.compile(r'```python\s*\n(.*)', re.DOTALL)
 _R_FENCE_RE = re.compile(r'```r\s*\n(.*?)```', re.DOTALL)
 _ACTION_TAG_RE = re.compile(r'ACTION\s*:\s*(\w+)', re.IGNORECASE)
+_ENTITY_LINE_RE = re.compile(r'^\s*entity\s*:\s*`?([\w:.\-]+)`?\s*$', re.IGNORECASE | re.MULTILINE)
 
 
 def _parse_action(raw: str) -> dict | None:
@@ -400,6 +448,17 @@ def _parse_action(raw: str) -> dict | None:
                 code = py_match.group(1).rstrip("`").rstrip()
                 if code.strip():
                     return {"action": "rewrite", "new_source": code}
+        elif action_type == "replace_entity":
+            eid_match = _ENTITY_LINE_RE.search(raw[tag_match.end():])
+            py_match = _PY_FENCE_RE.search(raw) or _PY_FENCE_OPEN_RE.search(raw)
+            if py_match:
+                # Missing entity line: still a replace_entity (refused by the loop),
+                # never a fragment mistaken for a full rewrite by the fallbacks below.
+                code = py_match.group(1).rstrip("`").rstrip()
+                if code.strip():
+                    return {"action": "replace_entity",
+                            "entity": eid_match.group(1) if eid_match else "",
+                            "new_source": code}
         elif action_type == "done":
             return {"action": "done"}
         elif action_type in ("probe_r", "probe"):
@@ -730,16 +789,28 @@ def _check_all_import_names(crash_msg: str, module: str, py_source: str = "") ->
 
 def _check_syntax(source: str) -> str | None:
     """Parse *source* with the AST and return a one-line error or None."""
+    # The sandbox runs the source with the data shim un-commented, so bare prose
+    # left inside the shim block only breaks once activated.
+    from ..stage4.verifier import _activate_data_shim
+    activated, has_shim = _activate_data_shim(source)
     # Strip lines that start with r2py sentinel comments — they can appear
     # between arguments in some placements and confuse the parser.
     clean = "\n".join(
-        line for line in source.splitlines()
+        line for line in activated.splitlines()
         if not line.lstrip().startswith("# r2py:")
     )
     try:
         ast.parse(clean)
     except SyntaxError as exc:
-        return f"line {exc.lineno}: {exc.msg}"
+        detail = f"line {exc.lineno}: {exc.msg}" + (" (in the source as executed, data shim active)" if has_shim else "")
+        # Show the offending source line: "line 9: invalid syntax" alone told the
+        # model nothing, and the line number refers to `clean` (r2py comment lines
+        # stripped), so it need not match the source the model sent.
+        text = (exc.text or "").rstrip("\n")
+        if text.strip():
+            caret = " " * max(0, (exc.offset or 1) - 1) + "^"
+            detail += f"\n    {text}\n    {caret}"
+        return detail
     return None
 
 

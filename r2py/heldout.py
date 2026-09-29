@@ -29,6 +29,7 @@ import shutil
 import sys
 import tempfile
 import time
+import traceback
 from collections import Counter
 from contextlib import contextmanager
 from datetime import datetime, timezone
@@ -81,8 +82,9 @@ DEFAULT_PROTOCOL = {
         "n_bare_seeds": 2,
         "n_structured_seeds": 2,
         "max_iters": 20,
-        "max_stalls": 10,
+        "max_stalls": 3,
         "timeout_s": 60,
+        "agent_budget_s": 2700,  # wall-clock cap for the agent loop, per script
         "data_compare": "auto",
     },
     "primary_test": {
@@ -304,13 +306,28 @@ def _entity_records(script_map, report) -> list[dict]:
         if es is None or entity.kind == EntityKind.LIBRARY_IMPORT:
             continue
         key = pattern_key(entity)
+        dims = sorted(es.active_dims)
         records.append({
+            "active_dims": dims,
+            "dim_scores": {d: getattr(es, d) for d in dims},
+            "executed_ok": es.executed_ok,
+            "uncomparable": eid in report.uncomparable,
             "id": eid, "name": entity.name,
             "key": pattern_id(*key) if key else None,
             "calls": [pattern_id(*q.split("::")) for q in correction_functions(entity.base_r_calls)],
             "score": entity_score(es),
         })
     return records
+
+
+def _drain_diagnostics() -> dict:
+    """Shadow-fixer outcomes and review failures since the last call, for the run's row."""
+    from r2py.harness.review import review_stats
+    from r2py.stage2.stitch import drain_shadow_log
+    out = {"shadow_fixers": drain_shadow_log(), "review_failures": dict(review_stats)}
+    for k in review_stats:
+        review_stats[k] = 0
+    return out
 
 
 def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool):
@@ -338,9 +355,14 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         escalation_model=cfg["model"],
         timeout_s=cfg["timeout_s"],
         max_stalls=cfg["max_stalls"],
+        agent_budget_s=cfg.get("agent_budget_s"),
     )
     py_path.write_text(result.python_source, encoding="utf-8")
-    if learn and result.final_score >= cfg["score_threshold"]:
+    # Seed from every run. seed_from_translation keeps only entities at or above
+    # entity_score_threshold, so a sub-threshold script still teaches the statements
+    # that verified against R. The old script-level gate discarded those: in the first
+    # training run, 90% of the compute (101h of 112h) produced no patterns at all.
+    if learn:
         seed_from_translation(
             r_path, py_path, library=lib, script_id=r_path.stem,
             score_report=result.final_score_report,
@@ -371,7 +393,7 @@ def _now() -> str:
 # Fixed LLM settings — applied from outside so the frozen harness stays byte-identical
 # ---------------------------------------------------------------------------
 
-RATE_LIMIT_TRIES = 5     # 429s are waited out (5, 10, 20, 40 s) before the harness sees an error
+RATE_LIMIT_TRIES = 7     # 429s are waited out (5, 10, 20, 40, 80, 160 s; upstream pool limits last minutes) before the harness sees an error
 RATE_LIMIT_WAIT_S = 5.0
 
 
@@ -514,7 +536,9 @@ def train(manifest: dict, workdir: str | Path, *, log=print) -> None:
                     row.update(score=r.final_score, patterns=len(lib.index.all_ids()))
                 except Exception as exc:
                     row["error"] = f"{type(exc).__name__}: {exc}"
+                    row["traceback"] = traceback.format_exc()[-1500:]  # e.g. which frame recursed
                     log(f"  ERROR: {row['error']}")
+                row.update(_drain_diagnostics())
                 row["seconds"] = round(time.monotonic() - started, 1)
                 _append_jsonl(progress_path, row)
                 attempts[script] += 1
@@ -613,6 +637,7 @@ def _score_loop(manifest: dict, workdir: Path, checkpoints: list[str], *, out: P
                 started = time.monotonic()
                 for attempt in range(1, MAX_ATTEMPTS + 1):
                     row.pop("error", None)
+                    row.pop("traceback", None)
                     # Fresh copy per run: whatever the loop writes is discarded.
                     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
                         shutil.copytree(workdir / "checkpoints" / cp, Path(tmp) / "lib")
@@ -632,7 +657,9 @@ def _score_loop(manifest: dict, workdir: Path, checkpoints: list[str], *, out: P
                             break
                         except Exception as exc:
                             row["error"] = f"{type(exc).__name__}: {exc}"
+                            row["traceback"] = traceback.format_exc()[-1500:]
                             log(f"  ERROR (attempt {attempt}/{MAX_ATTEMPTS}): {row['error']}")
+                row.update(_drain_diagnostics())
                 row["attempts"] = attempt
                 row["seconds"] = round(time.monotonic() - started, 1)
                 _append_jsonl(out, row)

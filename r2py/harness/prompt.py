@@ -114,6 +114,17 @@ ACTION: rewrite
 # the COMPLETE Python translation — ALL entities, from first import to last call
 ```
 
+To CHANGE ONE ENTITY and leave every other line untouched, give the entity id \
+(the `# r2py:entity:<id>` comment above its code) and only its new code. Do not \
+repeat the sentinel comment. Prefer this over a full rewrite once you know which \
+entity is wrong: lines you do not touch cannot break.
+
+ACTION: replace_entity
+entity: e17
+```python
+# only the new Python for entity e17
+```
+
 To PROBE R behavior:
 
 ACTION: probe_r
@@ -131,8 +142,15 @@ To STOP:
 ACTION: done
 
 ## Rules
-- REWRITE FIRST. When the score is low, rewrite immediately.
-- Keep your analysis to 1-2 sentences. ALL your output tokens should go to code.
+- REWRITE FIRST. On your first step, rewrite immediately.
+- After the first step, use replace_entity for fixes to one or two entities; \
+use a full rewrite only for changes that span many entities. An entity with \
+several `# r2py:entity:` lines cannot be replaced this way — rewrite instead.
+- After a rewrite that did NOT improve the score, do not rewrite again blindly: \
+use probe_r to see what R actually prints, or lookup_docs to check an API you \
+guessed at. A second blind rewrite is the single most common way to lose score.
+- Think before you write: state in 2-4 sentences which entities are failing and \
+what specifically you will change. Then emit the complete file.
 - The rewrite MUST be the COMPLETE file. Never output just the first few entities.
 - Preserve the data shim block (# r2py:data_shim:begin ... # r2py:data_shim:end) \
 exactly as-is. Do NOT replace it with hardcoded data literals.
@@ -156,6 +174,9 @@ system captures module globals; code inside functions scores zero.
 `d = ...` (same name). The verifier compares by variable name.
 - Translate ALL sections. If an R package has no Python equivalent, use \
 numpy/pandas/scipy to approximate it with variables of the same names and types.
+- The target runtime is CPython 3.10. An f-string expression may NOT contain a \
+backslash there (valid only from 3.12): bind the value to a variable first, e.g. \
+`nl = chr(10)` then `f"{s.split(nl)}"`.
 - In Python, positional arguments must come BEFORE keyword arguments in every \
 function call. R allows named arguments before positional ones — reorder them \
 when translating.

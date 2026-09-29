@@ -4,10 +4,17 @@ from __future__ import annotations
 from ...types import ComparatorResult, EffectClass
 
 
+def _comparable(effect: dict) -> dict:
+    """Drop R ``options()`` diffs: packages set them on load (e.g. cli's callr option) and
+    Python has no equivalent, so they made every correct translation score 0 (Stage 0b)."""
+    return {k: v for k, v in effect.items() if not k.startswith("option:")}
+
+
 class EnvComparator:
     effect_class = EffectClass.ENV
 
     def compare(self, r_effect: dict, py_effect: dict) -> ComparatorResult:
+        r_effect, py_effect = _comparable(r_effect), _comparable(py_effect)
         if r_effect == py_effect:
             return ComparatorResult(
                 effect_class=EffectClass.ENV,

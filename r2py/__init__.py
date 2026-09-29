@@ -80,7 +80,10 @@ def translate(
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     _write_translation_log(Path(py_path), script_map, result)
     _append_run_record(Path(r_path), result, model, escalation_model or model)
-    if result.final_score >= score_threshold:
+    # No script-level gate: seed_from_translation already keeps only entities
+    # scoring at or above entity_score_threshold, so a run that failed overall still
+    # contributes the statements that did verify.
+    if result.final_score_report is not None:
         seeded = seed_from_translation(
             r_path, py_path, library=library,
             score_report=result.final_score_report,
@@ -192,7 +195,13 @@ def seed_from_translation(
         if es is None or not es.executed_ok:
             return 0.0
         vals = [getattr(es, name) for name in es.active_dims]
-        return sum(vals) / len(vals) if vals else float(es.executed_ok)
+        if not vals:
+            # No comparable effect: the statement ran but produced nothing the
+            # verifier could check against R. Executing is not evidence that the
+            # translation is right, so it must never seed a pattern. This used to
+            # return 1.0, and only the script-level gate kept such entities out.
+            return 0.0
+        return sum(vals) / len(vals)
 
     def _entity_score(eid):
         if score_report is None:

@@ -29,6 +29,17 @@ _S4 = "r2py.stage4.verify"
 _EP = "r2py.library.epistemology.review"
 _AGENT = "r2py.harness.agent.reason"
 
+# The anti-hardcoding review now fails closed; without an API key it would reject every seed.
+_review_patch = patch("r2py.harness.review.review_translation", return_value=(True, ""))
+
+
+def setUpModule():
+    _review_patch.start()
+
+
+def tearDownModule():
+    _review_patch.stop()
+
 
 class TestCheapPathSuccess(unittest.TestCase):
     """Seed score >= threshold → agent not called."""
