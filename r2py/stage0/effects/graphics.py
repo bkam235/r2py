@@ -278,6 +278,10 @@ def _r2py_flush_figs(eid_safe=None):
         except Exception:
             pass
     _r2py_gfx_all.extend(fps)
+    # Rewritten on every flush, not just at exit: a script that crashes never reaches the
+    # epilogue, and its PNGs would otherwise have no fingerprints.
+    with open('_r2py_gfx_meta.json', 'w', encoding='utf-8') as _f:
+        _json.dump(_r2py_gfx_all, _f)
     if eid_safe is not None:
         with open(f'_r2py_cp_gfx_{eid_safe}.json', 'w', encoding='utf-8') as _f:
             _json.dump(fps, _f)

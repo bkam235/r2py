@@ -115,7 +115,7 @@ def run_parallel(args, scripts: list[str]) -> int:
     out.mkdir(parents=True)
     n = min(args.workers, len(scripts))
     print(f"smoke test: {len(scripts)} scripts on {n} workers -> {out}", flush=True)
-    passthrough = ["--n", str(args.n), "--budget-s", str(args.budget_s), "--checkpoint", args.checkpoint,
+    passthrough = (["--only", *args.only] if args.only else []) + ["--n", str(args.n), "--budget-s", str(args.budget_s), "--checkpoint", args.checkpoint,
                    "--manifest", args.manifest, "--workdir", args.workdir]
     procs = [subprocess.Popen([sys.executable, __file__, *passthrough, "--shard", f"{i}/{n}",
                                "--out", str(out)], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
@@ -142,6 +142,8 @@ def main() -> int:
     ap.add_argument("--checkpoint", default="full")
     ap.add_argument("--manifest", default=str(ROOT / "experiments/heldout/manifest.json"))
     ap.add_argument("--workdir", default=str(ROOT / "work/heldout"), help="holds checkpoints/<name>")
+    ap.add_argument("--only", nargs="+", metavar="SUBSTR",
+                    help="run only held-out scripts whose name contains one of these")
     ap.add_argument("--workers", type=int, default=1, help="parallel worker processes")
     ap.add_argument("--shard", help=argparse.SUPPRESS)  # internal: "i/N", with --out
     ap.add_argument("--out", help=argparse.SUPPRESS)
@@ -156,6 +158,8 @@ def main() -> int:
     if not pool.is_absolute():
         pool = ROOT / pool
     scripts = select(manifest, pool, args.n)
+    if args.only:
+        scripts = [e["script"] for e in manifest["heldout"] if any(o in e["script"] for o in args.only)]
 
     if args.list:
         for s in scripts:
