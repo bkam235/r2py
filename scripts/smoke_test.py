@@ -12,6 +12,7 @@ learning, into a scratch directory -- it touches nothing under work/heldout.  It
     python scripts/smoke_test.py --check-llm         # one tiny request, then exit
     python scripts/smoke_test.py                     # the run (12 scripts, 10 min agent budget each)
     python scripts/smoke_test.py --n 6 --budget-s 300
+    python scripts/smoke_test.py --workers 4         # scripts are independent; run them in parallel
 
 Cost: every script makes several live LLM calls; the default selection is a few dollars at most,
 but it is real spend.  Results: work/smoke/<timestamp>/{log.txt,rows.jsonl,summary.txt}.
@@ -105,6 +106,35 @@ def summarise(rows: list[dict], log: str) -> str:
     return "\n".join(out)
 
 
+def run_parallel(args, scripts: list[str]) -> int:
+    """One subprocess per shard (separate interpreters: the LLM pin and diagnostics are
+    per-process), then merge their logs and rows into one summary."""
+    import subprocess
+
+    out = ROOT / "work" / "smoke" / datetime.now().strftime("%Y%m%d_%H%M%S")
+    out.mkdir(parents=True)
+    n = min(args.workers, len(scripts))
+    print(f"smoke test: {len(scripts)} scripts on {n} workers -> {out}", flush=True)
+    passthrough = ["--n", str(args.n), "--budget-s", str(args.budget_s), "--checkpoint", args.checkpoint,
+                   "--manifest", args.manifest, "--workdir", args.workdir]
+    procs = [subprocess.Popen([sys.executable, __file__, *passthrough, "--shard", f"{i}/{n}",
+                               "--out", str(out)], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+             for i in range(n)]
+    for i, p in enumerate(procs):
+        p.wait()
+        print(f"worker {i} exited with {p.returncode}", flush=True)
+
+    rows = [json.loads(line) for f in sorted(out.glob("rows.w*.jsonl"))
+            for line in f.read_text(encoding="utf-8").splitlines()]
+    log = "\n".join(f.read_text(encoding="utf-8", errors="replace") for f in sorted(out.glob("log.w*.txt")))
+    (out / "log.txt").write_text(log, encoding="utf-8")
+    (out / "rows.jsonl").write_text("".join(json.dumps(r) + "\n" for r in rows), encoding="utf-8")
+    text = summarise(rows, log)
+    (out / "summary.txt").write_text(text, encoding="utf-8")
+    print("\n" + text)
+    return 0
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=12, help="number of scripts")
@@ -112,6 +142,9 @@ def main() -> int:
     ap.add_argument("--checkpoint", default="full")
     ap.add_argument("--manifest", default=str(ROOT / "experiments/heldout/manifest.json"))
     ap.add_argument("--workdir", default=str(ROOT / "work/heldout"), help="holds checkpoints/<name>")
+    ap.add_argument("--workers", type=int, default=1, help="parallel worker processes")
+    ap.add_argument("--shard", help=argparse.SUPPRESS)  # internal: "i/N", with --out
+    ap.add_argument("--out", help=argparse.SUPPRESS)
     ap.add_argument("--list", action="store_true", help="print the selection and exit")
     ap.add_argument("--check-llm", action="store_true", help="one tiny live request, then exit")
     args = ap.parse_args()
@@ -132,15 +165,23 @@ def main() -> int:
         ho.check_llm(manifest)
         return 0
 
+    if args.workers > 1 and not args.shard:
+        return run_parallel(args, scripts)
+    shard = 0
+    if args.shard:  # round-robin, so the slow plotting scripts (listed first) spread out
+        shard, of = (int(x) for x in args.shard.split("/"))
+        scripts = scripts[shard::of]
+
     cp_dir = Path(args.workdir) / "checkpoints" / args.checkpoint
     if not cp_dir.exists():
         sys.exit(f"no checkpoint at {cp_dir}")
     cfg = copy.deepcopy(manifest["protocol"]["translate"])
     cfg["agent_budget_s"] = args.budget_s
 
-    out = ROOT / "work" / "smoke" / datetime.now().strftime("%Y%m%d_%H%M%S")
-    out.mkdir(parents=True)
-    log_f = (out / "log.txt").open("w", encoding="utf-8")
+    out = Path(args.out) if args.out else ROOT / "work" / "smoke" / datetime.now().strftime("%Y%m%d_%H%M%S")
+    out.mkdir(parents=True, exist_ok=True)
+    tag = f".w{shard}" if args.shard else ""
+    log_f = (out / f"log{tag}.txt").open("w", encoding="utf-8", buffering=1)
     real_stdout = sys.stdout
     sys.stdout = Tee(real_stdout, log_f)
     rows: list[dict] = []
@@ -170,12 +211,14 @@ def main() -> int:
                 row.update(ho._drain_diagnostics())
                 row["seconds"] = round(time.monotonic() - started, 1)
                 rows.append(row)
-                with (out / "rows.jsonl").open("a", encoding="utf-8") as f:
+                with (out / f"rows{tag}.jsonl").open("a", encoding="utf-8") as f:
                     f.write(json.dumps(row) + "\n")
     finally:
         sys.stdout = real_stdout
         log_f.close()
 
+    if args.shard:
+        return 0  # the parent merges and summarises
     text = summarise(rows, (out / "log.txt").read_text(encoding="utf-8", errors="replace"))
     (out / "summary.txt").write_text(text, encoding="utf-8")
     print("\n" + text)
