@@ -62,9 +62,14 @@ def main() -> int:
     p.add_argument("--workers", type=int, default=1,
                    help="scoring processes run side by side (default: %(default)s)")
 
-    sub.add_parser("analyze", help="run the pre-specified tests on scores.jsonl")
+    p = sub.add_parser("analyze", help="run the pre-specified tests on scores.jsonl")
+    p.add_argument("--checkpoints", nargs="+", default=None,
+                   help="restrict the analysis to these checkpoints "
+                        "(default: every checkpoint in the manifest)")
 
-    sub.add_parser("status", help="show training and scoring progress")
+    p = sub.add_parser("status", help="show training and scoring progress")
+    p.add_argument("--checkpoints", nargs="+", default=None,
+                   help="restrict progress to these checkpoints")
 
     args = parser.parse_args()
     manifest_path = ROOT / args.manifest
@@ -95,11 +100,12 @@ def main() -> int:
     elif args.cmd == "score":
         ho.score(manifest, workdir, args.checkpoints or list(manifest["checkpoints"]), workers=args.workers)
     elif args.cmd == "analyze":
-        result = ho.analyze(manifest, workdir / "scores.jsonl", workdir / "checkpoints" / "full")
+        result = ho.analyze(manifest, workdir / "scores.jsonl", workdir / "checkpoints" / "full",
+                            checkpoints=args.checkpoints)
         (workdir / "analysis.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
         print(ho.format_report(result, manifest))
     elif args.cmd == "status":
-        print(ho.format_progress(ho.progress(manifest, workdir)))
+        print(ho.format_progress(ho.progress(manifest, workdir, args.checkpoints)))
     return 0
 
 

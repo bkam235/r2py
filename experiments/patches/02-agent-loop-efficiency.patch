@@ -1,0 +1,82 @@
+--- a/r2py/harness/agent.py
++++ b/r2py/harness/agent.py
+@@ -228,6 +228,11 @@
+                             "BEFORE keyword arguments in a function call. "
+                             "Move all non-`name=value` arguments to the front "
+                             "of every call, before any `name=value` pairs.")
++                elif "f-string" in syntax_error and "backslash" in syntax_error:
++                    hint = (" NOTE: The target runtime is CPython 3.10, where an "
++                            "f-string expression may not contain a backslash. "
++                            "Bind the value first (e.g. `nl = chr(10)` then "
++                            "`f\"{s.split(nl)}\"`) instead of inlining the escape.")
+                 elif "invalid syntax" in syntax_error:
+                     hint = (" NOTE: Python reserved keywords (from, in, as, class, "
+                             "return, import, for, while, if, else, lambda, ...) "
+@@ -299,8 +304,26 @@
+                 stall_count += 1
+                 crash_detail = f" Python error: {crash_msg}" if crash_msg else ""
+                 crash_detail += _auto_lookup_on_crash(crash_msg, harness, new_source)
+-                history.append(
+-                    f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count}).{crash_detail}")
++                catastrophic = (best_score - new_report.aggregate) >= CATASTROPHIC_DROP or (
++                    new_report.aggregate == 0.0 and best_score > 0.0
++                )
++                if catastrophic:
++                    # The loop always prompts with best_source, so the bad rewrite is
++                    # already discarded — but the agent could not tell, and kept
++                    # iterating on the broken variant it thought was current.
++                    print(f"[Agent]   Catastrophic rewrite ({best_score:.3f} -> "
++                          f"{new_report.aggregate:.3f}) — discarded, reverted to best")
++                    history.append(
++                        f"Step {step}: rewrite -> {new_report.aggregate:.3f} DISCARDED "
++                        f"(score fell from {best_score:.3f}). It has been REVERTED: the "
++                        "Python source shown above is the previous, better version, NOT "
++                        "your last rewrite. Do not resend that rewrite. Change ONLY the "
++                        "statements named as failing and keep every other line "
++                        f"byte-identical.{crash_detail}"
++                    )
++                else:
++                    history.append(
++                        f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count}).{crash_detail}")
+                 report = new_report if new_report.aggregate == best_score else report
+ 
+         else:
+@@ -313,6 +336,10 @@
+     print(f"[Agent]   No improvement achieved (score={best_score:.3f})")
+     return None
+ 
++
++# A rewrite that loses this much score (or crashes a working translation) is
++# reported to the agent as discarded, so it stops iterating on a broken variant.
++CATASTROPHIC_DROP = 0.25
+ 
+ _PKG_COLON_RE = re.compile(r"\b(\w+)::")
+ 
+@@ -739,7 +766,15 @@
+     try:
+         ast.parse(clean)
+     except SyntaxError as exc:
+-        return f"line {exc.lineno}: {exc.msg}"
++        detail = f"line {exc.lineno}: {exc.msg}"
++        # Show the offending source line: "line 9: invalid syntax" alone told the
++        # model nothing, and the line number refers to `clean` (r2py comment lines
++        # stripped), so it need not match the source the model sent.
++        text = (exc.text or "").rstrip("\n")
++        if text.strip():
++            caret = " " * max(0, (exc.offset or 1) - 1) + "^"
++            detail += f"\n    {text}\n    {caret}"
++        return detail
+     return None
+ 
+ 
+--- a/r2py/heldout.py
++++ b/r2py/heldout.py
+@@ -81,7 +81,7 @@
+         "n_bare_seeds": 2,
+         "n_structured_seeds": 2,
+         "max_iters": 20,
+-        "max_stalls": 10,
++        "max_stalls": 3,
+         "timeout_s": 60,
+         "data_compare": "auto",
+     },

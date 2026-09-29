@@ -840,7 +840,8 @@ def _paired_stats(before: dict[str, float], after: dict[str, float], manifest: d
     return out
 
 
-def analyze(manifest: dict, scores_path: str | Path, library_dir: str | Path | None = None) -> dict:
+def analyze(manifest: dict, scores_path: str | Path, library_dir: str | Path | None = None,
+            checkpoints: list[str] | None = None) -> dict:
     """The pre-specified tests.
 
     PRIMARY: mean score over the *targetable* entities (those the trained library at
@@ -850,17 +851,24 @@ def analyze(manifest: dict, scores_path: str | Path, library_dir: str | Path | N
     """
     spec = manifest["protocol"]["primary_test"]
     before, after = spec["before"], spec["after"]
+    # Which checkpoints this analysis covers. Defaults to the manifest, but a run that
+    # scored only a subset must say so: _trend keeps a checkpoint as soon as ANY row
+    # mentions it, then keeps only scripts present in EVERY one — so leftover rows from a
+    # dropped checkpoint would silently shrink the trend's n instead of being ignored.
+    order_all = [c for c in (checkpoints or manifest["checkpoints"]) if c in manifest["checkpoints"]]
     rows = read_scores(scores_path)
+    rows = [r for r in rows if r["checkpoint"] in order_all]
     script_means = per_script_means(rows)
     out: dict = {
         "n_heldout": len(manifest["heldout"]),
+        "checkpoints_analyzed": order_all,
         "n_errored_runs": sum(1 for r in rows if "error" in r),
         "n_infra_crash_runs": sum(1 for r in rows if r.get("infra_crash")),
         "harness_hashes": sorted({r["harness_hash"] for r in rows}),
         "llm_settings": sorted({json.dumps(r["llm"], sort_keys=True) for r in rows if "llm" in r}),
         "script_aggregate": {
             **_paired_stats(script_means.get(before, {}), script_means.get(after, {}), manifest),
-            "trend": _trend(script_means, list(manifest["checkpoints"])),
+            "trend": _trend(script_means, order_all),
         },
         "primary": None, "control": None, "share_targetable": None,
     }
@@ -870,7 +878,7 @@ def analyze(manifest: dict, scores_path: str | Path, library_dir: str | Path | N
     ent_means, meta = _entity_means(rows)
     pair = _endpoint(ent_means, meta, ids, [before, after], targetable=True)
     rest = _endpoint(ent_means, meta, ids, [before, after], targetable=False)
-    order = [c for c in manifest["checkpoints"] if c in ent_means]
+    order = [c for c in order_all if c in ent_means]
     every = _endpoint(ent_means, meta, ids, order, targetable=True)
     out["primary"] = {**_paired_stats(pair[before], pair[after], manifest), "trend": _trend(every, order)}
     out["control"] = _paired_stats(rest[before], rest[after], manifest)
@@ -954,7 +962,7 @@ def format_report(a: dict, manifest: dict) -> str:
 # Progress summary (behind `status`)
 # ---------------------------------------------------------------------------
 
-def progress(manifest: dict, workdir: str | Path) -> dict:
+def progress(manifest: dict, workdir: str | Path, checkpoints: list[str] | None = None) -> dict:
     """Where training and scoring stand, computed from the result files alone, so it works from
     another terminal or after a crash."""
     workdir = Path(workdir)
@@ -963,7 +971,8 @@ def progress(manifest: dict, workdir: str | Path) -> dict:
     ok = {r["script"] for r in t_rows if "error" not in r}
     finished = {s for s in attempts if s in ok or attempts[s] >= MAX_ATTEMPTS}
     s_rows = read_scores(workdir / "scores.jsonl")
-    checkpoints = list(manifest["checkpoints"])
+    checkpoints = [c for c in (checkpoints or manifest["checkpoints"])
+                   if c in manifest["checkpoints"]]
     by_cp: dict[str, list[float]] = {}
     for r in s_rows:
         if "score" in r:
@@ -976,12 +985,13 @@ def progress(manifest: dict, workdir: str | Path) -> dict:
             "last": t_rows[-1]["timestamp"] if t_rows else None,
         },
         "score": {
-            "done": len({(r["checkpoint"], r["script"], r["rep"]) for r in s_rows}),
+            "done": len({(r["checkpoint"], r["script"], r["rep"]) for r in s_rows
+                         if r["checkpoint"] in checkpoints}),
             "total": manifest["protocol"]["reps"] * len(manifest["heldout"]) * len(checkpoints),
             "errors": sum(1 for r in s_rows if "error" in r),
             "durations": [r["seconds"] for r in s_rows if "seconds" in r],
             "by_checkpoint": {c: {"n": len(v), "mean": sum(v) / len(v)}
-                              for c, v in by_cp.items() if c in manifest["checkpoints"]},
+                              for c, v in by_cp.items() if c in checkpoints},
             "last": s_rows[-1]["timestamp"] if s_rows else None,
             # parallel sessions: the workers seen among the most recent runs
             "workers": max(1, len({r["worker"] for r in s_rows[-30:] if r.get("worker") is not None})),

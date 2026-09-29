@@ -1,0 +1,71 @@
+--- a/r2py/harness/agent.py
++++ b/r2py/harness/agent.py
+@@ -4,6 +4,7 @@
+ import ast
+ import json
+ import re
++import time
+ from typing import TYPE_CHECKING
+ 
+ from ..stage2 import llm as _llm
+@@ -32,6 +33,7 @@
+     max_steps: int = 20,
+     score_threshold: float = 0.9,
+     max_stalls: int = 3,
++    budget_s: float | None = None,
+     audit_feedback: str = "",
+ ) -> "tuple[str, ScoreReport] | None":
+     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
+@@ -69,8 +71,16 @@
+           f"threshold={score_threshold}, max_steps={max_steps})")
+ 
+     stall_count = 0
++    # Wall-clock, not step count: the worst script of the first training run burned
++    # 10.7h in only 6 rewrites, so a step limit never reached it.
++    deadline = time.monotonic() + budget_s if budget_s else None
+ 
+     for step in range(1, max_steps + 1):
++        if deadline is not None and time.monotonic() >= deadline:
++            print(f"[Agent]   Wall-clock budget ({budget_s / 60:.0f} min) exhausted "
++                  f"after {step - 1} steps, stopping with score {best_score:.3f}")
++            break
++
+         if report.aggregate >= score_threshold:
+             print(f"[Agent]   Score {report.aggregate:.3f} >= threshold, stopping")
+             break
+--- a/r2py/heldout.py
++++ b/r2py/heldout.py
+@@ -83,6 +83,7 @@
+         "max_iters": 20,
+         "max_stalls": 3,
+         "timeout_s": 60,
++        "agent_budget_s": 2700,  # wall-clock cap for the agent loop, per script
+         "data_compare": "auto",
+     },
+     "primary_test": {
+@@ -338,6 +339,7 @@
+         escalation_model=cfg["model"],
+         timeout_s=cfg["timeout_s"],
+         max_stalls=cfg["max_stalls"],
++        agent_budget_s=cfg.get("agent_budget_s"),
+     )
+     py_path.write_text(result.python_source, encoding="utf-8")
+     # Seed from every run. seed_from_translation keeps only entities at or above
+--- a/r2py/loop.py
++++ b/r2py/loop.py
+@@ -90,6 +90,7 @@
+     seed_translation: "str | None" = None,
+     timeout_s: float = 60,
+     max_stalls: int = 3,
++    agent_budget_s: "float | None" = None,
+     **verify_kwargs,
+ ) -> TranslateResult:
+     """Cheap path → reasoning agent escalation loop.
+@@ -276,6 +277,7 @@
+         max_steps=max_iters,
+         score_threshold=score_threshold,
+         max_stalls=max_stalls,
++        budget_s=agent_budget_s,
+         audit_feedback=audit_feedback,
+     )
+ 
