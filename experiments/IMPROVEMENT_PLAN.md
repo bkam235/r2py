@@ -56,6 +56,19 @@ Measurement table's baseline from the run's files (matches: 1.39 patterns/h, 34%
 rewrites, 17% catastrophic, 227 syntax rejections, 84.5% single-example). Note its "scripts
 contributing" is 26% (library grew), not the 34% the table lists, which is the gate pass rate.
 Shim fixes confirmed live on `caret`/`e1071` (0 runtime SyntaxErrors, previously 3).
+**Development re-measure (2026-09-30, `experiments/dev_run/`, unpinned provider, 42 train / 24 held-out,
+empty vs full, 1 rep; NOT a registered experiment, results descriptive only).** Training 6-way parallel,
+35 min wall. Instrument (Stage 0a): 66 of 420 entity records (16%) have no active dimension (score 1.0 by
+construction); `side_effects` never scored 0 (262 active) and was 1.0 for only 49; review failed open 0
+times (0 llm_error / parse_error / unavailable). Shadow fixers over 46 runs: **16 valid->invalid**
+(the fixers corrupted valid source), 14 valid->valid, only **3 invalid->valid** -> deleting them was right.
+Training vs first run: 56 patterns from 42 scripts, 62.5% of scripts added a pattern (was 26%), 45% reached
+threshold (was 34%), 54% of compute on scripts that taught nothing (was 91%); BUT 94.6% of patterns hold a
+single example (was 84.5%), the plan's dilution signal, at n=56. **Decision gate: targetability 17% (<40%)**,
+so per the plan do not spend further scoring runs on the pattern library; primary (9 pairs) empty 0.847 ->
+full 0.685, p=0.84, dominated by 2 date_time scripts (-0.81): uninformative. Excluded data entities (15):
+8 are R `raw` -> Python `bytes` (a serialiser gap, cheap), rest lxml nodes and joblib caches. Graphics mean
+0.13 over 10 scripts. Not measured: agent-action mix (train stdout was not saved to a file).
 **Not done:** Stage 4 Phase 1+ (adapters), Stages 5-6 (gated on the re-measure below), the
 RecursionError (needs a traceback from a real run: rows now keep one). Nothing left that can be
 built and checked without a real scoring run.
