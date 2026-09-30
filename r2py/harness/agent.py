@@ -15,6 +15,7 @@ from . import prompt as _prompt
 from .review import REVIEW_UNAVAILABLE, review_translation
 from ..stage2.stitch import (
     DATA_SHIM_BEGIN as _SHIM_MARKER,
+    DATA_SHIM_RE as _SHIM_RE,
     shadow_autofix,
     splice_entity,
 )
@@ -254,6 +255,14 @@ def reason(
                 )
                 stall_count += 1
                 continue
+
+            # The data shim is harness-owned, and the prompt says to keep it exactly. Models
+            # keep un-commenting it or writing prose inside it ("Simulating highr internal
+            # tables"), which is a syntax error once the shim is activated. Put the original back.
+            new_source, shim_restored = restore_data_shim(best_source, new_source)
+            if shim_restored:
+                print("[Agent]   Data shim block was altered; restored the original")
+                _stat("outcome", f"{action_type}:shim_restored")
 
             source_lines = len(new_source.splitlines())
             print(f"[Agent]   Rewrite: {source_lines} lines")
@@ -871,6 +880,17 @@ def _check_syntax(source: str) -> str | None:
             detail += f"\n    {text}\n    {caret}"
         return detail
     return None
+
+
+def restore_data_shim(best_source: str, new_source: str) -> tuple[str, bool]:
+    """Replace the data-shim block of ``new_source`` with the one from ``best_source``.
+
+    Returns ``(source, changed)``.  Leaves the source alone when either side has no block.
+    """
+    old, new = _SHIM_RE.search(best_source), _SHIM_RE.search(new_source)
+    if not old or not new or old.group(0) == new.group(0):
+        return new_source, False
+    return new_source[:new.start()] + old.group(0) + new_source[new.end():], True
 
 
 def _runtime_version() -> str:

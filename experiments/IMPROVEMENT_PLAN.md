@@ -69,6 +69,15 @@ so per the plan do not spend further scoring runs on the pattern library; primar
 full 0.685, p=0.84, dominated by 2 date_time scripts (-0.81): uninformative. Excluded data entities (15):
 8 are R `raw` -> Python `bytes` (a serialiser gap, cheap), rest lxml nodes and joblib caches. Graphics mean
 0.13 over 10 scripts. Not measured: agent-action mix (train stdout was not saved to a file).
+**Agent-loop follow-ups (2026-09-30):** ProgramData now passes the sandbox env scrub (tinytex runs); R `raw`
+serialises as base64 on the Python side (was 8 of 15 excluded entities); translations run on a dedicated
+Python 3.13 venv (`.venv-sandbox`, preferred by `find_python`; the syntax gate and the prompt follow it);
+every run row carries `agent` stats (actions, per-action outcomes, stop reasons) and parallel workers log to
+`<workdir>/logs`; import gate (`stage0/env/module_check.py`: imports that are neither installed nor on PyPI
+are rejected before a verification is spent); an altered data-shim block is restored from the best source
+(prose inside it was the commonest syntax error); `replace_entity` has an A/B switch
+(`smoke_test.py --replace-entity off`, `cfg.replace_entity`). Suite: 706 pass, 1 pre-existing failure.
+**Not done:** the replace_entity A/B runs, then the library re-assessment.
 **Not done:** Stage 4 Phase 1+ (adapters), Stages 5-6 (gated on the re-measure below), the
 RecursionError (needs a traceback from a real run: rows now keep one). Nothing left that can be
 built and checked without a real scoring run.

@@ -43,3 +43,15 @@ class TestIndentedSentinel(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestRestoreShim(unittest.TestCase):
+    def test_altered_shim_is_put_back_and_the_rest_kept(self):
+        from r2py.harness.agent import restore_data_shim
+        best = "import os\n# r2py:data_shim:begin\n# x = 1\n# r2py:data_shim:end\ny = 1\n"
+        new = "import os\n# r2py:data_shim:begin\nSimulating tables\n# r2py:data_shim:end\ny = 2\n"
+        fixed, changed = restore_data_shim(best, new)
+        self.assertTrue(changed)
+        self.assertEqual(fixed, "import os\n# r2py:data_shim:begin\n# x = 1\n# r2py:data_shim:end\ny = 2\n")
+        self.assertEqual(restore_data_shim(best, best), (best, False))
+        self.assertEqual(restore_data_shim("y = 1\n", new), (new, False))  # no shim to restore from
