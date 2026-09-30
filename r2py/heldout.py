@@ -113,6 +113,15 @@ LLM_SETTINGS = {
 }
 
 
+def llm_settings(manifest: dict) -> dict:
+    """The LLM settings a run uses: the module defaults, overridden by ``protocol["llm"]``.
+
+    ``{"provider": None}`` leaves provider routing to OpenRouter (a development run: faster and
+    cheaper, but the weights/quantisation behind the model string are no longer fixed).
+    """
+    return {**LLM_SETTINGS, **(manifest["protocol"].get("llm") or {})}
+
+
 def package_of(script: str) -> str:
     return script.split("__")[0]
 
@@ -160,6 +169,8 @@ def select(
     n_intervals: int = DEFAULT_PROTOCOL["n_intervals"],
     reps: int = DEFAULT_PROTOCOL["reps"],
     seed: int = DEFAULT_PROTOCOL["seed"],
+    llm: dict | None = None,
+    agent_budget_s: float | None = None,
 ) -> dict:
     """Draw the held-out and training sets from pool_dir and return the manifest.
 
@@ -203,6 +214,11 @@ def select(
 
     protocol = {**DEFAULT_PROTOCOL, "seed": seed, "n_heldout": n_heldout, "per_package": per_package,
                 "n_train": len(train), "n_intervals": n_intervals, "reps": reps}
+    protocol["translate"] = dict(DEFAULT_PROTOCOL["translate"])
+    if agent_budget_s is not None:
+        protocol["translate"]["agent_budget_s"] = agent_budget_s
+    if llm:
+        protocol["llm"] = llm
     return {
         "protocol": protocol,
         "pool_dir": str(pool_dir),
@@ -435,7 +451,8 @@ class _PinnedClient:
         import openai
 
         extra = dict(kw.pop("extra_body", None) or {})
-        extra["provider"] = self._settings["provider"]
+        if self._settings.get("provider"):
+            extra["provider"] = self._settings["provider"]
         kw["temperature"] = self._settings["temperature"]
         kw.setdefault("timeout", self._settings["request_timeout_s"])
         for attempt in range(RATE_LIMIT_TRIES):
@@ -481,10 +498,11 @@ def check_llm(manifest: dict, *, log=print) -> None:
     from r2py.stage2 import llm
 
     model = manifest["protocol"]["translate"]["model"]
-    with pinned_llm(model) as served:
+    settings = llm_settings(manifest)
+    with pinned_llm(model, settings) as served:
         reply = llm.call([{"role": "user", "content": "Reply with the single word OK."}],
                         "You are terse.", model=model, max_tokens=16)
-    log(f"reply={reply!r}  served by: {dict(served)}  settings: {LLM_SETTINGS}")
+    log(f"reply={reply!r}  served by: {dict(served)}  settings: {settings}")
 
 
 # ---------------------------------------------------------------------------
@@ -517,7 +535,134 @@ def _progress_line(phase: str, done: int, total: int, durations: list[float], wo
 # Step 2 — train
 # ---------------------------------------------------------------------------
 
-def train(manifest: dict, workdir: str | Path, *, log=print) -> None:
+def _train_task(manifest: dict, snapshot: str, script: str, py_path: str) -> dict:
+    """One training translation in its own process, against a private copy of the library.
+
+    Does not learn: the parent seeds the live library from what comes back, one result at a
+    time, so the library is only ever written by one process.
+    """
+    from r2py.library import PatternLibrary
+
+    sys.stdout.reconfigure(line_buffering=True)
+    cfg = manifest["protocol"]["translate"]
+    out: dict = {"script": script}
+    started = time.monotonic()
+    try:
+        with pinned_llm(cfg["model"], llm_settings(manifest)) as served:
+            r, _ = _translate_once(_pool_path(manifest) / script, Path(py_path),
+                                   PatternLibrary(Path(snapshot)), cfg, learn=False)
+        out.update(score=r.final_score, score_report=r.final_score_report, seed_source=r.seed_source,
+                   seed_score_report=r.score_history[0] if r.score_history else None,
+                   served=dict(served))
+    except Exception as exc:
+        out["error"] = f"{type(exc).__name__}: {exc}"
+        out["traceback"] = traceback.format_exc()[-1500:]
+    out.update(_drain_diagnostics())
+    out["seconds"] = round(time.monotonic() - started, 1)
+    shutil.rmtree(snapshot, ignore_errors=True)
+    return out
+
+
+def _train_parallel(manifest: dict, workdir: Path, workers: int, *, log=print) -> None:
+    """Train with ``workers`` translations in flight at once.
+
+    Each task translates against a snapshot of the library taken when it starts, so it does not
+    see patterns learned by tasks that finish after that -- up to ``workers - 1`` scripts stale.
+    The parent seeds the live library from finished tasks one at a time.  For development runs:
+    the sequential path is the one that gives every script the full library learned before it.
+    """
+    from collections import deque
+    from concurrent.futures import FIRST_COMPLETED, ProcessPoolExecutor, wait
+
+    from r2py import seed_from_translation
+    from r2py.library import PatternLibrary
+
+    verify_inputs(manifest, manifest["train"])
+    cfg = manifest["protocol"]["translate"]
+    pool = _pool_path(manifest)
+    ckpt_dir = workdir / "checkpoints"
+    progress_path = workdir / "train_progress.jsonl"
+    rows = _read_jsonl(progress_path)
+    attempts = Counter(r["script"] for r in rows)
+    ok = {r["script"] for r in rows if "error" not in r}
+    durations = [r["seconds"] for r in rows if "seconds" in r]
+
+    def finished(script: str) -> bool:
+        return script in ok or attempts[script] >= MAX_ATTEMPTS
+
+    total = len(manifest["train"])
+    counts = {n: c for n, c in manifest["checkpoints"].items() if c > 0}
+    if not (ckpt_dir / "empty").exists():
+        if rows:
+            raise RuntimeError("training already started but the empty checkpoint is missing")
+        PatternLibrary(ckpt_dir / "empty")
+    lib = PatternLibrary(workdir / "lib_live")
+    todo = deque((i, e["script"]) for i, e in enumerate(manifest["train"], start=1) if not finished(e["script"]))
+    n_done = total - len(todo)
+    log(f"train: {n_done}/{total} already finished, {len(todo)} to go, {workers} in parallel")
+
+    served: Counter = Counter()
+    snapshots = workdir / "train_snapshots"
+    ctx = multiprocessing.get_context("spawn")
+    pending: dict = {}
+    with ProcessPoolExecutor(max_workers=workers, mp_context=ctx) as ex:
+        def submit() -> None:
+            while todo and len(pending) < workers:
+                i, script = todo.popleft()
+                snap = snapshots / f"{i}_{attempts[script] + 1}"
+                shutil.rmtree(snap, ignore_errors=True)
+                shutil.copytree(workdir / "lib_live", snap)
+                py_path = workdir / "train_outputs" / (Path(script).stem + ".py")
+                log(f"[train {i}/{total}] starting {script} (attempt {attempts[script] + 1})")
+                pending[ex.submit(_train_task, manifest, str(snap), script, str(py_path))] = (i, script, py_path)
+
+        submit()
+        while pending:
+            done, _ = wait(pending, return_when=FIRST_COMPLETED)
+            for fut in done:
+                i, script, py_path = pending.pop(fut)
+                row = {"script": script, "index": i, "attempt": attempts[script] + 1,
+                       "timestamp": _now(), "llm": llm_settings(manifest)}
+                try:
+                    res = fut.result()
+                except Exception as exc:  # the worker process itself died
+                    res = {"error": f"{type(exc).__name__}: {exc}", "seconds": 0.0}
+                served.update(res.pop("served", {}))
+                for k in ("shadow_fixers", "review_failures", "traceback", "error", "seconds"):
+                    if k in res:
+                        row[k] = res[k]
+                if "error" not in res:
+                    try:
+                        seed_from_translation(
+                            pool / script, py_path, library=lib, script_id=Path(script).stem,
+                            score_report=res["score_report"], entity_score_threshold=cfg["score_threshold"],
+                            seed_source=res["seed_source"], seed_score_report=res["seed_score_report"])
+                        row.update(score=res["score"], patterns=len(lib.index.all_ids()))
+                    except Exception as exc:
+                        row["error"] = f"{type(exc).__name__}: {exc}"
+                        row["traceback"] = traceback.format_exc()[-1500:]
+                _append_jsonl(progress_path, row)
+                attempts[script] += 1
+                durations.append(row.get("seconds", 0.0))
+                if "error" not in row:
+                    ok.add(script)
+                elif not finished(script):
+                    todo.appendleft((i, script))  # one retry, ahead of the rest
+                if finished(script):
+                    n_done += 1
+                    result = (f"score {row['score']:.3f}, {row['patterns']} patterns"
+                              if "error" not in row else f"FAILED after retries: {row['error'][:80]}")
+                    log(_progress_line("train", n_done, total, durations, workers) + f" | {script}: {result}")
+                    for name, count in counts.items():
+                        if n_done == count and not (ckpt_dir / name).exists():
+                            shutil.copytree(workdir / "lib_live", ckpt_dir / name)
+                            log(f"checkpoint {name!r} at {n_done} scripts ({len(lib.index.all_ids())} patterns)")
+            submit()
+    shutil.rmtree(snapshots, ignore_errors=True)
+    log(f"providers that served this session: {dict(served)}")
+
+
+def train(manifest: dict, workdir: str | Path, *, workers: int = 1, log=print) -> None:
     """Build the library from empty on the training set, snapshotting each checkpoint.
 
     Resumable: a script is finished once it has a successful row in train_progress.jsonl, or
@@ -527,6 +672,8 @@ def train(manifest: dict, workdir: str | Path, *, log=print) -> None:
     from r2py.library import PatternLibrary
 
     workdir = Path(workdir)
+    if workers > 1:
+        return _train_parallel(manifest, workdir, workers, log=log)
     verify_inputs(manifest, manifest["train"])
     cfg = manifest["protocol"]["translate"]
     pool = _pool_path(manifest)
@@ -550,13 +697,14 @@ def train(manifest: dict, workdir: str | Path, *, log=print) -> None:
 
     lib = PatternLibrary(workdir / "lib_live")
     log(f"train: {n_done}/{total} already finished, {total - n_done} to go")
-    with pinned_llm(cfg["model"]) as served:
+    settings = llm_settings(manifest)
+    with pinned_llm(cfg["model"], settings) as served:
         for i, e in enumerate(manifest["train"], start=1):
             script = e["script"]
             while not finished(script):
                 log(f"[train {i}/{total}] starting {script} (attempt {attempts[script] + 1})")
                 row = {"script": script, "index": i, "attempt": attempts[script] + 1,
-                       "timestamp": _now(), "llm": LLM_SETTINGS}
+                       "timestamp": _now(), "llm": settings}
                 started = time.monotonic()
                 try:
                     r, _ = _translate_once(pool / script,
@@ -649,7 +797,8 @@ def _score_loop(manifest: dict, workdir: Path, checkpoints: list[str], *, out: P
     if worker is None:
         log(f"score: {n_done}/{total} already done, {total - n_done} to go")
 
-    with pinned_llm(cfg["model"]) as served:
+    settings = llm_settings(manifest)
+    with pinned_llm(cfg["model"], settings) as served:
         for rep in range(manifest["protocol"]["reps"]):
             for e, cp in score_order(manifest, checkpoints, rep):
                 if (cp, e["script"], rep) in done:
@@ -660,7 +809,7 @@ def _score_loop(manifest: dict, workdir: Path, checkpoints: list[str], *, out: P
                 row = {"checkpoint": cp, "script": e["script"], "rep": rep,
                        "order_seed": f"{manifest['protocol']['seed']}:score:{rep}",
                        "library_hash": lib_hashes[cp], "harness_hash": hh,
-                       "model": cfg["model"], "llm": LLM_SETTINGS, "timestamp": _now()}
+                       "model": cfg["model"], "llm": settings, "timestamp": _now()}
                 if worker is not None:
                     row["worker"] = worker
                 started = time.monotonic()

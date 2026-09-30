@@ -51,10 +51,17 @@ def main() -> int:
     p.add_argument("--reps", type=int, default=ho.DEFAULT_PROTOCOL["reps"])
     p.add_argument("--seed", type=int, default=ho.DEFAULT_PROTOCOL["seed"])
     p.add_argument("--force", action="store_true", help="overwrite an existing manifest")
+    p.add_argument("--unpinned", action="store_true",
+                   help="development run: do not pin the LLM provider (OpenRouter routes freely)")
+    p.add_argument("--agent-budget-s", type=float, default=None,
+                   help="wall-clock cap for the agent loop per script (default: the protocol's)")
 
     sub.add_parser("check-llm", help="send one request with the pinned LLM settings")
 
-    sub.add_parser("train", help="build the library on the training set")
+    p = sub.add_parser("train", help="build the library on the training set")
+    p.add_argument("--workers", type=int, default=1,
+                   help="translations in flight at once; each sees the library as of its start, "
+                        "so up to workers-1 scripts stale (default: %(default)s = strictly sequential)")
 
     p = sub.add_parser("score", help="score the held-out set at each checkpoint")
     p.add_argument("--checkpoints", nargs="+", default=None,
@@ -80,7 +87,9 @@ def main() -> int:
             print(f"{manifest_path} exists; refusing to overwrite (--force to override)")
             return 1
         m = ho.select(args.pool, n_heldout=args.n_heldout, per_package=args.per_package,
-                      n_intervals=args.n_intervals, reps=args.reps, seed=args.seed)
+                      n_intervals=args.n_intervals, reps=args.reps, seed=args.seed,
+                      llm={"provider": None} if args.unpinned else None,
+                      agent_budget_s=args.agent_budget_s)
         ho.write_manifest(m, manifest_path)
         print(f"pool={m['pool_size']}  held-out={len(m['heldout'])}  train={len(m['train'])} "
               f"from {len(m['train_packages'])} packages ({args.per_package} per package)")
@@ -96,7 +105,7 @@ def main() -> int:
     if args.cmd == "check-llm":
         ho.check_llm(manifest)
     elif args.cmd == "train":
-        ho.train(manifest, workdir)
+        ho.train(manifest, workdir, workers=args.workers)
     elif args.cmd == "score":
         ho.score(manifest, workdir, args.checkpoints or list(manifest["checkpoints"]), workers=args.workers)
     elif args.cmd == "analyze":

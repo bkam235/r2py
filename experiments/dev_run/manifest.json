@@ -1,0 +1,475 @@
+{
+  "protocol": {
+    "seed": 20260919,
+    "n_heldout": 24,
+    "per_package": 2,
+    "n_intervals": 1,
+    "reps": 1,
+    "translate": {
+      "model": "openrouter:google/gemma-4-31b-it",
+      "score_threshold": 0.9,
+      "n_bare_seeds": 2,
+      "n_structured_seeds": 2,
+      "max_iters": 20,
+      "max_stalls": 3,
+      "timeout_s": 60,
+      "agent_budget_s": 1200.0,
+      "data_compare": "auto"
+    },
+    "primary_test": {
+      "name": "wilcoxon_signed_rank",
+      "endpoint": "targetable_entity_mean",
+      "before": "empty",
+      "after": "full",
+      "alternative": "greater",
+      "alpha": 0.05,
+      "zero_method": "wilcox"
+    },
+    "n_train": 42,
+    "llm": {
+      "provider": null
+    }
+  },
+  "pool_dir": "work/inputs/harvested",
+  "pool_size": 3988,
+  "checkpoints": {
+    "empty": 0,
+    "full": 42
+  },
+  "stratum_quotas": {
+    "data_wrangling": 4,
+    "date_time": 4,
+    "graphics": 4,
+    "html": 4,
+    "stats_objects": 4,
+    "other": 4
+  },
+  "train_packages": {
+    "broom": 2,
+    "caret": 2,
+    "clock": 2,
+    "ggplot2": 2,
+    "googledrive": 2,
+    "highr": 1,
+    "hms": 2,
+    "isoband": 2,
+    "lava": 2,
+    "lubridate": 2,
+    "magrittr": 2,
+    "openssl": 2,
+    "pROC": 2,
+    "purrr": 2,
+    "rmarkdown": 2,
+    "shape": 2,
+    "shiny": 2,
+    "textshaping": 2,
+    "tidyr": 2,
+    "timeDate": 2,
+    "tinytex": 1,
+    "xml2": 2
+  },
+  "uncovered_packages": [
+    "blob",
+    "cachem"
+  ],
+  "heldout": [
+    {
+      "script": "purrr__vignette__purrr_s3.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "9f62c791d4b403ea2a66a0f61f6b076a74266a2c212a3ea408f4cace73654429"
+    },
+    {
+      "script": "blob__rd_example__blob_Rd.R",
+      "package": "blob",
+      "stratum": "data_wrangling",
+      "sha256": "c2d7e3a53472d47608a145be3820b972d2ad729f44c062583192166ca23a978e"
+    },
+    {
+      "script": "magrittr__rd_example__aliases_Rd.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "923d23696964e9478bdfdfb0e3461cf087da142325bf9b680b18a301d018dd37"
+    },
+    {
+      "script": "tidyr__vignette__tidy-data_s3.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "e6ecb144edcb3fe0864058d253801fbc894e9b247d1158d8a88426995008851f"
+    },
+    {
+      "script": "lubridate__vignette__lubridate_s18.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "be2810b34f3b3ec23e7032f1a2a16aec6fe8b32ecd9bcf7705ba39fe4e2b4102"
+    },
+    {
+      "script": "timeDate__rd_example__earlyCloseNYSE_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "b770305a84c285991b585ee7d60f9523ae3bbc3bb2536822850fb3e019014947"
+    },
+    {
+      "script": "hms__rd_example__hms_Rd.R",
+      "package": "hms",
+      "stratum": "date_time",
+      "sha256": "ed2b95bf84bf82677507fc670bcdc0f4ae485ba083a01238ffbb1fb3858a4b6e"
+    },
+    {
+      "script": "clock__rd_example__zoned_time_info_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "c5b9b5df55c90bf998338bf317e22a343e72aa92c93b7d65e1c4ee7204f8c0cf"
+    },
+    {
+      "script": "shape__rd_example__femmecol_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "0d921543bc01b5c3bbbc6cd5c7c419ed1c316e8cbc58c3fa473bad4a2e63f462"
+    },
+    {
+      "script": "textshaping__vignette__c_interface.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "c878957abb2e23f3ff6204919c490211a6d88c68b5a19f264181af933ac997c1"
+    },
+    {
+      "script": "isoband__rd_example__isobands_Rd.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "ab75c8316955022a34a5c924ba4a3b86295db6280c3116c469985aa0425644e5"
+    },
+    {
+      "script": "ggplot2__rd_example__aes_linetype_size_shape_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "e1e5c9ced573708970f63b7c382940ba26c34e048bcd21ce5dfcb17f06963e51"
+    },
+    {
+      "script": "shiny__rd_example__httpResponse_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "be40bc3b088559ee0631a0ba2d0e0d01bee11bdd1ad37d94510f72d64fcb27d8"
+    },
+    {
+      "script": "highr__rd_example__hilight_Rd.R",
+      "package": "highr",
+      "stratum": "html",
+      "sha256": "a63cda19be480989ec40aa6f9ab78914e191212039853e4aa4ea4475c839b9b1"
+    },
+    {
+      "script": "rmarkdown__rd_example__output_format_dependency_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "a9d619af097e5a872a34ba4211e38d600c788c5ef9f9774cd92fb0c2fe1eb0e9"
+    },
+    {
+      "script": "xml2__rd_example__xml_cdata_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "af1b75cc1191e0abb2f48aaf5b8f89a9a7343acc1411d32de4a38509e9cad64f"
+    },
+    {
+      "script": "caret__rd_example__createDataPartition_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "5a180d3541f212e77d6b331b83c0b24e70da924f2186a313799a05bbce4e16ae"
+    },
+    {
+      "script": "lava__vignette__influencefunction_s34.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "89db545361f9e0714fa30639dc5c2c3e0183c4d8811d208e5f4cd25b44aba3a2"
+    },
+    {
+      "script": "pROC__rd_example__geom_polygon_auc_roc_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "6f8b44e4ccc7cb1005796dc3dc7aef466c22c88a999bbc3d616320857762d6d1"
+    },
+    {
+      "script": "broom__rd_example__glance_factanal_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "28a1205c37bdbc152719f0d4084889b3e69fbac7acad2665cf598000f9732121"
+    },
+    {
+      "script": "cachem__rd_example__cache_layered_Rd.R",
+      "package": "cachem",
+      "stratum": "other",
+      "sha256": "0a9478171500c2472596d70e47b1592693d8882c17818b214de94a40ccc41630"
+    },
+    {
+      "script": "tinytex__rd_example__tlmgr_Rd.R",
+      "package": "tinytex",
+      "stratum": "other",
+      "sha256": "8536a818a6a8c39e666c76950e81c0a0c6a9c936860fd0569821294a081f5b70"
+    },
+    {
+      "script": "openssl__rd_example__base64_encode_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "4615d39fa964a938fb71baff8c4f42deb82255fe71dbec7082bda69e6348c458"
+    },
+    {
+      "script": "googledrive__rd_example__drive_create_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "5932790c0004a260087d68ca82f5647872a4fbc4ae0e5c82dd799e5da1d2894d"
+    }
+  ],
+  "train": [
+    {
+      "script": "lubridate__rd_example__minute_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "55940c79c71268e152a522887520f451516fe34a038bf429d98d6ab350bf262d"
+    },
+    {
+      "script": "hms__rd_example__parse_hms_Rd.R",
+      "package": "hms",
+      "stratum": "date_time",
+      "sha256": "72d6ad28aff9bde5efa7f55937376cb57c94a852995e9cd661fb08827170bc3b"
+    },
+    {
+      "script": "clock__rd_example__as_naive_time_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "f74d01e619db49910219205ebb33dd9a00b2f18f68fd69785ade5566345f5884"
+    },
+    {
+      "script": "textshaping__vignette__c_interface_chunk1.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "43f6afb365ac0d496aec980a027fd31c1b32d12388604cbf19e9f7d071853eb8"
+    },
+    {
+      "script": "tidyr__vignette__pivot_chunk11.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "f8a1166a7c173e231f3fdeb3f5c810460723a8c1ea6be8f9452dc7b438867d88"
+    },
+    {
+      "script": "purrr__vignette__base_s1.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "f3f84049a66178d8961a719e8696f0364f2f99de63a406619fe0a6a3c70175e6"
+    },
+    {
+      "script": "rmarkdown__rd_example__pandoc_args_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "86caecf82f9ba4288546d007be68746813dea61d3051478fa913adf9286c91e8"
+    },
+    {
+      "script": "broom__rd_example__summary_tidiers_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "ec874774791849a57071cfa750ee5570a0424ea1c9f582c7d58994bca61810f9"
+    },
+    {
+      "script": "caret__rd_example__findCorrelation_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "bb83235b9b6ac157c4d9fb7e4b4a45a62dbc34b9143066a38dee7b255b97b0c7"
+    },
+    {
+      "script": "googledrive__rd_example__drive_link_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "62ba93ff252e7561e143fde83f37f4b7fb212a65a5e4793976e7ad226458a282"
+    },
+    {
+      "script": "tinytex__rd_example__check_installed_Rd.R",
+      "package": "tinytex",
+      "stratum": "other",
+      "sha256": "0d0ec74d548570497743ba8e26836f60de3cc0433a44a56149959c4fa9302347"
+    },
+    {
+      "script": "highr__vignette__highr-custom_s2.R",
+      "package": "highr",
+      "stratum": "html",
+      "sha256": "796828b7ed54e383afc99809178f9d84128d94f4dd63a9c5de29a860760371b1"
+    },
+    {
+      "script": "magrittr__vignette__tradeoffs_chunk9.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "b9cb061f96af413d1f4559c6e00175a3872a3f57df8eb3436f6cd7aaa0b7029a"
+    },
+    {
+      "script": "openssl__vignette__secure_rng_s6.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "00a0ac8d117a06121a4474ddbb65ccf978128f8cfff5c9dcfd5a894c2d0c5f70"
+    },
+    {
+      "script": "isoband__vignette__isoband1_s5.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "aa99f053fd55892611653e0e5fcab3ed334b8966fe2fd25913ab91dce59f8cce"
+    },
+    {
+      "script": "xml2__vignette__modification_s8.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "83c3f2ef3a46320088df221c032f6c508790312e2ab770401a03867ee0c66ca2"
+    },
+    {
+      "script": "ggplot2__vignette__extending-ggplot2_s16.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "7207d7b92fa6ea0019609396cabf9932b039e31f4d67ce53454b8aae08d57011"
+    },
+    {
+      "script": "pROC__rd_example__groupGeneric_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "0386bea35cd398c619c133e25dc3eff9d1c40ed3ddc5d9bcf8c2ed85ac3ea539"
+    },
+    {
+      "script": "shape__rd_example__shadepalette_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "3b28cd9ce8039891c06dc98622cb545cbea3f51864ed001e684a07bc32450c6a"
+    },
+    {
+      "script": "timeDate__rd_example__holiday-Dates_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "b3c22030715fa0fd8b7738cc6db676c259dea30bcda5f20a0d264773323e41a3"
+    },
+    {
+      "script": "lava__rd_example__csplit_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "0c0c504fd1eab34b6a4a4703efd8e414617dcaf994202e978694aa50a1484a48"
+    },
+    {
+      "script": "shiny__rd_example__exportTestValues_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "937225f51e2409d809ace3b47961f8d08d6dc10b935ae8586e2b9e5ca0e5c94c"
+    },
+    {
+      "script": "hms__rd_example__round_hms_Rd.R",
+      "package": "hms",
+      "stratum": "date_time",
+      "sha256": "2cd57ad4cf8a9e5ac36c01ca77db4227fdc7efe96da0fcb3837a591f3ed2d35e"
+    },
+    {
+      "script": "magrittr__vignette__magrittr_s7.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "c06d9971d0f52a4dc2b80422c403ef29873ec0a2e0861aafbab2f809b5715771"
+    },
+    {
+      "script": "shiny__rd_example__insertUI_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "c83f6f76d24d88d8195490857c8ab678b5917b9e4445b43946abf0f72cf3e131"
+    },
+    {
+      "script": "lava__rd_example__ordreg_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "a69c2ce0d60fe0485580edb949361f101ba6bab48bbd1b51562384712f393a8d"
+    },
+    {
+      "script": "pROC__rd_example__plot_ci_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "db22ef818cc9c1b8d4d5fb5840d0438a4e3a388398c1d05364778b86576cac22"
+    },
+    {
+      "script": "textshaping__rd_example__shape_text_Rd.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "540e85ba45eedeb49f8386d226ea0f9028af2666ba0cdc0cbdb136fcb1db3f80"
+    },
+    {
+      "script": "tidyr__rd_example__drop_na_Rd.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "82ae842472fccbd4e48eac08280a4614b402ba2343fd18658ba054b2f7c4224c"
+    },
+    {
+      "script": "shape__rd_example__intpalette_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "8f4d163e96dd5d7f4e9c2fd199d7dbf9d12e320d35a40cb4318aa81e47bd6133"
+    },
+    {
+      "script": "purrr__rd_example__list_c_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "ae1c1005b0274d458a79d41f8fc5d199ff3433f5c3ac406476786c148a1427fd"
+    },
+    {
+      "script": "isoband__rd_example__plot_iso_Rd.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "72ba1a8a47b3e57c0f7b1a1f957fc87f1afaa454db299f69100da653857a830a"
+    },
+    {
+      "script": "openssl__rd_example__rsa_encrypt_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "00468c6fce0f1ed9ff606fd48970fce44a3d4ad00e3c49e2eca8c4dd94843dc7"
+    },
+    {
+      "script": "clock__rd_example__calendar_month_factor_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "aea8b027d94bef207cfd82235e20a2b854e2c45ff4220299c65ef07eb4c62e68"
+    },
+    {
+      "script": "googledrive__rd_example__drive_auth_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "25a32644c43e4fa22ace0d44bfaa35f05427ae06e740606767a5a7bf616904b5"
+    },
+    {
+      "script": "xml2__rd_example__url_escape_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "b79036a22ddc7936a37199bfad9a74e310e7096ce970daf02080050ee57f431d"
+    },
+    {
+      "script": "rmarkdown__vignette__lua-filters_s1.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "05467b63f382ab9f6b488c9bbc09cdb82ca59020913eed00d0ac2b4f9fa79d13"
+    },
+    {
+      "script": "broom__rd_example__durbinWatsonTest_tidiers_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "c08a3c9a1f7e8d6c674920226f88711e1602a52e831fad2e16b597032666bd2a"
+    },
+    {
+      "script": "lubridate__rd_example__round_date_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "1f42b958b3f9377be92578f73af4ccdd636e9bdad2c2bb151a5659408887697a"
+    },
+    {
+      "script": "timeDate__rd_example__holiday-Listing_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "78ad3321f62e8e8dea1869fff8acce4c446f8555b277f331c8130fcaf43ddca6"
+    },
+    {
+      "script": "caret__rd_example__lift_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "1ed3744cd0c128dee7381bcfb589f553dcc347503cbf381b93b15c5c2417497a"
+    },
+    {
+      "script": "ggplot2__rd_example__geom_dotplot_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "a82427902a5e0550d1201e19b137746ab9ced9fc5798901f65482b9f12e94702"
+    }
+  ]
+}
