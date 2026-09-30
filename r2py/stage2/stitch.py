@@ -543,8 +543,9 @@ def shadow_autofix(code: str, site: str) -> None:
     source, or left invalid source invalid.  The caller keeps the original source.
     """
     before_ok = _parses(code)
-    for name, fixer in (("sanitize_keyword_args", sanitize_keyword_args),
-                        ("reorder_positional_before_kwargs", reorder_positional_before_kwargs)):
+    # Only the keyword-rename fixer is still watched: argument order is now repaired for real by
+    # stage2/argorder.py, so shadowing the old text-surgery version only added noise.
+    for name, fixer in (("sanitize_keyword_args", sanitize_keyword_args),):
         try:
             fixed, changed = fixer(code)
             if not changed:

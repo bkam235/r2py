@@ -95,6 +95,11 @@ def reason(
     print(f"[Agent]   Starting reasoning loop (model={model}, score={best_score:.3f}, "
           f"threshold={score_threshold}, max_steps={max_steps})")
 
+    # Entity repairs are cheap and each targets a different entity, so three misses in a row
+    # is too early to give up on the approach (all 3 scripts of the first live check stopped there).
+    if entity_repair:
+        max_stalls = max(max_stalls, ENTITY_REPAIR_MAX_STALLS)
+
     stall_count = 0
     entity_tries: dict[str, int] = {}          # entity repairs attempted, per entity
     entity_notes: dict[str, list[str]] = {}    # what each failed attempt looked like
@@ -924,6 +929,9 @@ def _check_syntax(source: str) -> str | None:
             detail += f"\n    {text}\n    {caret}"
         return detail
     return None
+
+
+ENTITY_REPAIR_MAX_STALLS = 6
 
 
 def _entity_score(es) -> float:

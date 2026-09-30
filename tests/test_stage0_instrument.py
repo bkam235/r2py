@@ -36,11 +36,11 @@ class TestShadowAutofix(unittest.TestCase):
         stitch.drain_shadow_log()
 
     def test_records_a_genuine_save_without_touching_the_source(self):
-        src = "f(a=1, 2)\n"
+        src = "f(from=1)\n"   # `from` is a keyword: invalid, and the renamer would make it valid
         stitch.shadow_autofix(src, "agent")
         log = stitch.drain_shadow_log()
         self.assertEqual([(e["fixer"], e["bucket"]) for e in log],
-                         [("reorder_positional_before_kwargs", "invalid->valid")])
+                         [("sanitize_keyword_args", "invalid->valid")])
 
     def test_clean_source_logs_nothing(self):
         stitch.shadow_autofix("f(1, a=2)\n", "seed")
