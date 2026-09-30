@@ -48,14 +48,20 @@ class HarnessTools:
         """Run Stage 4 verification, return full ScoreReport with comparisons."""
         from ..stage2.sentinel_mapper import (
             map_entities_to_lines, strip_sentinels, insert_sentinels,
-            flatten_entity_line_map,
+            flatten_entity_line_map, SentinelMappingError,
         )
         from ..stage4 import verifier
 
         clean = strip_sentinels(python_source)
-        entity_ranges = map_entities_to_lines(
-            self._script_map, clean, model=self._model,
-        )
+        try:
+            entity_ranges = map_entities_to_lines(
+                self._script_map, clean, model=self._model,
+            )
+        except SentinelMappingError as exc:
+            # As on the seed path: score without per-entity attribution rather than lose
+            # the step (a failed mapping used to fail the whole verification, 8 steps running).
+            print(f"r2py: sentinel mapping failed, using aggregate-only scoring: {exc}")
+            entity_ranges = {}
         self.last_annotated_source = insert_sentinels(clean, entity_ranges)
         entity_line_map = flatten_entity_line_map(entity_ranges)
         kw = {k: v for k, v in self._verify_kwargs.items()

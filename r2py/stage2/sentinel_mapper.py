@@ -147,8 +147,11 @@ def _parse_response(
 
     try:
         items = json.loads(raw)
-    except json.JSONDecodeError as exc:
-        raise SentinelMappingError(f"LLM returned invalid JSON: {exc}") from exc
+    except json.JSONDecodeError:
+        try:  # a lone backslash in a string ("Invalid \escape") is the usual culprit
+            items = json.loads(re.sub(r'\\(?!["\\/bfnrtu])', r'\\\\', raw))
+        except json.JSONDecodeError as exc:
+            raise SentinelMappingError(f"LLM returned invalid JSON: {exc}") from exc
 
     if not isinstance(items, list):
         raise SentinelMappingError(f"Expected JSON array, got {type(items).__name__}")
@@ -233,7 +236,7 @@ def map_entities_to_lines(
 
     messages = [{"role": "user", "content": user_msg}]
 
-    raw = _llm.call(messages, system=_SYSTEM_PROMPT, model=model, max_tokens=2048)
+    raw = _llm.call(messages, system=_SYSTEM_PROMPT, model=model, max_tokens=8192)
 
     try:
         return _parse_response(raw, entity_ids, total_lines)
@@ -248,6 +251,6 @@ def map_entities_to_lines(
             )},
         ]
         raw2 = _llm.call(
-            retry_messages, system=_SYSTEM_PROMPT, model=model, max_tokens=2048,
+            retry_messages, system=_SYSTEM_PROMPT, model=model, max_tokens=8192,
         )
         return _parse_response(raw2, entity_ids, total_lines)
