@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import ast
+from collections import Counter
 import json
 import re
 import time
@@ -16,6 +17,22 @@ from ..stage2.stitch import (
     shadow_autofix,
     splice_entity,
 )
+
+# What the agent did, per process, drained into each run's row (see heldout._drain_diagnostics):
+# {"action": {rewrite: n, ...}, "outcome": {"rewrite:worse": n, ...}, "stop": {"budget": n, ...}}
+agent_stats: dict[str, Counter] = {"action": Counter(), "outcome": Counter(), "stop": Counter()}
+
+
+def _stat(kind: str, key: str) -> None:
+    agent_stats[kind][key] += 1
+
+
+def drain_agent_stats() -> dict:
+    out = {k: dict(v) for k, v in agent_stats.items()}
+    for v in agent_stats.values():
+        v.clear()
+    return out
+
 
 if TYPE_CHECKING:
     from ..stage1.script_map import ScriptMap
@@ -62,7 +79,7 @@ def reason(
     unavailable_packages = _get_unavailable_packages(script_map)
 
     is_openrouter = model.startswith("openrouter:")
-    system_prompt = (
+    system_prompt = _prompt.with_runtime_note(
         _prompt.AGENT_SYSTEM_PROMPT_OPENROUTER if is_openrouter
         else _prompt.AGENT_SYSTEM_PROMPT
     )
@@ -79,14 +96,17 @@ def reason(
         if deadline is not None and time.monotonic() >= deadline:
             print(f"[Agent]   Wall-clock budget ({budget_s / 60:.0f} min) exhausted "
                   f"after {step - 1} steps, stopping with score {best_score:.3f}")
+            _stat("stop", "budget")
             break
 
         if report.aggregate >= score_threshold:
             print(f"[Agent]   Score {report.aggregate:.3f} >= threshold, stopping")
+            _stat("stop", "threshold")
             break
 
         if stall_count >= max_stalls:
             print(f"[Agent]   {max_stalls} consecutive non-improving rewrites, stopping")
+            _stat("stop", "stalled")
             break
 
         if stall_count > 0 and stall_count >= max_stalls - 1:
@@ -162,9 +182,11 @@ def reason(
 
         action_type = action.get("action", "")
         print(f"[Agent]   Step {step}: {action_type}")
+        _stat("action", action_type)
 
         if action_type == "done":
             history.append(f"Step {step}: done")
+            _stat("stop", "done")
             break
 
         elif action_type == "probe_r":
@@ -210,6 +232,7 @@ def reason(
                 new_source, splice_err = splice_entity(best_source, action.get("entity", ""), new_source)
                 if new_source is None:
                     print(f"[Agent]   replace_entity refused: {splice_err}")
+                    _stat("outcome", "replace_entity:refused")
                     history.append(f"Step {step}: replace_entity REFUSED — {splice_err}.")
                     continue  # not a stall: nothing was verified
 
@@ -232,6 +255,7 @@ def reason(
             syntax_error = _check_syntax(new_source)
             if syntax_error:
                 print(f"[Agent]   Syntax error: {syntax_error}")
+                _stat("outcome", f"{action_type}:syntax_rejected")
                 stall_count += 1
                 # Give targeted hints for the two common R->Python syntax errors.
                 hint = ""
@@ -241,7 +265,7 @@ def reason(
                             "Move all non-`name=value` arguments to the front "
                             "of every call, before any `name=value` pairs.")
                 elif "f-string" in syntax_error and "backslash" in syntax_error:
-                    hint = (" NOTE: The target runtime is CPython 3.10, where an "
+                    hint = (" NOTE: The target runtime is CPython " + _runtime_version() + ", where an "
                             "f-string expression may not contain a backslash. "
                             "Bind the value first (e.g. `nl = chr(10)` then "
                             "`f\"{s.split(nl)}\"`) instead of inlining the escape.")
@@ -261,6 +285,7 @@ def reason(
                 new_report = harness.verify(new_source)
             except Exception as exc:
                 print(f"[Agent]   Verification failed: {exc}")
+                _stat("outcome", f"{action_type}:verify_error")
                 history.append(f"Step {step}: rewrite -> verification error")
                 continue
 
@@ -276,6 +301,11 @@ def reason(
                     crash_msg = (detailed[0] if detailed else crash_fb[0]).message
                     print(f"[Agent]   Crash: {crash_msg[:300]}")
 
+            _stat("outcome", f"{action_type}:" + (
+                "improved" if new_report.aggregate > best_score + 1e-9 else
+                "catastrophic" if (best_score - new_report.aggregate) >= CATASTROPHIC_DROP
+                or (new_report.aggregate == 0.0 and best_score > 0.0) else
+                "worse" if new_report.aggregate < best_score - 1e-9 else "unchanged"))
             if new_report.aggregate > best_score:
                 # Code review gate: check for rule violations before adopting
                 passed, reason = review_translation(
@@ -284,6 +314,7 @@ def reason(
                 )
                 if not passed:
                     print(f"[Review]  FAILED: {reason}")
+                    _stat("outcome", f"{action_type}:review_rejected")
                     stall_count += 1
                     # Include a trimmed copy of the rejected source so the
                     # agent can see exactly what was hardcoded and avoid
@@ -799,18 +830,25 @@ def _check_syntax(source: str) -> str | None:
         line for line in activated.splitlines()
         if not line.lstrip().startswith("# r2py:")
     )
-    try:
-        ast.parse(clean)
-    except SyntaxError as exc:
-        detail = f"line {exc.lineno}: {exc.msg}" + (" (in the source as executed, data shim active)" if has_shim else "")
+    # Parsed by the interpreter that will run it: the harness's own may be older and reject
+    # valid newer syntax (nested f-string quotes).
+    from ..stage0.env.py_runtime import syntax_error_in_sandbox_python
+    exc = syntax_error_in_sandbox_python(clean)
+    if exc:
+        detail = f"line {exc['lineno']}: {exc['msg']}" + (" (in the source as executed, data shim active)" if has_shim else "")
         # Show the offending source line: "line 9: invalid syntax" alone told the
         # model nothing, and the line number refers to `clean` (r2py comment lines
         # stripped), so it need not match the source the model sent.
-        text = (exc.text or "").rstrip("\n")
+        text = (exc.get("text") or "").rstrip("\n")
         if text.strip():
-            caret = " " * max(0, (exc.offset or 1) - 1) + "^"
+            caret = " " * max(0, (exc.get("offset") or 1) - 1) + "^"
             detail += f"\n    {text}\n    {caret}"
         return detail
     return None
+
+
+def _runtime_version() -> str:
+    from ..stage0.env.py_runtime import python_version
+    return python_version()
 
 

@@ -28,6 +28,8 @@ _ALLOWED_ENV_VARS = frozenset({
     "WINDIR",               # Windows
     "COMSPEC",              # Windows cmd.exe path
     "PROCESSOR_ARCHITECTURE",  # Windows — required by some R native extensions (xfun crash)
+    "PROGRAMDATA",             # Windows — tinytex::win_app_dir() errors without it
+    "ProgramData",
 })
 
 

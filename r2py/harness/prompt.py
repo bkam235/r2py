@@ -174,9 +174,7 @@ system captures module globals; code inside functions scores zero.
 `d = ...` (same name). The verifier compares by variable name.
 - Translate ALL sections. If an R package has no Python equivalent, use \
 numpy/pandas/scipy to approximate it with variables of the same names and types.
-- The target runtime is CPython 3.10. An f-string expression may NOT contain a \
-backslash there (valid only from 3.12): bind the value to a variable first, e.g. \
-`nl = chr(10)` then `f"{s.split(nl)}"`.
+{RUNTIME_NOTE}
 - In Python, positional arguments must come BEFORE keyword arguments in every \
 function call. R allows named arguments before positional ones — reorder them \
 when translating.
@@ -439,3 +437,17 @@ def build_agent_turn(
 def _entity_avg(es) -> float:
     return (es.type_match + es.control_flow_match + es.data_output
             + es.variable_output + es.callable_output + es.side_effects) / 6
+
+
+def with_runtime_note(prompt: str) -> str:
+    """Fill in the runtime line of a system prompt from the interpreter that runs translations."""
+    from ..stage0.env.py_runtime import python_version, sandbox_version_info
+
+    if sandbox_version_info()[:2] >= (3, 12):
+        note = (f"- The target runtime is CPython {python_version()}. Only use APIs that exist in "
+                "current releases of the libraries you import.")
+    else:
+        note = (f"- The target runtime is CPython {python_version()}. An f-string expression may NOT "
+                "contain a backslash there (valid only from 3.12), nor reuse its own quote character: "
+                "bind the value to a variable first, e.g. `nl = chr(10)` then `f\"{s.split(nl)}\"`.")
+    return prompt.replace("{RUNTIME_NOTE}", note)

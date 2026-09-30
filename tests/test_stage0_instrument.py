@@ -97,3 +97,23 @@ class TestExcludedWorklist(unittest.TestCase):
                 {"excluded": [{"var": "m2", "r_class": "lm", "py_type": "statsmodels.X"}]}, {}]
         self.assertEqual(ho.excluded_worklist(rows),
                          [(("lm", "statsmodels.X"), 2), (("glm", "statsmodels.Y"), 1)])
+
+
+class TestBytesSerialisation(unittest.TestCase):
+    def test_bytes_serialise_like_r_raw(self):
+        # R: as.raw(c(1,2,255)) -> "AQL/" ; charToRaw("hi") -> "aGk="
+        from r2py.stage0.effects.data import _R2PyEncoder
+        import json
+        self.assertEqual(json.loads(json.dumps({"x": bytes([1, 2, 255]), "y": b"hi"}, cls=_R2PyEncoder)),
+                         {"x": "AQL/", "y": "aGk="})
+
+
+class TestSandboxInterpreterSyntax(unittest.TestCase):
+    def test_syntax_gate_uses_the_interpreter_that_runs_the_code(self):
+        from r2py.stage0.env.py_runtime import sandbox_version_info
+        nested = 'x = ["a"]\nprint(f"{", ".join(x)}")\n'  # nested same-quote f-string: 3.12+
+        if sandbox_version_info()[:2] >= (3, 12):
+            self.assertIsNone(_check_syntax(nested))
+        else:
+            self.assertIsNotNone(_check_syntax(nested))
+        self.assertIn("invalid syntax", _check_syntax("def f(:\n") or "")

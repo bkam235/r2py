@@ -338,11 +338,39 @@ def _entity_records(script_map, report) -> list[dict]:
     return records
 
 
+class _Tee:
+    def __init__(self, *streams) -> None:
+        self._streams = streams
+
+    def write(self, s: str) -> int:
+        for st in self._streams:
+            st.write(s)
+        return len(s)
+
+    def flush(self) -> None:
+        for st in self._streams:
+            st.flush()
+
+    def __getattr__(self, name):  # encoding, isatty, ... from the first (real) stream
+        return getattr(self._streams[0], name)
+
+
+def _log_to_file(path: Path) -> None:
+    """Also write this process's stdout/stderr to ``path`` (appending), so a parallel run leaves
+    a record the analysis scripts can read: worker output otherwise exists only on the console."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    f = path.open("a", encoding="utf-8", buffering=1)
+    sys.stdout = _Tee(sys.stdout, f)
+    sys.stderr = _Tee(sys.stderr, f)
+
+
 def _drain_diagnostics() -> dict:
     """Shadow-fixer outcomes and review failures since the last call, for the run's row."""
+    from r2py.harness.agent import drain_agent_stats
     from r2py.harness.review import review_stats
     from r2py.stage2.stitch import drain_shadow_log
-    out = {"shadow_fixers": drain_shadow_log(), "review_failures": dict(review_stats)}
+    out = {"shadow_fixers": drain_shadow_log(), "review_failures": dict(review_stats),
+           "agent": drain_agent_stats()}
     for k in review_stats:
         review_stats[k] = 0
     return out
@@ -544,6 +572,7 @@ def _train_task(manifest: dict, snapshot: str, script: str, py_path: str) -> dic
     from r2py.library import PatternLibrary
 
     sys.stdout.reconfigure(line_buffering=True)
+    _log_to_file(Path(py_path).parents[1] / "logs" / f"train.p{os.getpid()}.txt")
     cfg = manifest["protocol"]["translate"]
     out: dict = {"script": script}
     started = time.monotonic()
@@ -858,6 +887,7 @@ def _score_worker(manifest: dict, workdir: str, checkpoints: list[str], worker: 
     """Entry point of one scoring process (must be importable for multiprocessing 'spawn')."""
     sys.stdout.reconfigure(line_buffering=True)
     workdir = Path(workdir)
+    _log_to_file(workdir / "logs" / f"score.w{worker}.txt")
     _score_loop(manifest, workdir, checkpoints, out=workdir / f"scores.w{worker}.jsonl",
                 claims=workdir / "claims", worker=worker, workers=workers,
                 log=lambda msg: print(f"[w{worker}] {msg}"))

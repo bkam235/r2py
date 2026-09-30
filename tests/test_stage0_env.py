@@ -25,9 +25,11 @@ def test_find_python_returns_existing_path():
     assert p.exists(), f"find_python() returned non-existent path: {p}"
 
 
-def test_find_python_is_current_interpreter():
-    p = _py_runtime.find_python()
-    assert str(p) == sys.executable or p.resolve() == Path(sys.executable).resolve()
+def test_find_python_prefers_the_project_sandbox_venv(monkeypatch):
+    monkeypatch.delenv("R2PY_PYTHON", raising=False)
+    sandbox = _py_runtime._project_sandbox_python()
+    expected = sandbox if sandbox else Path(sys.executable)
+    assert _py_runtime.find_python().resolve() == expected.resolve()
 
 
 def test_python_version_format():

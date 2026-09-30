@@ -81,6 +81,9 @@ class _R2PyEncoder(_json.JSONEncoder):
             pass
         if isinstance(obj, (set, frozenset)):
             return list(obj)
+        if isinstance(obj, (bytes, bytearray)):  # jsonlite emits raw() as base64
+            import base64 as _b64
+            return _b64.b64encode(bytes(obj)).decode('ascii')
         return super().default(obj)
 
 
@@ -395,6 +398,9 @@ class _R2PyEncoder(_r2py_json.JSONEncoder):
         # sets — useful for env captures
         if isinstance(obj, (set, frozenset)):
             return list(obj)
+        if isinstance(obj, (bytes, bytearray)):  # jsonlite emits raw() as base64
+            import base64 as _b64
+            return _b64.b64encode(bytes(obj)).decode('ascii')
         return super().default(obj)
 
 

@@ -131,7 +131,9 @@ def test_scrub_env_removes_dangerous_vars():
 def test_scrub_env_keeps_allowed_vars():
     env = {"PATH": "/usr/bin", "HOME": "/home/u", "R_LIBS_USER": "/home/u/R"}
     clean = scrub_env(env)
-    assert clean == {"PATH": "/usr/bin", "HOME": "/home/u", "R_LIBS_USER": "/home/u/R"}
+    # scrub_env also sets PYTHONIOENCODING; the whitelisted vars must all survive unchanged.
+    assert {k: clean[k] for k in env} == env
+    assert set(clean) - set(env) == {"PYTHONIOENCODING"}
 
 
 # ---------------------------------------------------------------------------

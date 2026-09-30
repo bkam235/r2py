@@ -120,7 +120,7 @@ def test_files_collect_excludes_r2py_internals(tmp_path):
 # ---------------------------------------------------------------------------
 
 def test_graphics_collect_reads_png(tmp_path):
-    fake_png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 100
+    fake_png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 2100  # >= 2 KB: smaller files count as blank
     (tmp_path / "_r2py_plot_001.png").write_bytes(fake_png)
     result = _graphics_mod.collect(tmp_path)
     assert len(result["graphics"]) == 1
@@ -134,10 +134,10 @@ def test_graphics_collect_empty(tmp_path):
 
 def test_graphics_collect_multiple_sorted(tmp_path):
     for i in [3, 1, 2]:
-        (tmp_path / f"_r2py_plot_{i:03d}.png").write_bytes(bytes([i]))
+        (tmp_path / f"_r2py_plot_{i:03d}.png").write_bytes(bytes([i]) * 2100)
     result = _graphics_mod.collect(tmp_path)
     assert len(result["graphics"]) == 3
-    assert result["graphics"][0] == bytes([1])
+    assert result["graphics"][0] == bytes([1]) * 2100
 
 
 # ---------------------------------------------------------------------------
