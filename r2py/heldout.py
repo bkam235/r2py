@@ -403,6 +403,7 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         max_stalls=cfg["max_stalls"],
         agent_budget_s=cfg.get("agent_budget_s"),
         agent_replace_entity=cfg.get("replace_entity", True),
+        agent_entity_repair=cfg.get("entity_repair", False),
     )
     py_path.write_text(result.python_source, encoding="utf-8")
     # Seed from every run. seed_from_translation keeps only entities at or above

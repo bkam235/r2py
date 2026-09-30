@@ -134,7 +134,8 @@ def run_parallel(args, scripts: list[str]) -> int:
     n = min(args.workers, len(scripts))
     print(f"smoke test: {len(scripts)} scripts on {n} workers -> {out}", flush=True)
     passthrough = (["--only", *args.only] if args.only else []) + (["--all"] if args.all else []) + [
-                   "--replace-entity", args.replace_entity, "--n", str(args.n), "--budget-s", str(args.budget_s), "--checkpoint", args.checkpoint,
+                   "--replace-entity", args.replace_entity, "--entity-repair", args.entity_repair,
+                   "--n", str(args.n), "--budget-s", str(args.budget_s), "--checkpoint", args.checkpoint,
                    "--manifest", args.manifest, "--workdir", args.workdir]
     procs = [subprocess.Popen([sys.executable, __file__, *passthrough, "--shard", f"{i}/{n}",
                                "--out", str(out)], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
@@ -166,6 +167,8 @@ def main() -> int:
     ap.add_argument("--all", action="store_true", help="every held-out script in the manifest")
     ap.add_argument("--replace-entity", choices=("on", "off"), default="on",
                     help="offer the replace_entity action (off = the pre-Stage-3 prompt, for an A/B arm)")
+    ap.add_argument("--entity-repair", choices=("on", "off"), default="off",
+                    help="harness-driven repair of one failing entity per step (after the first)")
     ap.add_argument("--workers", type=int, default=1, help="parallel worker processes")
     ap.add_argument("--shard", help=argparse.SUPPRESS)  # internal: "i/N", with --out
     ap.add_argument("--out", help=argparse.SUPPRESS)
@@ -206,6 +209,7 @@ def main() -> int:
     cfg = copy.deepcopy(manifest["protocol"]["translate"])
     cfg["agent_budget_s"] = args.budget_s
     cfg["replace_entity"] = args.replace_entity == "on"
+    cfg["entity_repair"] = args.entity_repair == "on"
 
     out = Path(args.out) if args.out else ROOT / "work" / "smoke" / datetime.now().strftime("%Y%m%d_%H%M%S")
     out.mkdir(parents=True, exist_ok=True)

@@ -9,6 +9,7 @@ import time
 from typing import TYPE_CHECKING
 
 from ..stage0.env.module_check import unavailable_imports
+from ..stage2.argorder import repair_argument_order
 from ..stage2 import llm as _llm
 from ..stage2.llm import TruncatedResponseError
 from . import prompt as _prompt
@@ -16,6 +17,7 @@ from .review import REVIEW_UNAVAILABLE, review_translation
 from ..stage2.stitch import (
     DATA_SHIM_BEGIN as _SHIM_MARKER,
     DATA_SHIM_RE as _SHIM_RE,
+    rebuild_entity_line_map,
     shadow_autofix,
     splice_entity,
 )
@@ -55,6 +57,7 @@ def reason(
     budget_s: float | None = None,
     audit_feedback: str = "",
     replace_entity: bool = True,
+    entity_repair: bool = False,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -93,6 +96,8 @@ def reason(
           f"threshold={score_threshold}, max_steps={max_steps})")
 
     stall_count = 0
+    entity_tries: dict[str, int] = {}          # entity repairs attempted, per entity
+    entity_notes: dict[str, list[str]] = {}    # what each failed attempt looked like
     # Wall-clock, not step count: the worst script of the first training run burned
     # 10.7h in only 6 rewrites, so a step limit never reached it.
     deadline = time.monotonic() + budget_s if budget_s else None
@@ -121,6 +126,13 @@ def reason(
                 "failing entities, or action:done if you cannot improve further."
             )
 
+        # Harness-driven targeted repair: the model does not choose replace_entity on its own
+        # (1 use in 84 actions), so the harness picks the failing entity and asks for just that.
+        repair_eid = None
+        if entity_repair and not (step == 1 and best_score == 0.0):
+            repair_eid = _pick_repair_entity(report, best_source, entity_tries)
+        turn_system = system_prompt
+
         messages = _prompt.build_agent_turn(
             r_source=r_source,
             python_source=best_source,
@@ -136,10 +148,17 @@ def reason(
             sidecar_filename=getattr(harness, "_sidecar_filename", ""),
         )
 
+        if repair_eid is not None:
+            entity_tries[repair_eid] = entity_tries.get(repair_eid, 0) + 1
+            messages = _build_entity_repair(
+                script_map, r_source, best_source, report, repair_eid, entity_notes.get(repair_eid, []))
+            turn_system = _prompt.ENTITY_REPAIR_SYSTEM
+            print(f"[Agent]   Targeting entity {repair_eid} for repair")
+
         truncated = False
         try:
             raw = _llm.call(
-                messages, system_prompt,
+                messages, turn_system,
                 model=model, max_tokens=16384,
             )
         except TruncatedResponseError as exc:
@@ -151,6 +170,15 @@ def reason(
             break
 
         action = _parse_action(raw)
+        if repair_eid is not None:
+            # Whatever shape the answer took, it is a fragment for this entity.
+            frag = action.get("new_source") if action and action.get("action") in ("rewrite", "replace_entity") else None
+            if not frag:
+                history.append(f"Step {step}: entity repair of {repair_eid}: no usable code in the response")
+                _stat("outcome", "entity_repair:no_code")
+                stall_count += 1
+                continue
+            action = {"action": "entity_repair", "entity": repair_eid, "new_source": frag}
         if action is None:
             snippet = raw[:300].replace('\n', '\\n')
             print(f"[Agent]   Could not parse action from response: {snippet!r}")
@@ -226,7 +254,7 @@ def reason(
             history.append(f"Step {step}: lookup_docs {label}{cache_note} ->\n{result[:800]}")
             stall_count += 1
 
-        elif action_type in ("rewrite", "replace_entity"):
+        elif action_type in ("rewrite", "replace_entity", "entity_repair"):
             new_source = action.get("new_source", "")
             if not new_source.strip():
                 history.append(f"Step {step}: {action_type} (empty source)")
@@ -238,7 +266,7 @@ def reason(
                 stall_count += 1
                 continue
 
-            if action_type == "replace_entity":
+            if action_type in ("replace_entity", "entity_repair"):
                 # Splice into the best version so untouched lines stay byte-identical.
                 new_source, splice_err = splice_entity(best_source, action.get("entity", ""), new_source)
                 if new_source is None:
@@ -263,6 +291,18 @@ def reason(
             if shim_restored:
                 print("[Agent]   Data shim block was altered; restored the original")
                 _stat("outcome", f"{action_type}:shim_restored")
+
+            # R allows named arguments before positional ones; Python does not, and the model
+            # keeps writing it. Reordering is meaning-preserving, so do it -- and say so, so the
+            # agent still learns the rule instead of having the mistake hidden from it.
+            new_source, n_reordered = repair_argument_order(new_source)
+            if n_reordered:
+                print(f"[Agent]   Reordered arguments in {n_reordered} call(s) (positional first)")
+                _stat("outcome", f"{action_type}:arg_order_repaired")
+                history.append(
+                    f"Step {step}: NOTE — {n_reordered} call(s) had positional arguments after keyword "
+                    "arguments (legal in R, a SyntaxError in Python). The harness reordered them "
+                    "(positional first). Write positional arguments first yourself.")
 
             source_lines = len(new_source.splitlines())
             print(f"[Agent]   Rewrite: {source_lines} lines")
@@ -390,6 +430,10 @@ def reason(
                 stall_count += 1
                 crash_detail = f" Python error: {crash_msg}" if crash_msg else ""
                 crash_detail += _auto_lookup_on_crash(crash_msg, harness, new_source)
+                if action_type == "entity_repair":
+                    entity_notes.setdefault(action["entity"], []).append(
+                        f"aggregate went {best_score:.3f} -> {new_report.aggregate:.3f}"
+                        + (f"; {crash_msg[:200]}" if crash_msg else ""))
                 catastrophic = (best_score - new_report.aggregate) >= CATASTROPHIC_DROP or (
                     new_report.aggregate == 0.0 and best_score > 0.0
                 )
@@ -882,12 +926,53 @@ def _check_syntax(source: str) -> str | None:
     return None
 
 
+def _entity_score(es) -> float:
+    if not es.executed_ok:
+        return 0.0
+    dims = [getattr(es, d) for d in es.active_dims]
+    return sum(dims) / len(dims) if dims else 1.0
+
+
+def _pick_repair_entity(report, best_source: str, tries: dict[str, int], max_tries: int = 2) -> str | None:
+    """The entity to repair next: the first one that did not run (the root of a crash), else the
+    lowest-scoring.  Only entities with one span in the source (``splice_entity`` refuses the rest),
+    with something to verify, and not already tried ``max_tries`` times."""
+    spans = rebuild_entity_line_map(best_source)
+    crashed, weak = [], []
+    for eid, es in report.by_entity.items():
+        if not es.active_dims or tries.get(eid, 0) >= max_tries or len(spans.get(eid, [])) != 1:
+            continue
+        sc = _entity_score(es)
+        if not es.executed_ok:
+            crashed.append((spans[eid][0][0], eid))
+        elif sc < 0.9:
+            weak.append((sc, eid))
+    if crashed:
+        return min(crashed)[1]
+    return min(weak)[1] if weak else None
+
+
+def _build_entity_repair(script_map, r_source, best_source, report, eid, notes) -> list[dict]:
+    entity = script_map.entities[eid]
+    sp = entity.source_span
+    r_lines = (getattr(script_map, "source", "") or "").splitlines()
+    r_entity = "\n".join(r_lines[sp.start_line:sp.end_line + 1])
+    (start, end), = rebuild_entity_line_map(best_source)[eid]
+    py_entity = "\n".join(best_source.splitlines()[start:end])  # drops the sentinel line itself
+    return _prompt.build_entity_repair_turn(
+        r_source, best_source, report, eid, getattr(entity, "name", eid), r_entity, py_entity, notes)
+
+
 def restore_data_shim(best_source: str, new_source: str) -> tuple[str, bool]:
     """Replace the data-shim block of ``new_source`` with the one from ``best_source``.
 
     Returns ``(source, changed)``.  Leaves the source alone when either side has no block.
     """
     old, new = _SHIM_RE.search(best_source), _SHIM_RE.search(new_source)
+    if new and not old:
+        # No shim was generated for this script, so any block is the model's own invention
+        # ("No data shim needed for this script" inside the markers was a syntax error).
+        return _SHIM_RE.sub("", new_source, count=1), True
     if not old or not new or old.group(0) == new.group(0):
         return new_source, False
     return new_source[:new.start()] + old.group(0) + new_source[new.end():], True

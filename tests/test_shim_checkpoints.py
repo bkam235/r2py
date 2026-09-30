@@ -54,4 +54,8 @@ class TestRestoreShim(unittest.TestCase):
         self.assertTrue(changed)
         self.assertEqual(fixed, "import os\n# r2py:data_shim:begin\n# x = 1\n# r2py:data_shim:end\ny = 2\n")
         self.assertEqual(restore_data_shim(best, best), (best, False))
-        self.assertEqual(restore_data_shim("y = 1\n", new), (new, False))  # no shim to restore from
+        # no shim was generated for this script: a block the model invented is removed
+        fixed2, changed2 = restore_data_shim("y = 1\n", new)
+        self.assertTrue(changed2)
+        self.assertNotIn("data_shim", fixed2)
+        self.assertNotIn("Simulating", fixed2)

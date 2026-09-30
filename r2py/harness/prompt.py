@@ -460,3 +460,70 @@ def without_replace_entity(prompt: str) -> str:
     prompt = re.sub(r"To CHANGE ONE ENTITY.*?(?=To PROBE R behavior:)", "", prompt, flags=re.S)
     return re.sub(r"- After the first step, use replace_entity.*?(?=\n- After a rewrite that did NOT)",
                   "", prompt, flags=re.S).replace("\n\n\n", "\n\n")
+
+
+ENTITY_REPAIR_SYSTEM = """\
+You are repairing ONE entity of an R-to-Python translation. The harness has already found which
+entity is failing; everything else in the translation is fixed and will not be touched.
+
+Reply with a SHORT analysis (2-3 sentences: what is wrong with this entity and what you change),
+then exactly this, using the entity id you were given:
+
+ACTION: replace_entity
+entity: <id>
+```python
+# only the new Python code for this entity
+```
+
+Rules:
+- Output ONLY this entity's code, not the whole file, and do not repeat the `# r2py:entity:` comment.
+- Keep the variable names the R code assigns; the verifier compares by name.
+- Compute results the way R does. Never paste R's expected output as literals.
+- Positional arguments must come before keyword arguments in every call.
+- Use module-level code (no wrapping in `def`) unless the R code defines a function.
+- Only import modules that exist; R package names are not Python modules.
+"""
+
+
+def build_entity_repair_turn(
+    r_source: str,
+    python_source: str,
+    report: "ScoreReport",
+    eid: str,
+    entity_name: str,
+    r_entity_source: str,
+    py_entity_source: str,
+    notes: list[str] | None = None,
+) -> list[dict]:
+    """The message asking for a replacement of one failing entity."""
+    es = report.by_entity.get(eid)
+    dims = ""
+    if es is not None:
+        dims = ", ".join(f"{d}={getattr(es, d):.2f}" for d in sorted(es.active_dims)) or "(none active)"
+    parts = [f"## Repair entity `{eid}` ({entity_name})", "",
+             "### Full R source (context)", "```r", r_source, "```", "",
+             "### Full current Python translation (context)", "```python", python_source, "```", "",
+             f"### The entity to repair: `{eid}`", "R code:", "```r", r_entity_source, "```",
+             "Current Python code for it:", "```python", py_entity_source, "```", "",
+             f"Its scores: executed_ok={getattr(es, 'executed_ok', '?')}; {dims}", ""]
+    mine = [c for c in report.comparisons if c.entity_id == eid]
+    if mine:
+        parts.append("Output comparisons for this entity (R vs Python):")
+        for c in mine:
+            parts += [f"  [{c.effect_class.value}] score={c.score:.3f}",
+                      f"    R produced:      {c.r_value}", f"    Python produced: {c.py_value}"]
+            if c.diff_summary:
+                parts.append(f"    Diff: {c.diff_summary}")
+        parts.append("")
+    fb = [f for f in report.feedback if f.entity_id == eid]
+    crash = [f for f in report.feedback if f.effect_class.value == "syntax"]
+    if fb or crash:
+        parts.append("Verifier feedback:")
+        parts += [f"  {f.effect_class.value}: {f.message}" for f in (fb + crash)[:6]]
+        parts.append("")
+    if report.py_exit_code != 0:
+        parts += ["The Python script CRASHED; if the crash is in this entity, fix the crash first.", ""]
+    if notes:
+        parts += ["Earlier attempts on this entity that did not help:", *[f"  - {n}" for n in notes], ""]
+    parts.append(f"Now reply with ACTION: replace_entity / entity: {eid} and the fixed code.")
+    return [{"role": "user", "content": "\n".join(parts)}]

@@ -7,6 +7,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from .stage2 import llm as _llm
+from .stage2.argorder import repair_argument_order
 from .stage2.stitch import (
     build_data_shim,
     collect_shim_needed_names,
@@ -110,6 +111,9 @@ def translate(
 
     python_code = _extract_python(raw)
     shadow_autofix(python_code, "seed")
+    python_code, n_reordered = repair_argument_order(python_code)
+    if n_reordered:
+        print(f"[Seed]    Reordered arguments in {n_reordered} call(s) (positional first)", file=sys.stderr)
     python_source = _assemble(
         python_code, script_map, model,
         r_path=r_path,
