@@ -77,7 +77,18 @@ every run row carries `agent` stats (actions, per-action outcomes, stop reasons)
 are rejected before a verification is spent); an altered data-shim block is restored from the best source
 (prose inside it was the commonest syntax error); `replace_entity` has an A/B switch
 (`smoke_test.py --replace-entity off`, `cfg.replace_entity`). Suite: 706 pass, 1 pre-existing failure.
-**Not done:** the replace_entity A/B runs, then the library re-assessment.
+**replace_entity A/B (2026-09-30, 24 scripts, `empty` library, 20 min budget; arms `work/smoke/20260930_152523`
+on, `..._191227` off):** the model chose `replace_entity` once in 84 actions (refused), so the arms differ only
+by a prompt paragraph nobody follows and are effectively replicates. Mean 0.723 vs 0.684 (paired diff -0.038,
+SE 0.046, p=0.94); **per-script run-to-run SD of the difference is 0.22**, 12 of 24 exact ties, 3 scripts swung
+by >0.25 (clock, isoband, pROC). Rewrite-outcome rates moved 10+ points between arms (catastrophic 25% vs 15%,
+improved 32% vs 44%), i.e. rates at n=68 carry about +-10 pts of noise; smaller differences cannot be attributed.
+Shadow fixers over both arms: 23 valid->invalid vs 5 invalid->valid. Power: detecting a +0.03 script-level effect
+at SD 0.22 needs ~440 paired runs (~880 scoring runs, ~30 h wall at 6 workers). **Library decision: freeze**
+(see `r2py-experiment-state`): no coverage work, no further library A/B, until the agent loop has a stable
+baseline. Queued harness changes: AST-based arg-order repair that reports to the agent; a shim block the model
+invents when the best source has none; a harness-driven single-entity repair mode (the model does not pick it).
+**Not done:** the queued harness changes.
 **Not done:** Stage 4 Phase 1+ (adapters), Stages 5-6 (gated on the re-measure below), the
 RecursionError (needs a traceback from a real run: rows now keep one). Nothing left that can be
 built and checked without a real scoring run.
