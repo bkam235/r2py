@@ -88,7 +88,17 @@ at SD 0.22 needs ~440 paired runs (~880 scoring runs, ~30 h wall at 6 workers). 
 (see `r2py-experiment-state`): no coverage work, no further library A/B, until the agent loop has a stable
 baseline. Queued harness changes: AST-based arg-order repair that reports to the agent; a shim block the model
 invents when the best source has none; a harness-driven single-entity repair mode (the model does not pick it).
-**Not done:** the queued harness changes.
+**Queued harness changes built (2026-09-30):** (1) `stage2/argorder.py` reorders positional-after-keyword call
+arguments from the token stream (the source does not parse, so no AST), touching only calls, moving exact source
+slices, skipping calls with comments inside; used on agent rewrites (the agent is told) and seeds; replaces the
+deleted fixer whose text surgery corrupted valid source. (2) `restore_data_shim` also deletes a shim block the
+model invents when none was generated. (3) Entity-repair mode (`cfg.entity_repair`, `smoke_test --entity-repair on`,
+default off): the harness picks the first crashed entity, else the lowest-scoring one (single-span, <=2 tries),
+asks the model for just that, splices, verifies and gates as usual. First live check, 3 scripts, 8 attempts:
+12% improved / 50% unchanged / 0% worse / 38% catastrophic (a repaired entity can still crash the script) -
+mechanics work, benefit unproven. Suite: 719 pass, 1 pre-existing failure. **Not done:** an A/B of the new harness
+(arm without entity repair vs arm with) on the 24 dev scripts; per-script MDE at n=24 is ~0.13, so judge it on
+rewrite-outcome rates and on scripts that swing, not on the mean alone.
 **Not done:** Stage 4 Phase 1+ (adapters), Stages 5-6 (gated on the re-measure below), the
 RecursionError (needs a traceback from a real run: rows now keep one). Nothing left that can be
 built and checked without a real scoring run.
