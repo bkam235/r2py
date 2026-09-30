@@ -91,6 +91,7 @@ def run_loop(
     timeout_s: float = 60,
     max_stalls: int = 3,
     agent_budget_s: "float | None" = None,
+    agent_replace_entity: bool = True,
     **verify_kwargs,
 ) -> TranslateResult:
     """Cheap path → reasoning agent escalation loop.
@@ -278,6 +279,7 @@ def run_loop(
         score_threshold=score_threshold,
         max_stalls=max_stalls,
         budget_s=agent_budget_s,
+        replace_entity=agent_replace_entity,
         audit_feedback=audit_feedback,
     )
 

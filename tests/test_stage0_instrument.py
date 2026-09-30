@@ -117,3 +117,18 @@ class TestSandboxInterpreterSyntax(unittest.TestCase):
         else:
             self.assertIsNotNone(_check_syntax(nested))
         self.assertIn("invalid syntax", _check_syntax("def f(:\n") or "")
+
+
+class TestImportGate(unittest.TestCase):
+    def test_imports_are_collected_and_unresolvable_ones_flagged_without_the_network(self):
+        from unittest.mock import patch
+        from r2py.stage0.env import module_check as mc
+        src = "import numpy as np\nfrom pkg_x.sub import y\nimport os.path\nfrom . import rel\nimport magrittr\n"
+        self.assertEqual(mc.imported_modules(src), {"numpy", "pkg_x", "os", "magrittr"})
+        with patch.object(mc, "_not_importable", return_value=["pkg_x", "magrittr", "maybe"]), \
+             patch.object(mc, "_on_pypi", side_effect=lambda n: {"pkg_x": False, "maybe": True}.get(n)):
+            # pkg_x: not on PyPI -> flagged; magrittr: known unavailable -> flagged (no lookup);
+            # maybe: on PyPI -> the sandbox will install it
+            self.assertEqual(mc.unavailable_imports(src, {"magrittr"}), ["pkg_x", "magrittr"])
+        with patch.object(mc, "_not_importable", return_value=["x"]), patch.object(mc, "_on_pypi", return_value=None):
+            self.assertEqual(mc.unavailable_imports("import x"), [])  # undecidable (offline): do not block

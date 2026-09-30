@@ -1,0 +1,97 @@
+"""Predict ``ModuleNotFoundError`` before a translation is run.
+
+The sandbox handles a missing module by ``pip install``-ing it; when that fails the script
+crashes.  A rewrite that imports an R package name (``import magrittr``, ``import openssl``) then
+costs a whole verification to learn what could have been known up front.  ``unavailable_imports``
+returns the modules a script imports that are neither importable by the interpreter that runs
+translations nor installable from PyPI, so the agent can be told before spending a step.
+
+Whether a name is on PyPI is looked up with ``pip index versions`` and cached in
+``work/pypi_names.json`` (shared by parallel workers; a race only repeats a lookup).
+"""
+from __future__ import annotations
+
+import ast
+import json
+import subprocess
+from pathlib import Path
+
+from .py_runtime import find_python
+
+_CACHE = Path(__file__).resolve().parents[3] / "work" / "pypi_names.json"
+_PROBE = """
+import importlib.util, json, sys
+names = json.loads(sys.stdin.read())
+def ok(n):
+    try:
+        return importlib.util.find_spec(n) is not None
+    except Exception:
+        return True   # a broken parent package still means the name exists
+print(json.dumps([n for n in names if not ok(n)]))
+"""
+
+
+def imported_modules(source: str) -> set[str]:
+    """Top-level names a script imports (absolute imports only)."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return set()
+    names: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            names |= {a.name.split(".")[0] for a in node.names}
+        elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+            names.add(node.module.split(".")[0])
+    names.discard("__future__")
+    return names
+
+
+def _not_importable(names: list[str]) -> list[str]:
+    if not names:
+        return []
+    r = subprocess.run([str(find_python()), "-c", _PROBE], input=json.dumps(sorted(names)),
+                       capture_output=True, text=True, timeout=60, encoding="utf-8")
+    try:
+        return json.loads(r.stdout)
+    except ValueError:
+        return []  # cannot tell: do not block
+
+
+def _load_cache() -> dict[str, bool]:
+    try:
+        return json.loads(_CACHE.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+def _on_pypi(name: str) -> bool | None:
+    """True/False from ``pip index versions``; None when it could not be determined."""
+    cache = _load_cache()
+    if name in cache:
+        return cache[name]
+    try:
+        r = subprocess.run([str(find_python()), "-m", "pip", "index", "versions", name],
+                           capture_output=True, text=True, timeout=30)
+    except (subprocess.TimeoutExpired, OSError):
+        return None
+    out = (r.stdout + r.stderr).lower()
+    if r.returncode == 0:
+        found = True
+    elif "no matching distribution" in out or "could not find a version" in out:
+        found = False
+    else:
+        return None  # offline, rate-limited, ...: not evidence either way
+    cache[name] = found
+    try:
+        _CACHE.parent.mkdir(parents=True, exist_ok=True)
+        _CACHE.write_text(json.dumps(cache, indent=1), encoding="utf-8")
+    except OSError:
+        pass
+    return found
+
+
+def unavailable_imports(source: str, known_unavailable: frozenset[str] | set[str] = frozenset()) -> list[str]:
+    """Modules ``source`` imports that would fail at run time even after the sandbox's auto-install."""
+    missing = _not_importable(sorted(imported_modules(source)))
+    return [m for m in missing if m in known_unavailable or _on_pypi(m) is False]

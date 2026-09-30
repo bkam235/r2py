@@ -8,6 +8,7 @@ import re
 import time
 from typing import TYPE_CHECKING
 
+from ..stage0.env.module_check import unavailable_imports
 from ..stage2 import llm as _llm
 from ..stage2.llm import TruncatedResponseError
 from . import prompt as _prompt
@@ -52,6 +53,7 @@ def reason(
     max_stalls: int = 3,
     budget_s: float | None = None,
     audit_feedback: str = "",
+    replace_entity: bool = True,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -83,6 +85,8 @@ def reason(
         _prompt.AGENT_SYSTEM_PROMPT_OPENROUTER if is_openrouter
         else _prompt.AGENT_SYSTEM_PROMPT
     )
+    if not replace_entity:
+        system_prompt = _prompt.without_replace_entity(system_prompt)
 
     print(f"[Agent]   Starting reasoning loop (model={model}, score={best_score:.3f}, "
           f"threshold={score_threshold}, max_steps={max_steps})")
@@ -227,6 +231,12 @@ def reason(
                 history.append(f"Step {step}: {action_type} (empty source)")
                 continue
 
+            if action_type == "replace_entity" and not replace_entity:
+                _stat("outcome", "replace_entity:disabled")
+                history.append(f"Step {step}: replace_entity is not available; use rewrite.")
+                stall_count += 1
+                continue
+
             if action_type == "replace_entity":
                 # Splice into the best version so untouched lines stay byte-identical.
                 new_source, splice_err = splice_entity(best_source, action.get("entity", ""), new_source)
@@ -278,6 +288,22 @@ def reason(
                 history.append(
                     f"Step {step}: rewrite REJECTED — Python syntax error: "
                     f"{syntax_error}.{hint} Fix the error and rewrite."
+                )
+                continue
+
+            # Imports that cannot resolve (R package names such as `import magrittr`): tell the
+            # agent now instead of spending a verification to learn it from the crash.
+            from ..stage0.sandbox.py_sandbox import _SKIP_PACKAGES
+            bad_imports = unavailable_imports(new_source, _SKIP_PACKAGES)
+            if bad_imports:
+                print(f"[Agent]   Unavailable imports: {bad_imports}")
+                _stat("outcome", f"{action_type}:import_rejected")
+                stall_count += 1
+                history.append(
+                    f"Step {step}: {action_type} REJECTED before running — these imports cannot be "
+                    f"resolved (not installed and not on PyPI): {', '.join(bad_imports)}. They are "
+                    "R package names, not Python modules. Do not import them; translate the calls "
+                    "with the Python libraries that provide the same function (or implement it)."
                 )
                 continue
 

@@ -451,3 +451,12 @@ def with_runtime_note(prompt: str) -> str:
                 "contain a backslash there (valid only from 3.12), nor reuse its own quote character: "
                 "bind the value to a variable first, e.g. `nl = chr(10)` then `f\"{s.split(nl)}\"`.")
     return prompt.replace("{RUNTIME_NOTE}", note)
+
+
+def without_replace_entity(prompt: str) -> str:
+    """The prompt as it was before replace_entity: for the control arm of an A/B comparison."""
+    import re
+
+    prompt = re.sub(r"To CHANGE ONE ENTITY.*?(?=To PROBE R behavior:)", "", prompt, flags=re.S)
+    return re.sub(r"- After the first step, use replace_entity.*?(?=\n- After a rewrite that did NOT)",
+                  "", prompt, flags=re.S).replace("\n\n\n", "\n\n")

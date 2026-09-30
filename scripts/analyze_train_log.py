@@ -74,6 +74,25 @@ def stdout_metrics(text: str) -> dict:
     }
 
 
+def row_agent_metrics(rows: list[dict]) -> dict:
+    """The same agent figures, from the ``agent`` stats each run row now carries (no log parsing)."""
+    actions: Counter = Counter()
+    outcome: Counter = Counter()
+    stop: Counter = Counter()
+    for r in rows:
+        a = r.get("agent") or {}
+        actions.update(a.get("action", {}))
+        outcome.update(a.get("outcome", {}))
+        stop.update(a.get("stop", {}))
+    scored = {k: v for k, v in outcome.items() if k.split(":")[1] in ("improved", "unchanged", "worse", "catastrophic")}
+    n = sum(scored.values())
+    out = {"actions": dict(actions), "stops": dict(stop), "rewrites_scored": n}
+    for kind in ("improved", "unchanged", "worse", "catastrophic"):
+        out[f"share_rewrites_{kind}"] = sum(v for k, v in scored.items() if k.endswith(":" + kind)) / n if n else 0.0
+    out["other_outcomes"] = {k: v for k, v in sorted(outcome.items()) if k not in scored}
+    return out
+
+
 def library_metrics(library: Path) -> dict:
     """Examples per pattern, from the ``## Translation Examples`` bullets of each pattern file."""
     counts = []
@@ -110,6 +129,8 @@ def main() -> int:
     if args.progress.exists():
         rows = [json.loads(line) for line in args.progress.read_text(encoding="utf-8").splitlines() if line]
         metrics["progress"] = progress_metrics(rows, args.threshold)
+    if args.progress.exists() and any("agent" in r for r in rows):
+        metrics["agent_from_rows"] = row_agent_metrics(rows)
     if args.stdout.exists():
         metrics["agent"] = stdout_metrics(args.stdout.read_text(encoding="utf-8", errors="replace"))
     if args.library.exists():

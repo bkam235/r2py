@@ -95,6 +95,21 @@ def summarise(rows: list[dict], log: str) -> str:
                        ("runtime SyntaxError dumps", r"runtime SyntaxError"),
                        ("budget exhausted", r"Wall-clock budget")):
         out.append(f"{label:28s} {len(re.findall(pat, log))}")
+    outcomes: Counter = Counter()
+    stops: Counter = Counter()
+    for r in rows:
+        outcomes.update(r.get("agent", {}).get("outcome", {}))
+        stops.update(r.get("agent", {}).get("stop", {}))
+    out += ["", "rewrite outcomes by action (from the run rows):"]
+    for action in sorted({k.split(":")[0] for k in outcomes}):
+        mine = {k.split(":")[1]: v for k, v in outcomes.items() if k.startswith(action + ":")}
+        scored = sum(mine.get(k, 0) for k in ("improved", "unchanged", "worse", "catastrophic"))
+        share = lambda k: f"{mine.get(k, 0) / scored:.0%}" if scored else "-"
+        out.append(f"  {action:15s} scored={scored:3d} improved {share('improved')} unchanged {share('unchanged')} "
+                   f"worse {share('worse')} catastrophic {share('catastrophic')} | "
+                   + ", ".join(f"{k} {v}" for k, v in sorted(mine.items())
+                               if k not in ("improved", "unchanged", "worse", "catastrophic")))
+    out.append(f"agent stops: {dict(stops)}")
     ents = [e for r in rows for e in r.get("entities", [])]
     with_dims = sum(1 for e in ents if "active_dims" in e)
     out += ["", f"entity records: {len(ents)} ({with_dims} with active_dims)"]
@@ -118,7 +133,8 @@ def run_parallel(args, scripts: list[str]) -> int:
     out.mkdir(parents=True)
     n = min(args.workers, len(scripts))
     print(f"smoke test: {len(scripts)} scripts on {n} workers -> {out}", flush=True)
-    passthrough = (["--only", *args.only] if args.only else []) + ["--n", str(args.n), "--budget-s", str(args.budget_s), "--checkpoint", args.checkpoint,
+    passthrough = (["--only", *args.only] if args.only else []) + (["--all"] if args.all else []) + [
+                   "--replace-entity", args.replace_entity, "--n", str(args.n), "--budget-s", str(args.budget_s), "--checkpoint", args.checkpoint,
                    "--manifest", args.manifest, "--workdir", args.workdir]
     procs = [subprocess.Popen([sys.executable, __file__, *passthrough, "--shard", f"{i}/{n}",
                                "--out", str(out)], stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
@@ -147,6 +163,9 @@ def main() -> int:
     ap.add_argument("--workdir", default=str(ROOT / "work/heldout"), help="holds checkpoints/<name>")
     ap.add_argument("--only", nargs="+", metavar="SUBSTR",
                     help="run only held-out scripts whose name contains one of these")
+    ap.add_argument("--all", action="store_true", help="every held-out script in the manifest")
+    ap.add_argument("--replace-entity", choices=("on", "off"), default="on",
+                    help="offer the replace_entity action (off = the pre-Stage-3 prompt, for an A/B arm)")
     ap.add_argument("--workers", type=int, default=1, help="parallel worker processes")
     ap.add_argument("--shard", help=argparse.SUPPRESS)  # internal: "i/N", with --out
     ap.add_argument("--out", help=argparse.SUPPRESS)
@@ -161,6 +180,8 @@ def main() -> int:
     if not pool.is_absolute():
         pool = ROOT / pool
     scripts = select(manifest, pool, args.n)
+    if args.all:
+        scripts = [e["script"] for e in manifest["heldout"]]
     if args.only:
         scripts = [e["script"] for e in manifest["heldout"] if any(o in e["script"] for o in args.only)]
 
@@ -184,6 +205,7 @@ def main() -> int:
         sys.exit(f"no checkpoint at {cp_dir}")
     cfg = copy.deepcopy(manifest["protocol"]["translate"])
     cfg["agent_budget_s"] = args.budget_s
+    cfg["replace_entity"] = args.replace_entity == "on"
 
     out = Path(args.out) if args.out else ROOT / "work" / "smoke" / datetime.now().strftime("%Y%m%d_%H%M%S")
     out.mkdir(parents=True, exist_ok=True)
