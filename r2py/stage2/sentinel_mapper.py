@@ -12,6 +12,34 @@ from . import llm as _llm
 _SENTINEL_RE = re.compile(r"^\s*# r2py:entity:\S+$")
 
 
+_SENTINEL_ID_RE = re.compile(r"^\s*# r2py:entity:(\S+)$")
+
+
+def ranges_from_sentinels(python_source: str) -> dict[str, list[tuple[int, int]]]:
+    """Entity line ranges read off the ``# r2py:entity:<id>`` comments, deterministically.
+
+    Same shape as ``map_entities_to_lines`` (1-based inclusive, an entity may own several ranges) and in
+    the numbering of the source WITHOUT the sentinel lines, which is what verification runs.  A range
+    starts on the line after its sentinel and ends on the last non-blank line before the next one.
+    """
+    clean: list[str] = []
+    marks: list[tuple[str, int]] = []
+    for line in python_source.splitlines():
+        m = _SENTINEL_ID_RE.match(line)
+        if m:
+            marks.append((m.group(1), len(clean) + 1))
+        else:
+            clean.append(line)
+    out: dict[str, list[tuple[int, int]]] = {}
+    for i, (eid, start) in enumerate(marks):
+        end = (marks[i + 1][1] - 1) if i + 1 < len(marks) else len(clean)
+        while end >= start and not clean[end - 1].strip():
+            end -= 1
+        if end >= start:
+            out.setdefault(eid, []).append((start, end))
+    return out
+
+
 class SentinelMappingError(RuntimeError):
     """Raised when the LLM fails to produce a valid entity-line mapping."""
 

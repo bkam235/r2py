@@ -32,6 +32,7 @@ class TestVerifyDoesNotLoseTheStep(unittest.TestCase):
         ht = HarnessTools.__new__(HarnessTools)
         ht._script_map, ht._model, ht._data_compare = object(), "m", "auto"
         ht._sidecar_filename, ht._timeout_s, ht._verify_kwargs = "", 5, {}
+        ht._verify_cache, ht.last_annotated_source, ht._mapped_eids = {}, "", set()
         with patch.object(sm, "map_entities_to_lines", side_effect=sm.SentinelMappingError("bad")), \
              patch.object(verifier, "verify", return_value="REPORT") as v:
             self.assertEqual(ht.verify("x = 1\n"), "REPORT")

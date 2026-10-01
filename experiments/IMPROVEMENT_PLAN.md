@@ -47,10 +47,10 @@ and logs; the verified ones are the basis of Stages 7-11:
 
 | rank | work | why | stage |
 |---|---|---|---|
-| 1 | Measure attribution noise: verify one fixed source 5x | An hour, no code beyond a loop; decides whether every later comparison is contaminated | **8a** |
-| 1= | Trajectory log + verification cache (no behaviour change) | Without it nothing below can be evaluated cheaply, and today's logs cannot be replayed | **9a-b** |
-| 2 | Fix the search objective: tie-branch display bug, shaped objective (official score unchanged) | The loop cannot see progress on a crashing script; ~45% of agent runs start there | **7** |
-| 3 | Deterministic entity attribution, LLM mapper as fallback | The unit the score is built on is currently sampled | **8b-c** |
+| 1 | ~~Measure attribution noise: verify one fixed source 5x~~ **done 2026-10-01: large, see Stage 8** | | **8a** |
+| 1= | ~~Trajectory log + verification cache~~ **built 2026-10-01** | Without it nothing below can be evaluated cheaply, and today's logs cannot be replayed | **9a-b** |
+| 2 | ~~Fix the search objective~~ **built 2026-10-01, not yet evaluated:** tie-branch display bug, shaped objective (official score unchanged) | The loop cannot see progress on a crashing script; ~45% of agent runs start there | **7** |
+| 3 | ~~Deterministic entity attribution~~ **8b built 2026-10-01** (8c AST ranges open); LLM mapper as fallback | The unit the score is built on is currently sampled | **8b-c** |
 | 4 | State bank + paired replay; compare policies from identical frozen states | Removes the 0.22 between-run SD from policy comparisons | **9c-d** |
 | 5 | Entity edit as the default action, observation tools, remaining AST gates, ledger | Only meaningful once 7 and 8 are in | **10** |
 | 6 | Width: k candidates per entity, recombine crashed seeds, scoped workers | Serial depth saturates (runs end by stalling, not budget) | **11** |
@@ -924,6 +924,13 @@ stall counter. **Reported scores, the 0.9 pass threshold and every analysis keep
 aggregate.** Apply the same key to **seed selection**: today the best seed is chosen by the forced-zero
 aggregate, so with four crashing seeds the choice among them is arbitrary.
 
+**Built 2026-10-01 (not yet evaluated):** `harness/objective.py` (`search_key`, `better`); the loop accepts a
+candidate when its key improves (review only for candidates that run; shaped progress is recorded as the
+outcome `shaped_progress` and noted to the agent), seeds are ranked by the same key, and the displayed report
+always belongs to the displayed source (a rejected candidate's per-entity scores go into its history entry).
+Tests: `tests/test_search_objective.py` (key ordering and a mocked loop). Evaluate by paired replay (Stage 9d)
+and by the smoke arms once 8b is in, comparing P(runs afterwards) from crashing seeds.
+
 **Risks.** (a) A candidate can "reach" more entities by wrapping code in `try/except`; the review gate and
 the official score still decide the final result, and it is a visible pattern to gate if it appears.
 (b) Shaped progress could keep a doomed script alive; the step cap and wall-clock budget bound it.
@@ -945,7 +952,29 @@ several scripts; compare per-entity scores and the aggregate. Script: `scripts/a
 If the variance is zero, 8b-c is an efficiency and robustness change; if not, it contaminates every
 comparison made so far, including the replicate noise floor in this plan.
 
-**8b. Sentinels the model preserved are authoritative.** Add "every `# r2py:entity:` line present, in
+**8a result (2026-10-01; `scripts/attribution_noise.py`, same source verified repeatedly, unpinned provider):**
+the aggregate of an *unchanged* source moved in **4 of 5 scripts** when entity attribution was re-derived by
+the model: lava 0.469-0.683 (range 0.21), highr 0.438-0.773, rmarkdown 0.734-0.754, timeDate 0.755-0.762,
+lubridate constant (0.804) in one session and 0.438 in another. With the mapping held fixed the aggregate
+did not move at all (0 of 5 scripts): the sandbox and comparators are deterministic; the whole noise is the
+mapping. Two failure modes sit behind it: different line ranges for the same entities, and **mapping failures**
+(the mapper's reply truncates at its token limit and yields invalid JSON), after which verification silently
+falls back to aggregate-only scoring (0.438 where the mapped score was 0.773), and each failure costs two
+8192-token generations (~7 min). **So per-script scores, the 'replicate noise floor' (SD 0.22) and every
+strict-improvement decision the loop made were partly mapping noise.** (The first draft of the fixed-map
+condition passed ranges from the annotated source into a clean-source verification; that was a bug in the
+script, fixed, and does not affect the variance conclusion.)
+
+**8b built (2026-10-01).** `HarnessTools.verify` reads the mapping off the `# r2py:entity:` sentinels when every
+entity mapped by the starting source still has one (`sentinel_mapper.ranges_from_sentinels`, numbered like the
+sentinel-free source that verification runs), with no model call; otherwise it falls back to the model mapper,
+resampled up to 3 times before dropping to aggregate-only scoring; `sentinel_reuse`, `mapping_ok` and
+`mapping_failed` are counted in each run row (`verify_cache`), and the agent is told when sentinels were
+dropped. Checked live on the same two sources: lava 0.5757 x5 (was 0.469-0.683), highr 0.7729 x5 (was
+0.438-0.773), zero mapping calls. **Consequence: scores produced before this change and after it are not
+comparable at the level of single scripts**, and the dev-run arms above carry this noise.
+
+**8b (original design text).** Sentinels the model preserved are authoritative. Add "every `# r2py:entity:` line present, in
 order" to the gate list and tell the agent which are missing. Use the preserved sentinels as the mapping
 and call the LLM mapper only for entities left without one.
 
@@ -965,6 +994,11 @@ candidate source, per-entity scores, outcome class, tokens, latency, and the sto
 the stdout of every run next to its rows (the parallel workers now write `<workdir>/logs`).
 **9b. Verification cache** keyed by (script, source hash): identical sources are not re-run; also makes 8a
 cheap. No behaviour change; do 9a-b first.
+
+**Built 2026-10-01 (9a-b):** `harness/trajectory.py` writes `<outputs>/trajectories/<script>.jsonl` per run
+(run_start, every seed with its source and score, every agent step outcome with the candidate source, action,
+per-entity scores, crash text and prompt hash, `accepted`, run_end); `HarnessTools.verify` caches by source hash
+within a run (`hit` / `miss` in the run row). No behaviour change besides identical sources scoring identically.
 
 **9c. State bank.** Collect `(script, source, report)` states from *new* runs. **Correction to the insights
 document:** it proposes building the bank from the recorded training rewrites and smoke runs, but those logs

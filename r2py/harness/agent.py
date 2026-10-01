@@ -10,6 +10,9 @@ from typing import TYPE_CHECKING
 
 from ..stage0.env.module_check import unavailable_imports
 from ..stage2.argorder import repair_argument_order
+from ..stage2.sentinel_mapper import ranges_from_sentinels
+from . import objective as _obj
+from . import trajectory as _trajectory
 from ..stage2 import llm as _llm
 from ..stage2.llm import TruncatedResponseError
 from . import prompt as _prompt
@@ -27,8 +30,13 @@ from ..stage2.stitch import (
 agent_stats: dict[str, Counter] = {"action": Counter(), "outcome": Counter(), "stop": Counter()}
 
 
+_ctx: dict = {}  # the step being run: filled in as the step progresses, logged with each outcome
+
+
 def _stat(kind: str, key: str) -> None:
     agent_stats[kind][key] += 1
+    if kind == "outcome":
+        _trajectory.log("step", outcome=key, **_ctx)
 
 
 def drain_agent_stats() -> dict:
@@ -72,6 +80,8 @@ def reason(
         r_source, entities, entity_bundles,
     )
     best_source = current_source
+    if hasattr(harness, "note_reference"):
+        harness.note_reference(current_source)
     best_score = score_report.aggregate
     report = score_report
     history: list[str] = []
@@ -160,6 +170,11 @@ def reason(
             turn_system = _prompt.ENTITY_REPAIR_SYSTEM
             print(f"[Agent]   Targeting entity {repair_eid} for repair")
 
+        _ctx.clear()
+        _ctx.update(step=step, best_score=round(best_score, 4), best_hash=_trajectory.source_hash(best_source),
+                    prompt_hash=_trajectory.source_hash(json.dumps(messages, default=str)),
+                    entity_repair=repair_eid)
+        t_llm = time.monotonic()
         truncated = False
         try:
             raw = _llm.call(
@@ -219,6 +234,7 @@ def reason(
                 continue
 
         action_type = action.get("action", "")
+        _ctx.update(action=action_type, entity=action.get("entity"), llm_s=round(time.monotonic() - t_llm, 1))
         print(f"[Agent]   Step {step}: {action_type}")
         _stat("action", action_type)
 
@@ -309,6 +325,7 @@ def reason(
                     "arguments (legal in R, a SyntaxError in Python). The harness reordered them "
                     "(positional first). Write positional arguments first yourself.")
 
+            _ctx.update(source=new_source, source_hash=_trajectory.source_hash(new_source))
             source_lines = len(new_source.splitlines())
             print(f"[Agent]   Rewrite: {source_lines} lines")
 
@@ -361,6 +378,17 @@ def reason(
                 )
                 continue
 
+            # Attribution is read off the entity sentinels when they all survive; tell the agent when
+            # some did not, because then a model has to re-derive the mapping (less reliable).
+            lost = sorted(getattr(harness, "_mapped_eids", set()) - set(ranges_from_sentinels(new_source)))
+            if lost:
+                print(f"[Agent]   {len(lost)} entity sentinel(s) missing: {lost[:6]}")
+                _stat("outcome", f"{action_type}:sentinels_missing")
+                history.append(
+                    f"Step {step}: NOTE — {len(lost)} `# r2py:entity:` comment(s) were dropped "
+                    f"({', '.join(lost[:6])}). Entity attribution then has to be re-derived by a model, "
+                    "which is less reliable. Keep every `# r2py:entity:` line.")
+
             try:
                 new_report = harness.verify(new_source)
             except Exception as exc:
@@ -381,17 +409,25 @@ def reason(
                     crash_msg = (detailed[0] if detailed else crash_fb[0]).message
                     print(f"[Agent]   Crash: {crash_msg[:300]}")
 
+            _ctx.update(
+                aggregate=round(new_report.aggregate, 4), exit_code=new_report.py_exit_code,
+                crash=crash_msg[:600],
+                per_entity={eid: round(_entity_score(es), 3) for eid, es in new_report.by_entity.items()})
             _stat("outcome", f"{action_type}:" + (
                 "improved" if new_report.aggregate > best_score + 1e-9 else
                 "catastrophic" if (best_score - new_report.aggregate) >= CATASTROPHIC_DROP
                 or (new_report.aggregate == 0.0 and best_score > 0.0) else
                 "worse" if new_report.aggregate < best_score - 1e-9 else "unchanged"))
-            if new_report.aggregate > best_score:
-                # Code review gate: check for rule violations before adopting
-                passed, reason = review_translation(
-                    r_source, new_source, script_map, model=model,
-                    unavailable_packages=unavailable_packages,
-                )
+            if _obj.better(new_report, report):
+                # Code review gate: check for rule violations before adopting. A candidate that
+                # still crashes is only a stepping stone (Stage 7); the review judges what runs.
+                if new_report.py_exit_code == 0:
+                    passed, reason = review_translation(
+                        r_source, new_source, script_map, model=model,
+                        unavailable_packages=unavailable_packages,
+                    )
+                else:
+                    passed, reason = True, ""
                 if not passed:
                     print(f"[Review]  FAILED: {reason}")
                     _stat("outcome", f"{action_type}:review_rejected")
@@ -408,7 +444,6 @@ def reason(
                             "(not adopted: the anti-hardcoding review could not run). "
                             "Resubmit the same approach."
                         )
-                        report = new_report
                         continue
                     history.append(
                         f"Step {step}: rewrite -> {new_report.aggregate:.3f} "
@@ -416,21 +451,28 @@ def reason(
                         "Your code contains hardcoded values — you must COMPUTE "
                         "results, not copy expected output as literals.\n"
                         "Rejected code:\n```python\n"
-                        f"{rejected_snippet}\n```"
+                        f"{rejected_snippet}\n```" + _scores_note(new_report)
                     )
-                    # Show the rejected rewrite's comparisons on the next
-                    # turn so the agent sees which parts were correct vs.
-                    # hardcoded, rather than falling back to the stale seed
-                    # comparisons.
-                    report = new_report
+                    # `report` stays the report of the source the agent is shown (best_source):
+                    # showing a rejected candidate's comparisons next to a different program
+                    # misleads. Its per-entity scores are in the history entry instead.
                 else:
                     print(f"[Review]  PASSED")
+                    _trajectory.log("accepted", **_ctx)
                     best_source = harness.last_annotated_source or new_source
+                    progress_only = new_report.aggregate <= best_score + 1e-9
                     best_score = new_report.aggregate
                     report = new_report
                     stall_count = 0
-                    history.append(
-                        f"Step {step}: rewrite -> {new_report.aggregate:.3f} (ACCEPTED)")
+                    if progress_only:
+                        _stat("outcome", f"{action_type}:shaped_progress")
+                        history.append(
+                            f"Step {step}: rewrite -> {new_report.aggregate:.3f} (ACCEPTED as progress: it "
+                            "still crashes, but more of the script now runs or the entities that run score "
+                            f"better).{_scores_note(new_report)}")
+                    else:
+                        history.append(
+                            f"Step {step}: rewrite -> {new_report.aggregate:.3f} (ACCEPTED)")
             else:
                 stall_count += 1
                 crash_detail = f" Python error: {crash_msg}" if crash_msg else ""
@@ -458,13 +500,14 @@ def reason(
                     )
                 else:
                     history.append(
-                        f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count}).{crash_detail}")
-                report = new_report if new_report.aggregate == best_score else report
+                        f"Step {step}: rewrite -> {new_report.aggregate:.3f} (rejected, stall {stall_count})."
+                        f"{crash_detail}{_scores_note(new_report)}")
+                # `report` is NOT replaced here: it must keep belonging to best_source.
 
         else:
             history.append(f"Step {step}: unknown action {action_type!r}")
 
-    if best_score > score_report.aggregate:
+    if _obj.better(report, score_report):
         print(f"[Agent]   Improved: {score_report.aggregate:.3f} -> {best_score:.3f}")
         return best_source, report
 
@@ -934,11 +977,15 @@ def _check_syntax(source: str) -> str | None:
 ENTITY_REPAIR_MAX_STALLS = 6
 
 
-def _entity_score(es) -> float:
-    if not es.executed_ok:
-        return 0.0
-    dims = [getattr(es, d) for d in es.active_dims]
-    return sum(dims) / len(dims) if dims else 1.0
+_entity_score = _obj.entity_score
+
+
+def _scores_note(rep, limit: int = 12) -> str:
+    """One line with a candidate's per-entity scores (worst first), for the history entry."""
+    items = sorted(((eid, _entity_score(es)) for eid, es in rep.by_entity.items()), key=lambda kv: kv[1])
+    if not items:
+        return ""
+    return " Per-entity scores of that version: " + ", ".join(f"{e}={v:.2f}" for e, v in items[:limit]) + "."
 
 
 def _pick_repair_entity(report, best_source: str, tries: dict[str, int], max_tries: int = 2) -> str | None:

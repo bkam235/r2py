@@ -109,6 +109,8 @@ def run_loop(
     from .harness.agent import reason as _reason
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
     from .stage2.sentinel_mapper import flatten_entity_line_map as _flatten
+    from .harness import objective as _obj
+    from .harness import trajectory as _trajectory
     from .harness.review import review_translation as _review
     from .harness.audit import static_audit as _audit, format_audit_for_agent as _fmt_audit
 
@@ -214,6 +216,9 @@ def run_loop(
             _sidecar_fn, _shim_expected_names, entities, verify_kwargs,
         )
 
+        _trajectory.log("seed", label=seed_label, aggregate=round(alt_decomp.aggregate, 4),
+                        exit_code=alt_decomp.py_exit_code, source=alt_seed,
+                        source_hash=_trajectory.source_hash(alt_seed))
         if best_decomp is None:
             best_source = alt_seed
             best_decomp = alt_decomp
@@ -221,7 +226,7 @@ def run_loop(
             _emit(progress, kind="seed_done", score=alt_decomp.aggregate)
         else:
             print(f"[Seed]    {seed_label} score: {alt_decomp.aggregate:.3f}")
-            if alt_decomp.aggregate > best_decomp.aggregate:
+            if _obj.better(alt_decomp, best_decomp):
                 if alt_decomp.aggregate >= score_threshold:
                     alt_passed, alt_reason = _review(
                         r_source, alt_seed, script_map, model=escalation_model,
@@ -229,7 +234,7 @@ def run_loop(
                     if not alt_passed:
                         print(f"[Review]  Seed {seed_label} FAILED: {alt_reason}")
                         alt_decomp = _penalise_reviewed(alt_decomp)
-                if alt_decomp.aggregate > best_decomp.aggregate:
+                if _obj.better(alt_decomp, best_decomp):
                     best_source = alt_seed
                     best_decomp = alt_decomp
                     entity_line_map = alt_elmap
@@ -288,7 +293,7 @@ def run_loop(
     if agent_result is not None:
         improved, agent_report = agent_result
         score_history.append(agent_report)
-        if agent_report.aggregate > best_decomp.aggregate:
+        if _obj.better(agent_report, best_decomp):
             best_source = improved
             best_decomp = agent_report
 

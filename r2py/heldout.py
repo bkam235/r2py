@@ -368,9 +368,10 @@ def _drain_diagnostics() -> dict:
     """Shadow-fixer outcomes and review failures since the last call, for the run's row."""
     from r2py.harness.agent import drain_agent_stats
     from r2py.harness.review import review_stats
+    from r2py.harness.tools import drain_cache_stats
     from r2py.stage2.stitch import drain_shadow_log
     out = {"shadow_fixers": drain_shadow_log(), "review_failures": dict(review_stats),
-           "agent": drain_agent_stats()}
+           "agent": drain_agent_stats(), "verify_cache": drain_cache_stats()}
     for k in review_stats:
         review_stats[k] = 0
     return out
@@ -387,7 +388,11 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
     from r2py.loop import run_loop
     from r2py.stage1 import analyze
 
+    from r2py.harness import trajectory
+
     py_path.parent.mkdir(parents=True, exist_ok=True)
+    trajectory.begin(py_path.parent / "trajectories" / (py_path.stem + ".jsonl"),
+                     script=r_path.name, learn=learn, model=cfg["model"])
     script_map = analyze(r_path)
     result = run_loop(
         script_map, lib,
@@ -406,6 +411,8 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         agent_entity_repair=cfg.get("entity_repair", False),
     )
     py_path.write_text(result.python_source, encoding="utf-8")
+    trajectory.end(final_score=round(result.final_score, 4), iterations=result.iterations,
+                   final_hash=trajectory.source_hash(result.python_source))
     # Seed from every run. seed_from_translation keeps only entities at or above
     # entity_score_threshold, so a sub-threshold script still teaches the statements
     # that verified against R. The old script-level gate discarded those: in the first

@@ -182,7 +182,7 @@ class TestTranslateOnce(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
         self.addCleanup(tmp.cleanup)
         fake = SimpleNamespace(python_source="x = 1\n", final_score=score, final_score_report=None,
-                               seed_source="", score_history=[])
+                               seed_source="", score_history=[], iterations=1)
         cfg = ho.DEFAULT_PROTOCOL["translate"]
         with patch.object(r2py.stage1, "analyze", autospec=True), \
              patch.object(r2py.loop, "run_loop", autospec=True, return_value=fake) as loop, \
@@ -216,7 +216,8 @@ class TestTranslateOnce(unittest.TestCase):
         tmp = tempfile.TemporaryDirectory(ignore_cleanup_errors=True)
         self.addCleanup(tmp.cleanup)
         fake = SimpleNamespace(python_source="final\n", final_score=0.95, final_score_report="final report",
-                               seed_source="seed src", score_history=["seed report", "final report"])
+                               seed_source="seed src", score_history=["seed report", "final report"],
+                               iterations=1)
         with patch.object(r2py.stage1, "analyze", autospec=True), \
              patch.object(r2py.loop, "run_loop", autospec=True, return_value=fake), \
              patch.object(r2py, "seed_from_translation", autospec=True) as seed, \

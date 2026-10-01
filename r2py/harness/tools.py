@@ -6,6 +6,8 @@ pattern library queries, and entity information retrieval.
 """
 from __future__ import annotations
 
+import hashlib
+from collections import Counter
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -14,6 +16,18 @@ if TYPE_CHECKING:
     from ..library.pattern import Pattern
     from ..stage1.script_map import ScriptMap
     from ..types import ScoreReport
+
+
+# Verification cache outcomes (hit / miss), per process; drained into each run's row.
+cache_stats: Counter = Counter()
+
+MAPPING_TRIES = 3  # a failed mapping is resampled before falling back to aggregate-only scoring
+
+
+def drain_cache_stats() -> dict:
+    out = dict(cache_stats)
+    cache_stats.clear()
+    return out
 
 
 class HarnessTools:
@@ -42,32 +56,64 @@ class HarnessTools:
         self._docs_cache: dict[str, str] = {}
         self._probe_history: list[tuple[str, str]] = []
         self.last_annotated_source: str = ""
+        # (source hash) -> (report, annotated source): the same source is verified once per run.
+        # The agent resubmits identical candidates (3-5 times in a row in the entity-repair arm),
+        # and a repeat should cost nothing and, because entity attribution is an LLM call, must
+        # also score the same.
+        self._verify_cache: dict[str, tuple] = {}
+        # Entity ids the current best source maps (see note_reference); a candidate that keeps all
+        # of their sentinels is attributed by reading them, with no model call.
+        self._mapped_eids: set[str] = set()
         self._r_packages = _collect_r_packages(script_map)
+
+    def note_reference(self, annotated_source: str) -> None:
+        """Record which entities the (sentinel-annotated) starting source maps."""
+        from ..stage2.sentinel_mapper import ranges_from_sentinels
+        self._mapped_eids = set(ranges_from_sentinels(annotated_source))
 
     def verify(self, python_source: str) -> "ScoreReport":
         """Run Stage 4 verification, return full ScoreReport with comparisons."""
         from ..stage2.sentinel_mapper import (
             map_entities_to_lines, strip_sentinels, insert_sentinels,
-            flatten_entity_line_map, SentinelMappingError,
+            flatten_entity_line_map, ranges_from_sentinels, SentinelMappingError,
         )
         from ..stage4 import verifier
 
         clean = strip_sentinels(python_source)
-        try:
-            entity_ranges = map_entities_to_lines(
-                self._script_map, clean, model=self._model,
-            )
-        except SentinelMappingError as exc:
-            # As on the seed path: score without per-entity attribution rather than lose
-            # the step (a failed mapping used to fail the whole verification, 8 steps running).
-            print(f"r2py: sentinel mapping failed, using aggregate-only scoring: {exc}")
-            entity_ranges = {}
+        key = hashlib.sha1(clean.encode("utf-8")).hexdigest()
+        if key in self._verify_cache:
+            cache_stats["hit"] += 1
+            report, self.last_annotated_source = self._verify_cache[key]
+            return report
+        cache_stats["miss"] += 1
+        kept = ranges_from_sentinels(python_source)
+        if self._mapped_eids and self._mapped_eids <= set(kept):
+            # Every entity's sentinel survived: read the mapping off them. Asking a model to re-derive
+            # it each time gave the same source aggregates from 0.44 to 0.77 (attribution noise).
+            entity_ranges = {e: r for e, r in kept.items() if e in self._mapped_eids}
+            cache_stats["sentinel_reuse"] += 1
+        else:
+            entity_ranges = None
+            for attempt in range(MAPPING_TRIES):
+                try:
+                    entity_ranges = map_entities_to_lines(self._script_map, clean, model=self._model)
+                    cache_stats["mapping_ok"] += 1
+                    self._mapped_eids = set(entity_ranges)
+                    break
+                except SentinelMappingError as exc:
+                    print(f"r2py: sentinel mapping failed (attempt {attempt + 1}/{MAPPING_TRIES}): {exc}")
+            if entity_ranges is None:
+                # As on the seed path: score without per-entity attribution rather than lose the
+                # step. This silently changes the score (0.44 instead of 0.77 on one script), so
+                # it is counted.
+                cache_stats["mapping_failed"] += 1
+                entity_ranges = {}
         self.last_annotated_source = insert_sentinels(clean, entity_ranges)
         entity_line_map = flatten_entity_line_map(entity_ranges)
         kw = {k: v for k, v in self._verify_kwargs.items()
               if k not in ("data_compare", "entity_line_map",
                            "sidecar_filename", "timeout_s")}
-        return verifier.verify(
+        report = verifier.verify(
             self._script_map,
             clean,
             data_compare=self._data_compare,
@@ -76,6 +122,8 @@ class HarnessTools:
             timeout_s=self._timeout_s,
             **kw,
         )
+        self._verify_cache[key] = (report, self.last_annotated_source)
+        return report
 
     def probe_r(self, r_expression: str) -> str:
         """Run an R expression in sandbox and return its stdout.
