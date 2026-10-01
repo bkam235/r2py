@@ -625,6 +625,22 @@ Fix: syntax-check the **assembled** file rather than the fragment, and on any ru
 > first live check had a 38% catastrophic share, which Stage 7 (crash cliff) and Stage 8 (re-sampled
 > attribution) predict; judge the idea after those fixes, by paired replay (Stage 9).
 
+> **Entity-repair A/B result (2026-10-01; arms `work/smoke/20261001_065131` off, `..._082137` on; 24 dev scripts,
+> `empty` library, new harness in both):** mean 0.731 off vs 0.662 on (paired diff -0.070, SE 0.082, p = 0.64).
+> The SD of the paired difference is **0.40**, well above the 0.224 replicate noise, so the treatment itself
+> moves scores per script. Split by whether the seed ran: **scripts whose best seed ran (start > 0, n = 11):
+> -0.006 (3 wins, 2 losses), no effect; scripts whose seeds all crashed (start = 0.00, n = 11): -0.146 (4 wins,
+> 4 losses), with three scripts that full rewrites rescued to 0.90-1.00 (ggplot2, googledrive, hms) staying at 0.**
+> Mechanism, read from the logs: on a crashing script an entity repair cannot register progress (the aggregate
+> is 0.0 before and after), so each attempt looks like a stall; the model also repeated the same failing
+> fragment 3-5 times because import/syntax/review rejections never reach the per-entity notes (only score
+> outcomes do). Seed start scores are identical to two decimals across all four arms for most scripts, so the
+> variance lives in the agent stage. Same comparison, new harness vs old (X vs the earlier replicate arms):
+> syntax rejections 13 / 6 -> 1 (argument-order repair), shim restores 12, mean 0.731 vs 0.723 / 0.684, no
+> detectable score change. **Conclusion: do not adopt entity repair as built; it needs Stage 7 (a progress
+> signal on crashing scripts) first. Cheap stop-gaps: use it only when the best source runs, and feed every
+> rejection reason into the entity notes.**
+
 **No — it should be its own change, but it is the highest-value one.**
 
 Reasons to separate it:
