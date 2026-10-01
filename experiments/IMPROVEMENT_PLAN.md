@@ -625,7 +625,25 @@ Fix: syntax-check the **assembled** file rather than the fragment, and on any ru
 > first live check had a 38% catastrophic share, which Stage 7 (crash cliff) and Stage 8 (re-sampled
 > attribution) predict; judge the idea after those fixes, by paired replay (Stage 9).
 
-> **Entity-repair A/B result (2026-10-01; arms `work/smoke/20261001_065131` off, `..._082137` on; 24 dev scripts,
+> **Update, 2026-10-01 evening - entity repair on the stabilised harness (sentinel attribution, shaped objective,
+> arg-order repair; 24 dev scripts, `empty` library; arms in `work/smoke/`: `..._112951` repair off,
+> `..._140509` on with crash-traceback targeting, `..._165951` on with fragment re-indenting and escalation to a
+> full rewrite after two failed repairs).** Means 0.710 / 0.695 / 0.694; none differs from `off` beyond noise
+> (p = 0.88 / 0.97). Findings: (1) with attribution stabilised the SD of paired per-script differences fell
+> from 0.40 to 0.22 once the two entity-repair defects were fixed (the earlier 0.40 was largely those defects);
+> (2) targeting by the crash traceback's outermost frame raised the entity-repair improve rate from 19% to 30%;
+> (3) a real bug, fragments spliced unindented into a block ("unexpected indent"), and the missing escalation
+> were what collapsed `googledrive` and `ggplot2`; with escalation both recover and no script collapses;
+> (4) the approaches are complementary (per-script best of `off` and `on` = 0.794) but their sum, as built,
+> only matches `off`; (5) **seeds are a lottery**: the same script's best seed differed between arms in 10 of
+> the 22 scripts whose agent ran (e.g. isoband 0.861 in two arms, 0.000 in the third), so final-score
+> comparisons between arms are contaminated by the seed stage, which the agent change cannot affect. Among the
+> 12 scripts with an identical starting state in both arms, escalation vs off is +0.045 (2 wins, 1 loss, 9 ties).
+> **Conclusion: entity repair with escalation is neutral on this evidence, not an improvement; the comparison
+> that can resolve it starts every policy from the same frozen state (Stage 9c-d, now buildable from the
+> trajectory logs, which hold each run's seeds and sources).**
+
+> **Entity-repair A/B result (2026-10-01, earlier, before the stabilising fixes; arms `work/smoke/20261001_065131` off, `..._082137` on; 24 dev scripts,
 > `empty` library, new harness in both):** mean 0.731 off vs 0.662 on (paired diff -0.070, SE 0.082, p = 0.64).
 > The SD of the paired difference is **0.40**, well above the 0.224 replicate noise, so the treatment itself
 > moves scores per script. Split by whether the seed ran: **scripts whose best seed ran (start > 0, n = 11):

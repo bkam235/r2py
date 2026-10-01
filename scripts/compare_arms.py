@@ -58,7 +58,9 @@ def outcomes(rows: dict[str, dict]) -> tuple[dict[str, Counter], Counter, Counte
         actions.update(a.get("action", {}))
         stops.update(a.get("stop", {}))
         for key, n in (a.get("outcome") or {}).items():
-            action, kind = key.split(":", 1)
+            action, _, kind = key.partition(":")   # e.g. "rewrite:improved", or a bare "escalated_to_rewrite"
+            if not kind:
+                action, kind = "(loop)", action
             by_action.setdefault(action, Counter())[kind] += n
     return by_action, stops, actions
 
