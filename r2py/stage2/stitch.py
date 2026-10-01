@@ -322,8 +322,15 @@ def splice_entity(source: str, eid: str, body: str) -> tuple[str | None, str]:
     if len(spans) > 1:
         return None, f"entity {eid!r} has {len(spans)} separate spans; use a full rewrite for it"
     start, end = spans[0]
-    fragment = [l for l in body.splitlines() if not _SENTINEL_RE.match(l)]
     lines = source.splitlines()
+    # The model writes the fragment at column 0; if the entity sits inside a block (a function body,
+    # an `if`), splicing it unindented is an "unexpected indent" syntax error. Re-indent it to the
+    # indentation of the code it replaces, keeping its own relative indentation.
+    existing = next((l for l in lines[start:end] if l.strip()), "")
+    prefix = existing[:len(existing) - len(existing.lstrip())]
+    import textwrap
+    kept = [l for l in body.splitlines() if not _SENTINEL_RE.match(l)]
+    fragment = textwrap.indent(textwrap.dedent("\n".join(kept)), prefix).splitlines() if prefix else kept
     return "\n".join(lines[:start] + fragment + lines[end:]) + "\n", ""
 
 

@@ -73,3 +73,20 @@ class TestRejectionNotes(unittest.TestCase):
         agent._note_rejection(notes, "rewrite", {}, "ignored")
         agent._note_rejection(notes, "entity_repair", {"entity": "e3"}, "syntax error: line 2")
         self.assertEqual(notes, {"e3": ["imported x", "syntax error: line 2"]})
+
+
+class TestSpliceIndent(unittest.TestCase):
+    def test_fragment_takes_the_indentation_of_the_code_it_replaces(self):
+        from r2py.stage2.stitch import splice_entity
+        # insert_sentinels writes sentinels at column 0 even inside a block
+        src = "def f():\n# r2py:entity:e1\n    a = 1\n    b = 2\n# r2py:entity:e2\n    c = 3\n"
+        out, err = splice_entity(src, "e1", "a = 10\nif a:\n    b = 20")
+        self.assertEqual(err, "")
+        self.assertEqual(out, "def f():\n# r2py:entity:e1\n    a = 10\n    if a:\n        b = 20\n# r2py:entity:e2\n    c = 3\n")
+        import ast
+        ast.parse(out)
+
+    def test_module_level_entities_are_untouched_by_the_reindent(self):
+        from r2py.stage2.stitch import splice_entity
+        out, _ = splice_entity("# r2py:entity:e1\na = 1\n", "e1", "a = 2\n")
+        self.assertEqual(out, "# r2py:entity:e1\na = 2\n")

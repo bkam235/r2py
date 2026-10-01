@@ -113,6 +113,7 @@ def reason(
     stall_count = 0
     entity_tries: dict[str, int] = {}          # entity repairs attempted, per entity
     entity_notes: dict[str, list[str]] = {}    # what each failed attempt looked like
+    repair_misses = 0                          # consecutive non-improving attempts in entity-repair mode
     # Wall-clock, not step count: the worst script of the first training run burned
     # 10.7h in only 6 rewrites, so a step limit never reached it.
     deadline = time.monotonic() + budget_s if budget_s else None
@@ -144,7 +145,14 @@ def reason(
         # Harness-driven targeted repair: the model does not choose replace_entity on its own
         # (1 use in 84 actions), so the harness picks the failing entity and asks for just that.
         repair_eid = None
-        if entity_repair and not (step == 1 and best_score == 0.0):
+        # Escalation: two failed repairs in a row, then one full rewrite (the two approaches won on
+        # different scripts in the smoke arms: best-of-two 0.794 against 0.71 / 0.695 each).
+        escalate = repair_misses >= ENTITY_REPAIR_ESCALATE_AFTER
+        if escalate:
+            print("[Agent]   Escalating to a full rewrite after failed entity repairs")
+            _stat("outcome", "escalated_to_rewrite")
+            repair_misses = 0
+        if entity_repair and not escalate and not (step == 1 and best_score == 0.0):
             repair_eid = _pick_repair_entity(report, best_source, entity_tries)
         turn_system = system_prompt
 
@@ -165,6 +173,7 @@ def reason(
 
         if repair_eid is not None:
             entity_tries[repair_eid] = entity_tries.get(repair_eid, 0) + 1
+            repair_misses += 1   # assume a miss; acceptance resets it
             messages = _build_entity_repair(
                 script_map, r_source, best_source, report, repair_eid, entity_notes.get(repair_eid, []))
             turn_system = _prompt.ENTITY_REPAIR_SYSTEM
@@ -464,6 +473,7 @@ def reason(
                     print(f"[Review]  PASSED")
                     _trajectory.log("accepted", **_ctx)
                     best_source = harness.last_annotated_source or new_source
+                    repair_misses = 0
                     progress_only = new_report.aggregate <= best_score + 1e-9
                     best_score = new_report.aggregate
                     report = new_report
@@ -979,6 +989,7 @@ def _check_syntax(source: str) -> str | None:
 
 
 ENTITY_REPAIR_MAX_STALLS = 6
+ENTITY_REPAIR_ESCALATE_AFTER = 2
 
 
 _entity_score = _obj.entity_score
