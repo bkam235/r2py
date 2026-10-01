@@ -105,7 +105,16 @@ def build_data_shim(
         f"(_r2py_shim_Path(__file__).parent / {sidecar_filename!r}).read_text(encoding='utf-8'))",
         f"for _r2py_shim_n in {names_literal}:",
         "    if _r2py_shim_n in _r2py_shim_data:",
-        "        globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]",
+        "        _r2py_shim_v = _r2py_shim_data[_r2py_shim_n]",
+        # R data frames arrive as {column: [values]}; the translation was told they are data frames
+        # (and writes `.iloc`, `.columns`, passes them to plotnine), so hand it a DataFrame. 19 of 255
+        # logged seeds crashed on `'dict' object has no attribute ...` before this.
+        "        if (isinstance(_r2py_shim_v, dict) and _r2py_shim_v and "
+        "all(isinstance(_c, list) for _c in _r2py_shim_v.values()) and "
+        "len({len(_c) for _c in _r2py_shim_v.values()}) == 1):",
+        "            import pandas as _r2py_shim_pd",
+        "            _r2py_shim_v = _r2py_shim_pd.DataFrame(_r2py_shim_v)",
+        "        globals()[_r2py_shim_n] = _r2py_shim_v",
     ])
     return (
         DATA_SHIM_BEGIN

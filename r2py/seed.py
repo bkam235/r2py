@@ -14,6 +14,8 @@ from .stage2.stitch import (
     remove_shim_overrides,
     shadow_autofix,
 )
+from collections import Counter
+
 from . import __version__ as _r2py_version
 
 if TYPE_CHECKING:
@@ -73,6 +75,57 @@ _MAX_BASE_PATTERNS_IN_PROMPT = 8
 
 _COMMENT_RE = re.compile(r"^#[^\n]*\n", re.MULTILINE)
 
+# Outcomes of the seed gate in this process: found / fixed / still_broken (drained into run rows).
+seed_gate_stats: Counter = Counter()
+
+
+def seed_problems(code: str) -> list[str]:
+    """What is wrong with a seed before it is run: the checks the agent loop already applies to
+    its rewrites (syntax under the interpreter that will run it, imports that cannot resolve).
+    In 255 logged seeds 7 failed on syntax and 56 on an import."""
+    from .stage0.env.module_check import unavailable_imports
+    from .stage0.env.py_runtime import syntax_error_in_sandbox_python
+    from .stage0.sandbox.py_sandbox import _SKIP_PACKAGES
+
+    problems: list[str] = []
+    err = syntax_error_in_sandbox_python(code)
+    if err:
+        problems.append(f"syntax error on line {err['lineno']}: {err['msg']}")
+        return problems  # imports of unparseable code are not meaningful
+    bad = unavailable_imports(code, _SKIP_PACKAGES)
+    if bad:
+        problems.append(
+            "these imports cannot be resolved (not installed, not on PyPI; they are R package names, "
+            f"not Python modules): {', '.join(bad)}. Do not import them; use the Python libraries that "
+            "provide the same function, or implement it")
+    return problems
+
+
+def _corrective_round(messages: list[dict], system_prompt: str, raw: str, code: str, model: str) -> str:
+    """One corrective turn if the seed has a problem the gates can see; keep the better version."""
+    problems = seed_problems(code)
+    if not problems:
+        return code
+    seed_gate_stats["found"] += 1
+    print(f"[Seed]    Gate: {'; '.join(problems)[:200]} -- asking for a corrected version", file=sys.stderr)
+    try:
+        fixed_raw = _llm.call(
+            messages + [{"role": "assistant", "content": raw},
+                        {"role": "user", "content": "This Python cannot run:\n- " + "\n- ".join(problems)
+                         + "\nReturn the complete corrected Python code only."}],
+            system_prompt, model=model)
+    except Exception as exc:
+        print(f"[Seed]    corrective round failed: {exc}", file=sys.stderr)
+        seed_gate_stats["still_broken"] += 1
+        return code
+    fixed = _extract_python(fixed_raw)
+    remaining = seed_problems(fixed)
+    if not remaining:
+        seed_gate_stats["fixed"] += 1
+        return fixed
+    seed_gate_stats["still_broken"] += 1
+    return fixed if len(remaining) < len(problems) else code
+
 
 def translate(
     script_map: "ScriptMap",
@@ -84,6 +137,7 @@ def translate(
     no_seeds: bool = False,
     r_path: str = "",
     bare: bool = False,
+    gate: bool = True,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Translate an R script to Python via a single whole-file LLM call.
 
@@ -110,6 +164,8 @@ def translate(
         raw = "# r2py: seed translation failed"
 
     python_code = _extract_python(raw)
+    if gate:
+        python_code = _corrective_round(messages, system_prompt, raw, python_code, model)
     shadow_autofix(python_code, "seed")
     python_code, n_reordered = repair_argument_order(python_code)
     if n_reordered:

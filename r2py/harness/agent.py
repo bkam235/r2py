@@ -66,6 +66,7 @@ def reason(
     audit_feedback: str = "",
     replace_entity: bool = True,
     entity_repair: bool = False,
+    escalate_after: "int | None" = None,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -147,7 +148,7 @@ def reason(
         repair_eid = None
         # Escalation: two failed repairs in a row, then one full rewrite (the two approaches won on
         # different scripts in the smoke arms: best-of-two 0.794 against 0.71 / 0.695 each).
-        escalate = repair_misses >= ENTITY_REPAIR_ESCALATE_AFTER
+        escalate = repair_misses >= (ENTITY_REPAIR_ESCALATE_AFTER if escalate_after is None else escalate_after)
         if escalate:
             print("[Agent]   Escalating to a full rewrite after failed entity repairs")
             _stat("outcome", "escalated_to_rewrite")

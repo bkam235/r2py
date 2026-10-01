@@ -369,9 +369,12 @@ def _drain_diagnostics() -> dict:
     from r2py.harness.agent import drain_agent_stats
     from r2py.harness.review import review_stats
     from r2py.harness.tools import drain_cache_stats
+    from r2py.seed import seed_gate_stats
     from r2py.stage2.stitch import drain_shadow_log
     out = {"shadow_fixers": drain_shadow_log(), "review_failures": dict(review_stats),
-           "agent": drain_agent_stats(), "verify_cache": drain_cache_stats()}
+           "agent": drain_agent_stats(), "verify_cache": drain_cache_stats(),
+           "seed_gate": dict(seed_gate_stats)}
+    seed_gate_stats.clear()
     for k in review_stats:
         review_stats[k] = 0
     return out
