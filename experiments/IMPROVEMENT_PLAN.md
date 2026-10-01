@@ -1,4 +1,76 @@
-# Improvement plan — harness changes after the current scoring run
+# Improvement plan — harness and agent loop
+
+> **Revised 2026-10-01** after reading `r2py_harness_insights.md` (a comparison with agentic coding
+> harnesses) and checking its claims against the code and the smoke-test logs. The stage list below the
+> next section is unchanged history; **new work is Stages 7-11**, ranked in the table that follows.
+> The long status paragraphs that used to open this file are now the *Implementation log* further down.
+
+## Where we are, and what comes next
+
+**State.** The first held-out experiment is closed (null, p = 0.0569). The measurement instrument has been
+repaired (Stage 0), the agent loop has deterministic gates (shim, argument order, syntax, imports, review),
+`replace_entity` and a harness-driven entity-repair mode exist, translations run on Python 3.13, and a
+parallel development run (`experiments/dev_run/`) plus smoke-test arms give descriptive numbers. The pattern
+library is **frozen**: its script-level ceiling is +0.011..+0.035 while per-script run-to-run noise is
+SD 0.22, so one library A/B needs ~440 paired runs.
+
+**What the insights document changed.** It argues that the lever is not the agent interface but what the
+loop optimises, how entities are attributed, and how we evaluate. I checked the claims it makes about code
+and logs; the verified ones are the basis of Stages 7-11:
+
+| Claim | Check | Result |
+|---|---|---|
+| A crash forces the aggregate to exactly 0.0 | `stage4/verifier.py:~912` (`if r_bundle.exit_code == 0 and py_bundle.exit_code != 0: aggregate = 0.0`) | **confirmed** |
+| About half the agent runs start at 0.000 (9 of 21 and 11 of 21) | regex over the two smoke arms' logs | **confirmed** exactly |
+| 16 and 14 of 68 agent rewrites ended in a Python crash; 4 and 8 were 0.0 -> 0.0 ties | same | **confirmed** exactly |
+| Best-of-two across the replicate arms 0.752 vs mean single run 0.703 | from `rows.w*.jsonl` | **confirmed** (a rough estimate, not a test) |
+| Every verification re-maps entities with an LLM call | `harness/tools.py` `verify()` -> `map_entities_to_lines`, same model and temperature as the translator | **confirmed**; the variance this causes is **not measured** |
+| On a tie the agent sees a report from a program that is not the source shown | `agent.py`: `report = new_report if new_report.aggregate == best_score else report`; the prompt shows `best_source` | **confirmed in code**, impact not measured |
+| Audit findings disappear after about five steps | `build_agent_turn` keeps the last 5 non-probe history items; findings are `history[0]` | **confirmed in code** |
+| A state bank can be built "from the recorded 1,424 training rewrites and the smoke runs" | the logs hold scores and line counts, **not sources** | **not possible from existing data**: states must be logged from new runs (Stage 9) |
+
+**How this fits the earlier plan.**
+
+- It agrees with the 2026-09-29 reassessment: the library is not the lever, and the agent loop (45% of
+  rewrites lowering the score) is. It sharpens *why*: much of the "catastrophic" class is the crash cliff,
+  not model quality.
+- It reframes Stage 3. Entity repair is the right unit of change, but it was built on an objective that
+  cannot see progress (a repaired entity that still leaves the script crashing scores 0.0, the same as no
+  repair) and on attribution that is re-sampled every step. **The entity-repair A/B now running measures it
+  without those two fixes; a weak or negative result there is not evidence against the idea.**
+- It replaces "run another full-script A/B" with a cheaper, paired design (Stage 9). Full-script arms
+  cannot resolve effects smaller than ~0.13 at 24 scripts.
+- It reframes the library question: the successor to "coverage" is symptom-keyed guidance, tested at step
+  level (Stage 10), not more per-function patterns.
+
+### Revised priority (supersedes the 2026-09-29 table)
+
+| rank | work | why | stage |
+|---|---|---|---|
+| 1 | Measure attribution noise: verify one fixed source 5x | An hour, no code beyond a loop; decides whether every later comparison is contaminated | **8a** |
+| 1= | Trajectory log + verification cache (no behaviour change) | Without it nothing below can be evaluated cheaply, and today's logs cannot be replayed | **9a-b** |
+| 2 | Fix the search objective: tie-branch display bug, shaped objective (official score unchanged) | The loop cannot see progress on a crashing script; ~45% of agent runs start there | **7** |
+| 3 | Deterministic entity attribution, LLM mapper as fallback | The unit the score is built on is currently sampled | **8b-c** |
+| 4 | State bank + paired replay; compare policies from identical frozen states | Removes the 0.22 between-run SD from policy comparisons | **9c-d** |
+| 5 | Entity edit as the default action, observation tools, remaining AST gates, ledger | Only meaningful once 7 and 8 are in | **10** |
+| 6 | Width: k candidates per entity, recombine crashed seeds, scoped workers | Serial depth saturates (runs end by stalling, not budget) | **11** |
+| 7 | Model-object comparability (Phase 1+), pattern-library coverage | Library frozen; adapters are scoped by the excluded-entity worklist | Stage 4, 5-6 |
+
+**Sequencing constraint.** Do not edit `r2py/` while a comparison is running: the two arms must share one
+harness. Documentation-only changes are fine.
+
+**What this plan deliberately does not adopt** (from the insights document's own "what not to copy"):
+subagent fan-out for exploration, automatic compaction and tool-search deferral (contexts here are ~110
+lines), LLM-orchestrated multi-agent systems (about 15x the tokens when a deterministic verifier already
+selects), and interactive plan/permission modes. With a 31B open-weight model, harness-driven scheduling
+stays the default.
+
+---
+
+## Implementation log
+
+*Chronological record of what was built and measured; the stage sections after it hold the designs.
+Statements about "what is not done" in this log are historical; the table above is current.*
 
 **Implementation status (2026-09-29):** applied in the working tree, uncommitted — patches 01-04,
 Stage 0a (per-entity `active_dims` / `dim_scores` / `executed_ok` / `uncomparable` in
@@ -238,7 +310,7 @@ with two pinned dimensions still score 1.000. The aggregate is computed over *en
 *entity-level* endpoint cannot be determined from stored data, because per-entity `active_dims` are
 not recorded. **The discriminating power of the dependent variable is currently unknown.**
 
-### Revised priority
+### Revised priority (2026-09-29; **superseded by the table at the top, 2026-10-01**)
 
 | rank | work | why | plan stage |
 |---|---|---|---|
@@ -548,6 +620,11 @@ Fix: syntax-check the **assembled** file rather than the fragment, and on any ru
 
 ## Stage 3 — the full-rewrite half (answering: should this be in 03?)
 
+> **Status 2026-10-01:** `replace_entity` and a harness-driven entity-repair mode (`cfg.entity_repair`) are built.
+> The model chose `replace_entity` once in 84 actions, so the harness now schedules the entity itself. Their
+> first live check had a 38% catastrophic share, which Stage 7 (crash cliff) and Stage 8 (re-sampled
+> attribution) predict; judge the idea after those fixes, by paired replay (Stage 9).
+
 **No — it should be its own change, but it is the highest-value one.**
 
 Reasons to separate it:
@@ -804,6 +881,137 @@ Run Stage 6 diagnostics (step 1) after Stages 1–3 land. If targetability does 
 
 ---
 
+## Stage 7 — fix the search objective
+
+*Added 2026-10-01 from `r2py_harness_insights.md`, insight 1; claims checked against the code and logs.*
+
+**Problem.** `verify()` forces `aggregate = 0.0` whenever R succeeded and Python exited non-zero. The loop
+accepts a rewrite only if `aggregate` strictly improves. On a script whose current best crashes, every
+crashing candidate therefore looks identical, including one that fixed the first of two crash sites. In the
+two replicate arms: 9 of 21 and 11 of 21 agent runs started at 0.000; 16 and 14 of 68 rewrites ended in a
+crash; 4 and 8 were 0.0 -> 0.0 ties that strict improvement rejects. `decompose.py` already attributes the
+crash to an entity and marks the entities before it as executed, so the data for a gradient exists and the
+loop does not use it.
+
+**7a. Show the agent the report that belongs to the source it sees.** After a non-improving rewrite the loop
+sets `report = new_report` when the scores tie, but the next prompt shows `best_source`; the review-rejected
+branch does the same. The agent then reads comparisons and a traceback produced by a program it cannot see.
+Rule: the displayed report always belongs to the displayed source. A rejected candidate's traceback goes into
+the history entry (it already does), not into the standing report. Not yet measured; cheap to fix.
+
+**7b. A shaped search value, official score untouched.** Rank candidates by the key
+`(runs_to_completion, shaped)` where `runs_to_completion = (python_exit_code == 0)` and
+`shaped = aggregate` if it ran, else `mean(entity_score of executed entities) * (executed / total entities)`.
+Lexicographic, so a candidate that runs always beats one that crashes (no trading a working translation for
+a crashing one). Accept when the key improves; improvement of `shaped` among crashing candidates resets the
+stall counter. **Reported scores, the 0.9 pass threshold and every analysis keep using the official
+aggregate.** Apply the same key to **seed selection**: today the best seed is chosen by the forced-zero
+aggregate, so with four crashing seeds the choice among them is arbitrary.
+
+**Risks.** (a) A candidate can "reach" more entities by wrapping code in `try/except`; the review gate and
+the official score still decide the final result, and it is a visible pattern to gate if it appears.
+(b) Shaped progress could keep a doomed script alive; the step cap and wall-clock budget bound it.
+
+**How to judge it.** Not with a full-script A/B (MDE ~0.13). Use Stage 9's paired replay: from frozen
+crashing states, compare P(runs afterwards) and the final official score under the old and new acceptance rule.
+
+## Stage 8 — deterministic entity attribution
+
+**Problem.** `HarnessTools.verify` strips sentinels, calls `map_entities_to_lines` (an LLM call with one
+retry, at the translator's own model and temperature), re-inserts sentinels and scores. Costs: an extra model
+call per verification; a `SentinelMappingError` silently drops scoring to aggregate-only (this switches off
+per-entity feedback and entity repair; the fallback was added after a run lost eight steps to it); and
+possible score variance on identical source, because entity boundaries decide which checkpoint deltas are
+compared.
+
+**8a. Measure first (do before anything else in this stage).** Verify one fixed source five times, for
+several scripts; compare per-entity scores and the aggregate. Script: `scripts/attribution_noise.py`.
+If the variance is zero, 8b-c is an efficiency and robustness change; if not, it contaminates every
+comparison made so far, including the replicate noise floor in this plan.
+
+**8b. Sentinels the model preserved are authoritative.** Add "every `# r2py:entity:` line present, in
+order" to the gate list and tell the agent which are missing. Use the preserved sentinels as the mapping
+and call the LLM mapper only for entities left without one.
+
+**8c. AST ranges for assignments.** For variable-assignment entities, derive the line range from the AST by
+target name (the prompt already requires R variable names to be preserved). Also makes `replace_entity` and
+entity repair safer: their splice spans stop depending on a model re-deriving them.
+
+## Stage 9 — evaluation infrastructure: trajectories, cache, state bank, replay
+
+**Problem.** Full-script runs have a per-script SD of 0.22 between replicates; 12 of 24 scripts tie exactly
+and 3 swing by more than 0.25. At 24 scripts the smallest detectable mean difference is ~0.13, and
+rewrite-outcome rates at n = 68 carry about ±10 points of noise. We keep only aggregates and, for the first
+training run, lost the per-step record entirely.
+
+**9a. Trajectory log.** One JSONL record per agent step: script, run id, step, action, prompt hash, the
+candidate source, per-entity scores, outcome class, tokens, latency, and the stop reason per run. Also save
+the stdout of every run next to its rows (the parallel workers now write `<workdir>/logs`).
+**9b. Verification cache** keyed by (script, source hash): identical sources are not re-run; also makes 8a
+cheap. No behaviour change; do 9a-b first.
+
+**9c. State bank.** Collect `(script, source, report)` states from *new* runs. **Correction to the insights
+document:** it proposes building the bank from the recorded training rewrites and smoke runs, but those logs
+contain scores and line counts, not sources, so no state can be reconstructed from them.
+
+**9d. Paired replay.** Compare policies (entity edit vs rewrite, k = 1 vs 3 candidates, shaped vs official
+acceptance, triage fragments on or off) by sampling continuations from identical frozen states, paired by
+state. Each sample costs one model call and one verification instead of a 20-minute run, and pairing removes
+the between-run SD. Frozen states ignore learning across steps, so confirm winners with a small whole-script
+run. Metrics: P(improve), P(catastrophic), change in the shaped value, change in the official score.
+This is development evidence; it is not a pre-registered test.
+
+## Stage 10 — action space, observation tools, gates, ledger
+
+*Only after Stages 7 and 8: entity edits need a usable gradient and stable spans.*
+
+**10a. Entity edit as the default mutating action after the seed**, full rewrite as the escalation (two
+failed entity repairs, or several entities sharing a root cause). The harness already schedules the entity
+(`cfg.entity_repair`); this stage decides the default from replay evidence. Note the model chose
+`replace_entity` once in 84 actions: do not rely on prompting for it.
+**10b. Observation tools.** `inspect(entity, variable)`: R and Python values side by side (head, dtypes,
+attributes, NA positions, concise by default), built from the per-entity checkpoint data that is already
+captured; `probe_py(expr)` at the state after entity k. Keep the standing prompt to a compact scoreboard and
+let the agent pull detail. Expect a modest gain at 110-line scripts (focus, not context length).
+**10c. Remaining gates.** AST-checkable rules still living in the prompt: no top-level code wrapped in `def`
+(unless R defines a function), preserved variable names, sentinels present (8b), no literal equal to a
+captured R output. Each gate names the line and the fix; delete the matching prompt paragraphs. Pin the audit
+findings in the standing prompt (they currently scroll out of the last-5 history window after ~5 steps).
+**10d. Per-entity ledger and restart-on-stall.** Replace history strings with a record per entity (what R
+produces, what was tried in one line, why it failed, best score); on a stall restart the turn from the best
+source plus the ledger. Put the changing `## Step n/max` line last so a provider's prefix cache can hit.
+**10e. Symptom-keyed guidance (the successor to "coverage").** Verifier output already supports a
+deterministic triage: crash (with traceback line), type mismatch, value mismatch beyond tolerance, ordering,
+NA handling, stdout format, missing output, graphics page count. Classify each failing entity and load a short
+class-specific fragment on demand. Unlike the function-keyed library it does not need to have seen the
+function. A hypothesis, tested by replay at step level; if it wins, the "failure -> fix" variant of the
+library is its natural successor. (The prompt's stock gotcha catalogue, architecture §3.7, is a small
+unlearned version.)
+**10f. Non-OpenRouter prompt parity** (whole-file JSON string, no `replace_entity`): low priority, not used
+by any recorded run.
+
+## Stage 11 — width and scoped workers
+
+*Only after Stages 7 and 8, and decided by Stage 9's replay.*
+
+Seed width already exists (up to six one-shot translations); agent width does not, and runs end by stalling
+(17 and 13 of 24) far more often than by budget (1 and 2), so more serial depth would go unused. Best-of-two
+across the replicate arms was 0.752 against a mean single run of 0.703 (12 of 24 ties; suggestive, not a test).
+**11a.** Entity-level width: for the chosen failing entity, sample *k* independent repairs, splice and verify
+each, keep the best non-regressing one.
+**11b.** Recombine per-entity best fragments from seeds that crashed in different places, through the
+existing splice machinery; verification arbitrates.
+**11c.** A scoped worker: given one entity (R snippet, Python snippet, comparison, traceback line, ledger,
+and the tools `inspect`, `probe_r`, `probe_py`, `lookup_docs`) it returns a candidate fragment. The
+**harness**, not an LLM, orchestrates: triage, parallel workers, splice, gate, verify, merge non-overlapping
+fixes with a bisect on regression. This keeps the ~15x token cost of LLM-orchestrated multi-agent systems
+away. The agent loop already *is* a refine agent (RepoTransAgent's ablation: removing the repair loop drops
+pass rate 45.8% -> 26.5%, removing context gathering to 32.2%, removing retrieval only to 42.9%, which
+supports where effort already went), so this is about focus and width, not a new autonomous agent.
+**11d.** Whole-script width against the serial loop at equal token cost, last.
+
+---
+
 ## Measurement — how we will know each stage worked
 
 Compute these from the training log for the current run (the baseline) and for each run after.
@@ -831,10 +1039,20 @@ than ad hoc.
 | Runtime `SyntaxError` after passing the gate | occurs | impossible (gate checks assembled file) | **2b-2** |
 | Library patterns relevant to the target set | 41 of 155 | ↑ | 1, 6 |
 | Total training wall-clock | 112 h | ↓ | all |
+| Attribution noise: per-entity score spread on 5 verifications of one source | **unknown** | measured, then 0 | **8a** |
+| Agent runs starting at 0.000 / rewrites ending in a crash (smoke arms) | 9-11 of 21 / 14-16 of 68 | ↓ | 7, 10 |
+| P(improve), P(catastrophic) from identical frozen states, per policy | not recorded | recorded, paired | **9d** |
+| Smallest detectable mean difference, whole-script arms at 24 scripts | ~0.13 | no longer the primary instrument | 9 |
 
 ---
 
 ## Pre-registration impact
+
+**Addendum 2026-10-01.** Stages 7-11 change the loop's objective, attribution and action space, so no
+score from them is comparable with the first experiment, and none of them is pre-registered. They are
+evaluated as development work (paired replay, Stage 9). Whatever is carried into the next registered
+experiment must be frozen first, and the registration should name the official score (forced-zero
+aggregate) as the endpoint regardless of the shaped search value.
 
 **Stage 0b is the most consequential change in this document.** Repairing, re-weighting or
 excluding a comparator changes the meaning of every score, so results either side of it are not
