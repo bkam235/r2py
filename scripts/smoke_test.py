@@ -228,19 +228,25 @@ def main() -> int:
                 print(f"\n===== [{i}/{len(scripts)}] {script}", flush=True)
                 row = {"script": script}
                 started = time.monotonic()
-                with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
-                    shutil.copytree(cp_dir, Path(tmp) / "lib")
-                    try:
-                        r, entities = ho._translate_once(
-                            next(pool.rglob(script)), out / "py" / (Path(script).stem + ".py"),
-                            PatternLibrary(Path(tmp) / "lib"), cfg, learn=False)
-                        rep = r.final_score_report
-                        row.update(score=r.final_score, iterations=r.iterations,
-                                   by_effect={k.value: v for k, v in rep.by_effect.items()} if rep else {},
-                                   entities=entities)
-                    except Exception as exc:
-                        row["error"] = f"{type(exc).__name__}: {exc}"
-                        print(f"  ERROR: {row['error']}")
+                for attempt in (1, 2):
+                    row.pop("error", None)
+                    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+                        shutil.copytree(cp_dir, Path(tmp) / "lib")
+                        try:
+                            r, entities = ho._translate_once(
+                                next(pool.rglob(script)), out / "py" / (Path(script).stem + ".py"),
+                                PatternLibrary(Path(tmp) / "lib"), cfg, learn=False)
+                            rep = r.final_score_report
+                            row.update(score=r.final_score, iterations=r.iterations,
+                                       by_effect={k.value: v for k, v in rep.by_effect.items()} if rep else {},
+                                       entities=entities)
+                        except Exception as exc:
+                            row["error"] = f"{type(exc).__name__}: {exc}"
+                            print(f"  ERROR (attempt {attempt}/2): {row['error']}")
+                    # The sandbox watches the home folder, so a file you create there mid-run reads as
+                    # an escape; the harness's own runs retry once, and so does this.
+                    if "error" not in row or "SandboxEscape" not in row["error"]:
+                        break
                 row.update(ho._drain_diagnostics())
                 row["seconds"] = round(time.monotonic() - started, 1)
                 rows.append(row)

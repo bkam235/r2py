@@ -171,6 +171,10 @@ class ScoreReport:
     # Data entities left out of the comparison because Python could not serialise them:
     # [{"var", "r_class", "py_type"}] -- an adapter worklist, not agent feedback (Stage 4 Phase 0).
     excluded:     list[dict]                     = field(default_factory=list)
+    # Entities containing a frame of the crash traceback, OUTERMOST first (the statement the
+    # script was executing) down to the innermost (where the exception was raised, often a helper
+    # the translation defined). Empty when the run did not crash or attribution was unavailable.
+    crash_entities: list[str]                    = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------

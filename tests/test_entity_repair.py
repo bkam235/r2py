@@ -52,3 +52,24 @@ class TestPrompt(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestCrashTargeting(unittest.TestCase):
+    def test_the_entity_named_by_the_traceback_is_targeted_before_any_guess(self):
+        r = NS(by_entity={"e2": es(ok=False), "e3": es(ok=False, score=0.0)}, crash_entities=["e3", "e2"])
+        self.assertEqual(agent._pick_repair_entity(r, SRC, {}), "e3")           # not the earliest unexecuted one
+        self.assertEqual(agent._pick_repair_entity(r, SRC, {"e3": 2}), "e2")   # next frame once e3 is exhausted
+        self.assertEqual(agent._pick_repair_entity(r, SRC, {"e3": 2, "e2": 2}), None)
+
+    def test_without_crash_attribution_the_old_rule_applies(self):
+        r = NS(by_entity={"e2": es(ok=False), "e3": es(score=0.1)}, crash_entities=[])
+        self.assertEqual(agent._pick_repair_entity(r, SRC, {}), "e2")
+
+
+class TestRejectionNotes(unittest.TestCase):
+    def test_only_entity_repairs_collect_notes(self):
+        notes = {}
+        agent._note_rejection(notes, "entity_repair", {"entity": "e3"}, "imported x")
+        agent._note_rejection(notes, "rewrite", {}, "ignored")
+        agent._note_rejection(notes, "entity_repair", {"entity": "e3"}, "syntax error: line 2")
+        self.assertEqual(notes, {"e3": ["imported x", "syntax error: line 2"]})

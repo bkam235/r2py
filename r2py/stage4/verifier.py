@@ -857,6 +857,7 @@ def verify(
     # RC2: surface crash traceback as feedback so Stage 3 knows what line failed.
     # Target the feedback to the entity that caused the crash (via crash attribution)
     # so _weak_first prioritises it. Fall back to all entities if unattributable.
+    crash_entities: list[str] = []
     if py_bundle.exit_code != 0 and py_bundle.stderr:
         crash_msg = py_bundle.stderr.strip()
         if len(crash_msg) > 800:
@@ -865,6 +866,11 @@ def verify(
         _crash_elmap = cp_entity_line_map or entity_line_map
         if _crash_elmap:
             from .decompose import _parse_crash_line, _attribute_crash
+            import re as _re_frames
+            for frame_line in _re_frames.findall(r'File ".*?_r2py_script\.py", line (\d+)', py_bundle.stderr):
+                frame_eid, _ = _attribute_crash(int(frame_line), py_bundle.preamble_lines, _crash_elmap)
+                if frame_eid and frame_eid not in crash_entities:
+                    crash_entities.append(frame_eid)
             crash_line = _parse_crash_line(py_bundle.stderr)
             if crash_line is not None:
                 crashing_eid, _ = _attribute_crash(
@@ -929,6 +935,7 @@ def verify(
             py_exit_code=py_bundle.exit_code,
             py_entity_bundles=py_entity_bundles or {},
             infra_crash=infra_crash,
+            crash_entities=crash_entities,
         )
         if return_bundle:
             return report, py_bundle
@@ -1050,6 +1057,7 @@ def verify(
         py_entity_bundles=py_entity_bundles or {},
         infra_crash=infra_crash,
         excluded=excluded,
+        crash_entities=crash_entities,
     )
     if return_bundle:
         return report, py_bundle

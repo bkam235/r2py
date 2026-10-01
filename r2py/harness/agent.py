@@ -337,6 +337,7 @@ def reason(
             if syntax_error:
                 print(f"[Agent]   Syntax error: {syntax_error}")
                 _stat("outcome", f"{action_type}:syntax_rejected")
+                _note_rejection(entity_notes, action_type, action, f"syntax error: {syntax_error.splitlines()[0]}")
                 stall_count += 1
                 # Give targeted hints for the two common R->Python syntax errors.
                 hint = ""
@@ -369,6 +370,8 @@ def reason(
             if bad_imports:
                 print(f"[Agent]   Unavailable imports: {bad_imports}")
                 _stat("outcome", f"{action_type}:import_rejected")
+                _note_rejection(entity_notes, action_type, action,
+                                f"imported {', '.join(bad_imports)}, which cannot be installed; do not import them")
                 stall_count += 1
                 history.append(
                     f"Step {step}: {action_type} REJECTED before running — these imports cannot be "
@@ -431,6 +434,7 @@ def reason(
                 if not passed:
                     print(f"[Review]  FAILED: {reason}")
                     _stat("outcome", f"{action_type}:review_rejected")
+                    _note_rejection(entity_notes, action_type, action, f"rejected for hardcoding: {reason[:200]}")
                     stall_count += 1
                     # Include a trimmed copy of the rejected source so the
                     # agent can see exactly what was hardcoded and avoid
@@ -988,11 +992,24 @@ def _scores_note(rep, limit: int = 12) -> str:
     return " Per-entity scores of that version: " + ", ".join(f"{e}={v:.2f}" for e, v in items[:limit]) + "."
 
 
+def _note_rejection(notes: dict, action_type: str, action: dict, text: str) -> None:
+    """Remember why a harness gate refused an entity repair, so the next attempt on that entity can
+    avoid it (before this, only score outcomes reached the notes and the model repeated gated mistakes)."""
+    if action_type == "entity_repair" and action.get("entity"):
+        notes.setdefault(action["entity"], []).append(text)
+
+
 def _pick_repair_entity(report, best_source: str, tries: dict[str, int], max_tries: int = 2) -> str | None:
     """The entity to repair next: the first one that did not run (the root of a crash), else the
     lowest-scoring.  Only entities with one span in the source (``splice_entity`` refuses the rest),
     with something to verify, and not already tried ``max_tries`` times."""
     spans = rebuild_entity_line_map(best_source)
+    # A crash names its own culprit: the entity whose statement was executing (outermost frame of
+    # the traceback), then the entity where the exception was raised. Use that rather than guessing
+    # from which entities "did not run" (on googledrive that picked a stub defined far from the crash).
+    for eid in getattr(report, "crash_entities", None) or []:
+        if tries.get(eid, 0) < max_tries and len(spans.get(eid, [])) == 1 and eid in report.by_entity:
+            return eid
     crashed, weak = [], []
     for eid, es in report.by_entity.items():
         if not es.active_dims or tries.get(eid, 0) >= max_tries or len(spans.get(eid, [])) != 1:
