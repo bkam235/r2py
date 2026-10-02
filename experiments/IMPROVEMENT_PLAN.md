@@ -53,7 +53,7 @@ and logs; the verified ones are the basis of Stages 7-11:
 | 3 | ~~Deterministic entity attribution~~ **8b built 2026-10-01** (8c AST ranges open); LLM mapper as fallback | The unit the score is built on is currently sampled | **8b-c** |
 | 4 | ~~State bank + paired replay~~ **built and run 2026-10-02** (entity repair: neutral); compare policies from identical frozen states | Removes the 0.22 between-run SD from policy comparisons | **9c-d** |
 | 5 | Entity edit as the default action, observation tools, remaining AST gates, ledger | Only meaningful once 7 and 8 are in | **10** |
-| 6 | Width: k candidates per entity, recombine crashed seeds, scoped workers | Serial depth saturates (runs end by stalling, not budget) | **11** |
+| 6 | ~~Width (11d)~~ **built and replayed 2026-10-02: +0.144, p=0.001**; open: entity-level width, recombination, scoped workers | Serial depth saturates (runs end by stalling, not budget) | **11** |
 | 7 | Model-object comparability (Phase 1+), pattern-library coverage | Library frozen; adapters are scoped by the excluded-entity worklist | Stage 4, 5-6 |
 
 **Sequencing constraint.** Do not edit `r2py/` while a comparison is running: the two arms must share one
@@ -99,6 +99,18 @@ during a run (a file on the Desktop) was blamed on the script (`SandboxEscape`; 
 only the top level of the project and of `$HOME` plus `R_LIBS_USER` (`isolation._watch_roots`); `work/`, venvs and
 the IDE folders are skipped. Tests: `tests/test_stage0_sandbox.py`, `tests/test_seed_stage.py` (shim, gate, summarisers).
 Suite: 754 pass, 1 pre-existing failure (`test_stage2 ... locale_dataframe_date_column_round_trip`).
+*Agent width (Stage 11d; `harness/agent.reason_wide`, `loop.run_loop(agent_width=)`, `smoke_test.py --width`, replay policy `rewrite_w3`).*
+Computed offline from the 120 paired-replay runs, the best of k samples per state gave mean final 0.654 (k=1), 0.726 (2), 0.755
+(3), 0.801 (6). Live check: three independent rewrite loops in parallel from the same frozen state, each with its own
+harness, the verifier picking the best (20 states x 2 samples, 40 runs, 0 failed, 0 below the start score): mean final
+**0.795** against 0.651 for one loop; paired by state +0.144, SE 0.047, better/worse/tied 15/0/5, Wilcoxon p = 0.001; P(improve)
+88% against 58%; P(final >= 0.9) 40% against 23%; SD across samples within a state 0.016 against 0.108. This is development
+evidence on frozen states, not a pre-registered test, and the selection uses the official score, which the loop can
+compute at translation time. Cost: k times the model calls and verifications. Wall time: median 5 min, p90 27 min, max 88 min;
+in the two longest runs the agent steps themselves took ~4 min and the rest (~75 min) passed between the start of the run
+and the first step (start verification and audit), cause not identified (two runs overlapping in time: probably a stall,
+not width). Entity repair vs rewrite from the same states: +0.006, p = 0.78 (neutral). **Width is the first change in this
+programme with a clear effect.**
 *Lesson-store pilot (2026-10-02; `r2py/lessons.py`, `scripts/mine_lessons.py`, `seed_eval.py --lessons`).* Crash->fix pairs are
 mined from the trajectory logs (a step whose traceback vanished in the next candidate without the score dropping), the model
 distils each into a lesson keyed by library, and the seed gate offers the lessons for the libraries a draft imports. Mined
