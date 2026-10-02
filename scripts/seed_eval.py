@@ -102,6 +102,8 @@ def summarise(paths: list[str]) -> str:
 
 
 def main() -> int:
+    from r2py.keepawake import keep_awake
+    keep_awake()   # an idle laptop freezes background jobs (Modern Standby)
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--name")
     ap.add_argument("--gate", choices=("on", "off"), default="on")

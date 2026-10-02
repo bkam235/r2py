@@ -156,6 +156,8 @@ def run_parallel(args, scripts: list[str]) -> int:
 
 
 def main() -> int:
+    from r2py.keepawake import keep_awake
+    keep_awake()   # an idle laptop freezes background jobs (Modern Standby)
     ap = argparse.ArgumentParser()
     ap.add_argument("--n", type=int, default=12, help="number of scripts")
     ap.add_argument("--budget-s", type=float, default=600, help="agent wall-clock budget per script")

@@ -107,9 +107,10 @@ harness, the verifier picking the best (20 states x 2 samples, 40 runs, 0 failed
 88% against 58%; P(final >= 0.9) 40% against 23%; SD across samples within a state 0.016 against 0.108. This is development
 evidence on frozen states, not a pre-registered test, and the selection uses the official score, which the loop can
 compute at translation time. Cost: k times the model calls and verifications. Wall time: median 5 min, p90 27 min, max 88 min;
-in the two longest runs the agent steps themselves took ~4 min and the rest (~75 min) passed between the start of the run
-and the first step (start verification and audit), cause not identified (two runs overlapping in time: probably a stall,
-not width). Entity repair vs rewrite from the same states: +0.006, p = 0.78 (neutral). **Width is the first change in this
+in the longest runs the agent steps took ~4 min; **the rest was the machine in Modern Standby**: the three workers (caret, ggplot2,
+googledrive) were silent from ~+17 to +85 min and resumed together at 13:36:56, the minute Kernel-Power logged the exit from
+connected standby (event 507). Not width and not the pipeline; `r2py/keepawake.py` (`SetThreadExecutionState`) is now called at the
+start of replay, seed_eval, smoke_test and run_heldout. Earlier unexplained multi-hour hangs may have been the same cause. Entity repair vs rewrite from the same states: +0.006, p = 0.78 (neutral). **Width is the first change in this
 programme with a clear effect.**
 **Default (2026-10-02, decided by the user: 3x model cost accepted):** `DEFAULT_AGENT_WIDTH = 3` in `r2py/loop.py`; `run_loop`, the held-out
 pipeline (`cfg.agent_width`) and `smoke_test.py --width` use it. Provider concurrency is workers x 3 requests in flight.

@@ -176,6 +176,8 @@ def summarise(rows: list[dict]) -> str:
 
 
 def main() -> int:
+    from r2py.keepawake import keep_awake
+    keep_awake()   # an idle laptop freezes background jobs (Modern Standby)
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--arms", nargs="+", required=True)
     ap.add_argument("--policies", nargs="+", default=["rewrite", "entity_esc"], choices=sorted(POLICIES))

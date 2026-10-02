@@ -33,6 +33,8 @@ WORKDIR = "work/heldout"
 
 
 def main() -> int:
+    from r2py.keepawake import keep_awake
+    keep_awake()   # an idle laptop freezes background jobs (Modern Standby)
     sys.stdout.reconfigure(line_buffering=True)  # progress lines must appear at once, even in a log file
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
