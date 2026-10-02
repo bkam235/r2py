@@ -16,6 +16,10 @@ from .types import TranslateResult
 from .stage0.effects import bundle as _bundle_mod
 from .stage2.llm import _DEFAULT_MODEL as _LLM_DEFAULT_MODEL
 
+# Independent agent loops per script, the best result wins.  Replays: 3 loops beat 1 by +0.144 (p=0.001)
+# at three times the model calls (Stage 11d).
+DEFAULT_AGENT_WIDTH = 3
+
 if TYPE_CHECKING:
     from .types import ScriptMap
 
@@ -93,7 +97,7 @@ def run_loop(
     agent_budget_s: "float | None" = None,
     agent_replace_entity: bool = True,
     agent_entity_repair: bool = False,
-    agent_width: int = 1,
+    agent_width: int = DEFAULT_AGENT_WIDTH,
     **verify_kwargs,
 ) -> TranslateResult:
     """Cheap path → reasoning agent escalation loop.

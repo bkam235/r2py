@@ -73,8 +73,17 @@ class TestAgentEscalation(unittest.TestCase):
              patch(_S4, return_value=_sr(0.4)), \
              patch(_AGENT, return_value=None) as mock_agent, \
              patch(_EP, return_value=[]):
-            run_loop(SM, lib, score_threshold=0.85)
+            run_loop(SM, lib, score_threshold=0.85, agent_width=1)
         mock_agent.assert_called_once()
+
+    def test_default_width_runs_independent_loops(self):
+        from r2py.loop import DEFAULT_AGENT_WIDTH
+        lib = _mock_lib()
+        with patch(_S2, return_value=("seed", {})),              patch(_S4, return_value=_sr(0.4)),              patch(_AGENT, return_value=None) as mock_agent,              patch(_EP, return_value=[]):
+            run_loop(SM, lib, score_threshold=0.85)
+        self.assertEqual(mock_agent.call_count, DEFAULT_AGENT_WIDTH)
+        harnesses = {id(c.kwargs["harness"]) for c in mock_agent.call_args_list}
+        self.assertEqual(len(harnesses), DEFAULT_AGENT_WIDTH)   # each branch has its own harness
 
     def test_agent_improvement_accepted(self):
         lib = _mock_lib()

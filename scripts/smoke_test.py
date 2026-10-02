@@ -169,7 +169,7 @@ def main() -> int:
                     help="offer the replace_entity action (off = the pre-Stage-3 prompt, for an A/B arm)")
     ap.add_argument("--entity-repair", choices=("on", "off"), default="off",
                     help="harness-driven repair of one failing entity per step (after the first)")
-    ap.add_argument("--width", type=int, default=1, help="independent agent loops per script (the best result wins)")
+    ap.add_argument("--width", type=int, default=3, help="independent agent loops per script (the best result wins)")
     ap.add_argument("--workers", type=int, default=1, help="parallel worker processes")
     ap.add_argument("--shard", help=argparse.SUPPRESS)  # internal: "i/N", with --out
     ap.add_argument("--out", help=argparse.SUPPRESS)

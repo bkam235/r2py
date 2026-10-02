@@ -111,6 +111,8 @@ in the two longest runs the agent steps themselves took ~4 min and the rest (~75
 and the first step (start verification and audit), cause not identified (two runs overlapping in time: probably a stall,
 not width). Entity repair vs rewrite from the same states: +0.006, p = 0.78 (neutral). **Width is the first change in this
 programme with a clear effect.**
+**Default (2026-10-02, decided by the user: 3x model cost accepted):** `DEFAULT_AGENT_WIDTH = 3` in `r2py/loop.py`; `run_loop`, the held-out
+pipeline (`cfg.agent_width`) and `smoke_test.py --width` use it. Provider concurrency is workers x 3 requests in flight.
 *Lesson-store pilot (2026-10-02; `r2py/lessons.py`, `scripts/mine_lessons.py`, `seed_eval.py --lessons`).* Crash->fix pairs are
 mined from the trajectory logs (a step whose traceback vanished in the next candidate without the score dropping), the model
 distils each into a lesson keyed by library, and the seed gate offers the lessons for the libraries a draft imports. Mined
