@@ -34,6 +34,7 @@ def seed_task(task: dict) -> dict:
     import diagnose_seeds
     import replay
     from r2py import heldout as ho
+    from r2py import lessons as lessons_mod
     from r2py import seed as seed_mod
     from r2py.library import PatternLibrary
     from r2py.stage2.sentinel_mapper import strip_sentinels
@@ -53,7 +54,8 @@ def seed_task(task: dict) -> dict:
                 source, elmap = seed_mod.translate(
                     sm, PatternLibrary(Path(tmp) / "lib"), model=cfg["model"],
                     sidecar_filename=f"{stem}.r2py_data.json", script_relpath=f"work/seed_eval/{stem}.py",
-                    bare=task["kind"] == "bare", gate=task["gate"])
+                    bare=task["kind"] == "bare", gate=task["gate"],
+                    lessons=lessons_mod.load(task["lessons"]) if task.get("lessons") else None)
             rep, bundle = verifier.verify(
                 sm, source, data_compare=cfg["data_compare"], entity_line_map=elmap,
                 sidecar_filename=f"{stem}.r2py_data.json", timeout_s=cfg["timeout_s"], return_bundle=True)
@@ -105,6 +107,7 @@ def main() -> int:
     ap.add_argument("--gate", choices=("on", "off"), default="on")
     ap.add_argument("--schedule", nargs="+", default=["bare:2", "structured:2"], help="kind:count ...")
     ap.add_argument("--only", nargs="+")
+    ap.add_argument("--lessons", help="lesson store (JSON) offered in the seed gate's corrective turn")
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--manifest", default=str(ROOT / "experiments/dev_run/manifest.json"))
     ap.add_argument("--library", default=str(ROOT / "work/dev_run/checkpoints/empty"))
@@ -129,7 +132,7 @@ def main() -> int:
     for item in args.schedule:
         kind, count = item.split(":")
         kinds += [(kind, i) for i in range(int(count))]
-    tasks = [dict(script=s, kind=k, idx=i, gate=args.gate == "on", manifest=args.manifest, library=args.library,
+    tasks = [dict(script=s, kind=k, idx=i, gate=args.gate == "on", lessons=args.lessons, manifest=args.manifest, library=args.library,
                   cache=str(ROOT / "work/replay/script_maps"))
              for (k, i) in kinds for s in scripts if (s, k, i) not in done]
     print(f"{len(tasks)} seeds to generate ({len(done)} done), {args.workers} workers", flush=True)

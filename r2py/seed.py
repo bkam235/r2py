@@ -101,25 +101,42 @@ def seed_problems(code: str) -> list[str]:
     return problems
 
 
-def _corrective_round(messages: list[dict], system_prompt: str, raw: str, code: str, model: str) -> str:
-    """One corrective turn if the seed has a problem the gates can see; keep the better version."""
+def _corrective_round(messages: list[dict], system_prompt: str, raw: str, code: str, model: str,
+                      lessons: list | None = None) -> str:
+    """One corrective turn if the seed has a problem the gates can see, or imports a library the lesson
+    store (``r2py.lessons``) has pitfalls for; keep the better version."""
+    from .lessons import format_lessons, lessons_for
+
     problems = seed_problems(code)
-    if not problems:
+    matched = lessons_for(code, lessons) if lessons else []
+    if not problems and not matched:
         return code
-    seed_gate_stats["found"] += 1
-    print(f"[Seed]    Gate: {'; '.join(problems)[:200]} -- asking for a corrected version", file=sys.stderr)
+    request = ""
+    if problems:
+        seed_gate_stats["found"] += 1
+        print(f"[Seed]    Gate: {'; '.join(problems)[:200]} -- asking for a corrected version", file=sys.stderr)
+        request += "This Python cannot run:\n- " + "\n- ".join(problems) + "\n"
+    if matched:
+        seed_gate_stats["lessons_offered"] += 1
+        request += ("Earlier runs of translated scripts hit these problems with libraries you use:\n"
+                    + format_lessons(matched) + "\nChange your code where it is affected.\n")
     try:
         fixed_raw = _llm.call(
             messages + [{"role": "assistant", "content": raw},
-                        {"role": "user", "content": "This Python cannot run:\n- " + "\n- ".join(problems)
-                         + "\nReturn the complete corrected Python code only."}],
+                        {"role": "user", "content": request + "Return the complete corrected Python code only."}],
             system_prompt, model=model)
     except Exception as exc:
         print(f"[Seed]    corrective round failed: {exc}", file=sys.stderr)
-        seed_gate_stats["still_broken"] += 1
+        if problems:
+            seed_gate_stats["still_broken"] += 1
         return code
     fixed = _extract_python(fixed_raw)
     remaining = seed_problems(fixed)
+    if not problems:   # lessons only: take the revision unless it broke what ran
+        if remaining:
+            return code
+        seed_gate_stats["lessons_applied"] += 1
+        return fixed
     if not remaining:
         seed_gate_stats["fixed"] += 1
         return fixed
@@ -138,6 +155,7 @@ def translate(
     r_path: str = "",
     bare: bool = False,
     gate: bool = True,
+    lessons: list | None = None,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Translate an R script to Python via a single whole-file LLM call.
 
@@ -165,7 +183,7 @@ def translate(
 
     python_code = _extract_python(raw)
     if gate:
-        python_code = _corrective_round(messages, system_prompt, raw, python_code, model)
+        python_code = _corrective_round(messages, system_prompt, raw, python_code, model, lessons)
     shadow_autofix(python_code, "seed")
     python_code, n_reordered = repair_argument_order(python_code)
     if n_reordered:
