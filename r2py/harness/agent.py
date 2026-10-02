@@ -30,7 +30,8 @@ from ..stage2.stitch import (
 
 # What the agent did, per process, drained into each run's row (see heldout._drain_diagnostics):
 # {"action": {rewrite: n, ...}, "outcome": {"rewrite:worse": n, ...}, "stop": {"budget": n, ...}}
-agent_stats: dict[str, Counter] = {"action": Counter(), "outcome": Counter(), "stop": Counter()}
+agent_stats: dict[str, Counter] = {"action": Counter(), "outcome": Counter(), "stop": Counter(),
+                                   "entity_width": Counter()}
 
 
 class _StepContext(MutableMapping):
@@ -100,6 +101,7 @@ def reason(
     entity_repair: bool = False,
     escalate_after: "int | None" = None,
     branch: "int | None" = None,
+    entity_width: int = 1,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -242,6 +244,8 @@ def reason(
                 stall_count += 1
                 continue
             action = {"action": "entity_repair", "entity": repair_eid, "new_source": frag}
+            if entity_width > 1:
+                action = _widen_entity_repair(action, messages, turn_system, model, entity_width, best_source, harness)
         if action is None:
             snippet = raw[:300].replace('\n', '\\n')
             print(f"[Agent]   Could not parse action from response: {snippet!r}")
@@ -561,6 +565,51 @@ def reason(
 
     print(f"[Agent]   No improvement achieved (score={best_score:.3f})")
     return None
+
+
+def _prepare_fragment(best_source: str, eid: str, fragment: str) -> str | None:
+    """The source an entity repair would produce, through the gates that need no run; None when refused."""
+    from ..stage0.sandbox.py_sandbox import _SKIP_PACKAGES
+
+    new_source, _err = splice_entity(best_source, eid, fragment)
+    if new_source is None:
+        return None
+    new_source, _ = restore_data_shim(best_source, new_source)
+    new_source, _ = repair_argument_order(new_source)
+    if _check_syntax(new_source) or unavailable_imports(new_source, _SKIP_PACKAGES):
+        return None
+    return new_source
+
+
+def _widen_entity_repair(action: dict, messages: list, system: str, model: str, width: int,
+                         best_source: str, harness: "HarnessTools") -> dict:
+    """Entity-level width (Stage 11a): ``width`` independent repairs of the same entity are sampled in
+    parallel, spliced and verified; the best by the search objective replaces the first fragment."""
+    eid = action["entity"]
+
+    def sample(_i):
+        try:
+            a = _parse_action(_llm.call(messages, system, model=model, max_tokens=16384))
+        except Exception:
+            return None
+        return a.get("new_source") if a and a.get("action") in ("rewrite", "replace_entity") else None
+
+    with ThreadPoolExecutor(width - 1) as pool:
+        fragments = [action["new_source"]] + [f for f in pool.map(sample, range(width - 1)) if f]
+    best_frag, best_rep, seen = action["new_source"], None, set()
+    for frag in fragments:
+        source = _prepare_fragment(best_source, eid, frag)
+        if source is None or source in seen:
+            continue
+        seen.add(source)
+        try:
+            rep = harness.verify(source)
+        except Exception:
+            continue
+        if best_rep is None or _obj.better(rep, best_rep):
+            best_frag, best_rep = frag, rep
+    _stat("entity_width", f"{len(fragments)}_sampled_{len(seen)}_distinct")
+    return {**action, "new_source": best_frag}
 
 
 def reason_wide(harnesses: list, *, current_source: str, score_report: "ScoreReport", script_map: "ScriptMap",

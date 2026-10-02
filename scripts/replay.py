@@ -35,6 +35,7 @@ POLICIES = {
     "rewrite": dict(entity_repair=False, escalate_after=None),
     "entity_esc": dict(entity_repair=True, escalate_after=2),
     "entity_only": dict(entity_repair=True, escalate_after=10 ** 6),
+    "entity_esc_ew3": dict(entity_repair=True, escalate_after=2, entity_width=3),   # three repairs per failing entity
     "rewrite_w3": dict(entity_repair=False, escalate_after=None, width=3),   # three independent loops, best wins
 }
 

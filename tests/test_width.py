@@ -64,3 +64,43 @@ class TestReasonWide(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestEntityWidth(unittest.TestCase):
+    SRC = "# r2py:entity:a\nx = 1\n# r2py:entity:b\ny = 2\n"
+
+    class _Harness:
+        def __init__(self):
+            self.verified = []
+
+        def verify(self, source):
+            self.verified.append(source)
+            return _rep(0.9 if "y = 3" in source else 0.2 if "y = 4" in source else 0.5)
+
+    def _widen(self, replies, first="y = 4"):
+        import json
+        calls = iter(replies)
+        h = self._Harness()
+        with patch.object(agent._llm, "call", side_effect=lambda *a, **k: next(calls)):
+            out = agent._widen_entity_repair({"action": "entity_repair", "entity": "b", "new_source": first},
+                                             [], "sys", "m", 3, self.SRC, h)
+        return out, h
+
+    @staticmethod
+    def _reply(code):
+        import json
+        return json.dumps({"action": "rewrite", "new_source": code})
+
+    def test_best_verified_fragment_wins(self):
+        out, h = self._widen([self._reply("y = 3"), self._reply("y = 5")])
+        self.assertEqual(out["new_source"], "y = 3")
+        self.assertEqual(len(h.verified), 3)
+
+    def test_unusable_samples_leave_the_first_fragment(self):
+        out, h = self._widen([RuntimeError("boom"), "not json"])
+        self.assertEqual(out["new_source"], "y = 4")
+        self.assertEqual(len(h.verified), 1)
+
+    def test_identical_fragments_are_verified_once(self):
+        out, h = self._widen([self._reply("y = 4"), self._reply("y = 4")])
+        self.assertEqual(len(h.verified), 1)
