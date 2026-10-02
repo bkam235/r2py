@@ -70,27 +70,53 @@ def test_temp_workdir_isolated():
 # ---------------------------------------------------------------------------
 
 def test_sandbox_escape_detection(tmp_path):
-    """check_escape() raises SandboxEscape when a file outside workdir changed."""
+    """check_escape() raises SandboxEscape when a watched file outside workdir changed."""
+    from unittest.mock import patch
     from r2py.stage0.sandbox.isolation import check_escape, snapshot_home
 
-    # Create a file outside the workdir, snapshot, modify it, then check.
-    outside_file = tmp_path / "outside.txt"
-    outside_file.write_text("original")
-
-    # Workdir is a subdirectory — escape is anything written *outside* it.
+    watched = tmp_path / "watched"
+    watched.mkdir()
+    (watched / "outside.txt").write_text("original")
     workdir = tmp_path / "sandbox_workdir"
     workdir.mkdir()
 
-    import unittest.mock as _mock
-    # Patch snapshot_home to only watch our tmp_path (avoids reading $HOME).
-    from r2py.stage0.effects import files as _files
-    before = {str(outside_file): _files._sha256(outside_file)}
+    with patch("r2py.stage0.sandbox.isolation._watch_roots", return_value=[(watched, True)]):
+        before = snapshot_home()
+        (watched / "outside.txt").write_text("tampered")
+        with pytest.raises(SandboxEscape):
+            check_escape(before, workdir)
+        before = snapshot_home()
+        (watched / "new.txt").write_text("created")   # a new file is an escape too
+        with pytest.raises(SandboxEscape):
+            check_escape(before, workdir)
 
-    # Modify the file outside the workdir
-    outside_file.write_text("tampered")
 
-    with pytest.raises(SandboxEscape):
-        check_escape(before, workdir)
+def test_snapshot_ignores_unwatched_user_folders(tmp_path):
+    """Edits outside the watched directories (the user's Desktop) are not blamed on the script."""
+    from unittest.mock import patch
+    from r2py.stage0.sandbox.isolation import check_escape, snapshot_home
+
+    home = tmp_path / "home"
+    (home / "Desktop").mkdir(parents=True)
+    (home / ".Rprofile").write_text("a")
+    workdir = tmp_path / "wd"
+    workdir.mkdir()
+    with patch("r2py.stage0.sandbox.isolation._watch_roots", return_value=[(home, False)]):
+        before = snapshot_home()
+        (home / "Desktop" / "notes.md").write_text("user file")
+        check_escape(before, workdir)                       # must not raise
+        (home / ".Rprofile").write_text("b")                # a top-level dotfile is watched
+        with pytest.raises(SandboxEscape):
+            check_escape(before, workdir)
+
+
+def test_watch_roots_never_walk_home_recursively():
+    import os
+    from pathlib import Path
+    from r2py.stage0.sandbox.isolation import _watch_roots
+
+    home = Path(os.environ.get("USERPROFILE") or os.environ.get("HOME") or "")
+    assert all(not (recursive and root == home) for root, recursive in _watch_roots())
 
 
 def test_sandbox_escape_no_false_positive(tmp_path):

@@ -51,7 +51,7 @@ and logs; the verified ones are the basis of Stages 7-11:
 | 1= | ~~Trajectory log + verification cache~~ **built 2026-10-01** | Without it nothing below can be evaluated cheaply, and today's logs cannot be replayed | **9a-b** |
 | 2 | ~~Fix the search objective~~ **built 2026-10-01, not yet evaluated:** tie-branch display bug, shaped objective (official score unchanged) | The loop cannot see progress on a crashing script; ~45% of agent runs start there | **7** |
 | 3 | ~~Deterministic entity attribution~~ **8b built 2026-10-01** (8c AST ranges open); LLM mapper as fallback | The unit the score is built on is currently sampled | **8b-c** |
-| 4 | State bank + paired replay; compare policies from identical frozen states | Removes the 0.22 between-run SD from policy comparisons | **9c-d** |
+| 4 | ~~State bank + paired replay~~ **built and run 2026-10-02** (entity repair: neutral); compare policies from identical frozen states | Removes the 0.22 between-run SD from policy comparisons | **9c-d** |
 | 5 | Entity edit as the default action, observation tools, remaining AST gates, ledger | Only meaningful once 7 and 8 are in | **10** |
 | 6 | Width: k candidates per entity, recombine crashed seeds, scoped workers | Serial depth saturates (runs end by stalling, not budget) | **11** |
 | 7 | Model-object comparability (Phase 1+), pattern-library coverage | Library frozen; adapters are scoped by the excluded-entity worklist | Stage 4, 5-6 |
@@ -71,6 +71,36 @@ stays the default.
 
 *Chronological record of what was built and measured; the stage sections after it hold the designs.
 Statements about "what is not done" in this log are historical; the table above is current.*
+
+**Seed stage, replay and sandbox tripwire (2026-10-02).**
+*Why seeds fail* (`scripts/diagnose_seeds.py`: 255 logged seed sources re-verified, no model calls). 34% ran;
+structured 43%, bare 26%. Failures: import 22% (`shiny` 22 - not installed in the 3.13 sandbox; R package names such as
+`googledrive`, `lava`, `textshaping`), type errors 18% (scikit-learn 1.9 `force_all_finite` vs `factor_analyzer` 12;
+data frames handed over as dicts 9), attribute errors 16% (`dict.iloc` 10), syntax 3%. The agent loop's cheap gates
+would have flagged only 7 (syntax) + 18 (import) of the 168 failures.
+*Fixes:* `shiny`, `diskcache` installed and scikit-learn pinned to 1.7.2 in `.venv-sandbox`; the data shim builds a
+DataFrame when a variable is a dict of equal-length column lists (`stitch.build_data_shim`); seed gate
+(`seed.seed_problems` / `_corrective_round`: syntax and unresolvable imports get one corrective turn, outcomes counted
+in `seed_gate_stats`, drained into run rows).
+*Seed-only measurement* (`scripts/seed_eval.py`, 96 seeds = 24 scripts x (2 bare + 2 structured), no agent, both
+variants have the env and shim fixes): gate off - P(runs) 50%, P(>=0.5) 44%, mean 0.333, best seed per script mean 0.510,
+7/24 scripts with no seed above 0; gate on - 54%, 47%, 0.372, 0.566, 5/24 (93 seeds scored: 3 lost to the sandbox tripwire
+below). The gate fired on 10 seeds and fixed 8; the 4-point difference is **inside the noise at n=96** - not shown to
+help. The env/shim fixes lifted P(runs) from 34% (old logged seeds, not a paired comparison) to 50%. Structured seeds
+gain more (60% vs 50% with the gate), bare seeds are flat. Remaining causes: lxml element types 4, numpy indexing 3,
+hard-coded file paths (`FileNotFoundError`) 3, `textshaping` 4 (gate off only).
+*Paired replay* (`scripts/replay.py`: best logged seed per script frozen, 20 states with start < 0.9, 2 policies x 3
+samples = 120 runs, 0 failed, 0 below the start score): rewrite - mean final 0.651, gain +0.256, P(improve) 58%, P(>=0.9)
+23%; entity repair with escalation - 0.657, +0.263, 62%, 20%. Paired difference +0.006, SE 0.034, better/worse/tied
+8/5/7, Wilcoxon p = 0.78; SD across samples within a state ~0.11. **Entity repair is neutral.** Most of the gain from either
+policy is rescuing zero-score seeds, so the seed stage is the larger lever.
+*Sandbox tripwire narrowed:* `snapshot_home` hashed up to 2000 files under the whole home folder, so any edit there
+during a run (a file on the Desktop) was blamed on the script (`SandboxEscape`; it cost 3 gate-on seeds). It now watches
+only the top level of the project and of `$HOME` plus `R_LIBS_USER` (`isolation._watch_roots`); `work/`, venvs and
+the IDE folders are skipped. Tests: `tests/test_stage0_sandbox.py`, `tests/test_seed_stage.py` (shim, gate, summarisers).
+Suite: 754 pass, 1 pre-existing failure (`test_stage2 ... locale_dataframe_date_column_round_trip`).
+**Open:** a structured-only or wider seed schedule (P(runs) 60% vs 50%), prompt guidance for the remaining API-misuse
+causes, hard-coded file paths in seeds, a paired replay of other agent policies on the same frozen states.
 
 **Implementation status (2026-09-29):** applied in the working tree, uncommitted — patches 01-04,
 Stage 0a (per-entity `active_dims` / `dim_scores` / `executed_ok` / `uncomparable` in

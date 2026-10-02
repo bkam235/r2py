@@ -210,7 +210,8 @@ def main() -> int:
                                   start_hash=s["hash"], manifest=args.manifest, library=args.library,
                                   cache=str(ROOT / "work/replay/script_maps"), out_dir=str(out.parent),
                                   budget_s=args.budget_s))
-    print(f"{len(states)} frozen states: {', '.join(f'{n[:18]}({s['aggregate']:.2f})' for n, s in sorted(states.items()))}")
+    listing = ", ".join("%s(%.2f)" % (n[:18], s["aggregate"]) for n, s in sorted(states.items()))
+    print(f"{len(states)} frozen states: {listing}")
     print(f"{len(tasks)} runs to do ({len(finished)} already finished), {args.workers} workers", flush=True)
 
     ctx = multiprocessing.get_context("spawn")

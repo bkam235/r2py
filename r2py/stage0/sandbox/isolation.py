@@ -49,14 +49,13 @@ def _file_hash(path: Path) -> str:
     return h.hexdigest()
 
 
-# Subdirectory names to skip during home snapshotting — large/irrelevant trees
-# that are never written by sandbox scripts and would exhaust the file cap.
+# Subdirectory names to skip while snapshotting: large trees, caches, and places that background
+# tools (the IDE, Claude Code, the harness itself) write to while a run is in progress.
 _SNAPSHOT_SKIP_DIRS = frozenset({
     ".git", "node_modules", ".cache", "AppData", ".npm", ".cargo",
-    "__pycache__", ".tox", ".venv", "venv", ".mypy_cache",
-    ".claude",  # Claude Code writes here during normal operation
-    ".local",   # IDE/app state (Positron logs, etc.) written by background processes
-    ".ipython", # IPython session history (history.sqlite) updated on every Python run
+    "__pycache__", ".tox", ".venv", ".venv-sandbox", "venv", ".mypy_cache", ".pytest_cache",
+    ".idea", ".claude", ".local", ".ipython",
+    "work",     # run outputs: written by the harness's own workers, in parallel
 })
 
 # Individual files in $HOME written by background tools (not sandbox scripts).
@@ -64,33 +63,54 @@ _SNAPSHOT_SKIP_FILES = frozenset({
     ".claude.json",  # Claude Code session state
 })
 
+_PROJECT_ROOT = Path(__file__).resolve().parents[3]
+_MAX_FILES = 2000
+
+
+def _watch_roots() -> list[tuple[Path, bool]]:
+    """(directory, recursive) pairs the escape check watches.
+
+    Only places a stray script could plausibly write: the top level of the project and of $HOME
+    (``.Rprofile``, ``.Renviron``, ...) and the R user library.  Everything else, e.g. the
+    Desktop or the project's source tree, is where the user works: edits there are not the
+    script's doing and must not be blamed on it.
+    """
+    roots: list[tuple[Path, bool]] = [(_PROJECT_ROOT, False)]
+    for var in ("R_LIBS_USER",):
+        for part in os.environ.get(var, "").split(os.pathsep):
+            if part:
+                roots.append((Path(part), True))
+    home = Path(os.environ.get("USERPROFILE") or os.environ.get("HOME") or "")
+    if home.is_dir():
+        roots.append((home, False))
+    return roots
+
 
 def snapshot_home() -> dict[str, str]:
-    """Sample content hashes of files under $HOME (up to 2000 files).
+    """Sample content hashes of files in the watched directories (up to 2000 files).
 
     Used to detect out-of-workdir writes: take a snapshot before the run and
     call check_escape() after.  Sampling keeps cost low; the check is a
     best-effort tripwire, not a full audit.
     """
-    home = Path(os.environ.get("USERPROFILE") or os.environ.get("HOME") or "")
-    if not home.is_dir():
-        return {}
     snap: dict[str, str] = {}
-    count = 0
-    for p in home.rglob("*"):
-        if count >= 2000:
-            break
-        # Skip large/irrelevant directories that sandbox scripts never touch.
-        if any(part in _SNAPSHOT_SKIP_DIRS for part in p.parts):
+    for root, recursive in _watch_roots():
+        if not root.is_dir():
             continue
-        if p.name in _SNAPSHOT_SKIP_FILES:
-            continue
-        if p.is_file():
-            try:
-                snap[str(p)] = _file_hash(p)
-                count += 1
-            except OSError:
-                pass
+        for p in (root.rglob("*") if recursive else root.iterdir()):
+            if len(snap) >= _MAX_FILES:
+                return snap
+            # Paths are matched relative to the root: a skip name in a parent of the project
+            # (e.g. a project that lives under ``work/``) must not exclude all of it.
+            if any(part in _SNAPSHOT_SKIP_DIRS for part in p.relative_to(root).parts):
+                continue
+            if p.name in _SNAPSHOT_SKIP_FILES:
+                continue
+            if p.is_file():
+                try:
+                    snap[str(p)] = _file_hash(p)
+                except OSError:
+                    pass
     return snap
 
 
