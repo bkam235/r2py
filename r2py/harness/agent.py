@@ -5,7 +5,10 @@ import ast
 from collections import Counter
 import json
 import re
+import threading
 import time
+from collections.abc import MutableMapping
+from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
 from ..stage0.env.module_check import unavailable_imports
@@ -30,7 +33,36 @@ from ..stage2.stitch import (
 agent_stats: dict[str, Counter] = {"action": Counter(), "outcome": Counter(), "stop": Counter()}
 
 
-_ctx: dict = {}  # the step being run: filled in as the step progresses, logged with each outcome
+class _StepContext(MutableMapping):
+    """The step being run: filled in as the step progresses, logged with each outcome.  One per thread,
+    because width runs several loops of this module at once."""
+
+    def __init__(self) -> None:
+        self._local = threading.local()
+
+    @property
+    def _d(self) -> dict:
+        if not hasattr(self._local, "d"):
+            self._local.d = {}
+        return self._local.d
+
+    def __getitem__(self, k):
+        return self._d[k]
+
+    def __setitem__(self, k, v) -> None:
+        self._d[k] = v
+
+    def __delitem__(self, k) -> None:
+        del self._d[k]
+
+    def __iter__(self):
+        return iter(self._d)
+
+    def __len__(self) -> int:
+        return len(self._d)
+
+
+_ctx = _StepContext()
 
 
 def _stat(kind: str, key: str) -> None:
@@ -67,6 +99,7 @@ def reason(
     replace_entity: bool = True,
     entity_repair: bool = False,
     escalate_after: "int | None" = None,
+    branch: "int | None" = None,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -183,7 +216,7 @@ def reason(
         _ctx.clear()
         _ctx.update(step=step, best_score=round(best_score, 4), best_hash=_trajectory.source_hash(best_source),
                     prompt_hash=_trajectory.source_hash(json.dumps(messages, default=str)),
-                    entity_repair=repair_eid)
+                    entity_repair=repair_eid, branch=branch)
         t_llm = time.monotonic()
         truncated = False
         try:
@@ -528,6 +561,36 @@ def reason(
 
     print(f"[Agent]   No improvement achieved (score={best_score:.3f})")
     return None
+
+
+def reason_wide(harnesses: list, *, current_source: str, score_report: "ScoreReport", script_map: "ScriptMap",
+                **kwargs) -> "tuple[str, ScoreReport] | None":
+    """Width: one independent agent loop per harness, run in parallel from the same state; the verifier
+    picks the best result.  Replays of 20 frozen states gave a mean final score of 0.654 for one loop and
+    0.726 / 0.755 for the best of 2 / 3 (selection by the official score, which is computable at
+    translation time).  Each loop needs its own harness: verification cache, probe budget and annotated
+    source are per-harness state."""
+    if len(harnesses) == 1:
+        return reason(current_source=current_source, score_report=score_report, harness=harnesses[0],
+                      script_map=script_map, **kwargs)
+
+    def one(i: int):
+        try:
+            return reason(current_source=current_source, score_report=score_report, harness=harnesses[i],
+                          script_map=script_map, branch=i, **kwargs)
+        except Exception as exc:   # one failing branch must not lose the others
+            print(f"[Agent]   Branch {i} failed: {type(exc).__name__}: {exc}")
+            return None
+
+    with ThreadPoolExecutor(len(harnesses)) as pool:
+        results = [r for r in pool.map(one, range(len(harnesses))) if r is not None]
+    best = None
+    for r in results:
+        if best is None or _obj.better(r[1], best[1]):
+            best = r
+    print(f"[Agent]   Width {len(harnesses)}: " + (
+        "branch scores " + ", ".join(f"{r[1].aggregate:.3f}" for r in results) if results else "no branch improved"))
+    return best
 
 
 # A rewrite that loses this much score (or crashes a working translation) is

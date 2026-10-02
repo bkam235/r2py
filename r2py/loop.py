@@ -93,6 +93,7 @@ def run_loop(
     agent_budget_s: "float | None" = None,
     agent_replace_entity: bool = True,
     agent_entity_repair: bool = False,
+    agent_width: int = 1,
     **verify_kwargs,
 ) -> TranslateResult:
     """Cheap path → reasoning agent escalation loop.
@@ -106,7 +107,7 @@ def run_loop(
     from . import stage4
     from .seed import translate as _seed_translate
     from .harness.tools import HarnessTools
-    from .harness.agent import reason as _reason
+    from .harness.agent import reason_wide as _reason_wide
     from .stage2.stitch import rebuild_entity_line_map as _rebuild
     from .stage2.sentinel_mapper import flatten_entity_line_map as _flatten
     from .harness import objective as _obj
@@ -133,14 +134,17 @@ def run_loop(
 
     verify_kwargs["timeout_s"] = timeout_s
 
-    harness = HarnessTools(
-        script_map, library,
-        model=model,
-        data_compare=data_compare,
-        timeout_s=timeout_s,
-        sidecar_filename=_sidecar_fn or "",
-        verify_kwargs=verify_kwargs,
-    )
+    def _new_harness() -> HarnessTools:
+        return HarnessTools(
+            script_map, library,
+            model=model,
+            data_compare=data_compare,
+            timeout_s=timeout_s,
+            sidecar_filename=_sidecar_fn or "",
+            verify_kwargs=verify_kwargs,
+        )
+
+    harness = _new_harness()
 
     entities = getattr(script_map, "entities", {})
     _need_bundles = output_dir is not None
@@ -275,10 +279,10 @@ def run_loop(
     except Exception as exc:
         print(f"[Audit]   Audit failed (non-fatal): {exc}")
 
-    agent_result = _reason(
+    agent_result = _reason_wide(
+        [harness] + [_new_harness() for _ in range(max(1, agent_width) - 1)],
         current_source=best_source,
         score_report=best_decomp,
-        harness=harness,
         script_map=script_map,
         model=escalation_model,
         max_steps=max_iters,

@@ -134,7 +134,7 @@ def run_parallel(args, scripts: list[str]) -> int:
     n = min(args.workers, len(scripts))
     print(f"smoke test: {len(scripts)} scripts on {n} workers -> {out}", flush=True)
     passthrough = (["--only", *args.only] if args.only else []) + (["--all"] if args.all else []) + [
-                   "--replace-entity", args.replace_entity, "--entity-repair", args.entity_repair,
+                   "--replace-entity", args.replace_entity, "--entity-repair", args.entity_repair, "--width", str(args.width),
                    "--n", str(args.n), "--budget-s", str(args.budget_s), "--checkpoint", args.checkpoint,
                    "--manifest", args.manifest, "--workdir", args.workdir]
     procs = [subprocess.Popen([sys.executable, __file__, *passthrough, "--shard", f"{i}/{n}",
@@ -169,6 +169,7 @@ def main() -> int:
                     help="offer the replace_entity action (off = the pre-Stage-3 prompt, for an A/B arm)")
     ap.add_argument("--entity-repair", choices=("on", "off"), default="off",
                     help="harness-driven repair of one failing entity per step (after the first)")
+    ap.add_argument("--width", type=int, default=1, help="independent agent loops per script (the best result wins)")
     ap.add_argument("--workers", type=int, default=1, help="parallel worker processes")
     ap.add_argument("--shard", help=argparse.SUPPRESS)  # internal: "i/N", with --out
     ap.add_argument("--out", help=argparse.SUPPRESS)
@@ -210,6 +211,7 @@ def main() -> int:
     cfg["agent_budget_s"] = args.budget_s
     cfg["replace_entity"] = args.replace_entity == "on"
     cfg["entity_repair"] = args.entity_repair == "on"
+    cfg["agent_width"] = args.width
 
     out = Path(args.out) if args.out else ROOT / "work" / "smoke" / datetime.now().strftime("%Y%m%d_%H%M%S")
     out.mkdir(parents=True, exist_ok=True)

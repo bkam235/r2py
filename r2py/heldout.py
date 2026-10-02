@@ -412,6 +412,7 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         agent_budget_s=cfg.get("agent_budget_s"),
         agent_replace_entity=cfg.get("replace_entity", True),
         agent_entity_repair=cfg.get("entity_repair", False),
+        agent_width=cfg.get("agent_width", 1),
     )
     py_path.write_text(result.python_source, encoding="utf-8")
     trajectory.end(final_score=round(result.final_score, 4), iterations=result.iterations,

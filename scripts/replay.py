@@ -10,7 +10,7 @@ Each (state, policy) is run several times, which also measures the noise of the 
 
 States: for each script, the best seed found across ``--arms`` (trajectory logs); scripts whose best seed
 already reaches ``--max-start`` are skipped (nothing for the agent to do).
-Policies: rewrite (the default loop) | entity_esc (entity repair, escalating to a full rewrite after two
+Policies: rewrite_w3 (three independent rewrite loops, best wins) | rewrite (the default loop) | entity_esc (entity repair, escalating to a full rewrite after two
 misses) | entity_only (entity repair, never escalating).
 Results: ``--out`` JSONL, appended as runs finish (resumable: finished (state, policy, sample) are skipped).
 """
@@ -35,6 +35,7 @@ POLICIES = {
     "rewrite": dict(entity_repair=False, escalate_after=None),
     "entity_esc": dict(entity_repair=True, escalate_after=2),
     "entity_only": dict(entity_repair=True, escalate_after=10 ** 6),
+    "rewrite_w3": dict(entity_repair=False, escalate_after=None, width=3),   # three independent loops, best wins
 }
 
 
@@ -80,7 +81,7 @@ def run_one(task: dict) -> dict:
     load_dotenv(ROOT / ".env", override=True)
     from r2py import heldout as ho
     from r2py.harness import trajectory
-    from r2py.harness.agent import drain_agent_stats, reason
+    from r2py.harness.agent import drain_agent_stats, reason_wide
     from r2py.harness.audit import format_audit_for_agent, static_audit
     from r2py.harness.tools import HarnessTools
     from r2py.library import PatternLibrary
@@ -97,9 +98,11 @@ def run_one(task: dict) -> dict:
             with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
                 shutil.copytree(Path(task["library"]), Path(tmp) / "lib")
                 lib = PatternLibrary(Path(tmp) / "lib")
-                harness = HarnessTools(sm, lib, model=cfg["model"], data_compare=cfg["data_compare"],
-                                       timeout_s=cfg["timeout_s"],
-                                       sidecar_filename=f"{Path(task['script']).stem}.r2py_data.json")
+                def new_harness():
+                    return HarnessTools(sm, lib, model=cfg["model"], data_compare=cfg["data_compare"],
+                                        timeout_s=cfg["timeout_s"],
+                                        sidecar_filename=f"{Path(task['script']).stem}.r2py_data.json")
+                harness = new_harness()
                 trajectory.begin(out_dir / "trajectories" / f"{Path(task['script']).stem}.{task['policy']}.{task['sample']}.jsonl",
                                  script=task["script"], policy=task["policy"], sample=task["sample"])
                 harness.note_reference(task["source"])
@@ -113,11 +116,13 @@ def run_one(task: dict) -> dict:
                 except Exception:
                     pass
                 drain_agent_stats()
-                result = reason(
-                    task["source"], start_report, harness, sm, model=cfg["model"], max_steps=cfg["max_iters"],
-                    score_threshold=cfg["score_threshold"], max_stalls=cfg["max_stalls"],
-                    budget_s=task["budget_s"], audit_feedback=audit, replace_entity=False,
-                    **POLICIES[task["policy"]])
+                policy = dict(POLICIES[task["policy"]])
+                width = policy.pop("width", 1)
+                result = reason_wide(
+                    [harness] + [new_harness() for _ in range(width - 1)],
+                    current_source=task["source"], score_report=start_report, script_map=sm, model=cfg["model"],
+                    max_steps=cfg["max_iters"], score_threshold=cfg["score_threshold"], max_stalls=cfg["max_stalls"],
+                    budget_s=task["budget_s"], audit_feedback=audit, replace_entity=False, **policy)
                 final = result[1].aggregate if result else start_report.aggregate
                 row.update(final_score=round(final, 4), improved=bool(result and final > start_report.aggregate + 1e-9),
                            final_exit=(result[1].py_exit_code if result else start_report.py_exit_code))
