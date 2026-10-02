@@ -99,6 +99,14 @@ during a run (a file on the Desktop) was blamed on the script (`SandboxEscape`; 
 only the top level of the project and of `$HOME` plus `R_LIBS_USER` (`isolation._watch_roots`); `work/`, venvs and
 the IDE folders are skipped. Tests: `tests/test_stage0_sandbox.py`, `tests/test_seed_stage.py` (shim, gate, summarisers).
 Suite: 754 pass, 1 pre-existing failure (`test_stage2 ... locale_dataframe_date_column_round_trip`).
+*Lesson-store pilot (2026-10-02; `r2py/lessons.py`, `scripts/mine_lessons.py`, `seed_eval.py --lessons`).* Crash->fix pairs are
+mined from the trajectory logs (a step whose traceback vanished in the next candidate without the score dropping), the model
+distils each into a lesson keyed by library, and the seed gate offers the lessons for the libraries a draft imports. Mined
+from half the dev scripts (20 pairs, 15 signatures -> 6 lessons: pandas x3, numpy x2, shiny); tested on the other 12 scripts
+(48 seeds). Lessons were offered on 32/47 seeds and the revision taken each time. Result: P(runs) 53% vs 56% for the same
+scripts without lessons, P(>=0.5) 43% vs 44%, mean 0.381 vs 0.383 - **no effect** at +-7 points. The store is too small and too
+generic (the pandas lessons overlap the DataFrame shim); the pilot shows the mechanism runs end to end, not that it helps.
+A larger mining run is the real test and is deferred to the full training run.
 **Open:** a structured-only or wider seed schedule (P(runs) 60% vs 50%), prompt guidance for the remaining API-misuse
 causes, hard-coded file paths in seeds, a paired replay of other agent policies on the same frozen states.
 
