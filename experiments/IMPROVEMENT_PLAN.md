@@ -112,6 +112,13 @@ googledrive) were silent from ~+17 to +85 min and resumed together at 13:36:56, 
 connected standby (event 507). Not width and not the pipeline; `r2py/keepawake.py` (`SetThreadExecutionState`) is now called at the
 start of replay, seed_eval, smoke_test and run_heldout. Earlier unexplained multi-hour hangs may have been the same cause. Entity repair vs rewrite from the same states: +0.006, p = 0.78 (neutral). **Width is the first change in this
 programme with a clear effect.**
+*Entity-level width (Stage 11a; `agent._widen_entity_repair`, `--entity-width`, replay policy `entity_esc_ew3`).* Entity repair with escalation, but
+three independent repairs of the failing entity sampled, spliced and verified per step, the best kept. Replay, same 20 states x 2
+samples (40 runs, 0 failed): mean final 0.678, P(improve) 75%, P(final >= 0.9) 32%. Paired by state: +0.021 over entity repair without
+width (SE 0.033, p = 0.53), +0.027 over the plain rewrite loop (p = 0.12), **-0.117 against whole-loop width 3 (0.795; p = 0.22,
+3 better / 6 worse / 11 tied)**. Of 156 widened steps, 49 produced three identical fragments and 31 only two distinct ones (the
+samples are not diverse), 8 produced no usable fragment. **Entity-level width is not worth its cost; it stays off by default
+(`entity_width = 1`); whole-loop width is the width that works.**
 **Default (2026-10-02, decided by the user: 3x model cost accepted):** `DEFAULT_AGENT_WIDTH = 3` in `r2py/loop.py`; `run_loop`, the held-out
 pipeline (`cfg.agent_width`) and `smoke_test.py --width` use it. Provider concurrency is workers x 3 requests in flight.
 *Lesson-store pilot (2026-10-02; `r2py/lessons.py`, `scripts/mine_lessons.py`, `seed_eval.py --lessons`).* Crash->fix pairs are
