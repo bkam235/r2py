@@ -1,0 +1,28 @@
+scripts run: 12  errors: 1
+
+script                                                score   gfx   min  shadow  review-fail
+ggplot2__rd_example__aes_linetype_size_shape_Rd.R     0.896  0.00  19.3  -  -
+isoband__rd_example__isobands_Rd.R                    0.861  0.00  28.7  -  -
+pROC__rd_example__geom_polygon_auc_roc_Rd.R           0.333  0.00  25.9  {'reor:invalid->valid': 2}  -
+RColorBrewer__rd_example__ColorBrewer_Rd.R            0.620  0.04  24.0  -  -
+shape__rd_example__femmecol_Rd.R                      0.867  0.60  20.1  -  -
+vctrs__rd_example__new_date_Rd.R                      1.000     -   7.5  -  -
+caret__rd_example__createDataPartition_Rd.R           0.737  0.12  25.2  -  -
+e1071__rd_example__hamming_window_Rd.R                0.607  1.00  18.3  -  -
+purrr__vignette__purrr_s3.R                           1.000     -   7.6  -  -
+diagram__rd_example__diagram_Rd.R                       nan     -   7.9  {'reor:invalid->valid': 1}  -
+gtable__rd_example__gtable_show_layout_Rd.R           0.625  1.00  12.9  -  -
+xml2__rd_example__xml_cdata_Rd.R                      0.511     -  15.4  -  -
+
+agent actions: {'rewrite': 40, 'replace_entity': 1}
+replace_entity refused       1
+syntax errors                0
+review PASSED                9
+review FAILED                0
+review unavailable           0
+runtime SyntaxError dumps    4
+budget exhausted             9
+
+entity records: 137 (137 with active_dims)
+entities with no active dimensions: 29
+scripts with graphics scored: 8; mean 0.34

@@ -1,0 +1,27 @@
+smoke test: 12 scripts, checkpoint full, agent budget 600s, harness 7ecc87924726 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260929_155653
+
+===== [1/12] ggplot2__rd_example__aes_linetype_size_shape_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 102 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp3p7hyz69\_r2py_script.py", line 366, in <module>
+    ggplot(economics, aes('date', 'unemploy')) + geom_line(linewidth=2, lineend="round")
+                                                 ~~~~~
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 99 lines
+[Agent]   Rewrite scored: 0.862 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 97 lines
+[Agent]   Rewrite scored: 0.896 (was 0.862), exit_code=0
+[Review]  PASSED
+[Agent]   Wall-clock budget (10 min) exhausted after 3 steps, stopping with score 0.896
+[Agent]   Improved: 0.000 -> 0.896
+
+===== [2/12] RColorBrewer__rd_example__ColorBrewer_Rd.R

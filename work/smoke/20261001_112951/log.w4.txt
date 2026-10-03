@@ -1,0 +1,80 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 8e880039a896 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_112951
+
+===== [1/4] lubridate__vignette__lubridate_s18.R
+[Seed]    Structured 1 score: 0.628
+[Seed]    Bare 2 score: 0.438
+[Seed]    Structured 2 score: 0.640
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.640, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 73 lines
+[Agent]   Rewrite scored: 0.695 (was 0.640), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 109 lines
+[Agent]   Rewrite scored: 0.958 (was 0.695), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.958 >= threshold, stopping
+[Agent]   Improved: 0.640 -> 0.958
+
+===== [2/4] isoband__rd_example__isobands_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.861
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.861, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 175 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp0sdqpsqr\_r2py_script.py", line 455, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Lo
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 167 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpuuxamuza\_r2py_script.py", line 447, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Lo
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 167 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmphj3wmc5h\_r2py_script.py", line 448, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Lo
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.861)
+
+===== [3/4] caret__rd_example__createDataPartition_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 6 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.577, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 214 lines
+[Agent]   23 entity sentinel(s) missing: ['createDataPartition', 'createFolds', 'createFolds_1', 'createFolds_2', 'createResample', 'createTimeSlices']
+[Agent]   Rewrite scored: 0.614 (was 0.577), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 250 lines
+[Agent]   Rewrite scored: 0.581 (was 0.614), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 262 lines
+[Agent]   Rewrite scored: 0.587 (was 0.614), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 238 lines
+[Agent]   Rewrite scored: 0.581 (was 0.614), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.577 -> 0.614
+
+===== [4/4] openssl__rd_example__base64_encode_Rd.R
+[Seed]    Structured 1 score: 1.000

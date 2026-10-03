@@ -1,0 +1,25 @@
+scripts run: 3  errors: 0
+
+script                                                score   gfx   min  shadow  review-fail
+lava__vignette__influencefunction_s34.R               0.577     -  17.3  {'reor:valid->invalid': 3}  -
+pROC__rd_example__geom_polygon_auc_roc_Rd.R           0.378  0.00  26.3  {'reor:invalid->valid': 2}  -
+broom__rd_example__glance_factanal_Rd.R               0.000     -  20.6  -  -
+
+agent actions: {'entity_repair': 8, 'rewrite': 1}
+replace_entity refused       0
+syntax errors                0
+review PASSED                0
+review FAILED                1
+review unavailable           0
+runtime SyntaxError dumps    0
+budget exhausted             0
+
+rewrite outcomes by action (from the run rows):
+  entity_repair   scored=  8 improved 12% unchanged 50% worse 0% catastrophic 38% | review_rejected 1
+  rewrite         scored=  1 improved 0% unchanged 100% worse 0% catastrophic 0% | 
+agent stops: {'stalled': 3}
+
+entity records: 35 (35 with active_dims)
+entities with no active dimensions: 7
+excluded data entities: 0; worklist []
+scripts with graphics scored: 1; mean 0.00

@@ -1,0 +1,89 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness bd6e10dd2868 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_065131
+
+===== [1/4] purrr__vignette__purrr_s3.R
+[Seed]    Structured 1 score: 0.882
+[Seed]    Bare 2 score: 0.877
+[Seed]    Structured 2 score: 0.939
+
+===== [2/4] hms__rd_example__hms_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 117 lines
+[Agent]   Rewrite scored: 0.888 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 129 lines
+[Agent]   Rewrite scored: 0.886 (was 0.888), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 129 lines
+[Agent]   Rewrite scored: 0.896 (was 0.888), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 134 lines
+[Agent]   Rewrite scored: 0.883 (was 0.896), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 149 lines
+[Agent]   Rewrite scored: 0.898 (was 0.896), exit_code=0
+[Review]  PASSED
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 146 lines
+[Agent]   Rewrite scored: 0.891 (was 0.898), exit_code=0
+[Agent]   Wall-clock budget (20 min) exhausted after 6 steps, stopping with score 0.898
+[Agent]   Improved: 0.000 -> 0.898
+
+===== [3/4] shiny__rd_example__httpResponse_Rd.R
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 28 lines
+[Agent]   Rewrite scored: 0.500 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 29 lines
+[Agent]   Rewrite scored: 0.931 (was 0.500), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.931 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 0.931
+
+===== [4/4] pROC__rd_example__geom_polygon_auc_roc_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.333
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 4 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.333, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 165 lines
+[Agent]   Rewrite scored: 0.000 (was 0.333), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpfelvkszw\_r2py_script.py", line 495, in <module>
+    auc_s100b_partial_sp = auc_calc(roc_s100b, partial_auc=(0.9, 1))
+  File "C:\Users\bened\AppData\Local\Temp\tmpfelvkszw\_r2py_script.py", li
+[Agent]   Catastrophic rewrite (0.333 -> 0.000) — discarded, reverted to best
+[Agent]   Step 2: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 165 lines
+[Agent]   Rewrite scored: 0.000 (was 0.333), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpab3z3pam\_r2py_script.py", line 437, in <module>
+    roc_s100b['auc'] = auc_custom(roc_s100b)
+                       ~~~~~~~~~~^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Local\Temp\tmpab3z3pa
+[Agent]   Catastrophic rewrite (0.333 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 130 lines
+[Agent]   Rewrite scored: 0.333 (was 0.333), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.333)

@@ -1,0 +1,36 @@
+smoke test: 1 scripts, checkpoint empty, agent budget 900s, harness 4cb0f435a42d -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_210353
+
+===== [1/1] broom__rd_example__glance_factanal_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 84 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp9pwp9vot\_r2py_script.py", line 358, in <module>
+    fa1.fit(m1)
+    ~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py", 
+[Agent]   Targeting entity fit2 for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 60 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpghl1ue5o\_r2py_script.py", line 360, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   Targeting entity fit2 for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 60 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmplw1d3s8_\_r2py_script.py", line 360, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.000)

@@ -1,0 +1,111 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 8e880039a896 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_112951
+
+===== [1/4] blob__rd_example__blob_Rd.R
+[Seed]    Structured 1 score: 0.700
+[Seed]    Bare 2 score: 0.700
+[Seed]    Structured 2 score: 0.730
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.730, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 72 lines
+[Agent]   Rewrite scored: 1.000 (was 0.730), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.730 -> 1.000
+
+===== [2/4] clock__rd_example__zoned_time_info_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 135 lines
+[Agent]   7 entity sentinel(s) missing: ['info', 'info_1', 'x', 'x_1', 'x_2', 'x_3']
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...module>
+    info = zoned_time_info(x)
+  File "C:\Users\bened\AppData\Local\Temp\tmpxjagwj4f\_r2py_script.py", line 430, in zoned_time_info
+    idx = np.searchsorted(transitions, utc_dt)
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\numpy\_co
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 130 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...module>
+    info = zoned_time_info(x)
+  File "C:\Users\bened\AppData\Local\Temp\tmpz6nu866f\_r2py_script.py", line 416, in zoned_time_info
+    idx = np.searchsorted(transitions, utc_dt)
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\numpy\_co
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 104 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...e_info(x)
+  File "C:\Users\bened\AppData\Local\Temp\tmpyuifheo5\_r2py_script.py", line 393, in zoned_time_info
+    idx = np.searchsorted(transitions, utc_dt.timestamp())
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\numpy\_core\fromnumeric.py
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.000)
+
+===== [3/4] highr__rd_example__hilight_Rd.R
+[Seed]    Structured 1 score: 0.726
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.712
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.726, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 180 lines
+[Agent]   4 entity sentinel(s) missing: ['cat', 'cat_1', 'hilight', 'txt']
+[Agent]   Rewrite scored: 0.842 (was 0.726), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 195 lines
+[Agent]   Rewrite scored: 0.896 (was 0.842), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 179 lines
+[Agent]   Rewrite scored: 0.928 (was 0.896), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.928 >= threshold, stopping
+[Agent]   Improved: 0.726 -> 0.928
+
+===== [4/4] broom__rd_example__glance_factanal_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 91 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpa9g1qhpw\_r2py_script.py", line 392, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 83 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpnkekep2v\_r2py_script.py", line 389, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 127 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpyo2vsgd7\_r2py_script.py", line 449, in <module>
+    augment_fit2 = augment_factanal(fit2)
+  File "C:\Users\bened\AppData\Local\Temp\tmpyo2vsgd7\_r2py_script.py", line 419, in augment_factanal
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 111 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpu0c0y391\_r2py_script.py", line 411, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.000

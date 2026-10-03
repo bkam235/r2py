@@ -1,0 +1,174 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 8e880039a896 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_124904
+
+===== [1/4] lubridate__vignette__lubridate_s18.R
+[Seed]    Structured 1 score: 0.708
+[Seed]    Bare 2 score: 0.438
+[Seed]    Structured 2 score: 0.633
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.708, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 74 lines
+[Agent]   1 entity sentinel(s) missing: ['months_1']
+[Agent]   Rewrite scored: 0.663 (was 0.708), exit_code=0
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 76 lines
+[Agent]   1 entity sentinel(s) missing: ['months_1']
+[Agent]   Rewrite scored: 0.661 (was 0.708), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 78 lines
+[Agent]   1 entity sentinel(s) missing: ['months_1']
+[Agent]   Rewrite scored: 0.630 (was 0.708), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 71 lines
+[Agent]   Rewrite scored: 0.698 (was 0.708), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 77 lines
+[Agent]   Rewrite scored: 0.766 (was 0.708), exit_code=0
+[Review]  PASSED
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 76 lines
+[Agent]   Rewrite scored: 0.950 (was 0.766), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.950 >= threshold, stopping
+[Agent]   Improved: 0.708 -> 0.950
+
+===== [2/4] isoband__rd_example__isobands_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.861
+[Seed]    Structured 2 score: 0.000
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.861, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity g for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 84 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpir5_6xct\_r2py_script.py", line 377, in <module>
+    ax.contourf(X, Y, m, levels=[0.5, 1.5], colors=['cornsilk'])
+    ^^
+NameError: name 'ax' is not defined. Did you mean: 'max'?
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity g for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 85 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpnx_d2knm\_r2py_script.py", line 378, in <module>
+    ax.contourf(X, Y, m, levels=[0.5, 1.5], colors=['cornsilk'])
+    ^^
+NameError: name 'ax' is not defined. Did you mean: 'max'?
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 148 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...ost recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp3wanp8ww\_r2py_script.py", line 428, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Local\Temp\
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 135 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpaymppbmu\_r2py_script.py", line 410, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 141 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp17yigmue\_r2py_script.py", line 421, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Lo
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 154 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpew3az4ca\_r2py_script.py", line 431, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.861)
+
+===== [3/4] caret__rd_example__createDataPartition_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 226 lines
+[Agent]   21 entity sentinel(s) missing: ['createDataPartition', 'createFolds', 'createFolds_1', 'createFolds_2', 'createResample', 'createTimeSlices']
+[Agent]   Verification failed: Script wrote to a path outside the sandbox workdir: C:\Users\bened\Desktop\am.md
+[Agent]   Targeting entity plot for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 135 lines
+[Agent]   3 entity sentinel(s) missing: ['points', 'rug', 'rug_1']
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmplg3k8iru\_r2py_script.py", line 377, in <module>
+    df_plot = pd.DataFrame({'val': x[inA]})
+                                   ~^^^^^
+TypeError: only integer scalar arrays can be converted t
+[Agent]   Targeting entity plot for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 136 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp6t48faeo\_r2py_script.py", line 378, in <module>
+    df_plot = pd.DataFrame({'val': x[inA]})
+                                   ~^^^^^
+TypeError: only integer scalar arrays can be converted t
+[Agent]   Targeting entity createResample for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 144 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmph1wsuwxr\_r2py_script.py", line 379, in <module>
+    'val': np.concatenate([x[inA], x[not_inA]]),
+                           ~^^^^^
+TypeError: only integer scalar arrays can be converted to a
+[Agent]   Targeting entity createResample for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 145 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmppr7qn6e7\_r2py_script.py", line 379, in <module>
+    'val': np.concatenate([x[inA], x[not_inA]]),
+                           ~^^^^^
+TypeError: only integer scalar arrays can be converted to a
+[Agent]   Targeting entity createFolds for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 143 lines
+[Agent]   Verification failed: Script wrote to a path outside the sandbox workdir: C:\Users\bened\Desktop\am.md
+[Agent]   Targeting entity createFolds for repair
+[Agent]   Step 7: entity_repair
+[Agent]   Rewrite: 143 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpqze881fx\_r2py_script.py", line 379, in <module>
+    'val': np.concatenate([x[inA], x[not_inA]]),
+                           ~^^^^^
+TypeError: only integer scalar arrays can be converted to a
+[Agent]   Targeting entity createFolds_1 for repair
+[Agent]   Step 8: entity_repair
+[Agent]   Rewrite: 142 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp6t_plurg\_r2py_script.py", line 379, in <module>
+    'val': np.concatenate([x[inA], x[not_inA]]),
+                           ~^^^^^
+TypeError: only integer scalar arrays can be converted to a
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.000)
+
+===== [4/4] openssl__rd_example__base64_encode_Rd.R
+  ERROR: SandboxEscape: Script wrote to a path outside the sandbox workdir: C:\Users\bened\Desktop\am.md

@@ -1,0 +1,74 @@
+[
+ {
+  "signature": "AttributeError: 'list' object has no attribute 'values'",
+  "libs": [
+   "pandas"
+  ],
+  "symptom": "AttributeError: 'list' object has no attribute 'values'",
+  "lesson": "If a variable expected to be a pandas DataFrame or Series is actually a list, convert it using pd.DataFrame(list) before accessing the '.values' attribute.",
+  "support": 2,
+  "scripts": [
+   "clock__rd_example__zoned_time_info_Rd.R"
+  ]
+ },
+ {
+  "signature": "ModuleNotFoundError: No module named 'shiny'",
+  "libs": [
+   "shiny"
+  ],
+  "symptom": "ModuleNotFoundError: No module named 'shiny'",
+  "lesson": "Ensure the 'shiny' package is installed in the Python environment via pip or conda.",
+  "support": 1,
+  "scripts": [
+   "textshaping__vignette__c_interface.R"
+  ]
+ },
+ {
+  "signature": "TypeError: only integer scalar arrays can be converted to a scalar index",
+  "libs": [
+   "numpy"
+  ],
+  "symptom": "TypeError: only integer scalar arrays can be converted to a scalar index",
+  "lesson": "Ensure that indices used for NumPy array slicing are arrays of integers or boolean masks, rather than floating-point numbers or incompatible types.",
+  "support": 1,
+  "scripts": [
+   "caret__rd_example__createDataPartition_Rd.R"
+  ]
+ },
+ {
+  "signature": "TypeError: string indices must be integers, not 'str'",
+  "libs": [
+   "pandas"
+  ],
+  "symptom": "TypeError: string indices must be integers, not 'str'",
+  "lesson": "Avoid iterating over a pandas DataFrame as if it were a list of dictionaries; access columns directly by name using bracket notation.",
+  "support": 1,
+  "scripts": [
+   "clock__rd_example__zoned_time_info_Rd.R"
+  ]
+ },
+ {
+  "signature": "AttributeError: 'list' object has no attribute 'tzinfo'",
+  "libs": [
+   "pandas"
+  ],
+  "symptom": "AttributeError: 'list' object has no attribute 'tzinfo'",
+  "lesson": "When accessing fields from a data structure that could be either a pandas DataFrame or a list of dictionaries, ensure you handle the iteration or indexing consistently to avoid passing a list where a single datetime object is expected.",
+  "support": 1,
+  "scripts": [
+   "clock__rd_example__zoned_time_info_Rd.R"
+  ]
+ },
+ {
+  "signature": "AttributeError: 'list' object has no attribute 'tolist'",
+  "libs": [
+   "numpy"
+  ],
+  "symptom": "AttributeError: 'list' object has no attribute 'tolist'",
+  "lesson": "Do not call .tolist() on an object that is already a Python list; use it only on NumPy arrays to convert them to lists.",
+  "support": 1,
+  "scripts": [
+   "caret__rd_example__createDataPartition_Rd.R"
+  ]
+ }
+]

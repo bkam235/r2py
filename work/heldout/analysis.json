@@ -1,0 +1,195 @@
+{
+  "n_heldout": 60,
+  "checkpoints_analyzed": [
+    "empty",
+    "half",
+    "full"
+  ],
+  "n_errored_runs": 44,
+  "n_infra_crash_runs": 0,
+  "harness_hashes": [
+    "5a2b026daa0a"
+  ],
+  "llm_settings": [
+    "{\"provider\": {\"allow_fallbacks\": false, \"only\": [\"novita/bf16\"]}, \"request_timeout_s\": 300, \"temperature\": 1.0}"
+  ],
+  "script_aggregate": {
+    "n_paired": 59,
+    "mean_before": 0.6826401616633242,
+    "mean_after": 0.6833510360176452,
+    "mean_diff": 0.0007108743543210424,
+    "median_diff": 0.0,
+    "n_improved": 27,
+    "n_worse": 17,
+    "n_tied": 15,
+    "se_diff": 0.01303826548690732,
+    "test": {
+      "alternative": "greater",
+      "zero_method": "wilcox",
+      "alpha": 0.05,
+      "statistic": 565.0,
+      "p_value": 0.2069889369022575,
+      "p_value_two_sided": 0.413977873804515,
+      "rank_biserial": 0.1414141414141414,
+      "significant": false,
+      "n_nonzero": 44
+    },
+    "by_stratum": {
+      "data_wrangling": {
+        "n": 10,
+        "mean_diff": -0.0016079901448139533
+      },
+      "date_time": {
+        "n": 10,
+        "mean_diff": -0.038643984386523736
+      },
+      "graphics": {
+        "n": 10,
+        "mean_diff": 0.027739014120298788
+      },
+      "html": {
+        "n": 10,
+        "mean_diff": 0.007766291653112439
+      },
+      "stats_objects": {
+        "n": 10,
+        "mean_diff": 0.013535469395532693
+      },
+      "other": {
+        "n": 9,
+        "mean_diff": -0.005105157719013425
+      }
+    },
+    "trend": {
+      "checkpoints": [
+        "empty",
+        "half",
+        "full"
+      ],
+      "n": 59,
+      "n_monotone_nondecreasing": 21,
+      "n_strictly_increasing": 7,
+      "mean_by_checkpoint": {
+        "empty": 0.6826401616633242,
+        "half": 0.6992112144663636,
+        "full": 0.6833510360176452
+      },
+      "page_L": 721.5,
+      "p_value": 0.10697524342015041
+    }
+  },
+  "primary": {
+    "n_paired": 39,
+    "mean_before": 0.6970813204716566,
+    "mean_after": 0.7352138685904788,
+    "mean_diff": 0.03813254811882212,
+    "median_diff": 0.0,
+    "n_improved": 15,
+    "n_worse": 8,
+    "n_tied": 16,
+    "se_diff": 0.026883680085651833,
+    "test": {
+      "alternative": "greater",
+      "zero_method": "wilcox",
+      "alpha": 0.05,
+      "statistic": 190.0,
+      "p_value": 0.056873019126598444,
+      "p_value_two_sided": 0.11374603825319689,
+      "rank_biserial": 0.37681159420289856,
+      "significant": false,
+      "n_nonzero": 23
+    },
+    "by_stratum": {
+      "data_wrangling": {
+        "n": 7,
+        "mean_diff": 0.003989781308686277
+      },
+      "date_time": {
+        "n": 5,
+        "mean_diff": -0.08868364480987881
+      },
+      "graphics": {
+        "n": 5,
+        "mean_diff": 0.06411611740411323
+      },
+      "html": {
+        "n": 8,
+        "mean_diff": 0.021355897078882427
+      },
+      "stats_objects": {
+        "n": 9,
+        "mean_diff": 0.15675344027846658
+      },
+      "other": {
+        "n": 5,
+        "mean_diff": 9.008107296566425e-05
+      }
+    },
+    "trend": {
+      "checkpoints": [
+        "empty",
+        "half",
+        "full"
+      ],
+      "n": 39,
+      "n_monotone_nondecreasing": 17,
+      "n_strictly_increasing": 2,
+      "mean_by_checkpoint": {
+        "empty": 0.6970813204716566,
+        "half": 0.7457983208420094,
+        "full": 0.7352138685904788
+      },
+      "page_L": 476.0,
+      "p_value": 0.18251513591915203
+    }
+  },
+  "control": {
+    "n_paired": 58,
+    "mean_before": 0.7149887184641325,
+    "mean_after": 0.7157696377582217,
+    "mean_diff": 0.0007809192940891722,
+    "median_diff": 0.0,
+    "n_improved": 20,
+    "n_worse": 18,
+    "n_tied": 20,
+    "se_diff": 0.010831055928017152,
+    "test": {
+      "alternative": "greater",
+      "zero_method": "wilcox",
+      "alpha": 0.05,
+      "statistic": 378.0,
+      "p_value": 0.45669362253986306,
+      "p_value_two_sided": 0.9133872450797261,
+      "rank_biserial": 0.020242914979757085,
+      "significant": false,
+      "n_nonzero": 38
+    },
+    "by_stratum": {
+      "data_wrangling": {
+        "n": 10,
+        "mean_diff": 0.00011654752567186177
+      },
+      "date_time": {
+        "n": 10,
+        "mean_diff": -0.0033094256476455695
+      },
+      "graphics": {
+        "n": 10,
+        "mean_diff": 0.02879205294828046
+      },
+      "html": {
+        "n": 9,
+        "mean_diff": -0.0005162044030445006
+      },
+      "stats_objects": {
+        "n": 10,
+        "mean_diff": -0.009671944113131192
+      },
+      "other": {
+        "n": 9,
+        "mean_diff": -0.012148127605242568
+      }
+    }
+  },
+  "share_targetable": 0.20040080160320642
+}

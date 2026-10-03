@@ -1,0 +1,18 @@
+scripts run: 2  errors: 0
+
+script                                                score   gfx   min  shadow  review-fail
+caret__rd_example__createDataPartition_Rd.R           0.000  0.00  46.2  -  -
+e1071__rd_example__hamming_window_Rd.R                0.795  1.00   8.4  -  -
+
+agent actions: {'rewrite': 6}
+replace_entity refused       0
+syntax errors                0
+review PASSED                1
+review FAILED                0
+review unavailable           0
+runtime SyntaxError dumps    0
+budget exhausted             2
+
+entity records: 30 (30 with active_dims)
+entities with no active dimensions: 1
+scripts with graphics scored: 2; mean 0.50

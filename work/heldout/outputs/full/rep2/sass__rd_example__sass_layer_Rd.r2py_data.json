@@ -1,0 +1,60 @@
+{
+  "core": {
+    "layers": {
+      "1": {
+        "functions": {},
+        "defaults": {
+          "color": "blue !default"
+        },
+        "mixins": {},
+        "rules": "body { color: $color; }",
+        "declarations": {},
+        "html_deps": {},
+        "file_attachments": []
+      }
+    }
+  },
+  "core_layers": {
+    "layers": {
+      "1": {
+        "functions": {},
+        "defaults": {
+          "color": "blue !default"
+        },
+        "mixins": {},
+        "rules": "body { color: $color; }",
+        "declarations": {},
+        "html_deps": {},
+        "file_attachments": []
+      },
+      "red": {
+        "functions": [
+          {
+            "color": "red !default"
+          }
+        ],
+        "defaults": {},
+        "mixins": {},
+        "rules": [
+          ":root{ --color: #{$color}; }"
+        ],
+        "declarations": {},
+        "html_deps": {},
+        "file_attachments": []
+      },
+      "green": {
+        "functions": [
+          {
+            "color": "green !default"
+          }
+        ],
+        "defaults": {},
+        "mixins": {},
+        "rules": {},
+        "declarations": {},
+        "html_deps": {},
+        "file_attachments": []
+      }
+    }
+  }
+}

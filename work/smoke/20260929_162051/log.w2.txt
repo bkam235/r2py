@@ -1,0 +1,55 @@
+smoke test: 3 scripts, checkpoint full, agent budget 600s, harness 7ecc87924726 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260929_162051
+
+===== [1/3] caret__rd_example__createDataPartition_Rd.R
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_ed7bcded02.py
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 217 lines
+[Agent]   Rewrite scored: 0.587 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 213 lines
+[Agent]   Rewrite scored: 0.737 (was 0.587), exit_code=0
+[Review]  PASSED
+[Agent]   Wall-clock budget (10 min) exhausted after 2 steps, stopping with score 0.737
+[Agent]   Improved: 0.000 -> 0.737
+
+===== [2/3] e1071__rd_example__hamming_window_Rd.R
+[r2py] WARNING: 'y' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'y' is a data entity but Python could not serialize it — excluded from comparison
+[Seed]    Structured 1 score: 0.545
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_8d226b172c.py
+[Seed]    Bare 2 score: 0.000
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_9eb320014e.py
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.545, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 96 lines
+[Agent]   Rewrite scored: 0.607 (was 0.545), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 98 lines
+[Agent]   Rewrite scored: 0.607 (was 0.607), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 99 lines
+[Agent]   Rewrite scored: 0.607 (was 0.607), exit_code=0
+[Agent]   Wall-clock budget (10 min) exhausted after 3 steps, stopping with score 0.607
+[Agent]   Improved: 0.545 -> 0.607
+
+===== [3/3] purrr__vignette__purrr_s3.R
+[Seed]    Structured 1 score: 0.882
+[Seed]    Bare 2 score: 0.877
+[Seed]    Structured 2 score: 0.882
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.882, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 35 lines
+[Agent]   Rewrite scored: 1.000 (was 0.882), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.882 -> 1.000

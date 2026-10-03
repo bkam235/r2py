@@ -1,0 +1,200 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 61618ce10949 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_140509
+
+===== [1/4] lubridate__vignette__lubridate_s18.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.438
+[Seed]    Structured 2 score: 0.444
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.444, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity jan31 for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 65 lines
+[Agent]   Rewrite scored: 0.000 (was 0.444), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp7ug1b3u2\_r2py_script.py", line 370, in <module>
+    jan31 = ymd("2013-01-31")
+            ^^^
+NameError: name 'ymd' is not defined
+[Agent]   Catastrophic rewrite (0.444 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity jan31 for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 68 lines
+[Agent]   Rewrite scored: 0.632 (was 0.444), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity floor_date for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 75 lines
+[Agent]   Rewrite scored: 0.640 (was 0.632), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity months_2 for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 74 lines
+[Agent]   Rewrite scored: 0.759 (was 0.640), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity floor_date for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 67 lines
+[Agent]   Rewrite scored: 0.751 (was 0.759), exit_code=0
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 81 lines
+[Agent]   Rewrite scored: 0.630 (was 0.759), exit_code=0
+[Agent]   Step 7: rewrite
+[Agent]   Rewrite: 89 lines
+[Agent]   3 entity sentinel(s) missing: ['jan31', 'months_1', 'months_2']
+[Agent]   Rewrite scored: 0.691 (was 0.759), exit_code=0
+[Agent]   Step 8: rewrite
+[Agent]   Rewrite: 73 lines
+[Agent]   Rewrite scored: 0.698 (was 0.759), exit_code=0
+[Agent]   Step 9: rewrite
+[Agent]   Rewrite: 83 lines
+[Agent]   Rewrite scored: 0.818 (was 0.759), exit_code=0
+[Review]  PASSED
+[Agent]   Step 10: rewrite
+[Agent]   Rewrite: 103 lines
+[Agent]   Rewrite scored: 1.000 (was 0.818), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.444 -> 1.000
+
+===== [2/4] isoband__rd_example__isobands_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.861
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.861, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 157 lines
+[Agent]   8 entity sentinel(s) missing: ['m', 'm_1', 'm_2', 'm_3', 'plot_iso', 'plot_iso_1']
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpidxx4zaj\_r2py_script.py", line 449, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 163 lines
+[Agent]   4 entity sentinel(s) missing: ['grid.newpage', 'grid.path', 'grid.points', 'grid.polyline']
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpyyd2k76c\_r2py_script.py", line 445, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 161 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmphi3rgzfz\_r2py_script.py", line 441, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Lo
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 152 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp34cicwow\_r2py_script.py", line 433, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 153 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...rmalize_kwargs(kwargs, self))
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\matplotlib\artist.py", line 1313, in _internal_update
+    return self._update_props(
+         
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 142 lines
+[Agent]   3 entity sentinel(s) missing: ['grid.path', 'grid.points', 'grid.polyline']
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpqoo51bk2\_r2py_script.py", line 430, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Lo
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Wall-clock budget (20 min) exhausted after 6 steps, stopping with score 0.861
+[Agent]   No improvement achieved (score=0.861)
+
+===== [3/4] caret__rd_example__createDataPartition_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.504, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity groups for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 131 lines
+[Agent]   Rewrite scored: 0.000 (was 0.504), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...^^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\sklearn\model_selection\_split.py", line 142, in split
+    for test_index in self._iter_test_masks(X, y, groups):
+                      ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\
+[Agent]   Catastrophic rewrite (0.504 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity groups for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 131 lines
+[Agent]   Rewrite scored: 0.000 (was 0.504), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...^^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\sklearn\model_selection\_split.py", line 142, in split
+    for test_index in self._iter_test_masks(X, y, groups):
+                      ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "C:\Users\
+[Agent]   Catastrophic rewrite (0.504 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity inA for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 133 lines
+[Agent]   Rewrite scored: 0.000 (was 0.504), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...te-packages\pandas\core\frame.py", line 782, in __init__
+    mgr = dict_to_mgr(data, index, columns, dtype=dtype, copy=copy, typ=manager)
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\pandas\core\internals\construction.py", line 503, in dict_t
+[Agent]   Catastrophic rewrite (0.504 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity inA for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 132 lines
+[Agent]   Rewrite scored: 0.000 (was 0.504), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...te-packages\pandas\core\frame.py", line 782, in __init__
+    mgr = dict_to_mgr(data, index, columns, dtype=dtype, copy=copy, typ=manager)
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\pandas\core\internals\construction.py", line 503, in dict_t
+[Agent]   Catastrophic rewrite (0.504 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity createDataPartition for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 147 lines
+[Agent]   Rewrite scored: 0.504 (was 0.504), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity createDataPartition for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 144 lines
+[Agent]   Rewrite scored: 0.504 (was 0.504), exit_code=0
+[Agent]   Targeting entity createFolds for repair
+[Agent]   Step 7: entity_repair
+[Agent]   Rewrite: 147 lines
+[Agent]   Rewrite scored: 0.469 (was 0.504), exit_code=0
+[Agent]   Targeting entity createFolds for repair
+[Agent]   Step 8: entity_repair
+[Agent]   Rewrite: 147 lines
+[Agent]   Rewrite scored: 0.469 (was 0.504), exit_code=0
+[Agent]   Targeting entity createFolds_1 for repair
+[Agent]   Step 9: entity_repair
+[Agent]   Rewrite: 146 lines
+[Agent]   Rewrite scored: 0.469 (was 0.504), exit_code=0
+[Agent]   Targeting entity createFolds_1 for repair
+[Agent]   Step 10: entity_repair
+[Agent]   Rewrite: 147 lines
+[Agent]   Rewrite scored: 0.469 (was 0.504), exit_code=0
+[Agent]   Targeting entity createFolds_2 for repair
+[Agent]   Step 11: entity_repair
+[Agent]   Rewrite: 147 lines
+[Agent]   Rewrite scored: 0.504 (was 0.504), exit_code=0
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.504 -> 0.504
+
+===== [4/4] openssl__rd_example__base64_encode_Rd.R
+[Seed]    Structured 1 score: 1.000

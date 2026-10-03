@@ -1,0 +1,111 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness bd6e10dd2868 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_065131
+
+===== [1/4] lubridate__vignette__lubridate_s18.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.438
+[Seed]    Structured 2 score: 0.633
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.633, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 65 lines
+[Agent]   Rewrite scored: 0.661 (was 0.633), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 64 lines
+[Agent]   Rewrite scored: 0.627 (was 0.661), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 83 lines
+[Agent]   Rewrite scored: 0.000 (was 0.661), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmprlrt8_03\_r2py_script.py", line 392, in <module>
+    print(f" [1] " + " ".join([str(x) if not np.isnan(x) else "NA" for x in res1[:6]]))
+                                             ~~~~~~~~^^
+[Agent]   Catastrophic rewrite (0.661 -> 0.000) — discarded, reverted to best
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 81 lines
+[Agent]   Rewrite scored: 0.724 (was 0.661), exit_code=0
+[Review]  PASSED
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 79 lines
+[Agent]   Rewrite scored: 0.724 (was 0.724), exit_code=0
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 85 lines
+[Agent]   Rewrite scored: 0.804 (was 0.724), exit_code=0
+[Review]  PASSED
+[Agent]   Step 7: rewrite
+[Agent]   Rewrite: 91 lines
+[Agent]   Rewrite scored: 0.804 (was 0.804), exit_code=0
+[Agent]   Step 8: rewrite
+[Agent]   Rewrite: 90 lines
+[Agent]   Rewrite scored: 0.705 (was 0.804), exit_code=0
+[Agent]   Step 9: rewrite
+[Agent]   Rewrite: 86 lines
+[Agent]   Rewrite scored: 0.804 (was 0.804), exit_code=0
+[Agent]   Wall-clock budget (20 min) exhausted after 9 steps, stopping with score 0.804
+[Agent]   Improved: 0.633 -> 0.804
+
+===== [2/4] isoband__rd_example__isobands_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.789
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.789, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 161 lines
+[Agent]   Rewrite scored: 0.000 (was 0.789), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp3aac7mmp\_r2py_script.py", line 450, in <module>
+    df_bands = isobands(x_axis, y_axis, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Lo
+[Agent]   Catastrophic rewrite (0.789 -> 0.000) — discarded, reverted to best
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 160 lines
+[Agent]   Rewrite scored: 0.000 (was 0.789), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...rmalize_kwargs(kwargs, self))
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\matplotlib\artist.py", line 1313, in _internal_update
+    return self._update_props(
+         
+[Agent]   Catastrophic rewrite (0.789 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 132 lines
+[Agent]   Rewrite scored: 0.000 (was 0.789), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpi8mcev4d\_r2py_script.py", line 430, in <module>
+    df_bands = isobands(x_axis, y_axis, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Lo
+[Agent]   Catastrophic rewrite (0.789 -> 0.000) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.789)
+
+===== [3/4] caret__rd_example__createDataPartition_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 4 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 223 lines
+[Agent]   Rewrite scored: 0.407 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 207 lines
+[Agent]   Rewrite scored: 0.415 (was 0.407), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 203 lines
+[Agent]   Rewrite scored: 0.404 (was 0.415), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 248 lines
+[Agent]   Rewrite scored: 0.392 (was 0.415), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 245 lines
+[Agent]   Rewrite scored: 0.397 (was 0.415), exit_code=0
+[Agent]   Wall-clock budget (20 min) exhausted after 5 steps, stopping with score 0.415
+[Agent]   Improved: 0.000 -> 0.415
+
+===== [4/4] openssl__rd_example__base64_encode_Rd.R
+[Seed]    Structured 1 score: 1.000

@@ -1,0 +1,203 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness bd6e10dd2868 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_082137
+
+===== [1/4] magrittr__rd_example__aliases_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 49 lines
+[Agent]   Rewrite scored: 0.510 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity Sys.Date for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 56 lines
+[Agent]   Rewrite scored: 0.510 (was 0.510), exit_code=0
+[Agent]   Targeting entity Sys.Date for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 56 lines
+[Agent]   Rewrite scored: 0.510 (was 0.510), exit_code=0
+[Agent]   Targeting entity add for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 53 lines
+[Agent]   Rewrite scored: 0.517 (was 0.510), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity good.times for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 56 lines
+[Agent]   Rewrite scored: 0.517 (was 0.517), exit_code=0
+[Agent]   Targeting entity good.times for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 56 lines
+[Agent]   Rewrite scored: 0.517 (was 0.517), exit_code=0
+[Agent]   Targeting entity add for repair
+[Agent]   Step 7: entity_repair
+[Agent]   Rewrite: 53 lines
+[Agent]   Rewrite scored: 0.510 (was 0.517), exit_code=0
+[Agent]   Targeting entity data.frame for repair
+[Agent]   Step 8: entity_repair
+[Agent]   Rewrite: 44 lines
+[Agent]   Rewrite scored: 0.000 (was 0.517), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpbrqr2wh_\_r2py_script.py", line 372, in <module>
+    timestamp_series = good_times['timestamp']
+                       ^^^^^^^^^^
+NameError: name 'good_times' is not defined. Did you mean: 'g
+[Agent]   Catastrophic rewrite (0.517 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity data.frame for repair
+[Agent]   Step 9: entity_repair
+[Agent]   Rewrite: 44 lines
+[Agent]   Rewrite scored: 0.000 (was 0.517), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpgfjz866w\_r2py_script.py", line 372, in <module>
+    timestamp_series = good_times['timestamp']
+                       ^^^^^^^^^^
+NameError: name 'good_times' is not defined. Did you mean: 'g
+[Agent]   Catastrophic rewrite (0.517 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity extract for repair
+[Agent]   Step 10: entity_repair
+[Agent]   Rewrite: 46 lines
+[Agent]   Rewrite scored: 0.517 (was 0.517), exit_code=0
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.517
+
+===== [2/4] shape__rd_example__femmecol_Rd.R
+[Seed]    Structured 1 score: 0.811
+[Seed]    Bare 2 score: 0.646
+[Seed]    Structured 2 score: 0.811
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.811, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity filled.contour for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 86 lines
+[Agent]   Rewrite scored: 0.611 (was 0.811), exit_code=0
+[Agent]   Targeting entity filled.contour for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 85 lines
+[Agent]   Rewrite scored: 0.811 (was 0.811), exit_code=0
+[Agent]   Targeting entity image for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 89 lines
+[Agent]   Rewrite scored: 0.867 (was 0.811), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 76 lines
+[Agent]   Rewrite scored: 0.867 (was 0.867), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 81 lines
+[Agent]   Rewrite scored: 0.720 (was 0.867), exit_code=0
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 79 lines
+[Agent]   Rewrite scored: 0.720 (was 0.867), exit_code=0
+[Agent]   Step 7: rewrite
+[Agent]   Rewrite: 81 lines
+[Agent]   Rewrite scored: 0.720 (was 0.867), exit_code=0
+[Agent]   Step 8: rewrite
+[Agent]   Rewrite: 92 lines
+[Agent]   Rewrite scored: 0.667 (was 0.867), exit_code=0
+[Agent]   Step 9: rewrite
+[Agent]   Rewrite: 88 lines
+[Agent]   Rewrite scored: 0.720 (was 0.867), exit_code=0
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.811 -> 0.867
+
+===== [3/4] rmarkdown__rd_example__output_format_dependency_Rd.R
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 1 score: 0.603
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.540
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.603, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 100 lines
+[Agent]   Rewrite scored: 0.708 (was 0.603), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 137 lines
+[Agent]   Rewrite scored: 0.733 (was 0.708), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 127 lines
+[Agent]   Rewrite scored: 1.000 (was 0.733), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.603 -> 1.000
+
+===== [4/4] cachem__rd_example__cache_layered_Rd.R
+[r2py] Installing Python package 'diskcache' ...
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Seed]    Structured 1 score: 0.250
+[r2py] Installing Python package 'diskcache' ...
+[Seed]    Bare 2 score: 0.000
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Seed]    Structured 2 score: 0.250
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.250, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 261 lines
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.250 (was 0.250), exit_code=0
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 261 lines
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.250 (was 0.250), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 267 lines
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.250 (was 0.250), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 242 lines
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.250 (was 0.250), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 247 lines
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.250 (was 0.250), exit_code=0
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 240 lines
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.250 (was 0.250), exit_code=0
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.250)

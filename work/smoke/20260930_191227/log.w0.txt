@@ -1,0 +1,76 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 2f067644c32c -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_191227
+
+===== [1/4] purrr__vignette__purrr_s3.R
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 1 score: 0.934
+
+===== [2/4] hms__rd_example__hms_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 109 lines
+[Agent]   Rewrite scored: 0.887 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 122 lines
+[Agent]   Rewrite scored: 0.902 (was 0.887), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.902 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 0.902
+
+===== [3/4] shiny__rd_example__httpResponse_Rd.R
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 2 score: 0.000
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 27 lines
+[Agent]   Rewrite scored: 0.500 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 29 lines
+[Agent]   Rewrite scored: 0.931 (was 0.500), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.931 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 0.931
+
+===== [4/4] pROC__rd_example__geom_polygon_auc_roc_Rd.R
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'pyroc' ...
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 151 lines
+[Agent]   Rewrite scored: 0.333 (was 0.000), exit_code=0
+[Review]  FAILED: The translation hardcodes the coordinates for the AUC polygons (e.g., [1, 0, 0, 1], [0, 100, 100, 0]) instead of computing the actual area under the ROC curve.
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 138 lines
+[Agent]   Rewrite scored: 0.333 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 171 lines
+[Agent]   Rewrite scored: 0.333 (was 0.333), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 143 lines
+[Agent]   Rewrite scored: 0.333 (was 0.333), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 143 lines
+[Agent]   Rewrite scored: 0.000 (was 0.333), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpzuv342p4\_r2py_script.py", line 475, in <module>
+    auc_s100b_partial_sp = calculate_partial_auc(roc_s100b, partial_auc=[0.9, 1], partial_auc_focus="specificity")
+  File "C:\Users\bened\AppDa
+[Agent]   Catastrophic rewrite (0.333 -> 0.000) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.333

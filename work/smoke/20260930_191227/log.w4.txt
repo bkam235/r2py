@@ -1,0 +1,92 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 2f067644c32c -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_191227
+
+===== [1/4] lubridate__vignette__lubridate_s18.R
+[Seed]    Structured 1 score: 0.633
+[Seed]    Bare 2 score: 0.438
+[Seed]    Structured 2 score: 0.640
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.640, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 74 lines
+[Agent]   Rewrite scored: 0.664 (was 0.640), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 66 lines
+[Agent]   Rewrite scored: 0.804 (was 0.664), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 81 lines
+[Agent]   Rewrite scored: 0.875 (was 0.804), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 81 lines
+[Agent]   Rewrite scored: 0.875 (was 0.875), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 77 lines
+[Agent]   Rewrite scored: 0.875 (was 0.875), exit_code=0
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 78 lines
+[Agent]   Rewrite scored: 0.562 (was 0.875), exit_code=0
+[Agent]   Catastrophic rewrite (0.875 -> 0.562) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.640 -> 0.875
+
+===== [2/4] isoband__rd_example__isobands_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 205 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpd0dwvnk1\_r2py_script.py", line 482, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 180 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpfb3zut24\_r2py_script.py", line 453, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 172 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpzmb4aczm\_r2py_script.py", line 457, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.000)
+
+===== [3/4] caret__rd_example__createDataPartition_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.550
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 4 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.550, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 238 lines
+[Agent]   Rewrite scored: 0.611 (was 0.550), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 223 lines
+[Agent]   Rewrite scored: 0.627 (was 0.611), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 236 lines
+[Agent]   Rewrite scored: 0.624 (was 0.627), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 206 lines
+[Agent]   Rewrite scored: 0.636 (was 0.627), exit_code=0
+[Review]  PASSED
+[Agent]   Wall-clock budget (20 min) exhausted after 4 steps, stopping with score 0.636
+[Agent]   Improved: 0.550 -> 0.636
+
+===== [4/4] openssl__rd_example__base64_encode_Rd.R
+[Seed]    Structured 1 score: 1.000

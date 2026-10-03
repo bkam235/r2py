@@ -1,0 +1,38 @@
+smoke test: 1 scripts, checkpoint empty, agent budget 400s, harness 1b19cfa6dfde -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_135733
+
+===== [1/1] purrr__vignette__purrr_s3.R
+[Seed]    Structured 1 score: 0.953
+
+smoke test: 1 scripts, checkpoint empty, agent budget 400s, harness 1b19cfa6dfde -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_135733
+
+===== [1/1] highr__rd_example__hilight_Rd.R
+[r2py] Installing Python package 'pygments' ...
+[Seed]    Structured 1 score: 0.772
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.731
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.772, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 195 lines
+[Agent]   Syntax error: line 7: invalid syntax (in the source as executed, data shim active)
+    No external data files needed for this translation.
+       ^
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 218 lines
+[Agent]   Syntax error: line 7: invalid syntax (in the source as executed, data shim active)
+    Mocking internal data frames from highr
+            ^
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 187 lines
+[Agent]   Rewrite scored: 0.779 (was 0.772), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 175 lines
+[Agent]   Rewrite scored: 0.777 (was 0.779), exit_code=0
+[Agent]   Wall-clock budget (7 min) exhausted after 4 steps, stopping with score 0.779
+[Agent]   Improved: 0.772 -> 0.779
+
+smoke test: 1 scripts, checkpoint empty, agent budget 400s, harness 1b19cfa6dfde -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_135733
+
+===== [1/1] openssl__rd_example__base64_encode_Rd.R
+[Seed]    Structured 1 score: 1.000

@@ -1,0 +1,729 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 2f067644c32c -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_152523
+
+===== [1/4] purrr__vignette__purrr_s3.R
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 1 score: 0.940
+
+===== [2/4] hms__rd_example__hms_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 119 lines
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.875 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 131 lines
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.873 (was 0.875), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 138 lines
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.873 (was 0.875), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 117 lines
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.876 (was 0.875), exit_code=0
+[Review]  PASSED
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 147 lines
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.866 (was 0.876), exit_code=0
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 135 lines
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.869 (was 0.876), exit_code=0
+[Agent]   Step 7: rewrite
+[Agent]   Rewrite: 117 lines
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.871 (was 0.876), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.876
+
+===== [3/4] shiny__rd_example__httpResponse_Rd.R
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 35 lines
+[Agent]   Rewrite scored: 0.500 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 33 lines
+[r2py] Installing Python package 'shiny' ...
+[Agent]   Rewrite scored: 0.000 (was 0.500), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpoha9ifgn\_r2py_script.py", line 339, in <module>
+
+    import shiny
+
+ModuleNotFoundError: No module named 'shiny'
+[Agent]   Catastrophic rewrite (0.500 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: replace_entity
+[Agent]   replace_entity refused: entity 'httpResponse' has 2 separate spans; use a full rewrite for it
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 34 lines
+[Agent]   Rewrite scored: 0.931 (was 0.500), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.931 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 0.931
+
+===== [4/4] pROC__rd_example__geom_polygon_auc_roc_Rd.R
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'pyroc' ...
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 131 lines
+[Agent]   Syntax error: line 111: positional argument follows keyword argument (in the source as executed, data shim active)
+             + geom_polygon(data=df_sp, aes(x='1-specificity', y='sensitivity'), fill="green", alpha=0.3))
+                                                                                                        ^
+[Agent]   Step 2: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 142 lines
+[Agent]   Syntax error: line 97: positional argument follows keyword argument (in the source as executed, data shim active)
+        return geom_polygon(data=poly_df, aes(x='1-specificity', y='sensitivity'), fill="blue", alpha=0.3)
+                                                                                                         ^
+[Agent]   Step 3: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 134 lines
+[Agent]   Syntax error: line 109: positional argument follows keyword argument (in the source as executed, data shim active)
+             + geom_polygon(data=df_sp, aes(x='1-specificity', y='sensitivity'), fill="green", alpha=0.3))
+                                                                                                        ^
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.000)
+
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 2f067644c32c -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_152523
+
+===== [1/4] blob__rd_example__blob_Rd.R
+[Seed]    Structured 1 score: 0.700
+[Seed]    Bare 2 score: 0.700
+[Seed]    Structured 2 score: 0.700
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.700, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 42 lines
+[Agent]   Rewrite scored: 0.772 (was 0.700), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 59 lines
+[Agent]   Rewrite scored: 0.867 (was 0.772), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 56 lines
+[Agent]   Rewrite scored: 0.867 (was 0.867), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 58 lines
+[Agent]   Rewrite scored: 0.867 (was 0.867), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 58 lines
+[Agent]   Rewrite scored: 0.867 (was 0.867), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.700 -> 0.867
+
+===== [2/4] clock__rd_example__zoned_time_info_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.526, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 104 lines
+[Agent]   Rewrite scored: 0.000 (was 0.526), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpq1gkbvdu\_r2py_script.py", line 428, in <module>
+
+    info = zoned_time_info(x, "America/New_York")
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpq1gkbvdu\_r2py_script.py", line 379, in zoned_ti
+[Agent]   Catastrophic rewrite (0.526 -> 0.000) — discarded, reverted to best
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 113 lines
+[Agent]   Rewrite scored: 0.000 (was 0.526), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmp6m_3tn_b\_r2py_script.py", line 435, in <module>
+
+    info = zoned_time_info(x)
+
+  File "C:\Users\bened\AppData\Local\Temp\tmp6m_3tn_b\_r2py_script.py", line 397, in zoned_time_info
+
+    idx = b
+[Agent]   Catastrophic rewrite (0.526 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 107 lines
+[Agent]   Rewrite scored: 0.000 (was 0.526), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpo1dujo_y\_r2py_script.py", line 440, in <module>
+
+    print(zoned_time_info(info['end']).to_string())
+
+          ~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpo1dujo
+[Agent]   Catastrophic rewrite (0.526 -> 0.000) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.526)
+
+===== [3/4] highr__rd_example__hilight_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.733
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.733, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 165 lines
+[Agent]   Syntax error: line 5: invalid syntax (in the source as executed, data shim active)
+    The highr package internal markup tables
+        ^
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 147 lines
+[Agent]   Syntax error: line 8: invalid syntax (in the source as executed, data shim active)
+    Mocking highr internal data frames as they are accessed via :::
+            ^
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 135 lines
+[Agent]   Syntax error: line 6: invalid syntax (in the source as executed, data shim active)
+    Mocking the internal highr markup data frames accessed via :::
+            ^
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.733)
+
+===== [4/4] broom__rd_example__glance_factanal_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 119 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpnws_orfn\_r2py_script.py", line 387, in <module>
+
+    fit1 = run_factanal(m1, 3, "Bartlett")
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpnws_orfn\_r2py_script.py", line 356, in run_factanal
+
+ 
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 135 lines
+[Agent]   Syntax error: line 4: invalid syntax (in the source as executed, data shim active)
+    No data shim needed for this script as m1 is generated in-code.
+       ^
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 92 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpsry0iz2d\_r2py_script.py", line 355, in <module>
+
+    fa1.fit(m1)
+
+    ~~~~~~~^^^^
+
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py", 
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.000)
+
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 2f067644c32c -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_152523
+
+===== [1/4] magrittr__rd_example__aliases_Rd.R
+[r2py] Installing Python package 'seaborn' ...
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 54 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpwdpx838w\_r2py_script.py", line 352, in <module>
+
+    good.times = pd.DataFrame(good.times) if 'good.times' in globals() else None
+
+                              ^^^^
+
+NameError: name 'good' is 
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 63 lines
+[Agent]   Rewrite scored: 0.510 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 62 lines
+[Agent]   Rewrite scored: 0.510 (was 0.510), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 58 lines
+[Agent]   Rewrite scored: 0.510 (was 0.510), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 62 lines
+[Agent]   Rewrite scored: 0.510 (was 0.510), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.510
+
+===== [2/4] shape__rd_example__femmecol_Rd.R
+[Seed]    Structured 1 score: 0.811
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.811
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.811, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 89 lines
+[Agent]   Rewrite scored: 0.867 (was 0.811), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 92 lines
+[Agent]   Rewrite scored: 0.867 (was 0.867), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 94 lines
+[Agent]   Rewrite scored: 0.520 (was 0.867), exit_code=0
+[Agent]   Catastrophic rewrite (0.867 -> 0.520) — discarded, reverted to best
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 93 lines
+[Agent]   Rewrite scored: 0.520 (was 0.867), exit_code=0
+[Agent]   Catastrophic rewrite (0.867 -> 0.520) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.811 -> 0.867
+
+===== [3/4] rmarkdown__rd_example__output_format_dependency_Rd.R
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.540
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.540, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 89 lines
+[Agent]   Syntax error: line 5: invalid syntax (in the source as executed, data shim active)
+    No data shim needed for this script
+       ^
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 99 lines
+[Agent]   Rewrite scored: 0.872 (was 0.540), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 107 lines
+[Agent]   Rewrite scored: 0.754 (was 0.872), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 117 lines
+[Agent]   Syntax error: line 64: invalid syntax
+            print(f"$pre_processor\nNULL\n\n$keep_md\nNULL\n\n$clean_supporting\nNULL\n\n$post_processor\nNULL\n\n$file_scope\nNULL\n\n$on_exit\nNULL\n\nattr(,"class")\n[1] \"output_format_dependency\"")
+                                                                                                                                                                ^
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 175 lines
+[Agent]   Rewrite scored: 0.710 (was 0.872), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.540 -> 0.872
+
+===== [4/4] cachem__rd_example__cache_layered_Rd.R
+[r2py] Installing Python package 'cachetools' ...
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Seed]    Structured 1 score: 0.250
+[r2py] Installing Python package 'diskcache' ...
+[Seed]    Bare 2 score: 0.000
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Seed]    Structured 2 score: 0.250
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.250, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 198 lines
+[Agent]   Syntax error: line 11: invalid syntax (in the source as executed, data shim active)
+    No data shim needed for this script
+       ^
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 185 lines
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.250 (was 0.250), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 213 lines
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'm' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'cl' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.250 (was 0.250), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.250)
+
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 2f067644c32c -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_152523
+
+===== [1/4] tidyr__vignette__tidy-data_s3.R
+[Seed]    Structured 1 score: 0.850
+[Seed]    Bare 2 score: 0.500
+[Seed]    Structured 2 score: 0.850
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.850, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 17 lines
+[Agent]   Rewrite scored: 0.500 (was 0.850), exit_code=0
+[Agent]   Catastrophic rewrite (0.850 -> 0.500) — discarded, reverted to best
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 16 lines
+[Agent]   Rewrite scored: 0.500 (was 0.850), exit_code=0
+[Agent]   Catastrophic rewrite (0.850 -> 0.500) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 20 lines
+[Agent]   Rewrite scored: 0.500 (was 0.850), exit_code=0
+[Agent]   Catastrophic rewrite (0.850 -> 0.500) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.850)
+
+===== [2/4] textshaping__vignette__c_interface.R
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[Seed]    Structured 1 score: 0.000
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[Seed]    Bare 2 score: 0.000
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[Seed]    Structured 2 score: 0.000
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 15 lines
+[Agent]   Rewrite scored: 1.000 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 1.000
+
+===== [3/4] xml2__rd_example__xml_cdata_Rd.R
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Seed]    Structured 1 score: 0.000
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 19 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.375 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 24 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.000 (was 0.375), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmphe97t5jr\_r2py_script.py", line 348, in <module>
+
+    x.append(cdata_node)
+
+    ~~~~~~~~^^^^^^^^^^^^
+
+TypeError: Argument 'element' has incorrect type (expected lxml.etree._Element, got lxml.etr
+[Agent]   Catastrophic rewrite (0.375 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 21 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.511 (was 0.375), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 25 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.000 (was 0.511), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmp_ju0pbkh\_r2py_script.py", line 350, in <module>
+
+    as_character_x = etree.tostring(x, encoding='unicode', xml_declaration=True)
+
+  File "src/lxml/etree.pyx", line 3611, in lxml.etree.tostring
+[Agent]   Catastrophic rewrite (0.511 -> 0.000) — discarded, reverted to best
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 21 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.000 (was 0.511), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpov08vz9b\_r2py_script.py", line 351, in <module>
+
+    as_character_x = doc.tostring(encoding='UTF-8', xml_declaration=True, pretty_print=False).decode('utf-8')
+
+                     ^^^^^^^^^^^^
+[Agent]   Catastrophic rewrite (0.511 -> 0.000) — discarded, reverted to best
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 24 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.000 (was 0.511), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpym0obwas\_r2py_script.py", line 352, in <module>
+
+    as_character_x = doc.tostring(encoding='UTF-8', xml_declaration=True, method='xml').decode('utf-8')
+
+                     ^^^^^^^^^^^^
+
+Attr
+[Agent]   Catastrophic rewrite (0.511 -> 0.000) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.511
+
+===== [4/4] tinytex__rd_example__tlmgr_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 1.000
+
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 2f067644c32c -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_152523
+
+===== [1/4] lubridate__vignette__lubridate_s18.R
+[Seed]    Structured 1 score: 0.633
+[Seed]    Bare 2 score: 0.438
+[Seed]    Structured 2 score: 0.500
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.633, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 91 lines
+[Agent]   Rewrite scored: 0.691 (was 0.633), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 82 lines
+[Agent]   Rewrite scored: 0.625 (was 0.691), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 95 lines
+[Agent]   Rewrite scored: 0.875 (was 0.691), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 90 lines
+[Agent]   Rewrite scored: 0.875 (was 0.875), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 99 lines
+[Agent]   Rewrite scored: 0.875 (was 0.875), exit_code=0
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 102 lines
+[Agent]   Rewrite scored: 0.828 (was 0.875), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.633 -> 0.875
+
+===== [2/4] isoband__rd_example__isobands_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.861, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 188 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmplhkxi8lh\_r2py_script.py", line 454, in <module>
+
+    df_bands = isobands_approx(x_vals, y_vals, m, [0.5], [1.5])[0]
+
+               ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 143 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpsoukrwac\_r2py_script.py", line 417, in <module>
+
+    df_bands = isobands(x_vals, y_vals, m, [0.5], [1.5])[0]
+
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 148 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpmeo94p0f\_r2py_script.py", line 424, in <module>
+
+    df_bands = isobands(x_vals, y_vals, m, [0.5], [1.5])[0]
+
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.861)
+
+===== [3/4] caret__rd_example__createDataPartition_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.400, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 225 lines
+[Agent]   Rewrite scored: 0.384 (was 0.400), exit_code=0
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 220 lines
+[Agent]   Rewrite scored: 0.000 (was 0.400), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmpzmcic9f3\_r2py_script.py", line 402, in <module>
+
+    kde_in = stats.gaussian_kde(x[np.array(inA)-1])
+
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\scipy\stats\_kde.p
+[Agent]   Catastrophic rewrite (0.400 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 209 lines
+[Agent]   Rewrite scored: 0.531 (was 0.400), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 227 lines
+[Agent]   Rewrite scored: 0.747 (was 0.531), exit_code=0
+[Review]  PASSED
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 239 lines
+[Agent]   Rewrite scored: 0.748 (was 0.747), exit_code=0
+[Review]  PASSED
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 229 lines
+[Agent]   Rewrite scored: 0.653 (was 0.748), exit_code=0
+[Agent]   Wall-clock budget (20 min) exhausted after 6 steps, stopping with score 0.748
+[Agent]   Improved: 0.400 -> 0.748
+
+===== [4/4] openssl__rd_example__base64_encode_Rd.R
+[Seed]    Structured 1 score: 1.000
+
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 2f067644c32c -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_152523
+
+===== [1/4] timeDate__rd_example__earlyCloseNYSE_Rd.R
+[Seed]    Structured 1 score: 0.653
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.570
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.653, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 237 lines
+[Agent]   Syntax error: line 8: invalid syntax (in the source as executed, data shim active)
+    No data shim needed for this logic, but preserving block as per rules
+       ^
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 168 lines
+[Agent]   Syntax error: line 9: invalid syntax (in the source as executed, data shim active)
+    No external data needed for this logic
+       ^
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 210 lines
+[Agent]   Syntax error: line 8: invalid syntax (in the source as executed, data shim active)
+    No external data files needed for this translation.
+       ^
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.653)
+
+===== [2/4] ggplot2__rd_example__aes_linetype_size_shape_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 4 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 78 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+
+  File "C:\Users\bened\AppData\Local\Temp\tmp6hsucz30\_r2py_script.py", line 372, in <module>
+
+    geom_line(linewidth=2, lineend="round")
+
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 86 lines
+[Agent]   Rewrite scored: 0.862 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 87 lines
+[Agent]   Rewrite scored: 0.896 (was 0.862), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 87 lines
+[Agent]   Rewrite scored: 0.896 (was 0.896), exit_code=0
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 87 lines
+[Agent]   Rewrite scored: 0.896 (was 0.896), exit_code=0
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 87 lines
+[Agent]   Rewrite scored: 0.896 (was 0.896), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.896
+
+===== [3/4] lava__vignette__influencefunction_s34.R
+[r2py] Installing Python package 'lava' ...
+[Seed]    Structured 1 score: 0.577
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.576
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.577, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 130 lines
+[Agent]   Rewrite scored: 0.674 (was 0.577), exit_code=0
+[Review]  FAILED: The object_size function hardcodes the return value 18992, which is a computed result from the R source.
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 145 lines
+[Agent]   Rewrite scored: 0.620 (was 0.577), exit_code=0
+[Review]  FAILED: The translation uses a data shim to load pre-computed results for 'e' from a JSON file.
+[Agent]   Step 3: probe_r
+[Agent]   Probe result: 'ERROR: R script exited with code 1:\nFehler in foldr(nrow(y), N, list = FALSE) : \r\n  konnte Funktion "foldr" nicht finden\r\nRuft auf: source -> withVisible -> eval -> eval\r\nAusführung angehalten'
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.577)
+
+===== [4/4] googledrive__rd_example__drive_create_Rd.R
+[r2py] Installing Python package 'shiny' ...
+[r2py] Skipping install of 'googledrive' (known unavailable)
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[r2py] Skipping install of 'googledrive' (known unavailable)
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 177 lines
+[Agent]   Verification failed: maximum recursion depth exceeded while calling a Python object
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 180 lines
+[Agent]   Rewrite scored: 1.000 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 1.000

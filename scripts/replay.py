@@ -36,6 +36,7 @@ POLICIES = {
     "entity_esc": dict(entity_repair=True, escalate_after=2),
     "entity_only": dict(entity_repair=True, escalate_after=10 ** 6),
     "entity_esc_ew3": dict(entity_repair=True, escalate_after=2, entity_width=3),   # three repairs per failing entity
+    "beam3": dict(entity_repair=False, escalate_after=None, width=3, beam=dict(rounds=3, steps=4)),   # restart from the best states
     "rewrite_w3": dict(entity_repair=False, escalate_after=None, width=3),   # three independent loops, best wins
 }
 
@@ -83,6 +84,7 @@ def run_one(task: dict) -> dict:
     from r2py import heldout as ho
     from r2py.harness import trajectory
     from r2py.harness.agent import drain_agent_stats, reason_wide
+    from r2py.harness.beam import reason_beam
     from r2py.harness.audit import format_audit_for_agent, static_audit
     from r2py.harness.tools import HarnessTools
     from r2py.library import PatternLibrary
@@ -119,15 +121,20 @@ def run_one(task: dict) -> dict:
                 drain_agent_stats()
                 policy = dict(POLICIES[task["policy"]])
                 width = policy.pop("width", 1)
-                result = reason_wide(
-                    [harness] + [new_harness() for _ in range(width - 1)],
-                    current_source=task["source"], score_report=start_report, script_map=sm, model=cfg["model"],
-                    max_steps=cfg["max_iters"], score_threshold=cfg["score_threshold"], max_stalls=cfg["max_stalls"],
-                    budget_s=task["budget_s"], audit_feedback=audit, replace_entity=False, **policy)
+                beam_cfg = policy.pop("beam", None)
+                harnesses = [harness] + [new_harness() for _ in range(width - 1)]
+                common = dict(current_source=task["source"], score_report=start_report, script_map=sm, model=cfg["model"],
+                              score_threshold=cfg["score_threshold"], max_stalls=cfg["max_stalls"],
+                              budget_s=task["budget_s"], audit_feedback=audit, replace_entity=False, **policy)
+                if beam_cfg:
+                    result = reason_beam(harnesses, max_steps=beam_cfg["steps"], max_rounds=beam_cfg["rounds"], **common)
+                else:
+                    result = reason_wide(harnesses, max_steps=cfg["max_iters"], **common)
                 final = result[1].aggregate if result else start_report.aggregate
                 row.update(final_score=round(final, 4), improved=bool(result and final > start_report.aggregate + 1e-9),
                            final_exit=(result[1].py_exit_code if result else start_report.py_exit_code))
                 row["agent"] = drain_agent_stats()
+                row["llm_steps"] = sum(row["agent"]["action"].values())   # the cost measure: model calls per run
                 trajectory.end(final_score=row["final_score"])
     except Exception as exc:
         row["error"] = f"{type(exc).__name__}: {exc}"[:300]

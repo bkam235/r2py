@@ -1,0 +1,189 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness beca683f3f7b -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_165951
+
+===== [1/4] tidyr__vignette__tidy-data_s3.R
+[Seed]    Structured 1 score: 0.850
+[Seed]    Bare 2 score: 0.500
+[Seed]    Structured 2 score: 0.850
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.850, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity tribble for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 15 lines
+[Agent]   Rewrite scored: 0.500 (was 0.850), exit_code=0
+[Agent]   Catastrophic rewrite (0.850 -> 0.500) — discarded, reverted to best
+[Agent]   Targeting entity tribble for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 15 lines
+[Agent]   Rewrite scored: 0.500 (was 0.850), exit_code=0
+[Agent]   Catastrophic rewrite (0.850 -> 0.500) — discarded, reverted to best
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 22 lines
+[Agent]   Rewrite scored: 0.845 (was 0.850), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 27 lines
+[Agent]   Rewrite scored: 1.000 (was 0.850), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.850 -> 1.000
+
+===== [2/4] textshaping__vignette__c_interface.R
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[Seed]    Structured 1 score: 0.000
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[Seed]    Bare 2 score: 0.000
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[Seed]    Structured 2 score: 0.000
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 15 lines
+[r2py] Installing Python package 'shiny' ...
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpiauisudk\_r2py_script.py", line 339, in <module>
+    import shiny as sh
+ModuleNotFoundError: No module named 'shiny'
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 13 lines
+[Agent]   Rewrite scored: 1.000 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 1.000
+
+===== [3/4] xml2__rd_example__xml_cdata_Rd.R
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Seed]    Structured 1 score: 0.000
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 27 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.511 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity x for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 27 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.000 (was 0.511), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp89p5eta6\_r2py_script.py", line 355, in <module>
+    x.text = etree.CDATA("<d/>")
+    ^^^^^^
+AttributeError: 'lxml.etree._ElementTree' object has no attribute 'text' and no __dict__ for setti
+[Agent]   Catastrophic rewrite (0.511 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity x for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 27 lines
+[Agent]   Rewrite scored: 0.511 (was 0.511), exit_code=0
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 19 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.000 (was 0.511), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpvnmyw75a\_r2py_script.py", line 349, in <module>
+    as_character_x = etree.tostring(x, encoding='unicode', xml_declaration=True)
+  File "src/lxml/etree.pyx", line 3611, in lxml.etree.tostring
+[Agent]   Catastrophic rewrite (0.511 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity as.character for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 26 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.000 (was 0.511), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpa3ui9o4q\_r2py_script.py", line 358, in <module>
+    as_character_x = etree.tostring(x, encoding='unicode', xml_declaration=True)
+  File "src/lxml/etree.pyx", line 3611, in lxml.etree.tostring
+[Agent]   Catastrophic rewrite (0.511 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity as.character for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 26 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.000 (was 0.511), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpu24mi2_s\_r2py_script.py", line 358, in <module>
+    as_character_x = etree.tostring(x, encoding='unicode', xml_declaration=True) + "\n"
+                     ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^
+[Agent]   Catastrophic rewrite (0.511 -> 0.000) — discarded, reverted to best
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 7: rewrite
+[Agent]   Rewrite: 18 lines
+[r2py] WARNING: 'x' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.000 (was 0.511), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpig3eh_ls\_r2py_script.py", line 345, in <module>
+    x.append(etree.CDATA("<d/>"))
+    ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+TypeError: Argument 'element' has incorrect type (expected lxml.etree._Ele
+[Agent]   Catastrophic rewrite (0.511 -> 0.000) — discarded, reverted to best
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.511
+
+===== [4/4] tinytex__rd_example__tlmgr_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 78 lines
+[Agent]   Syntax error: line 21: invalid syntax
+    def tlmgr(args, usermode=False, .quiet=False):
+                                    ^
+[Agent]   Targeting entity tlmgr_search for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 21 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\anaconda3\Lib\subproce
+[Review]  PASSED
+[Agent]   Targeting entity tlmgr_search_1 for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 19 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\anaconda3\Lib\subproce
+[Review]  PASSED
+[Agent]   Targeting entity tlmgr for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 19 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\anaconda3\Lib\subproce
+[Agent]   Targeting entity tlmgr for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 19 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...5 lines>...
+                        gid, gids, uid, umask,
+                        ^^^^^^^^^^^^^^^^^^^^^^
+                        start_new_session, process_group)
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\anaconda3\Lib\subproce
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 74 lines
+[Agent]   Rewrite scored: 1.000 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 1.000

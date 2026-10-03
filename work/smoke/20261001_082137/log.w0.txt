@@ -1,0 +1,152 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness bd6e10dd2868 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_082137
+
+===== [1/4] purrr__vignette__purrr_s3.R
+[Seed]    Structured 1 score: 0.882
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.936
+
+===== [2/4] hms__rd_example__hms_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 120 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...sers\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\pandas\core\algorithms.py", line 1743, in map_array
+    return lib.map_infer(values, mapper, convert=convert)
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "pandas/_libs/lib.pyx", line 2999
+[Agent]   Targeting entity hms for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 77 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpm6bko1tx\_r2py_script.py", line 361, in <module>
+    t3 = [timedelta(seconds=s) for s in np.arange(1, 4)]
+          ~~~~~~~~~^^^^^^^^^^^
+TypeError: unsupported type for timedelta seconds comp
+[Agent]   Targeting entity try for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 76 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpkyvqbkck\_r2py_script.py", line 364, in <module>
+    t3 = [timedelta(seconds=s) for s in np.arange(1, 4)]
+          ~~~~~~~~~^^^^^^^^^^^
+TypeError: unsupported type for timedelta seconds comp
+[Agent]   Targeting entity try for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 78 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp_aq_36k1\_r2py_script.py", line 364, in <module>
+    t3 = [timedelta(seconds=s) for s in np.arange(1, 4)]
+          ~~~~~~~~~^^^^^^^^^^^
+TypeError: unsupported type for timedelta seconds comp
+[Agent]   Targeting entity as_hms for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 78 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpwowiqy49\_r2py_script.py", line 364, in <module>
+    t3 = [timedelta(seconds=s) for s in np.arange(1, 4)]
+          ~~~~~~~~~^^^^^^^^^^^
+TypeError: unsupported type for timedelta seconds comp
+[Agent]   Targeting entity as_hms for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 78 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpzi3e6sei\_r2py_script.py", line 364, in <module>
+    t3 = [timedelta(seconds=s) for s in np.arange(1, 4)]
+          ~~~~~~~~~^^^^^^^^^^^
+TypeError: unsupported type for timedelta seconds comp
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.000)
+
+===== [3/4] shiny__rd_example__httpResponse_Rd.R
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 32 lines
+[Agent]   Rewrite scored: 0.500 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 32 lines
+[Agent]   Rewrite scored: 0.931 (was 0.500), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.931 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 0.931
+
+===== [4/4] pROC__rd_example__geom_polygon_auc_roc_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.378, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity data for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 83 lines
+[Agent]   Rewrite scored: 0.000 (was 0.378), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...n.py", line 80, in inner_f
+    return f(*args, **kwargs)
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\sklearn\utils\_param_validation.py", line 191, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-
+[Agent]   Catastrophic rewrite (0.378 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity data for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 84 lines
+[Agent]   Rewrite scored: 0.000 (was 0.378), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...n.py", line 80, in inner_f
+    return f(*args, **kwargs)
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\sklearn\utils\_param_validation.py", line 191, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-
+[Agent]   Catastrophic rewrite (0.378 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity auc.s100b.partial.se for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 89 lines
+[Agent]   Rewrite scored: 0.000 (was 0.378), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp9pdkaxub\_r2py_script.py", line 403, in <module>
+    auc.s100b.partial.se = auc(fpr[mask_se], tpr[mask_se])
+    ^^^^^^^^^
+AttributeError: 'function' object has no attribute 's100b'
+[Agent]   Catastrophic rewrite (0.378 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity auc.s100b.partial.se for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 89 lines
+[Agent]   Rewrite scored: 0.378 (was 0.378), exit_code=0
+[Agent]   Targeting entity auc.s100b.partial.sp for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 88 lines
+[Agent]   Rewrite scored: 0.000 (was 0.378), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpzrh5az0z\_r2py_script.py", line 397, in <module>
+    auc.s100b.partial.sp = auc(fpr[mask_sp], tpr[mask_sp])
+    ^^^^^^^^^
+AttributeError: 'function' object has no attribute 's100b'
+[Agent]   Catastrophic rewrite (0.378 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity auc.s100b.partial.sp for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 88 lines
+[Agent]   Rewrite scored: 0.000 (was 0.378), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp80uvvtk6\_r2py_script.py", line 397, in <module>
+    auc.s100b.partial.sp = auc(fpr[mask_sp], tpr[mask_sp])
+    ^^^^^^^^^
+AttributeError: 'function' object has no attribute 's100b'
+[Agent]   Catastrophic rewrite (0.378 -> 0.000) — discarded, reverted to best
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.378)

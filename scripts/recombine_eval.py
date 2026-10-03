@@ -47,6 +47,7 @@ def work(task: dict) -> list[dict]:
     import replay
     from r2py import heldout as ho
     from r2py.harness import objective as obj
+    from r2py.harness import recombine as recombine_mod
     from r2py.harness.recombine import recombine
     from r2py.harness.tools import HarnessTools
     from r2py.library import PatternLibrary
@@ -78,12 +79,13 @@ def work(task: dict) -> list[dict]:
                     for s, r in pool[1:]:
                         if obj.better(r, best_rep):
                             best_src, best_rep = s, r
+                    recombine_mod.stats.clear()
                     res = recombine(pool, harness)
                     final = res[1] if res else best_rep
                     rows.append(dict(script=script, draw=d, pool=len(sub), best_single=round(best_rep.aggregate, 4),
                                      best_single_runs=best_rep.py_exit_code == 0,
                                      recombined=round(final.aggregate, 4), final_runs=final.py_exit_code == 0,
-                                     changed=res is not None))
+                                     changed=res is not None, stats=dict(recombine_mod.stats)))
     except Exception as exc:
         rows.append(dict(script=script, error=f"{type(exc).__name__}: {exc}"[:300]))
     for r in rows:
@@ -103,6 +105,11 @@ def summarise(rows: list[dict]) -> str:
              f"recombination changed the result in {sum(r['changed'] for r in ok)}/{len(ok)} draws; "
              f"better/worse/tied {sum(x > .01 for x in d)}/{sum(x < -.01 for x in d)}/{sum(abs(x) <= .01 for x in d)}",
              f"runs to completion: best single {sum(r['best_single_runs'] for r in ok)}  recombined {sum(r['final_runs'] for r in ok)}  of {len(ok)}"]
+    c = collections.Counter()
+    for r in ok:
+        c.update(r.get("stats", {}))
+    if c:
+        lines.append("what recombination did per entity tried: " + ", ".join(f"{k} {v}" for k, v in sorted(c.items())))
     by = collections.defaultdict(list)
     for r in ok:
         by[r["script"]].append(r["recombined"] - r["best_single"])

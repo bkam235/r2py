@@ -1,0 +1,167 @@
+{
+ "lubridate__vignette__lubridate_s18.R": {
+  "remapped": {
+   "aggregates": [
+    0.8042,
+    0.8042,
+    0.8042,
+    0.8042,
+    0.8042
+   ],
+   "agg_range": 0.0,
+   "entities": 8,
+   "entities_with_varying_score": 0,
+   "entities_with_varying_range": 0,
+   "varying_score": []
+  },
+  "fixed_map": {
+   "aggregates": [
+    1.0,
+    1.0,
+    1.0,
+    1.0,
+    1.0
+   ],
+   "agg_range": 0.0,
+   "entities": 8,
+   "entities_with_varying_score": 0,
+   "entities_with_varying_range": 0,
+   "varying_score": []
+  }
+ },
+ "timeDate__rd_example__earlyCloseNYSE_Rd.R": {
+  "remapped": {
+   "aggregates": [
+    0.7618,
+    0.7618,
+    0.7547,
+    0.7547,
+    0.7618
+   ],
+   "agg_range": 0.007099999999999995,
+   "entities": 6,
+   "entities_with_varying_score": 1,
+   "entities_with_varying_range": 0,
+   "varying_score": [
+    "c"
+   ]
+  },
+  "fixed_map": {
+   "aggregates": [
+    0.5162,
+    0.5162,
+    0.5162,
+    0.5162,
+    0.5162
+   ],
+   "agg_range": 0.0,
+   "entities": 6,
+   "entities_with_varying_score": 0,
+   "entities_with_varying_range": 0,
+   "varying_score": []
+  }
+ },
+ "highr__rd_example__hilight_Rd.R": {
+  "remapped": {
+   "aggregates": [
+    0.7731,
+    0.627,
+    0.7731,
+    0.7731,
+    0.7731
+   ],
+   "agg_range": 0.1461,
+   "entities": 5,
+   "entities_with_varying_score": 3,
+   "entities_with_varying_range": 4,
+   "varying_score": [
+    "cat",
+    "cat_1",
+    "hilight"
+   ]
+  },
+  "fixed_map": {
+   "aggregates": [
+    0.7635,
+    0.7635,
+    0.7635,
+    0.7635,
+    0.7635
+   ],
+   "agg_range": 0.0,
+   "entities": 5,
+   "entities_with_varying_score": 0,
+   "entities_with_varying_range": 0,
+   "varying_score": []
+  }
+ },
+ "rmarkdown__rd_example__output_format_dependency_Rd.R": {
+  "remapped": {
+   "aggregates": [
+    0.7342,
+    0.7539,
+    0.7342,
+    0.7539,
+    0.7539
+   ],
+   "agg_range": 0.01970000000000005,
+   "entities": 5,
+   "entities_with_varying_score": 2,
+   "entities_with_varying_range": 3,
+   "varying_score": [
+    "knit_meta_add",
+    "output_format_dependency"
+   ]
+  },
+  "fixed_map": {
+   "aggregates": [
+    0.7412,
+    0.7412,
+    0.7412,
+    0.7412,
+    0.7412
+   ],
+   "agg_range": 0.0,
+   "entities": 5,
+   "entities_with_varying_score": 0,
+   "entities_with_varying_range": 0,
+   "varying_score": []
+  }
+ },
+ "lava__vignette__influencefunction_s34.R": {
+  "remapped": {
+   "aggregates": [
+    0.6828,
+    0.5757,
+    0.5757,
+    0.5,
+    0.4686
+   ],
+   "agg_range": 0.21419999999999995,
+   "entities": 10,
+   "entities_with_varying_score": 5,
+   "entities_with_varying_range": 8,
+   "varying_score": [
+    "N",
+    "Print",
+    "e",
+    "e_1",
+    "object.size"
+   ]
+  },
+  "fixed_map": {
+   "aggregates": [
+    0.3929,
+    0.3929,
+    0.3929,
+    0.3929,
+    0.3929
+   ],
+   "agg_range": 0.0,
+   "entities": 10,
+   "entities_with_varying_score": 0,
+   "entities_with_varying_range": 0,
+   "varying_score": []
+  }
+ }
+}

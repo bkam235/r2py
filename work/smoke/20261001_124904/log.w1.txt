@@ -1,0 +1,230 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 8e880039a896 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_124904
+
+===== [1/4] blob__rd_example__blob_Rd.R
+[r2py] Installing Python package 'bytes' ...
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.700
+[Seed]    Structured 2 score: 0.700
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.700, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity as.blob for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 28 lines
+[Agent]   Rewrite scored: 0.727 (was 0.700), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity blob for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 28 lines
+[Agent]   Rewrite scored: 0.750 (was 0.727), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity new_blob for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 29 lines
+[Agent]   Rewrite scored: 0.850 (was 0.750), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity blob for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 33 lines
+[Agent]   Rewrite scored: 0.927 (was 0.850), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.927 >= threshold, stopping
+[Agent]   Improved: 0.700 -> 0.927
+
+===== [2/4] clock__rd_example__zoned_time_info_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 128 lines
+[Agent]   5 entity sentinel(s) missing: ['info', 'x', 'x_1', 'x_2', 'zoned_time_info']
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp15iao1ov\_r2py_script.py", line 458, in <module>
+    info = zoned_time_info(x)
+  File "C:\Users\bened\AppData\Local\Temp\tmp15iao1ov\_r2py_script.py", line 415, in zoned_time_info
+    idx = b
+[Agent]   Targeting entity zoned_time_info for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 106 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp7rup_lqs\_r2py_script.py", line 437, in <module>
+    info_end = info['end'] if isinstance(info, pd.DataFrame) else [item['end'] for item in info]
+                                              
+[Review]  PASSED
+[Agent]   Targeting entity zoned_time_info for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 106 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpop94p6gz\_r2py_script.py", line 437, in <module>
+    info_end = info['end'].tolist() if isinstance(info, pd.DataFrame) else [item['end'] for item in info]
+                                     
+[Agent]   Targeting entity info for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 80 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpw44tnh2l\_r2py_script.py", line 409, in <module>
+    info = zoned_time_info_func(x)
+  File "C:\Users\bened\AppData\Local\Temp\tmpw44tnh2l\_r2py_script.py", line 391, in zoned_time_info_func
+ 
+[Agent]   Targeting entity info for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 54 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpc5eq8ujh\_r2py_script.py", line 383, in <module>
+    info = zoned_time_info(x)
+           ^^^^^^^^^^^^^^^
+NameError: name 'zoned_time_info' is not defined
+[Review]  PASSED
+[Agent]   Targeting entity x for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 45 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp0jwp84re\_r2py_script.py", line 374, in <module>
+    info = zoned_time_info(x)
+           ^^^^^^^^^^^^^^^
+NameError: name 'zoned_time_info' is not defined
+[Agent]   Targeting entity x for repair
+[Agent]   Step 7: entity_repair
+[Agent]   Rewrite: 49 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpuk6a0xcq\_r2py_script.py", line 378, in <module>
+    info = zoned_time_info(x)
+           ^^^^^^^^^^^^^^^
+NameError: name 'zoned_time_info' is not defined
+[Agent]   Step 8: rewrite
+[Agent]   Rewrite: 90 lines
+[Agent]   1 entity sentinel(s) missing: ['info']
+[r2py] WARNING: 'info' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.500 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 9: rewrite
+[Agent]   Rewrite: 117 lines
+[r2py] WARNING: 'info' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.500 (was 0.500), exit_code=0
+[Agent]   Step 10: rewrite
+[Agent]   Rewrite: 131 lines
+[r2py] WARNING: 'info' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.500 (was 0.500), exit_code=0
+[Agent]   Step 11: rewrite
+[Agent]   Rewrite: 129 lines
+[r2py] WARNING: 'info' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.500 (was 0.500), exit_code=0
+[Agent]   Step 12: rewrite
+[Agent]   Rewrite: 126 lines
+[Agent]   Rewrite scored: 0.000 (was 0.500), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpvcsumwyn\_r2py_script.py", line 449, in <module>
+    info = zoned_time_info(x)
+  File "C:\Users\bened\AppData\Local\Temp\tmpvcsumwyn\_r2py_script.py", line 420, in zoned_time_info
+    idx = b
+[Agent]   Catastrophic rewrite (0.500 -> 0.000) — discarded, reverted to best
+[Agent]   Step 13: rewrite
+[Agent]   Rewrite: 123 lines
+[r2py] WARNING: 'info' is a data entity but Python could not serialize it — excluded from comparison
+[Agent]   Rewrite scored: 0.500 (was 0.500), exit_code=0
+[Agent]   Step 14: probe_r
+[Agent]   Probe result: 'ERROR: R script exited with code 1:\nFehler in year_month_day(2021, 3, 14, c(1, 3), c(59, 0), c(59, 0)) : \r\n  konnte Funktion "year_month_day" nicht finden\r\nRuft auf: source -> withVisible -> eval -> e'
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.500
+
+===== [3/4] highr__rd_example__hilight_Rd.R
+[Seed]    Structured 1 score: 0.727
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.704
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.727, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 145 lines
+[Agent]   Rewrite scored: 0.911 (was 0.727), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.911 >= threshold, stopping
+[Agent]   Improved: 0.727 -> 0.911
+
+===== [4/4] broom__rd_example__glance_factanal_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 94 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmphq55331n\_r2py_script.py", line 370, in <module>
+    fit1 = factanal_sim(m1, factors=3, scores="Bartlett")
+  File "C:\Users\bened\AppData\Local\Temp\tmphq55331n\_r2py_script.py", line 356, in 
+[Agent]   Targeting entity fit1 for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 68 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpef0arf2j\_r2py_script.py", line 362, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Review]  PASSED
+[Agent]   Targeting entity tidy for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 73 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp4st8rzbe\_r2py_script.py", line 362, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   Targeting entity tidy for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 70 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmptg8u_cl3\_r2py_script.py", line 362, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   Targeting entity fit2 for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 68 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpzial4vs2\_r2py_script.py", line 362, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   Targeting entity fit2 for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 68 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpzial4vs2\_r2py_script.py", line 362, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   Targeting entity tidy_1 for repair
+[Agent]   Step 7: entity_repair
+[Agent]   Rewrite: 68 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpdpvvwxz1\_r2py_script.py", line 362, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   Targeting entity tidy_1 for repair
+[Agent]   Step 8: entity_repair
+[Agent]   Rewrite: 71 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpil3_r9um\_r2py_script.py", line 362, in <module>
+    fit1.fit(m1)
+    ~~~~~~~~^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\factor_analyzer\factor_analyzer.py"
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.000

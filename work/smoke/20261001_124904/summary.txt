@@ -1,0 +1,46 @@
+scripts run: 24  errors: 2
+
+script                                                score   gfx   min  shadow  review-fail
+purrr__vignette__purrr_s3.R                           1.000     -   9.6  -  -
+hms__rd_example__hms_Rd.R                             0.898     -  20.0  -  -
+shiny__rd_example__httpResponse_Rd.R                  0.931     -   1.8  -  -
+pROC__rd_example__geom_polygon_auc_roc_Rd.R             nan     -   5.8  -  -
+blob__rd_example__blob_Rd.R                           0.927     -   9.8  -  -
+clock__rd_example__zoned_time_info_Rd.R               0.500     -  22.4  -  -
+highr__rd_example__hilight_Rd.R                       0.911     -   5.9  {'sani:valid->valid': 1}  -
+broom__rd_example__glance_factanal_Rd.R               0.000     -  17.5  -  -
+magrittr__rd_example__aliases_Rd.R                    0.635     -  11.6  -  -
+shape__rd_example__femmecol_Rd.R                      0.867  0.60  13.8  {'sani:valid->valid': 1}  -
+rmarkdown__rd_example__output_format_dependency_Rd.R  0.807     -  14.0  {'sani:valid->valid': 3}  -
+cachem__rd_example__cache_layered_Rd.R                0.250     -  19.5  -  -
+tidyr__vignette__tidy-data_s3.R                       0.850     -   9.9  -  -
+textshaping__vignette__c_interface.R                  1.000     -   1.1  -  -
+xml2__rd_example__xml_cdata_Rd.R                      0.625     -  12.7  -  -
+tinytex__rd_example__tlmgr_Rd.R                       1.000     -   1.7  -  -
+lubridate__vignette__lubridate_s18.R                  0.950     -  14.8  -  -
+isoband__rd_example__isobands_Rd.R                    0.861  1.00  19.3  -  -
+caret__rd_example__createDataPartition_Rd.R           0.000  0.00  26.6  -  -
+openssl__rd_example__base64_encode_Rd.R                 nan     -   0.4  -  -
+timeDate__rd_example__earlyCloseNYSE_Rd.R             0.957     -  12.7  -  -
+ggplot2__rd_example__aes_linetype_size_shape_Rd.R     0.000  0.00  13.0  -  -
+lava__vignette__influencefunction_s34.R               0.576     -  10.3  -  -
+googledrive__rd_example__drive_create_Rd.R            0.000     -  15.0  -  -
+
+agent actions: {'entity_repair': 83, 'rewrite': 73, 'probe_r': 1}
+replace_entity refused       0
+syntax errors                5
+review PASSED                35
+review FAILED                3
+review unavailable           0
+runtime SyntaxError dumps    0
+budget exhausted             0
+
+rewrite outcomes by action (from the run rows):
+  entity_repair   scored= 74 improved 19% unchanged 61% worse 8% catastrophic 12% | import_rejected 3, review_rejected 1, sentinels_missing 1, shaped_progress 6, syntax_rejected 5, verify_error 1
+  rewrite         scored= 71 improved 24% unchanged 35% worse 20% catastrophic 21% | review_rejected 2, sentinels_missing 13, shaped_progress 1, shim_restored 5, verify_error 2
+agent stops: {'threshold': 7, 'stalled': 12}
+
+entity records: 197 (197 with active_dims)
+entities with no active dimensions: 32
+excluded data entities: 0; worklist []
+scripts with graphics scored: 4; mean 0.40

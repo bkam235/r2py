@@ -1,0 +1,180 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 8e880039a896 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_124904
+
+===== [1/4] timeDate__rd_example__earlyCloseNYSE_Rd.R
+[Seed]    Structured 1 score: 0.619
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.622
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.622, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity c for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 120 lines
+[Agent]   Rewrite scored: 0.617 (was 0.622), exit_code=0
+[Agent]   Targeting entity c for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 120 lines
+[Agent]   Rewrite scored: 0.617 (was 0.622), exit_code=0
+[Agent]   Targeting entity earlyCloseNYSE_1 for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 120 lines
+[Agent]   Rewrite scored: 0.562 (was 0.622), exit_code=0
+[Agent]   Targeting entity earlyCloseNYSE_1 for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 120 lines
+[Agent]   Rewrite scored: 0.000 (was 0.622), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp347dznjf\_r2py_script.py", line 449, in <module>
+    combined = np.concatenate([early_closings, holidays])
+                               ^^^^^^^^^^^^^^
+NameError: name 'early_closings' is no
+[Agent]   Catastrophic rewrite (0.622 -> 0.000) — discarded, reverted to best
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 135 lines
+[Agent]   Rewrite scored: 0.569 (was 0.622), exit_code=0
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 157 lines
+[Agent]   Rewrite scored: 0.957 (was 0.622), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.957 >= threshold, stopping
+[Agent]   Improved: 0.622 -> 0.957
+
+===== [2/4] ggplot2__rd_example__aes_linetype_size_shape_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 103 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ... "C:\Users\bened\AppData\Local\Temp\tmp_vqab8lf\_r2py_script.py", line 378, in <module>
+    p_econ_lw1 = ggplot(economics, aes('date', 'unemploy')) + geom_line(linewidth=2, lineend='round')
+                                                              ~~~~~~~~~^^^^^^^^^
+[Review]  PASSED
+[Agent]   Targeting entity geom_point for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 102 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ... "C:\Users\bened\AppData\Local\Temp\tmpf22_1b6o\_r2py_script.py", line 378, in <module>
+    p_econ_lw1 = ggplot(economics, aes('date', 'unemploy')) + geom_line(linewidth=2, lineend='round')
+                                                              ~~~~~~~~~^^^^^^^^^
+[Agent]   Targeting entity geom_point for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 102 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ... "C:\Users\bened\AppData\Local\Temp\tmpf22_1b6o\_r2py_script.py", line 378, in <module>
+    p_econ_lw1 = ggplot(economics, aes('date', 'unemploy')) + geom_line(linewidth=2, lineend='round')
+                                                              ~~~~~~~~~^^^^^^^^^
+[Agent]   Targeting entity geom_point_1 for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 103 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ... "C:\Users\bened\AppData\Local\Temp\tmp_vqab8lf\_r2py_script.py", line 378, in <module>
+    p_econ_lw1 = ggplot(economics, aes('date', 'unemploy')) + geom_line(linewidth=2, lineend='round')
+                                                              ~~~~~~~~~^^^^^^^^^
+[Agent]   Targeting entity geom_point_1 for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 103 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ... "C:\Users\bened\AppData\Local\Temp\tmp_vqab8lf\_r2py_script.py", line 378, in <module>
+    p_econ_lw1 = ggplot(economics, aes('date', 'unemploy')) + geom_line(linewidth=2, lineend='round')
+                                                              ~~~~~~~~~^^^^^^^^^
+[Agent]   Targeting entity geom_hline for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 101 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ... "C:\Users\bened\AppData\Local\Temp\tmpfw5o6m1a\_r2py_script.py", line 378, in <module>
+    p_econ_lw1 = ggplot(economics, aes('date', 'unemploy')) + geom_line(linewidth=2, lineend='round')
+                                                              ~~~~~~~~~^^^^^^^^^
+[Agent]   Targeting entity geom_hline for repair
+[Agent]   Step 7: entity_repair
+[Agent]   Rewrite: 101 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ... "C:\Users\bened\AppData\Local\Temp\tmpfw5o6m1a\_r2py_script.py", line 378, in <module>
+    p_econ_lw1 = ggplot(economics, aes('date', 'unemploy')) + geom_line(linewidth=2, lineend='round')
+                                                              ~~~~~~~~~^^^^^^^^^
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.000
+
+===== [3/4] lava__vignette__influencefunction_s34.R
+[r2py] Installing Python package 'lava' ...
+[Seed]    Structured 1 score: 0.576
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.566
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.576, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity y for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 126 lines
+[Agent]   Rewrite scored: 0.576 (was 0.576), exit_code=0
+[Agent]   Targeting entity y for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 126 lines
+[Agent]   Rewrite scored: 0.576 (was 0.576), exit_code=0
+[Agent]   Targeting entity e_1 for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 128 lines
+[Agent]   Rewrite scored: 0.576 (was 0.576), exit_code=0
+[Agent]   Targeting entity e_1 for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 129 lines
+[Agent]   Rewrite scored: 0.587 (was 0.576), exit_code=0
+[Review]  FAILED: The translation includes a data shim that loads the computed result 'e' from a JSON file into the global scope.
+[Agent]   Step 5: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 139 lines
+[Agent]   Rewrite scored: 0.586 (was 0.576), exit_code=0
+[Review]  FAILED: The Python translation includes a data shim that loads pre-computed results for 'e' from a JSON file.
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 160 lines
+[Agent]   3 entity sentinel(s) missing: ['N', 'e_1', 'y']
+[Agent]   Rewrite scored: 0.630 (was 0.576), exit_code=0
+[Review]  FAILED: The `object_size` function returns a hardcoded string '18992 bytes' instead of computing the actual size of the object.
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.576)
+
+===== [4/4] googledrive__rd_example__drive_create_Rd.R
+[r2py] Installing Python package 'shiny' ...
+[r2py] Skipping install of 'googledrive' (known unavailable)
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[r2py] Skipping install of 'googledrive' (known unavailable)
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 206 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpg0u3q2mq\_r2py_script.py", line 455, in <module>
+    wordstar_res = api.files_create(wordstar_body)
+  File "C:\Users\bened\AppData\Local\Temp\tmpg0u3q2mq\_r2py_script.py", line 424, in files_c
+[Agent]   Targeting entity drive_has_token for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 118 lines
+[Agent]   Syntax error: line 21: expected an indented block after 'if' statement on line 19
+        wordstar_metadata = {
+        ^
+[Agent]   Targeting entity drive_has_token for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 116 lines
+[Agent]   Syntax error: line 101: invalid syntax
+    except Exception as e:
+    ^
+[Agent]   Targeting entity wordstar for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 117 lines
+[Agent]   Unavailable imports: ['googleapiclient']
+[Agent]   Targeting entity wordstar for repair
+[Agent]   Step 5: entity_repair
+[Agent]   Rewrite: 117 lines
+[Agent]   Unavailable imports: ['googleapiclient']
+[Agent]   Targeting entity pluck for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 117 lines
+[Agent]   Unavailable imports: ['googleapiclient']
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.000)

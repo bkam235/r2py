@@ -1,0 +1,242 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness beca683f3f7b -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_165951
+
+===== [1/4] lubridate__vignette__lubridate_s18.R
+[Seed]    Structured 1 score: 0.633
+[Seed]    Bare 2 score: 0.438
+[Seed]    Structured 2 score: 0.633
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.633, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity floor_date for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 58 lines
+[Agent]   Rewrite scored: 0.000 (was 0.633), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpmav1ljyd\_r2py_script.py", line 356, in <module>
+    floor_jan = floor_date(jan31, "month")
+                           ^^^^^
+NameError: name 'jan31' is not defined
+[Agent]   Catastrophic rewrite (0.633 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity floor_date for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 58 lines
+[Agent]   Rewrite scored: 0.000 (was 0.633), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpmav1ljyd\_r2py_script.py", line 356, in <module>
+    floor_jan = floor_date(jan31, "month")
+                           ^^^^^
+NameError: name 'jan31' is not defined
+[Agent]   Catastrophic rewrite (0.633 -> 0.000) — discarded, reverted to best
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 78 lines
+[Agent]   Rewrite scored: 0.625 (was 0.633), exit_code=0
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 62 lines
+[Agent]   Rewrite scored: 0.691 (was 0.633), exit_code=0
+[Review]  PASSED
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 85 lines
+[Agent]   Rewrite scored: 0.833 (was 0.691), exit_code=0
+[Review]  PASSED
+[Agent]   Step 6: rewrite
+[Agent]   Rewrite: 72 lines
+[Agent]   Rewrite scored: 0.875 (was 0.833), exit_code=0
+[Review]  PASSED
+[Agent]   Step 7: rewrite
+[Agent]   Rewrite: 101 lines
+[Agent]   Rewrite scored: 0.853 (was 0.875), exit_code=0
+[Agent]   Step 8: rewrite
+[Agent]   Rewrite: 105 lines
+[Agent]   Rewrite scored: 0.625 (was 0.875), exit_code=0
+[Agent]   Catastrophic rewrite (0.875 -> 0.625) — discarded, reverted to best
+[Agent]   Step 9: rewrite
+[Agent]   Rewrite: 77 lines
+[Agent]   Rewrite scored: 0.875 (was 0.875), exit_code=0
+[Agent]   Step 10: rewrite
+[Agent]   Rewrite: 107 lines
+[Agent]   Rewrite scored: 0.875 (was 0.875), exit_code=0
+[Agent]   Step 11: rewrite
+[Agent]   Rewrite: 71 lines
+[Agent]   Rewrite scored: 0.875 (was 0.875), exit_code=0
+[Agent]   Step 12: rewrite
+[Agent]   Rewrite: 69 lines
+[Agent]   Rewrite scored: 0.875 (was 0.875), exit_code=0
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.633 -> 0.875
+
+===== [2/4] isoband__rd_example__isobands_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 4 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 210 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpkq7mcor9\_r2py_script.py", line 480, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Lo
+[Agent]   Targeting entity m for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 206 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp7bq3agyt\_r2py_script.py", line 466, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+                        ^^^^^^
+NameError: name 'x_vals' is not defined
+[Review]  PASSED
+[Agent]   Targeting entity grid.newpage for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 203 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpidx_pnvu\_r2py_script.py", line 466, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+                        ^^^^^^
+NameError: name 'x_vals' is not defined
+[Agent]   Targeting entity grid.newpage for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 203 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpidx_pnvu\_r2py_script.py", line 466, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+                        ^^^^^^
+NameError: name 'x_vals' is not defined
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 162 lines
+[Agent]   14 entity sentinel(s) missing: ['df_bands', 'df_lines', 'g', 'grid.newpage', 'grid.path', 'grid.points']
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\matplotlib\axes\_axes.py", line 5163, in _parse_scatter_color_args
+    raise ValueError(
+        f"'c' argument must be a color, a sequence of colors, "
+        f"or a sequence of numbers, not {c!r}") fro
+[Agent]   Targeting entity grid.points for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 206 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp75dnf7ll\_r2py_script.py", line 466, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+                        ^^^^^^
+NameError: name 'x_vals' is not defined
+[Agent]   Targeting entity grid.points for repair
+[Agent]   Step 7: entity_repair
+[Agent]   Rewrite: 206 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp75dnf7ll\_r2py_script.py", line 466, in <module>
+    df_bands = isobands(x_vals, y_vals, m, 0.5, 1.5)[0]
+                        ^^^^^^
+NameError: name 'x_vals' is not defined
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 8: rewrite
+[Agent]   Rewrite: 200 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpcs4qukir\_r2py_script.py", line 336, in <module>
+    from matplotlib.contour import contour, contourf
+ImportError: cannot import name 'contour' from 'matplotlib.contour' (C:\Users\bened\Deskto
+[Agent]   6 consecutive non-improving rewrites, stopping
+[Agent]   Improved: 0.000 -> 0.000
+
+===== [3/4] caret__rd_example__createDataPartition_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 3 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 247 lines
+[Agent]   21 entity sentinel(s) missing: ['createDataPartition', 'createFolds', 'createFolds_1', 'createFolds_2', 'createResample', 'createTimeSlices']
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpo6v2lc_4\_r2py_script.py", line 511, in <module>
+    res_partition = createDataPartition(oilType, times=2)
+  File "C:\Users\bened\AppData\Local\Temp\tmpo6v2lc_4\_r2py_script.py", line 393, in 
+[Agent]   Targeting entity plot for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 151 lines
+[Agent]   3 entity sentinel(s) missing: ['points', 'rug', 'rug_1']
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmppdc3llda\_r2py_script.py", line 384, in <module>
+    kde = gaussian_kde(x[inA])
+                       ~^^^^^
+TypeError: only integer scalar arrays can be converted to a scalar index
+[Review]  PASSED
+[Agent]   Targeting entity createResample for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 157 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpuhu1kb3g\_r2py_script.py", line 384, in <module>
+    kde = gaussian_kde(x[inA])
+                       ~^^^^^
+TypeError: only integer scalar arrays can be converted to a scalar index
+[Agent]   Targeting entity createResample for repair
+[Agent]   Step 4: entity_repair
+[Agent]   Rewrite: 151 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpbe0bwpyl\_r2py_script.py", line 384, in <module>
+    kde = gaussian_kde(x[inA])
+                       ~^^^^^
+TypeError: only integer scalar arrays can be converted to a scalar index
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 5: rewrite
+[Agent]   Rewrite: 242 lines
+[Agent]   21 entity sentinel(s) missing: ['createDataPartition', 'createFolds', 'createFolds_1', 'createFolds_2', 'createResample', 'createTimeSlices']
+[Agent]   Rewrite scored: 0.737 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Targeting entity inA for repair
+[Agent]   Step 6: entity_repair
+[Agent]   Rewrite: 260 lines
+[Agent]   Rewrite scored: 0.000 (was 0.737), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpr1itj0p6\_r2py_script.py", line 503, in <module>
+    kde_inA = gaussian_kde(x_inA)
+                           ^^^^^
+NameError: name 'x_inA' is not defined
+[Agent]   Catastrophic rewrite (0.737 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity inA for repair
+[Agent]   Step 7: entity_repair
+[Agent]   Rewrite: 260 lines
+[Agent]   Rewrite scored: 0.000 (was 0.737), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpxxiwasd7\_r2py_script.py", line 503, in <module>
+    kde_inA = gaussian_kde(x_inA)
+                           ^^^^^
+NameError: name 'x_inA' is not defined
+[Agent]   Catastrophic rewrite (0.737 -> 0.000) — discarded, reverted to best
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 8: rewrite
+[Agent]   Rewrite: 267 lines
+[Agent]   Rewrite scored: 0.000 (was 0.737), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpwvzaoy1e\_r2py_script.py", line 491, in <module>
+    res_partition = createDataPartition(oilType, times=2)
+  File "C:\Users\bened\AppData\Local\Temp\tmpwvzaoy1e\_r2py_script.py", line 384, in 
+[Agent]   Catastrophic rewrite (0.737 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity createFolds_1 for repair
+[Agent]   Step 9: entity_repair
+[Agent]   Rewrite: 267 lines
+[Agent]   Rewrite scored: 0.691 (was 0.737), exit_code=0
+[Agent]   Targeting entity createFolds_1 for repair
+[Agent]   Step 10: entity_repair
+[Agent]   Rewrite: 267 lines
+[Agent]   Rewrite scored: 0.697 (was 0.737), exit_code=0
+[Agent]   Escalating to a full rewrite after failed entity repairs
+[Agent]   Step 11: rewrite
+[Agent]   Rewrite: 271 lines
+[Agent]   Rewrite scored: 0.708 (was 0.737), exit_code=0
+[Agent]   Wall-clock budget (20 min) exhausted after 11 steps, stopping with score 0.737
+[Agent]   Improved: 0.000 -> 0.737
+
+===== [4/4] openssl__rd_example__base64_encode_Rd.R
+[Seed]    Structured 1 score: 1.000

@@ -1,0 +1,43 @@
+# Translated from <R script> by r2py v0.3.0
+# Model: openrouter:google/gemma-4-31b-it  ScriptMap entities: 6
+
+import base64
+
+# r2py:entity:message
+def base64_encode(bin, linebreaks=False):
+    if isinstance(bin, str):
+        bin = bin.encode('utf-8')
+    if not isinstance(bin, (bytes, bytearray)):
+        raise TypeError("bin must be raw bytes")
+    
+    encoded = base64.b64encode(bin).decode('utf-8')
+    if linebreaks:
+        # Mimic R's linebreaks behavior if needed, though typically b64encode is a single string
+        return encoded
+    return encoded
+
+# r2py:entity:output
+def base64_decode(text):
+    if isinstance(text, (bytes, bytearray)):
+        text = text.decode('utf-8')
+    if not isinstance(text, str):
+        raise TypeError("text must be a character string")
+    if text is None:
+        return bytes()
+    
+    # Remove carriage returns and newlines as per R's gsub
+    text = text.replace('\r', '').replace('\n', '')
+    return base64.b64decode(text)
+
+# r2py:entity:identical
+def identical(x, y, **kwargs):
+    return x == y
+
+# r2py:entity:input
+input = "foo = bar + 5".encode('utf-8')
+# r2py:entity:message
+message = base64_encode(input)
+# r2py:entity:output
+output = base64_decode(message)
+# r2py:entity:identical
+print(identical(output, input))

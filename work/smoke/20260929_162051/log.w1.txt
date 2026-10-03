@@ -1,0 +1,75 @@
+smoke test: 3 scripts, checkpoint full, agent budget 600s, harness 7ecc87924726 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260929_162051
+
+===== [1/3] RColorBrewer__rd_example__ColorBrewer_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.620
+[Seed]    Structured 2 score: 0.619
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.620, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 226 lines
+[Agent]   Rewrite scored: 0.000 (was 0.620), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp2b2ukh5k\_r2py_script.py", line 382, in <module>
+    mypalette = brewer_pal(7, "Greens")
+  File "C:\Users\bened\AppData\Local\Temp\tmp2b2ukh5k\_r2py_script.py", line 366, in brewer_pal
+    in
+[Agent]   Catastrophic rewrite (0.620 -> 0.000) — discarded, reverted to best
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 178 lines
+[Agent]   Rewrite scored: 0.000 (was 0.620), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpyhlhkg1d\_r2py_script.py", line 360, in <module>
+    mypalette = brewer_pal(7, "Greens")
+  File "C:\Users\bened\AppData\Local\Temp\tmpyhlhkg1d\_r2py_script.py", line 343, in brewer_pal
+    in
+[Agent]   Catastrophic rewrite (0.620 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 163 lines
+[Agent]   Rewrite scored: 0.000 (was 0.620), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpd189pkjp\_r2py_script.py", line 445, in <module>
+    display_brewer_all(n=10, exact_n=False)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Local\Temp\tmpd189pkjp\
+[Agent]   Catastrophic rewrite (0.620 -> 0.000) — discarded, reverted to best
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 160 lines
+[Agent]   Rewrite scored: 0.000 (was 0.620), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpbetgftxs\_r2py_script.py", line 442, in <module>
+    display_brewer_all(n=10, exact_n=False)
+    ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\AppData\Local\Temp\tmpbetgftxs\
+[Agent]   Catastrophic rewrite (0.620 -> 0.000) — discarded, reverted to best
+[Agent]   Wall-clock budget (10 min) exhausted after 4 steps, stopping with score 0.620
+[Agent]   No improvement achieved (score=0.620)
+
+===== [2/3] shape__rd_example__femmecol_Rd.R
+[Seed]    Structured 1 score: 0.683
+[Seed]    Bare 2 score: 0.761
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.761, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 88 lines
+[Agent]   Rewrite scored: 0.667 (was 0.761), exit_code=0
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 92 lines
+[Agent]   Rewrite scored: 0.867 (was 0.761), exit_code=0
+[Review]  PASSED
+[Agent]   Wall-clock budget (10 min) exhausted after 2 steps, stopping with score 0.867
+[Agent]   Improved: 0.761 -> 0.867
+
+===== [3/3] vctrs__rd_example__new_date_Rd.R
+[Seed]    Structured 1 score: 0.500
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.515
+[Audit]   No structural issues found
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.515, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 71 lines
+[Agent]   Rewrite scored: 1.000 (was 0.515), exit_code=0
+[Review]  PASSED
+[Agent]   Score 1.000 >= threshold, stopping
+[Agent]   Improved: 0.515 -> 1.000

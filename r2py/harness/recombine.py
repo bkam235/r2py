@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import ast
 import sys
+from collections import Counter
 from typing import TYPE_CHECKING
 
 from ..stage2.stitch import rebuild_entity_line_map, splice_entity
@@ -17,7 +18,10 @@ if TYPE_CHECKING:
     from ..types import ScoreReport
     from .tools import HarnessTools
 
-MARGIN = 0.05          # a donor entity must beat the base's by this much
+# What recombination did in this process (read by scripts that report it).
+stats: Counter = Counter()
+
+MARGIN = 0.05         # a donor entity must beat the base's by this much
 MAX_VERIFIES = 8       # verifications spent per recombination
 
 
@@ -95,16 +99,23 @@ def recombine(pool: list[tuple[str, "ScoreReport"]], harness: "HarnessTools",
             break
         es = base_rep.by_entity.get(eid)
         donors = _donors(eid, _obj.entity_score(es) if es is not None else 0.0, pool)
-        if not donors or base_src.count(f"# r2py:entity:{eid}\n") != 1:
+        if not donors:
+            stats["no_donor"] += 1
+            continue
+        if base_src.count(f"# r2py:entity:{eid}\n") != 1:
+            stats["base_span"] += 1
             continue
         _score, frag, donor_src = donors[0]
         new_src, _err = splice_entity(base_src, eid, frag)
         if new_src is None:
+            stats["splice_refused"] += 1
             continue
         new_src = _with_donor_imports(new_src, donor_src)
         if _check_syntax(new_src) or unavailable_imports(new_src, _SKIP_PACKAGES):
+            stats["gate_rejected"] += 1
             continue
         spent += 1
+        stats["verified"] += 1
         try:
             rep = harness.verify(new_src)
         except Exception as exc:
@@ -112,6 +123,7 @@ def recombine(pool: list[tuple[str, "ScoreReport"]], harness: "HarnessTools",
             continue
         if _obj.better(rep, base_rep):
             print(f"[Recombine] entity {eid}: {base_rep.aggregate:.3f} -> {rep.aggregate:.3f}", file=sys.stderr)
+            stats["kept"] += 1
             base_src = getattr(harness, "last_annotated_source", None) or new_src
             base_rep = rep
     if _obj.better(base_rep, start_rep):

@@ -1,0 +1,86 @@
+smoke test: 4 scripts, checkpoint empty, agent budget 1200s, harness 8e880039a896 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20261001_112951
+
+===== [1/4] purrr__vignette__purrr_s3.R
+[Seed]    Structured 1 score: 0.932
+
+===== [2/4] hms__rd_example__hms_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 130 lines
+[Agent]   12 entity sentinel(s) missing: ['as.POSIXct', 'as_hms', 'as_hms_1', 'as_hms_2', 'd', 'd$hours']
+[Agent]   Rewrite scored: 0.891 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 145 lines
+[Agent]   Rewrite scored: 0.891 (was 0.891), exit_code=0
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 143 lines
+[Agent]   Rewrite scored: 0.898 (was 0.891), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 150 lines
+[Agent]   Rewrite scored: 0.910 (was 0.898), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.910 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 0.910
+
+===== [3/4] shiny__rd_example__httpResponse_Rd.R
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 1 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Bare 2 score: 0.000
+[r2py] Installing Python package 'shiny' ...
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 29 lines
+[Agent]   1 entity sentinel(s) missing: ['httpResponse']
+[Agent]   Rewrite scored: 0.500 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 31 lines
+[Agent]   Rewrite scored: 0.931 (was 0.500), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.931 >= threshold, stopping
+[Agent]   Improved: 0.000 -> 0.931
+
+===== [4/4] pROC__rd_example__geom_polygon_auc_roc_Rd.R
+[r2py] Installing Python package 'pyroc' ...
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 161 lines
+[Agent]   1 entity sentinel(s) missing: ['ggroc']
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        y_true, y_score, pos_label=pos_label, sample_weight=sample_weight
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbo
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 149 lines
+[Agent]   3 entity sentinel(s) missing: ['geom_polygon_auc_1', 'geom_polygon_auc_2', 'geom_polygon_auc_3']
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp0u1cpeu5\_r2py_script.py", line 469, in <module>
+    auc_s100b_partial_sp = auc(roc_s100b, partial_auc=[0.9, 1])
+  File "C:\Users\bened\AppData\Local\Temp\tmp0u1cpeu5\_r2py_script.py", line 40
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 163 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp3i5j29ku\_r2py_script.py", line 472, in <module>
+    p2_base = ggroc(roc_s100b_percent, legacy_axes=True)
+  File "C:\Users\bened\AppData\Local\Temp\tmp3i5j29ku\_r2py_script.py", line 424, in g
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.000)

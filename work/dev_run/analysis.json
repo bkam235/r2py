@@ -1,0 +1,195 @@
+{
+  "n_heldout": 24,
+  "checkpoints_analyzed": [
+    "empty",
+    "full"
+  ],
+  "n_errored_runs": 2,
+  "n_infra_crash_runs": 0,
+  "harness_hashes": [
+    "eb7836ffd45a"
+  ],
+  "llm_settings": [
+    "{\"provider\": null, \"request_deadline_s\": 420, \"request_timeout_s\": 300, \"temperature\": 1.0}"
+  ],
+  "script_aggregate": {
+    "n_paired": 23,
+    "mean_before": 0.6969507902130837,
+    "mean_after": 0.6618916883043905,
+    "mean_diff": -0.03505910190869311,
+    "median_diff": 0.0,
+    "n_improved": 7,
+    "n_worse": 5,
+    "n_tied": 11,
+    "se_diff": 0.04167694191547501,
+    "test": {
+      "alternative": "greater",
+      "zero_method": "wilcox",
+      "alpha": 0.05,
+      "statistic": 40.0,
+      "p_value": 0.4687364611812376,
+      "p_value_two_sided": 0.9374729223624751,
+      "rank_biserial": 0.02564102564102564,
+      "significant": false,
+      "n_nonzero": 12
+    },
+    "by_stratum": {
+      "data_wrangling": {
+        "n": 4,
+        "mean_diff": 0.0
+      },
+      "date_time": {
+        "n": 4,
+        "mean_diff": -0.22550500861950062
+      },
+      "graphics": {
+        "n": 4,
+        "mean_diff": -0.021689730715325678
+      },
+      "html": {
+        "n": 4,
+        "mean_diff": -0.061972433586852005
+      },
+      "stats_objects": {
+        "n": 4,
+        "mean_diff": 0.06431292591912406
+      },
+      "other": {
+        "n": 3,
+        "mean_diff": 0.05768588137009182
+      }
+    },
+    "trend": null
+  },
+  "primary": {
+    "n_paired": 9,
+    "mean_before": 0.8471075738088379,
+    "mean_after": 0.6851221150471725,
+    "mean_diff": -0.16198545876166548,
+    "median_diff": 0.0,
+    "n_improved": 2,
+    "n_worse": 4,
+    "n_tied": 3,
+    "se_diff": 0.12957523964318432,
+    "test": {
+      "alternative": "greater",
+      "zero_method": "wilcox",
+      "alpha": 0.05,
+      "statistic": 6.0,
+      "p_value": 0.84375,
+      "p_value_two_sided": 0.4375,
+      "rank_biserial": -0.42857142857142855,
+      "significant": false,
+      "n_nonzero": 6
+    },
+    "by_stratum": {
+      "data_wrangling": {
+        "n": 1,
+        "mean_diff": 0.0
+      },
+      "date_time": {
+        "n": 2,
+        "mean_diff": -0.8125
+      },
+      "graphics": {
+        "n": 3,
+        "mean_diff": -0.03284180271158269
+      },
+      "stats_objects": {
+        "n": 2,
+        "mean_diff": 0.032828139639879406
+      },
+      "other": {
+        "n": 1,
+        "mean_diff": 0.19999999999999996
+      }
+    },
+    "trend": null
+  },
+  "control": {
+    "n_paired": 23,
+    "mean_before": 0.7388052476017322,
+    "mean_after": 0.7072553475545696,
+    "mean_diff": -0.0315499000471626,
+    "median_diff": 0.0,
+    "n_improved": 8,
+    "n_worse": 5,
+    "n_tied": 10,
+    "se_diff": 0.0429211622115022,
+    "test": {
+      "alternative": "greater",
+      "zero_method": "wilcox",
+      "alpha": 0.05,
+      "statistic": 50.0,
+      "p_value": 0.37657618238295726,
+      "p_value_two_sided": 0.7531523647659145,
+      "rank_biserial": 0.0989010989010989,
+      "significant": false,
+      "n_nonzero": 13
+    },
+    "by_stratum": {
+      "data_wrangling": {
+        "n": 4,
+        "mean_diff": 0.0
+      },
+      "date_time": {
+        "n": 4,
+        "mean_diff": -0.2491807488305695
+      },
+      "graphics": {
+        "n": 4,
+        "mean_diff": 0.03125
+      },
+      "html": {
+        "n": 4,
+        "mean_diff": -0.06197243358685198
+      },
+      "stats_objects": {
+        "n": 4,
+        "mean_diff": 0.05591365930548081
+      },
+      "other": {
+        "n": 3,
+        "mean_diff": 0.056770130454340983
+      }
+    }
+  },
+  "share_targetable": 0.1702127659574468,
+  "excluded_worklist": [
+    [
+      [
+        "raw",
+        "builtins.bytes"
+      ],
+      8
+    ],
+    [
+      [
+        "xml_document, xml_node",
+        "lxml.etree._Element"
+      ],
+      2
+    ],
+    [
+      [
+        "cache_layered, cachem",
+        "joblib.memory.Memory"
+      ],
+      2
+    ],
+    [
+      [
+        "cache_disk, cachem",
+        "joblib.memory.Memory"
+      ],
+      2
+    ],
+    [
+      [
+        "cache_mem, cachem",
+        "joblib.memory.Memory"
+      ],
+      1
+    ]
+  ]
+}

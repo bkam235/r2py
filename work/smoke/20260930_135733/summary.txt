@@ -1,0 +1,24 @@
+scripts run: 3  errors: 0
+
+script                                                score   gfx   min  shadow  review-fail
+purrr__vignette__purrr_s3.R                           0.953     -   2.6  -  -
+highr__rd_example__hilight_Rd.R                       0.779     -  14.1  {'sani:valid->valid': 4}  -
+openssl__rd_example__base64_encode_Rd.R               1.000     -   2.4  -  -
+
+agent actions: {'rewrite': 4}
+replace_entity refused       0
+syntax errors                2
+review PASSED                1
+review FAILED                0
+review unavailable           0
+runtime SyntaxError dumps    0
+budget exhausted             1
+
+rewrite outcomes by action (from the run rows):
+  rewrite         scored=  2 improved 50% unchanged 0% worse 50% catastrophic 0% | syntax_rejected 2
+agent stops: {'budget': 1}
+
+entity records: 14 (14 with active_dims)
+entities with no active dimensions: 2
+excluded data entities: 0; worklist []
+scripts with graphics scored: 0

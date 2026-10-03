@@ -1,0 +1,34 @@
+smoke test: 1 scripts, checkpoint empty, agent budget 900s, harness 4cb0f435a42d -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260930_210353
+
+===== [1/1] pROC__rd_example__geom_polygon_auc_roc_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.378, threshold=0.9, max_steps=20)
+[Agent]   Targeting entity data for repair
+[Agent]   Step 1: entity_repair
+[Agent]   Rewrite: 95 lines
+[Agent]   Rewrite scored: 0.000 (was 0.378), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpi8xkh_d_\_r2py_script.py", line 364, in <module>
+    fpr, tpr, thresholds = roc_curve(d['outcome'], d['s100b'])
+                                     ^
+NameError: name 'd' is not defined. Did 
+[Agent]   Catastrophic rewrite (0.378 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity data for repair
+[Agent]   Step 2: entity_repair
+[Agent]   Rewrite: 95 lines
+[Agent]   Rewrite scored: 0.000 (was 0.378), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpl7aydy7g\_r2py_script.py", line 364, in <module>
+    fpr, tpr, thresholds = roc_curve(d['outcome'], d['s100b'])
+                                     ^
+NameError: name 'd' is not defined. Did 
+[Agent]   Catastrophic rewrite (0.378 -> 0.000) — discarded, reverted to best
+[Agent]   Targeting entity auc.s100b.partial.se for repair
+[Agent]   Step 3: entity_repair
+[Agent]   Rewrite: 99 lines
+[Agent]   Rewrite scored: 0.378 (was 0.378), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.378)

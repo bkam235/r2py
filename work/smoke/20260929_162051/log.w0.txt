@@ -1,0 +1,89 @@
+smoke test: 3 scripts, checkpoint full, agent budget 600s, harness 7ecc87924726 -> C:\Users\bened\Desktop\r2py_v0.3\work\smoke\20260929_162051
+
+===== [1/3] ggplot2__rd_example__aes_linetype_size_shape_Rd.R
+[Seed]    Structured 1 score: 0.000
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 2 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.000, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 101 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp00onqrnj\_r2py_script.py", line 364, in <module>
+    geom_line(linewidth=2, lineend='round')
+    ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\anaconda3\Lib\site-packages\plo
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 103 lines
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_006afd35ee.py
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): File "C:\Users\bened\AppData\Local\Temp\tmpmn4teii1\_r2py_script.py", line 353
+    # r2py:entity:geom_line_3
+    ^^^^^^^^^^^^^^^^^^^^^^^^^
+SyntaxError: invalid syntax
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 110 lines
+[Agent]   Rewrite scored: 0.000 (was 0.000), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...^^^^^^
+  File "C:\Users\bened\anaconda3\Lib\site-packages\plotnine\geoms\geom_path.py", line 504, in _draw_lines
+    lines = Line2D(
+        data["x"],
+    ...<6 lines>...
+        **join_style,
+    )
+  File "C:\Users\bened\anaconda3\Lib\site-packages\matplotlib\lin
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 108 lines
+[Agent]   Rewrite scored: 0.896 (was 0.000), exit_code=0
+[Review]  PASSED
+[Agent]   Wall-clock budget (10 min) exhausted after 4 steps, stopping with score 0.896
+[Agent]   Improved: 0.000 -> 0.896
+
+===== [2/3] isoband__rd_example__isobands_Rd.R
+[Seed]    Structured 1 score: 0.861
+[Seed]    Bare 2 score: 0.661
+[Seed]    Structured 2 score: 0.861
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.861, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 204 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpz6q24ol0\_r2py_script.py", line 469, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 2: rewrite
+[Agent]   Rewrite: 177 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp5m36golr\_r2py_script.py", line 441, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Step 3: rewrite
+[Agent]   Rewrite: 211 lines
+[Agent]   Rewrite scored: 0.000 (was 0.861), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmpht97rfx9\_r2py_script.py", line 474, in <module>
+    df_bands = isobands(x_coords, y_coords, m, 0.5, 1.5)[0]
+               ~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\Ap
+[Agent]   Catastrophic rewrite (0.861 -> 0.000) — discarded, reverted to best
+[Agent]   Wall-clock budget (10 min) exhausted after 3 steps, stopping with score 0.861
+[Agent]   No improvement achieved (score=0.861)
+
+===== [3/3] pROC__rd_example__geom_polygon_auc_roc_Rd.R
+[Seed]    Structured 1 score: 0.333
+[Seed]    Bare 2 score: 0.000
+[Seed]    Structured 2 score: 0.000
+[Audit]   Found 1 structural issue(s)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.333, threshold=0.9, max_steps=20)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 151 lines
+[Agent]   Rewrite scored: 0.333 (was 0.333), exit_code=0
+[Agent]   Wall-clock budget (10 min) exhausted after 1 steps, stopping with score 0.333
+[Agent]   No improvement achieved (score=0.333)
