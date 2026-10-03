@@ -121,6 +121,13 @@ samples are not diverse), 8 produced no usable fragment. **Entity-level width is
 (`entity_width = 1`); whole-loop width is the width that works.**
 **Default (2026-10-02, decided by the user: 3x model cost accepted):** `DEFAULT_AGENT_WIDTH = 3` in `r2py/loop.py`; `run_loop`, the held-out
 pipeline (`cfg.agent_width`) and `smoke_test.py --width` use it. Provider concurrency is workers x 3 requests in flight.
+*Beam search over restarts (Stage 11e; `harness/beam.py`, replay policy `beam3`: rounds of 3 chains x 4 steps, each round restarting from the best
+distinct states found, up to 3 rounds).* Same 20 states x 2 samples (40 runs, 0 failed): mean final 0.779, P(improve) 82%, P(final >= 0.9) 42%,
+14.7 model steps per run (3 independent chains: 0.795, 12.8 steps; one loop: 0.651, 3.4 steps). Paired by state: +0.128 over one loop (p = 0.003) but
+**-0.017 against independent width 3 (SE 0.018, p = 1.0; 3 better / 3 worse / 14 tied)**. Sharing progress between chains did not help at this
+scale; independent chains are as good and simpler. Gain per model step: 0.075 for the first loop, 0.031 for width 3, 0.026 for the beam - the
+first loop is by far the most efficient and every extra branch pays about a third as much per call. Search allocation is not the lever; MCTS
+would face the same: the verifier is deterministic and the budget is a few tens of expansions.
 *Seed width and a third seed style (2026-10-03).* Best of k seeds (mean over 24 scripts; 8 seeds per script: 4 bare + 4 structured, gate on):
 k=1 0.380, 2 0.488, 3 0.551, 4 0.591, 6 0.632, 8 0.652; +0.07 per extra seed up to 4, +0.015 beyond - about the efficiency of an extra
 agent step (width 3: +0.144 for ~9 extra steps). Within one style best-of-4 is 0.491 (bare) / 0.516 (structured), mixing two of each gives
