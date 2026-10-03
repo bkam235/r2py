@@ -121,6 +121,17 @@ samples are not diverse), 8 produced no usable fragment. **Entity-level width is
 (`entity_width = 1`); whole-loop width is the width that works.**
 **Default (2026-10-02, decided by the user: 3x model cost accepted):** `DEFAULT_AGENT_WIDTH = 3` in `r2py/loop.py`; `run_loop`, the held-out
 pipeline (`cfg.agent_width`) and `smoke_test.py --width` use it. Provider concurrency is workers x 3 requests in flight.
+*Seed width and a third seed style (2026-10-03).* Best of k seeds (mean over 24 scripts; 8 seeds per script: 4 bare + 4 structured, gate on):
+k=1 0.380, 2 0.488, 3 0.551, 4 0.591, 6 0.632, 8 0.652; +0.07 per extra seed up to 4, +0.015 beyond - about the efficiency of an extra
+agent step (width 3: +0.144 for ~9 extra steps). Within one style best-of-4 is 0.491 (bare) / 0.516 (structured), mixing two of each gives
+0.602: the two styles fail on different scripts. Diversity of sources is not the limit (all 40 width-3 first candidates distinct, 22 of 24
+seed sets without a duplicate, temperature already 1.0); 3 of 24 scripts still have no seed above 0 after 8. **Third style `planned`**
+(bare input; the model writes a `# plan:` line per statement naming the Python call and the R/Python differences; stripped before
+verification; `seed.translate(style="planned")`, `n_planned_seeds`, `seed_eval --schedule planned:N`): 96 seeds, P(runs) 55%, P(>=0.5) 43%,
+mean 0.347 - the same as bare (0.337), below structured (0.422). Best of 4: planned alone 0.439; 2 bare + 1 structured + 1 planned 0.594 against
+0.602 for 2 + 2 structured; at six seeds 2+2+2 0.634 against 3+3 0.633. **It adds no diversity beyond bare and structured**; it stays available,
+default 0. Recombination of seeds (11b, `harness/recombine.py`): 72 draws of 4 seeds, changed the result in 2; of 729 entity slots 712 had no
+donor that did the entity better by 0.05 (seeds fail on the same entities), so it is dropped.
 *Lesson-store pilot (2026-10-02; `r2py/lessons.py`, `scripts/mine_lessons.py`, `seed_eval.py --lessons`).* Crash->fix pairs are
 mined from the trajectory logs (a step whose traceback vanished in the next candidate without the score dropping), the model
 distils each into a lesson keyed by library, and the seed gate offers the lessons for the libraries a draft imports. Mined
