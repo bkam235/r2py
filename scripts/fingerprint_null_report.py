@@ -70,7 +70,7 @@ def chance_rates(corpus: list[dict], n_pools: int, pool_vars: int, rtol: float, 
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--fields", default=str(ROOT / "work/census/fields.jsonl"))
+    ap.add_argument("--fields", default=str(ROOT / "work/census/fields_v3.jsonl"))
     ap.add_argument("--target", type=float, default=1e-3)
     ap.add_argument("--pools", type=int, default=150)
     ap.add_argument("--pool-vars", type=int, default=10)
@@ -92,29 +92,28 @@ def main() -> int:
         print(f"  {k}  fields {len(rates):5d}   mean chance rate {sum(rates) / len(rates):.4f}   "
               f"fields that ever matched {sum(r > 0 for r in rates)}")
 
-    def rate_of(min_non_int: int, min_distinct: int) -> tuple[float, int]:
-        keep = [r for _s, vals, r in res if _admit(vals, min_non_int, min_distinct)]
+    def rate_of(digits: int, k: int) -> tuple[float, int]:
+        keep = [r for _s, vals, r in res
+                if sum(1 for v in vals if fp.significant_digits(v) >= digits) >= k]
         return (sum(keep) / len(keep) if keep else 0.0), len(keep)
 
-    def _admit(vals, min_non_int, min_distinct) -> bool:
-        non_int = sum(1 for v in vals if abs(v - round(v)) > 1e-9)
-        return (non_int >= min(len(vals), min_non_int) and non_int > 0) or len({round(v) for v in vals}) >= min_distinct
-
-    print("\nchance-match rate of the fields each rule admits (target {:.0e}):".format(args.target))
+    print()
+    print("chance-match rate of the fields each rule admits (target {:.0e}):".format(args.target))
     best = None
-    for mn, md in itertools.product((1, 2, 3), (6, 8, 12, 20, 10 ** 9)):
-        rate, n = rate_of(mn, md)
+    for digits, k in itertools.product((3, 4, 5, 6), (1, 2, 3, 4, 5, 8)):
+        rate, n = rate_of(digits, k)
         ok = rate < args.target
-        print(f"  MIN_NON_INTEGERS={mn} MIN_DISTINCT_INTEGERS={md if md < 10 ** 9 else 'never':>5}: "
-              f"{n:5d} fields admitted, chance rate {rate:.5f} {'ok' if ok else ''}")
+        print(f"  PRECISE_DIGITS={digits} MIN_PRECISE_VALUES={k}: {n:5d} fields admitted, chance rate {rate:.5f} {'ok' if ok else ''}")
         if ok and n and (best is None or n > best[2]):
-            best = (mn, md, n)
+            best = (digits, k, n)
     if best:
-        print(f"\nloosest rule under the target: MIN_NON_INTEGERS={best[0]}, MIN_DISTINCT_INTEGERS={best[1]} "
+        print()
+        print(f"loosest rule under the target: PRECISE_DIGITS={best[0]}, MIN_PRECISE_VALUES={best[1]} "
               f"({best[2]} of {len(res)} fields admitted)")
-    rate, n = rate_of(fp.MIN_NON_INTEGERS, fp.MIN_DISTINCT_INTEGERS)
+    rate, n = rate_of(fp.PRECISE_DIGITS, fp.MIN_PRECISE_VALUES)
     passed = rate < args.target
-    print(f"\ncurrent constants (MIN_NON_INTEGERS={fp.MIN_NON_INTEGERS}, MIN_DISTINCT_INTEGERS={fp.MIN_DISTINCT_INTEGERS}): "
+    print()
+    print(f"current constants (PRECISE_DIGITS={fp.PRECISE_DIGITS}, MIN_PRECISE_VALUES={fp.MIN_PRECISE_VALUES}): "
           f"{n} fields admitted, chance rate {rate:.5f} -> {'PASS' if passed else 'FAIL'}")
     return 0 if passed else 1
 

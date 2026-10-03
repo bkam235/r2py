@@ -20,9 +20,12 @@ from typing import Any
 
 from .base import _difflib_similarity
 
-# Calibrated by scripts/fingerprint_null_report.py (chance-match rate of an informative field < 1e-3).
-MIN_NON_INTEGERS = 1        # a field needs this many non-integer values (or enough distinct integers) to count
-MIN_DISTINCT_INTEGERS = 12
+# Calibrated by scripts/fingerprint_null_report.py on the full-precision census of 2026-10-03 (309 scripts, 4000
+# fields, 150 pools of 10 variables from other packages each): fields with >= 5 values of >= 5 significant digits
+# match an unrelated object by chance at 0.0006; with 4 such values already at 0.02, and integer or low-precision
+# fields at 0.6 (shared datasets, constants such as pi, 0/1 indicators).  Target: < 1e-3.
+PRECISE_DIGITS = 5          # a value is distinctive with at least this many significant digits
+MIN_PRECISE_VALUES = 5      # a field is informative with at least this many distinctive values
 MATCH_FRACTION = 0.99       # share of a field's values that must be found in the pool
 MAX_FIELD_WEIGHT = 20       # a long vector counts like this many values, not more
 
@@ -88,12 +91,14 @@ def texts(value: Any) -> list[str]:
     return [value] if isinstance(value, str) else []
 
 
+def significant_digits(v: float) -> int:
+    """Significant digits of *v* at double precision, trailing zeros and float noise removed."""
+    return len(("%.10g" % abs(v)).split("e")[0].replace(".", "").lstrip("0").rstrip("0"))
+
+
 def informative(vals: list[float]) -> bool:
-    """Could a match of this field be a coincidence?  Calibrated, see the module docstring."""
-    non_int = sum(1 for v in vals if abs(v - round(v)) > 1e-9)
-    if non_int >= min(len(vals), MIN_NON_INTEGERS) and non_int > 0:
-        return True
-    return len({round(v) for v in vals}) >= MIN_DISTINCT_INTEGERS
+    """Could a match of this field be a coincidence?  Calibrated, see the constants above."""
+    return sum(1 for v in vals if significant_digits(v) >= PRECISE_DIGITS) >= MIN_PRECISE_VALUES
 
 
 def pool_of(value: Any) -> list[float]:

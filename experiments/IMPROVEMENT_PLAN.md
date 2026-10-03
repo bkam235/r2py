@@ -30,7 +30,7 @@ the fix are moved to `work/replay/script_maps_digits4`.**
 | # | Step | Purpose / gate |
 |---|---|---|
 | 1 | Capture precision (`digits = NA`) | **done 2026-10-03** |
-| 2 | Recalibrate the generic fingerprints (`fingerprint_null_report.py` on a fresh census) | the comparator stays out of scores until the chance-match rate of admitted fields is < 1e-3 |
+| 2 | Recalibrate the generic fingerprints (`fingerprint_null_report.py` on a fresh census) | **done 2026-10-03**: full-precision census (309 scripts); a numeric field is informative with >= 5 values of >= 5 significant digits (`PRECISE_DIGITS`, `MIN_PRECISE_VALUES`): chance-match rate 0.0006 against unrelated objects of other packages (target 1e-3), 608 of 4000 fields admitted; with 4 such values 0.003, integer or low-precision fields ~0.6 (shared datasets, pi, 0/1). The first rule (any non-integer) failed at 0.24. Fields that are not informative are not scored |
 | 3 | New baseline: paired replay and seed-only evaluation on the fixed harness | everything later is compared with this |
 | 3a | Re-check earlier conclusions with the fixed measurement: pattern library (its admission gate was starved by the defect), the 0.7-0.9 entity band (25.9% of observations), the loss analysis | may change what is built next |
 | 4 | Random-draw shim: R's draws recorded and replayed to Python as inputs, like datasets | 34 of 316 scripts draw random numbers; today they cannot match |

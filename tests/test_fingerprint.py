@@ -5,9 +5,11 @@ from r2py.stage0.effects import data as D
 from r2py.stage4.comparators import fingerprint as F
 from r2py.stage4.comparators.data import DataComparator
 
-R_LM = {"coefficients": {"(Intercept)": 37.2851, "wt": -5.3445},
-        "residuals": {"a": -2.28, "b": -0.92, "c": -2.09},
-        "fitted": {"a": 23.28, "b": 21.92, "c": 24.89}}
+# Fields need >= 5 values of >= 5 significant digits to be informative (calibrated chance-match rate < 1e-3).
+COEF = [37.28513, -5.344472, 1.234567, 0.4521983, -2.718281]
+RES = [-2.282611, -0.91977, -2.085865, 1.297241, -0.200144, -0.693258]
+FIT = [23.282611, 21.91977, 24.885865, 20.102759, 18.900144, 18.793258]
+R_LM = {"coefficients": dict(zip("abcde", COEF)), "residuals": dict(zip("uvwxyz", RES)), "fitted": FIT}
 
 
 def _py(numbers, texts=()):
@@ -72,34 +74,37 @@ class TestCapture(unittest.TestCase):
 
 class TestNumericTier(unittest.TestCase):
     def test_label_and_layout_free_match(self):
-        py = _py({".params": [37.2851, -5.3445], ".resid": [-2.28, -0.92, -2.09], ".fitted": [23.28, 21.92, 24.89]})
+        py = _py({".params": COEF, ".resid": RES, ".fitted": FIT})
         self.assertEqual(F.compare("m", R_LM, py, 1e-6, 1e-9)[:2], (1.0, "pass"))
 
     def test_order_and_split_intercept_do_not_matter(self):
-        py = _py({".coef_": [-5.3445], ".intercept_": [37.2851], ".r": [-2.09, -0.92, -2.28], ".f": [24.89, 21.92, 23.28]})
+        py = _py({".coef_": COEF[1:], ".intercept_": COEF[:1], ".r": RES[::-1], ".f": FIT[::-1]})
         self.assertEqual(F.compare("m", R_LM, py, 1e-6, 1e-9)[0], 1.0)
 
     def test_missing_fields_are_named_and_cost_their_weight(self):
-        py = _py({".coef_": [-5.3445], ".intercept_": [37.2851]})
+        py = _py({".coef_": COEF[1:], ".intercept_": COEF[:1]})
         score, verdict, tag, why = F.compare("m", R_LM, py, 1e-6, 1e-9)
         self.assertEqual((verdict, tag), ("fail", "value"))
-        self.assertAlmostEqual(score, 2 / 8)
+        self.assertAlmostEqual(score, 5 / 17)
         self.assertIn("residuals", why)
         self.assertIn("fitted", why)
 
     def test_wrong_numbers_fail(self):
-        py = _py({".params": [30.0, -4.0], ".resid": [1.0, 2.0, 3.0], ".fitted": [9.0, 8.0, 7.0]})
+        py = _py({".params": [v * 1.1 for v in COEF], ".resid": [v + 0.5 for v in RES], ".fitted": [v * 2 for v in FIT]})
         self.assertEqual(F.compare("m", R_LM, py, 1e-6, 1e-9)[0], 0.0)
 
     def test_python_side_plain_values_work_as_a_pool(self):
-        py = {"coefficients": {"a": 37.2851, "b": -5.3445}, "residuals": [-2.28, -0.92, -2.09], "fitted": [23.28, 21.92, 24.89]}
-        self.assertEqual(F.compare("m", {"__r2py_fp__": True, "numbers": [37.2851, -5.3445, 0.1234]}, py, 1e-6, 1e-9)[0], 2 / 3)
+        py = {"coefficients": dict(zip("abcde", COEF)), "residuals": RES[:5]}
+        r = {"__r2py_fp__": True, "numbers": COEF + RES}
+        self.assertAlmostEqual(F.compare("m", r, py, 1e-6, 1e-9)[0], 10 / 11)
 
     def test_uninformative_integer_fields_are_ignored(self):
         self.assertFalse(F.informative([32.0]))
-        self.assertFalse(F.informative([1.0, 2.0, 3.0]))
-        self.assertTrue(F.informative([0.4231]))
-        self.assertTrue(F.informative(list(map(float, range(20)))))
+        self.assertFalse(F.informative(list(map(float, range(50)))))          # integers: shared by many objects
+        self.assertFalse(F.informative([0.5, 0.25, 3.141593, 0.1, 2.5]))      # few significant digits
+        self.assertFalse(F.informative(COEF[:4]))                             # too few distinctive values
+        self.assertTrue(F.informative(COEF))
+        self.assertEqual(F.significant_digits(0.30000000000000004), 1)        # float noise is not precision
         r = {"__r2py_fp__": True, "class": ["x"], "numbers": [32.0]}
         self.assertEqual(F.compare("m", r, _py({".n": [32.0]}), 1e-6, 1e-9)[1], "skip")
 
@@ -122,7 +127,7 @@ class TestTextTier(unittest.TestCase):
 
 class TestDataComparatorIntegration(unittest.TestCase):
     def test_fingerprint_pair_is_scored_instead_of_excluded(self):
-        res = DataComparator().compare({"m": R_LM}, {"m": _py({".p": [37.2851, -5.3445], ".r": [-2.28, -0.92, -2.09], ".f": [23.28, 21.92, 24.89]})})
+        res = DataComparator().compare({"m": R_LM}, {"m": _py({".p": COEF, ".r": RES, ".f": FIT})})
         self.assertEqual(res.score, 1.0)
         self.assertEqual(res.verdict, "pass")
 
