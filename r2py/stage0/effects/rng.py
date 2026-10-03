@@ -58,7 +58,7 @@ rexp <- function(n, rate = 1) {
 """
 
 R_EPILOGUE_CAPTURE = """\
-writeLines(jsonlite::toJSON(.r2py_rng_log, auto_unbox=TRUE), '_r2py_rng.json')
+writeLines(jsonlite::toJSON(.r2py_rng_log, auto_unbox=TRUE, digits=NA), '_r2py_rng.json')
 """
 
 

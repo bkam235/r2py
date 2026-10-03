@@ -305,7 +305,7 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
       } else {
         # .r2py_serialize_var now returns an R object; encode it here so the
         # per-checkpoint JSON document is well-formed.
-        json_val <- jsonlite::toJSON(serialized, auto_unbox = TRUE, na = 'null', force = TRUE)
+        json_val <- jsonlite::toJSON(serialized, auto_unbox = TRUE, na = 'null', force = TRUE, digits = NA)
         data_parts <- c(data_parts, paste0('"', v, '":', as.character(json_val)))
       }
     }

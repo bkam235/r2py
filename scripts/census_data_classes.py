@@ -59,6 +59,7 @@ def main() -> int:
     ap.add_argument("--manifest", default=str(ROOT / "experiments/heldout/manifest.json"))
     ap.add_argument("--out", default=str(ROOT / "work/census/fields.jsonl"))
     ap.add_argument("--limit", type=int)
+    ap.add_argument("--only", nargs="+", help="substrings of script names")
     args = ap.parse_args()
 
     from r2py import heldout as ho
@@ -68,6 +69,7 @@ def main() -> int:
         names += [e["script"] for e in manifest["heldout"]]
     if args.split in ("train", "all"):
         names += [e["script"] if isinstance(e, dict) else e for e in manifest["train"]]
+    names = [n for n in names if any(o in n for o in args.only)] if args.only else names
     names = names[: args.limit] if args.limit else names
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)

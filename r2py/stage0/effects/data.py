@@ -191,12 +191,16 @@ _R_FINGERPRINT_FN = (
     ".r2py_fp <- function(o) {\n"
     "  if (is.language(o) || is.expression(o) || is.primitive(o)) return('__uncapturable__')\n"
     "  .bad <- function(t) is.null(t) || !nzchar(trimws(t)) || grepl('<pointer: ', t, fixed = TRUE)\n"
-    "  txt <- tryCatch(paste(utils::head(as.character(o), 50), collapse = ' '), error = function(e) NULL)\n"
-    "  if (.bad(txt)) txt <- tryCatch(paste(utils::head(format(o), 50), collapse = ' '), error = function(e) NULL)\n"
+    # Text only from a real as.character method (xml2, date-times): the default method on a list is a deparse.
+    "  .has_m <- any(vapply(class(o), function(cl) !is.null(utils::getS3method('as.character', cl, optional = TRUE)), logical(1)))\n"
+    "  txt <- if (.has_m) tryCatch(paste(utils::head(as.character(o), 50), collapse = ' '), error = function(e) NULL) else NULL\n"
     "  if (.bad(txt)) txt <- NULL\n"
-    "  num <- tryCatch(suppressWarnings(as.numeric(unlist(o))), error = function(e) NULL)\n"
-    "  if (!is.null(num)) num <- num[is.finite(num)]\n"
-    "  if (length(num) == 0) num <- NULL else num <- num[seq_len(min(length(num), 5000))]\n"
+    # Numbers: the numeric components of a list (one field each), or the values of an atomic/other object.
+    "  .cap <- function(z) { v <- suppressWarnings(as.numeric(z)); v <- v[is.finite(v)]; v[seq_len(min(length(v), 5000))] }\n"
+    "  num <- if (is.list(o)) {\n"
+    "    Filter(length, lapply(Filter(function(z) is.numeric(z) && length(z) > 0, unclass(o)), .cap))\n"
+    "  } else tryCatch(.cap(unlist(o)), error = function(e) NULL)\n"
+    "  if (length(num) == 0) num <- NULL\n"
     "  if (is.null(txt) && is.null(num)) return('__uncapturable__')\n"
     "  res <- list(`__r2py_fp__` = TRUE, class = as.list(class(o)))\n"
     "  if (!is.null(txt)) res[['text']] <- substr(txt, 1, 20000)\n"
@@ -291,7 +295,7 @@ def build_r_epilogue() -> str:
         "    .r2py_state[[.r2py_v]] <- .r2py_serialized\n"
         "  }\n"
         "}\n"
-        "writeLines(jsonlite::toJSON(.r2py_state, auto_unbox=TRUE, na='null', force=TRUE), '_r2py_state.json')\n"
+        "writeLines(jsonlite::toJSON(.r2py_state, auto_unbox=TRUE, na='null', force=TRUE, digits=NA), '_r2py_state.json')\n"
         "writeLines(jsonlite::toJSON(.r2py_uncapturable), '_r2py_uncapturable.json')\n"
     )
 

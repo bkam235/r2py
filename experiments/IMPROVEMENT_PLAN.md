@@ -5,6 +5,46 @@
 > next section is unchanged history; **new work is Stages 7-11**, ranked in the table that follows.
 > The long status paragraphs that used to open this file are now the *Implementation log* further down.
 
+## Roadmap from 2026-10-03: measurement first, then a harness that learns
+
+**Why a new roadmap.** Of everything built so far, two changes moved scores: whole-loop width (+0.144 on frozen
+states) and the seed-environment / data-shim fixes (seeds that run 34% -> 50%). Every *learning* mechanism was null
+(pattern library p = 0.057, lesson store, a third seed style). Search works but forgets: each script is solved from
+scratch. The data say what a learning harness has to store instead (see the discussion of 2026-10-03):
+- the model does not look for information (739 rewrites against 10 R probes; `replace_entity` 1 in 84), so knowledge
+  must be pushed by the harness, and prompt text barely moves a small model;
+- after width 3 only 1 of 40 final translations crashes; most lost score is in scripts that run with wrong values,
+  concentrated in package semantics (caret, broom, pROC, clock) - **to be recomputed after the precision fix**;
+- function-keyed knowledge can reach about half of all calls: 57% of held-out call sites call a function also used in
+  a training script (44% in >= 2); 778 distinct functions, the top 100 cover 54%;
+- seeds of one script fail repeatedly for the same API fact (9 of 16 scripts).
+
+**Measurement defect found 2026-10-03 (fixed first).** R values were captured with `jsonlite::toJSON`'s default of four
+decimal places while the data comparator requires agreement to 1e-6: R `x <- 1/3` was stored as 0.3333 and a correct
+Python `x = 1/3` scored 0. Every correct translation of a non-round number failed its data comparison - in all scores
+so far, including the held-out experiment, the pattern library's 0.9 admission gate, the dev runs and the replays.
+Fixed with `digits = NA` in every R JSON writer (data capture, per-entity checkpoints, env, RNG log;
+`tests/test_capture_precision.py`). **Scores before and after are not comparable; analysed script maps cached before
+the fix are moved to `work/replay/script_maps_digits4`.**
+
+| # | Step | Purpose / gate |
+|---|---|---|
+| 1 | Capture precision (`digits = NA`) | **done 2026-10-03** |
+| 2 | Recalibrate the generic fingerprints (`fingerprint_null_report.py` on a fresh census) | the comparator stays out of scores until the chance-match rate of admitted fields is < 1e-3 |
+| 3 | New baseline: paired replay and seed-only evaluation on the fixed harness | everything later is compared with this |
+| 3a | Re-check earlier conclusions with the fixed measurement: pattern library (its admission gate was starved by the defect), the 0.7-0.9 entity band (25.9% of observations), the loss analysis | may change what is built next |
+| 4 | Random-draw shim: R's draws recorded and replayed to Python as inputs, like datasets | 34 of 316 scripts draw random numbers; today they cannot match |
+| 5 | Learning-curve instrument (D): knowledge snapshots at 0 / N / 2N translated scripts, held-out packages, paired replay + seed-only evaluation, coverage of held-out call sites | the gate for every learning mechanism |
+| 6 | Harness-located errors (C): the first R call whose value differs from Python's, reported to the agent | precise feedback; the input queue for 7 |
+| 7 | Verified R-semantics runtime (A): Python functions reproducing R functions, proposed by the small model, accepted only after differential tests against R on generated inputs; failing inputs kept as tests; functions used by a translation pasted into its output (decided 2026-10-03); pilot first: share that passes validation, paired replay with / without, held-out coverage | knowledge that is executable and validated, pushed by the harness |
+| 8 | Search -> runtime (B): accepted agent fixes become runtime candidates | the harness learns from its own work |
+| 9 | Side fixes: seed `FileNotFoundError` (9 seeds) and `RLexer` import (9), data-shim churn (24% of rewrites), catastrophic rewrites (20%), unrecovered sentinels (40% of drops), mapper JSON failures, fingerprint gaps (XML node sets) | cheap, between runs |
+| 10 | Pre-registration of every measurement change (precision, fingerprints, random-draw shim, runtime), then the training run with width, trajectories, model calls per run and the learning mechanisms - the first real learning-curve measurement | |
+
+Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
+more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
+make a small model (Gemma 4) translate well through knowledge and structure in the harness.
+
 ## Where we are, and what comes next
 
 **State.** The first held-out experiment is closed (null, p = 0.0569). The measurement instrument has been

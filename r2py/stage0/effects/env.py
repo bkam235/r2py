@@ -43,7 +43,7 @@ if (!identical(.r2py_env_before$wd, .r2py_env_after$wd)) {
   .r2py_env_diff[['wd']] <- .r2py_env_after$wd
 }
 if (length(.r2py_env_diff) > 0) {
-  writeLines(jsonlite::toJSON(.r2py_env_diff, auto_unbox=TRUE, na='null'), '_r2py_env.json')
+  writeLines(jsonlite::toJSON(.r2py_env_diff, auto_unbox=TRUE, na='null', digits=NA), '_r2py_env.json')
 }
 """
 
