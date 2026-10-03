@@ -134,3 +134,34 @@ class TestEvaluationScripts(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestPlannedStyle(unittest.TestCase):
+    def test_plan_lines_are_stripped_and_code_kept(self):
+        from r2py import seed
+        code = "# plan: x <- 1 -> plain assignment\n  # Plan: sum -> np.sum, 0-based\nx = 1\n# a normal comment\ny = 2\n"
+        self.assertEqual(seed._PLAN_LINE_RE.sub("", code), "x = 1\n# a normal comment\ny = 2\n")
+
+    def test_style_picks_the_prompt(self):
+        from types import SimpleNamespace
+        from unittest.mock import patch
+        from r2py import seed
+
+        sm = SimpleNamespace(source="x <- 1", entities={})
+        seen = {}
+
+        def fake_call(messages, system, **kw):
+            seen["system"], seen["user"] = system, messages[0]["content"]
+            return "# plan: x\nx = 1\n"
+
+        for style, expected in (("bare", seed._BARE_SYSTEM_PROMPT), ("planned", seed._PLANNED_SYSTEM_PROMPT)):
+            with patch.object(seed._llm, "call", side_effect=fake_call), \
+                 patch.object(seed, "_assemble", side_effect=lambda code, *a, **k: code), \
+                 patch("r2py.stage2.sentinel_mapper.map_entities_to_lines", return_value={}), \
+                 patch("r2py.stage2.sentinel_mapper.insert_sentinels", side_effect=lambda c, m, *a, **k: c):
+                try:
+                    seed.translate(sm, None, style=style, gate=False)
+                except Exception:
+                    pass   # only the prompt choice is under test
+            self.assertEqual(seen["system"], expected)
+            self.assertIn("x <- 1", seen["user"])

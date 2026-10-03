@@ -86,6 +86,7 @@ def run_loop(
     no_seeds: bool = False,
     n_bare_seeds: int = 3,
     n_structured_seeds: int = 3,
+    n_planned_seeds: int = 0,
     output_dir: "Path | None" = None,
     checkpoint_path: "Path | None" = None,
     model: str = _LLM_DEFAULT_MODEL,
@@ -163,18 +164,24 @@ def run_loop(
     r_source = getattr(script_map, "source", "") or ""
 
     # --- Build seed schedule: interleave bare and structured seeds ---------- #
-    # Each entry is (label, bare_flag). First seed gets full verification;
+    # Each entry is (label, style). First seed gets full verification;
     # subsequent seeds only run when below threshold.
-    _seed_schedule: list[tuple[str, bool]] = []
+    def _styles() -> list[tuple[str, str]]:
+        out = []
+        for i in range(max(n_bare_seeds, n_structured_seeds, n_planned_seeds)):
+            for count, label, style in ((n_bare_seeds, "Bare", "bare"),
+                                        (n_structured_seeds, "Structured", "structured"),
+                                        (n_planned_seeds, "Planned", "planned")):
+                if i < count:
+                    out.append((f"{label} {i+1}", style))
+        return out
+
+    _seed_schedule: list[tuple[str, str]] = []
     if seed_translation is not None:
         # Resuming — if score is 0.0 we'll regenerate below.
         pass
     else:
-        for i in range(max(n_bare_seeds, n_structured_seeds)):
-            if i < n_bare_seeds:
-                _seed_schedule.append((f"Bare {i+1}", True))
-            if i < n_structured_seeds:
-                _seed_schedule.append((f"Structured {i+1}", False))
+        _seed_schedule = _styles()
 
     # --- Generate and verify seeds ----------------------------------------- #
     best_source: str = ""
@@ -201,13 +208,9 @@ def run_loop(
         _emit(progress, kind="seed_done", score=seed_decomp.aggregate)
         # If resumed translation is worthless, run the full schedule
         if best_decomp.aggregate == 0.0:
-            for i in range(max(n_bare_seeds, n_structured_seeds)):
-                if i < n_bare_seeds:
-                    _seed_schedule.append((f"Bare {i+1}", True))
-                if i < n_structured_seeds:
-                    _seed_schedule.append((f"Structured {i+1}", False))
+            _seed_schedule = _styles()
 
-    for seed_label, bare_flag in _seed_schedule:
+    for seed_label, seed_style in _seed_schedule:
         if best_decomp is not None and best_decomp.aggregate >= score_threshold:
             break
 
@@ -216,7 +219,7 @@ def run_loop(
             no_seeds=no_seeds, model=model,
             sidecar_filename=_sidecar_fn,
             script_relpath=_script_relpath,
-            bare=bare_flag,
+            style=seed_style,
         )
         alt_seed, alt_decomp = _verify_seed(
             alt_seed, alt_elmap, script_map, stage4,

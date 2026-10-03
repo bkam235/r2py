@@ -54,7 +54,7 @@ def seed_task(task: dict) -> dict:
                 source, elmap = seed_mod.translate(
                     sm, PatternLibrary(Path(tmp) / "lib"), model=cfg["model"],
                     sidecar_filename=f"{stem}.r2py_data.json", script_relpath=f"work/seed_eval/{stem}.py",
-                    bare=task["kind"] == "bare", gate=task["gate"],
+                    style=task["kind"], gate=task["gate"],
                     lessons=lessons_mod.load(task["lessons"]) if task.get("lessons") else None)
             rep, bundle = verifier.verify(
                 sm, source, data_compare=cfg["data_compare"], entity_line_map=elmap,
@@ -81,7 +81,7 @@ def summarise(paths: list[str]) -> str:
         lines.append(f"\n== {Path(p).stem}: {n} seeds ({len(rows) - n} errors) over {len({r['script'] for r in ok})} scripts")
         lines.append(f"  P(runs) {sum(r['exit_code'] == 0 for r in ok) / n:.0%}   P(>=0.5) {sum(r['aggregate'] >= 0.5 for r in ok) / n:.0%}"
                      f"   P(>=0.9) {sum(r['aggregate'] >= 0.9 for r in ok) / n:.0%}   mean {st.mean(r['aggregate'] for r in ok):.3f}")
-        for kind in ("bare", "structured"):
+        for kind in ("bare", "structured", "planned"):
             ks = [r for r in ok if r["kind"] == kind]
             if ks:
                 lines.append(f"  {kind:10s} n={len(ks):3d}  P(runs) {sum(r['exit_code'] == 0 for r in ks) / len(ks):.0%}  "

@@ -404,6 +404,7 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         data_compare=cfg["data_compare"],
         n_bare_seeds=cfg["n_bare_seeds"],
         n_structured_seeds=cfg["n_structured_seeds"],
+        n_planned_seeds=cfg.get("n_planned_seeds", 0),
         checkpoint_path=py_path,
         model=cfg["model"],
         escalation_model=cfg["model"],

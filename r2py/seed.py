@@ -60,6 +60,27 @@ computation and produce variables with the same names and similar types \
 (DataFrames for data frames, dicts for named lists, etc.).
 """
 
+# Third style: the bare input, but the model first plans each statement.  The styles fail on different
+# scripts (best of 4 seeds: 0.49 bare, 0.52 structured, 0.61 for two of each), so a new style is worth more
+# than another sample of an old one.  The plan names what differs between R and Python; the plan lines
+# are stripped from the code.
+_PLANNED_SYSTEM_PROMPT = """\
+Translate the R code to Python. Use real libraries (shiny, pandas, numpy, \
+plotnine). If a function has no Python equivalent, use numpy/pandas/scipy to \
+approximate it. Write all code at the top/module level - do NOT wrap in \
+function definitions. Preserve R variable names (d, m, g, etc.). Translate \
+ALL sections - do not skip any.
+
+Before the code, write a plan: one line per top-level R statement, each starting \
+with "# plan:", naming the Python function you will call and anything that \
+differs between the R call and the Python one (argument order and names, \
+0-based versus 1-based indexing, data frame versus dict or array, NA handling, \
+return type). Then write the Python code. Output only the plan lines and the \
+code, nothing else.\
+"""
+
+_PLAN_LINE_RE = re.compile(r"^[ \t]*#[ \t]*plan:.*\n?", re.MULTILINE | re.IGNORECASE)
+
 _BARE_SYSTEM_PROMPT = """\
 Translate the R code to Python. Use real libraries (shiny, pandas, numpy, \
 plotnine). If a function has no Python equivalent, use numpy/pandas/scipy to \
@@ -155,6 +176,7 @@ def translate(
     r_path: str = "",
     bare: bool = False,
     gate: bool = True,
+    style: str | None = None,
     lessons: list | None = None,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Translate an R script to Python via a single whole-file LLM call.
@@ -165,11 +187,12 @@ def translate(
     """
     from .stage1.runner import strip_r_guards
 
-    if bare:
+    style = style or ("bare" if bare else "structured")
+    if style in ("bare", "planned"):
         r_clean = strip_r_guards(script_map.source or "")
         r_clean = _COMMENT_RE.sub("", r_clean).strip()
         messages = [{"role": "user", "content": f"```r\n{r_clean}\n```"}]
-        system_prompt = _BARE_SYSTEM_PROMPT
+        system_prompt = _BARE_SYSTEM_PROMPT if style == "bare" else _PLANNED_SYSTEM_PROMPT
     else:
         prompt_parts = _build_prompt(script_map, library, no_seeds=no_seeds)
         messages = [{"role": "user", "content": "\n\n".join(prompt_parts)}]
@@ -182,6 +205,8 @@ def translate(
         raw = "# r2py: seed translation failed"
 
     python_code = _extract_python(raw)
+    if style == "planned":
+        python_code = _PLAN_LINE_RE.sub("", python_code)
     if gate:
         python_code = _corrective_round(messages, system_prompt, raw, python_code, model, lessons)
     shadow_autofix(python_code, "seed")
