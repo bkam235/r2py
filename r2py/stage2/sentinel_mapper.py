@@ -52,6 +52,77 @@ def strip_sentinels(python_source: str) -> str:
     )
 
 
+def restore_sentinels(reference: str, candidate: str) -> str:
+    """*candidate* with the entity sentinels of *reference* put back, by aligning unchanged lines.
+
+    A rewrite that drops ``# r2py:entity:`` comments used to be attributed by a model (a sampled
+    mapping: the aggregate of an unchanged source moved by up to 0.2).  Here every sentinel the
+    candidate lost is re-inserted deterministically: before the first line of its entity body that
+    survives unchanged, or, when the whole body was rewritten, right after the last surviving line that
+    preceded it.  Sentinels the candidate kept stay where it put them.  The result is only as good as
+    the alignment; ``ranges_from_sentinels`` on it tells the caller whether every entity got a range.
+    """
+    import difflib
+    from collections import defaultdict
+
+    def split(text):
+        clean, marks = [], []
+        for line in text.splitlines():
+            m = _SENTINEL_ID_RE.match(line)
+            if m:
+                marks.append((m.group(1), len(clean)))
+            else:
+                clean.append(line)
+        return clean, marks
+
+    ref_clean, ref_marks = split(reference)
+    cand_clean, cand_marks = split(candidate)
+    sm = difflib.SequenceMatcher(a=[l.strip() for l in ref_clean], b=[l.strip() for l in cand_clean], autojunk=False)
+    match: dict[int, int] = {}
+    for blk in sm.get_matching_blocks():
+        for k in range(blk.size):
+            if ref_clean[blk.a + k].strip():
+                match[blk.a + k] = blk.b + k
+
+    kept = defaultdict(list)                       # eid -> positions of its sentinels in the candidate
+    for eid, pos in cand_marks:
+        kept[eid].append(pos)
+    seen = defaultdict(int)
+    placed: list[tuple[int, int, str]] = []        # (candidate line index, order, eid)
+    prev = 0
+    for j, (eid, p0) in enumerate(ref_marks):
+        n, seen[eid] = seen[eid], seen[eid] + 1
+        if n < len(kept[eid]):
+            target = kept[eid][n]
+        else:
+            end = ref_marks[j + 1][1] if j + 1 < len(ref_marks) else len(ref_clean)
+            target = None
+            for b in range(p0, end):
+                if b in match:
+                    target = max(match[b] - (b - p0), 0)   # same offset into the body as in the reference
+                    target = min(target, match[b])
+                    break
+            if target is None:
+                before = [match[b] for b in range(p0) if b in match]
+                target = (max(before) + 1) if before else 0
+        target = max(target, prev)                 # entities stay in the reference's order
+        prev = target
+        placed.append((target, j, eid))
+    known = {e for e, _ in ref_marks}
+    extra = [(pos, len(ref_marks) + k, eid) for k, (eid, pos) in enumerate(cand_marks) if eid not in known]
+    placed = sorted(placed + extra)
+
+    out: list[str] = []
+    k = 0
+    for i in range(len(cand_clean) + 1):
+        while k < len(placed) and placed[k][0] == i:
+            out.append(f"# r2py:entity:{placed[k][2]}")
+            k += 1
+        if i < len(cand_clean):
+            out.append(cand_clean[i])
+    return "\n".join(out)
+
+
 def insert_sentinels(
     python_source: str,
     entity_line_map: "dict[str, list[tuple[int, int]]] | dict[str, tuple[int, int]]",

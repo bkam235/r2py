@@ -64,12 +64,26 @@ class HarnessTools:
         # Entity ids the current best source maps (see note_reference); a candidate that keeps all
         # of their sentinels is attributed by reading them, with no model call.
         self._mapped_eids: set[str] = set()
+        self._reference_source = ""   # the annotated source being improved (restores dropped sentinels)
         self._r_packages = _collect_r_packages(script_map)
 
     def note_reference(self, annotated_source: str) -> None:
-        """Record which entities the (sentinel-annotated) starting source maps."""
+        """Record which entities the (sentinel-annotated) source being improved maps, and its text."""
         from ..stage2.sentinel_mapper import ranges_from_sentinels
         self._mapped_eids = set(ranges_from_sentinels(annotated_source))
+        self._reference_source = annotated_source
+
+    def _restored_ranges(self, candidate: str):
+        """Entity ranges of *candidate* with the reference's dropped sentinels restored; None if any
+        entity of the reference still has no range."""
+        from ..stage2.sentinel_mapper import ranges_from_sentinels, restore_sentinels
+
+        if not self._mapped_eids or not getattr(self, "_reference_source", ""):
+            return None
+        ranges = ranges_from_sentinels(restore_sentinels(self._reference_source, candidate))
+        if not self._mapped_eids <= set(ranges):
+            return None
+        return {e: r for e, r in ranges.items() if e in self._mapped_eids}
 
     def verify(self, python_source: str) -> "ScoreReport":
         """Run Stage 4 verification, return full ScoreReport with comparisons."""
@@ -92,6 +106,11 @@ class HarnessTools:
             # it each time gave the same source aggregates from 0.44 to 0.77 (attribution noise).
             entity_ranges = {e: r for e, r in kept.items() if e in self._mapped_eids}
             cache_stats["sentinel_reuse"] += 1
+        elif (restored := self._restored_ranges(python_source)) is not None:
+            # Some sentinels were dropped: put them back by aligning unchanged lines with the
+            # reference, which is deterministic; a model is asked only if that cannot place them all.
+            entity_ranges = restored
+            cache_stats["sentinel_restored"] += 1
         else:
             entity_ranges = None
             for attempt in range(MAPPING_TRIES):

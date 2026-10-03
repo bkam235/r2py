@@ -120,9 +120,7 @@ def reason(
         harness.note_reference(current_source)
     best_score = score_report.aggregate
     report = score_report
-    history: list[str] = []
-    if audit_feedback:
-        history.append(audit_feedback)
+    history: list[str] = []   # the audit findings are pinned in the turn (build_agent_turn), not kept here
 
     patterns_by_entity = _prefetch_patterns(harness, score_report)
     r_function_sources, entity_metadata = _prefetch_r_sources(
@@ -205,6 +203,7 @@ def reason(
             r_function_sources=r_function_sources,
             entity_metadata=entity_metadata,
             sidecar_filename=getattr(harness, "_sidecar_filename", ""),
+            audit_feedback=audit_feedback,
         )
 
         if repair_eid is not None:
@@ -511,6 +510,8 @@ def reason(
                     print(f"[Review]  PASSED")
                     _trajectory.log("accepted", **_ctx)
                     best_source = harness.last_annotated_source or new_source
+                    if hasattr(harness, "note_reference"):
+                        harness.note_reference(best_source)
                     repair_misses = 0
                     progress_only = new_report.aggregate <= best_score + 1e-9
                     best_score = new_report.aggregate

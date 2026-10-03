@@ -342,6 +342,7 @@ def build_agent_turn(
     r_function_sources: list[str] | None = None,
     entity_metadata: str | None = None,
     sidecar_filename: str = "",
+    audit_feedback: str = "",
 ) -> list[dict]:
     """Build the messages for one agent reasoning turn."""
     parts = []
@@ -411,6 +412,12 @@ def build_agent_turn(
             parts.append("### R construct warnings (language-level pitfalls)")
             parts.append(construct_notes)
             parts.append("")
+
+    if audit_feedback:
+        # Pinned: as history item 0 these scrolled out of the last-5 window after about five steps.
+        parts.append("### Static audit findings (structural issues found in the starting translation)")
+        parts.append(audit_feedback)
+        parts.append("")
 
     if history:
         parts.append("### Previous actions this session")
