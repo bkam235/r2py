@@ -37,7 +37,15 @@ def work(task: tuple) -> dict:
         sm = analyze(next(pool.rglob(name)))
         vars_ = [(var, info.get("class", "")) for ent in (getattr(sm, "entity_types", None) or {}).values()
                  for var, info in ent.items() if isinstance(info, dict)]
-        return {"script": name, "vars": vars_, "seconds": round(time.monotonic() - started, 1)}
+        # What the comparators will see of each captured variable: its numeric fields and text forms (values
+        # truncated), kept for scripts/fingerprint_null_report.py.
+        from r2py.stage4.comparators import fingerprint as fp
+        from r2py.stage4.verifier import get_r_bundle
+        captured = {}
+        for var, val in (getattr(get_r_bundle(sm), "data", {}) or {}).items():
+            fields = [(path, vec[:2000]) for path, vec in fp.numeric_fields(val)][:200]
+            captured[var] = {"fp": fp.is_fp(val), "fields": fields, "texts": [t[:300] for t in fp.texts(val)][:2]}
+        return {"script": name, "vars": vars_, "captured": captured, "seconds": round(time.monotonic() - started, 1)}
     except Exception as exc:
         return {"script": name, "error": f"{type(exc).__name__}: {exc}"[:200]}
 
@@ -49,7 +57,7 @@ def main() -> int:
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--split", choices=("heldout", "train", "all"), default="all")
     ap.add_argument("--manifest", default=str(ROOT / "experiments/heldout/manifest.json"))
-    ap.add_argument("--out", default=str(ROOT / "work/census/classes.jsonl"))
+    ap.add_argument("--out", default=str(ROOT / "work/census/fields.jsonl"))
     ap.add_argument("--limit", type=int)
     args = ap.parse_args()
 
@@ -71,7 +79,7 @@ def main() -> int:
         for i, row in enumerate(pool.imap_unordered(work, tasks), 1):
             f.write(json.dumps(row) + "\n")
             f.flush()
-            print(f"[{i}/{len(tasks)}] {row['script'][:60]} " + (row.get("error", f"{len(row['vars'])} vars")), flush=True)
+            print(f"[{i}/{len(tasks)}] {row['script'][:60]} " + (row["error"] if "error" in row else f"{len(row['vars'])} vars"), flush=True)
     rows = [json.loads(l) for l in out.read_text(encoding="utf-8").splitlines() if l.strip()]
     ok = [r for r in rows if "vars" in r]
     tally = collections.Counter()

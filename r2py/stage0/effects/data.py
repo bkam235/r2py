@@ -166,6 +166,12 @@ register_r_adapter(
     "is.atomic({var}) || is.numeric({var}) || is.character({var}) || is.logical({var})",
     "{var}",
 )
+# Anything else (xml2 documents, external pointers, S3/S4 objects no adapter above knows): a generic
+# fingerprint -- its text form and its numbers -- compared with the Python object's by value.
+register_r_adapter(
+    "TRUE",
+    ".r2py_fp({var})",
+)
 
 
 # ---------------------------------------------------------------------------
@@ -176,6 +182,28 @@ R_PREAMBLE = """\
 library(jsonlite)
 .r2py_uncapturable <- character(0)
 """
+
+
+# Generic fingerprint of an R object no adapter handles: its text form (as.character, else format) and its
+# numbers.  Language objects and objects with neither text nor numbers stay uncapturable.
+_R_FINGERPRINT_FN = (
+    ".r2py_has_unc <- function(x) any(unlist(rapply(x, function(z) identical(z, '__uncapturable__'), how = 'list')))\n"
+    ".r2py_fp <- function(o) {\n"
+    "  if (is.language(o) || is.expression(o) || is.primitive(o)) return('__uncapturable__')\n"
+    "  .bad <- function(t) is.null(t) || !nzchar(trimws(t)) || grepl('<pointer: ', t, fixed = TRUE)\n"
+    "  txt <- tryCatch(paste(utils::head(as.character(o), 50), collapse = ' '), error = function(e) NULL)\n"
+    "  if (.bad(txt)) txt <- tryCatch(paste(utils::head(format(o), 50), collapse = ' '), error = function(e) NULL)\n"
+    "  if (.bad(txt)) txt <- NULL\n"
+    "  num <- tryCatch(suppressWarnings(as.numeric(unlist(o))), error = function(e) NULL)\n"
+    "  if (!is.null(num)) num <- num[is.finite(num)]\n"
+    "  if (length(num) == 0) num <- NULL else num <- num[seq_len(min(length(num), 5000))]\n"
+    "  if (is.null(txt) && is.null(num)) return('__uncapturable__')\n"
+    "  res <- list(`__r2py_fp__` = TRUE, class = as.list(class(o)))\n"
+    "  if (!is.null(txt)) res[['text']] <- substr(txt, 1, 20000)\n"
+    "  if (!is.null(num)) res[['numbers']] <- num\n"
+    "  res\n"
+    "}\n"
+)
 
 
 def build_r_serializer_fn() -> str:
@@ -205,7 +233,8 @@ def build_r_serializer_fn() -> str:
         dispatch_lines.append("    '__uncapturable__'")
     body = "\n".join(dispatch_lines)
     return (
-        ".r2py_serialize_var <- function(.r2py_obj) {\n"
+        _R_FINGERPRINT_FN
+        + ".r2py_serialize_var <- function(.r2py_obj) {\n"
         "  if (is.null(.r2py_obj)) return(NULL)\n"
         "  if (is.environment(.r2py_obj)) return(NULL)\n"
         "  if (is.function(.r2py_obj)) {\n"
@@ -224,9 +253,17 @@ def build_r_serializer_fn() -> str:
         "      attributes = .r2py_attrs\n"
         "    ))\n"
         "  }\n"
-        "  tryCatch({\n"
+        "  .r2py_res <- tryCatch({\n"
         f"{body}\n"
         "  }, error = function(e) '__uncapturable__')\n"
+        # A classed list with parts that cannot be captured (an xml2 document is a list of two external
+        # pointers) says nothing as a dict: describe the whole object by its fingerprint instead.
+        "  if (!is.null(attr(.r2py_obj, 'class')) && is.list(.r2py_res) && !is.data.frame(.r2py_obj) &&\n"
+        "      .r2py_has_unc(.r2py_res)) {\n"
+        "    .r2py_fp_res <- .r2py_fp(.r2py_obj)\n"
+        "    if (!identical(.r2py_fp_res, '__uncapturable__')) return(.r2py_fp_res)\n"
+        "  }\n"
+        "  .r2py_res\n"
         "}\n"
     )
 
@@ -404,12 +441,126 @@ class _R2PyEncoder(_r2py_json.JSONEncoder):
         return super().default(obj)
 
 
+def _r2py_fingerprint(obj):
+    \"\"\"A generic, library-independent fingerprint of an object JSON cannot encode.
+
+    ``numbers``: every finite number reachable through public non-callable attributes (depth <= 3), by
+    path -- sklearn's ``coef_``, statsmodels' ``params`` / ``fittedvalues``, arrays, scalars, DataFrame
+    columns.  ``texts``: its string forms (``str``, serialised XML).  The comparator matches an R
+    object's numbers against this pool by value, so no per-library or per-class code is needed.
+    Returns None when the object has neither.
+    \"\"\"
+    import time as _t
+    import types as _types
+    _deadline = _t.monotonic() + 5.0
+    _budget = [20000]
+    _numbers = {}
+    _seen = set()
+
+    def _add(path, values):
+        out = []
+        for v in values:
+            try:
+                f = float(v)
+            except Exception:
+                continue
+            if _r2py_math.isfinite(f):
+                out.append(f)
+        if out and _budget[0] > 0 and len(_numbers) < 200:
+            out = out[:_budget[0]]
+            _budget[0] -= len(out)
+            _numbers[path] = out
+
+    def _walk(o, path, depth):
+        if id(o) in _seen or depth > 3 or _budget[0] <= 0 or _t.monotonic() > _deadline:
+            return
+        _seen.add(id(o))
+        if isinstance(o, (bool, str, bytes, bytearray, _types.ModuleType)):
+            return
+        if isinstance(o, (int, float)):
+            _add(path, [o])
+            return
+        try:
+            import numpy as _np
+            if isinstance(o, _np.ndarray):
+                if o.dtype.kind in 'fiu':
+                    _add(path, o.ravel().tolist())
+                return
+            if isinstance(o, _np.generic):
+                if o.dtype.kind in 'fiu':
+                    _add(path, [o.item()])
+                return
+        except ImportError:
+            pass
+        try:
+            import pandas as _pd
+            if isinstance(o, _pd.DataFrame):
+                for _c in list(o.columns)[:100]:
+                    if _pd.api.types.is_numeric_dtype(o[_c]):
+                        _add(path + '.' + str(_c), o[_c].tolist())
+                return
+            if isinstance(o, (_pd.Series, _pd.Index)):
+                if _pd.api.types.is_numeric_dtype(o):
+                    _add(path, o.tolist())
+                return
+        except ImportError:
+            pass
+        if isinstance(o, (list, tuple)):
+            if o and all(isinstance(x, (int, float)) and not isinstance(x, bool) for x in o[:1000]):
+                _add(path, o)
+            else:
+                for _i, _x in enumerate(list(o)[:50]):
+                    _walk(_x, path + '[' + str(_i) + ']', depth + 1)
+            return
+        if isinstance(o, dict):
+            for _k, _x in list(o.items())[:100]:
+                _walk(_x, path + '.' + str(_k), depth + 1)
+            return
+        try:
+            _names = [n for n in dir(o) if not n.startswith('_')]
+        except Exception:
+            return
+        for _n in _names[:300]:
+            if _t.monotonic() > _deadline:
+                break
+            try:
+                _a = getattr(o, _n)
+            except Exception:
+                continue
+            if callable(_a):
+                continue
+            _walk(_a, path + '.' + _n, depth + 1)
+
+    _walk(obj, '', 0)
+
+    _texts = []
+    for _fn in (lambda: str(obj), lambda: _r2py_xml_text(obj)):
+        try:
+            _s = _fn()
+        except Exception:
+            continue
+        if isinstance(_s, str) and _s.strip() and ' at 0x' not in _s and _s not in _texts:
+            _texts.append(_s[:20000])
+    if not _numbers and not _texts:
+        return None
+    return {'__r2py_fp__': True, 'type': type(obj).__module__ + '.' + type(obj).__qualname__,
+            'numbers': _numbers, 'texts': _texts}
+
+
+def _r2py_xml_text(obj):
+    from lxml import etree as _etree
+    if isinstance(obj, (_etree._Element, _etree._ElementTree)):
+        return _etree.tostring(obj, encoding='unicode')
+    return None
+
+
 def _r2py_try_serialize(name, obj):
     \"\"\"Round-trip ``obj`` through ``_R2PyEncoder``, sanitizing non-finite floats.
 
     Returns ``(json_safe_value, True)`` on success — the value is pure Python
     (dict/list/str/number/bool/None) and can be re-serialized without a custom
-    encoder.  Returns ``(None, False)`` for anything the encoder cannot handle.
+    encoder.  An object the encoder cannot handle is captured as a generic fingerprint
+    (see ``_r2py_fingerprint``); ``(None, False)`` only when it has no numbers and no text.
     \"\"\"
     try:
         raw = _r2py_json.dumps(obj, cls=_R2PyEncoder, allow_nan=True)
@@ -417,7 +568,12 @@ def _r2py_try_serialize(name, obj):
             'NaN': None, 'Infinity': 'Inf', '-Infinity': '-Inf',
         }.get(c))), True
     except (TypeError, ValueError):
-        return None, False
+        pass
+    try:
+        fp = _r2py_fingerprint(obj)
+    except Exception:
+        fp = None
+    return (fp, True) if fp else (None, False)
 """
 
 

@@ -16,6 +16,7 @@ import math
 from typing import Any
 
 from ...types import ComparatorResult, EffectClass
+from . import fingerprint as _fingerprint
 from .base import text_similarity
 
 _DEFAULT_RTOL = 1e-6
@@ -120,6 +121,11 @@ def _compare_pair(
     verdict is one of: "pass", "fail".
     failure_tag is "value" or "infra" (only on fail), or None on pass.
     """
+    # An object JSON cannot represent (a fitted model, an XML document) is a generic fingerprint on one side
+    # or both: compared by value, not by structure.
+    if _fingerprint.is_fp(r_val) or _fingerprint.is_fp(py_val):
+        return _fingerprint.compare(name, r_val, py_val, rtol, atol)
+
     # Both null/None
     if _is_null(r_val) and _is_null(py_val):
         return 1.0, "pass", None, ""
@@ -283,6 +289,9 @@ class DataComparator:
             score, verdict, failure_tag, explanation = _compare_pair(
                 name, r_val, py_val, self.rtol, self.atol
             )
+            if verdict == "skip":   # a fingerprint with nothing informative to compare
+                uncomparable_vars.append(name)
+                continue
 
             if verdict == "fail" and failure_tag == "infra" and self.data_compare == "auto":
                 # Rescue infra failures via text fallback; value failures are never rescued
