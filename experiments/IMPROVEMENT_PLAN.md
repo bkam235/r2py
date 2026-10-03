@@ -121,6 +121,16 @@ samples are not diverse), 8 produced no usable fragment. **Entity-level width is
 (`entity_width = 1`); whole-loop width is the width that works.**
 **Default (2026-10-02, decided by the user: 3x model cost accepted):** `DEFAULT_AGENT_WIDTH = 3` in `r2py/loop.py`; `run_loop`, the held-out
 pipeline (`cfg.agent_width`) and `smoke_test.py --width` use it. Provider concurrency is workers x 3 requests in flight.
+*Deterministic sentinel restoration + pinned audit (2026-10-03; `stage2/sentinel_mapper.restore_sentinels`, `HarnessTools._restored_ranges`, `build_agent_turn(audit_feedback=)`).*
+Of 2070 scored rewrites in the replay runs 21% dropped sentinels (then attributed by a sampled model mapping). A dropped sentinel is now put back by
+aligning unchanged lines with the source being improved (`note_reference` is also called on every accepted candidate); a model is asked only if an entity still
+has no range. On logged sources: 239/239 synthetic drops restored to exactly the original ranges; of 155 real candidates that lost sentinels every entity got
+a range back in 93 (60%). Audit findings are pinned in every agent turn instead of scrolling out of the last-5 history. Replay, same 20 states, new harness
+against the earlier runs, paired by state: **one loop** (3 samples) mean final 0.722 against 0.651 (+0.071, SE 0.036, p = 0.079; better/worse/tied 10/4/6;
+P(improve) 77% against 58%; SD within a state 0.076 against 0.108; 4.0 steps against 3.4). **Width 3** (2 samples) 0.796 against 0.795 (+0.001, p = 0.09 on a
+mostly-tied sample): no gain on top of width, which already averages the mapping noise out. Reading: less attribution noise makes the single loop better
+(borderline), and the single loop at 4 steps now reaches 0.722 against 0.796 for width 3 at 12.7 steps. The old and new runs were made hours apart; the
+design cannot separate the two changes.
 *Beam search over restarts (Stage 11e; `harness/beam.py`, replay policy `beam3`: rounds of 3 chains x 4 steps, each round restarting from the best
 distinct states found, up to 3 rounds).* Same 20 states x 2 samples (40 runs, 0 failed): mean final 0.779, P(improve) 82%, P(final >= 0.9) 42%,
 14.7 model steps per run (3 independent chains: 0.795, 12.8 steps; one loop: 0.651, 3.4 steps). Paired by state: +0.128 over one loop (p = 0.003) but
