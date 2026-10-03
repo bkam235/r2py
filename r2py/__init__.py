@@ -1,4 +1,4 @@
-"""r2py v0.2 — R-to-Python execution-verified translator."""
+"""r2py v0.3 — R-to-Python execution-verified translator."""
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
