@@ -109,6 +109,7 @@ DEFAULT_CAPTURE: CaptureSpec = frozenset({
     EffectClass.ENV,
     EffectClass.HTML,
     EffectClass.WARNINGS,
+    EffectClass.RNG,      # R's draws, replayed to Python by the verifier (not scored as an effect)
 })
 
 

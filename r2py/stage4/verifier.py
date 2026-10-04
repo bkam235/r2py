@@ -65,6 +65,13 @@ def _get_r_bundle(script_map) -> EffectBundle:
     return EffectBundle()
 
 
+def _rng_replay(r_bundle: EffectBundle):
+    """R's recorded random draws as a replay log for the Python run; None when R drew nothing."""
+    from ..stage0.sandbox.base import ReplayLog
+
+    return ReplayLog(rng_draws=list(r_bundle.rng_log)) if r_bundle.rng_log else None
+
+
 def _compare_bundles(
     r_bundle: EffectBundle,
     py_bundle: EffectBundle,
@@ -762,7 +769,7 @@ def verify(
         py_bundle = sandbox.run(
             py_source_activated, workdir=workdir, capture=capture,
             preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=timeout_s,
-            sidecar_files=sidecar_files,
+            sidecar_files=sidecar_files, replay=_rng_replay(r_bundle),
         )
         py_entity_bundles = _collect_py_checkpoints(workdir, cp_eids)
     else:
@@ -771,7 +778,7 @@ def verify(
             py_bundle = sandbox.run(
                 py_source_activated, workdir=_wd, capture=capture,
                 preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=timeout_s,
-                sidecar_files=sidecar_files,
+                sidecar_files=sidecar_files, replay=_rng_replay(r_bundle),
             )
             py_entity_bundles = _collect_py_checkpoints(_wd, cp_eids)
 
@@ -903,7 +910,7 @@ def verify(
         EffectClass.HTML:     bool(r_bundle.html),
         EffectClass.ENV:      bool(r_bundle.env),
         EffectClass.WARNINGS: bool(r_bundle.warnings),
-        EffectClass.RNG:      bool(r_bundle.rng_log),
+        EffectClass.RNG:      False,   # R's draws are inputs for the Python run (replay), not a result
         EffectClass.NETWORK:  bool(r_bundle.network_log),
         EffectClass.SYNTAX:   True,
     }
