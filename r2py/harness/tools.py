@@ -144,6 +144,74 @@ class HarnessTools:
         self._verify_cache[key] = (report, self.last_annotated_source)
         return report
 
+    def locate(self, annotated_source: str, eid: str) -> str | None:
+        """Where inside entity *eid* does this Python first depart from R?  A sentence for the agent, or None.
+
+        Every call of the entity is probed on both sides (see ``harness.locate``) in two extra sandbox runs; the
+        result is cached per (entity, source).  Returns None when the entity cannot be probed (no span, a source
+        that does not parse, a run that fails).
+        """
+        import tempfile
+
+        from ..stage0.effects import data as _data_effects
+        from ..stage0.sandbox.py_sandbox import PySandbox
+        from ..stage0.sandbox.r_sandbox import RSandbox
+        from ..stage1.runner import _CRAWLER_PKG_RE, strip_r_guards
+        from ..stage2.sentinel_mapper import ranges_from_sentinels, strip_sentinels
+        from ..stage4.verifier import _activate_data_shim, _build_sidecar_payload, _rng_replay, get_r_bundle
+        from ..types import EffectClass
+        from . import locate as _loc
+
+        clean = strip_sentinels(annotated_source)
+        key = ("locate", eid, hashlib.sha1(clean.encode("utf-8")).hexdigest())
+        cache = self.__dict__.setdefault("_locate_cache", {})
+        if key in cache:
+            return cache[key]
+
+        entity = self._script_map.entities.get(eid)
+        span = getattr(entity, "source_span", None)
+        spans = ranges_from_sentinels(annotated_source).get(eid)
+        r_source = getattr(self._script_map, "source", "") or ""
+        if span is None or not spans or not r_source:
+            return None
+        try:
+            r_program = strip_r_guards(_loc.r_locate_program(r_source, (span.start_line, span.end_line)))
+            m = _CRAWLER_PKG_RE.search(r_source)
+            if m:
+                r_program = f"suppressPackageStartupMessages(library({m.group(1)}))\n" + r_program
+            with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+                RSandbox().run(r_program, workdir=Path(tmp), capture=frozenset({EffectClass.STDOUT}),
+                               preamble=_data_effects.build_r_serializer_fn() + _loc.R_PROBE_FUNCTIONS,
+                               timeout_s=min(self._timeout_s, 60))
+                f = Path(tmp) / "_r2py_probes.json"
+                r_probes = _loc.load_probes(f.read_text(encoding="utf-8") if f.exists() else None)
+
+            shimmed, has_shim = _activate_data_shim(clean)
+            py_probes: list = []
+            for lo, hi in spans:
+                instrumented = _loc.instrument_python(shimmed, (lo, hi))
+                if instrumented is None:
+                    return None
+                shimmed = instrumented if len(spans) == 1 else shimmed
+                if len(spans) == 1:
+                    break
+            sidecar = ({self._sidecar_filename: _build_sidecar_payload(self._script_map)}
+                       if has_shim and self._sidecar_filename else None)
+            with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+                PySandbox().run(shimmed, workdir=Path(tmp), capture=frozenset({EffectClass.DATA, EffectClass.RNG}),
+                                preamble=_loc.PY_PROBE_PREAMBLE, timeout_s=min(self._timeout_s, 60),
+                                sidecar_files=sidecar, replay=_rng_replay(get_r_bundle(self._script_map)))
+                f = Path(tmp) / "_r2py_probes.json"
+                py_probes = _loc.load_probes(f.read_text(encoding="utf-8") if f.exists() else None)
+        except Exception:
+            return None
+        if not r_probes:
+            return None
+        text = _loc.format_divergence(getattr(entity, "name", eid), _loc.find_divergence(r_probes, py_probes),
+                                      len(r_probes), len(py_probes))
+        cache[key] = text
+        return text
+
     def probe_r(self, r_expression: str) -> str:
         """Run an R expression in sandbox and return its stdout.
 

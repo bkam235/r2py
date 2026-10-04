@@ -37,6 +37,7 @@ POLICIES = {
     "entity_only": dict(entity_repair=True, escalate_after=10 ** 6),
     "entity_esc_ew3": dict(entity_repair=True, escalate_after=2, entity_width=3),   # three repairs per failing entity
     "beam3": dict(entity_repair=False, escalate_after=None, width=3, beam=dict(rounds=3, steps=4)),   # restart from the best states
+    "rewrite_loc": dict(entity_repair=False, escalate_after=None, locate=True),     # the harness locates the first diverging call
     "rewrite_w3": dict(entity_repair=False, escalate_after=None, width=3),   # three independent loops, best wins
 }
 

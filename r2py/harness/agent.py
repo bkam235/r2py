@@ -31,7 +31,7 @@ from ..stage2.stitch import (
 # What the agent did, per process, drained into each run's row (see heldout._drain_diagnostics):
 # {"action": {rewrite: n, ...}, "outcome": {"rewrite:worse": n, ...}, "stop": {"budget": n, ...}}
 agent_stats: dict[str, Counter] = {"action": Counter(), "outcome": Counter(), "stop": Counter(),
-                                   "entity_width": Counter()}
+                                   "entity_width": Counter(), "locate": Counter()}
 
 
 class _StepContext(MutableMapping):
@@ -102,6 +102,7 @@ def reason(
     escalate_after: "int | None" = None,
     branch: "int | None" = None,
     entity_width: int = 1,
+    locate: bool = False,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -121,6 +122,11 @@ def reason(
     best_score = score_report.aggregate
     report = score_report
     history: list[str] = []   # the audit findings are pinned in the turn (build_agent_turn), not kept here
+    located: set[str] = set()  # entities already probed for the point where Python departs from R
+    if locate:
+        _loc_note = _locate_note(harness, best_source, report, located)
+        if _loc_note:
+            history.append(f"Step 0: LOCATED (the harness probed every call of the worst entity in R and in your Python). {_loc_note}")
 
     patterns_by_entity = _prefetch_patterns(harness, score_report)
     r_function_sources, entity_metadata = _prefetch_r_sources(
@@ -526,6 +532,10 @@ def reason(
                     else:
                         history.append(
                             f"Step {step}: rewrite -> {new_report.aggregate:.3f} (ACCEPTED)")
+                    if locate:
+                        _loc_note = _locate_note(harness, best_source, report, located)
+                        if _loc_note:
+                            history.append(f"Step {step}: LOCATED. {_loc_note}")
             else:
                 stall_count += 1
                 crash_detail = f" Python error: {crash_msg}" if crash_msg else ""
@@ -1107,6 +1117,28 @@ ENTITY_REPAIR_ESCALATE_AFTER = 2
 
 
 _entity_score = _obj.entity_score
+
+
+LOCATE_MAX = 8            # probe runs per agent loop (each is two extra sandbox runs)
+LOCATE_BELOW = 0.95       # an entity scoring under this, that ran, is worth locating
+
+
+def _locate_note(harness: "HarnessTools", annotated_source: str, report: "ScoreReport", tried: set) -> str | None:
+    """Where inside the worst-scoring entity that ran does the Python first depart from R?  See ``harness.locate``."""
+    if len(tried) >= LOCATE_MAX or not hasattr(harness, "locate"):
+        return None
+    crashed = set(getattr(report, "crash_entities", []) or [])
+    pool = [(eid, _entity_score(es)) for eid, es in report.by_entity.items()
+            if es.executed_ok and eid not in crashed and eid not in tried and _entity_score(es) < LOCATE_BELOW]
+    for eid, _score in sorted(pool, key=lambda kv: kv[1]):
+        tried.add(eid)
+        note = harness.locate(annotated_source, eid)
+        _stat("locate", "found" if note else "none")
+        if note:
+            return note
+        if len(tried) >= LOCATE_MAX:
+            break
+    return None
 
 
 def _scores_note(rep, limit: int = 12) -> str:

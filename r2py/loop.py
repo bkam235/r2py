@@ -100,6 +100,7 @@ def run_loop(
     agent_entity_repair: bool = False,
     agent_width: int = DEFAULT_AGENT_WIDTH,
     agent_entity_width: int = 1,
+    agent_locate: bool = False,
     **verify_kwargs,
 ) -> TranslateResult:
     """Cheap path → reasoning agent escalation loop.
@@ -300,6 +301,7 @@ def run_loop(
         replace_entity=agent_replace_entity,
         entity_repair=agent_entity_repair,
         entity_width=agent_entity_width,
+        locate=agent_locate,
         audit_feedback=audit_feedback,
     )
 
