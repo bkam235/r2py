@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from pathlib import Path
 
 from ..stage2 import llm as _llm
@@ -17,6 +18,7 @@ from . import difftest
 
 ROUNDS = 5          # counterexample rounds per attempt
 ATTEMPTS = 3        # independent attempts (fresh conversations) per function
+BUDGET_S = 900      # wall clock per function: a slow function is reported as failed, it does not hold up the pilot
 SOURCE_LIMIT = 6000
 
 _CALLS_SYSTEM = "You know R well. Reply with R code only, one call per line, no commentary."
@@ -92,9 +94,14 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
                 f"Example calls with R's results:\n{_describe(core)}\n\n"
                 f"Write `def r_{difftest.py_name(fname)}(...)`.")
         best = None
+        deadline = time.monotonic() + BUDGET_S
         for attempt_no in range(1, attempts + 1):
+            if time.monotonic() > deadline:
+                break
             messages = [{"role": "user", "content": base}]
             for rnd in range(1, rounds + 1):
+                if time.monotonic() > deadline:
+                    break
                 raw = _llm.call(messages, _IMPL_SYSTEM, model=model, max_tokens=6000)
                 code = _code(raw)
                 res = difftest.run_python(code, fname, cases)
@@ -110,7 +117,7 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
                             {"role": "assistant", "content": raw},
                             {"role": "user", "content": f"{res.core_passed} of {res.core_total} ordinary cases pass. Failing cases:\n"
                                                         f"{_failures(res)}\nReturn the complete corrected code."}]
-        rec.update(best, status="failed")
+        rec.update(best or {}, status="failed")
     except Exception as exc:
         rec["error"] = f"{type(exc).__name__}: {exc}"[:300]
     return rec
