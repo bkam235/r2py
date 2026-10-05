@@ -33,7 +33,7 @@ class TestPieces(unittest.TestCase):
                                                            {"call": "f(2)", "expected": 4, "error": "KeyError: 'x'"}])
         text = propose._failures(res)
         self.assertIn("f(1)", text)
-        self.assertIn("R returns 2", text)
+        self.assertIn("as values) 2", text)
         self.assertIn("Python returned 3", text)
         self.assertIn("KeyError", text)
 
@@ -123,6 +123,34 @@ class TestAgainstR(unittest.TestCase):
         self.assertFalse(res.ok)
         self.assertIn("did not run to completion", res.failures[0]["error"])
         self.assertIn("SyntaxError", res.failures[0]["error"])
+
+
+@pytest.mark.skipif(not _has_r(), reason="R not available")
+class TestNaturalReturnTypes(unittest.TestCase):
+    """The first pilot accepted `r_charToRaw` returning a base64 string, because the oracle compares serialised values."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.built = difftest.build_cases("charToRaw", ["charToRaw('Hello')", "charToRaw('abc')", "charToRaw('R2')"])
+
+    def test_cases_carry_r_class_and_printed_form(self):
+        self.assertEqual(self.built["cases"][0]["rclass"], "raw")
+        self.assertIn("48 65 6c 6c 6f", self.built["cases"][0]["shown"])
+        self.assertIn("class 'raw'", propose._describe(self.built["cases"], 1))
+
+    def test_a_serialised_form_is_rejected_and_the_natural_object_accepted(self):
+        b64 = ("import base64\n"
+               "def r_charToRaw(x):\n"
+               "    t = x[0] if isinstance(x, list) else x\n"
+               "    return base64.b64encode(str(t).encode()).decode()\n")
+        nat = ("def r_charToRaw(x):\n"
+               "    t = x[0] if isinstance(x, list) else x\n"
+               "    return str(t).encode('utf-8')\n")
+        bad = difftest.run_python(b64, "charToRaw", self.built["cases"])
+        good = difftest.run_python(nat, "charToRaw", self.built["cases"])
+        self.assertFalse(bad.ok_core)
+        self.assertIn("natural Python object", bad.failures[0]["error"])
+        self.assertTrue(good.ok_core)
 
 
 if __name__ == "__main__":

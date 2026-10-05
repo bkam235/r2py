@@ -27,7 +27,10 @@ _IMPL_SYSTEM = (
     "`r_<name>` with dots in the R name replaced by underscores; its parameters have R's formal names (dots replaced by "
     "underscores) and R's defaults (R's `...` becomes `*args, **kwargs`); vectors arrive as numpy arrays (NA is NaN), strings as lists of str, data frames as "
     "pandas DataFrames; return a numpy array, scalar, list, dict or DataFrame holding the values R returns (names are "
-    "not compared; a factor is a list of str). If the R function draws random numbers (sample, runif, rnorm ...), call the "
+    "not compared; a factor is a list of str). Return the natural Python object for the R value, not a serialised form: "
+    "bytes for a raw vector, a datetime / pandas Timestamp for POSIXct, a datetime.date for Date, a timedelta for difftime, "
+    "a number for a number, a list of str for character, a bool for logical; the harness serialises your return value the way "
+    "it serialises R's, and code that uses your function needs the real object. If the R function draws random numbers (sample, runif, rnorm ...), call the "
     "numpy or random equivalents with the same counts and sizes: the test harness serves R's own draws to them, so what "
     "must match is how the draws are used (order, number, indexing). If an R parameter name is a Python builtin "
     "(list, dict, type, str, ...), keep the name but reach the builtin through `import builtins` inside the function. Use only numpy, pandas, scipy and the standard library. No printing. "
@@ -54,7 +57,7 @@ def propose_calls(fname: str, package: str | None, usage: str, model: str) -> li
 def _describe(cases: list[dict], n: int = 4) -> str:
     out = []
     for c in cases[:n]:
-        out.append(f"{c['call']}\n  -> R returns {json.dumps(c['expected'])[:300]}")
+        out.append(f"{c['call']}\n  -> R returns an object of class '{c.get('rclass', '?')}', printed: {c.get('shown', '')[:300]}")
     return "\n".join(out)
 
 
@@ -62,7 +65,7 @@ def _failures(res: difftest.Result, n: int = 3) -> str:
     out = []
     for f in sorted(res.failures, key=lambda f: not f.get("core", True))[:n]:        # ordinary-use failures first
         got = f.get("error") or ("Python returned " + json.dumps(f.get("got"))[:300])
-        out.append(f"{f['call']}\n  R returns {json.dumps(f.get('expected'))[:300]}\n  yours: {got}")
+        out.append(f"{f['call']}\n  R returns (class '{f.get('rclass', '?')}', as values) {json.dumps(f.get('expected'))[:300]}\n  yours: {got}")
     return "\n".join(out)
 
 

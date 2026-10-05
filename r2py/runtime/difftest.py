@@ -79,7 +79,9 @@ _R_CASES = r"""
   ex <- tryCatch(.r2py_serialize_var(res), error = function(e) '__uncapturable__')
   if (is.null(ex) || identical(ex, '__uncapturable__')) return(invisible())
   .r2py_cases[[length(.r2py_cases) + 1L]] <<- list(call = label, args = .r2py_json_args(args), expected = ex, draws = .draws,
-    first_class = if (length(args) >= 1) class(args[[1]])[1] else '')
+    first_class = if (length(args) >= 1) class(args[[1]])[1] else '',
+    rclass = class(res)[1],
+    shown = substr(paste(utils::head(utils::capture.output(print(res)), 12), collapse = ' | '), 1, 400))
 }
 .r2py_method_for <- function(fun, fname, first) {
   if (any(grepl("UseMethod", deparse(body(fun)), fixed = TRUE))) {
@@ -190,6 +192,48 @@ def _rt_conv(v):
     return v
 
 
+import datetime as _rt_dt
+
+_RT_NATURAL = {'raw': 'bytes', 'POSIXct': 'datetime / pandas Timestamp / numpy datetime64', 'Date': 'datetime.date / pandas Timestamp',
+               'difftime': 'timedelta / numpy timedelta64', 'data.frame': 'pandas DataFrame', 'matrix': 'numpy 2-d array'}
+
+
+def _rt_first(v):
+    if _rt_np is not None and isinstance(v, _rt_np.ndarray):
+        return v.flat[0] if v.size else None
+    if isinstance(v, (list, tuple)):
+        return v[0] if v else None
+    try:
+        import pandas as _rt_pd
+        if isinstance(v, (_rt_pd.Series, _rt_pd.Index)):
+            return v.iloc[0] if hasattr(v, 'iloc') and len(v) else (v[0] if len(v) else None)
+    except ImportError:
+        pass
+    return v
+
+
+def _rt_type_ok(rclass, res):
+    if rclass not in _RT_NATURAL:
+        return True
+    if rclass == 'data.frame':
+        try:
+            import pandas as _rt_pd
+            return isinstance(res, _rt_pd.DataFrame)
+        except ImportError:
+            return True
+    if rclass == 'matrix':
+        return (_rt_np is not None and isinstance(res, _rt_np.ndarray) and res.ndim == 2) or type(res).__name__ == 'DataFrame'
+    x = _rt_first(res)
+    if x is None:
+        return True
+    if rclass == 'raw':
+        return isinstance(res, (bytes, bytearray)) or (_rt_np is not None and isinstance(res, _rt_np.ndarray) and res.dtype == _rt_np.uint8)
+    if rclass == 'difftime':
+        return isinstance(x, _rt_dt.timedelta) or (_rt_np is not None and isinstance(x, _rt_np.timedelta64)) or type(x).__name__ == 'Timedelta'
+    stamp = isinstance(x, (_rt_dt.date, _rt_dt.datetime)) or (_rt_np is not None and isinstance(x, _rt_np.datetime64)) or type(x).__name__ == 'Timestamp'
+    return stamp
+
+
 _rt_cases = _rt_json.load(open('_cases_in.json', encoding='utf-8'))
 _rt_out = []
 for _c in _rt_cases:
@@ -204,6 +248,9 @@ for _c in _rt_cases:
         for _d in _c.get('draws') or []:
             _r2py_draws.setdefault(_d['fn'], []).append(_d['value'] if isinstance(_d['value'], list) else [_d['value']])
         _res = __FUNC__(*_pos, **_kw)
+        if not _rt_type_ok(_c.get('rclass'), _res):
+            raise TypeError("R returns class '" + str(_c.get('rclass')) + "': return the natural Python object for it ("
+                            + _RT_NATURAL[_c.get('rclass')] + "), not a serialised form such as a string; got " + type(_res).__name__)
         _v, _ok = _r2py_try_serialize('r', _res)
         _rt_out.append({'value': _v} if _ok else {'error': 'result of type ' + type(_res).__name__ + ' is not serialisable'})
     except BaseException as _e:
@@ -250,7 +297,8 @@ def run_python(code: str, fname: str, cases: list[dict], timeout_s: float = 60) 
         bundle = PySandbox().run(
             source, workdir=wd, capture=frozenset({EffectClass.DATA, EffectClass.RNG}), timeout_s=timeout_s,
             replay=ReplayLog(rng_draws=[("rnorm", [], [0.0])]),          # installs the hooks; the real draws are set per case
-            sidecar_files={"_cases_in.json": json.dumps([{"args": c["args"], "draws": c.get("draws", [])} for c in cases])})
+            sidecar_files={"_cases_in.json": json.dumps([{"args": c["args"], "draws": c.get("draws", []), "rclass": c.get("rclass", "")}
+                                                    for c in cases])})
         f = wd / "_cases_out.json"
         outs = json.loads(f.read_text(encoding="utf-8")) if f.exists() else []
     if len(outs) != len(cases):
@@ -261,7 +309,7 @@ def run_python(code: str, fname: str, cases: list[dict], timeout_s: float = 60) 
     for c, o in zip(cases, outs):
         core = c.get("core", True)
         if "error" in o:
-            res.failures.append({"call": c["call"], "expected": _unwrap(c["expected"]), "error": o["error"], "core": core})
+            res.failures.append({"call": c["call"], "expected": _unwrap(c["expected"]), "error": o["error"], "core": core, "rclass": c.get("rclass")})
             continue
         _score, verdict, _tag, _why = _compare_pair(c["call"], _unwrap(c["expected"]), _unwrap(o["value"]),
                                                     _DEFAULT_RTOL, _DEFAULT_ATOL)
@@ -269,5 +317,5 @@ def run_python(code: str, fname: str, cases: list[dict], timeout_s: float = 60) 
             res.passed += 1
             res.core_passed += core
         else:
-            res.failures.append({"call": c["call"], "expected": _unwrap(c["expected"]), "got": _unwrap(o["value"]), "core": core})
+            res.failures.append({"call": c["call"], "expected": _unwrap(c["expected"]), "got": _unwrap(o["value"]), "core": core, "rclass": c.get("rclass")})
     return res

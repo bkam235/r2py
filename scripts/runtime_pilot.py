@@ -24,7 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-OUT = ROOT / "work/runtime/pilot"
+OUT = ROOT / "work/runtime/pilot_v2"   # the first pilot (work/runtime/pilot) validated serialised values; see the plan
 SIDE_EFFECTS = {
     "library", "require", "requireNamespace", "suppressPackageStartupMessages", "data", "plot", "print", "cat", "message",
     "warning", "stop", "try", "withAutoprint", "writeLines", "tempfile", "unlink", "system.file", "vignette", "set.seed",
