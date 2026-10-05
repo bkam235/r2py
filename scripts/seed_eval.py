@@ -35,6 +35,7 @@ def seed_task(task: dict) -> dict:
     import replay
     from r2py import heldout as ho
     from r2py import lessons as lessons_mod
+    from r2py.runtime.store import RuntimeStore
     from r2py import seed as seed_mod
     from r2py.library import PatternLibrary
     from r2py.stage2.sentinel_mapper import strip_sentinels
@@ -55,7 +56,8 @@ def seed_task(task: dict) -> dict:
                     sm, PatternLibrary(Path(tmp) / "lib"), model=cfg["model"],
                     sidecar_filename=f"{stem}.r2py_data.json", script_relpath=f"work/seed_eval/{stem}.py",
                     style=task["kind"], gate=task["gate"],
-                    lessons=lessons_mod.load(task["lessons"]) if task.get("lessons") else None)
+                    lessons=lessons_mod.load(task["lessons"]) if task.get("lessons") else None,
+                    runtime=RuntimeStore(task["runtime"]) if task.get("runtime") else None)
             rep, bundle = verifier.verify(
                 sm, source, data_compare=cfg["data_compare"], entity_line_map=elmap,
                 sidecar_filename=f"{stem}.r2py_data.json", timeout_s=cfg["timeout_s"], return_bundle=True)
@@ -109,6 +111,7 @@ def main() -> int:
     ap.add_argument("--gate", choices=("on", "off"), default="on")
     ap.add_argument("--schedule", nargs="+", default=["bare:2", "structured:2"], help="kind:count ...")
     ap.add_argument("--only", nargs="+")
+    ap.add_argument("--runtime", help="directory of verified R-function implementations (r2py.runtime), offered in the structured prompt")
     ap.add_argument("--lessons", help="lesson store (JSON) offered in the seed gate's corrective turn")
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--manifest", default=str(ROOT / "experiments/dev_run/manifest.json"))
@@ -134,7 +137,7 @@ def main() -> int:
     for item in args.schedule:
         kind, count = item.split(":")
         kinds += [(kind, i) for i in range(int(count))]
-    tasks = [dict(script=s, kind=k, idx=i, gate=args.gate == "on", lessons=args.lessons, manifest=args.manifest, library=args.library,
+    tasks = [dict(script=s, kind=k, idx=i, gate=args.gate == "on", lessons=args.lessons, runtime=args.runtime, manifest=args.manifest, library=args.library,
                   cache=str(ROOT / "work/replay/script_maps"))
              for (k, i) in kinds for s in scripts if (s, k, i) not in done]
     print(f"{len(tasks)} seeds to generate ({len(done)} done), {args.workers} workers", flush=True)
