@@ -56,6 +56,45 @@ def failing_entity_functions() -> list[tuple[str, str | None, str]]:
     return [(n, p, "failing entity") for n, p in sorted(seen.items()) if function_exists(n, p)]
 
 
+def failing_entity_sites() -> list[dict]:
+    """The real calls behind the failing-entity functions: (function, package, script R source, entity span)."""
+    sites = {}
+    for f in glob.glob(str(ROOT / "work/replay_v3/trajectories/*rewrite_w3*.jsonl")):
+        recs = [json.loads(l) for l in open(f, encoding="utf-8")]
+        script = recs[0]["script"]
+        acc = [r for r in recs if r["kind"] == "accepted" and r.get("per_entity")]
+        pkl = ROOT / "work/replay/script_maps" / (Path(script).stem + ".pkl")
+        if not acc or not pkl.exists():
+            continue
+        best = max(acc, key=lambda r: r["aggregate"])
+        sm = pickle.loads(pkl.read_bytes())
+        pkg = script.split("__")[0]
+        for eid, score in best["per_entity"].items():
+            ent = sm.entities.get(eid)
+            span = getattr(ent, "source_span", None)
+            if ent is not None and span is not None and score < 0.9 and ent.kind.value == "FunctionCall" and ent.name not in SIDE_EFFECTS:
+                sites.setdefault(ent.name, {"function": ent.name, "package": pkg, "source": sm.source,
+                                            "span": (span.start_line, span.end_line), "script": script})
+    return list(sites.values())
+
+
+def hard_task(args: tuple) -> dict:
+    name, pkg, source, span = args
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / ".env", override=True)
+    from r2py import heldout as ho
+    from r2py.runtime import difftest, propose
+
+    man = ho.load_manifest(str(ROOT / "experiments/dev_run/manifest.json"))
+    cfg = man["protocol"]["translate"]
+    mined = difftest.mine_cases(source, tuple(span), name, pkg)
+    with ho.pinned_llm(cfg["model"], ho.llm_settings(man)):
+        rec = propose.attempt(name, pkg, cfg["model"], rounds=8, attempts=4, mined=mined, source_limit=15000, budget_s=1800)
+    rec["tag"] = "failing entity (hard pass)"
+    propose.save(rec, OUT)
+    return rec
+
+
 def function_exists(name: str, pkg: str) -> bool:
     import tempfile
     from r2py.stage0.sandbox.r_sandbox import RSandbox
@@ -118,7 +157,7 @@ def summarise(rows: list[dict]) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("mode", choices=("candidates", "run", "summary"))
+    ap.add_argument("mode", choices=("candidates", "run", "summary", "hard"))
     ap.add_argument("--limit", type=int)
     ap.add_argument("--only", nargs="+")
     ap.add_argument("--workers", type=int, default=6)
@@ -140,6 +179,20 @@ def main() -> int:
         if v2.exists():
             latest.update({json.loads(l)["function"]: json.loads(l) for l in v2.read_text(encoding="utf-8").splitlines() if l.strip()})
         print(summarise(list(latest.values())))
+        return 0
+    if args.mode == "hard":
+        sites = [x for x in failing_entity_sites() if function_exists(x["function"], x["package"])]
+        if args.only:
+            sites = [x for x in sites if x["function"] in args.only]
+        hard = OUT / "hard_results.jsonl"
+        print(f"{len(sites)} failing-entity functions: {[x['function'] for x in sites]}", flush=True)
+        ctx = multiprocessing.get_context("spawn")
+        with ctx.Pool(min(args.workers, max(1, len(sites)))) as pool, hard.open("a", encoding="utf-8") as f:
+            for rec in pool.imap_unordered(hard_task, [(x["function"], x["package"], x["source"], x["span"]) for x in sites]):
+                f.write(json.dumps({k: v for k, v in rec.items() if k != "code"}, default=str) + "\n")
+                f.flush()
+                print(f"{rec['function']:22s} {rec['status']:9s} mined {rec.get('n_mined')} core {rec.get('core_passed', '-')}/{rec.get('core_total', '-')} "
+                      f"attempt {rec.get('attempt', '-')} round {rec.get('rounds')} {rec.get('error', '')[:60]}", flush=True)
         return 0
     cands = candidate_list()
     if args.only:

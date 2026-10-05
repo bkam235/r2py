@@ -142,6 +142,90 @@ def build_cases(fname: str, calls: list[str], package: str | None = None, timeou
     return out
 
 
+_R_MINE = r"""
+.r2py_json_args <- function(args) {
+  lapply(seq_along(args), function(i) list(if (is.null(names(args)) || !nzchar(names(args)[i])) NULL else names(args)[i],
+                                           .r2py_serialize_var(args[[i]])))
+}
+.r2py_method_for <- function(fun, fname, first) {
+  if (any(grepl("UseMethod", deparse(body(fun)), fixed = TRUE))) {
+    for (cl in c(class(first), "default")) {
+      meth <- tryCatch(utils::getS3method(fname, cl, optional = TRUE), error = function(e) NULL)
+      if (!is.null(meth)) return(meth)
+    }
+  }
+  fun
+}
+.r2py_fname <- "__FNAME__"
+.r2py_fun <- get(.r2py_fname, mode = "function")
+.r2py_ent <- parse(text = r"------(__ENTITY__)------", keep.source = FALSE)
+.r2py_walk <- function(e) {
+  out <- list()
+  if (is.call(e)) {
+    h <- e[[1]]
+    hn <- if (is.symbol(h)) as.character(h) else if (is.call(h) && length(h) == 3 && as.character(h[[1]]) %in% c("::", ":::")) as.character(h[[3]]) else ""
+    if (identical(hn, .r2py_fname)) out <- c(out, list(e))
+    for (i in seq_along(e)[-1]) if (!identical(e[[i]], quote(expr = ))) out <- c(out, .r2py_walk(e[[i]]))
+  }
+  out
+}
+.r2py_sites <- unlist(lapply(as.list(.r2py_ent), .r2py_walk), recursive = FALSE)
+.r2py_mined <- list()
+for (cl in utils::head(.r2py_sites, 3)) {
+  m0 <- tryCatch(match.call(.r2py_fun, cl, expand.dots = TRUE), error = function(e) NULL)
+  if (is.null(m0) || length(m0) < 2) next
+  first <- tryCatch(eval(as.list(m0)[[2]], envir = globalenv()), error = function(e) NULL)
+  meth <- .r2py_method_for(.r2py_fun, .r2py_fname, first)
+  m <- tryCatch(match.call(meth, cl, expand.dots = TRUE), error = function(e) NULL)
+  if (is.null(m)) next
+  args <- tryCatch(lapply(as.list(m)[-1], eval, envir = globalenv()), error = function(e) NULL)
+  if (is.null(args)) next
+  .before <- length(.r2py_rng_log)
+  res <- tryCatch(suppressWarnings(do.call(.r2py_fun, args)), error = function(e) NULL)
+  if (is.null(res)) next
+  ex <- tryCatch(.r2py_serialize_var(res), error = function(e) '__uncapturable__')
+  if (is.null(ex) || identical(ex, '__uncapturable__')) next
+  .draws <- if (length(.r2py_rng_log) > .before) .r2py_rng_log[(.before + 1L):length(.r2py_rng_log)] else list()
+  .r2py_mined[[length(.r2py_mined) + 1L]] <- list(call = paste(deparse(cl), collapse = " "), args = .r2py_json_args(args),
+    expected = ex, draws = .draws, first_class = class(args[[1]])[1], rclass = class(res)[1],
+    shown = substr(paste(utils::head(utils::capture.output(print(res)), 12), collapse = " | "), 1, 400), mined = TRUE)
+}
+writeLines(jsonlite::toJSON(.r2py_mined, auto_unbox = TRUE, digits = NA, na = 'null', force = TRUE), '_r2py_mined.json')
+"""
+
+
+def mine_cases(r_source: str, span: tuple[int, int], fname: str, package: str | None = None, timeout_s: float = 120) -> list[dict]:
+    """Test cases from the *real* calls of *fname* in a script: the arguments the call has when the script reaches it.
+
+    The script runs up to the entity (with the draws of its random functions recorded), the entity's calls to *fname* are
+    found in its parse tree, their arguments evaluated in the script's own environment, and R's answer and draws kept.
+    These are the inputs the translation will actually face, which the model's invented examples may not be.
+    """
+    from ..stage0.sandbox.r_sandbox import RSandbox
+
+    lines = r_source.splitlines(keepends=True)
+    start, end = span
+    entity = "".join(lines[start:end + 1])
+    if ")------\"" in entity:
+        return []
+    program = ""
+    if package:
+        program += f"suppressPackageStartupMessages(library({package}))\n"
+    program += _R_INTERCEPT_RNG + "".join(lines[:start]) + "\n"
+    program += _R_MINE.replace("__FNAME__", fname).replace("__ENTITY__", entity)
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+        try:
+            RSandbox().run(program, workdir=Path(tmp), capture=frozenset({EffectClass.STDOUT}), timeout_s=timeout_s,
+                           preamble=_data_effects.build_r_serializer_fn())
+        except Exception:
+            return []
+        f = Path(tmp) / "_r2py_mined.json"
+        if not f.exists():
+            return []
+        out = json.loads(f.read_text(encoding="utf-8"))
+    return out if isinstance(out, list) else []
+
+
 MUTANT = "  [first argument:"
 
 

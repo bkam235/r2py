@@ -155,3 +155,27 @@ class TestNaturalReturnTypes(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@pytest.mark.skipif(not _has_r(), reason="R not available")
+class TestMinedCases(unittest.TestCase):
+    SOURCE = "set.seed(3)\nx <- c(5, 1, 4, 2, 3, 9)\nm <- median(x)\nq <- quantile(sort(x), 0.9)\n"
+
+    def test_the_real_call_is_found_with_its_arguments_evaluated_in_the_scripts_environment(self):
+        mined = difftest.mine_cases(self.SOURCE, (2, 2), "median")
+        self.assertEqual(len(mined), 1)
+        self.assertEqual(mined[0]["call"], "median(x)")
+        self.assertEqual(mined[0]["args"][0][1], [5, 1, 4, 2, 3, 9])        # the value of x, which the model never saw
+        self.assertEqual(mined[0]["expected"], 3.5)
+        self.assertTrue(mined[0]["mined"])
+
+    def test_nested_calls_are_found_and_unrelated_functions_ignored(self):
+        mined = difftest.mine_cases(self.SOURCE, (3, 3), "sort")
+        self.assertEqual([m["call"] for m in mined], ["sort(x)"])
+        self.assertEqual(difftest.mine_cases(self.SOURCE, (3, 3), "median"), [])
+
+    def test_describe_shows_the_values_of_mined_arguments(self):
+        mined = difftest.mine_cases(self.SOURCE, (2, 2), "median")
+        text = propose._describe(mined)
+        self.assertIn("arguments evaluated in the script", text)
+        self.assertIn("[5, 1, 4, 2, 3, 9]", text)

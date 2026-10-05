@@ -19,7 +19,7 @@ from . import difftest
 ROUNDS = 5          # counterexample rounds per attempt
 ATTEMPTS = 3        # independent attempts (fresh conversations) per function
 BUDGET_S = 900      # wall clock per function: a slow function is reported as failed, it does not hold up the pilot
-SOURCE_LIMIT = 6000
+SOURCE_LIMIT = 6000        # characters of the R source shown to the model (more for hard targets)
 
 _CALLS_SYSTEM = "You know R well. Reply with R code only, one call per line, no commentary."
 
@@ -59,7 +59,11 @@ def propose_calls(fname: str, package: str | None, usage: str, model: str) -> li
 def _describe(cases: list[dict], n: int = 4) -> str:
     out = []
     for c in cases[:n]:
-        out.append(f"{c['call']}\n  -> R returns an object of class '{c.get('rclass', '?')}', printed: {c.get('shown', '')[:300]}")
+        args = ""
+        if c.get("mined"):      # a real call from a script: its variables mean nothing to the model, so show their values
+            vals = "; ".join(f"{a[0] or '_'} = {json.dumps(a[1])[:160]}" for a in c["args"])
+            args = f"\n  (arguments evaluated in the script: {vals})"
+        out.append(f"{c['call']}{args}\n  -> R returns an object of class '{c.get('rclass', '?')}', printed: {c.get('shown', '')[:300]}")
     return "\n".join(out)
 
 
@@ -71,7 +75,8 @@ def _failures(res: difftest.Result, n: int = 3) -> str:
     return "\n".join(out)
 
 
-def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, attempts: int = ATTEMPTS) -> dict:
+def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, attempts: int = ATTEMPTS,
+            mined: list[dict] | None = None, source_limit: int = SOURCE_LIMIT, budget_s: float = BUDGET_S) -> dict:
     """Try to build a verified Python implementation of one R function; returns a record (never raises).
 
     The cases are built once.  The model gets up to ``attempts`` independent tries (fresh conversations: the sampled
@@ -83,18 +88,22 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
         probe = difftest.build_cases(fname, [f"{fname}(1:5)"], package)            # usage and source need no model
         calls = propose_calls(fname, package, probe.get("usage", ""), model)
         built = difftest.build_cases(fname, calls, package)
-        cases = built["cases"]
+        cases = difftest.label_core(list(built["cases"])) if not mined else list(built["cases"])
+        if mined:                       # real calls come first and always count as ordinary use
+            for m in mined:
+                m["core"] = True
+            cases = list(mined) + [c for c in cases if c["call"] not in {m["call"] for m in mined}]
         core = [c for c in cases if c.get("core", True)]
-        rec.update(n_calls=len(calls), n_cases=len(cases), n_core=len(core))
+        rec.update(n_calls=len(calls), n_cases=len(cases), n_core=len(core), n_mined=len(mined or []))
         if len(core) < 3:
             rec["status"] = "no_cases"                                              # R accepted fewer than three ordinary calls
             return rec
         base = (f"R function `{package + '::' if package else ''}{fname}`\nUsage: {built['usage']}\n"
-                f"R source (may be a wrapper around compiled code):\n{built['source'][:SOURCE_LIMIT]}\n\n"
+                f"R source (may be a wrapper around compiled code):\n{built['source'][:source_limit]}\n\n"
                 f"Example calls with R's results:\n{_describe(core)}\n\n"
                 f"Write `def r_{difftest.py_name(fname)}(...)`.")
         best = None
-        deadline = time.monotonic() + BUDGET_S
+        deadline = time.monotonic() + budget_s
         for attempt_no in range(1, attempts + 1):
             if time.monotonic() > deadline:
                 break
