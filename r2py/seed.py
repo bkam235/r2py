@@ -100,7 +100,7 @@ _COMMENT_RE = re.compile(r"^#[^\n]*\n", re.MULTILINE)
 seed_gate_stats: Counter = Counter()
 
 
-def seed_problems(code: str) -> list[str]:
+def seed_problems(code: str, runtime=None) -> list[str]:
     """What is wrong with a seed before it is run: the checks the agent loop already applies to
     its rewrites (syntax under the interpreter that will run it, imports that cannot resolve).
     In 255 logged seeds 7 failed on syntax and 56 on an import."""
@@ -119,16 +119,22 @@ def seed_problems(code: str) -> list[str]:
             "these imports cannot be resolved (not installed, not on PyPI; they are R package names, "
             f"not Python modules): {', '.join(bad)}. Do not import them; use the Python libraries that "
             "provide the same function, or implement it")
+    if runtime is not None:
+        unknown = runtime.unknown_references(code)
+        if unknown:
+            problems.append(
+                f"{', '.join(unknown)} {'does' if len(unknown) == 1 else 'do'} not exist: only the verified functions listed in the prompt "
+                "exist (r_<name>); implement the other R calls yourself")
     return problems
 
 
 def _corrective_round(messages: list[dict], system_prompt: str, raw: str, code: str, model: str,
-                      lessons: list | None = None) -> str:
+                      lessons: list | None = None, runtime=None) -> str:
     """One corrective turn if the seed has a problem the gates can see, or imports a library the lesson
     store (``r2py.lessons``) has pitfalls for; keep the better version."""
     from .lessons import format_lessons, lessons_for
 
-    problems = seed_problems(code)
+    problems = seed_problems(code, runtime)
     matched = lessons_for(code, lessons) if lessons else []
     if not problems and not matched:
         return code
@@ -152,7 +158,7 @@ def _corrective_round(messages: list[dict], system_prompt: str, raw: str, code: 
             seed_gate_stats["still_broken"] += 1
         return code
     fixed = _extract_python(fixed_raw)
-    remaining = seed_problems(fixed)
+    remaining = seed_problems(fixed, runtime)
     if not problems:   # lessons only: take the revision unless it broke what ran
         if remaining:
             return code
@@ -209,7 +215,7 @@ def translate(
     if style == "planned":
         python_code = _PLAN_LINE_RE.sub("", python_code)
     if gate:
-        python_code = _corrective_round(messages, system_prompt, raw, python_code, model, lessons)
+        python_code = _corrective_round(messages, system_prompt, raw, python_code, model, lessons, runtime)
     shadow_autofix(python_code, "seed")
     python_code, n_reordered = repair_argument_order(python_code)
     if n_reordered:

@@ -102,6 +102,30 @@ class RuntimeStore:
             names = {m for m in re.findall(r"\br_[A-Za-z0-9_]+", body)}
         return [e for k, e in self.entries.items() if k in names]
 
+    def unknown_references(self, py_source: str) -> list[str]:
+        """``r_*`` names the code calls that nothing defines and the store does not provide.
+
+        Told that ``r_earlyCloseNYSE`` exists, a model writes ``r_holidayNYSE`` too, by analogy; the harness can only
+        paste what the store has, so the call would end in a NameError.  Names the code defines itself are not flagged.
+        """
+        body = _BLOCK_RE.sub("", py_source)
+        try:
+            tree = ast.parse(body)
+        except SyntaxError:
+            return []
+        defined: set[str] = set()
+        for n in ast.walk(tree):
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+                defined.add(n.name)
+            elif isinstance(n, ast.Name) and isinstance(n.ctx, (ast.Store, ast.Del)):
+                defined.add(n.id)
+            elif isinstance(n, ast.arg):
+                defined.add(n.arg)
+            elif isinstance(n, (ast.Import, ast.ImportFrom)):
+                defined.update((a.asname or a.name).split(".")[0] for a in n.names)
+        used = {n.id for n in ast.walk(tree) if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load)}
+        return sorted(u for u in used if u.startswith("r_") and u not in defined and u not in self.entries)
+
     def block(self, entries: list[Entry]) -> str:
         parts = [f"{BEGIN} {', '.join(e.py for e in entries)}",
                  "# Verified against R by differential tests; managed by the harness - do not edit."]

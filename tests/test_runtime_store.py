@@ -87,6 +87,20 @@ class TestStore(unittest.TestCase):
         self.assertTrue(out.index("# r2py:entity:x") < out.index("x = [1.0, 2.0]"))
         self.assertEqual(out.splitlines()[out.splitlines().index("# r2py:entity:x") + 1], "x = [1.0, 2.0]")
 
+    def test_unknown_r_names_are_flagged_unless_defined_or_provided(self):
+        self.assertEqual(self.store.unknown_references("m = r_median([1])\nh = r_holidayNYSE(2022)\n"), ["r_holidayNYSE"])
+        self.assertEqual(self.store.unknown_references("def r_helper(x):\n    return x\nm = r_helper(1)\n"), [])
+        self.assertEqual(self.store.unknown_references("m = r_median([1])\n"), [])
+        self.assertEqual(self.store.unknown_references("def (:\n"), [])
+
+    def test_seed_gate_reports_unknown_functions_only_with_a_store(self):
+        from r2py.seed import seed_problems
+        code = "h = r_holidayNYSE(2022)\n"
+        self.assertEqual(seed_problems(code), [])
+        problems = seed_problems(code, self.store)
+        self.assertEqual(len(problems), 1)
+        self.assertIn("r_holidayNYSE", problems[0])
+
 
 if __name__ == "__main__":
     unittest.main()

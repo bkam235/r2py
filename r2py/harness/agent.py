@@ -445,6 +445,18 @@ def reason(
                 )
                 continue
 
+            # A verified function the store does not have (named by analogy with one it does): a NameError at run time.
+            unknown = runtime.unknown_references(new_source) if runtime is not None else []
+            if unknown:
+                print(f"[Agent]   Unknown verified functions: {unknown}")
+                _stat("outcome", f"{action_type}:unknown_runtime_function")
+                _note_rejection(entity_notes, action_type, action, f"called {', '.join(unknown)}, which do not exist")
+                stall_count += 1
+                history.append(
+                    f"Step {step}: {action_type} REJECTED before running - {', '.join(unknown)} do not exist. Only the verified "
+                    "functions listed in the prompt exist (`r_<name>`); implement every other R function yourself.")
+                continue
+
             # Attribution is read off the entity sentinels when they all survive; tell the agent when
             # some did not, because then a model has to re-derive the mapping (less reliable).
             lost = sorted(getattr(harness, "_mapped_eids", set()) - set(ranges_from_sentinels(new_source)))
