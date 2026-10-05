@@ -78,7 +78,8 @@ _R_CASES = r"""
   .draws <- if (length(.r2py_rng_log) > .before) .r2py_rng_log[(.before + 1L):length(.r2py_rng_log)] else list()
   ex <- tryCatch(.r2py_serialize_var(res), error = function(e) '__uncapturable__')
   if (is.null(ex) || identical(ex, '__uncapturable__')) return(invisible())
-  .r2py_cases[[length(.r2py_cases) + 1L]] <<- list(call = label, args = .r2py_json_args(args), expected = ex, draws = .draws)
+  .r2py_cases[[length(.r2py_cases) + 1L]] <<- list(call = label, args = .r2py_json_args(args), expected = ex, draws = .draws,
+    first_class = if (length(args) >= 1) class(args[[1]])[1] else '')
 }
 .r2py_method_for <- function(fun, fname, first) {
   if (any(grepl("UseMethod", deparse(body(fun)), fixed = TRUE))) {
@@ -135,8 +136,28 @@ def build_cases(fname: str, calls: list[str], package: str | None = None, timeou
         if not f.exists():
             return {"cases": [], "source": "", "usage": ""}
         out = json.loads(f.read_text(encoding="utf-8"))
-    out["cases"] = out.get("cases", [])[:MAX_CASES]
+    out["cases"] = label_core(out.get("cases", [])[:MAX_CASES])
     return out
+
+
+MUTANT = "  [first argument:"
+
+
+def label_core(cases: list[dict]) -> list[dict]:
+    """Mark each case ``core`` or exotic.  The model's example calls disagree with each other about what the first
+    argument of an R function is (``tolower(data.frame(...))`` next to seven calls with character vectors) and R's
+    behaviour on the odd one is idiosyncratic, so the most common first-argument class among the example calls defines
+    the function's ordinary use: calls of another class, and the mutants made from them, are reported but do not
+    decide acceptance."""
+    import collections
+
+    classes = collections.Counter(c.get("first_class", "") for c in cases if MUTANT not in c["call"])
+    mode = classes.most_common(1)[0][0] if classes else ""
+    parent = {c["call"]: c.get("first_class", "") for c in cases if MUTANT not in c["call"]}
+    for c in cases:
+        root = c["call"].split(MUTANT)[0]
+        c["core"] = parent.get(root, c.get("first_class", "")) == mode
+    return cases
 
 
 # ------------------------------------------------------------------------------------------------- Python side
@@ -196,11 +217,18 @@ with open('_cases_out.json', 'w', encoding='utf-8') as _f:
 class Result:
     passed: int = 0
     total: int = 0
-    failures: list[dict] = field(default_factory=list)       # {"call", "expected", "got" | "error"}
+    core_passed: int = 0
+    core_total: int = 0
+    failures: list[dict] = field(default_factory=list)       # {"call", "expected", "got" | "error", "core"}
 
     @property
     def ok(self) -> bool:
         return self.total > 0 and self.passed == self.total
+
+    @property
+    def ok_core(self) -> bool:
+        """Every ordinary-use case passes (see ``label_core``): the acceptance criterion."""
+        return self.core_total > 0 and self.core_passed == self.core_total
 
 
 def _unwrap(v):
@@ -216,7 +244,7 @@ def run_python(code: str, fname: str, cases: list[dict], timeout_s: float = 60) 
 
     func ="r_" + py_name(fname)
     source = code + "\n" + _PY_RUNNER.replace("__FUNC__", func)
-    res = Result(total=len(cases))
+    res = Result(total=len(cases), core_total=sum(1 for c in cases if c.get("core", True)))
     with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
         wd = Path(tmp)
         bundle = PySandbox().run(
@@ -231,13 +259,15 @@ def run_python(code: str, fname: str, cases: list[dict], timeout_s: float = 60) 
                              + func + "` and import what it needs. Python said: " + tail})
         return res
     for c, o in zip(cases, outs):
+        core = c.get("core", True)
         if "error" in o:
-            res.failures.append({"call": c["call"], "expected": _unwrap(c["expected"]), "error": o["error"]})
+            res.failures.append({"call": c["call"], "expected": _unwrap(c["expected"]), "error": o["error"], "core": core})
             continue
         _score, verdict, _tag, _why = _compare_pair(c["call"], _unwrap(c["expected"]), _unwrap(o["value"]),
                                                     _DEFAULT_RTOL, _DEFAULT_ATOL)
         if verdict == "pass":
             res.passed += 1
+            res.core_passed += core
         else:
-            res.failures.append({"call": c["call"], "expected": _unwrap(c["expected"]), "got": _unwrap(o["value"])})
+            res.failures.append({"call": c["call"], "expected": _unwrap(c["expected"]), "got": _unwrap(o["value"]), "core": core})
     return res

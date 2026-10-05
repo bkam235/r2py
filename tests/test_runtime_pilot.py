@@ -59,6 +59,36 @@ class TestPieces(unittest.TestCase):
         self.assertIn("no usable cases / errors: c", text)
 
 
+class TestCoreLabelling(unittest.TestCase):
+    def _case(self, call, cls):
+        return {"call": call, "first_class": cls}
+
+    def test_the_most_common_first_argument_class_defines_ordinary_use(self):
+        cases = [self._case("f('a')", "character"), self._case("f('b')", "character"), self._case("f(df)", "data.frame"),
+                 self._case("f('a')  [first argument: reversed]", "character"),
+                 self._case("f(df)  [first argument: reversed]", "data.frame")]
+        difftest.label_core(cases)
+        self.assertEqual([c["core"] for c in cases], [True, True, False, True, False])
+
+    def test_mutants_follow_their_parent_even_if_the_class_changes(self):
+        cases = [self._case("f(1:3)", "integer"), self._case("f(1:4)", "integer"),
+                 self._case("f(1:3)  [first argument: scaled]", "numeric")]
+        difftest.label_core(cases)
+        self.assertTrue(all(c["core"] for c in cases))
+
+    def test_result_acceptance_counts_only_core_cases(self):
+        r = difftest.Result(passed=3, total=5, core_passed=3, core_total=3)
+        self.assertTrue(r.ok_core)
+        self.assertFalse(r.ok)
+        self.assertFalse(difftest.Result(core_passed=2, core_total=3).ok_core)
+        self.assertFalse(difftest.Result().ok_core)
+
+    def test_failures_shown_to_the_model_list_core_ones_first(self):
+        res = difftest.Result(failures=[{"call": "odd", "expected": 1, "got": 2, "core": False},
+                                        {"call": "plain", "expected": 1, "got": 3, "core": True}])
+        self.assertTrue(propose._failures(res, n=1).startswith("plain"))
+
+
 @pytest.mark.skipif(not _has_r(), reason="R not available")
 class TestAgainstR(unittest.TestCase):
     CALLS = ["quantile(c(2.5,3.1,4.7,5.2,6.8,7.4,9.9,10.3), 0.9)", "quantile(c(1,5,2,8,3), probs=c(0.25,0.5), type=6)"]

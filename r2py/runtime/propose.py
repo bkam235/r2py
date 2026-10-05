@@ -15,7 +15,8 @@ from pathlib import Path
 from ..stage2 import llm as _llm
 from . import difftest
 
-ROUNDS = 3
+ROUNDS = 5          # counterexample rounds per attempt
+ATTEMPTS = 3        # independent attempts (fresh conversations) per function
 SOURCE_LIMIT = 6000
 
 _CALLS_SYSTEM = "You know R well. Reply with R code only, one call per line, no commentary."
@@ -28,7 +29,8 @@ _IMPL_SYSTEM = (
     "pandas DataFrames; return a numpy array, scalar, list, dict or DataFrame holding the values R returns (names are "
     "not compared; a factor is a list of str). If the R function draws random numbers (sample, runif, rnorm ...), call the "
     "numpy or random equivalents with the same counts and sizes: the test harness serves R's own draws to them, so what "
-    "must match is how the draws are used (order, number, indexing). Use only numpy, pandas, scipy and the standard library. No printing. "
+    "must match is how the draws are used (order, number, indexing). If an R parameter name is a Python builtin "
+    "(list, dict, type, str, ...), keep the name but reach the builtin through `import builtins` inside the function. Use only numpy, pandas, scipy and the standard library. No printing. "
     "Reply with the complete Python code only.")
 
 
@@ -58,43 +60,54 @@ def _describe(cases: list[dict], n: int = 4) -> str:
 
 def _failures(res: difftest.Result, n: int = 3) -> str:
     out = []
-    for f in res.failures[:n]:
+    for f in sorted(res.failures, key=lambda f: not f.get("core", True))[:n]:        # ordinary-use failures first
         got = f.get("error") or ("Python returned " + json.dumps(f.get("got"))[:300])
         out.append(f"{f['call']}\n  R returns {json.dumps(f.get('expected'))[:300]}\n  yours: {got}")
     return "\n".join(out)
 
 
-def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS) -> dict:
-    """Try to build a verified Python implementation of one R function; returns a record (never raises)."""
+def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, attempts: int = ATTEMPTS) -> dict:
+    """Try to build a verified Python implementation of one R function; returns a record (never raises).
+
+    The cases are built once.  The model gets up to ``attempts`` independent tries (fresh conversations: the sampled
+    code differs), each with up to ``rounds`` counterexample rounds; the first version that passes every ordinary-use
+    case (``difftest.label_core``) is accepted.  Cases that exercise odd input classes are reported, not required.
+    """
     rec: dict = {"function": fname, "package": package, "status": "error", "rounds": 0}
     try:
         probe = difftest.build_cases(fname, [f"{fname}(1:5)"], package)            # usage and source need no model
         calls = propose_calls(fname, package, probe.get("usage", ""), model)
         built = difftest.build_cases(fname, calls, package)
         cases = built["cases"]
-        rec.update(n_calls=len(calls), n_cases=len(cases))
-        if len(cases) < 3:
-            rec["status"] = "no_cases"                                              # R accepted fewer than three of the calls
+        core = [c for c in cases if c.get("core", True)]
+        rec.update(n_calls=len(calls), n_cases=len(cases), n_core=len(core))
+        if len(core) < 3:
+            rec["status"] = "no_cases"                                              # R accepted fewer than three ordinary calls
             return rec
         base = (f"R function `{package + '::' if package else ''}{fname}`\nUsage: {built['usage']}\n"
                 f"R source (may be a wrapper around compiled code):\n{built['source'][:SOURCE_LIMIT]}\n\n"
-                f"Example calls with R's results:\n{_describe(cases)}\n\n"
+                f"Example calls with R's results:\n{_describe(core)}\n\n"
                 f"Write `def r_{difftest.py_name(fname)}(...)`.")
-        messages = [{"role": "user", "content": base}]
-        code = ""
-        for rnd in range(1, rounds + 1):
-            raw = _llm.call(messages, _IMPL_SYSTEM, model=model, max_tokens=6000)
-            code = _code(raw)
-            res = difftest.run_python(code, fname, cases)
-            rec.update(rounds=rnd, passed=res.passed, total=res.total, code=code, failures=res.failures[:5])
-            if res.ok:
-                rec["status"] = "passed"
-                return rec
-            messages = [{"role": "user", "content": base},
-                        {"role": "assistant", "content": raw},
-                        {"role": "user", "content": f"{res.passed} of {res.total} cases pass. Failing cases:\n{_failures(res)}\n"
-                                                    "Return the complete corrected code."}]
-        rec["status"] = "failed"
+        best = None
+        for attempt_no in range(1, attempts + 1):
+            messages = [{"role": "user", "content": base}]
+            for rnd in range(1, rounds + 1):
+                raw = _llm.call(messages, _IMPL_SYSTEM, model=model, max_tokens=6000)
+                code = _code(raw)
+                res = difftest.run_python(code, fname, cases)
+                cur = dict(attempt=attempt_no, rounds=rnd, passed=res.passed, total=res.total, core_passed=res.core_passed,
+                           core_total=res.core_total, code=code, failures=res.failures[:5])
+                if best is None or (res.core_passed, res.passed) > (best["core_passed"], best["passed"]):
+                    best = cur
+                if res.ok_core:
+                    rec.update(cur, status="passed", exotic_passed=res.passed - res.core_passed,
+                               exotic_total=res.total - res.core_total)
+                    return rec
+                messages = [{"role": "user", "content": base},
+                            {"role": "assistant", "content": raw},
+                            {"role": "user", "content": f"{res.core_passed} of {res.core_total} ordinary cases pass. Failing cases:\n"
+                                                        f"{_failures(res)}\nReturn the complete corrected code."}]
+        rec.update(best, status="failed")
     except Exception as exc:
         rec["error"] = f"{type(exc).__name__}: {exc}"[:300]
     return rec

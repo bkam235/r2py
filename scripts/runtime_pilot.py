@@ -110,7 +110,8 @@ def summarise(rows: list[dict]) -> str:
         sub = [r for r in done if r.get("tag", "").startswith(tag)]
         if sub:
             out.append(f"  {tag:18s} {sum(r['status'] == 'passed' for r in sub)}/{len(sub)} pass")
-    out.append("failed: " + "; ".join(f"{r['function']} ({r.get('passed', 0)}/{r.get('total', 0)})" for r in rows if r["status"] == "failed"))
+    out.append("failed: " + "; ".join(f"{r['function']} ({r.get('core_passed', r.get('passed', 0))}/{r.get('core_total', r.get('total', 0))})"
+                                   for r in rows if r["status"] == "failed"))
     out.append("no usable cases / errors: " + ", ".join(r["function"] for r in rows if r["status"] in ("no_cases", "error")))
     return "\n".join(out)
 
@@ -121,11 +122,24 @@ def main() -> int:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--only", nargs="+")
     ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--retry", action="store_true", help="only functions that did not pass before; results go to results_v2.jsonl")
     args = ap.parse_args()
-    results = OUT / "results.jsonl"
+    v1 = OUT / "results.jsonl"
+    results = OUT / ("results_v2.jsonl" if args.retry else "results.jsonl")
+    old = [json.loads(l) for l in v1.read_text(encoding="utf-8").splitlines() if l.strip()] if v1.exists() else []
     rows = [json.loads(l) for l in results.read_text(encoding="utf-8").splitlines() if l.strip()] if results.exists() else []
+    if args.retry:   # a function's current record is its latest: v2 where it was retried, else v1
+        latest = {r["function"]: r for r in old}
+        latest.update({r["function"]: r for r in rows})
+        rows_all = list(latest.values())
+    else:
+        rows_all = rows
     if args.mode == "summary":
-        print(summarise(rows))
+        v2 = OUT / "results_v2.jsonl"
+        latest = {r["function"]: r for r in old}
+        if v2.exists():
+            latest.update({json.loads(l)["function"]: json.loads(l) for l in v2.read_text(encoding="utf-8").splitlines() if l.strip()})
+        print(summarise(list(latest.values())))
         return 0
     cands = candidate_list()
     if args.only:
@@ -136,7 +150,11 @@ def main() -> int:
         print(len(cands), "candidates")
         return 0
     done = {r["function"] for r in rows}
-    todo = [c for c in cands if c[0] not in done][: args.limit]
+    if args.retry:
+        passed_before = {r["function"] for r in old if r["status"] == "passed"}
+        todo = [c for c in cands if c[0] not in passed_before and c[0] not in done][: args.limit]
+    else:
+        todo = [c for c in cands if c[0] not in done][: args.limit]
     OUT.mkdir(parents=True, exist_ok=True)
     print(f"{len(todo)} functions to try, {args.workers} workers", flush=True)
     ctx = multiprocessing.get_context("spawn")
@@ -146,9 +164,12 @@ def main() -> int:
             f.write(json.dumps(slim, default=str) + "\n")
             f.flush()
             print(f"[{i}/{len(todo)}] {rec['function']:24s} {rec['status']:9s} rounds {rec.get('rounds')} "
-                  f"{rec.get('passed', '-')}/{rec.get('total', '-')} {rec.get('error', '')[:60]}", flush=True)
+                  f"core {rec.get('core_passed', rec.get('passed', '-'))}/{rec.get('core_total', rec.get('total', '-'))} "
+                  f"(attempt {rec.get('attempt', '-')}) {rec.get('error', '')[:60]}", flush=True)
     rows = [json.loads(l) for l in results.read_text(encoding="utf-8").splitlines() if l.strip()]
-    print("\n" + summarise(rows))
+    latest = {r["function"]: r for r in old}
+    latest.update({r["function"]: r for r in rows})
+    print("\n" + summarise(list(latest.values())))
     return 0
 
 
