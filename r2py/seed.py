@@ -177,6 +177,7 @@ def translate(
     bare: bool = False,
     gate: bool = True,
     style: str | None = None,
+    runtime=None,
     lessons: list | None = None,
 ) -> tuple[str, dict[str, tuple[int, int]]]:
     """Translate an R script to Python via a single whole-file LLM call.
@@ -194,7 +195,7 @@ def translate(
         messages = [{"role": "user", "content": f"```r\n{r_clean}\n```"}]
         system_prompt = _BARE_SYSTEM_PROMPT if style == "bare" else _PLANNED_SYSTEM_PROMPT
     else:
-        prompt_parts = _build_prompt(script_map, library, no_seeds=no_seeds)
+        prompt_parts = _build_prompt(script_map, library, no_seeds=no_seeds, runtime=runtime)
         messages = [{"role": "user", "content": "\n\n".join(prompt_parts)}]
         system_prompt = _SYSTEM_PROMPT
 
@@ -219,6 +220,8 @@ def translate(
         sidecar_filename=sidecar_filename,
         script_relpath=script_relpath,
     )
+    if runtime is not None:
+        python_source = runtime.sync(python_source)      # the managed block of the verified functions the code calls
     from .stage2.sentinel_mapper import (
         map_entities_to_lines, insert_sentinels, flatten_entity_line_map,
         SentinelMappingError,
@@ -276,6 +279,7 @@ def _build_prompt(
     script_map: "ScriptMap",
     library: "PatternLibrary",
     no_seeds: bool = False,
+    runtime=None,
 ) -> list[str]:
     """Build the user prompt for whole-file translation."""
     from .types import EntityKind
@@ -399,6 +403,10 @@ def _build_prompt(
             "## R construct warnings (language-level pitfalls in this script):\n"
             + construct_notes
         )
+
+    section = runtime.prompt_section(script_map.source or "") if runtime is not None else ""
+    if section:
+        parts.append("### Verified Python implementations of R functions this script calls\n" + section)
 
     return parts
 

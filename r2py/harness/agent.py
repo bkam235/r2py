@@ -122,6 +122,8 @@ def reason(
     best_score = score_report.aggregate
     report = score_report
     history: list[str] = []   # the audit findings are pinned in the turn (build_agent_turn), not kept here
+    runtime = getattr(harness, "runtime", None)
+    runtime_section = runtime.prompt_section(getattr(script_map, "source", "") or "") if runtime is not None else ""
     located: set[str] = set()  # entities already probed for the point where Python departs from R
     if locate:
         _loc_note = _locate_note(harness, best_source, report, located)
@@ -141,6 +143,10 @@ def reason(
     )
     if not replace_entity:
         system_prompt = _prompt.without_replace_entity(system_prompt)
+    if runtime_section:
+        system_prompt += ("\n\nVerified R functions: when the turn lists Python implementations of R functions, call them "
+                          "(`r_<name>(...)`) instead of reimplementing the R function. The harness keeps their code in a block "
+                          "between `# r2py:runtime:begin` and `# r2py:runtime:end`; never edit, define or import them.")
 
     print(f"[Agent]   Starting reasoning loop (model={model}, score={best_score:.3f}, "
           f"threshold={score_threshold}, max_steps={max_steps})")
@@ -210,6 +216,7 @@ def reason(
             entity_metadata=entity_metadata,
             sidecar_filename=getattr(harness, "_sidecar_filename", ""),
             audit_feedback=audit_feedback,
+            runtime_section=runtime_section,
         )
 
         if repair_eid is not None:
@@ -364,6 +371,11 @@ def reason(
             if shim_restored:
                 print("[Agent]   Data shim block was altered; restored the original")
                 _stat("outcome", f"{action_type}:shim_restored")
+            if runtime is not None:   # the managed block of verified functions follows what the code references
+                synced = runtime.sync(new_source)
+                if synced != new_source:
+                    _stat("outcome", f"{action_type}:runtime_block_synced")
+                new_source = synced
 
             # R allows named arguments before positional ones; Python does not, and the model
             # keeps writing it. Reordering is meaning-preserving, so do it -- and say so, so the

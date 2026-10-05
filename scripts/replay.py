@@ -37,6 +37,7 @@ POLICIES = {
     "entity_only": dict(entity_repair=True, escalate_after=10 ** 6),
     "entity_esc_ew3": dict(entity_repair=True, escalate_after=2, entity_width=3),   # three repairs per failing entity
     "beam3": dict(entity_repair=False, escalate_after=None, width=3, beam=dict(rounds=3, steps=4)),   # restart from the best states
+    "rewrite_rt": dict(entity_repair=False, escalate_after=None, runtime=str(ROOT / "work/runtime/pilot")),   # verified R functions offered
     "rewrite_loc": dict(entity_repair=False, escalate_after=None, locate=True),     # the harness locates the first diverging call
     "rewrite_w3": dict(entity_repair=False, escalate_after=None, width=3),   # three independent loops, best wins
 }
@@ -102,10 +103,17 @@ def run_one(task: dict) -> dict:
             with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
                 shutil.copytree(Path(task["library"]), Path(tmp) / "lib")
                 lib = PatternLibrary(Path(tmp) / "lib")
+                policy = dict(POLICIES[task["policy"]])
+                runtime_dir = policy.pop("runtime", None)
+                store = None
+                if runtime_dir:
+                    from r2py.runtime.store import RuntimeStore
+                    store = RuntimeStore(runtime_dir)
+
                 def new_harness():
                     return HarnessTools(sm, lib, model=cfg["model"], data_compare=cfg["data_compare"],
                                         timeout_s=cfg["timeout_s"],
-                                        sidecar_filename=f"{Path(task['script']).stem}.r2py_data.json")
+                                        sidecar_filename=f"{Path(task['script']).stem}.r2py_data.json", runtime=store)
                 harness = new_harness()
                 trajectory.begin(out_dir / "trajectories" / f"{Path(task['script']).stem}.{task['policy']}.{task['sample']}.jsonl",
                                  script=task["script"], policy=task["policy"], sample=task["sample"])
@@ -120,7 +128,6 @@ def run_one(task: dict) -> dict:
                 except Exception:
                     pass
                 drain_agent_stats()
-                policy = dict(POLICIES[task["policy"]])
                 width = policy.pop("width", 1)
                 beam_cfg = policy.pop("beam", None)
                 harnesses = [harness] + [new_harness() for _ in range(width - 1)]

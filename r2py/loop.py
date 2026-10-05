@@ -101,6 +101,7 @@ def run_loop(
     agent_width: int = DEFAULT_AGENT_WIDTH,
     agent_entity_width: int = 1,
     agent_locate: bool = False,
+    runtime_dir: "str | Path | None" = None,
     **verify_kwargs,
 ) -> TranslateResult:
     """Cheap path → reasoning agent escalation loop.
@@ -141,6 +142,11 @@ def run_loop(
 
     verify_kwargs["timeout_s"] = timeout_s
 
+    runtime = None
+    if runtime_dir:
+        from .runtime.store import RuntimeStore
+        runtime = RuntimeStore(runtime_dir)
+
     def _new_harness() -> HarnessTools:
         return HarnessTools(
             script_map, library,
@@ -149,6 +155,7 @@ def run_loop(
             timeout_s=timeout_s,
             sidecar_filename=_sidecar_fn or "",
             verify_kwargs=verify_kwargs,
+            runtime=runtime,
         )
 
     harness = _new_harness()
@@ -221,6 +228,7 @@ def run_loop(
             sidecar_filename=_sidecar_fn,
             script_relpath=_script_relpath,
             style=seed_style,
+            runtime=runtime,
         )
         alt_seed, alt_decomp = _verify_seed(
             alt_seed, alt_elmap, script_map, stage4,

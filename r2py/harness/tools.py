@@ -43,8 +43,10 @@ class HarnessTools:
         timeout_s: float = 60,
         sidecar_filename: str = "",
         verify_kwargs: dict | None = None,
+        runtime=None,
     ):
         self._script_map = script_map
+        self.runtime = runtime   # verified R-function store (r2py.runtime.store), or None
         self._library = library
         self._model = model
         self._data_compare = data_compare
