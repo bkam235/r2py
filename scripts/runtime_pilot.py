@@ -24,6 +24,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+LOCATE = False     # --locate: tell the model where inside the R function its Python first departs
 OUT = ROOT / "work/runtime/pilot_v2"   # the first pilot (work/runtime/pilot) validated serialised values; see the plan
 SIDE_EFFECTS = {
     "library", "require", "requireNamespace", "suppressPackageStartupMessages", "data", "plot", "print", "cat", "message",
@@ -79,7 +80,7 @@ def failing_entity_sites() -> list[dict]:
 
 
 def hard_task(args: tuple) -> dict:
-    name, pkg, source, span = args
+    name, pkg, source, span, locate, out_dir = args
     from dotenv import load_dotenv
     load_dotenv(ROOT / ".env", override=True)
     from r2py import heldout as ho
@@ -89,9 +90,10 @@ def hard_task(args: tuple) -> dict:
     cfg = man["protocol"]["translate"]
     mined = difftest.mine_cases(source, tuple(span), name, pkg)
     with ho.pinned_llm(cfg["model"], ho.llm_settings(man)):
-        rec = propose.attempt(name, pkg, cfg["model"], rounds=8, attempts=4, mined=mined, source_limit=15000, budget_s=1800)
+        rec = propose.attempt(name, pkg, cfg["model"], rounds=8, attempts=4, mined=mined, source_limit=15000, budget_s=1800,
+                              locate=locate)
     rec["tag"] = "failing entity (hard pass)"
-    propose.save(rec, OUT)
+    propose.save(rec, Path(out_dir))
     return rec
 
 
@@ -161,8 +163,14 @@ def main() -> int:
     ap.add_argument("--limit", type=int)
     ap.add_argument("--only", nargs="+")
     ap.add_argument("--workers", type=int, default=6)
+    ap.add_argument("--locate", action="store_true", help="hard mode: add the step-by-step locator to the repair messages")
+    ap.add_argument("--out-dir", help="directory for results and accepted code (default work/runtime/pilot_v2)")
     ap.add_argument("--retry", action="store_true", help="only functions that did not pass before; results go to results_v2.jsonl")
     args = ap.parse_args()
+    global OUT, LOCATE
+    LOCATE = args.locate
+    if args.out_dir:
+        OUT = Path(args.out_dir)
     v1 = OUT / "results.jsonl"
     results = OUT / ("results_v2.jsonl" if args.retry else "results.jsonl")
     old = [json.loads(l) for l in v1.read_text(encoding="utf-8").splitlines() if l.strip()] if v1.exists() else []
@@ -188,7 +196,7 @@ def main() -> int:
         print(f"{len(sites)} failing-entity functions: {[x['function'] for x in sites]}", flush=True)
         ctx = multiprocessing.get_context("spawn")
         with ctx.Pool(min(args.workers, max(1, len(sites)))) as pool, hard.open("a", encoding="utf-8") as f:
-            for rec in pool.imap_unordered(hard_task, [(x["function"], x["package"], x["source"], x["span"]) for x in sites]):
+            for rec in pool.imap_unordered(hard_task, [(x["function"], x["package"], x["source"], x["span"], args.locate, str(OUT)) for x in sites]):
                 f.write(json.dumps({k: v for k, v in rec.items() if k != "code"}, default=str) + "\n")
                 f.flush()
                 print(f"{rec['function']:22s} {rec['status']:9s} mined {rec.get('n_mined')} core {rec.get('core_passed', '-')}/{rec.get('core_total', '-')} "

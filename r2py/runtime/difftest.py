@@ -224,7 +224,11 @@ def mine_cases(r_source: str, span: tuple[int, int], fname: str, package: str | 
         if not f.exists():
             return []
         out = json.loads(f.read_text(encoding="utf-8"))
-    return out if isinstance(out, list) else []
+    out = out if isinstance(out, list) else []
+    setup = "".join(lines[:start])[:60000]
+    for m in out:
+        m["setup"] = setup          # the script up to the entity: the locator re-runs the call in this environment
+    return out
 
 
 MUTANT = "  [first argument:"

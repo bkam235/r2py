@@ -14,7 +14,7 @@ import time
 from pathlib import Path
 
 from ..stage2 import llm as _llm
-from . import difftest
+from . import difftest, locate_fn
 
 ROUNDS = 5          # counterexample rounds per attempt
 ATTEMPTS = 3        # independent attempts (fresh conversations) per function
@@ -75,15 +75,30 @@ def _failures(res: difftest.Result, n: int = 3) -> str:
     return "\n".join(out)
 
 
+def _locate(fname: str, package: str | None, code: str, res: difftest.Result, cases: list[dict], cache: dict) -> str:
+    """The locator's sentence for the first failing ordinary case, ending in a newline; empty if it cannot say."""
+    by_call = {c["call"]: c for c in cases}
+    for f in res.failures:
+        if f.get("core", True) and f["call"] in by_call and "error" not in f:       # a crash has its own message
+            try:
+                note = locate_fn.explain(fname, package, code, by_call[f["call"]], cache)
+            except Exception:
+                note = None
+            call = f["call"][:80]
+            return ("Where it goes wrong (the harness ran R's code and yours step by step on `" + call + "`): " + note + chr(10)) if note else ""
+    return ""
+
+
 def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, attempts: int = ATTEMPTS,
-            mined: list[dict] | None = None, source_limit: int = SOURCE_LIMIT, budget_s: float = BUDGET_S) -> dict:
+            mined: list[dict] | None = None, source_limit: int = SOURCE_LIMIT, budget_s: float = BUDGET_S,
+            locate: bool = False) -> dict:
     """Try to build a verified Python implementation of one R function; returns a record (never raises).
 
     The cases are built once.  The model gets up to ``attempts`` independent tries (fresh conversations: the sampled
     code differs), each with up to ``rounds`` counterexample rounds; the first version that passes every ordinary-use
     case (``difftest.label_core``) is accepted.  Cases that exercise odd input classes are reported, not required.
     """
-    rec: dict = {"function": fname, "package": package, "status": "error", "rounds": 0}
+    rec: dict = {"function": fname, "package": package, "status": "error", "rounds": 0, "locate": locate}
     try:
         probe = difftest.build_cases(fname, [f"{fname}(1:5)"], package)            # usage and source need no model
         calls = propose_calls(fname, package, probe.get("usage", ""), model)
@@ -103,6 +118,7 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
                 f"Example calls with R's results:\n{_describe(core)}\n\n"
                 f"Write `def r_{difftest.py_name(fname)}(...)`.")
         best = None
+        probe_cache: dict = {}
         deadline = time.monotonic() + budget_s
         for attempt_no in range(1, attempts + 1):
             if time.monotonic() > deadline:
@@ -122,10 +138,13 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
                     rec.update(cur, status="passed", exotic_passed=res.passed - res.core_passed,
                                exotic_total=res.total - res.core_total)
                     return rec
+                where = ""
+                if locate:     # the harness probes both sides and says where inside the R function the Python first departs
+                    where = _locate(fname, package, code, res, cases, probe_cache)
                 messages = [{"role": "user", "content": base},
                             {"role": "assistant", "content": raw},
                             {"role": "user", "content": f"{res.core_passed} of {res.core_total} ordinary cases pass. Failing cases:\n"
-                                                        f"{_failures(res)}\nReturn the complete corrected code."}]
+                                                        f"{_failures(res)}\n{where}Return the complete corrected code."}]
         rec.update(best or {}, status="failed")
     except Exception as exc:
         rec["error"] = f"{type(exc).__name__}: {exc}"[:300]
