@@ -97,6 +97,26 @@ def hard_task(args: tuple) -> dict:
     return rec
 
 
+def fix_task(args: tuple) -> dict:
+    """One candidate from the agent's fixes: mined real call + the fixed fragment as evidence."""
+    name, pkg, source, span, hint_text, out_dir = args
+    from dotenv import load_dotenv
+    load_dotenv(ROOT / ".env", override=True)
+    from r2py import heldout as ho
+    from r2py.runtime import difftest, propose
+
+    man = ho.load_manifest(str(ROOT / "experiments/dev_run/manifest.json"))
+    cfg = man["protocol"]["translate"]
+    package = None if pkg in ("base", "stats", "utils", "") else pkg
+    mined = difftest.mine_cases(source, tuple(span), name, package)
+    with ho.pinned_llm(cfg["model"], ho.llm_settings(man)):
+        rec = propose.attempt(name, package, cfg["model"], rounds=6, attempts=3, mined=mined, source_limit=15000, budget_s=1200,
+                              locate=True, hint=hint_text)
+    rec["tag"] = "agent fix"
+    propose.save(rec, Path(out_dir))
+    return rec
+
+
 def function_exists(name: str, pkg: str) -> bool:
     import tempfile
     from r2py.stage0.sandbox.r_sandbox import RSandbox
@@ -159,7 +179,7 @@ def summarise(rows: list[dict]) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("mode", choices=("candidates", "run", "summary", "hard"))
+    ap.add_argument("mode", choices=("candidates", "run", "summary", "hard", "fixes"))
     ap.add_argument("--limit", type=int)
     ap.add_argument("--only", nargs="+")
     ap.add_argument("--workers", type=int, default=6)
@@ -187,6 +207,34 @@ def main() -> int:
         if v2.exists():
             latest.update({json.loads(l)["function"]: json.loads(l) for l in v2.read_text(encoding="utf-8").splitlines() if l.strip()})
         print(summarise(list(latest.values())))
+        return 0
+    if args.mode == "fixes":
+        from r2py.runtime import mine_fixes
+        from r2py.runtime.store import RuntimeStore
+        files = glob.glob(str(ROOT / "work/replay*/trajectories/*.jsonl")) + glob.glob(str(ROOT / "work/smoke/*/py/trajectories/*.jsonl"))
+        fixes = mine_fixes.fixes_from_trajectories(files, ROOT / "work/replay/script_maps")
+        known = {e.function for e in RuntimeStore(ROOT / "work/runtime/pilot_v2").entries.values()}
+        by = mine_fixes.candidates(fixes, known)
+        fx_out = ROOT / "work/runtime/pilot_v2_fixes"
+        done = {json.loads(l)["function"] for l in (fx_out / "results.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()}             if (fx_out / "results.jsonl").exists() else set()
+        tasks = []
+        for fn, fs in sorted(by.items()):
+            best = max(fs, key=lambda f: (f.score_after - f.score_before))
+            pkg = "base" if best.package in ("", "base", "stats", "utils") else best.package
+            if fn in done or (args.only and fn not in args.only) or not function_exists(fn, pkg):
+                continue
+            tasks.append((fn, pkg, best.r_source, best.span, mine_fixes.hint(best), str(fx_out)))
+        tasks = tasks[: args.limit]
+        fx_out.mkdir(parents=True, exist_ok=True)
+        print(f"{len(by)} candidate functions from the agent's fixes, {len(tasks)} to try", flush=True)
+        ctx = multiprocessing.get_context("spawn")
+        with ctx.Pool(args.workers) as pool, (fx_out / "results.jsonl").open("a", encoding="utf-8") as f:
+            for i, rec in enumerate(pool.imap_unordered(fix_task, tasks), 1):
+                f.write(json.dumps({k: v for k, v in rec.items() if k != "code"}, default=str) + "\n")
+                f.flush()
+                print(f"[{i}/{len(tasks)}] {rec['function']:26s} {rec['status']:9s} mined {rec.get('n_mined')} "
+                      f"core {rec.get('core_passed', '-')}/{rec.get('core_total', '-')} attempt {rec.get('attempt', '-')} round {rec.get('rounds')} "
+                      f"{rec.get('error', '')[:60]}", flush=True)
         return 0
     if args.mode == "hard":
         sites = [x for x in failing_entity_sites() if function_exists(x["function"], x["package"])]

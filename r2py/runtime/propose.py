@@ -91,7 +91,7 @@ def _locate(fname: str, package: str | None, code: str, res: difftest.Result, ca
 
 def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, attempts: int = ATTEMPTS,
             mined: list[dict] | None = None, source_limit: int = SOURCE_LIMIT, budget_s: float = BUDGET_S,
-            locate: bool = False) -> dict:
+            locate: bool = False, hint: str = "") -> dict:
     """Try to build a verified Python implementation of one R function; returns a record (never raises).
 
     The cases are built once.  The model gets up to ``attempts`` independent tries (fresh conversations: the sampled
@@ -116,7 +116,7 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
         base = (f"R function `{package + '::' if package else ''}{fname}`\nUsage: {built['usage']}\n"
                 f"R source (may be a wrapper around compiled code):\n{built['source'][:source_limit]}\n\n"
                 f"Example calls with R's results:\n{_describe(core)}\n\n"
-                f"Write `def r_{difftest.py_name(fname)}(...)`.")
+                + (hint + "\n\n" if hint else "") + f"Write `def r_{difftest.py_name(fname)}(...)`.")
         best = None
         probe_cache: dict = {}
         deadline = time.monotonic() + budget_s
