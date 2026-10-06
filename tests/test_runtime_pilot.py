@@ -179,3 +179,25 @@ class TestMinedCases(unittest.TestCase):
         text = propose._describe(mined)
         self.assertIn("arguments evaluated in the script", text)
         self.assertIn("[5, 1, 4, 2, 3, 9]", text)
+
+
+@pytest.mark.skipif(not _has_r(), reason="R not available")
+class TestPurity(unittest.TestCase):
+    def test_value_functions_are_pure_and_control_flow_or_system_functions_are_not(self):
+        res = difftest.impure_calls([("median", None), ("try", None), ("local", None), ("system2", None), ("sort", None)])
+        self.assertEqual(res["median"], [])            # stop() inside is an error message, not a side effect
+        self.assertEqual(res["sort"], [])
+        self.assertIn("tryCatch", res["try"])
+        self.assertTrue(res["local"])                  # evaluates an unevaluated expression
+        self.assertTrue(res["system2"])
+
+    def test_store_skips_impure_entries(self):
+        import json
+        import tempfile
+        from pathlib import Path
+        from r2py.runtime.store import RuntimeStore
+        with tempfile.TemporaryDirectory() as d:
+            for name, impure in (("a", []), ("b", ["system2"])):
+                (Path(d) / f"base__{name}.json").write_text(json.dumps({"function": name, "package": None, "status": "passed", "impure": impure}), encoding="utf-8")
+                (Path(d) / f"base__{name}.py").write_text(f"def r_{name}(x):\n    return x\n", encoding="utf-8")
+            self.assertEqual(sorted(RuntimeStore(d).entries), ["r_a"])

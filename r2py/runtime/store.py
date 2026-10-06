@@ -53,7 +53,7 @@ class RuntimeStore:
             except (OSError, json.JSONDecodeError):
                 continue
             code_file = f.with_suffix(".py")
-            if rec.get("status") == "passed" and code_file.exists():
+            if rec.get("status") == "passed" and code_file.exists() and not rec.get("impure"):
                 e = Entry(rec["function"], rec.get("package"), code_file.read_text(encoding="utf-8"))
                 self.entries[e.py] = e
 

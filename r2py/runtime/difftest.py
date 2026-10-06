@@ -231,6 +231,58 @@ def mine_cases(r_source: str, span: tuple[int, int], fname: str, package: str | 
     return out
 
 
+# R functions that make a function something other than a value computed from values: they run commands or touch files and the
+# session, take their arguments unevaluated (substitute, match.call, sys.call, eval), or catch and handle errors.  A Python
+# function cannot reproduce those by receiving evaluated arguments, so a function whose body uses one is not a runtime candidate
+# however well it does on tests (try, local, force and suppressPackageStartupMessages all "passed" as vacuous wrappers).
+IMPURE = ("system", "system2", "shell", "Sys.setenv", "Sys.setlocale", "Sys.sleep", "Sys.time", "Sys.getenv", "file", "url", "readLines",
+          "readline", "download.file", "unlink", "setwd", "options", "set.seed", "library", "require", "loadNamespace",
+          "requireNamespace", "attachNamespace", "assign", "<<-", "substitute", "match.call", "sys.call", "sys.function", "eval",
+          "evalq", "quote", "bquote", "on.exit", "tryCatch", "try", "withCallingHandlers", "browseURL", "sink", "environment<-",
+          "parent.frame", "sys.frame", "delayedAssign", "forceAndCall", "local")
+
+_R_PURITY = r"""
+fns <- jsonlite::fromJSON(r"----(__SPECS__)----", simplifyVector = FALSE)
+res <- lapply(fns, function(sp) {
+  if (!is.null(sp$pkg) && nzchar(sp$pkg)) suppressPackageStartupMessages(library(sp$pkg, character.only = TRUE))
+  f <- tryCatch(get(sp$name, mode = "function"), error = function(e) NULL)
+  if (is.null(f)) return(list(name = sp$name, impure = list()))
+  meth <- tryCatch(utils::getS3method(sp$name, "default", optional = TRUE), error = function(e) NULL)
+  bodies <- list(body(f)); if (!is.null(meth)) bodies[[2]] <- body(meth)
+  # Names used outside error/warning messages: `substitute(x)` inside stop() only labels the message.
+  cond <- c("stop", "warning", "message", "stopifnot", "gettextf", "gettext", ".Deprecated", ".Defunct", "packageStartupMessage")
+  walk <- function(e) {
+    if (is.call(e)) {
+      h <- e[[1]]
+      hn <- if (is.symbol(h)) as.character(h) else ""
+      if (hn %in% cond) return(character(0))
+      return(c(hn, unlist(lapply(as.list(e)[-1], function(a) if (identical(a, quote(expr = ))) character(0) else walk(a))), if (!is.symbol(h)) walk(h)))
+    }
+    if (is.symbol(e)) return(as.character(e))
+    character(0)
+  }
+  used <- unique(unlist(lapply(bodies, walk)))
+  list(name = sp$name, impure = as.list(intersect(used, unlist(IMPURE))))
+})
+cat("@@", as.character(jsonlite::toJSON(res, auto_unbox = TRUE)), "@@")
+"""
+
+
+def impure_calls(specs: list[tuple[str, str | None]], timeout_s: float = 180) -> dict[str, list[str]]:
+    """For each (function, package): the impure/lazy R functions its body (and default method) uses."""
+    from ..stage0.sandbox.r_sandbox import RSandbox
+
+    program = _R_PURITY.replace("__SPECS__", json.dumps([{"name": n, "pkg": p or ""} for n, p in specs]))
+    program = "IMPURE <- c(" + ", ".join(json.dumps(x) for x in IMPURE) + ")\n" + program
+    with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
+        out = RSandbox().run(program, workdir=Path(tmp), capture=frozenset({EffectClass.STDOUT}), timeout_s=timeout_s).stdout
+    try:
+        res = json.loads(out.split("@@")[1])
+    except (IndexError, json.JSONDecodeError):
+        return {}
+    return {r["name"]: list(r.get("impure") or []) for r in res}
+
+
 MUTANT = "  [first argument:"
 
 

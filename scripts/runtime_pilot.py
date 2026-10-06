@@ -179,7 +179,7 @@ def summarise(rows: list[dict]) -> str:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("mode", choices=("candidates", "run", "summary", "hard", "fixes"))
+    ap.add_argument("mode", choices=("candidates", "run", "summary", "hard", "fixes", "purity"))
     ap.add_argument("--limit", type=int)
     ap.add_argument("--only", nargs="+")
     ap.add_argument("--workers", type=int, default=6)
@@ -207,6 +207,20 @@ def main() -> int:
         if v2.exists():
             latest.update({json.loads(l)["function"]: json.loads(l) for l in v2.read_text(encoding="utf-8").splitlines() if l.strip()})
         print(summarise(list(latest.values())))
+        return 0
+    if args.mode == "purity":      # annotate accepted functions that are not values-from-values (see difftest.IMPURE)
+        from r2py.runtime import difftest
+        d = Path(args.out_dir) if args.out_dir else OUT
+        recs = {f: json.loads(f.read_text(encoding="utf-8")) for f in sorted(d.glob("*.json"))}
+        specs = [(r["function"], r.get("package")) for r in recs.values() if r.get("status") == "passed"]
+        impure = difftest.impure_calls(specs)
+        for f, r in recs.items():
+            if r.get("status") == "passed":
+                r["impure"] = impure.get(r["function"], [])
+                f.write_text(json.dumps(r, indent=1, default=str), encoding="utf-8")
+        print(f"{len(specs)} accepted functions; impure (excluded from the store): "
+              + "; ".join(f"{k} {v}" for k, v in impure.items() if v))
+        print("pure:", ", ".join(k for k, v in impure.items() if not v))
         return 0
     if args.mode == "fixes":
         from r2py.runtime import mine_fixes
