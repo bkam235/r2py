@@ -76,8 +76,20 @@ class TestDivergence(unittest.TestCase):
 
     def test_vectors_match_as_a_whole_and_text_values_compare_canonically(self):
         r = [_p(1, "f(x)", [1.234567, 2.345678, 3.456789]), _p(2, "g(y)", "<a> <b/> </a>")]
-        self.assertIsNone(L.find_divergence(r, [_p(1, "h", [3.456789, 1.234567, 2.345678]), _p(2, "t", "<a><b/></a>")]))
+        self.assertIsNone(L.find_divergence(r, [_p(1, "h", [1.234567, 2.345678, 3.456789]), _p(2, "t", "<a><b/></a>")]))
         self.assertEqual(L.find_divergence(r[:1], [_p(1, "h", [1.234567, 2.345678, 9.9])])["expr"], "f(x)")
+
+    def test_the_same_values_in_another_order_is_an_order_divergence(self):
+        r = [_p(1, "sort(x)", [1.234567, 2.345678, 3.456789])]
+        d = L.find_divergence(r, [_p(1, "np.sort(x)[::-1]", [3.456789, 2.345678, 1.234567])])
+        self.assertEqual(d["kind"], "order")
+        self.assertIn("different order", L.format_divergence("e", d, 1, 1))
+
+    def test_small_integer_index_vectors_are_not_matched_by_pooled_values(self):
+        r = [_p(1, "sample(idx)", [2, 4, 1, 3])]
+        py = [_p(1, "arange", [0, 1, 2, 3]), _p(2, "choice", [2, 2, 4, 1])]
+        self.assertEqual(L.find_divergence(r, py)["expr"], "sample(idx)")
+        self.assertIsNone(L.find_divergence(r, py + [_p(3, "mine", [2, 4, 1, 3])]))
 
     def test_load_probes_tolerates_garbage(self):
         self.assertEqual(L.load_probes(None), [])

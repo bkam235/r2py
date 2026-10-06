@@ -210,14 +210,36 @@ def find_divergence(r_probes: list[dict], py_probes: list[dict]) -> dict | None:
     """
     py_numbers = [x for p in py_probes for x in _numbers(p["value"])]
     py_texts = {_fp.canonical_text(t) for p in py_probes for t in _fp.texts(p["value"])}
+    py_vectors = [vec for p in py_probes for _path, vec in _fp.numeric_fields(p["value"])]
     for p in r_probes:
         nums = _numbers(p["value"])
         if nums and len(nums) <= 2 and all(_fp.significant_digits(x) <= 2 for x in nums):
             continue
+        if len(nums) >= 2:
+            # A vector is reproduced only as the same sequence: pooled values would match any index vector made of small
+            # integers (they occur everywhere), and the order of a result is part of the result.
+            if any(_same_sequence(nums, v) for v in py_vectors):
+                continue
+            kind = "order" if any(len(v) == len(nums) and _same_sequence(sorted(nums), sorted(v)) for v in py_vectors) else "missing"
+            return {"expr": p["expr"], "numbers": nums, "texts": _fp.texts(p["value"]), "kind": kind,
+                    "closest": _closest(nums, py_probes) if kind == "missing" else _same_values(nums, py_probes)}
         ok = _reproduced(p, py_numbers, py_texts)
         if ok is False:
-            return {"expr": p["expr"], "numbers": nums, "texts": _fp.texts(p["value"]),
+            return {"expr": p["expr"], "numbers": nums, "texts": _fp.texts(p["value"]), "kind": "missing",
                     "closest": _closest(nums, py_probes)}
+    return None
+
+
+def _same_sequence(a: list[float], b: list[float]) -> bool:
+    return len(a) == len(b) and all(abs(x - y) <= ATOL + RTOL * abs(y) for x, y in zip(a, b))
+
+
+def _same_values(nums: list[float], py_probes: list[dict]) -> dict | None:
+    """The Python vector holding the same values as R's in another order (for the 'order' divergence)."""
+    for p in py_probes:
+        for _path, vec in _fp.numeric_fields(p["value"]):
+            if len(vec) == len(nums) and _same_sequence(sorted(nums), sorted(vec)):
+                return {"expr": p["expr"], "numbers": vec, "error": 0.0}
     return None
 
 
@@ -244,7 +266,10 @@ def format_divergence(entity: str, d: dict | None, n_r: int, n_py: int) -> str:
     text = (f"Entity {entity}: the first call where your Python departs from R is `{d['expr']}`. R computes {shown}, and no "
             f"value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).")
     c = d.get("closest")
-    if c:
+    if c and d.get("kind") == "order":
+        text = (f"Entity {entity}: the first call where your Python departs from R is `{d['expr']}`. R computes {shown}; your Python computes "
+                f"the same values in a different order: {_preview(c['numbers'])} from `{c['expr']}`.")
+    elif c:
         text += f" The nearest Python value is {_preview(c['numbers'])} from `{c['expr']}` (relative error {c['error']:.3g})."
     return text
 

@@ -107,6 +107,9 @@ def explain(fname: str, package: str | None, code: str, case: dict, cache: dict 
     text = (f"Inside R's `{fname}`, the first step where your Python departs from R is `{d['expr']}`: R computes {shown} and no value of "
             "that kind occurs anywhere in your Python for this call (the steps before it were reproduced).")
     c = d.get("closest")
-    if c:
+    if c and d.get("kind") == "order":
+        text = (f"Inside R's `{fname}`, the first step where your Python departs from R is `{d['expr']}`: R computes {shown}; your Python "
+                f"computes the same values in a different order: {_loc._preview(c['numbers'])} (from `{c['expr']}`).")
+    elif c:
         text += f" The nearest value your Python computes is {_loc._preview(c['numbers'])} from `{c['expr']}` (relative error {c['error']:.3g})."
     return text
