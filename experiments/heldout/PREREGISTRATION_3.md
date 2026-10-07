@@ -1,12 +1,16 @@
 # Pre-registration 3: Does a library trained by the improved harness improve translation scores?
 
-**Status:** DRAFT, for review. Not yet registered; no training or scoring has been run under it.
+**Status:** Registered 2026-10-07, prior to data collection. The three open points (feature set, scoring
+checkpoints, parallel training) were confirmed by the user.
 **Date:** 2026-10-07
 **Relates to:** `PREREGISTRATION_2.md` (first held-out experiment, closed: primary p = 0.0569, null;
 see `RESULTS.md`). That document and its results stay unedited.
-**Harness at drafting:** `a88d6b0f9892` (`heldout.harness_hash()`), commit `885c833`. The hash and
-commit actually registered are filled in when this draft is approved and committed; any later
-change to `r2py/` invalidates the run (see "Deviations").
+**Registered harness hash:** `a88d6b0f9892` (`heldout.harness_hash()`), code at commit `885c833`.
+**Manifest:** `experiments/heldout/manifest_3.json`, sha256
+`51a1808c3d522a06775d905307710672c0929f0570127f97387391a240d891db` (held-out and training lists
+identical to `manifest.json`; `translate` block adds width 3, locate on, runtime store
+`work/runtime/pilot_v2`, entity repair off, planned seeds 0). Work directory: `work/heldout3`.
+Any later change to `r2py/` invalidates the run (see "Deviations").
 
 ## Why a third registration
 
@@ -171,7 +175,5 @@ A change to the harness hash after registration invalidates the run and needs a 
 Operational interruptions (outage, Ctrl-C, resume) are not deviations; they are recorded in
 `train_events.jsonl`.
 
-## To confirm before registration
-1. Feature set above (width 3, locator on, runtime store frozen at 28 functions; others off).
-2. Scoring checkpoints: `empty`, `half`, `full` first, the other two optional.
-3. Parallel training with 5 workers (staleness accepted) versus sequential (about 65 h or more).
+## Confirmed by the user at registration
+Feature set as above; scoring `empty`, `half`, `full` first; parallel training with 5 workers.

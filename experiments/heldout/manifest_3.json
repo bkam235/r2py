@@ -1,0 +1,2011 @@
+{
+  "protocol": {
+    "seed": 20260919,
+    "n_heldout": 60,
+    "per_package": 6,
+    "n_intervals": 4,
+    "reps": 3,
+    "translate": {
+      "model": "openrouter:google/gemma-4-31b-it",
+      "score_threshold": 0.9,
+      "n_bare_seeds": 2,
+      "n_structured_seeds": 2,
+      "max_iters": 20,
+      "max_stalls": 10,
+      "timeout_s": 60,
+      "data_compare": "auto",
+      "agent_width": 3,
+      "entity_width": 1,
+      "entity_repair": false,
+      "locate": true,
+      "runtime_dir": "work/runtime/pilot_v2",
+      "n_planned_seeds": 0
+    },
+    "primary_test": {
+      "name": "wilcoxon_signed_rank",
+      "endpoint": "targetable_entity_mean",
+      "before": "empty",
+      "after": "full",
+      "alternative": "greater",
+      "alpha": 0.05,
+      "zero_method": "wilcox"
+    },
+    "n_train": 256
+  },
+  "pool_dir": "work/inputs/harvested",
+  "pool_size": 3988,
+  "checkpoints": {
+    "empty": 0,
+    "f1of4": 64,
+    "half": 128,
+    "f3of4": 192,
+    "full": 256
+  },
+  "stratum_quotas": {
+    "data_wrangling": 10,
+    "date_time": 10,
+    "graphics": 10,
+    "html": 10,
+    "stats_objects": 10,
+    "other": 10
+  },
+  "train_packages": {
+    "ModelMetrics": 6,
+    "base64enc": 1,
+    "broom": 6,
+    "bslib": 6,
+    "caret": 6,
+    "clock": 6,
+    "diagram": 6,
+    "downlit": 5,
+    "dplyr": 6,
+    "e1071": 6,
+    "fansi": 6,
+    "farver": 6,
+    "ggplot2": 6,
+    "googledrive": 6,
+    "gtable": 6,
+    "highr": 1,
+    "hms": 1,
+    "htmltools": 6,
+    "htmlwidgets": 4,
+    "isoband": 6,
+    "lava": 6,
+    "lubridate": 6,
+    "magrittr": 6,
+    "openssl": 6,
+    "pROC": 6,
+    "prettyunits": 5,
+    "prodlim": 6,
+    "proxy": 3,
+    "purrr": 6,
+    "ragg": 6,
+    "ranger": 4,
+    "recipes": 6,
+    "reshape2": 5,
+    "rmarkdown": 6,
+    "rvest": 6,
+    "sass": 6,
+    "sessioninfo": 5,
+    "shape": 6,
+    "shiny": 6,
+    "sparsevctrs": 6,
+    "systemfonts": 6,
+    "textshaping": 5,
+    "tidyr": 6,
+    "timeDate": 6,
+    "timechange": 1,
+    "tinytex": 1,
+    "utf8": 4,
+    "uuid": 1,
+    "vctrs": 6,
+    "xml2": 6
+  },
+  "uncovered_packages": [
+    "RColorBrewer",
+    "blob",
+    "cachem",
+    "conflicted",
+    "rematch"
+  ],
+  "heldout": [
+    {
+      "script": "purrr__vignette__purrr_s3.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "9f62c791d4b403ea2a66a0f61f6b076a74266a2c212a3ea408f4cace73654429"
+    },
+    {
+      "script": "blob__rd_example__blob_Rd.R",
+      "package": "blob",
+      "stratum": "data_wrangling",
+      "sha256": "c2d7e3a53472d47608a145be3820b972d2ad729f44c062583192166ca23a978e"
+    },
+    {
+      "script": "magrittr__rd_example__aliases_Rd.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "923d23696964e9478bdfdfb0e3461cf087da142325bf9b680b18a301d018dd37"
+    },
+    {
+      "script": "tidyr__vignette__tidy-data_s3.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "e6ecb144edcb3fe0864058d253801fbc894e9b247d1158d8a88426995008851f"
+    },
+    {
+      "script": "rematch__rd_example__re_match_Rd.R",
+      "package": "rematch",
+      "stratum": "data_wrangling",
+      "sha256": "3fe9cdf849b1ac672cfa0f11eec75eb47193ec080bf5b672e3561033c685c8b5"
+    },
+    {
+      "script": "utf8__rd_example__utf8_print_Rd.R",
+      "package": "utf8",
+      "stratum": "data_wrangling",
+      "sha256": "3d8f93b35ab12c3b0e7860bfd0a6f20d1efb2e07863ed3653258747daca11ba9"
+    },
+    {
+      "script": "sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "adcef77a800c84aed0326ba21ffe50b4fe8832899975472501b1b025c8fa1b19"
+    },
+    {
+      "script": "dplyr__vignette__colwise_chunk17.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "ce35aeb0f69416f8113512328c5f0bf009431a8e53041847aa9dfd417ba48889"
+    },
+    {
+      "script": "reshape2__rd_example__melt_array_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "b3e324b4ea22dd080bf27dd9205787713aae8e43b28a5ba2daa568536e17f4d3"
+    },
+    {
+      "script": "vctrs__rd_example__new_date_Rd.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "03975763dec7774f108cb801f3cc98332be5caf92f7d5792c14a61625ca4ae49"
+    },
+    {
+      "script": "lubridate__vignette__lubridate_s18.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "be2810b34f3b3ec23e7032f1a2a16aec6fe8b32ecd9bcf7705ba39fe4e2b4102"
+    },
+    {
+      "script": "timeDate__rd_example__earlyCloseNYSE_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "b770305a84c285991b585ee7d60f9523ae3bbc3bb2536822850fb3e019014947"
+    },
+    {
+      "script": "hms__rd_example__hms_Rd.R",
+      "package": "hms",
+      "stratum": "date_time",
+      "sha256": "ed2b95bf84bf82677507fc670bcdc0f4ae485ba083a01238ffbb1fb3858a4b6e"
+    },
+    {
+      "script": "clock__rd_example__zoned_time_info_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "c5b9b5df55c90bf998338bf317e22a343e72aa92c93b7d65e1c4ee7204f8c0cf"
+    },
+    {
+      "script": "timechange__rd_example__time_add_Rd.R",
+      "package": "timechange",
+      "stratum": "date_time",
+      "sha256": "aa720f4fc850ce6e13af94080fe7b68d0fa2472d959f750139291f1d2eeda7e3"
+    },
+    {
+      "script": "lubridate__vignette__lubridate_s19.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "5702c0f8f9713df6a2847b2e33542663ecd03a99b79175b9584d81f494098ae0"
+    },
+    {
+      "script": "timeDate__rd_example__base-sample_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "bfda1cfca8541b8d44492e14896f0f8e3b4a9a079ddce2b5aa7fead640f776cc"
+    },
+    {
+      "script": "hms__rd_example__round_hms_Rd.R",
+      "package": "hms",
+      "stratum": "date_time",
+      "sha256": "2cd57ad4cf8a9e5ac36c01ca77db4227fdc7efe96da0fcb3837a591f3ed2d35e"
+    },
+    {
+      "script": "clock__vignette__faq_s28.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "c4a30d7b39395133b813209e56af65bcf79df98c9d8af9e1cf5e1693d2b4aec2"
+    },
+    {
+      "script": "timechange__rd_example__time_update_Rd.R",
+      "package": "timechange",
+      "stratum": "date_time",
+      "sha256": "7845a4313889396a4a020bcb53c3e562c5d48ca5251705b0f20a95f79321335e"
+    },
+    {
+      "script": "shape__rd_example__femmecol_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "0d921543bc01b5c3bbbc6cd5c7c419ed1c316e8cbc58c3fa473bad4a2e63f462"
+    },
+    {
+      "script": "textshaping__vignette__c_interface.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "c878957abb2e23f3ff6204919c490211a6d88c68b5a19f264181af933ac997c1"
+    },
+    {
+      "script": "isoband__rd_example__isobands_Rd.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "ab75c8316955022a34a5c924ba4a3b86295db6280c3116c469985aa0425644e5"
+    },
+    {
+      "script": "ggplot2__rd_example__aes_linetype_size_shape_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "e1e5c9ced573708970f63b7c382940ba26c34e048bcd21ce5dfcb17f06963e51"
+    },
+    {
+      "script": "ragg__rd_example__agg_png_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "742b413c2cf60e16053564d58765c6b90a5d6d730d41a6fb0be4c13ef97d3e43"
+    },
+    {
+      "script": "systemfonts__rd_example__font_feature_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "32ba3c9ddb535c5001b0022ecbf180da539b2f3d2186fc8bd1a40ba976657dac"
+    },
+    {
+      "script": "gtable__rd_example__gtable_show_layout_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "92aff234114cb986cf11155ab5fee5de2e77b01f83742af9662e73c2838cc48f"
+    },
+    {
+      "script": "RColorBrewer__rd_example__ColorBrewer_Rd.R",
+      "package": "RColorBrewer",
+      "stratum": "graphics",
+      "sha256": "14945dff09a7f0b57de36bdbbddf7fe557b293d4765dbdd4db79042b2d9bce19"
+    },
+    {
+      "script": "diagram__rd_example__diagram_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "00c42e790b92454038f79ad6ce13aa9ddcd37dd883fb0828a6d0c630f5a14463"
+    },
+    {
+      "script": "farver__rd_example__decode_colour_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "646c34166e069c1e632965aa7ceb7b669ea51f9bbc823122aa5df7bb0510f4b2"
+    },
+    {
+      "script": "shiny__rd_example__httpResponse_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "be40bc3b088559ee0631a0ba2d0e0d01bee11bdd1ad37d94510f72d64fcb27d8"
+    },
+    {
+      "script": "highr__rd_example__hilight_Rd.R",
+      "package": "highr",
+      "stratum": "html",
+      "sha256": "a63cda19be480989ec40aa6f9ab78914e191212039853e4aa4ea4475c839b9b1"
+    },
+    {
+      "script": "rmarkdown__rd_example__output_format_dependency_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "a9d619af097e5a872a34ba4211e38d600c788c5ef9f9774cd92fb0c2fe1eb0e9"
+    },
+    {
+      "script": "xml2__rd_example__xml_cdata_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "af1b75cc1191e0abb2f48aaf5b8f89a9a7343acc1411d32de4a38509e9cad64f"
+    },
+    {
+      "script": "sass__rd_example__sass_layer_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "1996e7b8f6fb7538f50a2bd443edfc5aeec953c34cae57c996637c808e1bd450"
+    },
+    {
+      "script": "htmlwidgets__vignette__develop_advanced_chunk6.R",
+      "package": "htmlwidgets",
+      "stratum": "html",
+      "sha256": "e11c8ba04914f18b1560eeb07f4740267d2a52e8b69c11d3d55e066a3c1c54df"
+    },
+    {
+      "script": "htmltools__rd_example__capturePlot_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "b2f5f0f4c95cd0bc99466df17f186836a8661382c76fe8fbc0838ed87a9505cb"
+    },
+    {
+      "script": "bslib__rd_example__layout_columns_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "f908d6b2ee13db505f279471f9605e100d3678a34fe907d226b57ee8e0ee83fb"
+    },
+    {
+      "script": "rvest__vignette__rvest_s9.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "013fff10a60e6482ca929188b92e1803b94863b96b0890244a43f640457efc18"
+    },
+    {
+      "script": "downlit__rd_example__downlit_md_path_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "c03303cd9775518f1d0dd85e8af2b9c682c50febb84c26c25a2c3c8b7811e0fe"
+    },
+    {
+      "script": "caret__rd_example__createDataPartition_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "5a180d3541f212e77d6b331b83c0b24e70da924f2186a313799a05bbce4e16ae"
+    },
+    {
+      "script": "lava__vignette__influencefunction_s34.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "89db545361f9e0714fa30639dc5c2c3e0183c4d8811d208e5f4cd25b44aba3a2"
+    },
+    {
+      "script": "pROC__rd_example__geom_polygon_auc_roc_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "6f8b44e4ccc7cb1005796dc3dc7aef466c22c88a999bbc3d616320857762d6d1"
+    },
+    {
+      "script": "broom__rd_example__glance_factanal_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "28a1205c37bdbc152719f0d4084889b3e69fbac7acad2665cf598000f9732121"
+    },
+    {
+      "script": "ranger__rd_example__predict_ranger_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "4dfce7081e7d3c27d16e41313c5fa356cf11656f001234cc4e1fe9c19c183281"
+    },
+    {
+      "script": "proxy__rd_example__dist_Rd.R",
+      "package": "proxy",
+      "stratum": "stats_objects",
+      "sha256": "bab4c71a560701226c22eceb06b69079c1f807708ca8c26ec6cedb6b448ef139"
+    },
+    {
+      "script": "prodlim__rd_example__predict_prodlim_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "5721c39ed9ec07e47f550117444be72b594d8a2d5733485043afda3b181ea946"
+    },
+    {
+      "script": "recipes__rd_example__step_integer_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "57ff5d7f0dfa99d26d30991b43cf769257b4dd233b952a871f861367627ba966"
+    },
+    {
+      "script": "e1071__rd_example__hamming_window_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "c0d1060a3843862a4b51201932f17ca0c54e09970852e73cfaf69dfc08d7c232"
+    },
+    {
+      "script": "ModelMetrics__rd_example__ppv_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "0a1bfa75e673d20fb7e363b1e38754dc63161b7515a48dd66907b485d2eabde1"
+    },
+    {
+      "script": "cachem__rd_example__cache_layered_Rd.R",
+      "package": "cachem",
+      "stratum": "other",
+      "sha256": "0a9478171500c2472596d70e47b1592693d8882c17818b214de94a40ccc41630"
+    },
+    {
+      "script": "tinytex__rd_example__tlmgr_Rd.R",
+      "package": "tinytex",
+      "stratum": "other",
+      "sha256": "8536a818a6a8c39e666c76950e81c0a0c6a9c936860fd0569821294a081f5b70"
+    },
+    {
+      "script": "openssl__rd_example__base64_encode_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "4615d39fa964a938fb71baff8c4f42deb82255fe71dbec7082bda69e6348c458"
+    },
+    {
+      "script": "googledrive__rd_example__drive_create_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "5932790c0004a260087d68ca82f5647872a4fbc4ae0e5c82dd799e5da1d2894d"
+    },
+    {
+      "script": "fansi__rd_example__make_styles_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "b2dc36892295a016474a788fe955e9ba34493343d699c6b3f632e98c51f6874d"
+    },
+    {
+      "script": "prettyunits__rd_example__pretty_bytes_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "4f695eba7dc5928ed8c32914b251c22aa902d6116a1bbc8a583c0ad601834be7"
+    },
+    {
+      "script": "base64enc__rd_example__base64_Rd.R",
+      "package": "base64enc",
+      "stratum": "other",
+      "sha256": "9b8cc6728834bdc5236037ae25f4be57ceb6fa3e5303510b1dab977c56431da3"
+    },
+    {
+      "script": "conflicted__rd_example__conflicts_prefer_Rd.R",
+      "package": "conflicted",
+      "stratum": "other",
+      "sha256": "d5e65dedf1f6dd66e337d2438a3c6b050797feb2ce3056d61d661d9895f1c5e4"
+    },
+    {
+      "script": "sessioninfo__rd_example__package_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "c251ff744c9569be94b56a1473427431f7bd8d44e6512c62e82c457a90f5721a"
+    },
+    {
+      "script": "uuid__rd_example__UUID_Rd.R",
+      "package": "uuid",
+      "stratum": "other",
+      "sha256": "272925c598801c4229626a400a90d74b07ad50f16f5ee68eba22014cb65f6bf9"
+    }
+  ],
+  "train": [
+    {
+      "script": "isoband__vignette__isoband1_chunk1.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "cb09965b9712df536361826222e3b713cde4e5e6fcd65dfa317c3244d2363ad1"
+    },
+    {
+      "script": "base64enc__rd_example__dataURI_Rd.R",
+      "package": "base64enc",
+      "stratum": "other",
+      "sha256": "de1e958d62fb55a635f355b783b728fa817daa050b3723e9e1c5a53c96883742"
+    },
+    {
+      "script": "clock__rd_example__posixt-group_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "7ec7a94f4b7f4f45dfac93c5ff80b0f566827ea80ce09f9dc46f097b776e866d"
+    },
+    {
+      "script": "timechange__rd_example__time-zones_Rd.R",
+      "package": "timechange",
+      "stratum": "date_time",
+      "sha256": "073eed725b3b0d4bc7c76d1b89e8200bee8095667c88d29a10b72923221835ed"
+    },
+    {
+      "script": "ggplot2__vignette__ggplot2-in-packages_s13.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "292b3134d400df59a965805f90587f620973705bcf8a04ad93007cd334b52c58"
+    },
+    {
+      "script": "vctrs__vignette__type-size_s23.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "b9f5d03ef8c6f5271f5aa8da378cbd5c9a7dfa92f09f5de0a42fef1b95e4649c"
+    },
+    {
+      "script": "gtable__rd_example__bind_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "f27d113d376d96941a210b5593e81368fb2a5ed703e1d9689972aa7d88d4e890"
+    },
+    {
+      "script": "highr__vignette__highr-custom_s2.R",
+      "package": "highr",
+      "stratum": "html",
+      "sha256": "796828b7ed54e383afc99809178f9d84128d94f4dd63a9c5de29a860760371b1"
+    },
+    {
+      "script": "proxy__rd_example__registry_Rd.R",
+      "package": "proxy",
+      "stratum": "stats_objects",
+      "sha256": "cf8b5f14310989805ff317a6cbe0e6442568606a880e6080a9443991d035eab6"
+    },
+    {
+      "script": "lubridate__rd_example__date_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "bc47da294e801e217a50221dbd667139082fabd86f611862940a995e47c943b6"
+    },
+    {
+      "script": "magrittr__rd_example__pipe-eager_Rd.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "73d9340ef83b67318c62853242c6c8da00a996e87cc75bca7e05709c5ef17f55"
+    },
+    {
+      "script": "systemfonts__rd_example__shape_string_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "94cbb55599ff539adf8a6fcd4ff298596691a4f5f5b05c6e5f29e20690a68e48"
+    },
+    {
+      "script": "rvest__vignette__rvest_s17.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "0bbb057530e9ff339684f10be977150fd62cbbab18f556ad76715a2d63b0b5a4"
+    },
+    {
+      "script": "googledrive__rd_example__drive_about_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "9abda2b2d6ba7abca4e34eacdb5456dad02f7ca1c0ee43198af81726ac7b8f5a"
+    },
+    {
+      "script": "htmltools__rd_example__tagQuery_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "a61e84efb6d0b2d488f0a4e8a0ff5c5ec580556944781a61d80c8876df826077"
+    },
+    {
+      "script": "openssl__rd_example__encrypt_envelope_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "eb0ce4a7dd1f30bc2e10880860eace62d2a7dc337a9796dc9b5b003bf68a0a9c"
+    },
+    {
+      "script": "ModelMetrics__rd_example__tnr_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "bc61e900d6db93e8492eb892312516dfe06227a8f0a115f6d7250ef58065f8bf"
+    },
+    {
+      "script": "purrr__vignette__purrr_s10.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "da54b391518e8999b8cac82e855d2a086fb96d8c8a4b1e1dee7e4010472564c4"
+    },
+    {
+      "script": "recipes__vignette__Roles_chunk11.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "9e52ec0346663e3ac9490f299a64c12c95bb7fe8c3a31ce725c96eba112c4409"
+    },
+    {
+      "script": "tidyr__rd_example__separate_rows_Rd.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "2c2d344081a87ea2d656193dd9347a8af31eb00b86acf2cb200d44bf3a8e55f1"
+    },
+    {
+      "script": "pROC__rd_example__plot_ci_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "db22ef818cc9c1b8d4d5fb5840d0438a4e3a388398c1d05364778b86576cac22"
+    },
+    {
+      "script": "e1071__rd_example__sigmoid_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "45ee6f5f3e0672b167d83c385def625f1831a66072f6ff52f90cea74cbcdb579"
+    },
+    {
+      "script": "uuid__rd_example__UUIDgenerate_Rd.R",
+      "package": "uuid",
+      "stratum": "other",
+      "sha256": "b21e3933ef02ef57ece08e436eda2e69b519f774bb5286817e3033ae0f5c172b"
+    },
+    {
+      "script": "ranger__rd_example__hshrink_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "9cb0a39806b218af16924633df816cf753d122637ce76f33580bc59a53ec3853"
+    },
+    {
+      "script": "utf8__rd_example__utf8_format_Rd.R",
+      "package": "utf8",
+      "stratum": "data_wrangling",
+      "sha256": "28a4a484903af9a043af722acd5da305f5f44ffd82c12434d4bc197b293d2a3e"
+    },
+    {
+      "script": "farver__rd_example__native_encoding_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "b2bc90e32f438fbfbfbedcca209dbfd478676ed797461a27c5240aacfaa942d8"
+    },
+    {
+      "script": "prodlim__rd_example__row_match_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "a84ec8ec606773688cb5e248dc97c2c76646d8743b3741eb9fde8a33f56eecb8"
+    },
+    {
+      "script": "sessioninfo__rd_example__external_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "195dcd5a3c81c20dd86cb0325c72fbc9009c39da856b9dd8a4bf3dc79599a67f"
+    },
+    {
+      "script": "sparsevctrs__rd_example__sparse_logical_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "7ff4add56e22b05582471153d7bd94f02ac2da024444367c6a6614091474ab8a"
+    },
+    {
+      "script": "bslib__rd_example__bs_get_variables_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "3cef44f704f814db775dd9a0590852ace50a4a0017de2f23e993d93f0a4f6f14"
+    },
+    {
+      "script": "caret__rd_example__lift_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "1ed3744cd0c128dee7381bcfb589f553dcc347503cbf381b93b15c5c2417497a"
+    },
+    {
+      "script": "ragg__rd_example__agg_webp_anim_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "ce1da297a723dcb68d347f36853446d168bebed7ce04575ec7040ec849add80a"
+    },
+    {
+      "script": "fansi__rd_example__substr_ctl_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "df74fedbde980fcf7d997ac11ba8ee2f438f064d1c61e1572eff8cd2d525aafc"
+    },
+    {
+      "script": "reshape2__rd_example__melt_list_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "40d293bad8557da354c473af3d7fc0bb49d86ac8bc1b543b6911340c1d6c91ab"
+    },
+    {
+      "script": "tinytex__rd_example__check_installed_Rd.R",
+      "package": "tinytex",
+      "stratum": "other",
+      "sha256": "0d0ec74d548570497743ba8e26836f60de3cc0433a44a56149959c4fa9302347"
+    },
+    {
+      "script": "dplyr__vignette__programming_chunk10.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "0de55d12ee214b0a0c5eb95fd861e5713795856257ca29af7800260790af4d61"
+    },
+    {
+      "script": "shiny__rd_example__observe_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "17372018d5b8a8d66005ce208f2a88f5573df44cd64070079c8036bb98826728"
+    },
+    {
+      "script": "xml2__rd_example__xml_dtd_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "cbf6c0e711a486a151397b57da20a34c1294f868dc66109d0d4a582a619320cb"
+    },
+    {
+      "script": "hms__rd_example__parse_hms_Rd.R",
+      "package": "hms",
+      "stratum": "date_time",
+      "sha256": "72d6ad28aff9bde5efa7f55937376cb57c94a852995e9cd661fb08827170bc3b"
+    },
+    {
+      "script": "prettyunits__rd_example__pretty_ms_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "dc470dc658a647e059c61bb356a2a14cba08b991c4deb75d5467ac8edb50d30a"
+    },
+    {
+      "script": "sass__rd_example__sass_options_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "e70fa45a5d9f1ed9eef0e82e7d2640601ac413d02e61b1ace38e371190ea0a0a"
+    },
+    {
+      "script": "htmlwidgets__vignette__develop_advanced_chunk5.R",
+      "package": "htmlwidgets",
+      "stratum": "html",
+      "sha256": "c73177c020b2a9be76daccb84a69685d9b46efa0a8f9c4bcdbebdcb511fa74a5"
+    },
+    {
+      "script": "timeDate__rd_example__timeDate-Calendar_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "c2ffd969c341b7848a2210f2ae8f8801619b4b42c9725dbf014c90445ae27238"
+    },
+    {
+      "script": "diagram__rd_example__textmulti_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "97670537d098876e0b4f6ed16a6e88acc7ce5095a83bc4636263615dfe23f230"
+    },
+    {
+      "script": "shape__rd_example__getellipse_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "96f6a07f7dd2d6f42806c02f398e0d268f5bca895a9f683a1414cb5b76c9e758"
+    },
+    {
+      "script": "rmarkdown__rd_example__pkg_file_lua_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "248e04353079636617bb2cbf078a9a38926517784c3bd6351d4d1b1285e27206"
+    },
+    {
+      "script": "downlit__rd_example__highlight_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "3d3734338270b411595f34f6ad278f2687b489e8be16c6083f64f9c8f2e702fa"
+    },
+    {
+      "script": "broom__rd_example__tidy_binWidth_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "f2272ed8938ffedbaf050444bf5ca06e28780f050fa2a4b8f04c3ffade1f2e12"
+    },
+    {
+      "script": "lava__rd_example__fplot_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "d293d1d436f5331fc833fef1a2f620bd3bf9de18c74e8c5e499a9cef08c5e4e2"
+    },
+    {
+      "script": "textshaping__vignette__c_interface_chunk1.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "43f6afb365ac0d496aec980a027fd31c1b32d12388604cbf19e9f7d071853eb8"
+    },
+    {
+      "script": "recipes__rd_example__step_YeoJohnson_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "235259c86027f802adf64e017abf65dbc3577e6208c6c24d2888d0394b9ca49c"
+    },
+    {
+      "script": "htmlwidgets__rd_example__JS_Rd.R",
+      "package": "htmlwidgets",
+      "stratum": "html",
+      "sha256": "028b9078811bad1ef99c317f7db47c20ef3b7e70e5b908f2da21df9f7e5c1e68"
+    },
+    {
+      "script": "purrr__rd_example__attr_getter_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "235ef5515eb90d2751188b6e95505c8732ed2cff4427abf1b834f186d51a046c"
+    },
+    {
+      "script": "googledrive__rd_example__drive_cp_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "d93c53fc802fadd6abd8894d46efda75a615f3e22bbe53e020df352210e00103"
+    },
+    {
+      "script": "fansi__rd_example__state_at_end_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "04869d69f01362459daf117343a352befeb3b2400ea4e1c9fdaef99757b75f83"
+    },
+    {
+      "script": "bslib__rd_example__layout_column_wrap_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "c7ab8db3e5a13f0940ae8a885b787655eca8a5e9b1d0d35dcaf9b81d1b6b803e"
+    },
+    {
+      "script": "caret__vignette__caret_s3.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "8bae9a77234a46c27d13a21952b8eb809def147d9bcdb39d296dcd8a3d3f11e7"
+    },
+    {
+      "script": "utf8__rd_example__utf8_encode_Rd.R",
+      "package": "utf8",
+      "stratum": "data_wrangling",
+      "sha256": "7620a685313d2c81813dd6e7a8ff0a0ee9ece4ded1718833b9f3973fe115b92f"
+    },
+    {
+      "script": "shape__rd_example__Arrowhead_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "93b0f09a0cf626e4c7c29879b22d458b2cdad8e7bf82e34db54bc8b8de4877b6"
+    },
+    {
+      "script": "downlit__rd_example__evaluate_and_highlight_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "c160dfb1894715d330169891322d4523a7fd639a2e28fd0009570e48faf3e112"
+    },
+    {
+      "script": "pROC__rd_example__coords_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "03f25decf68cfa41029b3a4703b77c8515bb4beb44b24b6c31d2ce3d88984b4c"
+    },
+    {
+      "script": "proxy__rd_example__rowSums_dist_Rd.R",
+      "package": "proxy",
+      "stratum": "stats_objects",
+      "sha256": "979a908ea1756267e0c55b749de64b500eee1f9d7838411321615c0651dad76e"
+    },
+    {
+      "script": "diagram__rd_example__textround_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "b4ed9b0af2838de9bca58143f7d70548c6ff5207fb58ee8255c987331cb346c9"
+    },
+    {
+      "script": "ggplot2__rd_example__position_jitterdodge_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "2d81e86e1ae52a7c1be5619c70214cbdea0f8aadb4bf5dd9082065043cff44c8"
+    },
+    {
+      "script": "prettyunits__rd_example__time_ago_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "4cc2fb1c099ed0a5fc80d7ee21f107e296a087c27d4dd2260710560a0638e87e"
+    },
+    {
+      "script": "openssl__rd_example__keygen_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "0f10ccab0382e761ef429eeba3caf7e5bf3e748b116515eabc315a9625c359e5"
+    },
+    {
+      "script": "htmltools__rd_example__tagAppendAttributes_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "f1d3f45afdc8fc7567155e5fa83ab47dcf77e717ec1521dabc640300abe101d1"
+    },
+    {
+      "script": "xml2__rd_example__xml_children_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "80715597d9a5bd65c1c001dcb9e526dc45e8c9f896c45c5b93aa6b3522ca9d38"
+    },
+    {
+      "script": "reshape2__rd_example__parse_formula_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "757e8eeed15ef2049e2b3f13848e45cf19f1a2e893fdb4b318f8204a9f4faebf"
+    },
+    {
+      "script": "sparsevctrs__rd_example__sparse_which_na_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "0432434f5f2eb14628f4ab519a432b4938bb16c8a4441cd708d3ae00de2b5873"
+    },
+    {
+      "script": "sessioninfo__rd_example__session_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "fbb3f926f3b5ee1afda79cb28feb2280d3a0d299507312eb7c3df08e38b6d85a"
+    },
+    {
+      "script": "sass__rd_example__sass_import_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "8faed1b68eb33c4bcc0d05d317d2e941c64191377b7cfb058c96485266e185af"
+    },
+    {
+      "script": "timeDate__rd_example__timeDate-midnightStandard_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "3d6ee449bf84e7769126c51ac93256e2db678409a4855f5f2397bfa4f20ff9a0"
+    },
+    {
+      "script": "shiny__rd_example__isolate_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "c0bc81deffe21ae7d4e33f655fd1daa4346e663dd355b4ace556a809170a90b0"
+    },
+    {
+      "script": "prodlim__rd_example__as_data_table_prodlim_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "676794ab82f91df8c9bab84fa42fb618cd788ff8b9167b9f20b01ed265d83b61"
+    },
+    {
+      "script": "dplyr__vignette__dplyr_s21.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "d001a931367fd6e7c9cd278c63fc560cf1145460fbf8900026fea7cd68dd799c"
+    },
+    {
+      "script": "gtable__rd_example__gtable_add_grob_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "d3b93751ea5bbe9bf2a754ffa7075f97ccdf5f076a40e4e9b2804f0a624c4fd0"
+    },
+    {
+      "script": "rvest__vignette__rvest_s7.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "526b3fd9d1fe51f52968a1b05578c3534c637a2a0347831da09d6043644faab5"
+    },
+    {
+      "script": "textshaping__rd_example__plot_shape_Rd.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "9b0b7b033f2b2d2b9ec926b308a2467747421221bbd8b4045d261d856d206edb"
+    },
+    {
+      "script": "systemfonts__rd_example__glyph_raster_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "8012abdcfca6ea93676fb07870e3f442a12ffc482d5ee5e1bcc3149eee79cf6e"
+    },
+    {
+      "script": "magrittr__vignette__tradeoffs_s12.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "be0393bb2f77ecf9684991d44e5240d7f6f13e6bee2278e0132e9390aeccb043"
+    },
+    {
+      "script": "ragg__rd_example__agg_ppm_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "8c3a33005fd80294cbd3f870ec729f4875178ff8f654ea8a36445a402181e27f"
+    },
+    {
+      "script": "vctrs__vignette__s3-vector_s6.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "590c9d24417c9b6ff6283b460e4fb2f3091b537762dc47c765b3ae8dc4b2ce4f"
+    },
+    {
+      "script": "clock__rd_example__seq_clock_time_point_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "37c1bc6429788b348f2d5fb553555fc599f25b37a4ec5f7740838aaec0db8475"
+    },
+    {
+      "script": "ModelMetrics__rd_example__mse_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "80355920661632abae68387910b4d66d1a62d1ac14538ddca0823ed6ec139937"
+    },
+    {
+      "script": "lubridate__vignette__lubridate_s2.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "6664a8e56a674d1ade68c0208fd40e6b00f35beb82ad3f63d2d6ffa74583cb9a"
+    },
+    {
+      "script": "rmarkdown__vignette__lua-filters_s1.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "05467b63f382ab9f6b488c9bbc09cdb82ca59020913eed00d0ac2b4f9fa79d13"
+    },
+    {
+      "script": "broom__vignette__broom_chunk6.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "65428ec955f544cc2b872bbff90d174789527243e0abfbb3610d572e364cd982"
+    },
+    {
+      "script": "farver__rd_example__manip_channel_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "b0482185729d559636bf08fec253aaec81b4a1bdc9cd946c745ff8300e30ceeb"
+    },
+    {
+      "script": "isoband__vignette__isoband1_s5.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "aa99f053fd55892611653e0e5fcab3ed334b8966fe2fd25913ab91dce59f8cce"
+    },
+    {
+      "script": "ranger__rd_example__importance_pvalues_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "2e6b2830f22eefa14a79fdd67cb9a9f2881cbbc6be444d2023b527f9ff8ada38"
+    },
+    {
+      "script": "e1071__rd_example__read_matrix_csr_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "17735104adbcf7d4bd9595e946f0559df45e9727fdd5ead0daab7baa7c518009"
+    },
+    {
+      "script": "tidyr__vignette__pivot_s18.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "7693db3d1e3f762ac767c2997b76a287f258b22e67f484dcaec4282aeb6babd9"
+    },
+    {
+      "script": "lava__rd_example__csplit_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "0c0c504fd1eab34b6a4a4703efd8e414617dcaf994202e978694aa50a1484a48"
+    },
+    {
+      "script": "lava__vignette__nonlinear_s1.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "53859bfd50072d4b7c9b2873226cfb04eeaa2162d569a644feae16cff9185d1c"
+    },
+    {
+      "script": "diagram__rd_example__textempty_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "7c31910a6ef916b5ba234c264d9c97e431004fecacd59f6b0294d89578fa9b89"
+    },
+    {
+      "script": "rvest__rd_example__html_attr_Rd.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "5ff47d2414c0e4c94c307231dc8a9bab6a6241d6d8d75312755f652a6cb63b95"
+    },
+    {
+      "script": "shiny__rd_example__resourcePaths_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "26a39fc61a9909288c279643cef369d088ebe03710b77f93b31a3cebe6748432"
+    },
+    {
+      "script": "fansi__rd_example__strsplit_ctl_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "88a8336c39c4fa9afb64b091d543714ca959792e2a7c50ef0c20ed918155bc73"
+    },
+    {
+      "script": "rmarkdown__rd_example__pandoc_args_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "86caecf82f9ba4288546d007be68746813dea61d3051478fa913adf9286c91e8"
+    },
+    {
+      "script": "tidyr__vignette__tidy-data_s9.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "12db6ad986f2303beae4cc0e8d6362bd6347f3baeb06f44ffc4c7fb285b2018f"
+    },
+    {
+      "script": "gtable__rd_example__gtable_add_padding_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "7cb02c5223791a7f98bd3884574d6a7a395ee5eadec6cf11ab5f9f4db895305e"
+    },
+    {
+      "script": "prettyunits__rd_example__pretty_sec_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "0adfc36d8ae6de5c701ac50cf3e78f12e81a2ba4531acd11611ebe2d35198d3d"
+    },
+    {
+      "script": "magrittr__vignette__magrittr_s1.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "644465009ba73dc1d8546f8ccdda948cb76bcd28a0f155a63912989dbb966d22"
+    },
+    {
+      "script": "ggplot2__rd_example__geom_bin_2d_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "d8ca218b08ed10efef9a7ea398bc557ef5bb4addce570301da90f2139571b065"
+    },
+    {
+      "script": "proxy__vignette__overview.R",
+      "package": "proxy",
+      "stratum": "stats_objects",
+      "sha256": "ae4e9d5814d660b99cede35997819878d10f7a55b5c309567fcc9a0e24472a16"
+    },
+    {
+      "script": "ModelMetrics__rd_example__gini_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "1a4ee1f58509299e44512bb79adc201b4bb23a418b45d962b8133240d2a0b46c"
+    },
+    {
+      "script": "reshape2__rd_example__cast_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "a2553ca814bdf5603dc1f81b7d4b7d89ed3efcb1050a68351d80568abdcca44b"
+    },
+    {
+      "script": "sparsevctrs__vignette__design_s1.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "0ffa269f430de6decdd406ead143e730f3e0317e331db01ce5eb611b50425ee0"
+    },
+    {
+      "script": "shape__rd_example__plotcircle_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "e022b7b6d60cb01d15afcc64707886034f487d06068cecb9a969b8b3c5cd7525"
+    },
+    {
+      "script": "bslib__rd_example__bs_global_theme_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "626fa6ae752cf5affc7512e6d6d0470a335a9c404b5c65dec768be32132b8ade"
+    },
+    {
+      "script": "farver__rd_example__as_white_ref_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "a3b8c128110a29950483e84b2699bfc0b170ad51f3e90e46796b1b31528702c0"
+    },
+    {
+      "script": "e1071__rd_example__boxplot_bclust_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "a2186566988c1e542fa6c45a8a78c7e7c578ee4808aafd8cab4cfdbbdb5e8a63"
+    },
+    {
+      "script": "clock__vignette__clock_s13.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "dab20bb272669436f28cf663e9a5fae66b22235bbcfbba31e4511129c1d3a85e"
+    },
+    {
+      "script": "sass__rd_example__as_sass_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "0feefcc37c83a6a8b9e757759eb6625036790520a41e5b2581d84867e068ad47"
+    },
+    {
+      "script": "caret__rd_example__preProcess_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "71fbfc3c46c4e3256c35342712e4945a8196daa3bdc10e08d26eb7f2c15bb20e"
+    },
+    {
+      "script": "broom__rd_example__augment_survreg_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "090dabfda6ab10ae7d782ac99439daaaf9f7fe9ed2b6c814aca6606b19d8d09c"
+    },
+    {
+      "script": "googledrive__rd_example__shortcut_resolve_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "952064e5a05944e63930276869d2d2fb1f35623223e86f86eec95b1d7f101b72"
+    },
+    {
+      "script": "htmltools__rd_example__parseCssColors_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "78dca0cbb8e9c124a8f7ecc3558f653481c17b82d4c2ff52d385c7798e7b2a02"
+    },
+    {
+      "script": "purrr__rd_example__keep_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "13a67d67287ddc83c89d7e546bdf8521f9278ce2c9c623b087f2e2ede26d7204"
+    },
+    {
+      "script": "htmlwidgets__vignette__develop_advanced_chunk8.R",
+      "package": "htmlwidgets",
+      "stratum": "html",
+      "sha256": "dc87701adcb8e25cf3f77b1cd6879684f85a38131153d4c04557b9a2d732f2dc"
+    },
+    {
+      "script": "timeDate__rd_example__timeDate-Sequence_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "1470d43b370ef380e03f0f0d4a185c67bded872fc6a074d78b1fd1fb096781e8"
+    },
+    {
+      "script": "sessioninfo__rd_example__session_diff_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "e6a75b137fdf3c1813dec4154c3e230202ae748ce9e2e34918e8e1b124361782"
+    },
+    {
+      "script": "textshaping__rd_example__shape_text_Rd.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "540e85ba45eedeb49f8386d226ea0f9028af2666ba0cdc0cbdb136fcb1db3f80"
+    },
+    {
+      "script": "recipes__rd_example__step_filter_missing_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "4de4336cae745f41cb14dfb5f5c9e7c336e2d599abd87f4760254cf3e2ce1859"
+    },
+    {
+      "script": "lubridate__rd_example__hms_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "4e075334ef7d32693d968b73deb790c41272c27a321bf91246fb074ff54d19c0"
+    },
+    {
+      "script": "ragg__rd_example__agg_capture_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "950a5624e20a1a086e53bad40678f3e940a0460a5ff3cb1d98423010c8079abb"
+    },
+    {
+      "script": "ranger__rd_example__csrf_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "1ab1deb4bb700ff16bbc232864bc2a434dbdec9c883fcb1df22abebeba684884"
+    },
+    {
+      "script": "isoband__vignette__isoband1_s4.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "8855f5d1cabfba4f06925e4f368497a83ebd0b8b56816fdec89be46e6e4cf314"
+    },
+    {
+      "script": "pROC__rd_example__lines_roc_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "57b5ba36ff792c47c714fadde06510aa03db5db2682006cf98b8d3484e86d197"
+    },
+    {
+      "script": "vctrs__vignette__type-size_s17.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "44824dbf7302c2a425cdb906288c56c217e3b648225104f33a2ab8ccb0bcf2c1"
+    },
+    {
+      "script": "systemfonts__vignette__fonts_basics_chunk1.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "b20a14f90db2085ae0ee882f9d3f0fd2ec4e32a4eb724de842f8d084fcb0e0df"
+    },
+    {
+      "script": "openssl__rd_example__ec_dh_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "a72bbfb4dcf3d4a18c62c10568dce140704f63670b3f8d25a2f9f0af6981b109"
+    },
+    {
+      "script": "prodlim__rd_example__backGround_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "76cfb232bb63736be903508fdeb24e91433b468efc8c0984156d80a8d6810834"
+    },
+    {
+      "script": "utf8__rd_example__utf8_width_Rd.R",
+      "package": "utf8",
+      "stratum": "data_wrangling",
+      "sha256": "b50748691b55f35b16f312830059a5e5f07318893b3cd21e3bf56ae072758137"
+    },
+    {
+      "script": "xml2__rd_example__xml_attr_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "2ec8761462a3a702921fe4d1db906a3b095e7f77ada9abc00444576920316612"
+    },
+    {
+      "script": "downlit__rd_example__href_topic_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "d82c717c617407169bf46cdc22a7b24ed7db11fbc493c66a7b041f9b5c438ea7"
+    },
+    {
+      "script": "dplyr__rd_example__glimpse_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "721dbcba8ab19f8c2fc096e0af49021b9ccc1d2dcf173232de6e1e8c3a41e996"
+    },
+    {
+      "script": "textshaping__rd_example__lorem_text_Rd.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "64ba6a564ea8ec8e03403dc3bcbda54de2972024f996786a640fa5934c69fa00"
+    },
+    {
+      "script": "bslib__rd_example__page_fillable_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "dc58ae33f45366dba75cb77b5927e8e6815f4fe5790478d9b8c96e7129059520"
+    },
+    {
+      "script": "downlit__rd_example__autolink_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "512183f5d3dc2bf214390f2320ae61ba57e5a393b51cbc21fac0be29d23f9e6e"
+    },
+    {
+      "script": "openssl__vignette__bignum_s2.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "1c650da15c4bf6f8652c5c834f26fe42bd330865338efbf50e87c06860b84620"
+    },
+    {
+      "script": "htmlwidgets__rd_example__htmlwidgets-shiny_Rd.R",
+      "package": "htmlwidgets",
+      "stratum": "html",
+      "sha256": "82a4d1d3ad3008aa7bda37d6b7e1faa765822d8640150eed10a25b2e054c7bf9"
+    },
+    {
+      "script": "shape__rd_example__filledmultigonal_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "093670b392b8f2c115564872e3bf26cd1650a9b6d3e1df87ce411f23f612d196"
+    },
+    {
+      "script": "caret__rd_example__modelLookup_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "1ab421c439c0eb60ba4df9a0f01bf90561659c341b4136c8d5673de79c91d63c"
+    },
+    {
+      "script": "gtable__rd_example__gtable_add_cols_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "5aef1b7af476d52784fb6ac074f9d0c38158d7add6ab996a69b703457e9f5f46"
+    },
+    {
+      "script": "htmltools__rd_example__tagAddRenderHook_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "18ff3ad9587a735bace76c25f0fa3fd1ad8677d8b027784db8b3b270e6bcd74b"
+    },
+    {
+      "script": "timeDate__rd_example__methods-mathOps_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "cf832241c9d96fc3c119d3fbee3adbb2adf998530807970f652fa0f1bf6c8e75"
+    },
+    {
+      "script": "rvest__rd_example__html_table_Rd.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "b0a776d18cd08e0974ee1727486e86dc3bdce64c16147c25098f01ffef3c0da6"
+    },
+    {
+      "script": "lubridate__rd_example__period_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "aceaa269553641147746d0808a9c3d11e286f81c0033049c96daa0f90f595016"
+    },
+    {
+      "script": "sass__rd_example__output_template_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "ecba227fae3d74e83db0044d2f815017c6aab94abe4046e8cef9dc1f52a5b71b"
+    },
+    {
+      "script": "isoband__vignette__isoband3_s2.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "9b74d6dfdc2c7d6240a194c850dc908a8de0934cc8db15a394ff83ec5da1c896"
+    },
+    {
+      "script": "sparsevctrs__rd_example__sparse_lag_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "d80fc2a78ad8897751985b9a1f63022da833e23c43273c8cfb910f5e099c1592"
+    },
+    {
+      "script": "ggplot2__vignette__ggplot2-in-packages_s8.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "2bf6c65bd941d5c010f547a27e79c5475aaa194fe88d80e671424e4cdbeb4c2f"
+    },
+    {
+      "script": "xml2__rd_example__xml_type_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "1d2c19c83874199a688695ce2aa6f46197d2b47c77655737f4e827dccfeb23bd"
+    },
+    {
+      "script": "vctrs__vignette__s3-vector_s76.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "f7acf43a41ff62c802d2aa0b069cbf478d10cd282120d6fb76e9a5f34bee40be"
+    },
+    {
+      "script": "shiny__rd_example__actionButton_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "ef37cb43d895c4872259ecb94e294d13f4f04e96f340a4c18420a32e6fbcbfeb"
+    },
+    {
+      "script": "googledrive__rd_example__dribble-checks_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "a492bd67588e4ee45a6292a57580fda28f37f4d39082e6d3e8118afddc48af56"
+    },
+    {
+      "script": "reshape2__rd_example__colsplit_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "eec015d3a4f423dbb4c04db1cdae7eec9d0c40e11c51293e77ec47e3d20168b8"
+    },
+    {
+      "script": "pROC__rd_example__aSAH_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "f41567e44763d6141c0df32ab7a6b2a2ad554c109123672538865bd418031dd4"
+    },
+    {
+      "script": "broom__rd_example__augment_felm_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "89a139523acd2292b8c21c9590adea45451cc9bce6d3b383ab75d2890fdd6c7d"
+    },
+    {
+      "script": "e1071__rd_example__write_svm_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "82ecdd37f18c743c5f82f5d142c348fe42f5f16d55c751c6261810b4c41959ac"
+    },
+    {
+      "script": "utf8__rd_example__output_utf8_Rd.R",
+      "package": "utf8",
+      "stratum": "data_wrangling",
+      "sha256": "11a64aea71fbe3ec23a7487250f44e6516e947e440f680d6e77c890d9314c4aa"
+    },
+    {
+      "script": "prettyunits__rd_example__pretty_num_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "0e42a52a379a2862620155d39318a0eafa3f9fe6adc562d6f6b75f05b8dca24d"
+    },
+    {
+      "script": "farver__rd_example__convert_colour_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "45a48bda7cd369342592e6956d05c47e44ebff51cac7a9215ca549492bb40dbf"
+    },
+    {
+      "script": "sessioninfo__rd_example__python_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "175bf1b538b96b7f1b6aa6cddd1ae338332dd40cda44c51bb06640cd5f08e8de"
+    },
+    {
+      "script": "magrittr__vignette__tradeoffs_s1.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "6a2b86f883763c9c5fb0165aeecc0d5640cd11a1ff5867944e13e68a9b86bfec"
+    },
+    {
+      "script": "rmarkdown__rd_example__pandoc_available_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "fa4adcd9b5d1ac85283a61092e52ced273f4ff5729c32ffcaef8f8dcaddb56dd"
+    },
+    {
+      "script": "clock__vignette__recipes_s68.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "97b9cada2f9aa7c0635053e2dde30092c17048161308aa5d979876cde76ca25f"
+    },
+    {
+      "script": "lava__rd_example__scheffe_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "8578cdd0da4aacb848e565ff0f03bd628d9a753f77c23d5fd9843b4da9bff961"
+    },
+    {
+      "script": "ModelMetrics__rd_example__logLoss_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "9e2bdabc1eb4792da88ea9bdd6433ccac2345e061e2e839ad9a5e0e9050c773e"
+    },
+    {
+      "script": "dplyr__vignette__recoding-replacing_s22.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "881a2a52f0e94ad80a08cff9e16a6b6bc19694ebe833d82a80b028293321adb1"
+    },
+    {
+      "script": "ragg__rd_example__agg_webp_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "e532db5a605d18345845a0e82a78d1592321ace178c8ddd5ffefd077718012a9"
+    },
+    {
+      "script": "fansi__vignette__sgr-in-rmd_s6.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "1b7ce93da8e3079fc475f7a964677087155eb88e9aad4c1dd83175ab9c4ed271"
+    },
+    {
+      "script": "ranger__rd_example__deforest_Rd.R",
+      "package": "ranger",
+      "stratum": "stats_objects",
+      "sha256": "0bd080659473fee0aac0f1942e8c85f2112545bddf93cfacfcfc0dfaeb899056"
+    },
+    {
+      "script": "tidyr__rd_example__complete_Rd.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "d22ee322724c72055c9e0a18b51644cc5075b80fdb9da9a6cd1d7a5fa0d4c925"
+    },
+    {
+      "script": "diagram__rd_example__coordinates_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "c98fdc1939570d86e3e4af8e2bca9bfdbd67d89f2faadf2613bcc5b97b8ea5e1"
+    },
+    {
+      "script": "recipes__rd_example__step_rm_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "1a0ebdfea84d53032218e264a267c7e15c08cb58c713b0b7941ad362e1c52dad"
+    },
+    {
+      "script": "prodlim__rd_example__plotIllnessDeathModel_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "b20a2569adeef98d78db477eac9e44b8ab83ebe86ef23ae1a45defb817dffeb7"
+    },
+    {
+      "script": "purrr__rd_example__slowly_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "62903a235bbe53c45e29a858d3c02c47804483595c73b62fad143ae2ca8ebb7d"
+    },
+    {
+      "script": "systemfonts__rd_example__register_variant_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "31d335649ba194778d63b129895b63ac6f571abfa16aac9c42f3f93ca54609ec"
+    },
+    {
+      "script": "shiny__rd_example__modalDialog_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "a702e36ef0f0cd377dc234a262324e112726bdf371f597043f9c1b17bcc83f83"
+    },
+    {
+      "script": "fansi__rd_example__normalize_state_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "d7f036c9be4c56378a3f178486af949cd32e50e844e9f5c86caedd82129e6ad3"
+    },
+    {
+      "script": "ggplot2__rd_example__stat_summary_2d_Rd.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "3d348b48faafa6e291e87b48035fbfc6c8514095226553cc8ba5d65b81807399"
+    },
+    {
+      "script": "e1071__rd_example__matchClasses_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "57d1d368d2cfb4b7aa2bc0ed1237293c593bbe0c7e5c6152c5468eb79bba2a40"
+    },
+    {
+      "script": "sparsevctrs__rd_example__coerce-vector_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "9d363f427156362c8055c9ff0bfdfad4584014c7e368d05820aed030c183601b"
+    },
+    {
+      "script": "prettyunits__rd_example__vague_dt_Rd.R",
+      "package": "prettyunits",
+      "stratum": "other",
+      "sha256": "6eb7269a1d60d6f62fcdb8fd6dd2b741d3becd25a63d7c77d2377914542a76cd"
+    },
+    {
+      "script": "isoband__rd_example__plot_iso_Rd.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "72ba1a8a47b3e57c0f7b1a1f957fc87f1afaa454db299f69100da653857a830a"
+    },
+    {
+      "script": "magrittr__vignette__magrittr_s11.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "f55bbd34c5997597799a7e8a36f9457f7e08a69cb83e6ed4ebd2513304820d20"
+    },
+    {
+      "script": "clock__rd_example__time-point-rounding_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "fe4a4170c836d538eb4bb0bd26928d02b99f28bf5edbc89d7097cee186f6637a"
+    },
+    {
+      "script": "farver__rd_example__encode_colour_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "13c40538a32ede8c2090081afff595b5495b0647873aa785d26e3a118da74573"
+    },
+    {
+      "script": "diagram__rd_example__selfarrow_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "91fc2892bc1818ead992164b878b2f66037ee792e795971035386ee7d0d31184"
+    },
+    {
+      "script": "htmltools__rd_example__builder_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "31bd447f6d8524f43539b2ca1a7048f8d1f4c273339d0105680f27e111729bdc"
+    },
+    {
+      "script": "lubridate__rd_example__within-interval_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "f015fd4c926e38bb67f1e78d4e56120b9048294e049534df3f01c4cb6aea719c"
+    },
+    {
+      "script": "ModelMetrics__rd_example__auc_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "4a9f17d1f21939ec07cdba83c90f34aa3ccac819af7693b574a9c011aa297896"
+    },
+    {
+      "script": "openssl__rd_example__certificates_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "8e64dc24efaf46870850ad057ffef48bf6f9ac55c3aad5d849d0a5a52e66022c"
+    },
+    {
+      "script": "xml2__rd_example__xml_name_Rd.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "47e209357ea191f11118e88a71ae85a8e90e9dc9284c7b5f9aeafd5d2f224a8d"
+    },
+    {
+      "script": "timeDate__rd_example__calendar-isBizday_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "bfa4eba3ec28c37413a6906e6028a00653b9faed50428915daf1ceca722d4302"
+    },
+    {
+      "script": "lava__rd_example__covariance_Rd.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "caebb54cdd20caac976b003a382523563450de6eee0bdbc45fa6625527c11de4"
+    },
+    {
+      "script": "googledrive__rd_example__drive_read_string_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "fd5867c8a6fced7f5ae65cbee52efe5652d95fd113840779a041c976fd07449e"
+    },
+    {
+      "script": "ragg__rd_example__agg_tiff_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "d9ccf755ccd4f73d9d42f0bde674e47c979bea3c286fa73f22681bcbbbd7e5c6"
+    },
+    {
+      "script": "textshaping__rd_example__get_font_features_Rd.R",
+      "package": "textshaping",
+      "stratum": "graphics",
+      "sha256": "f491dd303f3ade12c530861857ec5f486f8fefe6d6be5d7156c5b26ac783753f"
+    },
+    {
+      "script": "shape__rd_example__Arrows_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "1ab33d8112185a0883e85747980d709a7c8a09f88c385435705a4a9bc2a8d94c"
+    },
+    {
+      "script": "caret__rd_example__update_train_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "bbb4b297550bc09df92cd21dc3af6b3bf7bc25d12c8099a3374aab152921bc8a"
+    },
+    {
+      "script": "sass__vignette__sass_s1.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "4618236847b42380643baf87e28350565103a6f36682d0497eaae4e7b2a194e8"
+    },
+    {
+      "script": "dplyr__rd_example__storms_Rd.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "e5600612181cabe231adf5dce629d8649bb183199cde4c62adee4dbc3f98d448"
+    },
+    {
+      "script": "sessioninfo__rd_example__platform_info_Rd.R",
+      "package": "sessioninfo",
+      "stratum": "other",
+      "sha256": "571ccd3b361ea1cb44179b509739ff4deada6fda446479d808ca2ce3cfd6e1be"
+    },
+    {
+      "script": "broom__rd_example__augment_drc_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "e43c60a4a19ad6db3f16c0d4ce4d1e9b7de229769c080ff018a92f224fac2bd8"
+    },
+    {
+      "script": "reshape2__rd_example__melt_data_frame_Rd.R",
+      "package": "reshape2",
+      "stratum": "data_wrangling",
+      "sha256": "7403d26ae99cdbe878d0b62a55877f7a486a3ef69f797b5564c54fa58a6965ad"
+    },
+    {
+      "script": "pROC__rd_example__print_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "b9e625f8647fe3288eb19cc13c605354a8d0d840477c8e0eca00da04455052f0"
+    },
+    {
+      "script": "bslib__rd_example__page_sidebar_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "c511c4b5d98aa3fc218d7f72e05a4b9cbc27188497f948fd81b2bd380c946012"
+    },
+    {
+      "script": "vctrs__rd_example__vec_cast_Rd.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "1d4bc19b4ed77bb32b2005cc64eb29464cf0768d0ce2f4ec388a0cd45711dd49"
+    },
+    {
+      "script": "prodlim__rd_example__summary_prodlim_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "b332652bbbda133bdb23ae6412ce078fbb4a868f28e2f9d718a4fe20d90a2958"
+    },
+    {
+      "script": "gtable__rd_example__gtable_add_space_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "aed79d6cac7c29470f235f93561410a7d1f51809b9dfbd64dde439548a1f90c9"
+    },
+    {
+      "script": "downlit__rd_example__downlit_html_path_Rd.R",
+      "package": "downlit",
+      "stratum": "html",
+      "sha256": "385d1d169180942ffcfaab2c1c7e18e1b32d2a7d4a218deb2a602dc8f4940a9b"
+    },
+    {
+      "script": "rmarkdown__rd_example__includes_Rd.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "f37e5144d09120ef99b02e4d8caa8c7a0a0547d2eee86428761f47c567a986ab"
+    },
+    {
+      "script": "systemfonts__rd_example__match_fonts_Rd.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "ac756333fbf272b59a0088c5570d16d109f2529af5da947490f541e2af5c6fcd"
+    },
+    {
+      "script": "recipes__rd_example__step_kpca_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "695e5880b4732be3e5b77ff68844bf3f374fb7db34d0b429b673260d91c96cde"
+    },
+    {
+      "script": "purrr__rd_example__invoke_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "41f6544d82f966353a34367e18fd974d2ea43d6426f364d314533c94c5659fbe"
+    },
+    {
+      "script": "rvest__rd_example__html_element_Rd.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "0b274601f593b9c947f482abb5ce5430ca17cb1d6e4a678e7d3be7ade1d853ae"
+    },
+    {
+      "script": "tidyr__rd_example__chop_Rd.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "c44ae7d319e8726a34db62cafe03b573e01fdd5b54b2999d67fe7aaf8a1dd661"
+    },
+    {
+      "script": "purrr__rd_example__chuck_Rd.R",
+      "package": "purrr",
+      "stratum": "data_wrangling",
+      "sha256": "e30184ba9d76c457d46607da59ec4b79c05ed9561829ac8ed2bba543dd728502"
+    },
+    {
+      "script": "e1071__rd_example__predict_svm_Rd.R",
+      "package": "e1071",
+      "stratum": "stats_objects",
+      "sha256": "448c48fa4f5d1e40bea8cbb65e6b968c5c034abdef02c50558fccfa0408fa514"
+    },
+    {
+      "script": "broom__rd_example__augment_loess_Rd.R",
+      "package": "broom",
+      "stratum": "stats_objects",
+      "sha256": "e0bef4580ba4bce81413771c116c3deefd4e5608d0cb51188cdaf822217fcdee"
+    },
+    {
+      "script": "isoband__vignette__isoband1_s1.R",
+      "package": "isoband",
+      "stratum": "graphics",
+      "sha256": "0f97fe2efee4fbf92eee1d1f207ec2c78efbb26845b3d84fbb07033a59ab972c"
+    },
+    {
+      "script": "openssl__rd_example__aes_cbc_Rd.R",
+      "package": "openssl",
+      "stratum": "other",
+      "sha256": "c5e1bf3acc7185befe677cfff3aabea6e5139a42b70a5e46514fe6b35cfed6bd"
+    },
+    {
+      "script": "ggplot2__vignette__ggplot2-in-packages_s6.R",
+      "package": "ggplot2",
+      "stratum": "graphics",
+      "sha256": "0307416c96d43689350b393a975e0b2dc79d7ce0bece170c2a37ec7f78f9d432"
+    },
+    {
+      "script": "lubridate__rd_example__leap_year_Rd.R",
+      "package": "lubridate",
+      "stratum": "date_time",
+      "sha256": "63db182c7bfa293758795d89f7a30ebbf96b1269082c444717dcd3e479173558"
+    },
+    {
+      "script": "vctrs__vignette__type-size_s29.R",
+      "package": "vctrs",
+      "stratum": "data_wrangling",
+      "sha256": "3c7c8031d1af4b109fff9c9737893250941dc8afc2f6a500a42e1bb3690c4867"
+    },
+    {
+      "script": "systemfonts__vignette__c_interface_s1.R",
+      "package": "systemfonts",
+      "stratum": "graphics",
+      "sha256": "78501d93f1ec05e7f1e8bf5231e1bd98724f34819499826becf3acb08b551997"
+    },
+    {
+      "script": "shape__rd_example__plotellipse_Rd.R",
+      "package": "shape",
+      "stratum": "graphics",
+      "sha256": "e42c46046cb3b8a86eee045ccaa75599e0b98d410a9e54ded3476b1b85388b2d"
+    },
+    {
+      "script": "bslib__rd_example__value_box_Rd.R",
+      "package": "bslib",
+      "stratum": "html",
+      "sha256": "b808b694836d68e16b3231cf8bcabf5c218873767983fc66d63c0ba795a25bf8"
+    },
+    {
+      "script": "ModelMetrics__rd_example__rmse_Rd.R",
+      "package": "ModelMetrics",
+      "stratum": "stats_objects",
+      "sha256": "752e0e5cb690a2b433c9073ae48052f4f39b4b09a38a8a2770797d35ccfe8606"
+    },
+    {
+      "script": "htmltools__rd_example__htmlPreserve_Rd.R",
+      "package": "htmltools",
+      "stratum": "html",
+      "sha256": "7e0df3dc388fd6b643c8d9d9c9e637d211a7364d6461e25cbbbe77fb632dcf43"
+    },
+    {
+      "script": "tidyr__vignette__pivot_s4.R",
+      "package": "tidyr",
+      "stratum": "data_wrangling",
+      "sha256": "9f38c86839cf6de067c39c15035e67131f89f9c034d1c6321507701d5b5ab116"
+    },
+    {
+      "script": "sparsevctrs__rd_example__sparse_replace_na_Rd.R",
+      "package": "sparsevctrs",
+      "stratum": "data_wrangling",
+      "sha256": "7ceee87f1ab34e31835bda6eacac0173570e167dba112bbe49438d4de3a76d03"
+    },
+    {
+      "script": "pROC__rd_example__multiclass_Rd.R",
+      "package": "pROC",
+      "stratum": "stats_objects",
+      "sha256": "27221c80bbf23efee7c22369a9b25ba6cd8c7e515a2070f8fa8d136b119230a7"
+    },
+    {
+      "script": "diagram__rd_example__splitarrow_Rd.R",
+      "package": "diagram",
+      "stratum": "graphics",
+      "sha256": "562b18c3b16de2ce24d4b6dcc6787c6e3f9af583f26f551f501bfe8ee770517a"
+    },
+    {
+      "script": "farver__rd_example__compare_colour_Rd.R",
+      "package": "farver",
+      "stratum": "graphics",
+      "sha256": "13bbff49c4aee2811d46cf33c58a19438716af7b29a902e5c82ecf973faa8b24"
+    },
+    {
+      "script": "sass__rd_example__sass_file_cache_Rd.R",
+      "package": "sass",
+      "stratum": "html",
+      "sha256": "86ec1924c914b83642194ac22e3a646c679d2021a0c72214a795a8d11bcf4a18"
+    },
+    {
+      "script": "caret__rd_example__knn3_Rd.R",
+      "package": "caret",
+      "stratum": "stats_objects",
+      "sha256": "d333586c95e143fa1717e7aac094001fd5e7fa00da905350116575c955ada80f"
+    },
+    {
+      "script": "lava__demo__inference.R",
+      "package": "lava",
+      "stratum": "stats_objects",
+      "sha256": "95992e7d84a74522fac0121bb5002456111207682427cdcc0aff941a8504d676"
+    },
+    {
+      "script": "ragg__rd_example__agg_jpeg_Rd.R",
+      "package": "ragg",
+      "stratum": "graphics",
+      "sha256": "c9b50e76962d23d1f0e36d1d31ace2913d2eccbc7bbb63cf887d51bcb734fa6e"
+    },
+    {
+      "script": "fansi__rd_example__strwrap_ctl_Rd.R",
+      "package": "fansi",
+      "stratum": "other",
+      "sha256": "593e9dcf0ecc069e6e7124ffdfd6e901f90bb1f333f610629bccb4203a88c6a4"
+    },
+    {
+      "script": "googledrive__rd_example__drive_download_Rd.R",
+      "package": "googledrive",
+      "stratum": "other",
+      "sha256": "40bdfdaf0c0fb219dd836aa5b09e3bf89caee1ca4ab81092c3f55721b2cca7c9"
+    },
+    {
+      "script": "xml2__vignette__modification_s7.R",
+      "package": "xml2",
+      "stratum": "html",
+      "sha256": "9d18b68aaa2e6533668ed31b249fa1a2eb10776a89f027bee46733c8d1d29fc1"
+    },
+    {
+      "script": "rvest__rd_example__html_children_Rd.R",
+      "package": "rvest",
+      "stratum": "html",
+      "sha256": "d7240ccc3fb9743acf7e3a94450cc91f4b63a1c0434bcb15f16590afc34292b5"
+    },
+    {
+      "script": "gtable__rd_example__gtable_trim_Rd.R",
+      "package": "gtable",
+      "stratum": "graphics",
+      "sha256": "8d239f164bbfbbbfe57666db1030cb4f2eabc6dc955f1440c0cfeab334005cf5"
+    },
+    {
+      "script": "dplyr__vignette__rowwise_s36.R",
+      "package": "dplyr",
+      "stratum": "data_wrangling",
+      "sha256": "1870e9933aa938e60d8ccb8c24e97ada8462126bf69fb321bd516cfc58e1f362"
+    },
+    {
+      "script": "shiny__rd_example__updateRadioButtons_Rd.R",
+      "package": "shiny",
+      "stratum": "html",
+      "sha256": "26a937a71bfd491832722c3ed56601121978eda1b5e15e9189cf3a23ab552b00"
+    },
+    {
+      "script": "recipes__rd_example__discretize_Rd.R",
+      "package": "recipes",
+      "stratum": "stats_objects",
+      "sha256": "9e4619d36da09f57ad058cdca6ffba03265eb5871e6e8bd0596b01a991ab88ef"
+    },
+    {
+      "script": "rmarkdown__vignette__lua-filters_s3.R",
+      "package": "rmarkdown",
+      "stratum": "html",
+      "sha256": "80a5ee0d77bc7e0c6bdce4aca196d45ecb1a38f946f0d31c8f74bb22d2a17e8d"
+    },
+    {
+      "script": "clock__rd_example__iso-year-week-day-getters_Rd.R",
+      "package": "clock",
+      "stratum": "date_time",
+      "sha256": "fcfdb43c9c95d7ae3988be727ae295c17d0316bd5967f00c6c80ee75485353a3"
+    },
+    {
+      "script": "prodlim__rd_example__Hist_Rd.R",
+      "package": "prodlim",
+      "stratum": "stats_objects",
+      "sha256": "900a95bc0937170c45e3baea5dfddb097d7c7d19ef5f8a3d979a1986940ff287"
+    },
+    {
+      "script": "magrittr__vignette__tradeoffs_s25.R",
+      "package": "magrittr",
+      "stratum": "data_wrangling",
+      "sha256": "9b45b25b0eeda8953348ca944ac5d8971eb2276047f9a445c2b0ef8555af77c1"
+    },
+    {
+      "script": "timeDate__rd_example__timeDate-finCenter_Rd.R",
+      "package": "timeDate",
+      "stratum": "date_time",
+      "sha256": "4a2206296c6f88b7af3382296c199381f1a0415dd5949e11eca8e3f7869216f4"
+    }
+  ]
+}
