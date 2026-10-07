@@ -294,8 +294,19 @@ def main() -> int:
     print(f"{len(cases)} cases, {len(args.treatments)} arms, {args.samples} sample(s): "
           f"{len(tasks)} calls to make ({len(finished)} done)", flush=True)
     ctx = multiprocessing.get_context("spawn")
+    outages = 0
     with ctx.Pool(args.workers) as pool, OUT.open("a", encoding="utf-8") as fh:
         for i, row in enumerate(pool.imap_unordered(run_one, tasks), start=1):
+            if row.get("outcome") == "provider_unavailable":
+                outages += 1
+                print(f"[{i}/{len(tasks)}] provider unavailable ({row.get('provider')}): "
+                      f"{row['script']} {row['entity']} {row['treatment']} — discarded", flush=True)
+                if outages >= 3:
+                    pool.terminate()
+                    print(f"\nstopping: {outages} runs met a provider outage and were discarded. "
+                          "Nothing partial was recorded; the same command resumes.", flush=True)
+                    break
+                continue
             fh.write(json.dumps(row) + "\n")
             fh.flush()
             done.append(row)
