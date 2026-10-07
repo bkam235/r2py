@@ -1,0 +1,5 @@
+248 scripts re-verified (5 errors), 5 model calls
+aggregate: mean 0.669, >= 0.9: 85
+entities: 1850, scoring >= 0.9 with a Python snippet: 558 (30%)
+distinct keys among them: 208
+of those keys, only reachable per entity (not from a >= 0.9 script): 96

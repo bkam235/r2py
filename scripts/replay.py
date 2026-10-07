@@ -40,6 +40,9 @@ POLICIES = {
     "rewrite_rt": dict(entity_repair=False, escalate_after=None, runtime=str(ROOT / "work/runtime/pilot")),   # verified R functions offered
     "rewrite_loc": dict(entity_repair=False, escalate_after=None, locate=True),     # the harness locates the first diverging call
     "rewrite_w3": dict(entity_repair=False, escalate_after=None, width=3),   # three independent loops, best wins
+    # Upper bound on retrieval: a library holding a verified example of exactly the functions this
+    # script calls, built by scripts/oracle_library.py (perfect coverage, perfect retrieval).
+    "rewrite_w3_oracle": dict(entity_repair=False, escalate_after=None, width=3, oracle=True),
 }
 
 
@@ -101,10 +104,14 @@ def run_one(task: dict) -> dict:
         with ho.pinned_llm(cfg["model"], ho.llm_settings(manifest)):
             sm = _script_map(task["script"], manifest, Path(task["cache"]))
             with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
-                shutil.copytree(Path(task["library"]), Path(tmp) / "lib")
-                lib = PatternLibrary(Path(tmp) / "lib")
                 policy = dict(POLICIES[task["policy"]])
                 runtime_dir = policy.pop("runtime", None)
+                lib_dir = Path(task["library"])
+                if policy.pop("oracle", False):
+                    lib_dir = ROOT / "work/oracle/libs" / Path(task["script"]).stem
+                shutil.copytree(lib_dir, Path(tmp) / "lib")
+                lib = PatternLibrary(Path(tmp) / "lib")
+                row["lib_patterns"] = len(list((Path(tmp) / "lib" / "patterns").glob("*.md")))
                 store = None
                 if runtime_dir:
                     from r2py.runtime.store import RuntimeStore
