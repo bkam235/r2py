@@ -43,6 +43,43 @@ the fix are moved to `work/replay/script_maps_digits4`.**
 | 9 | Side fixes: seed `FileNotFoundError` (9 seeds) and `RLexer` import (9), data-shim churn (24% of rewrites), catastrophic rewrites (20%), unrecovered sentinels (40% of drops), mapper JSON failures, fingerprint gaps (XML node sets) | cheap, between runs | **done 2026-10-07, partly**: (a) *FileNotFoundError seeds (12 of 12 are one script, tinytex `tlmgr`)*: the translation shells out to TinyTeX's `tlmgr`, which the sandbox does not have; an environment gap of that script, not a harness defect - left. (b) *Imported names that do not exist* (`from pygments.lexers import RLexer`, `from shiny import http_response`; the installed module imports, the name does not): new generic gate `module_check.missing_import_names` (runs once per (module, name) in the translation interpreter, suggestions from the module and its submodules) in the seed gate's corrective round and in the agent's rewrite gate (`import_name_rejected`). Seed-only, bare 6 + structured 6 per script: shiny P(runs) 25% -> 58% / 83% (two runs; the model stops inventing `http_response`), highr unchanged at ~8% - told that `RLexer` does not exist the model still writes it, because the suggestions (`pygments.lexers.r.RdLexer` ...) do not name `SLexer`; the right name needs API knowledge the harness does not have. (c) *Data-shim churn* (24% of rewrites altered the block): the block is now hidden from the model behind one placeholder comment and restored by the harness after every rewrite (`stitch.hide_data_shim` / `show_data_shim`; the prompts say to keep the line); effect on scores not measured, tests added. (d) *Sentinels the restoration could not recover*: unmatched assignments are anchored by their target name inside the gap between matched lines: every entity recovered in 165 of 256 real candidates (was 157; +3 points). (e) *Catastrophic rewrites (20%)* and *mapper JSON failures at 8192 tokens*: not addressed (no cheap fix; the shaped objective already discards catastrophic rewrites) |
 | 10 | Pre-registration of every measurement change (precision, fingerprints, random-draw shim, runtime), then the training run with width, trajectories, model calls per run and the learning mechanisms - the first real learning-curve measurement | |
 
+**Step 10 result (2026-10-07): registered, then withdrawn unrun, and why.** `PREREGISTRATION_3.md` was written and
+registered (width 3, locator, runtime store frozen at 28 functions, 5-worker training, scoring `empty`/`half`/`full`),
+then withdrawn before any data collection: it would have spent ~15 h of training and ~1 day of scoring to re-measure a
+learning mechanism that is unchanged since the null result. Instead the question "what could the library ever reach?"
+was answered offline from data already paid for (`scripts/coverage_probe.py`, no LLM calls, no new translations):
+entity scores of the first experiment's 164 `empty` runs, the trained library, and a parse-only
+(package, function) inventory of the 256 training scripts (`work/coverage_probe/`).
+
+| supply available to retrieval | held-out entities | of the 142.8 lost points |
+|---|---|---|
+| the library as actually trained (155 patterns) | 20% | **17%** |
+| everything in the 85 training scripts that scored >= 0.9 | 23% | 22% |
+| everything in all 250 training runs, harvested per entity | 47% | **52%** |
+| ... plus the same function name in any package | 47% | 54% |
+| ... plus anything at all from the same package (the tier removed in 2026-09) | 85% | 86% |
+
+Two findings, both against the current design:
+
+1. **The ceiling is a harvest problem, not a retrieval problem.** Loosening the key buys ~2 points (52% -> 54%);
+   harvesting per entity from *every* run instead of only whole scripts scoring >= 0.9 buys 30 (22% -> 52%). The
+   >= 0.9 script gate, not the exact (package, function) key, is what throws the corpus away. 52 held-out entities
+   (11.2 lost points, 8%) have no key at all under `pattern_key` and can only be reached by a snippet-level unit.
+2. **Where the library did apply, it recovered none of the loss.** On the 100 informable entities, lost points go
+   23.9 -> 23.9 from `empty` to `full` (net +0.058 points; 56 of 100 entities move, by up to +-0.46, and the moves
+   cancel). Entity-weighted pooling therefore shows 0% recovery where the registered, script-weighted endpoint showed
+   +0.038 - the registered effect sits on a few small scripts. Noise over 100 entities excludes recovery above
+   roughly 12% of reachable loss. **Diagnostic recomputation on a closed experiment, not a re-analysis of record:
+   `RESULTS.md` stands as written.**
+
+So raising coverage multiplies a factor currently measured at zero, and the decision gate of 2026-09-29 ("below ~40%
+targetability, do not spend another scoring run on the library") is met on the ceiling but not on the efficacy. The
+next test is therefore efficacy, not coverage: an **oracle-library replay** - paired frozen states, `rewrite_w3` with
+and without a library holding a verified example of exactly the functions the failing entities call. It is an upper
+bound on every retrieval scheme (perfect coverage, perfect retrieval) and costs one replay. If it moves nothing,
+retrieved text is finished as a learning mechanism for this model, and the evolving-knowledge path is the verified
+runtime (A/B of steps 7-8), which also reaches the ~48% of loss that no training script covers.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.

@@ -1,0 +1,23 @@
+held-out entities (excl. boilerplate): 499 from 59 scripts
+mean entity score at `empty`: 0.714   lost points: 142.8
+training inventory: 250 scripts parsed (6 failed), 526 distinct keys, 147 distinct base calls
+library as trained: 155 patterns shown
+
+scheme            entities   lost points reachable
+learned          100   20%            23.9    17%
+key              200   40%            64.3    45%
+key_or_call      233   47%            74.5    52%
+name             237   47%            77.1    54%
+package          424   85%           123.3    86%
+
+the biggest losses the training set has nothing for (key not in training, 10 worst):
+   11.15  (no key)
+    3.80  rcolorbrewer.display.brewer.all
+    3.79  timechange.time-add
+    3.33  grdevices.devasknewpage
+    3.00  utils.browseurl
+    2.97  timechange.time-subtract
+    2.69  utils.demo
+    2.41  caret.createtimeslices
+    2.00  proc.ggroc
+    1.67  systemfonts.font-feature

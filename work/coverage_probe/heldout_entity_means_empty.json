@@ -1,0 +1,2915 @@
+{
+"downlit__rd_example__downlit_md_path_Rd.R||is_installed": {
+"mean": 1.0,
+"key": "rlang.is-installed",
+"calls": [
+"base.withautoprint"
+]
+},
+"downlit__rd_example__downlit_md_path_Rd.R||pandoc_available": {
+"mean": 1.0,
+"key": "rmarkdown.pandoc-available",
+"calls": []
+},
+"downlit__rd_example__downlit_md_path_Rd.R||downlit_md_string": {
+"mean": 1.0,
+"key": "downlit.downlit-md-string",
+"calls": []
+},
+"downlit__rd_example__downlit_md_path_Rd.R||downlit_md_string_1": {
+"mean": 1.0,
+"key": "downlit.downlit-md-string",
+"calls": []
+},
+"downlit__rd_example__downlit_md_path_Rd.R||downlit_md_string_2": {
+"mean": 1.0,
+"key": "downlit.downlit-md-string",
+"calls": []
+},
+"downlit__rd_example__downlit_md_path_Rd.R||downlit_md_string_3": {
+"mean": 1.0,
+"key": "downlit.downlit-md-string",
+"calls": []
+},
+"highr__rd_example__hilight_Rd.R||hilight": {
+"mean": 0.8023406218039132,
+"key": "highr.hilight",
+"calls": []
+},
+"highr__rd_example__hilight_Rd.R||txt": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"highr__rd_example__hilight_Rd.R||cat": {
+"mean": 0.7324100968948745,
+"key": "base.cat",
+"calls": [
+"base.cat"
+]
+},
+"highr__rd_example__hilight_Rd.R||cat_1": {
+"mean": 0.6638697847690714,
+"key": "base.cat",
+"calls": [
+"base.cat"
+]
+},
+"timeDate__rd_example__base-sample_Rd.R||dts": {
+"mean": 0.25,
+"key": null,
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||dts_1": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||tms": {
+"mean": 0.25,
+"key": null,
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||tms_1": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||GMT": {
+"mean": 0.25,
+"key": "timedate.timedate",
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||GMT_1": {
+"mean": 0.9808743169398907,
+"key": null,
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||ZUR": {
+"mean": 0.25,
+"key": "timedate.timedate",
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||ZUR_1": {
+"mean": 0.9786661143330572,
+"key": null,
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||c": {
+"mean": 0.8974119282344435,
+"key": "base.c",
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||c_1": {
+"mean": 0.8945115945921748,
+"key": "base.c",
+"calls": []
+},
+"timeDate__rd_example__base-sample_Rd.R||rep": {
+"mean": 0.9615638621054022,
+"key": "base.rep",
+"calls": [
+"base.rep"
+]
+},
+"timeDate__rd_example__base-sample_Rd.R||rep_1": {
+"mean": 0.9592930129798398,
+"key": "base.rep",
+"calls": [
+"base.rep"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||mypalette": {
+"mean": 0.1685323383084577,
+"key": "rcolorbrewer.brewer.pal",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||image": {
+"mean": 0.6110385984477585,
+"key": "graphics.image",
+"calls": [
+"graphics.image",
+"base.as.matrix"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.pal": {
+"mean": 0.6004588511704979,
+"key": "rcolorbrewer.display.brewer.pal",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.pal_1": {
+"mean": 0.6154580905896057,
+"key": "rcolorbrewer.display.brewer.pal",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage_1": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.all": {
+"mean": 0.4696791015884453,
+"key": "rcolorbrewer.display.brewer.all",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage_2": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.all_1": {
+"mean": 0.5126350513493886,
+"key": "rcolorbrewer.display.brewer.all",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage_3": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.all_2": {
+"mean": 0.4826922796536239,
+"key": "rcolorbrewer.display.brewer.all",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage_4": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.all_3": {
+"mean": 0.5521702341490423,
+"key": "rcolorbrewer.display.brewer.all",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage_5": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.all_4": {
+"mean": 0.5225312717767581,
+"key": "rcolorbrewer.display.brewer.all",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage_6": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.all_5": {
+"mean": 0.5753035694090115,
+"key": "rcolorbrewer.display.brewer.all",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage_7": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.all_6": {
+"mean": 0.5639677916915801,
+"key": "rcolorbrewer.display.brewer.all",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage_8": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||display.brewer.all_7": {
+"mean": 0.5240173676552272,
+"key": "rcolorbrewer.display.brewer.all",
+"calls": []
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||devAskNewPage_9": {
+"mean": 0.6666666666666666,
+"key": "grdevices.devasknewpage",
+"calls": [
+"grdevices.devasknewpage"
+]
+},
+"RColorBrewer__rd_example__ColorBrewer_Rd.R||brewer.pal.info": {
+"mean": 0.5300203138467668,
+"key": null,
+"calls": []
+},
+"dplyr__vignette__colwise_chunk17.R||rescale01": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.range"
+]
+},
+"dplyr__vignette__colwise_chunk17.R||df": {
+"mean": 0.75,
+"key": "dplyr.tibble",
+"calls": [
+"stats.rnorm"
+]
+},
+"dplyr__vignette__colwise_chunk17.R||mutate": {
+"mean": 0.5838709677419355,
+"key": "dplyr.mutate",
+"calls": []
+},
+"sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R||is_installed": {
+"mean": 1.0,
+"key": "rlang.is-installed",
+"calls": [
+"base.withautoprint"
+]
+},
+"sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R||set.seed": {
+"mean": 1.0,
+"key": "base.set.seed",
+"calls": [
+"base.set.seed"
+]
+},
+"sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R||mat": {
+"mean": 0.25,
+"key": "base.matrix",
+"calls": [
+"base.matrix",
+"base.sample"
+]
+},
+"sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R||colnames(mat)": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.colnames"
+]
+},
+"sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R||sparse_mat": {
+"mean": 0.25,
+"key": "matrix.matrix",
+"calls": []
+},
+"sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R||res": {
+"mean": 0.292,
+"key": "sparsevctrs.coerce-to-sparse-tibble",
+"calls": []
+},
+"sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R||vapply": {
+"mean": 0.6577825159914712,
+"key": "base.vapply",
+"calls": [
+"base.vapply",
+"base.logical"
+]
+},
+"magrittr__rd_example__aliases_Rd.R||extract": {
+"mean": 1.0,
+"key": "magrittr.extract",
+"calls": []
+},
+"magrittr__rd_example__aliases_Rd.R||good.times": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.sys.date",
+"base.seq",
+"base.data.frame"
+]
+},
+"magrittr__rd_example__aliases_Rd.R||Sys.Date": {
+"mean": 1.0,
+"key": "base.sys.date",
+"calls": [
+"base.sys.date"
+]
+},
+"magrittr__rd_example__aliases_Rd.R||seq": {
+"mean": 1.0,
+"key": "base.seq",
+"calls": [
+"base.seq"
+]
+},
+"magrittr__rd_example__aliases_Rd.R||data.frame": {
+"mean": 1.0,
+"key": "base.data.frame",
+"calls": [
+"base.data.frame"
+]
+},
+"magrittr__rd_example__aliases_Rd.R||good.times$quarter": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.format"
+]
+},
+"magrittr__rd_example__aliases_Rd.R||use_series": {
+"mean": 1.0,
+"key": "magrittr.use-series",
+"calls": []
+},
+"magrittr__rd_example__aliases_Rd.R||format": {
+"mean": 1.0,
+"key": "base.format",
+"calls": [
+"base.format"
+]
+},
+"magrittr__rd_example__aliases_Rd.R||divide_by_int": {
+"mean": 1.0,
+"key": "magrittr.divide-by-int",
+"calls": []
+},
+"magrittr__rd_example__aliases_Rd.R||add": {
+"mean": 1.0,
+"key": "magrittr.add",
+"calls": []
+},
+"prodlim__rd_example__predict_prodlim_Rd.R||dat": {
+"mean": 0.25041036463829286,
+"key": "prodlim.simsurv",
+"calls": []
+},
+"prodlim__rd_example__predict_prodlim_Rd.R||fit": {
+"mean": 0.25,
+"key": "prodlim.prodlim",
+"calls": []
+},
+"prodlim__rd_example__predict_prodlim_Rd.R||predict": {
+"mean": 0.6998629559350622,
+"key": "stats.predict",
+"calls": [
+"stats.predict"
+]
+},
+"prodlim__rd_example__predict_prodlim_Rd.R||predict_1": {
+"mean": 0.711704834605598,
+"key": "stats.predict",
+"calls": [
+"stats.predict"
+]
+},
+"prodlim__rd_example__predict_prodlim_Rd.R||mfit": {
+"mean": 0.25,
+"key": "prodlim.prodlim",
+"calls": []
+},
+"prodlim__rd_example__predict_prodlim_Rd.R||predict_2": {
+"mean": 0.5963081861958266,
+"key": "stats.predict",
+"calls": [
+"stats.predict"
+]
+},
+"prodlim__rd_example__predict_prodlim_Rd.R||predict_3": {
+"mean": 0.5907536456316944,
+"key": "stats.predict",
+"calls": [
+"stats.predict"
+]
+},
+"prodlim__rd_example__predict_prodlim_Rd.R||predict_4": {
+"mean": 0.6138976779681363,
+"key": "stats.predict",
+"calls": [
+"stats.predict"
+]
+},
+"ranger__rd_example__predict_ranger_Rd.R||ranger": {
+"mean": 0.9957805907172995,
+"key": "ranger.ranger",
+"calls": []
+},
+"ranger__rd_example__predict_ranger_Rd.R||train.idx": {
+"mean": 0.25,
+"key": "base.sample",
+"calls": [
+"base.sample",
+"base.nrow"
+]
+},
+"ranger__rd_example__predict_ranger_Rd.R||iris.train": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"ranger__rd_example__predict_ranger_Rd.R||iris.test": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"ranger__rd_example__predict_ranger_Rd.R||rg.iris": {
+"mean": 0.2591152121031818,
+"key": "ranger.ranger",
+"calls": []
+},
+"ranger__rd_example__predict_ranger_Rd.R||pred.iris": {
+"mean": 0.9693917231509209,
+"key": "stats.predict",
+"calls": [
+"stats.predict"
+]
+},
+"ranger__rd_example__predict_ranger_Rd.R||table": {
+"mean": 1.0,
+"key": "base.table",
+"calls": [
+"base.table"
+]
+},
+"ranger__rd_example__predict_ranger_Rd.R||rf": {
+"mean": 0.25,
+"key": "ranger.ranger",
+"calls": []
+},
+"ranger__rd_example__predict_ranger_Rd.R||pred": {
+"mean": 0.601025308916264,
+"key": "stats.predict",
+"calls": [
+"stats.predict"
+]
+},
+"ranger__rd_example__predict_ranger_Rd.R||rf_1": {
+"mean": 0.9810622150482825,
+"key": "ranger.ranger",
+"calls": []
+},
+"ranger__rd_example__predict_ranger_Rd.R||pred_1": {
+"mean": 1.0,
+"key": "stats.predict",
+"calls": [
+"stats.predict",
+"base.sample"
+]
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||data": {
+"mean": 0.0,
+"key": "utils.data",
+"calls": [
+"utils.data"
+]
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||roc.s100b": {
+"mean": 0.3041617033948779,
+"key": "proc.roc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||roc.s100b.percent": {
+"mean": 0.3274408284023669,
+"key": "proc.roc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||ggroc": {
+"mean": 0.5,
+"key": "proc.ggroc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||geom_polygon_auc": {
+"mean": 1.0,
+"key": "proc.geom-polygon-auc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||ggroc_1": {
+"mean": 0.5,
+"key": "proc.ggroc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||geom_polygon_auc_1": {
+"mean": 1.0,
+"key": "proc.geom-polygon-auc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||auc.s100b.partial.sp": {
+"mean": 0.25,
+"key": "proc.auc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||auc.s100b.partial.se": {
+"mean": 0.25,
+"key": "proc.auc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||ggroc_2": {
+"mean": 0.5,
+"key": "proc.ggroc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||geom_polygon_auc_2": {
+"mean": 1.0,
+"key": "proc.geom-polygon-auc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||ggroc_3": {
+"mean": 0.5,
+"key": "proc.ggroc",
+"calls": []
+},
+"pROC__rd_example__geom_polygon_auc_roc_Rd.R||geom_polygon_auc_3": {
+"mean": 1.0,
+"key": "proc.geom-polygon-auc",
+"calls": []
+},
+"hms__rd_example__hms_Rd.R||hms": {
+"mean": 1.0,
+"key": "hms.hms",
+"calls": []
+},
+"hms__rd_example__hms_Rd.R||hms_1": {
+"mean": 1.0,
+"key": "hms.hms",
+"calls": []
+},
+"hms__rd_example__hms_Rd.R||new_hms": {
+"mean": 1.0,
+"key": "hms.new-hms",
+"calls": [
+"base.as.numeric"
+]
+},
+"hms__rd_example__hms_Rd.R||try": {
+"mean": 1.0,
+"key": "base.try",
+"calls": [
+"base.try"
+]
+},
+"hms__rd_example__hms_Rd.R||as_hms": {
+"mean": 1.0,
+"key": "hms.as-hms",
+"calls": []
+},
+"hms__rd_example__hms_Rd.R||as_hms_1": {
+"mean": 1.0,
+"key": "hms.as-hms",
+"calls": []
+},
+"hms__rd_example__hms_Rd.R||as_hms_2": {
+"mean": 0.7231182795698925,
+"key": "hms.as-hms",
+"calls": [
+"base.sys.time"
+]
+},
+"hms__rd_example__hms_Rd.R||as.POSIXct": {
+"mean": 1.0,
+"key": "base.as.posixct",
+"calls": [
+"base.as.posixct"
+]
+},
+"hms__rd_example__hms_Rd.R||data.frame": {
+"mean": 1.0,
+"key": "base.data.frame",
+"calls": [
+"base.data.frame"
+]
+},
+"hms__rd_example__hms_Rd.R||d": {
+"mean": 0.25,
+"key": "base.data.frame",
+"calls": [
+"base.data.frame"
+]
+},
+"hms__rd_example__hms_Rd.R||d$hours": {
+"mean": 1.0,
+"key": "hms.hms",
+"calls": []
+},
+"hms__rd_example__hms_Rd.R||d_1": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"lubridate__vignette__lubridate_s18.R||jan31": {
+"mean": 0.75,
+"key": "lubridate.ymd",
+"calls": []
+},
+"lubridate__vignette__lubridate_s18.R||months": {
+"mean": 0.8333333333333334,
+"key": "base.months",
+"calls": [
+"base.months"
+]
+},
+"lubridate__vignette__lubridate_s18.R||floor_date": {
+"mean": 0.7902654867256638,
+"key": "lubridate.floor-date",
+"calls": [
+"base.months"
+]
+},
+"lubridate__vignette__lubridate_s18.R||months_1": {
+"mean": 1.0,
+"key": "base.months",
+"calls": [
+"base.months"
+]
+},
+"lubridate__vignette__lubridate_s18.R||days": {
+"mean": 1.0,
+"key": "lubridate.days",
+"calls": [
+"base.months"
+]
+},
+"lubridate__vignette__lubridate_s18.R||months_2": {
+"mean": 0.7678540814120769,
+"key": "base.months",
+"calls": [
+"base.months"
+]
+},
+"blob__rd_example__blob_Rd.R||x1": {
+"mean": 0.25,
+"key": "base.chartoraw",
+"calls": [
+"base.chartoraw"
+]
+},
+"blob__rd_example__blob_Rd.R||x2": {
+"mean": 0.25,
+"key": "base.as.raw",
+"calls": [
+"base.as.raw"
+]
+},
+"blob__rd_example__blob_Rd.R||new_blob": {
+"mean": 1.0,
+"key": "blob.new-blob",
+"calls": []
+},
+"blob__rd_example__blob_Rd.R||blob": {
+"mean": 1.0,
+"key": "blob.blob",
+"calls": []
+},
+"blob__rd_example__blob_Rd.R||as.blob": {
+"mean": 1.0,
+"key": "blob.as.blob",
+"calls": []
+},
+"farver__rd_example__decode_colour_Rd.R||decode_colour": {
+"mean": 0.9687830687830689,
+"key": "farver.decode-colour",
+"calls": []
+},
+"farver__rd_example__decode_colour_Rd.R||decode_colour_1": {
+"mean": 0.9343285931678649,
+"key": "farver.decode-colour",
+"calls": []
+},
+"farver__rd_example__decode_colour_Rd.R||decode_colour_2": {
+"mean": 0.8662012173290369,
+"key": "farver.decode-colour",
+"calls": []
+},
+"bslib__rd_example__layout_columns_Rd.R||is_interactive": {
+"mean": 1.0,
+"key": "rlang.is-interactive",
+"calls": [
+"base.withautoprint"
+]
+},
+"bslib__rd_example__layout_columns_Rd.R||x": {
+"mean": 0.25,
+"key": "bslib.card",
+"calls": []
+},
+"bslib__rd_example__layout_columns_Rd.R||page_fillable": {
+"mean": 0.5,
+"key": "bslib.page-fillable",
+"calls": []
+},
+"bslib__rd_example__layout_columns_Rd.R||page_fillable_1": {
+"mean": 0.5,
+"key": "bslib.page-fillable",
+"calls": []
+},
+"bslib__rd_example__layout_columns_Rd.R||page_fillable_2": {
+"mean": 0.5,
+"key": "bslib.page-fillable",
+"calls": []
+},
+"bslib__rd_example__layout_columns_Rd.R||page_fillable_3": {
+"mean": 0.5,
+"key": "bslib.page-fillable",
+"calls": []
+},
+"bslib__rd_example__layout_columns_Rd.R||page_fillable_4": {
+"mean": 0.5,
+"key": "bslib.page-fillable",
+"calls": []
+},
+"sessioninfo__rd_example__package_info_Rd.R||package_info": {
+"mean": 0.698596862274693,
+"key": "sessioninfo.package-info",
+"calls": []
+},
+"sessioninfo__rd_example__package_info_Rd.R||package_info_1": {
+"mean": 0.8334563104255792,
+"key": "sessioninfo.package-info",
+"calls": []
+},
+"shiny__rd_example__httpResponse_Rd.R||httpResponse": {
+"mean": 0.9311594202898551,
+"key": "shiny.httpresponse",
+"calls": []
+},
+"clock__rd_example__zoned_time_info_Rd.R||x": {
+"mean": 0.25,
+"key": "clock.year-month-day",
+"calls": []
+},
+"clock__rd_example__zoned_time_info_Rd.R||x_1": {
+"mean": 1.0,
+"key": "clock.as-naive-time",
+"calls": []
+},
+"clock__rd_example__zoned_time_info_Rd.R||x_2": {
+"mean": 1.0,
+"key": "clock.as-zoned-time",
+"calls": []
+},
+"clock__rd_example__zoned_time_info_Rd.R||x_3": {
+"mean": 0.8660914702581369,
+"key": null,
+"calls": []
+},
+"clock__rd_example__zoned_time_info_Rd.R||info": {
+"mean": 0.25,
+"key": "clock.zoned-time-info",
+"calls": []
+},
+"clock__rd_example__zoned_time_info_Rd.R||info_1": {
+"mean": 0.8081260364842454,
+"key": null,
+"calls": []
+},
+"clock__rd_example__zoned_time_info_Rd.R||zoned_time_info": {
+"mean": 0.6771404821280133,
+"key": "clock.zoned-time-info",
+"calls": []
+},
+"lava__vignette__influencefunction_s34.R||set.seed": {
+"mean": 0.0,
+"key": "base.set.seed",
+"calls": [
+"base.set.seed"
+]
+},
+"lava__vignette__influencefunction_s34.R||y": {
+"mean": 0.0,
+"key": "base.cbind",
+"calls": [
+"base.cbind",
+"stats.rnorm"
+]
+},
+"lava__vignette__influencefunction_s34.R||N": {
+"mean": 0.0,
+"key": null,
+"calls": []
+},
+"lava__vignette__influencefunction_s34.R||id": {
+"mean": 0.0,
+"key": "lava.foldr",
+"calls": [
+"base.nrow"
+]
+},
+"lava__vignette__influencefunction_s34.R||Print": {
+"mean": 0.0,
+"key": "lava.print",
+"calls": [
+"base.cbind",
+"base.table"
+]
+},
+"lava__vignette__influencefunction_s34.R||e": {
+"mean": 0.0,
+"key": "lava.estimate",
+"calls": [
+"base.cbind"
+]
+},
+"lava__vignette__influencefunction_s34.R||object.size": {
+"mean": 0.0,
+"key": "utils.object.size",
+"calls": [
+"utils.object.size"
+]
+},
+"lava__vignette__influencefunction_s34.R||e_1": {
+"mean": 0.0,
+"key": null,
+"calls": []
+},
+"shape__rd_example__femmecol_Rd.R||filled.contour": {
+"mean": 0.8247892617688278,
+"key": "graphics.filled.contour",
+"calls": [
+"graphics.filled.contour"
+]
+},
+"shape__rd_example__femmecol_Rd.R||femmecol": {
+"mean": 1.0,
+"key": "shape.femmecol",
+"calls": []
+},
+"shape__rd_example__femmecol_Rd.R||image": {
+"mean": 0.8337204410180087,
+"key": "graphics.image",
+"calls": [
+"graphics.image",
+"base.matrix"
+]
+},
+"utf8__rd_example__utf8_print_Rd.R||print": {
+"mean": 1.0,
+"key": "base.print",
+"calls": [
+"base.print",
+"base.inttoutf8"
+]
+},
+"utf8__rd_example__utf8_print_Rd.R||utf8_print": {
+"mean": 0.6078231292517007,
+"key": "utf8.utf8-print",
+"calls": [
+"base.inttoutf8"
+]
+},
+"utf8__rd_example__utf8_print_Rd.R||utf8_print_1": {
+"mean": 0.6944444444444444,
+"key": "utf8.utf8-print",
+"calls": [
+"base.inttoutf8"
+]
+},
+"utf8__rd_example__utf8_print_Rd.R||oldlocale": {
+"mean": 0.3222222222222222,
+"key": "base.sys.getlocale",
+"calls": [
+"base.sys.getlocale"
+]
+},
+"utf8__rd_example__utf8_print_Rd.R||invisible": {
+"mean": 0.7111111111111111,
+"key": "base.invisible",
+"calls": [
+"base.invisible",
+"base.sys.setlocale"
+]
+},
+"utf8__rd_example__utf8_print_Rd.R||utf8_print_2": {
+"mean": 0.5777777777777778,
+"key": "utf8.utf8-print",
+"calls": [
+"base.inttoutf8"
+]
+},
+"utf8__rd_example__utf8_print_Rd.R||invisible_1": {
+"mean": 0.6666666666666666,
+"key": "base.invisible",
+"calls": [
+"base.invisible",
+"base.sys.setlocale"
+]
+},
+"utf8__rd_example__utf8_print_Rd.R||utf8_print_3": {
+"mean": 0.5396228322968806,
+"key": "utf8.utf8-print",
+"calls": [
+"base.matrix",
+"base.as.character"
+]
+},
+"fansi__rd_example__make_styles_Rd.R||classes": {
+"mean": 1.0,
+"key": "base.do.call",
+"calls": [
+"base.do.call",
+"base.expand.grid"
+]
+},
+"fansi__rd_example__make_styles_Rd.R||writeLines": {
+"mean": 1.0,
+"key": "base.writelines",
+"calls": [
+"base.writelines"
+]
+},
+"fansi__rd_example__make_styles_Rd.R||css0": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"fansi__rd_example__make_styles_Rd.R||css1": {
+"mean": 1.0,
+"key": "fansi.make-styles",
+"calls": []
+},
+"fansi__rd_example__make_styles_Rd.R||writeLines_1": {
+"mean": 1.0,
+"key": "base.writelines",
+"calls": [
+"base.writelines"
+]
+},
+"fansi__rd_example__make_styles_Rd.R||string": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"fansi__rd_example__make_styles_Rd.R||html": {
+"mean": 0.25,
+"key": "fansi.to-html",
+"calls": []
+},
+"fansi__rd_example__make_styles_Rd.R||writeLines_2": {
+"mean": 0.9690721649484536,
+"key": "base.writelines",
+"calls": [
+"base.writelines"
+]
+},
+"fansi__rd_example__make_styles_Rd.R||in_html": {
+"mean": 1.0,
+"key": "fansi.in-html",
+"calls": []
+},
+"fansi__rd_example__make_styles_Rd.R||mix": {
+"mean": 1.0,
+"key": "base.matrix",
+"calls": [
+"base.matrix"
+]
+},
+"fansi__rd_example__make_styles_Rd.R||css2": {
+"mean": 1.0,
+"key": "fansi.make-styles",
+"calls": []
+},
+"fansi__rd_example__make_styles_Rd.R||in_html_1": {
+"mean": 1.0,
+"key": "fansi.in-html",
+"calls": []
+},
+"isoband__rd_example__isobands_Rd.R||m": {
+"mean": 1.0,
+"key": "base.matrix",
+"calls": [
+"base.matrix"
+]
+},
+"isoband__rd_example__isobands_Rd.R||df_bands": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.ncol",
+"base.nrow"
+]
+},
+"isoband__rd_example__isobands_Rd.R||isobands": {
+"mean": 1.0,
+"key": "isoband.isobands",
+"calls": [
+"base.ncol",
+"base.nrow"
+]
+},
+"isoband__rd_example__isobands_Rd.R||df_lines": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.ncol",
+"base.nrow"
+]
+},
+"isoband__rd_example__isobands_Rd.R||isolines": {
+"mean": 1.0,
+"key": "isoband.isolines",
+"calls": [
+"base.ncol",
+"base.nrow"
+]
+},
+"isoband__rd_example__isobands_Rd.R||g": {
+"mean": 0.25,
+"key": "base.expand.grid",
+"calls": [
+"base.expand.grid",
+"base.ncol",
+"base.nrow"
+]
+},
+"isoband__rd_example__isobands_Rd.R||grid.newpage": {
+"mean": 0.6666666666666666,
+"key": "grid.grid.newpage",
+"calls": []
+},
+"isoband__rd_example__isobands_Rd.R||grid.points": {
+"mean": 1.0,
+"key": "grid.grid.points",
+"calls": []
+},
+"isoband__rd_example__isobands_Rd.R||grid.path": {
+"mean": 1.0,
+"key": "grid.grid.path",
+"calls": []
+},
+"isoband__rd_example__isobands_Rd.R||grid.polyline": {
+"mean": 1.0,
+"key": "grid.grid.polyline",
+"calls": []
+},
+"isoband__rd_example__isobands_Rd.R||plot_iso": {
+"mean": 0.9520630105595255,
+"key": "isoband.plot-iso",
+"calls": []
+},
+"isoband__rd_example__isobands_Rd.R||m_1": {
+"mean": 1.0,
+"key": "base.matrix",
+"calls": [
+"base.matrix"
+]
+},
+"isoband__rd_example__isobands_Rd.R||plot_iso_1": {
+"mean": 0.9567174343166677,
+"key": "isoband.plot-iso",
+"calls": []
+},
+"isoband__rd_example__isobands_Rd.R||m_2": {
+"mean": 1.0,
+"key": "base.matrix",
+"calls": [
+"base.matrix"
+]
+},
+"isoband__rd_example__isobands_Rd.R||plot_iso_2": {
+"mean": 0.9605654512514629,
+"key": "isoband.plot-iso",
+"calls": []
+},
+"isoband__rd_example__isobands_Rd.R||m_3": {
+"mean": 1.0,
+"key": "base.matrix",
+"calls": [
+"base.matrix"
+]
+},
+"isoband__rd_example__isobands_Rd.R||plot_iso_3": {
+"mean": 0.9445580262969693,
+"key": "isoband.plot-iso",
+"calls": []
+},
+"purrr__vignette__purrr_s3.R||x": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"purrr__vignette__purrr_s3.R||triple": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"purrr__vignette__purrr_s3.R||out": {
+"mean": 1.0,
+"key": "purrr.map",
+"calls": []
+},
+"purrr__vignette__purrr_s3.R||str": {
+"mean": 0.8639240506329113,
+"key": "utils.str",
+"calls": [
+"utils.str"
+]
+},
+"lubridate__vignette__lubridate_s19.R||last_day": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||blue": {
+"mean": 0.9199999999999999,
+"key": null,
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||red": {
+"mean": 0.9199999999999999,
+"key": null,
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||green": {
+"mean": 0.9199999999999999,
+"key": null,
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||core": {
+"mean": 0.84,
+"key": "sass.sass-layer",
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||core_1": {
+"mean": 0.84,
+"key": null,
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||sass": {
+"mean": 0.7009678019728272,
+"key": "sass.sass",
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||red_layer": {
+"mean": 0.84,
+"key": "sass.sass-layer",
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||sass_1": {
+"mean": 0.7009678019728272,
+"key": "sass.sass",
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||sass_2": {
+"mean": 0.7009678019728272,
+"key": "sass.sass",
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||core_layers": {
+"mean": 0.84,
+"key": "sass.sass-bundle",
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||core_layers_1": {
+"mean": 0.84,
+"key": null,
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||core_slim": {
+"mean": 0.84,
+"key": "sass.sass-bundle-remove",
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||sass_3": {
+"mean": 0.7009678019728272,
+"key": "sass.sass",
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||tmp_png": {
+"mean": 0.32,
+"key": "base.tempfile",
+"calls": [
+"base.tempfile"
+]
+},
+"sass__rd_example__sass_layer_Rd.R||png": {
+"mean": 0.7009678019728272,
+"key": "grdevices.png",
+"calls": [
+"grdevices.png"
+]
+},
+"sass__rd_example__sass_layer_Rd.R||par": {
+"mean": 0.7009678019728272,
+"key": "graphics.par",
+"calls": [
+"graphics.par",
+"base.rep-len"
+]
+},
+"sass__rd_example__sass_layer_Rd.R||plot.new": {
+"mean": 0.7009678019728272,
+"key": "graphics.plot.new",
+"calls": [
+"graphics.plot.new"
+]
+},
+"sass__rd_example__sass_layer_Rd.R||rect": {
+"mean": 0.7009678019728272,
+"key": "graphics.rect",
+"calls": [
+"graphics.rect"
+]
+},
+"sass__rd_example__sass_layer_Rd.R||dev.off": {
+"mean": 0.7009678019728272,
+"key": "grdevices.dev.off",
+"calls": [
+"grdevices.dev.off"
+]
+},
+"sass__rd_example__sass_layer_Rd.R||layer": {
+"mean": 0.7669681742043551,
+"key": "sass.sass-layer",
+"calls": []
+},
+"sass__rd_example__sass_layer_Rd.R||output_path": {
+"mean": 0.32,
+"key": "base.tempfile",
+"calls": [
+"base.tempfile"
+]
+},
+"sass__rd_example__sass_layer_Rd.R||sass_4": {
+"mean": 0.7009678019728272,
+"key": "sass.sass",
+"calls": []
+},
+"e1071__rd_example__hamming_window_Rd.R||hamming.window": {
+"mean": 0.6431159420289855,
+"key": "e1071.hamming.window",
+"calls": []
+},
+"e1071__rd_example__hamming_window_Rd.R||x": {
+"mean": 0.75,
+"key": "stats.rnorm",
+"calls": [
+"stats.rnorm"
+]
+},
+"e1071__rd_example__hamming_window_Rd.R||y": {
+"mean": 0.25,
+"key": "e1071.stft",
+"calls": []
+},
+"e1071__rd_example__hamming_window_Rd.R||plot": {
+"mean": 0.7432764913955157,
+"key": "graphics.plot",
+"calls": [
+"base.plot"
+]
+},
+"clock__vignette__faq_s28.R||raw": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"clock__vignette__faq_s28.R||x": {
+"mean": 0.25,
+"key": "clock.sys-time-parse",
+"calls": []
+},
+"clock__vignette__faq_s28.R||x_1": {
+"mean": 0.7731481481481481,
+"key": null,
+"calls": []
+},
+"base64enc__rd_example__base64_Rd.R||base64encode": {
+"mean": 1.0,
+"key": "base64enc.base64encode",
+"calls": []
+},
+"base64enc__rd_example__base64_Rd.R||base64encode_1": {
+"mean": 0.9981751824817519,
+"key": "base64enc.base64encode",
+"calls": []
+},
+"base64enc__rd_example__base64_Rd.R||base64encode_2": {
+"mean": 0.9972727272727273,
+"key": "base64enc.base64encode",
+"calls": []
+},
+"base64enc__rd_example__base64_Rd.R||x": {
+"mean": 0.25,
+"key": "base.chartoraw",
+"calls": [
+"base.chartoraw"
+]
+},
+"base64enc__rd_example__base64_Rd.R||y": {
+"mean": 0.25,
+"key": "base64enc.base64decode",
+"calls": []
+},
+"base64enc__rd_example__base64_Rd.R||stopifnot": {
+"mean": 1.0,
+"key": "base.stopifnot",
+"calls": [
+"base.stopifnot",
+"base.identical"
+]
+},
+"timeDate__rd_example__earlyCloseNYSE_Rd.R||earlyCloseNYSE": {
+"mean": 0.6416720534367593,
+"key": "timedate.earlyclosenyse",
+"calls": []
+},
+"timeDate__rd_example__earlyCloseNYSE_Rd.R||earlyCloseNYSE_1": {
+"mean": 0.7123968008255933,
+"key": "timedate.earlyclosenyse",
+"calls": []
+},
+"timeDate__rd_example__earlyCloseNYSE_Rd.R||holidayNYSE": {
+"mean": 0.523939226470872,
+"key": "timedate.holidaynyse",
+"calls": []
+},
+"timeDate__rd_example__earlyCloseNYSE_Rd.R||c": {
+"mean": 0.5290176319241248,
+"key": "base.c",
+"calls": []
+},
+"ragg__rd_example__agg_png_Rd.R||file": {
+"mean": 0.25,
+"key": "base.tempfile",
+"calls": [
+"base.tempfile"
+]
+},
+"ragg__rd_example__agg_png_Rd.R||agg_png": {
+"mean": 1.0,
+"key": "ragg.agg-png",
+"calls": []
+},
+"ragg__rd_example__agg_png_Rd.R||plot": {
+"mean": 1.0,
+"key": "graphics.plot",
+"calls": [
+"base.plot"
+]
+},
+"ragg__rd_example__agg_png_Rd.R||dev.off": {
+"mean": 0.5,
+"key": "grdevices.dev.off",
+"calls": [
+"grdevices.dev.off"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||is_interactive": {
+"mean": 0.0,
+"key": "rlang.is-interactive",
+"calls": [
+"base.withautoprint"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||res": {
+"mean": 0.0,
+"key": "htmltools.captureplot",
+"calls": [
+"base.plot"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||browseURL": {
+"mean": 0.0,
+"key": "utils.browseurl",
+"calls": [
+"utils.browseurl"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||unlink": {
+"mean": 0.0,
+"key": "base.unlink",
+"calls": [
+"base.unlink"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||pngpath": {
+"mean": 0.0,
+"key": "base.tempfile",
+"calls": [
+"base.tempfile"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||capturePlot": {
+"mean": 0.0,
+"key": "htmltools.captureplot",
+"calls": [
+"base.plot"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||browseURL_1": {
+"mean": 0.0,
+"key": "utils.browseurl",
+"calls": [
+"utils.browseurl"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||unlink_1": {
+"mean": 0.0,
+"key": "base.unlink",
+"calls": [
+"base.unlink"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||capabilities": {
+"mean": 0.0,
+"key": "base.capabilities",
+"calls": [
+"base.capabilities"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||svgpath": {
+"mean": 0.0,
+"key": "htmltools.captureplot",
+"calls": [
+"base.plot",
+"base.tempfile"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||browseURL_2": {
+"mean": 0.0,
+"key": "utils.browseurl",
+"calls": [
+"utils.browseurl"
+]
+},
+"htmltools__rd_example__capturePlot_Rd.R||unlink_2": {
+"mean": 0.0,
+"key": "base.unlink",
+"calls": [
+"base.unlink"
+]
+},
+"tidyr__vignette__tidy-data_s3.R||tribble": {
+"mean": 0.8495575221238938,
+"key": "tidyr.tribble",
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||is_installed": {
+"mean": 0.39321829653370743,
+"key": "rlang.is-installed",
+"calls": [
+"base.getrversion"
+]
+},
+"recipes__rd_example__step_integer_Rd.R||data": {
+"mean": 0.05555555555555555,
+"key": "utils.data",
+"calls": [
+"utils.data"
+]
+},
+"recipes__rd_example__step_integer_Rd.R||sacr_tr": {
+"mean": 0.2002755511022044,
+"key": null,
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||sacr_tr$sqft[1]": {
+"mean": 0.19999999999999998,
+"key": null,
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||sacr_te": {
+"mean": 0.20268817204301073,
+"key": null,
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||sacr_te$sqft[1]": {
+"mean": 0.19999999999999998,
+"key": null,
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||sacr_te$city[1]": {
+"mean": 0.19999999999999998,
+"key": null,
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||sacr_te$city[2]": {
+"mean": 0.19999999999999998,
+"key": null,
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||rec": {
+"mean": 0.6666666666666666,
+"key": null,
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||recipe": {
+"mean": 0.05555555555555555,
+"key": "recipes.recipe",
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||step_integer": {
+"mean": 0.05555555555555555,
+"key": "recipes.step-integer",
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||prep": {
+"mean": 0.05555555555555555,
+"key": "recipes.prep",
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||bake": {
+"mean": 0.07010663198421581,
+"key": "recipes.bake",
+"calls": []
+},
+"recipes__rd_example__step_integer_Rd.R||tidy": {
+"mean": 0.09121086507753011,
+"key": "recipes.tidy",
+"calls": []
+},
+"systemfonts__rd_example__font_feature_Rd.R||font_feature": {
+"mean": 0.16666666666666666,
+"key": "systemfonts.font-feature",
+"calls": []
+},
+"systemfonts__rd_example__font_feature_Rd.R||font_feature_1": {
+"mean": 0.16666666666666666,
+"key": "systemfonts.font-feature",
+"calls": []
+},
+"uuid__rd_example__UUID_Rd.R||u": {
+"mean": 0.625,
+"key": "uuid.as.uuid",
+"calls": []
+},
+"uuid__rd_example__UUID_Rd.R||uv": {
+"mean": 0.43850840439680433,
+"key": null,
+"calls": []
+},
+"uuid__rd_example__UUID_Rd.R||as.character": {
+"mean": 1.0,
+"key": "base.as.character",
+"calls": [
+"base.as.character"
+]
+},
+"uuid__rd_example__UUID_Rd.R||is.na": {
+"mean": 0.9695652173913043,
+"key": "base.is.na",
+"calls": [
+"base.is.na"
+]
+},
+"uuid__rd_example__UUID_Rd.R||identical": {
+"mean": 1.0,
+"key": "base.identical",
+"calls": [
+"base.identical",
+"base.as.character"
+]
+},
+"uuid__rd_example__UUID_Rd.R||as.raw": {
+"mean": 1.0,
+"key": "base.as.raw",
+"calls": [
+"base.as.raw"
+]
+},
+"uuid__rd_example__UUID_Rd.R||identical_1": {
+"mean": 1.0,
+"key": "base.identical",
+"calls": [
+"base.identical",
+"base.as.raw"
+]
+},
+"uuid__rd_example__UUID_Rd.R||identical_2": {
+"mean": 1.0,
+"key": "base.identical",
+"calls": [
+"base.identical",
+"base.as.character",
+"base.as.raw"
+]
+},
+"rematch__rd_example__re_match_Rd.R||dates": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"rematch__rd_example__re_match_Rd.R||isodate": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"rematch__rd_example__re_match_Rd.R||re_match": {
+"mean": 0.9003450638082978,
+"key": "rematch.re-match",
+"calls": []
+},
+"rematch__rd_example__re_match_Rd.R||isodaten": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"rematch__rd_example__re_match_Rd.R||re_match_1": {
+"mean": 0.9210526315789473,
+"key": "rematch.re-match",
+"calls": []
+},
+"diagram__rd_example__diagram_Rd.R||example": {
+"mean": 0.007484168105929764,
+"key": "utils.example",
+"calls": [
+"utils.example"
+]
+},
+"diagram__rd_example__diagram_Rd.R||example_1": {
+"mean": 0.008916323731138546,
+"key": "utils.example",
+"calls": [
+"utils.example"
+]
+},
+"diagram__rd_example__diagram_Rd.R||demo": {
+"mean": 0.11247217359266777,
+"key": "utils.demo",
+"calls": [
+"utils.demo"
+]
+},
+"diagram__rd_example__diagram_Rd.R||demo_1": {
+"mean": 0.1011420079523317,
+"key": "utils.demo",
+"calls": [
+"utils.demo"
+]
+},
+"diagram__rd_example__diagram_Rd.R||demo_2": {
+"mean": 0.09424906938177972,
+"key": "utils.demo",
+"calls": [
+"utils.demo"
+]
+},
+"diagram__rd_example__diagram_Rd.R||browseURL": {
+"mean": 1.0,
+"key": "utils.browseurl",
+"calls": [
+"utils.browseurl",
+"base.paste",
+"base.system.file"
+]
+},
+"diagram__rd_example__diagram_Rd.R||vignette": {
+"mean": 1.0,
+"key": "utils.vignette",
+"calls": [
+"utils.vignette"
+]
+},
+"diagram__rd_example__diagram_Rd.R||edit": {
+"mean": 1.0,
+"key": "utils.edit",
+"calls": [
+"utils.edit",
+"utils.vignette"
+]
+},
+"diagram__rd_example__diagram_Rd.R||browseURL_1": {
+"mean": 1.0,
+"key": "utils.browseurl",
+"calls": [
+"utils.browseurl",
+"base.paste",
+"base.system.file"
+]
+},
+"broom__rd_example__glance_factanal_Rd.R||set.seed": {
+"mean": 1.0,
+"key": "base.set.seed",
+"calls": [
+"base.set.seed"
+]
+},
+"broom__rd_example__glance_factanal_Rd.R||m1": {
+"mean": 0.75,
+"key": "dplyr.tibble",
+"calls": []
+},
+"broom__rd_example__glance_factanal_Rd.R||m2": {
+"mean": 0.75,
+"key": "purrr.map-dfr",
+"calls": []
+},
+"broom__rd_example__glance_factanal_Rd.R||fit1": {
+"mean": 0.25,
+"key": "stats.factanal",
+"calls": [
+"stats.factanal"
+]
+},
+"broom__rd_example__glance_factanal_Rd.R||fit2": {
+"mean": 0.25,
+"key": "stats.factanal",
+"calls": [
+"stats.factanal"
+]
+},
+"broom__rd_example__glance_factanal_Rd.R||tidy": {
+"mean": 0.6043381745978627,
+"key": "broom.tidy",
+"calls": []
+},
+"broom__rd_example__glance_factanal_Rd.R||tidy_1": {
+"mean": 0.6043381745978627,
+"key": "broom.tidy",
+"calls": []
+},
+"broom__rd_example__glance_factanal_Rd.R||augment": {
+"mean": 0.5097750146293836,
+"key": "broom.augment",
+"calls": []
+},
+"broom__rd_example__glance_factanal_Rd.R||augment_1": {
+"mean": 0.5097663341030221,
+"key": "broom.augment",
+"calls": []
+},
+"broom__rd_example__glance_factanal_Rd.R||augment_2": {
+"mean": 0.5106248605881768,
+"key": "broom.augment",
+"calls": []
+},
+"broom__rd_example__glance_factanal_Rd.R||augment_3": {
+"mean": 0.5106181975634237,
+"key": "broom.augment",
+"calls": []
+},
+"vctrs__rd_example__new_date_Rd.R||new_date": {
+"mean": 1.0,
+"key": "vctrs.new-date",
+"calls": []
+},
+"vctrs__rd_example__new_date_Rd.R||new_datetime": {
+"mean": 1.0,
+"key": "vctrs.new-datetime",
+"calls": []
+},
+"vctrs__rd_example__new_date_Rd.R||new_duration": {
+"mean": 1.0,
+"key": "vctrs.new-duration",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||x": {
+"mean": 1.0,
+"key": "base.as.posixct",
+"calls": [
+"base.as.posixct"
+]
+},
+"timechange__rd_example__time_add_Rd.R||time_add": {
+"mean": 0.8875968992248062,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_1": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_2": {
+"mean": 0.7777777777777778,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_3": {
+"mean": 0.8875968992248062,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_4": {
+"mean": 0.5666666666666667,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_5": {
+"mean": 0.8875968992248062,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_6": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_7": {
+"mean": 0.7962962962962963,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_8": {
+"mean": 0.8875968992248062,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_9": {
+"mean": 0.5666666666666667,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||x_1": {
+"mean": 1.0,
+"key": "base.as.posixlt",
+"calls": [
+"base.as.posixlt"
+]
+},
+"timechange__rd_example__time_add_Rd.R||time_add_10": {
+"mean": 0.872093023255814,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_11": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_12": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||tt": {
+"mean": 0.3851907950680272,
+"key": "base.as.posixct",
+"calls": [
+"base.as.posixct"
+]
+},
+"timechange__rd_example__time_add_Rd.R||time_add_13": {
+"mean": 0.7363291597791765,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_14": {
+"mean": 0.776608560090703,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_15": {
+"mean": 0.776608560090703,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_16": {
+"mean": 0.776608560090703,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||cst": {
+"mean": 1.0,
+"key": "base.as.posixlt",
+"calls": [
+"base.as.posixlt"
+]
+},
+"timechange__rd_example__time_add_Rd.R||cdt": {
+"mean": 1.0,
+"key": "base.as.posixlt",
+"calls": [
+"base.as.posixlt"
+]
+},
+"timechange__rd_example__time_add_Rd.R||time_add_17": {
+"mean": 0.872093023255814,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_18": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_19": {
+"mean": 0.872093023255814,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_20": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_add_21": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-add",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||x_2": {
+"mean": 1.0,
+"key": "base.as.posixct",
+"calls": [
+"base.as.posixct"
+]
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract": {
+"mean": 0.8875968992248062,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_1": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_2": {
+"mean": 0.7777777777777778,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_3": {
+"mean": 0.8875968992248062,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_4": {
+"mean": 0.5666666666666667,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_5": {
+"mean": 0.8875968992248062,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_6": {
+"mean": 0.8875968992248062,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_7": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_8": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_9": {
+"mean": 0.7962962962962963,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_10": {
+"mean": 0.8875968992248062,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_11": {
+"mean": 0.5666666666666667,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||y": {
+"mean": 1.0,
+"key": "base.as.posixlt",
+"calls": [
+"base.as.posixlt"
+]
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_12": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_13": {
+"mean": 0.872093023255814,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_14": {
+"mean": 0.872093023255814,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"timechange__rd_example__time_add_Rd.R||time_subtract_15": {
+"mean": 0.5625,
+"key": "timechange.time-subtract",
+"calls": []
+},
+"rmarkdown__rd_example__output_format_dependency_Rd.R||output_format_dependency": {
+"mean": 1.0,
+"key": "rmarkdown.output-format-dependency",
+"calls": []
+},
+"rmarkdown__rd_example__output_format_dependency_Rd.R||knit_meta_add": {
+"mean": 0.8333333333333334,
+"key": "knitr.knit-meta-add",
+"calls": []
+},
+"rmarkdown__rd_example__output_format_dependency_Rd.R||str": {
+"mean": 0.9205634322519775,
+"key": "utils.str",
+"calls": [
+"utils.str"
+]
+},
+"xml2__rd_example__xml_cdata_Rd.R||x": {
+"mean": 0.25,
+"key": "xml2.xml-new-root",
+"calls": []
+},
+"xml2__rd_example__xml_cdata_Rd.R||xml_add_child": {
+"mean": 1.0,
+"key": "xml2.xml-add-child",
+"calls": []
+},
+"xml2__rd_example__xml_cdata_Rd.R||as.character": {
+"mean": 0.5,
+"key": "base.as.character",
+"calls": [
+"base.as.character"
+]
+},
+"prettyunits__rd_example__pretty_bytes_Rd.R||bytes": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"prettyunits__rd_example__pretty_bytes_Rd.R||pretty_bytes": {
+"mean": 0.9728915662650602,
+"key": "prettyunits.pretty-bytes",
+"calls": []
+},
+"prettyunits__rd_example__pretty_bytes_Rd.R||pretty_bytes_1": {
+"mean": 0.9423076923076923,
+"key": "prettyunits.pretty-bytes",
+"calls": []
+},
+"prettyunits__rd_example__pretty_bytes_Rd.R||pretty_bytes_2": {
+"mean": 0.8152173913043478,
+"key": "prettyunits.pretty-bytes",
+"calls": []
+},
+"ModelMetrics__rd_example__ppv_Rd.R||data": {
+"mean": 0.08333333333333333,
+"key": "utils.data",
+"calls": [
+"utils.data"
+]
+},
+"ModelMetrics__rd_example__ppv_Rd.R||glmModel": {
+"mean": 0.125,
+"key": "stats.glm",
+"calls": [
+"stats.glm"
+]
+},
+"ModelMetrics__rd_example__ppv_Rd.R||Preds": {
+"mean": 0.125,
+"key": "stats.predict",
+"calls": [
+"stats.predict"
+]
+},
+"ModelMetrics__rd_example__ppv_Rd.R||ppv": {
+"mean": 0.5,
+"key": "modelmetrics.ppv",
+"calls": []
+},
+"ModelMetrics__rd_example__ppv_Rd.R||precision": {
+"mean": 0.5,
+"key": "modelmetrics.precision",
+"calls": []
+},
+"htmlwidgets__vignette__develop_advanced_chunk6.R||fooWidget": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.attr"
+]
+},
+"hms__rd_example__round_hms_Rd.R||round_hms": {
+"mean": 0.9444444444444444,
+"key": "hms.round-hms",
+"calls": []
+},
+"hms__rd_example__round_hms_Rd.R||round_hms_1": {
+"mean": 0.9444444444444444,
+"key": "hms.round-hms",
+"calls": []
+},
+"hms__rd_example__round_hms_Rd.R||round_hms_2": {
+"mean": 0.8692067736185384,
+"key": "hms.round-hms",
+"calls": []
+},
+"hms__rd_example__round_hms_Rd.R||round_hms_3": {
+"mean": 0.8660968660968661,
+"key": "hms.round-hms",
+"calls": []
+},
+"hms__rd_example__round_hms_Rd.R||round_hms_4": {
+"mean": 0.9035087719298246,
+"key": "hms.round-hms",
+"calls": []
+},
+"hms__rd_example__round_hms_Rd.R||trunc_hms": {
+"mean": 0.9444444444444444,
+"key": "hms.trunc-hms",
+"calls": []
+},
+"hms__rd_example__round_hms_Rd.R||ceiling_hms": {
+"mean": 0.9444444444444444,
+"key": "hms.ceiling-hms",
+"calls": []
+},
+"hms__rd_example__round_hms_Rd.R||floor_hms": {
+"mean": 0.9444444444444444,
+"key": "hms.floor-hms",
+"calls": []
+},
+"reshape2__rd_example__melt_array_Rd.R||a": {
+"mean": 1.0,
+"key": "base.array",
+"calls": [
+"base.array"
+]
+},
+"reshape2__rd_example__melt_array_Rd.R||melt": {
+"mean": 0.6660939289805269,
+"key": "reshape2.melt",
+"calls": []
+},
+"reshape2__rd_example__melt_array_Rd.R||melt_1": {
+"mean": 0.8849627012171182,
+"key": "reshape2.melt",
+"calls": []
+},
+"reshape2__rd_example__melt_array_Rd.R||melt_2": {
+"mean": 0.99822695035461,
+"key": "reshape2.melt",
+"calls": []
+},
+"reshape2__rd_example__melt_array_Rd.R||dimnames(a)": {
+"mean": 1.0,
+"key": "base.lapply",
+"calls": [
+"base.dimnames",
+"base.lapply",
+"base.dim"
+]
+},
+"reshape2__rd_example__melt_array_Rd.R||melt_3": {
+"mean": 0.9982817869415808,
+"key": "reshape2.melt",
+"calls": []
+},
+"reshape2__rd_example__melt_array_Rd.R||melt_4": {
+"mean": 0.99822695035461,
+"key": "reshape2.melt",
+"calls": []
+},
+"reshape2__rd_example__melt_array_Rd.R||dimnames(a)[1]": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.dimnames"
+]
+},
+"reshape2__rd_example__melt_array_Rd.R||melt_5": {
+"mean": 0.9982817869415808,
+"key": "reshape2.melt",
+"calls": []
+},
+"proxy__rd_example__dist_Rd.R||summary": {
+"mean": 0.6909770523107144,
+"key": "base.summary",
+"calls": [
+"base.summary"
+]
+},
+"proxy__rd_example__dist_Rd.R||pr_DB$get_entry": {
+"mean": 0.6644827457144996,
+"key": null,
+"calls": []
+},
+"proxy__rd_example__dist_Rd.R||x": {
+"mean": 0.25,
+"key": "base.matrix",
+"calls": [
+"base.matrix",
+"base.sample"
+]
+},
+"proxy__rd_example__dist_Rd.R||dist": {
+"mean": 0.808003719333381,
+"key": "proxy.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||dist_1": {
+"mean": 0.808003719333381,
+"key": "proxy.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||dist_2": {
+"mean": 0.808003719333381,
+"key": "proxy.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||dist_3": {
+"mean": 0.8292006604506604,
+"key": "proxy.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||dist_4": {
+"mean": 0.8009259259259259,
+"key": "proxy.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||as.matrix": {
+"mean": 0.8218112844467947,
+"key": "proxy.as.matrix",
+"calls": [
+"base.as.matrix",
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||x_1": {
+"mean": 1.0,
+"key": "base.matrix",
+"calls": [
+"base.matrix",
+"stats.rnorm"
+]
+},
+"proxy__rd_example__dist_Rd.R||rownames(x)": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.rownames"
+]
+},
+"proxy__rd_example__dist_Rd.R||colnames(x)": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.colnames"
+]
+},
+"proxy__rd_example__dist_Rd.R||dist_5": {
+"mean": 0.5801282051282052,
+"key": "proxy.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||dist_6": {
+"mean": 0.6374942942790403,
+"key": "proxy.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||f": {
+"mean": 1.0,
+"key": null,
+"calls": [
+"base.sum"
+]
+},
+"proxy__rd_example__dist_Rd.R||dist_7": {
+"mean": 0.6972530216761562,
+"key": "proxy.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||z": {
+"mean": 0.2579935155309289,
+"key": "base.unlist",
+"calls": [
+"base.unlist",
+"base.apply"
+]
+},
+"proxy__rd_example__dist_Rd.R||d": {
+"mean": 0.3746122828784119,
+"key": "stats.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||dist_8": {
+"mean": 0.6884943512695085,
+"key": "proxy.dist",
+"calls": [
+"stats.dist"
+]
+},
+"proxy__rd_example__dist_Rd.R||subset": {
+"mean": 0.6650011103708638,
+"key": "base.subset",
+"calls": [
+"base.subset"
+]
+},
+"proxy__rd_example__dist_Rd.R||c": {
+"mean": 0.6332070707070707,
+"key": "base.c",
+"calls": []
+},
+"proxy__rd_example__dist_Rd.R||as.matrix_1": {
+"mean": 0.7445682589948117,
+"key": "proxy.as.matrix",
+"calls": [
+"base.as.matrix",
+"base.exp"
+]
+},
+"proxy__rd_example__dist_Rd.R||row.dist": {
+"mean": 0.7160493827160493,
+"key": "proxy.row.dist",
+"calls": []
+},
+"proxy__rd_example__dist_Rd.R||col.dist": {
+"mean": 0.7353046320412645,
+"key": "proxy.col.dist",
+"calls": []
+},
+"gtable__rd_example__gtable_show_layout_Rd.R||gt": {
+"mean": 0.3786407766990291,
+"key": "gtable.gtable",
+"calls": []
+},
+"gtable__rd_example__gtable_show_layout_Rd.R||gtable_show_layout": {
+"mean": 0.9081121528863504,
+"key": "gtable.gtable-show-layout",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||date": {
+"mean": 1.0,
+"key": "base.as.date",
+"calls": [
+"base.as.date"
+]
+},
+"timechange__rd_example__time_update_Rd.R||time_update": {
+"mean": 1.0,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_update_1": {
+"mean": 1.0,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_update_2": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_update_3": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time": {
+"mean": 1.0,
+"key": "base.as.posixct",
+"calls": [
+"base.as.posixct"
+]
+},
+"timechange__rd_example__time_update_Rd.R||time_update_4": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_update_5": {
+"mean": 0.8055555555555556,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_update_6": {
+"mean": 0.8837209302325582,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_update_7": {
+"mean": 0.6666666666666666,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_update_8": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_1": {
+"mean": 1.0,
+"key": "base.as.posixct",
+"calls": [
+"base.as.posixct"
+]
+},
+"timechange__rd_example__time_update_Rd.R||time_update_9": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_update_10": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-update",
+"calls": []
+},
+"timechange__rd_example__time_update_Rd.R||time_update_11": {
+"mean": 0.8953488372093024,
+"key": "timechange.time-update",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||df": {
+"mean": 0.8402380952380953,
+"key": "base.data.frame",
+"calls": [
+"base.data.frame"
+]
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||p": {
+"mean": 0.8402380952380953,
+"key": "ggplot2.ggplot",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_line": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-line",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_line_1": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-line",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_line_2": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-line",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||ggplot": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.ggplot",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_line_3": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-line",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||ggplot_1": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.ggplot",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_line_4": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-line",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||ggplot_2": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.ggplot",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_line_5": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-line",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||p_1": {
+"mean": 0.8402380952380953,
+"key": "ggplot2.ggplot",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_1": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_2": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_hline": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-hline",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_3": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_4": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_5": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_6": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_7": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_8": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": [
+"base.factor"
+]
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||df2": {
+"mean": 0.8402380952380953,
+"key": "base.data.frame",
+"calls": [
+"base.data.frame"
+]
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||p_2": {
+"mean": 0.8402380952380953,
+"key": "ggplot2.ggplot",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_9": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||scale_shape_identity": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.scale-shape-identity",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_10": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||scale_shape_identity_1": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.scale-shape-identity",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||geom_point_11": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.geom-point",
+"calls": []
+},
+"ggplot2__rd_example__aes_linetype_size_shape_Rd.R||scale_shape_identity_2": {
+"mean": 0.8668650793650794,
+"key": "ggplot2.scale-shape-identity",
+"calls": []
+},
+"rvest__vignette__rvest_s9.R||html": {
+"mean": 0.43857142857142856,
+"key": "rvest.minimal-html",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||drive_has_token": {
+"mean": 0.8,
+"key": "googledrive.drive-has-token",
+"calls": [
+"base.withautoprint"
+]
+},
+"googledrive__rd_example__drive_create_Rd.R||wordstar": {
+"mean": 0.8666666666666667,
+"key": "googledrive.drive-create",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||pluck": {
+"mean": 0.7333333333333334,
+"key": "purrr.pluck",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||execuvision": {
+"mean": 0.8666666666666667,
+"key": "googledrive.drive-create",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||pluck_1": {
+"mean": 0.7333333333333334,
+"key": "purrr.pluck",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||drive_browse": {
+"mean": 0.8,
+"key": "googledrive.drive-browse",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||b4xl": {
+"mean": 0.8666666666666667,
+"key": "googledrive.drive-mkdir",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||drive_create": {
+"mean": 0.8,
+"key": "googledrive.drive-create",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||drive_create_1": {
+"mean": 0.8,
+"key": "googledrive.drive-create",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||drive_create_2": {
+"mean": 0.8,
+"key": "googledrive.drive-create",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||drive_ls": {
+"mean": 0.8,
+"key": "googledrive.drive-ls",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||drive_create_3": {
+"mean": 0.8,
+"key": "googledrive.drive-create",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||drive_create_4": {
+"mean": 0.8,
+"key": "googledrive.drive-create",
+"calls": []
+},
+"googledrive__rd_example__drive_create_Rd.R||drive_rm": {
+"mean": 0.9333333333333333,
+"key": "googledrive.drive-rm",
+"calls": []
+},
+"textshaping__vignette__c_interface.R||opts_chunk$set": {
+"mean": 1.0,
+"key": null,
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||data": {
+"mean": 0.6553491126605399,
+"key": "utils.data",
+"calls": [
+"utils.data"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||createDataPartition": {
+"mean": 0.6553491126605399,
+"key": "caret.createdatapartition",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||x": {
+"mean": 0.68,
+"key": "stats.rgamma",
+"calls": [
+"stats.rgamma"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||inA": {
+"mean": 0.7242476634023415,
+"key": "caret.createdatapartition",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||plot": {
+"mean": 0.6553491126605399,
+"key": "graphics.plot",
+"calls": [
+"base.plot",
+"stats.density"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||rug": {
+"mean": 0.6553491126605399,
+"key": "graphics.rug",
+"calls": [
+"graphics.rug"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||points": {
+"mean": 0.6553491126605399,
+"key": "graphics.points",
+"calls": [
+"graphics.points",
+"stats.density"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||rug_1": {
+"mean": 0.6553491126605399,
+"key": "graphics.rug",
+"calls": [
+"graphics.rug"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||createResample": {
+"mean": 0.6553491126605399,
+"key": "caret.createresample",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||createFolds": {
+"mean": 0.6553491126605399,
+"key": "caret.createfolds",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||createFolds_1": {
+"mean": 0.6553491126605399,
+"key": "caret.createfolds",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||createFolds_2": {
+"mean": 0.6553491126605399,
+"key": "caret.createfolds",
+"calls": [
+"stats.rnorm"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||createTimeSlices": {
+"mean": 0.6553491126605399,
+"key": "caret.createtimeslices",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||createTimeSlices_1": {
+"mean": 0.6553491126605399,
+"key": "caret.createtimeslices",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||createTimeSlices_2": {
+"mean": 0.6553491126605399,
+"key": "caret.createtimeslices",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||createTimeSlices_3": {
+"mean": 0.6553491126605399,
+"key": "caret.createtimeslices",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||createTimeSlices_4": {
+"mean": 0.6553491126605399,
+"key": "caret.createtimeslices",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||createTimeSlices_5": {
+"mean": 0.6553491126605399,
+"key": "caret.createtimeslices",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||createTimeSlices_6": {
+"mean": 0.6553491126605399,
+"key": "caret.createtimeslices",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||set.seed": {
+"mean": 0.6553491126605399,
+"key": "base.set.seed",
+"calls": [
+"base.set.seed"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||groups": {
+"mean": 0.8800000000000001,
+"key": "base.sort",
+"calls": [
+"base.sort",
+"base.sample"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||table": {
+"mean": 0.6553491126605399,
+"key": "base.table",
+"calls": [
+"base.table"
+]
+},
+"caret__rd_example__createDataPartition_Rd.R||folds": {
+"mean": 0.6027118644067797,
+"key": "caret.groupkfold",
+"calls": []
+},
+"caret__rd_example__createDataPartition_Rd.R||lapply": {
+"mean": 0.6553491126605399,
+"key": "base.lapply",
+"calls": [
+"base.lapply",
+"base.table"
+]
+},
+"openssl__rd_example__base64_encode_Rd.R||input": {
+"mean": 0.25,
+"key": "base.chartoraw",
+"calls": [
+"base.chartoraw"
+]
+},
+"openssl__rd_example__base64_encode_Rd.R||message": {
+"mean": 1.0,
+"key": "openssl.base64-encode",
+"calls": []
+},
+"openssl__rd_example__base64_encode_Rd.R||output": {
+"mean": 0.25,
+"key": "openssl.base64-decode",
+"calls": []
+},
+"openssl__rd_example__base64_encode_Rd.R||identical": {
+"mean": 1.0,
+"key": "base.identical",
+"calls": [
+"base.identical"
+]
+},
+"cachem__rd_example__cache_layered_Rd.R||m": {
+"mean": 0.2631578947368421,
+"key": "cachem.cache-mem",
+"calls": []
+},
+"cachem__rd_example__cache_layered_Rd.R||d": {
+"mean": 0.25,
+"key": "cachem.cache-disk",
+"calls": []
+},
+"cachem__rd_example__cache_layered_Rd.R||cl": {
+"mean": 0.25,
+"key": "cachem.cache-layered",
+"calls": []
+},
+"conflicted__rd_example__conflicts_prefer_Rd.R||conflicts_prefer": {
+"mean": 1.0,
+"key": "conflicted.conflicts-prefer",
+"calls": []
+},
+"conflicted__rd_example__conflicts_prefer_Rd.R||conflicts_prefer_1": {
+"mean": 1.0,
+"key": "conflicted.conflicts-prefer",
+"calls": []
+}
+}
