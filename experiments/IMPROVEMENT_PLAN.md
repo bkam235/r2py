@@ -120,6 +120,53 @@ the ~69% of held-out loss no training script's verified entity covers. Open cave
 (+-0.1 at script level) and the oracle is bounded by the corpus, so it bounds what *these* 256 training scripts could
 teach, not what an unlimited corpus could.
 
+**Runtime ceiling, step 1 of the runtime pilot (2026-10-07).** `scripts/runtime_ceiling.py`, offline, no model calls:
+each held-out entity's loss is attributed to the function that would have to be implemented and that function is
+classified in R. (`difftest.impure_calls` cannot be used directly: it returns an empty impure list both for a pure
+function and for one R cannot find, so the script runs its own probe - see the open task on that defect.)
+
+| class | entities | lost points | share |
+|---|---|---|---|
+| candidate (found, closure, no impure call) | 259 | 71.1 | **50%** |
+| impure (IO, environment, NSE, error handling) | 97 | 42.3 | 30% |
+| not found (uninstalled, S4/R5, local helper) | 54 | 12.3 | 9% |
+| graphics / device | 58 | 11.8 | 8% |
+| primitive (no R body to read a spec from) | 23 | 4.2 | 3% |
+
+The structural ceiling is 50%, which clears the pre-committed >= 25%. But candidate loss is 52.7 points on *package*
+functions against 18.4 on base/stats/utils, and the pilot's measured pass rates are 59% (30/51) for base/stats/utils
+and 22% (10/45) for package functions. Discounted by those rates the expected reach is **22.5 points = 16% of the
+loss** - the same order as the pattern library's 17%. The criterion did not say whether to discount by
+implementability; both readings are recorded here rather than choosing the favourable one. The largest candidates are
+`time_add@timechange` (3.79), `tempfile@base` (3.11), `predict@stats` (3.09), `time_subtract@timechange` (2.97),
+`page_fillable@bslib` (2.50), `createTimeSlices@caret` (2.41) - mostly package functions with complex semantics, and
+`predict` is a generic over model objects that no standalone function can reproduce.
+
+**Why every knowledge-injection mechanism is null: the model does not read the examples**
+(`scripts/imitation_probe.py`, from the oracle replay, no new runs). For the 52 entities that had an example in one arm
+and not the other, the share of the example's distinctive identifiers (in its Python, absent from the entity's R,
+not builtins) that appear in the entity's final Python:
+
+```
+example in the prompt : 6.3%
+example never shown   : 6.6%   <- chance
+difference            : -0.3%      44 of 52 entities unchanged, 3 more similar, 5 less
+```
+
+Exactly one entity visibly adopted its example (`holidayNYSE`, recall 21% -> 77%) and its score *fell*, 0.90 -> 0.81.
+So the nulls are not about which example is retrieved or how it is keyed: the content never reaches the output. For
+context, the agent prompt is ~8,800 characters and the pattern section begins **69% of the way through it**, after the
+R source, the whole current translation, the verification result, the entity list and the data variables, introduced
+by a soft "use ... to inform your rewrite".
+
+**Working hypothesis, consistent with everything measured so far:** this model acts on information *about the code in
+front of it* - a diverging value (locator +0.029), a missing import, a syntax error, a crash - and not on *analogies
+it has to transfer* (library, lessons, oracle: all null). Width works because it is more attempts, not more reading.
+The next tests separate "the examples are useless" from "the behaviour is broken": (1) mechanically substitute an
+example into its entity and re-verify - no model calls at all, so it is nearly free, and it bounds whether the content
+helps when it *is* used; (2) only if that is positive, make the knowledge about the code in front of the model
+(example rewritten into the script's own variable names, placed last, as a required edit) and re-run the paired replay.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.

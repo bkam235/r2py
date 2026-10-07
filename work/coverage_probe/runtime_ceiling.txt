@@ -1,0 +1,32 @@
+held-out entities 499, lost points 142.8; 233 distinct (function, package) pairs probed in R
+class           entities   lost points   share
+candidate            259          71.1     50%
+impure                97          42.3     30%
+not_found             54          12.3      9%
+graphics              58          11.8      8%
+primitive             23           4.2      3%
+(unmapped)             8           1.0      1%
+
+biggest losses among the candidates (what a runtime would have to implement):
+    3.79  time_add@timechange
+    3.11  tempfile@base
+    3.09  predict@stats
+    2.97  time_subtract@timechange
+    2.50  page_fillable@bslib
+    2.41  createTimeSlices@caret
+    2.25  charToRaw@base
+    2.00  ggroc@pROC
+    1.96  augment@broom
+    1.67  font_feature@systemfonts
+    1.50  timeDate@timeDate
+    1.50  matrix@base
+
+biggest losses ruled out (graphics / impure / primitive / not found):
+    3.80  display.brewer.all@RColorBrewer
+    3.33  devAskNewPage@grDevices
+    3.21  data@utils
+    3.00  capturePlot@htmltools
+    3.00  browseURL@utils
+    3.00  unlink@base
+    2.69  demo@utils
+    2.55  c@base
