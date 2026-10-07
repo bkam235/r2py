@@ -28,7 +28,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 ARMS = [f"work/smoke/{a}" for a in ("20261001_112951", "20261001_140509", "20261001_165951")]
 LIBS = ROOT / "work" / "oracle" / "libs"
 MAPS = ROOT / "work" / "replay" / "script_maps"
-OUT = ROOT / "work" / "replay_oracle" / "substitution.jsonl"
+OUT = ROOT / "work" / "replay_oracle" / "substitution.jsonl"  # --source self writes substitution_self.jsonl
 
 
 def reindent(snippet: str, indent: str) -> str:
@@ -58,9 +58,45 @@ def substitute(source: str, ranges: list[tuple[int, int]], snippet: str) -> str:
     return "\n".join(out) + "\n"
 
 
+def donors(stem: str) -> dict[str, str]:
+    """entity id -> the Python of that entity from a run that scored it 1.0.
+
+    A positive control: unlike a library example, this code *is* a correct translation of this very
+    statement, in this script's own variable names. If substituting it does not raise the score, the
+    substitution instrument is broken; if showing it to the model does not change the output, the
+    model is not using even a perfect, context-matched example.
+    """
+    from r2py.harness import trajectory
+    from r2py.stage2.sentinel_mapper import ranges_from_sentinels
+
+    best: dict[str, str] = {}
+    for f in (ROOT / "work" / "replay_oracle" / "trajectories").glob(f"{stem}.*.jsonl"):
+        for rec in trajectory.read(f):
+            if rec["kind"] not in ("step", "accepted") or not rec.get("source"):
+                continue
+            per = rec.get("per_entity") or {}
+            lines = rec["source"].splitlines()
+            ranges = ranges_from_sentinels(rec["source"])
+            for eid, score in per.items():
+                if float(score) < 0.999 or eid in best or eid not in ranges:
+                    continue
+                code = "\n".join(l for a, b in ranges[eid] for l in lines[a:b + 1]
+                                 if "r2py:entity:" not in l)
+                if code.strip():
+                    best[eid] = code
+    return best
+
+
 def main() -> int:
+    import argparse
+
     from dotenv import load_dotenv
     load_dotenv(ROOT / ".env", override=True)
+    ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    ap.add_argument("--source", choices=["library", "self"], default="library",
+                    help="library: the oracle library's example for the entity's function. "
+                         "self: the same entity's code from a run that scored it 1.0 (positive control)")
+    args = ap.parse_args()
     import replay
     from r2py import heldout as ho
     from r2py.harness.tools import HarnessTools
@@ -80,7 +116,8 @@ def main() -> int:
         for f in (LIBS / stem / "patterns").glob("*.md"):
             pat = from_markdown(f.read_text(encoding="utf-8"))
             pats[pat.id] = [ex.py_snippet for ex in pat.translation_examples]
-        if not pats:
+        own_code = donors(stem) if args.source == "self" else {}
+        if not pats and not own_code:
             continue
         sm = pickle.loads((MAPS / f"{stem}.pkl").read_bytes())
         tools = HarnessTools(sm, empty, model=cfg["model"], data_compare=cfg["data_compare"],
@@ -92,11 +129,16 @@ def main() -> int:
             k = pattern_key(entity)
             keys = ({pattern_id(*k)} if k else set()) | {
                 pattern_id(*q.split("::")) for q in correction_functions(entity.base_r_calls or [])}
-            snippets = [s for key in keys & set(pats) for s in pats[key]]
+            if args.source == "self":
+                snippets = [own_code[eid]] if eid in own_code else []
+            else:
+                snippets = [s for key in sorted(keys & set(pats)) for s in pats[key]]
             if not snippets or eid not in ranges:
                 continue
             before = base.by_entity.get(eid)
             before_score = ho.entity_score(before) if before else None
+            if args.source == "self" and before_score is not None and before_score > 0.999:
+                continue                      # nothing to repair: the start state already scores it 1.0
             try:
                 new_source = substitute(state["source"], ranges[eid], snippets[0])
                 rep = tools.verify(new_source)
@@ -122,8 +164,9 @@ def main() -> int:
             print(f"  {stem[:34]:<36}{eid[:20]:<22} {before_score} -> {after_score}   "
                   f"aggregate {base.aggregate:.3f} -> {rep.aggregate:.3f}", flush=True)
 
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    OUT.write_text("\n".join(json.dumps(r) for r in rows) + "\n", encoding="utf-8")
+    out_path = OUT if args.source == "library" else OUT.with_name("substitution_self.jsonl")
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    out_path.write_text("\n".join(json.dumps(r) for r in rows) + "\n", encoding="utf-8")
     scored = [r for r in rows if r.get("before") is not None and r.get("after") is not None]
     print(f"\n{len(rows)} substitutions over {len({r['script'] for r in rows})} states")
     for k, v in outcomes.most_common():

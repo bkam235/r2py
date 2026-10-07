@@ -197,13 +197,17 @@ entity worse                     6
 entity better                    2
 ```
 
-Restricted to the 45 substitutions where the example was for the entity's **own** (package, function) key, not
-just a base-R call inside it: 2 better, 19 unchanged, 24 worse. So this is not the known base-call noise. An example
-carries its source script's variable names and purpose - one retrieved for an assignment `y <- ...` in
-`lava__vignette__influencefunction_s34` was a matplotlib rectangle-drawing snippet, which made Python write files and
-cost the whole script its file comparison. Examples from other scripts are therefore **not drop-in usable by the
-harness** either, which closes the pattern-library line of work on mechanism rather than on a null score alone:
-the content cannot be applied mechanically, and the model will not adapt it (imitation at chance, 6.3% vs 6.6%).
+Restricted to the 45 substitutions where the example was for the entity's **own** (package, function) key, not just
+a base-R call inside it: 2 better, 19 unchanged, 24 worse.
+
+**This instrument is invalid as a test of the examples' content, and the positive control is what showed it.**
+Substituting the *same entity's own code taken from a run that scored it 1.0* - a correct translation of that very
+statement, in that script's own variable names - behaves the same way: 48 substitutions, 29 unchanged, 13 stopped
+running, 3 worse, 3 better, mean entity score 0.237 -> 0.057 (`--source self`). An entity's code depends on the rest
+of its program (earlier imports, helper definitions, names), so splicing lines between two programs breaks the
+program whatever their quality. Nothing about the usefulness of example *content* can be read off either run, and the
+earlier claim that examples "are not drop-in usable" stands only in the narrow sense that the harness cannot paste
+them in - not as evidence that their content is worthless.
 
 *Does the model call a pasted verified function?* (existing `rewrite_rt` trajectories, `work/replay_v5/`, the older
 store.) Five runs had sources and 8 opportunities between them - an entity whose R call matches a store function -
@@ -212,12 +216,37 @@ and the model called the `r_*` function in **8 of 8**, already in its first rewr
 Small sample and an old store, and being called is not the same as scoring better (the `rewrite_rt` replay remains
 inconclusive), but it is the opposite of the examples' chance-level adoption.
 
-**Conclusion.** The obstacle is not prompt position, framing or attention: it is that an example requires a transfer
-step (rename, re-situate, adapt) that this model does not perform and the harness cannot perform for it. Knowledge
-that is **self-contained and callable** - a verified `r_*` function - needs no transfer and is used immediately. The
-two dimensions therefore separate: *coverage* (how to verify functions for the long tail of package functions, where
-half of attempts never get three test cases) and *behaviour*, which looks solved for callable units and unsolvable
-for analogical ones.
+**Was the model ignoring the examples because they were unrelated?** Asked 2026-10-07 after the matplotlib case
+above, and answered no, from the same runs (`imitation_probe.py`, stratified; no new runs). 43 of 52 entities got an
+example of **their own function**, median R-statement relatedness (identifier Jaccard between the two R statements)
+0.33, 29 of 52 at or above 0.3. The difference between arms is zero in every stratum:
+
+| stratum | n | shown | not shown | difference |
+|---|---|---|---|---|
+| all entities | 52 | 6.3% | 6.6% | -0.3% |
+| example for the entity's own function | 43 | 7.0% | 7.3% | -0.3% |
+| example only for a base-R call inside | 9 | 3.0% | 3.1% | -0.1% |
+| R statements related (Jaccard >= 0.3) | 29 | 9.7% | 10.2% | -0.5% |
+| **own function AND related** | **27** | **10.4%** | **10.9%** | **-0.5%** |
+
+Absolute recall rises with relatedness, which is mechanical (a related example shares more identifiers with the R, so
+an independent translation coincides with it more often); the arm difference does not. A second, independent measure
+agrees: of the library calls the example used (`np.quantile`, `pd.to_datetime`, ...), 14.3% appear in the output when
+the example is shown and 16.8% when it is not (n = 43, 3 entities adopted a shown call, 4 the opposite). The
+distinctive-token sets are not small enough for this to be noise (median 15 unrelated, 18 related).
+
+So retrieval relatedness is **not** the explanation: the matplotlib case was real but atypical. What remains open is
+narrower: the examples may have been related yet not have contained the fact the entity was missing. That is testable
+and is the next step - a **one-step paired A/B**: for entities a frozen state scores below 1.0 and for which some run
+scored 1.0, show the model the correct translation *of that very statement, in the script's own variable names* as the
+example, ask for a single rewrite, and measure whether the rewrite adopts it. One model call per arm per case (~290
+calls, far cheaper than a full replay) and it isolates behaviour from search dynamics.
+
+**Conclusion so far.** The obstacle is not prompt position, framing, attention or retrieval relatedness. What is
+established: the model does not adopt examples of its own function from other scripts, and it does call a pasted,
+self-contained verified `r_*` function on sight (8 of 8). The two dimensions separate: *coverage* (how to verify
+functions for the long tail, where half of package attempts never get three test cases) and *behaviour*, which is
+solved for callable units and, for analogical ones, has one test left before it is called unsolvable.
 
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
