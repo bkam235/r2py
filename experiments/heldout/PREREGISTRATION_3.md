@@ -1,7 +1,14 @@
 # Pre-registration 3: Does a library trained by the improved harness improve translation scores?
 
-**Status:** Registered 2026-10-07, prior to data collection. The three open points (feature set, scoring
-checkpoints, parallel training) were confirmed by the user.
+**Status:** WITHDRAWN 2026-10-07, before any data collection. Registered earlier the same day
+(feature set, scoring checkpoints and parallel training confirmed), then withdrawn unrun: the
+design tests a learning mechanism that the cheap instruments already show to be about flat
+(learning-curve slope +0.011/100 training scripts, 95% CI [-0.014, +0.037]; 20% of held-out
+entities informable), and nothing in the roadmap since changed how the library learns. Spending
+~15 h of training and ~1 day of scoring to re-measure a known-flat mechanism was judged not
+worth it; the work moves to raising informable coverage first. Nothing was run under this
+document: `work/heldout3/` was never created. The text below stays unedited as a record.
+No results may be reported under it; a future run needs a new registration.
 **Date:** 2026-10-07
 **Relates to:** `PREREGISTRATION_2.md` (first held-out experiment, closed: primary p = 0.0569, null;
 see `RESULTS.md`). That document and its results stay unedited.
