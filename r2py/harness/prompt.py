@@ -57,9 +57,9 @@ Python equivalent API.
 - If a rewrite does not improve the score, DO NOT rewrite again with minor changes. \
 Instead, probe_r to understand what R actually outputs for the failing entities, \
 then rewrite with that knowledge. If you cannot improve further, use action "done".
-- When rewriting, preserve the data shim block (# r2py:data_shim:begin ... \
-# r2py:data_shim:end) exactly as-is. Do NOT replace it with hardcoded data \
-literals — the shim loads input datasets (like mtcars) at runtime.
+- A comment line "# r2py:data_shim managed by the harness ..." stands for the block that \
+loads the script's input datasets (like mtcars) at runtime; keep that line where it is. \
+Do NOT replace it with hardcoded data literals.
 - Drop R documentation scaffolding: withAutoprint, examplesIf, \
 rlang::is_interactive(), rlang::is_installed() wrappers are guards for \
 optional/interactive examples. In our pipeline the guarded code ALWAYS \
@@ -152,8 +152,8 @@ guessed at. A second blind rewrite is the single most common way to lose score.
 - Think before you write: state in 2-4 sentences which entities are failing and \
 what specifically you will change. Then emit the complete file.
 - The rewrite MUST be the COMPLETE file. Never output just the first few entities.
-- Preserve the data shim block (# r2py:data_shim:begin ... # r2py:data_shim:end) \
-exactly as-is. Do NOT replace it with hardcoded data literals.
+- Keep the comment line "# r2py:data_shim managed by the harness ..." where it is: it stands \
+for the block that loads the input datasets. Do NOT replace it with hardcoded data literals.
 - Drop R scaffolding guards: withAutoprint, examplesIf, rlang::is_interactive(), \
 rlang::is_installed() — remove the guard, translate the code inside unconditionally.
 - Focus on the WORST-scoring entities first, but include ALL entities in the rewrite.

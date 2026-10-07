@@ -23,8 +23,10 @@ from .review import REVIEW_UNAVAILABLE, review_translation
 from ..stage2.stitch import (
     DATA_SHIM_BEGIN as _SHIM_MARKER,
     DATA_SHIM_RE as _SHIM_RE,
+    hide_data_shim,
     rebuild_entity_line_map,
     shadow_autofix,
+    show_data_shim,
     splice_entity,
 )
 
@@ -204,7 +206,7 @@ def reason(
 
         messages = _prompt.build_agent_turn(
             r_source=r_source,
-            python_source=best_source,
+            python_source=hide_data_shim(best_source),
             report=report,
             script_map=script_map,
             step=step,
@@ -355,6 +357,7 @@ def reason(
                     history.append(f"Step {step}: replace_entity REFUSED — {splice_err}.")
                     continue  # not a stall: nothing was verified
 
+            new_source = show_data_shim(best_source, new_source)
             if _SHIM_MARKER in best_source and _SHIM_MARKER not in new_source:
                 print(f"[Agent]   Rewrite dropped data shim block — rejecting")
                 history.append(
@@ -443,6 +446,20 @@ def reason(
                     "R package names, not Python modules. Do not import them; translate the calls "
                     "with the Python libraries that provide the same function (or implement it)."
                 )
+                continue
+
+            # `from module import name` where the module has no such name: ImportError on the first line.
+            from ..stage0.env.module_check import missing_import_names
+            missing = missing_import_names(new_source)
+            if missing:
+                desc = "; ".join(f"`from {m} import {n}`" + (f" (did you mean {', '.join(near)}?)" if near else "") for m, n, near in missing)
+                print(f"[Agent]   Imported names that do not exist: {desc}")
+                _stat("outcome", f"{action_type}:import_name_rejected")
+                _note_rejection(entity_notes, action_type, action, f"imported names that do not exist: {desc}")
+                stall_count += 1
+                history.append(
+                    f"Step {step}: {action_type} REJECTED before running - these imported names do not exist in their modules: {desc}. "
+                    "Use the library's actual API; if it has no such function, implement it.")
                 continue
 
             # A verified function the store does not have (named by analogy with one it does): a NameError at run time.
@@ -1213,7 +1230,7 @@ def _build_entity_repair(script_map, r_source, best_source, report, eid, notes) 
     (start, end), = rebuild_entity_line_map(best_source)[eid]
     py_entity = "\n".join(best_source.splitlines()[start:end])  # drops the sentinel line itself
     return _prompt.build_entity_repair_turn(
-        r_source, best_source, report, eid, getattr(entity, "name", eid), r_entity, py_entity, notes)
+        r_source, hide_data_shim(best_source), report, eid, getattr(entity, "name", eid), r_entity, py_entity, notes)
 
 
 def restore_data_shim(best_source: str, new_source: str) -> tuple[str, bool]:

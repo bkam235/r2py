@@ -165,3 +165,28 @@ class TestPlannedStyle(unittest.TestCase):
                     pass   # only the prompt choice is under test
             self.assertEqual(seen["system"], expected)
             self.assertIn("x <- 1", seen["user"])
+
+
+class TestShimHiding(unittest.TestCase):
+    SRC = "# header\n# r2py:data_shim:begin\n# x = 1\n# r2py:data_shim:end\n\n# r2py:entity:a\ny = 2\n"
+
+    def test_the_model_sees_one_line_and_gets_the_block_back(self):
+        from r2py.stage2.stitch import SHIM_PLACEHOLDER, hide_data_shim, show_data_shim
+        hidden = hide_data_shim(self.SRC)
+        self.assertIn(SHIM_PLACEHOLDER, hidden)
+        self.assertNotIn("r2py:data_shim:begin", hidden)
+        self.assertEqual(show_data_shim(self.SRC, hidden), self.SRC)
+        rewritten = hidden.replace("y = 2", "y = 3")
+        self.assertEqual(show_data_shim(self.SRC, rewritten), self.SRC.replace("y = 2", "y = 3"))
+
+    def test_a_dropped_placeholder_or_a_missing_shim_is_handled(self):
+        from r2py.stage2.stitch import SHIM_PLACEHOLDER, hide_data_shim, show_data_shim
+        dropped = hide_data_shim(self.SRC).replace(SHIM_PLACEHOLDER + "\n", "")
+        self.assertEqual(show_data_shim(self.SRC, dropped), self.SRC)
+        self.assertEqual(show_data_shim("x = 1\n", "x = 2\n"), "x = 2\n")
+        self.assertEqual(hide_data_shim("x = 1\n"), "x = 1\n")
+
+    def test_a_block_the_model_wrote_itself_is_left_for_the_restore_step(self):
+        from r2py.stage2.stitch import show_data_shim
+        own = "# r2py:data_shim:begin\n# my own\n# r2py:data_shim:end\ny = 1\n"
+        self.assertEqual(show_data_shim(self.SRC, own), own)

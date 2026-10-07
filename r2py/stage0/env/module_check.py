@@ -31,6 +31,66 @@ print(json.dumps([n for n in names if not ok(n)]))
 """
 
 
+_NAMES_PROBE = """
+import importlib, importlib.util, json, sys
+pairs = json.loads(sys.stdin.read())          # [[module, name], ...]
+bad = []
+for mod, name in pairs:
+    try:
+        m = importlib.import_module(mod)
+    except Exception:
+        continue                                # a module that cannot be imported is the other check's business
+    if hasattr(m, name):
+        continue
+    try:
+        if importlib.util.find_spec(mod + "." + name) is not None:
+            continue                            # a submodule
+    except ModuleNotFoundError:
+        pass                                    # e.g. "'os' is not a package": there is no such submodule
+    except Exception:
+        continue
+    near = [n for n in dir(m) if not n.startswith("_") and n.lower().replace("_", "") == name.lower().replace("_", "")]
+    bad.append([mod, name, near[:3]])
+print(json.dumps(bad))
+"""
+
+
+def imported_names(source: str) -> list[tuple[str, str]]:
+    """``(module, name)`` for every ``from module import name`` (absolute, named, not star)."""
+    try:
+        tree = ast.parse(source)
+    except SyntaxError:
+        return []
+    out = []
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.level == 0 and node.module and node.module != "__future__":
+            out += [(node.module, a.name) for a in node.names if a.name != "*"]
+    return out
+
+
+_NAMES_CACHE: dict[tuple[str, str], list | None] = {}
+
+
+def missing_import_names(source: str) -> list[tuple[str, str, list[str]]]:
+    """``from module import name`` where *module* imports but has no such name: ``(module, name, near spellings)``.
+
+    A model writes ``from pygments.lexers import RLexer`` or ``from shiny import http_response``; both modules are
+    installed, the names do not exist, and the script dies at its first line.  The check runs in the interpreter that
+    runs translations, once per (module, name), so it adds a second or two the first time and nothing after.
+    """
+    pairs = [p for p in dict.fromkeys(imported_names(source)) if p not in _NAMES_CACHE]
+    if pairs:
+        try:
+            r = subprocess.run([str(find_python()), "-c", _NAMES_PROBE], input=json.dumps(pairs), capture_output=True,
+                               text=True, timeout=90, encoding="utf-8")
+            bad = {(m, n): near for m, n, near in json.loads(r.stdout)}
+        except (subprocess.TimeoutExpired, OSError, ValueError):
+            return []                           # cannot tell: do not block
+        for p in pairs:
+            _NAMES_CACHE[p] = bad.get(p)
+    return [(m, n, _NAMES_CACHE[(m, n)]) for m, n in dict.fromkeys(imported_names(source)) if _NAMES_CACHE.get((m, n)) is not None]
+
+
 def imported_modules(source: str) -> set[str]:
     """Top-level names a script imports (absolute imports only)."""
     try:

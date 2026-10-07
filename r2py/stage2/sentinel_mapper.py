@@ -84,6 +84,31 @@ def restore_sentinels(reference: str, candidate: str) -> str:
             if ref_clean[blk.a + k].strip():
                 match[blk.a + k] = blk.b + k
 
+    # Lines the exact alignment missed: an assignment keeps its target name through a rewrite (the prompt requires it), so
+    # an unmatched `name = ...` is paired with the unmatched `name = ...` in the same gap between two matched lines.
+    assign = re.compile(r"^\s*([A-Za-z_][A-Za-z_0-9]*)\s*=[^=]")
+    used = set(match.values())
+    anchors = sorted(match)
+    for i, line in enumerate(ref_clean):
+        if i in match or not line.strip():
+            continue
+        m = assign.match(line)
+        if not m:
+            continue
+        before = [a for a in anchors if a < i]
+        after = [a for a in anchors if a > i]
+        lo = match[before[-1]] + 1 if before else 0
+        hi = match[after[0]] if after else len(cand_clean)
+        for j in range(lo, hi):
+            if j in used:
+                continue
+            mc = assign.match(cand_clean[j])
+            if mc and mc.group(1) == m.group(1):
+                match[i] = j
+                used.add(j)
+                anchors = sorted(match)
+                break
+
     kept = defaultdict(list)                       # eid -> positions of its sentinels in the candidate
     for eid, pos in cand_marks:
         kept[eid].append(pos)

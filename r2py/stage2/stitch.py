@@ -17,6 +17,36 @@ DATA_SHIM_RE = re.compile(
     re.DOTALL,
 )
 
+SHIM_PLACEHOLDER = "# r2py:data_shim managed by the harness (loads R's input data) - do not write it"
+
+
+def hide_data_shim(source: str) -> str:
+    """The source as the model sees it: the data-shim block (harness code the model keeps rewriting or breaking: 24% of
+    rewrites altered it) replaced by one comment line.  ``show_data_shim`` puts the real block back."""
+    m = DATA_SHIM_RE.search(source)
+    if not m:
+        return source
+    end = m.end() + (1 if source[m.end():m.end() + 1] == "\n" else 0)
+    return source[:m.start()] + SHIM_PLACEHOLDER + "\n" + source[end:]
+
+
+def show_data_shim(original: str, rewritten: str) -> str:
+    """*rewritten* (written against ``hide_data_shim(original)``) with *original*'s data-shim block restored.
+
+    The placeholder line is replaced by the block; if the model dropped the placeholder, the block goes where it stood in
+    *original* (after the same leading comment lines).  A block the model wrote itself is left to ``restore_data_shim``.
+    """
+    block = DATA_SHIM_RE.search(original)
+    if not block or DATA_SHIM_RE.search(rewritten):
+        return rewritten
+    text = block.group(0) + "\n"
+    if SHIM_PLACEHOLDER in rewritten:
+        return rewritten.replace(SHIM_PLACEHOLDER + "\n", text, 1) if SHIM_PLACEHOLDER + "\n" in rewritten else rewritten.replace(SHIM_PLACEHOLDER, text.rstrip("\n"), 1)
+    lead = original[:block.start()].count("\n")
+    lines = rewritten.splitlines(keepends=True)
+    return "".join(lines[:lead]) + text + "".join(lines[lead:])
+
+
 # R call names whose results are non-deterministic from Python's PRNG (RNG)
 # or environment-dependent (file reads, env vars).  Entities whose defining
 # call is in this set are reclassified as "non-translatable sources" — their

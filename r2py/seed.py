@@ -119,6 +119,12 @@ def seed_problems(code: str, runtime=None) -> list[str]:
             "these imports cannot be resolved (not installed, not on PyPI; they are R package names, "
             f"not Python modules): {', '.join(bad)}. Do not import them; use the Python libraries that "
             "provide the same function, or implement it")
+    from .stage0.env.module_check import missing_import_names
+    missing = missing_import_names(code)
+    if missing:
+        problems.append("these imported names do not exist in their (installed) modules: " + "; ".join(
+            f"`from {m} import {n}`" + (f" (did you mean {', '.join(near)}?)" if near else "") for m, n, near in missing)
+            + ". Check the library's actual API; if it has no such function, implement it")
     if runtime is not None:
         unknown = runtime.unknown_references(code)
         if unknown:
