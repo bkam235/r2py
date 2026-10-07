@@ -1,0 +1,279 @@
+37 cases, 4 arms, 1 sample(s): 148 calls to make (8 done)
+[1/148] blob__rd_example__blob_Rd   blob              library         0.5 -> 1.0  adopt 0.0  verified
+[2/148] blob__rd_example__blob_Rd   new_blob          none            0.5 -> 1.0  adopt 0.0  verified
+[3/148] blob__rd_example__blob_Rd   new_blob          entity_only     0.5 -> 0.5  adopt 0.0  verified
+[4/148] blob__rd_example__blob_Rd   new_blob          library         0.5 -> 1.0  adopt 0.0  verified
+[5/148] blob__rd_example__blob_Rd   new_blob          last_imperative 0.5 -> 0.5  adopt 0.0  verified
+[6/148] blob__rd_example__blob_Rd   blob              last_imperative 0.5 -> 1.0  adopt 0.0  verified
+[7/148] blob__rd_example__blob_Rd   blob              none            0.5 -> 1.0  adopt 0.0  verified
+[8/148] blob__rd_example__blob_Rd   as.blob           none            0.6493 -> 0.75  adopt 0.0  verified
+[9/148] blob__rd_example__blob_Rd   blob              entity_only     0.5 -> 1.0  adopt 0.0  verified
+[10/148] blob__rd_example__blob_Rd   as.blob           last_imperative 0.6493 -> 0.75  adopt 0.0  verified
+[11/148] blob__rd_example__blob_Rd   as.blob           library         0.6493 -> 1.0  adopt 0.0  verified
+[12/148] clock__rd_example__zoned_t  import_clock      library         0.0 -> 0.0  adopt 0.0  verified
+[13/148] blob__rd_example__blob_Rd   as.blob           entity_only     0.6493 -> 0.7536  adopt 0.0  verified
+[14/148] clock__rd_example__zoned_t  x_1               none            0.0 -> 1.0  adopt None  verified
+[15/148] clock__rd_example__zoned_t  import_clock      none            0.0 -> 1.0  adopt 0.0  verified
+[16/148] clock__rd_example__zoned_t  import_clock      last_imperative 0.0 -> 1.0  adopt 0.0  verified
+[17/148] clock__rd_example__zoned_t  import_clock      entity_only     0.0 -> 1.0  adopt 0.0  verified
+[18/148] clock__rd_example__zoned_t  x_1               library         0.0 -> 0.0  adopt None  verified
+[19/148] clock__rd_example__zoned_t  x_1               entity_only     0.0 -> 1.0  adopt None  verified
+[20/148] clock__rd_example__zoned_t  x_2               none            0.4667 -> 1.0  adopt 0.0  verified
+[21/148] clock__rd_example__zoned_t  x_1               last_imperative 0.0 -> 0.0  adopt None  verified
+[22/148] clock__rd_example__zoned_t  x_3               none            0.5618 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[23/148] clock__rd_example__zoned_t  x_3               library         0.5618 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[24/148] clock__rd_example__zoned_t  x_2               last_imperative 0.4667 -> 0.0  adopt 1.0  verified
+[25/148] clock__rd_example__zoned_t  x_3               entity_only     0.5618 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[26/148] googledrive__rd_example__d  suppressPackageS  none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[27/148] clock__rd_example__zoned_t  x_2               entity_only     0.4667 -> 0.0  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[28/148] googledrive__rd_example__d  suppressPackageS  last_imperative 0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[29/148] googledrive__rd_example__d  suppressPackageS  entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[30/148] clock__rd_example__zoned_t  x_3               last_imperative 0.5618 -> 0.428  adopt 0.0  verified
+[31/148] googledrive__rd_example__d  suppressPackageS  library         0.0 -> 1.0  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[32/148] googledrive__rd_example__d  import_googledri  library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[33/148] googledrive__rd_example__d  import_googledri  none            0.0 -> 0.0  adopt 0.0  verified
+[34/148] googledrive__rd_example__d  drive_has_token   none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[35/148] clock__rd_example__zoned_t  x_2               library         0.4667 -> 1.0  adopt 0.0  verified
+[36/148] googledrive__rd_example__d  drive_has_token   library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[37/148] googledrive__rd_example__d  drive_has_token   entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[38/148] googledrive__rd_example__d  wordstar          none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[39/148] googledrive__rd_example__d  wordstar          library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[40/148] googledrive__rd_example__d  wordstar          entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[41/148] highr__rd_example__hilight  hilight           library         0.7639 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[42/148] highr__rd_example__hilight  hilight           last_imperative 0.7639 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[43/148] highr__rd_example__hilight  hilight           entity_only     0.7639 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[44/148] googledrive__rd_example__d  wordstar          last_imperative 0.0 -> 1.0  adopt 0.0  verified
+[45/148] hms__rd_example__hms_Rd     suppressPackageS  library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[46/148] hms__rd_example__hms_Rd     suppressPackageS  none            0.0 -> 0.0  adopt 0.0  verified
+[47/148] googledrive__rd_example__d  drive_has_token   last_imperative 0.0 -> 0.1667  adopt 0.0  verified
+[48/148] hms__rd_example__hms_Rd     suppressPackageS  entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[49/148] highr__rd_example__hilight  hilight           none            0.7639 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[50/148] googledrive__rd_example__d  import_googledri  entity_only     0.0 -> 1.0  adopt 0.0  verified
+[51/148] hms__rd_example__hms_Rd     import_hms        library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[52/148] hms__rd_example__hms_Rd     import_hms        last_imperative 0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[53/148] hms__rd_example__hms_Rd     import_hms        entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[54/148] hms__rd_example__hms_Rd     import_hms        none            0.0 -> 0.0  adopt 0.0  verified
+[55/148] hms__rd_example__hms_Rd     hms               none            0.4653 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[56/148] hms__rd_example__hms_Rd     hms               library         0.4653 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[57/148] hms__rd_example__hms_Rd     hms               entity_only     0.4653 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[58/148] googledrive__rd_example__d  import_googledri  last_imperative 0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[59/148] hms__rd_example__hms_Rd     hms_1             library         0.0833 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[60/148] hms__rd_example__hms_Rd     hms_1             last_imperative 0.0833 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[61/148] hms__rd_example__hms_Rd     hms_1             entity_only     0.0833 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[62/148] lava__vignette__influencef  Print             none            0.9625 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[63/148] lava__vignette__influencef  Print             library         0.9625 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[64/148] lava__vignette__influencef  Print             last_imperative 0.9625 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[65/148] hms__rd_example__hms_Rd     suppressPackageS  last_imperative 0.0 -> 0.0  adopt 0.0  verified
+[66/148] lava__vignette__influencef  object.size       none            0.6429 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[67/148] lava__vignette__influencef  object.size       library         0.6429 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[68/148] lava__vignette__influencef  object.size       entity_only     0.6429 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[69/148] lava__vignette__influencef  e_1               none            0.7518 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[70/148] hms__rd_example__hms_Rd     hms               last_imperative 0.4653 -> 0.0  adopt 0.0  verified
+[71/148] lava__vignette__influencef  e_1               library         0.7518 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[72/148] lava__vignette__influencef  Print             entity_only     0.9625 -> 0.8548  adopt 0.0  verified
+[73/148] hms__rd_example__hms_Rd     hms_1             none            0.0833 -> 1.0  adopt 0.0  verified
+[74/148] lava__vignette__influencef  e_1               entity_only     0.7518 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[75/148] lubridate__vignette__lubri  months            none            0.5081 -> 0.7271  adopt 0.0  verified
+[76/148] lubridate__vignette__lubri  months            library         0.5081 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[77/148] lubridate__vignette__lubri  floor_date        none            0.5302 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[78/148] lubridate__vignette__lubri  floor_date        library         0.5302 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[79/148] lubridate__vignette__lubri  months            entity_only     0.5081 -> 0.741  adopt 0.0  verified
+[80/148] lubridate__vignette__lubri  floor_date        last_imperative 0.5302 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[81/148] lava__vignette__influencef  object.size       last_imperative 0.6429 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[82/148] lubridate__vignette__lubri  floor_date        entity_only     0.5302 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[83/148] lubridate__vignette__lubri  months            last_imperative 0.5081 -> 0.6104  adopt 0.0  verified
+[84/148] lubridate__vignette__lubri  months_2          library         0.522 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[85/148] lubridate__vignette__lubri  months_2          last_imperative 0.522 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[86/148] lubridate__vignette__lubri  months_2          entity_only     0.522 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[87/148] pROC__rd_example__geom_pol  suppressPackageS  none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[88/148] lava__vignette__influencef  e_1               last_imperative 0.7518 -> 0.0  adopt 0.0  verified
+[89/148] pROC__rd_example__geom_pol  suppressPackageS  last_imperative 0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[90/148] pROC__rd_example__geom_pol  suppressPackageS  entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[91/148] lubridate__vignette__lubri  months_2          none            0.522 -> 0.0  adopt 0.0  verified
+[92/148] pROC__rd_example__geom_pol  import_pROC       library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[93/148] pROC__rd_example__geom_pol  import_pROC       none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[94/148] pROC__rd_example__geom_pol  import_pROC       last_imperative 0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[95/148] pROC__rd_example__geom_pol  data              none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[96/148] pROC__rd_example__geom_pol  import_pROC       entity_only     0.0 -> None  adopt None  splice refused: unknown entity 'import_p
+[97/148] pROC__rd_example__geom_pol  data              library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[98/148] pROC__rd_example__geom_pol  data              last_imperative 0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[99/148] pROC__rd_example__geom_pol  suppressPackageS  library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[100/148] pROC__rd_example__geom_pol  geom_polygon_auc  none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[101/148] pROC__rd_example__geom_pol  geom_polygon_auc  library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[102/148] pROC__rd_example__geom_pol  data              entity_only     0.0 -> 0.1  adopt 0.0  verified
+[103/148] pROC__rd_example__geom_pol  geom_polygon_auc  last_imperative 0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[104/148] rmarkdown__rd_example__out  output_format_de  none            0.5 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[105/148] pROC__rd_example__geom_pol  geom_polygon_auc  entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[106/148] rmarkdown__rd_example__out  output_format_de  last_imperative 0.5 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[107/148] rmarkdown__rd_example__out  output_format_de  entity_only     0.5 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[108/148] rmarkdown__rd_example__out  knit_meta_add     none            0.5 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[109/148] rmarkdown__rd_example__out  knit_meta_add     library         0.5 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[110/148] rmarkdown__rd_example__out  knit_meta_add     last_imperative 0.5 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[111/148] rmarkdown__rd_example__out  knit_meta_add     entity_only     0.5 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[112/148] rmarkdown__rd_example__out  str               none            0.637 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[113/148] rmarkdown__rd_example__out  str               library         0.637 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[114/148] rmarkdown__rd_example__out  str               last_imperative 0.637 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[115/148] rmarkdown__rd_example__out  str               entity_only     0.637 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[116/148] shape__rd_example__femmeco  image             library         0.8333 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[117/148] shiny__rd_example__httpRes  suppressPackageS  none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[118/148] shape__rd_example__femmeco  image             entity_only     0.8333 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[119/148] shape__rd_example__femmeco  image             last_imperative 0.8333 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+[120/148] shape__rd_example__femmeco  image             none            0.8333 -> 1.0  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+[121/148] shiny__rd_example__httpRes  suppressPackageS  last_imperative 0.0 -> None  adopt None  no code
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+[122/148] shiny__rd_example__httpRes  suppressPackageS  entity_only     0.0 -> None  adopt None  no code
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+[123/148] textshaping__vignette__c_i  suppressPackageS  library         0.0 -> 1.0  adopt 0.0  verified
+[124/148] shiny__rd_example__httpRes  suppressPackageS  library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+[125/148] textshaping__vignette__c_i  import_textshapi  none            0.0 -> 1.0  adopt 0.0  verified
+[126/148] textshaping__vignette__c_i  suppressPackageS  none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[127/148] textshaping__vignette__c_i  suppressPackageS  last_imperative 0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[128/148] textshaping__vignette__c_i  suppressPackageS  entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[129/148] textshaping__vignette__c_i  import_textshapi  library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[130/148] textshaping__vignette__c_i  opts_chunk$set    none            0.0 -> 1.0  adopt 0.0  verified
+[131/148] textshaping__vignette__c_i  import_textshapi  last_imperative 0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[132/148] textshaping__vignette__c_i  import_textshapi  entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[133/148] textshaping__vignette__c_i  opts_chunk$set    last_imperative 0.0 -> 1.0  adopt 0.0  verified
+[134/148] textshaping__vignette__c_i  opts_chunk$set    library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[135/148] textshaping__vignette__c_i  opts_chunk$set    entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[136/148] tidyr__vignette__tidy-data  tribble           none            0.8496 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[137/148] tidyr__vignette__tidy-data  tribble           last_imperative 0.8496 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[138/148] tidyr__vignette__tidy-data  tribble           entity_only     0.8496 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[139/148] tidyr__vignette__tidy-data  tribble           library         0.8496 -> 1.0  adopt 0.0  verified
+[140/148] xml2__rd_example__xml_cdat  import_xml2       none            0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[141/148] xml2__rd_example__xml_cdat  import_xml2       library         0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[142/148] xml2__rd_example__xml_cdat  import_xml2       entity_only     0.0 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[143/148] xml2__rd_example__xml_cdat  xml_add_child     none            0.1667 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[144/148] xml2__rd_example__xml_cdat  xml_add_child     last_imperative 0.1667 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[145/148] xml2__rd_example__xml_cdat  xml_add_child     entity_only     0.1667 -> None  adopt None  error: RuntimeError: OpenRouter call fai
+[146/148] xml2__rd_example__xml_cdat  import_xml2       last_imperative 0.0 -> 0.0  adopt 0.0  verified
+[147/148] xml2__rd_example__xml_cdat  xml_add_child     library         0.1667 -> 1.0  adopt 0.7778  verified
+[148/148] rmarkdown__rd_example__out  output_format_de  library         0.5 -> 0.5  adopt 0.3913  verified
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+r2py: sentinel mapping failed (attempt 1/3): Invalid line range for drive_has_token: 65-66 (file has 1 lines)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_7f1c932d03.py
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_da42e35406.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+
+156 runs over 39 cases
+
+arm              runs  adoption  entity before   after  better  worse                action
+none               15     0.0%          0.271   0.698      11      1       ?:23,rewrite:16
+library            11    11.7%          0.330   0.773       8      0       ?:27,rewrite:12
+last_imperative    15     7.1%          0.294   0.430       7      4   ?:21,lookup_docs:1,
+entity_only        10     0.0%          0.359   0.695       7      2   ?:27,lookup_docs:1,
+
+library - none, paired: n=6  mean -0.292  better/worse 1/2
+last_imperative - none, paired: n=9  mean -0.291  better/worse 0/4
+entity_only - none, paired: n=8  mean -0.060  better/worse 2/2
