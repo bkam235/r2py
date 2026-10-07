@@ -1,0 +1,1353 @@
+[
+ {
+  "stem": "blob__rd_example__blob_Rd",
+  "eid": "import_blob",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "blob__rd_example__blob_Rd",
+  "eid": "x1",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "blob__rd_example__blob_Rd",
+  "eid": "x2",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "blob__rd_example__blob_Rd",
+  "eid": "new_blob",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "blob__rd_example__blob_Rd",
+  "eid": "blob",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "blob__rd_example__blob_Rd",
+  "eid": "as.blob",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "import_broom",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "set.seed",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "import_dplyr",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "import_purrr",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "m1",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "m2",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "fit1",
+  "informed": false,
+  "w3": 0.33699999999999997,
+  "oracle": 0.4116666666666666
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "fit2",
+  "informed": false,
+  "w3": 0.33699999999999997,
+  "oracle": 0.4116666666666666
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "tidy",
+  "informed": false,
+  "w3": 0.8183333333333334,
+  "oracle": 0.7043333333333334
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "tidy_1",
+  "informed": false,
+  "w3": 0.8183333333333334,
+  "oracle": 0.7043333333333334
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "augment",
+  "informed": false,
+  "w3": 0.5293333333333333,
+  "oracle": 0.526
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "augment_1",
+  "informed": false,
+  "w3": 0.5336666666666667,
+  "oracle": 0.5276666666666667
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "augment_2",
+  "informed": false,
+  "w3": 0.531,
+  "oracle": 0.5286666666666667
+ },
+ {
+  "stem": "broom__rd_example__glance_factanal_Rd",
+  "eid": "augment_3",
+  "informed": false,
+  "w3": 0.534,
+  "oracle": 0.5296666666666667
+ },
+ {
+  "stem": "cachem__rd_example__cache_layered_Rd",
+  "eid": "import_cachem",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "cachem__rd_example__cache_layered_Rd",
+  "eid": "m",
+  "informed": false,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "cachem__rd_example__cache_layered_Rd",
+  "eid": "d",
+  "informed": false,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "cachem__rd_example__cache_layered_Rd",
+  "eid": "cl",
+  "informed": false,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "import_caret",
+  "informed": false,
+  "w3": 0.78,
+  "oracle": 0.773
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "data",
+  "informed": true,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createDataPartition",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "x",
+  "informed": false,
+  "w3": 0.6803333333333333,
+  "oracle": 0.8533333333333333
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "inA",
+  "informed": false,
+  "w3": 0.7066666666666667,
+  "oracle": 0.6873333333333334
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "plot",
+  "informed": true,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "rug",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "points",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "rug_1",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createResample",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createFolds",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createFolds_1",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createFolds_2",
+  "informed": true,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createTimeSlices",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createTimeSlices_1",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createTimeSlices_2",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createTimeSlices_3",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createTimeSlices_4",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createTimeSlices_5",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "createTimeSlices_6",
+  "informed": false,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "set.seed",
+  "informed": true,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "groups",
+  "informed": true,
+  "w3": 0.8803333333333333,
+  "oracle": 0.8533333333333333
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "table",
+  "informed": true,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "folds",
+  "informed": false,
+  "w3": 0.803,
+  "oracle": 0.776
+ },
+ {
+  "stem": "caret__rd_example__createDataPartition_Rd",
+  "eid": "lapply",
+  "informed": true,
+  "w3": 0.6916666666666667,
+  "oracle": 0.7106666666666667
+ },
+ {
+  "stem": "clock__rd_example__zoned_time_info_Rd",
+  "eid": "import_clock",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "clock__rd_example__zoned_time_info_Rd",
+  "eid": "x",
+  "informed": false,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "clock__rd_example__zoned_time_info_Rd",
+  "eid": "x_1",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "clock__rd_example__zoned_time_info_Rd",
+  "eid": "x_2",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "clock__rd_example__zoned_time_info_Rd",
+  "eid": "x_3",
+  "informed": false,
+  "w3": 0.9116666666666667,
+  "oracle": 0.826
+ },
+ {
+  "stem": "clock__rd_example__zoned_time_info_Rd",
+  "eid": "info",
+  "informed": false,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "clock__rd_example__zoned_time_info_Rd",
+  "eid": "info_1",
+  "informed": false,
+  "w3": 0.8713333333333333,
+  "oracle": 0.8833333333333333
+ },
+ {
+  "stem": "clock__rd_example__zoned_time_info_Rd",
+  "eid": "zoned_time_info",
+  "informed": false,
+  "w3": 0.7736666666666666,
+  "oracle": 0.74
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "import_ggplot2",
+  "informed": false,
+  "w3": 0.88,
+  "oracle": 0.29333333333333333
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "df",
+  "informed": true,
+  "w3": 0.88,
+  "oracle": 0.56
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "p",
+  "informed": true,
+  "w3": 0.88,
+  "oracle": 0.56
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_line",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3446666666666667
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_line_1",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3446666666666667
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_line_2",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3446666666666667
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "ggplot",
+  "informed": true,
+  "w3": 0.9,
+  "oracle": 0.3446666666666667
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_line_3",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3446666666666667
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "ggplot_1",
+  "informed": true,
+  "w3": 0.9,
+  "oracle": 0.3446666666666667
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_line_4",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3446666666666667
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "ggplot_2",
+  "informed": true,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_line_5",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "p_1",
+  "informed": true,
+  "w3": 0.88,
+  "oracle": 0.29333333333333333
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_1",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_2",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_hline",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_3",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_4",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_5",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_6",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_7",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_8",
+  "informed": true,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "df2",
+  "informed": true,
+  "w3": 0.88,
+  "oracle": 0.29333333333333333
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "p_2",
+  "informed": true,
+  "w3": 0.88,
+  "oracle": 0.29333333333333333
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_9",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "scale_shape_identity",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_10",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "scale_shape_identity_1",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "geom_point_11",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "ggplot2__rd_example__aes_linetype_size_shape_Rd",
+  "eid": "scale_shape_identity_2",
+  "informed": false,
+  "w3": 0.9,
+  "oracle": 0.3
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "import_googledrive",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "drive_has_token",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "wordstar",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "pluck",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "execuvision",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "pluck_1",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "drive_browse",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "b4xl",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "drive_create",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "drive_create_1",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "drive_create_2",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "drive_ls",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "drive_create_3",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "drive_create_4",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "googledrive__rd_example__drive_create_Rd",
+  "eid": "drive_rm",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "highr__rd_example__hilight_Rd",
+  "eid": "import_highr",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "highr__rd_example__hilight_Rd",
+  "eid": "hilight",
+  "informed": false,
+  "w3": 0.9823333333333333,
+  "oracle": 0.998
+ },
+ {
+  "stem": "highr__rd_example__hilight_Rd",
+  "eid": "txt",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "highr__rd_example__hilight_Rd",
+  "eid": "cat",
+  "informed": true,
+  "w3": 0.925,
+  "oracle": 0.9326666666666666
+ },
+ {
+  "stem": "highr__rd_example__hilight_Rd",
+  "eid": "cat_1",
+  "informed": true,
+  "w3": 0.8716666666666667,
+  "oracle": 0.8566666666666667
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "import_hms",
+  "informed": false,
+  "w3": 0.3333333333333333,
+  "oracle": 1.0
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "hms",
+  "informed": false,
+  "w3": 0.3333333333333333,
+  "oracle": 1.0
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "hms_1",
+  "informed": false,
+  "w3": 0.3333333333333333,
+  "oracle": 1.0
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "new_hms",
+  "informed": false,
+  "w3": 0.3333333333333333,
+  "oracle": 1.0
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "try",
+  "informed": true,
+  "w3": 0.3333333333333333,
+  "oracle": 1.0
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "as_hms",
+  "informed": false,
+  "w3": 0.3333333333333333,
+  "oracle": 0.8333333333333334
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "as_hms_1",
+  "informed": false,
+  "w3": 0.3333333333333333,
+  "oracle": 0.9333333333333333
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "as_hms_2",
+  "informed": false,
+  "w3": 0.32666666666666666,
+  "oracle": 0.8433333333333334
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "as.POSIXct",
+  "informed": true,
+  "w3": 0.3333333333333333,
+  "oracle": 1.0
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "data.frame",
+  "informed": true,
+  "w3": 0.3333333333333333,
+  "oracle": 0.9833333333333333
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "d",
+  "informed": true,
+  "w3": 0.08333333333333333,
+  "oracle": 0.25
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "d$hours",
+  "informed": false,
+  "w3": 0.3333333333333333,
+  "oracle": 1.0
+ },
+ {
+  "stem": "hms__rd_example__hms_Rd",
+  "eid": "d_1",
+  "informed": false,
+  "w3": 0.3333333333333333,
+  "oracle": 0.9946666666666667
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "import_isoband",
+  "informed": false,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "import_grid",
+  "informed": false,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "m",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "df_bands",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "isobands",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "df_lines",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "isolines",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "g",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.08333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "grid.newpage",
+  "informed": false,
+  "w3": 0.0,
+  "oracle": 0.16666666666666666
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "grid.points",
+  "informed": false,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "grid.path",
+  "informed": false,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "grid.polyline",
+  "informed": false,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "plot_iso",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.16666666666666666
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "m_1",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "plot_iso_1",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "m_2",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "plot_iso_2",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "m_3",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "isoband__rd_example__isobands_Rd",
+  "eid": "plot_iso_3",
+  "informed": true,
+  "w3": 0.0,
+  "oracle": 0.3333333333333333
+ },
+ {
+  "stem": "lava__vignette__influencefunction_s34",
+  "eid": "import_lava",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lava__vignette__influencefunction_s34",
+  "eid": "set.seed",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lava__vignette__influencefunction_s34",
+  "eid": "y",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lava__vignette__influencefunction_s34",
+  "eid": "N",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lava__vignette__influencefunction_s34",
+  "eid": "id",
+  "informed": true,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "lava__vignette__influencefunction_s34",
+  "eid": "Print",
+  "informed": true,
+  "w3": 0.9953333333333333,
+  "oracle": 0.993
+ },
+ {
+  "stem": "lava__vignette__influencefunction_s34",
+  "eid": "e",
+  "informed": true,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "lava__vignette__influencefunction_s34",
+  "eid": "object.size",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 0.9666666666666667
+ },
+ {
+  "stem": "lava__vignette__influencefunction_s34",
+  "eid": "e_1",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lubridate__vignette__lubridate_s18",
+  "eid": "import_lubridate",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lubridate__vignette__lubridate_s18",
+  "eid": "jan31",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lubridate__vignette__lubridate_s18",
+  "eid": "months",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lubridate__vignette__lubridate_s18",
+  "eid": "floor_date",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lubridate__vignette__lubridate_s18",
+  "eid": "months_1",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lubridate__vignette__lubridate_s18",
+  "eid": "days",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "lubridate__vignette__lubridate_s18",
+  "eid": "months_2",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "import_pROC",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "data",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "roc.s100b",
+  "informed": true,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "roc.s100b.percent",
+  "informed": true,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "ggroc",
+  "informed": false,
+  "w3": 0.5,
+  "oracle": 0.5
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "geom_polygon_auc",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "ggroc_1",
+  "informed": false,
+  "w3": 0.5,
+  "oracle": 0.5
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "geom_polygon_auc_1",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "auc.s100b.partial.sp",
+  "informed": false,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "auc.s100b.partial.se",
+  "informed": false,
+  "w3": 0.25,
+  "oracle": 0.25
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "ggroc_2",
+  "informed": false,
+  "w3": 0.5,
+  "oracle": 0.5
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "geom_polygon_auc_2",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "ggroc_3",
+  "informed": false,
+  "w3": 0.5,
+  "oracle": 0.5
+ },
+ {
+  "stem": "pROC__rd_example__geom_polygon_auc_roc_Rd",
+  "eid": "geom_polygon_auc_3",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "rmarkdown__rd_example__output_format_dependency_Rd",
+  "eid": "import_rmarkdown",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "rmarkdown__rd_example__output_format_dependency_Rd",
+  "eid": "output_format_dependency",
+  "informed": false,
+  "w3": 0.8333333333333334,
+  "oracle": 0.8333333333333334
+ },
+ {
+  "stem": "rmarkdown__rd_example__output_format_dependency_Rd",
+  "eid": "knit_meta_add",
+  "informed": false,
+  "w3": 0.8333333333333334,
+  "oracle": 0.7803333333333333
+ },
+ {
+  "stem": "rmarkdown__rd_example__output_format_dependency_Rd",
+  "eid": "str",
+  "informed": true,
+  "w3": 0.9403333333333334,
+  "oracle": 0.844
+ },
+ {
+  "stem": "shape__rd_example__femmecol_Rd",
+  "eid": "import_shape",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "shape__rd_example__femmecol_Rd",
+  "eid": "filled.contour",
+  "informed": false,
+  "w3": 0.6,
+  "oracle": 0.6
+ },
+ {
+  "stem": "shape__rd_example__femmecol_Rd",
+  "eid": "femmecol",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "shape__rd_example__femmecol_Rd",
+  "eid": "image",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "shiny__rd_example__httpResponse_Rd",
+  "eid": "import_shiny",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "shiny__rd_example__httpResponse_Rd",
+  "eid": "httpResponse",
+  "informed": false,
+  "w3": 0.931,
+  "oracle": 0.931
+ },
+ {
+  "stem": "textshaping__vignette__c_interface",
+  "eid": "import_textshaping",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "textshaping__vignette__c_interface",
+  "eid": "opts_chunk$set",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "tidyr__vignette__tidy-data_s3",
+  "eid": "import_tidyr",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "tidyr__vignette__tidy-data_s3",
+  "eid": "tribble",
+  "informed": false,
+  "w3": 0.8966666666666666,
+  "oracle": 0.8966666666666666
+ },
+ {
+  "stem": "timeDate__rd_example__earlyCloseNYSE_Rd",
+  "eid": "import_timeDate",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "timeDate__rd_example__earlyCloseNYSE_Rd",
+  "eid": "earlyCloseNYSE",
+  "informed": false,
+  "w3": 0.9349999999999999,
+  "oracle": 0.9153333333333333
+ },
+ {
+  "stem": "timeDate__rd_example__earlyCloseNYSE_Rd",
+  "eid": "earlyCloseNYSE_1",
+  "informed": false,
+  "w3": 0.939,
+  "oracle": 0.941
+ },
+ {
+  "stem": "timeDate__rd_example__earlyCloseNYSE_Rd",
+  "eid": "holidayNYSE",
+  "informed": true,
+  "w3": 0.9036666666666666,
+  "oracle": 0.8723333333333333
+ },
+ {
+  "stem": "timeDate__rd_example__earlyCloseNYSE_Rd",
+  "eid": "c",
+  "informed": true,
+  "w3": 0.6586666666666666,
+  "oracle": 0.6136666666666667
+ },
+ {
+  "stem": "xml2__rd_example__xml_cdata_Rd",
+  "eid": "import_xml2",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "xml2__rd_example__xml_cdata_Rd",
+  "eid": "x",
+  "informed": false,
+  "w3": 1.0,
+  "oracle": 0.7556666666666667
+ },
+ {
+  "stem": "xml2__rd_example__xml_cdata_Rd",
+  "eid": "xml_add_child",
+  "informed": true,
+  "w3": 1.0,
+  "oracle": 1.0
+ },
+ {
+  "stem": "xml2__rd_example__xml_cdata_Rd",
+  "eid": "as.character",
+  "informed": true,
+  "w3": 0.965,
+  "oracle": 0.965
+ }
+]

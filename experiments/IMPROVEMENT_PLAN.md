@@ -80,6 +80,46 @@ bound on every retrieval scheme (perfect coverage, perfect retrieval) and costs 
 retrieved text is finished as a learning mechanism for this model, and the evolving-knowledge path is the verified
 runtime (A/B of steps 7-8), which also reaches the ~48% of loss that no training script covers.
 
+**Oracle-library replay (2026-10-07): null, and retrieval work stops here.** The efficacy test proposed above was
+run. Preparation: the 265 saved training translations were re-verified per entity offline
+(`scripts/reverify_training.py`, 250 scripts, **5 model calls in total** because attribution is read off the saved
+sentinels; mean aggregate 0.669 against 0.676 in the original run, the same 85 scripts >= 0.9). 558 of 1,850 entities
+verify at >= 0.9 with a usable Python snippet, giving **260 keys against the library's 155**. That revises the ceiling
+above: counting only entities whose translation actually verified, a per-entity harvest reaches **31%** of the
+held-out loss, not 52% (the 52% counted keys whose translations were wrong).
+
+From that corpus, `scripts/oracle_library.py` built one library per script holding verified examples (<= 3, from other
+scripts only) for exactly the functions that script calls: 721 examples over 260 keys, answering 29% of lookups; 15 of
+the 20 frozen replay states get >= 1 pattern, 10 get >= 2, 5 get none and serve as a noise control with identical arms.
+`replay.py --policies rewrite_w3 rewrite_w3_oracle --samples 3` (120 runs, `work/replay_oracle/`):
+
+| arm | runs | mean final | P(improve) | P(>= 0.9) |
+|---|---|---|---|---|
+| `rewrite_w3` | 60 | 0.766 | 75% | 40% |
+| `rewrite_w3_oracle` | 60 | 0.755 | 75% | 40% |
+
+Paired by state: all 20 states **-0.011** (Wilcoxon p = 0.534, better/worse/tied 3/5/12); the 15 covered states
+**-0.010** (SE 0.058, p = 0.441); the 10 states with >= 2 patterns **-0.013**; the 5-state control **-0.013**
+(SE 0.116), which is the instrument's noise floor. Entity-level diagnostic
+(`scripts/oracle_entity_analysis.py`, from the `per_entity` scores in the trajectory log, computed after seeing the
+script-level result): entities that got an example **+0.022** [-0.215, +0.207], recovering 6% of their 22.6 lost
+points; entities without one -0.042. Both intervals are wide enough to be uninformative on their own.
+
+**Not a wiring artifact.** With an oracle library the agent prompt carries a 2,456-character pattern section with
+four entities' verified examples, where the empty library yields "(no patterns available)" - checked directly through
+`_prefetch_patterns` + `format_patterns` on `hms__rd_example__hms_Rd`. (Prompt hashes cannot be used for this check:
+the audit section is itself a model call, so the two arms' prompts differ in every state regardless.)
+
+**Where this leaves learning from past translations.** Three independent tests are now null: the registered experiment
+(0% of reachable loss recovered, bound ~12%), the lesson store, and an oracle with perfect coverage and perfect
+retrieval. The pattern across everything built so far is that **pushing text at the model does not work, while search,
+verified executable knowledge and error localisation do** (width 3 +0.09..+0.14; locator +0.029 n.s.; runtime store
+no harm). The evolving-harness path is therefore the verified runtime (steps 7-8): its unit is a differential-tested
+`r_*` function rather than a suggestive snippet, it needs no retrieval, and it is the only mechanism that can reach
+the ~69% of held-out loss no training script's verified entity covers. Open caveat: this replay is underpowered
+(+-0.1 at script level) and the oracle is bounded by the corpus, so it bounds what *these* 256 training scripts could
+teach, not what an unlimited corpus could.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
