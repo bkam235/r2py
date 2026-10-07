@@ -49,8 +49,25 @@ for mod, name in pairs:
         pass                                    # e.g. "'os' is not a package": there is no such submodule
     except Exception:
         continue
-    near = [n for n in dir(m) if not n.startswith("_") and n.lower().replace("_", "") == name.lower().replace("_", "")]
-    bad.append([mod, name, near[:3]])
+    import difflib
+    pub = [n for n in dir(m) if not n.startswith("_")]
+    near = difflib.get_close_matches(name, pub, n=3, cutoff=0.6)
+    if not near and hasattr(m, "__path__"):
+        # Not in the package namespace: a close name in one of its submodules (pygments.lexers.r.SLexer)
+        import pkgutil, time
+        t0 = time.monotonic()
+        scored = []
+        for info in list(pkgutil.iter_modules(m.__path__))[:500]:
+            if time.monotonic() - t0 > 12:
+                break
+            try:
+                sub = importlib.import_module(mod + "." + info.name)
+            except Exception:
+                continue
+            for hit in difflib.get_close_matches(name, [n for n in dir(sub) if not n.startswith("_")], n=2, cutoff=0.8):
+                scored.append((difflib.SequenceMatcher(None, name, hit).ratio(), mod + "." + info.name + "." + hit))
+        near = [n for _r, n in sorted(scored, reverse=True)[:6]]
+    bad.append([mod, name, near[:6]])
 print(json.dumps(bad))
 """
 

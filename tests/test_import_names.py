@@ -14,7 +14,7 @@ class TestImportedNames(unittest.TestCase):
         bad = missing_import_names("from os import path, nonexistent_name\nfrom pandas import DataFrame, dataframe\n")
         self.assertEqual({(m, n) for m, n, _ in bad}, {("os", "nonexistent_name"), ("pandas", "dataframe")})
         near = {n: near for _m, n, near in bad}
-        self.assertEqual(near["dataframe"], ["DataFrame"])
+        self.assertEqual(near["dataframe"][0], "DataFrame")
 
     def test_existing_names_and_submodules_pass(self):
         self.assertEqual(missing_import_names("from os import path\nfrom json import decoder, loads\nfrom numpy.random import default_rng\n"), [])
