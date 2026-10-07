@@ -61,6 +61,8 @@ def main() -> int:
     sub.add_parser("check-llm", help="send one request with the pinned LLM settings")
 
     p = sub.add_parser("train", help="build the library on the training set")
+    p.add_argument("--poll-s", type=float, default=60.0, help="while the provider is unavailable (no credits, no network): seconds between checks")
+    p.add_argument("--max-wait-h", type=float, default=6.0, help="give up waiting after this many hours (the same command resumes)")
     p.add_argument("--workers", type=int, default=1,
                    help="translations in flight at once; each sees the library as of its start, "
                         "so up to workers-1 scripts stale (default: %(default)s = strictly sequential)")
@@ -107,7 +109,10 @@ def main() -> int:
     if args.cmd == "check-llm":
         ho.check_llm(manifest)
     elif args.cmd == "train":
-        ho.train(manifest, workdir, workers=args.workers)
+        finished = ho.train(manifest, workdir, workers=args.workers, poll_s=args.poll_s, max_wait_s=args.max_wait_h * 3600)
+        if not finished:
+            print("training is NOT complete; run the same command to resume (nothing finished is repeated)")
+            return 3
     elif args.cmd == "score":
         ho.score(manifest, workdir, args.checkpoints or list(manifest["checkpoints"]), workers=args.workers)
     elif args.cmd == "analyze":

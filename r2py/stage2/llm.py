@@ -2,7 +2,9 @@
 from __future__ import annotations
 
 import os
+import threading
 import time
+from collections import Counter
 
 import anthropic
 
@@ -18,6 +20,56 @@ class TruncatedResponseError(RuntimeError):
             f"LLM response truncated at max_tokens={max_tokens}. "
             "Increase max_tokens or reduce entity size."
         )
+
+class ProviderUnavailable(RuntimeError):
+    """The model provider failed in a way that is not the translation's fault (no credits, no network, overloaded).
+
+    A run in which a call failed for good has not measured the harness: its seeds are empty and its agent stopped.  The
+    experiment drivers raise this instead of recording such a run, so it is repeated once the provider is back."""
+
+    def __init__(self, kinds: dict):
+        self.kinds = dict(kinds)
+        super().__init__(f"model provider unavailable: {dict(kinds)}")
+
+
+# Calls that failed for good (after the retries), by kind, since the last drain.  Many callers catch the exception and
+# carry on (a seed becomes empty, the agent loop stops), so the failure is also recorded here, where the driver can see it.
+provider_failures: Counter = Counter()
+_pf_lock = threading.Lock()
+
+
+def classify_failure(exc: BaseException) -> str:
+    """'credits' (HTTP 402), 'rate_limit' (429), 'server' (5xx), 'network' (connection, timeout) or 'other'."""
+    code = getattr(exc, "status_code", None)
+    text = str(exc)
+    if code == 402 or "Error code: 402" in text or "more credits" in text or "credits" in text.lower() and "402" in text:
+        return "credits"
+    if code == 429 or "Error code: 429" in text:
+        return "rate_limit"
+    if isinstance(code, int) and code >= 500 or "Error code: 5" in text[:40]:
+        return "server"
+    name = type(exc).__name__
+    if "Connection" in name or "Timeout" in name or "Connection error" in text or "timed out" in text.lower():
+        return "network"
+    return "other"
+
+
+def _record_failure(exc: BaseException) -> None:
+    with _pf_lock:
+        provider_failures[classify_failure(exc)] += 1
+
+
+def peek_provider_failures() -> dict:
+    with _pf_lock:
+        return {k: v for k, v in provider_failures.items() if v}
+
+
+def drain_provider_failures() -> dict:
+    with _pf_lock:
+        out = {k: v for k, v in provider_failures.items() if v}
+        provider_failures.clear()
+    return out
+
 
 # Module-level client cache keyed by api_key so the underlying HTTP session
 # is reused across all entity calls within a translation run.
@@ -89,6 +141,8 @@ def call(
         except Exception:
             raise
 
+    if last_exc is not None:
+        _record_failure(last_exc)
     raise RuntimeError(f"LLM call failed after {_MAX_RETRIES} attempts: {last_exc}")
 
 
@@ -151,4 +205,6 @@ def _call_openrouter(
             wait = 2 ** attempt
             time.sleep(wait)
 
+    if last_exc is not None:
+        _record_failure(last_exc)
     raise RuntimeError(f"OpenRouter call failed after {_MAX_RETRIES} attempts: {last_exc}")

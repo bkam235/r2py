@@ -392,10 +392,12 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
     from r2py.stage1 import analyze
 
     from r2py.harness import trajectory
+    from r2py.stage2 import llm as _llm
 
     py_path.parent.mkdir(parents=True, exist_ok=True)
     trajectory.begin(py_path.parent / "trajectories" / (py_path.stem + ".jsonl"),
                      script=r_path.name, learn=learn, model=cfg["model"])
+    _llm.drain_provider_failures()
     script_map = analyze(r_path)
     result = run_loop(
         script_map, lib,
@@ -418,6 +420,12 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         agent_locate=cfg.get("locate", False),
         runtime_dir=cfg.get("runtime_dir"),
     )
+    failures = _llm.drain_provider_failures()
+    if failures:
+        # No credits, no network, an overloaded provider: seeds came back empty and the agent stopped.  That run says
+        # nothing about the harness and must neither be recorded as a score nor taught to the library.
+        trajectory.end(provider_unavailable=failures)
+        raise _llm.ProviderUnavailable(failures)
     py_path.write_text(result.python_source, encoding="utf-8")
     trajectory.end(final_score=round(result.final_score, 4), iterations=result.iterations,
                    final_hash=trajectory.source_hash(result.python_source))
@@ -580,6 +588,40 @@ def _progress_line(phase: str, done: int, total: int, durations: list[float], wo
 # Step 2 — train
 # ---------------------------------------------------------------------------
 
+def provider_ok(manifest: dict) -> tuple[bool, str]:
+    """One tiny request through the pinned model: is the provider answering (credits, network)?"""
+    from r2py.stage2 import llm
+
+    cfg = manifest["protocol"]["translate"]
+    try:
+        with pinned_llm(cfg["model"], llm_settings(manifest)):
+            llm.call([{"role": "user", "content": "Reply with the word ok."}], "You reply with one word.",
+                     model=cfg["model"], max_tokens=8)
+        return True, ""
+    except Exception as exc:
+        return False, f"{llm.classify_failure(exc)}: {str(exc)[:160]}"
+    finally:
+        llm.drain_provider_failures()
+
+
+def wait_for_provider(manifest: dict, kinds: dict, *, log=print, poll_s: float = 60.0, max_wait_s: float = 6 * 3600.0) -> bool:
+    """Block until the provider answers again; False after ``max_wait_s`` (the caller then stops cleanly: the
+    progress files hold every finished script, so the same command resumes)."""
+    log(f"provider unavailable ({kinds}); pausing, checking every {poll_s:.0f}s for up to {max_wait_s / 3600:.1f} h. "
+        "Add credits / restore the network and it continues by itself; Ctrl-C stops, the same command resumes.")
+    waited = 0.0
+    while waited <= max_wait_s:
+        ok, why = provider_ok(manifest)
+        if ok:
+            log(f"provider is back after {waited / 60:.0f} min; resuming")
+            return True
+        time.sleep(poll_s)
+        waited += poll_s
+        if int(waited / poll_s) % 10 == 0:
+            log(f"  still unavailable after {waited / 60:.0f} min ({why})")
+    return False
+
+
 def _train_task(manifest: dict, snapshot: str, script: str, py_path: str) -> dict:
     """One training translation in its own process, against a private copy of the library.
 
@@ -601,15 +643,19 @@ def _train_task(manifest: dict, snapshot: str, script: str, py_path: str) -> dic
                    seed_score_report=r.score_history[0] if r.score_history else None,
                    served=dict(served))
     except Exception as exc:
-        out["error"] = f"{type(exc).__name__}: {exc}"
-        out["traceback"] = traceback.format_exc()[-1500:]
+        if type(exc).__name__ == "ProviderUnavailable":
+            out["provider_unavailable"] = dict(getattr(exc, "kinds", {}))
+        else:
+            out["error"] = f"{type(exc).__name__}: {exc}"
+            out["traceback"] = traceback.format_exc()[-1500:]
     out.update(_drain_diagnostics())
     out["seconds"] = round(time.monotonic() - started, 1)
     shutil.rmtree(snapshot, ignore_errors=True)
     return out
 
 
-def _train_parallel(manifest: dict, workdir: Path, workers: int, *, log=print) -> None:
+def _train_parallel(manifest: dict, workdir: Path, workers: int, *, log=print, poll_s: float = 60.0,
+                    max_wait_s: float = 6 * 3600.0) -> bool:
     """Train with ``workers`` translations in flight at once.
 
     Each task translates against a snapshot of the library taken when it starts, so it does not
@@ -651,9 +697,11 @@ def _train_parallel(manifest: dict, workdir: Path, workers: int, *, log=print) -
     snapshots = workdir / "train_snapshots"
     ctx = multiprocessing.get_context("spawn")
     pending: dict = {}
+    outage: dict = {}                 # kinds of the provider failures seen since the last time the provider answered
+    completed = True
     with ProcessPoolExecutor(max_workers=workers, mp_context=ctx) as ex:
         def submit() -> None:
-            while todo and len(pending) < workers:
+            while todo and len(pending) < workers and not outage:
                 i, script = todo.popleft()
                 snap = snapshots / f"{i}_{attempts[script] + 1}"
                 shutil.rmtree(snap, ignore_errors=True)
@@ -673,6 +721,15 @@ def _train_parallel(manifest: dict, workdir: Path, workers: int, *, log=print) -
                     res = fut.result()
                 except Exception as exc:  # the worker process itself died
                     res = {"error": f"{type(exc).__name__}: {exc}", "seconds": 0.0}
+                if res.get("provider_unavailable"):
+                    # Not a result: back to the front of the queue, no attempt counted, nothing recorded as a score.
+                    todo.appendleft((i, script))
+                    for k, v in res["provider_unavailable"].items():
+                        outage[k] = outage.get(k, 0) + v
+                    _append_jsonl(workdir / "train_events.jsonl", {"event": "provider_unavailable", "script": script,
+                                                                 "kinds": res["provider_unavailable"], "timestamp": _now()})
+                    log(f"[train {i}/{total}] {script}: provider failed ({res['provider_unavailable']}); will be repeated")
+                    continue
                 served.update(res.pop("served", {}))
                 for k in ("shadow_fixers", "review_failures", "traceback", "error", "seconds"):
                     if k in res:
@@ -703,23 +760,37 @@ def _train_parallel(manifest: dict, workdir: Path, workers: int, *, log=print) -
                         if n_done == count and not (ckpt_dir / name).exists():
                             shutil.copytree(workdir / "lib_live", ckpt_dir / name)
                             log(f"checkpoint {name!r} at {n_done} scripts ({len(lib.index.all_ids())} patterns)")
+            if outage and not pending:
+                # everything in flight has come back: wait for the provider, then carry on with the same queue
+                if not wait_for_provider(manifest, outage, log=log, poll_s=poll_s, max_wait_s=max_wait_s):
+                    log(f"gave up waiting; {len(todo)} scripts unfinished. Run the same command to resume.")
+                    completed = False
+                    break
+                outage.clear()
             submit()
     shutil.rmtree(snapshots, ignore_errors=True)
     log(f"providers that served this session: {dict(served)}")
+    return completed
 
 
-def train(manifest: dict, workdir: str | Path, *, workers: int = 1, log=print) -> None:
+def train(manifest: dict, workdir: str | Path, *, workers: int = 1, log=print, poll_s: float = 60.0,
+          max_wait_s: float = 6 * 3600.0) -> bool:
     """Build the library from empty on the training set, snapshotting each checkpoint.
 
     Resumable: a script is finished once it has a successful row in train_progress.jsonl, or
     MAX_ATTEMPTS failed ones. A failing script is retried at once, so the checkpoints stay
     a clean prefix of the training order.
+
+    A provider outage (no credits, no network) is not a failed attempt: the run is discarded without a row,
+    the driver waits until a tiny request succeeds (``poll_s``, at most ``max_wait_s``) and repeats the script.
+    If the wait runs out, or on Ctrl-C, nothing is lost: the same command resumes with the unfinished scripts.
+    Returns True when every script is finished.
     """
     from r2py.library import PatternLibrary
 
     workdir = Path(workdir)
     if workers > 1:
-        return _train_parallel(manifest, workdir, workers, log=log)
+        return _train_parallel(manifest, workdir, workers, log=log, poll_s=poll_s, max_wait_s=max_wait_s)
     verify_inputs(manifest, manifest["train"])
     cfg = manifest["protocol"]["translate"]
     pool = _pool_path(manifest)
@@ -758,6 +829,14 @@ def train(manifest: dict, workdir: str | Path, *, workers: int = 1, log=print) -
                                            lib, cfg, learn=True)
                     row.update(score=r.final_score, patterns=len(lib.index.all_ids()))
                 except Exception as exc:
+                    if type(exc).__name__ == "ProviderUnavailable":
+                        _drain_diagnostics()
+                        _append_jsonl(workdir / "train_events.jsonl", {"event": "provider_unavailable", "script": script,
+                                                                     "kinds": getattr(exc, "kinds", {}), "timestamp": _now()})
+                        if not wait_for_provider(manifest, getattr(exc, "kinds", {}), log=log, poll_s=poll_s, max_wait_s=max_wait_s):
+                            log(f"gave up waiting at {script}. Run the same command to resume.")
+                            return False
+                        continue                      # the same script again; no attempt counted, no row written
                     row["error"] = f"{type(exc).__name__}: {exc}"
                     row["traceback"] = traceback.format_exc()[-1500:]  # e.g. which frame recursed
                     log(f"  ERROR: {row['error']}")
@@ -778,6 +857,7 @@ def train(manifest: dict, workdir: str | Path, *, workers: int = 1, log=print) -
                     shutil.copytree(workdir / "lib_live", ckpt_dir / name)
                     log(f"checkpoint {name!r} at {i} scripts ({len(lib.index.all_ids())} patterns)")
     log(f"providers that served this session: {dict(served)}")
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -859,7 +939,9 @@ def _score_loop(manifest: dict, workdir: Path, checkpoints: list[str], *, out: P
                 if worker is not None:
                     row["worker"] = worker
                 started = time.monotonic()
-                for attempt in range(1, MAX_ATTEMPTS + 1):
+                attempt = 0
+                while attempt < MAX_ATTEMPTS:
+                    attempt += 1
                     row.pop("error", None)
                     row.pop("traceback", None)
                     # Fresh copy per run: whatever the loop writes is discarded.
@@ -881,6 +963,14 @@ def _score_loop(manifest: dict, workdir: Path, checkpoints: list[str], *, out: P
                                 entities=entities)
                             break
                         except Exception as exc:
+                            if type(exc).__name__ == "ProviderUnavailable":
+                                # Not a result: wait for the provider and repeat this attempt (no row, no attempt counted).
+                                _drain_diagnostics()
+                                if not wait_for_provider(manifest, getattr(exc, "kinds", {}), log=log):
+                                    log("gave up waiting; the same command resumes with the unfinished runs.")
+                                    raise SystemExit(3)
+                                attempt -= 1
+                                continue
                             row["error"] = f"{type(exc).__name__}: {exc}"
                             row["traceback"] = traceback.format_exc()[-1500:]
                             log(f"  ERROR (attempt {attempt}/{MAX_ATTEMPTS}): {row['error']}")
