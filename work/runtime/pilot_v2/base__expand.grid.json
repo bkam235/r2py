@@ -1,0 +1,141 @@
+{
+ "function": "expand.grid",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 30,
+ "n_core": 20,
+ "attempt": 1,
+ "passed": 27,
+ "total": 30,
+ "core_passed": 20,
+ "core_total": 20,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_expand_grid(*args, KEEP_OUT_ATTRS=True, stringsAsFactors=True, **kwargs):\n    # In R, expand.grid(...) takes ... which can be named or unnamed arguments.\n    # Python's *args is unnamed, **kwargs is named.\n    # R's behavior: if the first arg is a list, it treats it as the set of arguments.\n    \n    # Combine args and kwargs into a list of values and a list of names\n    actual_args = []\n    names = []\n    \n    # Handle the \"if (nargs == 1L && is.list(a1 <- args[[1L]]))\" case\n    # If the first positional argument is a dictionary (simulating a list with names), \n    # R uses that list.\n    if len(args) == 1 and isinstance(args[0], dict):\n        input_dict = args[0]\n        # Note: R lists maintain order. Python dicts do too since 3.7.\n        for k, v in input_dict.items():\n            actual_args.append(v)\n            names.append(k)\n    else:\n        # First, process positional arguments\n        for i, arg in enumerate(args):\n            # Special case: if the user passed KEEP_OUT_ATTRS or stringsAsFactors as positional\n            # This is unlikely given the R signature, but we handle them as values if they \n            # aren't the specific named parameters.\n            actual_args.append(arg)\n            names.append(f\"Var{i+1}\")\n        \n        # Then process named arguments\n        for k, v in kwargs.items():\n            actual_args.append(v)\n            names.append(k)\n\n    # Remove the specific control arguments from the data if they were passed in kwargs\n    # because in R, the ... is separate from KEEP.OUT.ATTRS and stringsAsFactors\n    # (The function signature in R is expand.grid(..., KEEP.OUT.ATTRS = TRUE, ...))\n    # However, in Python, we define them explicitly. If they are in kwargs, \n    # they are NOT part of the ...\n    # But wait, the R function is `function (..., KEEP.OUT.ATTRS = TRUE, stringsAsFactors = TRUE)`.\n    # In Python `def r_expand_grid(*args, KEEP_OUT_ATTRS=True, stringsAsFactors=True, **kwargs)`,\n    # `kwargs` contains any named args that aren't KEEP_OUT_ATTRS or stringsAsFactors.\n    \n    # Re-evaluating the input gathering:\n    final_args = []\n    final_names = []\n    \n    # 1. Positional args\n    for i, arg in enumerate(args):\n        final_args.append(arg)\n        final_names.append(f\"Var{i+1}\")\n    \n    # 2. Named args (kwargs)\n    for k, v in kwargs.items():\n        final_args.append(v)\n        final_names.append(k)\n\n    nargs = len(final_args)\n    if nargs == 0:\n        return pd.DataFrame()\n\n    # lengths of inputs\n    d = []\n    for x in final_args:\n        if isinstance(x, (list, np.ndarray, pd.Series)):\n            d.append(len(x))\n        elif isinstance(x, (int, float, str, bool)) or x is None:\n            d.append(1)\n        else:\n            # Try to get length, otherwise 1\n            try:\n                d.append(len(x))\n            except TypeError:\n                d.append(1)\n\n    orep = np.prod(d).astype(int)\n    \n    columns = {}\n    rep_fac = 1\n    \n    if orep == 0:\n        # R: for (i in iArgs) cargs[[i]] <- args[[i]][FALSE]\n        for i in range(nargs):\n            x = final_args[i]\n            if isinstance(x, (list, np.ndarray, pd.Series)):\n                columns[final_names[i]] = np.array([], dtype=np.array(x).dtype)\n            else:\n                columns[final_names[i]] = np.array([])\n    else:\n        for i in range(nargs):\n            x = final_args[i]\n            \n            # Convert to numpy array for consistent indexing/repeating\n            # R handles scalars as vectors of length 1\n            if not isinstance(x, (list, np.ndarray, pd.Series)):\n                x_vec = np.array([x])\n            else:\n                x_vec = np.array(x)\n            \n            nx = len(x_vec)\n            \n            # stringsAsFactors logic\n            if stringsAsFactors and x_vec.dtype.kind in 'SU': # string or unicode\n                # R factor: unique levels in order of appearance\n                # we represent factors as lists of strings in this harness\n                unique_vals = pd.unique(x_vec)\n                # In R, factor is a specific type. Here we keep as is or cast.\n                # The harness asks for factors as lists of str.\n                # But expand.grid produces a dataframe. \n                pass\n\n            # Calculate repeat patterns\n            # x <- x[rep.int(rep.int(seq_len(nx), rep.int(rep_fac, nx)), orep)]\n            # This is effectively: repeat each element rep_fac times, \n            # then repeat that whole block (orep / (nx * rep_fac)) times.\n            \n            current_orep = orep // (nx * rep_fac) if (nx * rep_fac) != 0 else 0\n            \n            # repeat each element rep_fac times\n            repeated = np.repeat(x_vec, rep_fac)\n            # repeat the whole sequence current_orep times\n            full_col = np.tile(repeated, current_orep)\n            \n            columns[final_names[i]] = full_col\n            rep_fac *= nx\n\n    df = pd.DataFrame(columns)\n    \n    # R's expand.grid doesn't have a named index by default, \n    # but it is 1-based. pandas is 0-based.\n    # The harness says to return the natural Python object.\n    # DataFrames are returned as DataFrames.\n    \n    return df\n",
+ "failures": [
+  {
+   "call": "expand.grid(letters[1:3], matrix(1:6, nrow = 2))",
+   "expected": {
+    "Var1": [
+     "a",
+     "b",
+     "c",
+     "a",
+     "b",
+     "c",
+     "a",
+     "b",
+     "c",
+     "a",
+     "b",
+     "c",
+     "a",
+     "b",
+     "c",
+     "a",
+     "b",
+     "c"
+    ],
+    "Var2": [
+     1,
+     1,
+     1,
+     2,
+     2,
+     2,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     5,
+     5,
+     5,
+     6,
+     6,
+     6
+    ]
+   },
+   "error": "ValueError: All arrays must be of the same length",
+   "core": false,
+   "rclass": "data.frame"
+  },
+  {
+   "call": "expand.grid(letters[1:3], matrix(1:6, nrow = 2))  [first argument: reversed]",
+   "expected": {
+    "Var1": [
+     "c",
+     "b",
+     "a",
+     "c",
+     "b",
+     "a",
+     "c",
+     "b",
+     "a",
+     "c",
+     "b",
+     "a",
+     "c",
+     "b",
+     "a",
+     "c",
+     "b",
+     "a"
+    ],
+    "Var2": [
+     1,
+     1,
+     1,
+     2,
+     2,
+     2,
+     3,
+     3,
+     3,
+     4,
+     4,
+     4,
+     5,
+     5,
+     5,
+     6,
+     6,
+     6
+    ]
+   },
+   "error": "ValueError: All arrays must be of the same length",
+   "core": false,
+   "rclass": "data.frame"
+  },
+  {
+   "call": "expand.grid(letters[1:3], matrix(1:6, nrow = 2))  [first argument: a single value]",
+   "expected": {
+    "Var1": [
+     "a",
+     "a",
+     "a",
+     "a",
+     "a",
+     "a"
+    ],
+    "Var2": [
+     1,
+     2,
+     3,
+     4,
+     5,
+     6
+    ]
+   },
+   "error": "ValueError: All arrays must be of the same length",
+   "core": false,
+   "rclass": "data.frame"
+  }
+ ],
+ "exotic_passed": 7,
+ "exotic_total": 10,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

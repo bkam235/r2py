@@ -1,0 +1,13 @@
+{
+ "function": "median",
+ "package": null,
+ "status": "passed",
+ "rounds": 3,
+ "n_calls": 8,
+ "n_cases": 43,
+ "passed": 43,
+ "total": 43,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_median(x, na_rm=False, **kwargs):\n    \"\"\"\n    Python reproduction of R's median function.\n    \"\"\"\n    # In R, factors are passed as lists of strings, and data frames as pandas DataFrames.\n    if isinstance(x, pd.DataFrame):\n        raise TypeError(\"need numeric data\")\n    \n    # Handle single numeric values (scalars) by converting them to 1D arrays\n    if np.isscalar(x):\n        x = np.array([x])\n    elif isinstance(x, list):\n        # Check if it's a \"factor\" (list of strings)\n        if len(x) > 0 and isinstance(x[0], str):\n            raise TypeError(\"need numeric data\")\n        x = np.array(x)\n    else:\n        x = np.asanyarray(x)\n        # Ensure x is treated as a 1D array if it's 0-d\n        if x.ndim == 0:\n            x = x.reshape(1)\n\n    # Handle NA cases\n    if na_rm:\n        # Remove NaNs\n        x = x[~np.isnan(x)]\n    else:\n        # If any NaN is present and na.rm is FALSE, R returns NA (NaN)\n        if np.any(np.isnan(x)):\n            return np.nan\n\n    n = len(x)\n    if n == 0:\n        return np.nan\n\n    # Sort the array to find the median\n    sorted_x = np.sort(x)\n    \n    # R's logic:\n    # half <- (n + 1L)%/%2L\n    # if (n%%2L == 1L) sort(x, partial = half)[half]\n    # else mean(sort(x, partial = half + 0L:1L)[half + 0L:1L])\n    \n    if n % 2 == 1:\n        # Odd: middle element\n        # R index (n+1)//2 is Python index (n-1)//2\n        return sorted_x[(n - 1) // 2]\n    else:\n        # Even: average of two middle elements\n        # R indices (n//2) and (n//2 + 1)\n        # Python indices (n//2 - 1) and (n//2)\n        mid_left = (n // 2) - 1\n        mid_right = n // 2\n        return (sorted_x[mid_left] + sorted_x[mid_right]) / 2.0\n",
+ "failures": [],
+ "tag": "corpus frequency (stats)"
+}

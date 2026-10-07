@@ -1,0 +1,20 @@
+{
+ "function": "which",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 22,
+ "n_core": 19,
+ "attempt": 1,
+ "passed": 22,
+ "total": 22,
+ "core_passed": 19,
+ "core_total": 19,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_which(x, arr_ind=False, useNames=True):\n    # In R, which() treats any non-zero numeric value as TRUE \n    # and NaN as FALSE (though usually x is logical).\n    # We convert to a numpy array to handle various input types.\n    x_arr = np.asanyarray(x)\n    \n    # R's which(x) returns indices where x is TRUE.\n    # NaNs are treated as FALSE in R's which().\n    mask = np.nan_to_num(x_arr, nan=0).astype(bool)\n    \n    # Find indices where mask is True\n    wh = np.where(mask.ravel())[0]\n    \n    # R uses 1-based indexing\n    wh_1based = wh + 1\n    \n    if arr_ind and x_arr.ndim > 1:\n        # arrayInd implementation\n        dims = x_arr.shape\n        # R's arrayInd unravels indices in column-major order\n        # np.unravel_index does exactly this if we pass the flat index\n        # and the shape of the array.\n        indices = np.unravel_index(wh, dims)\n        \n        # R returns a matrix where each column is a dimension\n        # The result is indices[0] (row), indices[1] (col), etc.\n        # We stack them as columns and add 1 for 1-based indexing.\n        res = np.column_stack([idx + 1 for idx in indices])\n        \n        # If result is empty, R returns a matrix with 0 rows and ncol dimensions\n        if res.shape[0] == 0:\n            return np.empty((0, len(dims)), dtype=int)\n        \n        return res\n    else:\n        # Return as a 1D numpy array of integers\n        # If nothing is found, R returns integer(0)\n        if len(wh_1based) == 0:\n            return np.array([], dtype=int)\n        return wh_1based\n",
+ "failures": [],
+ "exotic_passed": 3,
+ "exotic_total": 3,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

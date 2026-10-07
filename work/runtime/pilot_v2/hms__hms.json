@@ -1,0 +1,22 @@
+{
+ "function": "hms",
+ "package": "hms",
+ "status": "passed",
+ "rounds": 3,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 33,
+ "n_core": 27,
+ "n_mined": 0,
+ "attempt": 1,
+ "passed": 33,
+ "total": 33,
+ "core_passed": 27,
+ "core_total": 27,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_hms(seconds=None, minutes=None, hours=None, days=None):\n    \"\"\"\n    Reproduces hms::hms from R.\n    R's hms class stores values as total seconds since midnight.\n    Importantly, R's hms representation allows negative values and represents\n    them as -HH:MM:SS rather than wrapping around midnight (unlike Python's % operator).\n    \"\"\"\n    weights = {\n        'seconds': 1,\n        'minutes': 60,\n        'hours': 3600,\n        'days': 86400\n    }\n    \n    args = {\n        'seconds': seconds,\n        'minutes': minutes,\n        'hours': hours,\n        'days': days\n    }\n    \n    # Determine if input is vector or scalar\n    is_vector = False\n    for val in args.values():\n        if isinstance(val, (list, np.ndarray, pd.Series)):\n            is_vector = True\n            break\n    \n    # Calculate total seconds\n    total_secs = None\n    for key, weight in weights.items():\n        val = args[key]\n        if val is not None:\n            arr = np.array(val, dtype=float)\n            term = arr * weight\n            if total_secs is None:\n                total_secs = term\n            else:\n                total_secs = total_secs + term\n                \n    if total_secs is None:\n        return np.array([], dtype=float)\n    \n    # Convert to array for consistent processing\n    res_arr = np.atleast_1d(total_secs)\n    \n    def format_hms(s):\n        if np.isnan(s):\n            return None\n        \n        # R's hms formatting for negative values: \n        # It treats the sign separately: - (abs(s) formatted)\n        sign = \"\"\n        if s < 0:\n            sign = \"-\"\n            s = abs(s)\n        \n        # Calculate components\n        # R's hms does not wrap days into 24h for the purpose of the internal value\n        # but the printer typically does. However, the failing cases show \n        # that it preserves the negative sign.\n        h = int(s // 3600)\n        m = int((s % 3600) // 60)\n        sec = s % 60\n        \n        # Format seconds part\n        if sec == int(sec):\n            sec_str = f\"{int(sec):02d}\"\n        else:\n            # R's hms uses a specific precision for fractional seconds\n            # We format to 1 or more decimals as required by the test cases\n            sec_str = f\"{sec:06.2f}\" \n            # Remove trailing zeros but keep at least one decimal if it's a float\n            # Based on \"00:00:01.1\", we should format carefully.\n            if sec_str.endswith('0'):\n                sec_str = sec_str.rstrip('0').rstrip('.')\n            # Ensure it's at least 2 digits before the dot\n            # This is complex; let's use a simpler approach for the fraction.\n            # R's hms uses `sprintf(\"%.2f\", sec)` effectively but strips trailing zeros.\n            # Let's refine:\n            sec_val = f\"{sec:06.2f}\" # e.g. \"01.10\"\n            if sec_val.endswith('0'):\n                sec_val = sec_val.rstrip('0').rstrip('.')\n            # But hms output for 1.1 is 01.1, not 1.1\n            # Re-calculating sec_str for the final return\n            parts = f\"{sec:06.2f}\".split('.')\n            whole = parts[0]\n            frac = parts[1].rstrip('0').rstrip('.')\n            sec_str = whole + ('.' + frac if frac else '')\n        \n        # The provided \"00:00:01.1\" suggests HH:MM:S.s\n        # Let's rebuild the final string\n        if sec == int(sec):\n            return f\"{sign}{h:02d}:{m:02d}:{int(sec):02d}\"\n        else:\n            # Correct fraction formatting to match R's hms\n            # We need 2 digits for whole seconds, then a dot, then decimals.\n            # e.g. 1.1 -> 01.1\n            whole_sec = int(sec)\n            frac_sec = sec - whole_sec\n            frac_str = f\"{frac_sec:.2f}\"[2:].rstrip('0').rstrip('.')\n            return f\"{sign}{h:02d}:{m:02d}:{whole_sec:02d}.{frac_str}\"\n\n    results = [format_hms(x) for x in res_arr]\n    \n    if not is_vector:\n        return results[0]\n    else:\n        return results\n",
+ "failures": [],
+ "exotic_passed": 6,
+ "exotic_total": 6,
+ "tag": "agent fix",
+ "impure": []
+}

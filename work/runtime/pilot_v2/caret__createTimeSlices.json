@@ -1,0 +1,1307 @@
+{
+ "function": "createTimeSlices",
+ "package": "caret",
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 36,
+ "n_core": 21,
+ "n_mined": 1,
+ "attempt": 1,
+ "passed": 26,
+ "total": 36,
+ "core_passed": 21,
+ "core_total": 21,
+ "code": "import numpy as np\n\ndef r_createTimeSlices(y, initialWindow, horizon=1, fixedWindow=True, skip=0):\n    \"\"\"\n    Reproduces caret::createTimeSlices in Python.\n    \"\"\"\n    # length(y) in R\n    n = len(y)\n    \n    # stops <- seq(initialWindow, (length(y) - horizon), by = skip + 1)\n    start_val = initialWindow\n    end_val = n - horizon\n    step = skip + 1\n    \n    if start_val > end_val:\n        stops = []\n    else:\n        # Calculate number of elements to match R's seq behavior\n        num_elements = int((end_val - start_val) // step) + 1\n        stops = [start_val + i * step for i in range(num_elements)]\n    \n    if fixedWindow:\n        # starts <- stops - initialWindow + 1\n        starts = [s - initialWindow + 1 for s in stops]\n    else:\n        # starts <- rep(1, length(stops))\n        starts = [1] * len(stops)\n    \n    # train <- mapply(seq, starts, stops, SIMPLIFY = FALSE)\n    train_list = {}\n    # test <- mapply(seq, stops + 1, stops + horizon, SIMPLIFY = FALSE)\n    test_list = {}\n    \n    for i in range(len(stops)):\n        s_start = starts[i]\n        s_stop = stops[i]\n        \n        # Training: sequence from s_start to s_stop inclusive\n        train_indices = list(range(s_start, s_stop + 1))\n        \n        # Testing: sequence from s_stop + 1 to s_stop + horizon inclusive\n        t_start = s_stop + 1\n        t_stop = s_stop + horizon\n        test_indices = list(range(t_start, t_stop + 1))\n        \n        # R's seq(a, b) returns a scalar if a == b. \n        # Based on the failure case: \"test\": {\"Testing5\": 6...} instead of [6]\n        # we must handle the scalar return for single-element sequences.\n        if len(test_indices) == 1:\n            test_val = test_indices[0]\n        else:\n            test_val = test_indices\n            \n        if len(train_indices) == 1:\n            train_val = train_indices[0]\n        else:\n            train_val = train_indices\n\n        # nums <- gsub(\" \", \"0\", format(stops))\n        num_str = str(s_stop).replace(\" \", \"0\")\n        \n        train_list[f\"Training{num_str}\"] = train_val\n        test_list[f\"Testing{num_str}\"] = test_val\n        \n    return {\n        \"train\": train_list,\n        \"test\": test_list\n    }\n",
+ "failures": [
+  {
+   "call": "caret::createTimeSlices(rep(1, 20), 5)",
+   "expected": {
+    "train": {
+     "Training05": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training06": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training07": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training08": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training09": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing05": 6,
+     "Testing06": 7,
+     "Testing07": 8,
+     "Testing08": 9,
+     "Testing09": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "got": {
+    "train": {
+     "Training5": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training6": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training7": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training8": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training9": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing5": 6,
+     "Testing6": 7,
+     "Testing7": 8,
+     "Testing8": 9,
+     "Testing9": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "core": false,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createTimeSlices(rep(1, 20), 5)  [first argument: an NA inserted]",
+   "expected": {
+    "train": {
+     "Training05": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training06": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training07": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training08": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training09": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing05": 6,
+     "Testing06": 7,
+     "Testing07": 8,
+     "Testing08": 9,
+     "Testing09": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "got": {
+    "train": {
+     "Training5": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training6": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training7": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training8": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training9": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing5": 6,
+     "Testing6": 7,
+     "Testing7": 8,
+     "Testing8": 9,
+     "Testing9": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "core": false,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createTimeSlices(rep(1, 20), 5)  [first argument: a tie]",
+   "expected": {
+    "train": {
+     "Training05": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training06": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training07": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training08": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training09": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing05": 6,
+     "Testing06": 7,
+     "Testing07": 8,
+     "Testing08": 9,
+     "Testing09": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "got": {
+    "train": {
+     "Training5": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training6": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training7": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training8": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training9": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing5": 6,
+     "Testing6": 7,
+     "Testing7": 8,
+     "Testing8": 9,
+     "Testing9": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "core": false,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createTimeSlices(rep(1, 20), 5)  [first argument: scaled]",
+   "expected": {
+    "train": {
+     "Training05": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training06": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training07": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training08": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training09": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing05": 6,
+     "Testing06": 7,
+     "Testing07": 8,
+     "Testing08": 9,
+     "Testing09": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "got": {
+    "train": {
+     "Training5": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training6": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training7": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training8": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training9": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing5": 6,
+     "Testing6": 7,
+     "Testing7": 8,
+     "Testing8": 9,
+     "Testing9": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "core": false,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createTimeSlices(rep(1, 20), 5)  [first argument: reversed]",
+   "expected": {
+    "train": {
+     "Training05": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training06": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training07": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training08": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training09": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing05": 6,
+     "Testing06": 7,
+     "Testing07": 8,
+     "Testing08": 9,
+     "Testing09": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "got": {
+    "train": {
+     "Training5": [
+      1,
+      2,
+      3,
+      4,
+      5
+     ],
+     "Training6": [
+      2,
+      3,
+      4,
+      5,
+      6
+     ],
+     "Training7": [
+      3,
+      4,
+      5,
+      6,
+      7
+     ],
+     "Training8": [
+      4,
+      5,
+      6,
+      7,
+      8
+     ],
+     "Training9": [
+      5,
+      6,
+      7,
+      8,
+      9
+     ],
+     "Training10": [
+      6,
+      7,
+      8,
+      9,
+      10
+     ],
+     "Training11": [
+      7,
+      8,
+      9,
+      10,
+      11
+     ],
+     "Training12": [
+      8,
+      9,
+      10,
+      11,
+      12
+     ],
+     "Training13": [
+      9,
+      10,
+      11,
+      12,
+      13
+     ],
+     "Training14": [
+      10,
+      11,
+      12,
+      13,
+      14
+     ],
+     "Training15": [
+      11,
+      12,
+      13,
+      14,
+      15
+     ],
+     "Training16": [
+      12,
+      13,
+      14,
+      15,
+      16
+     ],
+     "Training17": [
+      13,
+      14,
+      15,
+      16,
+      17
+     ],
+     "Training18": [
+      14,
+      15,
+      16,
+      17,
+      18
+     ],
+     "Training19": [
+      15,
+      16,
+      17,
+      18,
+      19
+     ]
+    },
+    "test": {
+     "Testing5": 6,
+     "Testing6": 7,
+     "Testing7": 8,
+     "Testing8": 9,
+     "Testing9": 10,
+     "Testing10": 11,
+     "Testing11": 12,
+     "Testing12": 13,
+     "Testing13": 14,
+     "Testing14": 15,
+     "Testing15": 16,
+     "Testing16": 17,
+     "Testing17": 18,
+     "Testing18": 19,
+     "Testing19": 20
+    }
+   },
+   "core": false,
+   "rclass": "list"
+  }
+ ],
+ "exotic_passed": 5,
+ "exotic_total": 15,
+ "tag": "failing entity (hard pass)",
+ "impure": []
+}

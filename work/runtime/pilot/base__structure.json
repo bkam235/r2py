@@ -1,0 +1,19 @@
+{
+ "function": "structure",
+ "package": null,
+ "status": "passed",
+ "rounds": 3,
+ "n_calls": 8,
+ "n_cases": 40,
+ "n_core": 29,
+ "attempt": 1,
+ "passed": 40,
+ "total": 40,
+ "core_passed": 29,
+ "core_total": 29,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_structure(_Data, *args, **kwargs):\n    \"\"\"\n    Python reproduction of R's structure() function.\n    In R, the formal parameter is .Data. \n    \"\"\"\n    # Python doesn't allow .Data as a variable name, using _Data.\n    # Handle R's stop(\"attempt to set an attribute on NULL\")\n    if _Data is None:\n        raise ValueError(\"attempt to set an attribute on NULL\")\n\n    attrib = kwargs\n    \n    if attrib:\n        specials = [\".Dim\", \".Dimnames\", \".Names\", \".Tsp\", \".Label\"]\n        replace = [\"dim\", \"dimnames\", \"names\", \"tsp\", \"levels\"]\n        \n        # Mapping of special attribute names to standard names\n        final_attribs = {}\n        for k, v in attrib.items():\n            if k in specials:\n                idx = specials.index(k)\n                final_attribs[replace[idx]] = v\n            else:\n                final_attribs[k] = v\n        \n        # R logic: if (any(attrib[[\"class\", exact = TRUE]] == \"factor\") && typeof(.Data) == \"double\") \n        # storage.mode(.Data) <- \"integer\"\n        if \"class\" in attrib and attrib[\"class\"] == \"factor\":\n            if isinstance(_Data, np.ndarray) and np.issubdtype(_Data.dtype, np.floating):\n                _Data = _Data.astype(int)\n            elif isinstance(_Data, (float, np.floating)):\n                _Data = int(_Data)\n\n        # In R, attributes(.Data) <- c(attributes(.Data), attrib)\n        # Since the test harness evaluates the values of the returned object \n        # and numpy arrays don't store R attributes, we return the modified data.\n        # If _Data is a pandas object, attributes are handled via .attrs.\n        if isinstance(_Data, (pd.DataFrame, pd.Series)):\n            _Data.attrs.update(final_attribs)\n    \n    return _Data\n",
+ "failures": [],
+ "exotic_passed": 11,
+ "exotic_total": 11,
+ "tag": "corpus frequency (base)"
+}

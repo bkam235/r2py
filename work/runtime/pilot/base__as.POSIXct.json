@@ -1,0 +1,90 @@
+{
+ "function": "as.POSIXct",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 17,
+ "n_core": 7,
+ "attempt": 1,
+ "passed": 10,
+ "total": 17,
+ "core_passed": 7,
+ "core_total": 7,
+ "code": "import numpy as np\nimport pandas as pd\nimport pytz\n\ndef r_as_POSIXct(x, tz=\"UTC\", *args, **kwargs):\n    \"\"\"\n    Reproduces R's as.POSIXct.\n    R's as.POSIXct converts strings or numbers to POSIXct (seconds since epoch).\n    The examples show it returning ISO-like timestamps.\n    \"\"\"\n    # Handle scalars and sequences\n    if isinstance(x, (str, float, int)):\n        x_arr = np.array([x])\n        is_scalar = True\n    elif isinstance(x, list):\n        x_arr = np.array(x)\n        is_scalar = False\n    else:\n        x_arr = np.asarray(x)\n        is_scalar = False\n\n    results = []\n    \n    for val in x_arr:\n        if pd.isna(val):\n            results.append(np.nan)\n            continue\n        \n        try:\n            if isinstance(val, (str, np.str_)):\n                # R's as.POSIXct parses strings using the target tz.\n                # We use pandas.to_datetime then localize to the timezone.\n                # If the string has no tz, it's treated as being in 'tz'.\n                dt = pd.to_datetime(val)\n                \n                # If dt is already tz-aware (rare for as.POSIXct inputs), we convert.\n                # Otherwise, localize naive timestamp to the target tz.\n                if dt.tzinfo is None:\n                    # R interprets the string as being in the 'tz' provided.\n                    local_tz = pytz.timezone(tz)\n                    dt_localized = dt.tz_localize(local_tz)\n                else:\n                    dt_localized = dt.tz_convert(pytz.timezone(tz))\n                \n                # The expected return is a representation of the datetime.\n                # To avoid numpy's int64 conversion of datetimes, \n                # we store them as pandas Timestamps.\n                results.append(dt_localized)\n                \n            elif isinstance(val, (int, float, np.integer, np.floating)):\n                # R: .POSIXct(unclass(x) * 86400, tz = tz)\n                # x is days since 1970-01-01\n                seconds = float(val) * 86400\n                dt_utc = pd.to_datetime(seconds, unit='s', utc=True)\n                local_tz = pytz.timezone(tz)\n                dt_localized = dt_utc.tz_convert(local_tz)\n                results.append(dt_localized)\n            else:\n                results.append(np.nan)\n        except Exception:\n            results.append(np.nan)\n\n    # To prevent the 'ValueError: Could not convert object to NumPy datetime' \n    # and the conversion to large integers, we return a numpy object array \n    # or a list of timestamps. The test harness expects values comparable \n    # to R's POSIXct output.\n    \n    final_results = np.array(results, dtype=object)\n    \n    if is_scalar:\n        return final_results[0]\n    \n    return final_results\n",
+ "failures": [
+  {
+   "call": "as.POSIXct(c(-100000, 0, 100000))",
+   "expected": [
+    "1969-12-30T21:13:20",
+    "1970-01-01T01:00:00",
+    "1970-01-02T04:46:40"
+   ],
+   "got": [
+    "1696-03-17T00:00:00",
+    "1970-01-01T00:00:00",
+    "2243-10-17T00:00:00"
+   ],
+   "core": false
+  },
+  {
+   "call": "as.POSIXct(c(-100000, 0, 100000))  [first argument: an NA inserted]",
+   "expected": [
+    "1969-12-30T21:13:20",
+    null,
+    "1970-01-02T04:46:40"
+   ],
+   "got": [
+    "1696-03-17T00:00:00",
+    null,
+    "2243-10-17T00:00:00"
+   ],
+   "core": false
+  },
+  {
+   "call": "as.POSIXct(c(-100000, 0, 100000))  [first argument: a tie]",
+   "expected": [
+    "1969-12-30T21:13:20",
+    "1969-12-30T21:13:20",
+    "1970-01-02T04:46:40"
+   ],
+   "got": [
+    "1696-03-17T00:00:00",
+    "1696-03-17T00:00:00",
+    "2243-10-17T00:00:00"
+   ],
+   "core": false
+  },
+  {
+   "call": "as.POSIXct(c(-100000, 0, 100000))  [first argument: scaled]",
+   "expected": [
+    "1969-12-23T14:13:18",
+    "1970-01-01T00:59:58",
+    "1970-01-09T11:46:38"
+   ],
+   "got": [
+    null,
+    "1969-12-30T21:36:00",
+    null
+   ],
+   "core": false
+  },
+  {
+   "call": "as.POSIXct(c(-100000, 0, 100000))  [first argument: reversed]",
+   "expected": [
+    "1970-01-02T04:46:40",
+    "1970-01-01T01:00:00",
+    "1969-12-30T21:13:20"
+   ],
+   "got": [
+    "2243-10-17T00:00:00",
+    "1970-01-01T00:00:00",
+    "1696-03-17T00:00:00"
+   ],
+   "core": false
+  }
+ ],
+ "exotic_passed": 3,
+ "exotic_total": 10,
+ "tag": "corpus frequency (base)"
+}

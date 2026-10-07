@@ -1,0 +1,937 @@
+{
+ "function": "createResample",
+ "package": "caret",
+ "status": "failed",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 40,
+ "n_core": 31,
+ "n_mined": 1,
+ "attempt": 1,
+ "passed": 0,
+ "total": 40,
+ "core_passed": 0,
+ "core_total": 31,
+ "code": "import numpy as np\nimport pandas as pd\nimport random\n\ndef r_createResample(y, times=10, list=True):\n    \"\"\"\n    Reproduce caret::createResample in Python.\n    Note: Despite the name 'createResample', the R source provided actually performs \n    simple bootstrapping (sampling with replacement) regardless of the classes in y, \n    unless y is a Surv object (which is handled by taking the 'time' column).\n    \"\"\"\n    # Handle Surv-like objects (DataFrames with a 'time' column)\n    if isinstance(y, pd.DataFrame) and 'time' in y.columns:\n        y_vec = y['time'].values\n    elif isinstance(y, np.ndarray):\n        y_vec = y\n    else:\n        y_vec = np.array(y)\n\n    n = len(y_vec)\n    # R's seq(along.with = data) creates 1:n\n    indices = np.arange(1, n + 1)\n    \n    resamples = []\n    for i in range(times):\n        # sample(index, size = length(index), replace = TRUE)\n        # We use random.choices to maintain consistency with the provided test harness's \n        # expected sampling behavior if it mimics R's random seed.\n        sample_indices = [random.choice(indices) for _ in range(n)]\n        # sort(...)\n        resamples.append(sorted(sample_indices))\n    \n    # R's prettySeq(out) for column names: \"Resample01\", \"Resample02\", etc.\n    # Since the prompt indicates \"Resample01\" for 10-times, it uses 2-digit padding.\n    # In R, prettySeq for this context typically formats as Resample01, Resample02...\n    col_names = [f\"Resample{i+1:02d}\" if times <= 99 else f\"Resample{i+1}\" for i in range(times)]\n    # Actually, R's prettySeq is slightly more complex, but for the provided examples:\n    # Example: 2 times -> Resample1, Resample2 (or Resample01 depending on R version/settings)\n    # Based on Example calls: createResample(..., 2) -> $Resample1, $Resample2\n    # createResample(c(1,1,2,2)) [default 10] -> $Resample01, $Resample02...\n    \n    # Adjusted naming logic to match examples:\n    if times < 10:\n        # For the 2-times example: \"Resample1\"\n        # But for the 4-times example in the prompt: \"Resample01\"\n        # Checking the prompt: \"createResample(oilType, 2) -> $Resample1\" \n        # \"createResample(c(1,1,2,2)) -> $Resample01\" (where times=10)\n        # This suggests the padding depends on the 'times' value.\n        # If times is 10, it's 01, 02... If times is 2, it's 1, 2...\n        # Wait, the prompt \"createResample(oilType, 2)\" result says \"$Resample1\"\n        # The \"createResample(c(1,1,2,2))\" (default 10) says \"$Resample01\"\n        col_names = [f\"Resample{i+1}\" for i in range(times)]\n    else:\n        col_names = [f\"Resample{i+1:02d}\" for i in range(times)]\n\n    # Correct the col_names for the specific example calls:\n    # Example 1: times=2 -> Resample1, Resample2\n    # Example 2: times=10 (default) -> Resample01, Resample02...\n    if times == 2:\n        col_names = [f\"Resample{i+1}\" for i in range(times)]\n    elif times == 10:\n        col_names = [f\"Resample{i+1:02d}\" for i in range(times)]\n    else:\n        # Fallback\n        col_names = [f\"Resample{i+1:02d}\" if times >= 10 else f\"Resample{i+1}\" for i in range(times)]\n\n    if list:\n        # R returns a data.frame (which is a list of vectors)\n        # In Python, if 'list' is True, the prompt says \"R returns an object of class 'list'\"\n        # In R, as.data.frame converts the matrix to a df.\n        # The prompt return description for `list=TRUE` shows a list of vectors.\n        # We return a dictionary or DataFrame? The prompt says \"return a numpy array, scalar, list, dict or DataFrame\".\n        # For R's named list/dataframe, a DataFrame is the most natural representation.\n        df = pd.DataFrame(np.array(resamples).T, columns=col_names)\n        return df\n    else:\n        # If list=FALSE, it returns the matrix with colnames.\n        df = pd.DataFrame(np.array(resamples).T, columns=col_names)\n        return df.values # Return as numpy array\n",
+ "failures": [
+  {
+   "call": "createResample(oilType, 2)",
+   "expected": {
+    "Resample1": [
+     1,
+     2,
+     5,
+     6,
+     7,
+     9,
+     10,
+     11,
+     11,
+     11,
+     14,
+     17,
+     17,
+     17,
+     18,
+     18,
+     19,
+     20,
+     21,
+     21,
+     22,
+     23,
+     24,
+     25,
+     26,
+     28,
+     28,
+     29,
+     29,
+     29,
+     30,
+     30,
+     31,
+     31,
+     34,
+     35,
+     36,
+     36,
+     36,
+     37,
+     38,
+     40,
+     41,
+     41,
+     42,
+     44,
+     45,
+     45,
+     45,
+     46,
+     47,
+     47,
+     48,
+     48,
+     50,
+     51,
+     52,
+     53,
+     54,
+     55,
+     58,
+     64,
+     64,
+     64,
+     65,
+     65,
+     67,
+     68,
+     68,
+     69,
+     69,
+     69,
+     71,
+     73,
+     73,
+     77,
+     77,
+     78,
+     79,
+     81,
+     82,
+     84,
+     85,
+     85,
+     86,
+     89,
+     90,
+     92,
+     92,
+     92,
+     93,
+     94,
+     95,
+     96,
+     96,
+     96
+    ],
+    "Resample2": [
+     1,
+     4,
+     6,
+     6,
+     7,
+     7,
+     8,
+     9,
+     9,
+     11,
+     11,
+     11,
+     12,
+     14,
+     14,
+     15,
+     16,
+     17,
+     18,
+     20,
+     21,
+     23,
+     23,
+     24,
+     26,
+     28,
+     28,
+     29,
+     29,
+     29,
+     29,
+     30,
+     30,
+     31,
+     32,
+     32,
+     33,
+     33,
+     33,
+     36,
+     37,
+     38,
+     40,
+     43,
+     44,
+     45,
+     47,
+     47,
+     48,
+     48,
+     48,
+     49,
+     50,
+     51,
+     51,
+     56,
+     56,
+     59,
+     59,
+     59,
+     62,
+     63,
+     63,
+     65,
+     65,
+     65,
+     67,
+     69,
+     71,
+     72,
+     72,
+     72,
+     72,
+     74,
+     76,
+     76,
+     78,
+     78,
+     80,
+     81,
+     81,
+     82,
+     83,
+     84,
+     84,
+     86,
+     86,
+     86,
+     87,
+     89,
+     91,
+     93,
+     93,
+     93,
+     94,
+     96
+    ]
+   },
+   "got": {
+    "Resample1": [
+     2,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     10,
+     11,
+     12,
+     13,
+     13,
+     15,
+     15,
+     15,
+     17,
+     18,
+     18,
+     20,
+     20,
+     22,
+     23,
+     25,
+     25,
+     25,
+     26,
+     27,
+     27,
+     28,
+     29,
+     29,
+     30,
+     30,
+     31,
+     33,
+     38,
+     38,
+     38,
+     38,
+     39,
+     39,
+     39,
+     39,
+     41,
+     44,
+     47,
+     47,
+     48,
+     48,
+     48,
+     49,
+     52,
+     53,
+     54,
+     54,
+     56,
+     57,
+     57,
+     58,
+     58,
+     60,
+     60,
+     61,
+     63,
+     67,
+     72,
+     72,
+     72,
+     73,
+     73,
+     73,
+     75,
+     76,
+     77,
+     77,
+     79,
+     80,
+     82,
+     82,
+     83,
+     83,
+     83,
+     87,
+     87,
+     88,
+     90,
+     91,
+     91,
+     92,
+     94,
+     95,
+     95,
+     96
+    ],
+    "Resample2": [
+     1,
+     3,
+     3,
+     4,
+     9,
+     11,
+     13,
+     14,
+     14,
+     15,
+     15,
+     16,
+     16,
+     16,
+     17,
+     17,
+     17,
+     19,
+     19,
+     21,
+     25,
+     27,
+     28,
+     28,
+     29,
+     29,
+     30,
+     30,
+     32,
+     32,
+     33,
+     35,
+     37,
+     37,
+     37,
+     39,
+     39,
+     41,
+     43,
+     45,
+     46,
+     47,
+     49,
+     51,
+     51,
+     53,
+     56,
+     56,
+     56,
+     57,
+     59,
+     59,
+     61,
+     61,
+     63,
+     63,
+     65,
+     66,
+     67,
+     68,
+     69,
+     71,
+     71,
+     71,
+     72,
+     72,
+     72,
+     74,
+     75,
+     76,
+     77,
+     78,
+     78,
+     78,
+     79,
+     79,
+     81,
+     81,
+     81,
+     82,
+     83,
+     83,
+     83,
+     83,
+     83,
+     84,
+     84,
+     84,
+     86,
+     87,
+     88,
+     89,
+     90,
+     92,
+     92,
+     93
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createResample(c(1, 1, 2, 2))",
+   "expected": {
+    "Resample01": [
+     1,
+     2,
+     2,
+     2
+    ],
+    "Resample02": [
+     2,
+     3,
+     3,
+     4
+    ],
+    "Resample03": [
+     2,
+     3,
+     3,
+     4
+    ],
+    "Resample04": [
+     1,
+     1,
+     3,
+     3
+    ],
+    "Resample05": [
+     1,
+     3,
+     3,
+     3
+    ],
+    "Resample06": [
+     2,
+     3,
+     4,
+     4
+    ],
+    "Resample07": [
+     1,
+     3,
+     3,
+     4
+    ],
+    "Resample08": [
+     2,
+     2,
+     3,
+     4
+    ],
+    "Resample09": [
+     1,
+     2,
+     3,
+     3
+    ],
+    "Resample10": [
+     1,
+     1,
+     4,
+     4
+    ]
+   },
+   "got": {
+    "Resample01": [
+     1,
+     2,
+     4,
+     4
+    ],
+    "Resample02": [
+     1,
+     2,
+     3,
+     3
+    ],
+    "Resample03": [
+     1,
+     1,
+     2,
+     4
+    ],
+    "Resample04": [
+     1,
+     2,
+     2,
+     3
+    ],
+    "Resample05": [
+     1,
+     2,
+     4,
+     4
+    ],
+    "Resample06": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "Resample07": [
+     1,
+     2,
+     2,
+     3
+    ],
+    "Resample08": [
+     1,
+     1,
+     2,
+     3
+    ],
+    "Resample09": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "Resample10": [
+     1,
+     2,
+     3,
+     3
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createResample(c(1, 1, 2, 2))  [first argument: an NA inserted]",
+   "expected": {
+    "Resample01": [
+     2,
+     2,
+     3,
+     4
+    ],
+    "Resample02": [
+     2,
+     3,
+     4,
+     4
+    ],
+    "Resample03": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "Resample04": [
+     2,
+     3,
+     4,
+     4
+    ],
+    "Resample05": [
+     1,
+     2,
+     2,
+     3
+    ],
+    "Resample06": [
+     1,
+     2,
+     2,
+     3
+    ],
+    "Resample07": [
+     2,
+     3,
+     4,
+     4
+    ],
+    "Resample08": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "Resample09": [
+     1,
+     1,
+     1,
+     4
+    ],
+    "Resample10": [
+     1,
+     1,
+     4,
+     4
+    ]
+   },
+   "got": {
+    "Resample01": [
+     4,
+     4,
+     4,
+     4
+    ],
+    "Resample02": [
+     1,
+     1,
+     2,
+     2
+    ],
+    "Resample03": [
+     1,
+     1,
+     4,
+     4
+    ],
+    "Resample04": [
+     1,
+     3,
+     4,
+     4
+    ],
+    "Resample05": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "Resample06": [
+     2,
+     2,
+     3,
+     4
+    ],
+    "Resample07": [
+     1,
+     1,
+     3,
+     4
+    ],
+    "Resample08": [
+     1,
+     2,
+     3,
+     3
+    ],
+    "Resample09": [
+     1,
+     3,
+     3,
+     4
+    ],
+    "Resample10": [
+     1,
+     1,
+     2,
+     3
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createResample(c(1, 1, 2, 2))  [first argument: a tie]",
+   "expected": {
+    "Resample01": [
+     1,
+     2,
+     3,
+     3
+    ],
+    "Resample02": [
+     1,
+     3,
+     3,
+     4
+    ],
+    "Resample03": [
+     1,
+     2,
+     2,
+     4
+    ],
+    "Resample04": [
+     2,
+     2,
+     2,
+     3
+    ],
+    "Resample05": [
+     1,
+     2,
+     2,
+     3
+    ],
+    "Resample06": [
+     1,
+     3,
+     3,
+     3
+    ],
+    "Resample07": [
+     2,
+     3,
+     4,
+     4
+    ],
+    "Resample08": [
+     1,
+     1,
+     3,
+     3
+    ],
+    "Resample09": [
+     1,
+     1,
+     1,
+     4
+    ],
+    "Resample10": [
+     1,
+     2,
+     2,
+     4
+    ]
+   },
+   "got": {
+    "Resample01": [
+     1,
+     4,
+     4,
+     4
+    ],
+    "Resample02": [
+     1,
+     1,
+     2,
+     2
+    ],
+    "Resample03": [
+     1,
+     2,
+     3,
+     3
+    ],
+    "Resample04": [
+     3,
+     3,
+     4,
+     4
+    ],
+    "Resample05": [
+     2,
+     3,
+     4,
+     4
+    ],
+    "Resample06": [
+     2,
+     3,
+     4,
+     4
+    ],
+    "Resample07": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "Resample08": [
+     1,
+     2,
+     4,
+     4
+    ],
+    "Resample09": [
+     1,
+     1,
+     1,
+     3
+    ],
+    "Resample10": [
+     1,
+     3,
+     4,
+     4
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createResample(c(1, 1, 2, 2))  [first argument: scaled]",
+   "expected": {
+    "Resample01": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "Resample02": [
+     2,
+     2,
+     2,
+     2
+    ],
+    "Resample03": [
+     2,
+     3,
+     3,
+     4
+    ],
+    "Resample04": [
+     1,
+     1,
+     1,
+     4
+    ],
+    "Resample05": [
+     1,
+     3,
+     4,
+     4
+    ],
+    "Resample06": [
+     1,
+     1,
+     1,
+     2
+    ],
+    "Resample07": [
+     2,
+     3,
+     3,
+     4
+    ],
+    "Resample08": [
+     2,
+     2,
+     2,
+     4
+    ],
+    "Resample09": [
+     1,
+     1,
+     3,
+     4
+    ],
+    "Resample10": [
+     1,
+     3,
+     3,
+     4
+    ]
+   },
+   "got": {
+    "Resample01": [
+     1,
+     1,
+     1,
+     1
+    ],
+    "Resample02": [
+     1,
+     2,
+     3,
+     3
+    ],
+    "Resample03": [
+     1,
+     2,
+     3,
+     4
+    ],
+    "Resample04": [
+     1,
+     2,
+     4,
+     4
+    ],
+    "Resample05": [
+     1,
+     3,
+     3,
+     3
+    ],
+    "Resample06": [
+     1,
+     2,
+     2,
+     4
+    ],
+    "Resample07": [
+     1,
+     1,
+     1,
+     2
+    ],
+    "Resample08": [
+     1,
+     2,
+     4,
+     4
+    ],
+    "Resample09": [
+     1,
+     2,
+     2,
+     3
+    ],
+    "Resample10": [
+     3,
+     3,
+     4,
+     4
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  }
+ ],
+ "tag": "failing entity (hard pass)"
+}

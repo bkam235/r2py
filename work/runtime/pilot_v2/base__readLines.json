@@ -1,0 +1,68 @@
+{
+ "function": "readLines",
+ "package": null,
+ "status": "failed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 6,
+ "n_core": 6,
+ "attempt": 1,
+ "passed": 0,
+ "total": 6,
+ "core_passed": 0,
+ "core_total": 6,
+ "code": "import numpy as np\nimport io\nimport os\n\ndef r_readLines(con=None, n=-1, ok=True, warn=True, encoding=\"unknown\", skipNul=False):\n    \"\"\"\n    Python implementation of R's readLines.\n    \n    Parameters:\n    con: a file-like object, a path to a file, or a textConnection (io.StringIO).\n    n: number of lines to read. -1 means read all.\n    ok: (Ignored in this basic implementation, always True)\n    warn: Whether to warn if the connection was not closed properly.\n    encoding: Encoding of the file. \"unknown\" defaults to system encoding.\n    skipNul: Whether to skip null characters.\n    \"\"\"\n    \n    # If con is a path (string), open it\n    if isinstance(con, str):\n        # R's default encoding is complex, here we use system default or specified\n        enc = encoding if encoding != \"unknown\" else None\n        f = open(con, \"r\", encoding=enc)\n        try:\n            lines = r_readLines(f, n=n, ok=ok, warn=warn, encoding=encoding, skipNul=skipNul)\n        finally:\n            f.close()\n        return lines\n\n    # If con is None, simulate stdin()\n    if con is None:\n        import sys\n        con = sys.stdin\n\n    # Ensure we are dealing with a text-based stream\n    # If it's a binary stream, we wrap it in a TextIOWrapper\n    if hasattr(con, 'read') and not isinstance(con, (io.TextIOWrapper, io.StringIO)):\n        # This handles cases like open(file, 'rb')\n        import codecs\n        enc = encoding if encoding != \"unknown\" else 'utf-8'\n        # Note: wrapping might be tricky if con is already open; \n        # normally R's textConnection is like io.StringIO\n        pass\n\n    # Read lines\n    # R's readLines reads until EOF or n lines.\n    # It strips the trailing newline character.\n    \n    # If the connection is io.StringIO or similar\n    # We read and split by line breaks, but R's readLines behavior \n    # is specifically to remove the trailing \\n or \\r\\n.\n    \n    # To handle n = -1 (all lines)\n    if n == -1:\n        # Read everything and split, but we must mimic R's behavior of \n        # removing only the last newline if it exists? \n        # No, R readLines removes the line ending from every element.\n        content = con.read()\n        if not content:\n            return np.array([], dtype=object)\n        \n        # R's readLines treats \\n as the line separator.\n        # If the file ends with \\n, R does NOT create a trailing empty string.\n        # Example: \"a\\n\" -> [\"a\"], \"a\\n\\n\" -> [\"a\", \"\"]\n        lines = content.splitlines()\n        \n        # Special case: if the content ends with a newline, splitlines() handles it.\n        # However, if the content is empty, R returns a character(0)\n    else:\n        lines = []\n        for _ in range(n):\n            line = con.readline()\n            if not line:\n                break\n            # Remove trailing newline character(s)\n            if line.endswith('\\r\\n'):\n                line = line[:-2]\n            elif line.endswith('\\n'):\n                line = line[:-1]\n            lines.append(line)\n\n    # Handle skipNul\n    if skipNul:\n        lines = [line.replace('\\0', '') for line in lines]\n\n    # R returns a character vector (numpy array of strings in this harness)\n    return np.array(lines, dtype=object)\n",
+ "failures": [
+  {
+   "call": "readLines(textConnection(\"line1\\nline2\\nline3\"))",
+   "expected": [
+    "line1",
+    "line2",
+    "line3"
+   ],
+   "error": "AttributeError: 'dict' object has no attribute 'read'",
+   "core": true,
+   "rclass": "character"
+  },
+  {
+   "call": "readLines(textConnection(\"a\\nb\"), n = 1L)",
+   "expected": "a",
+   "error": "AttributeError: 'dict' object has no attribute 'readline'",
+   "core": true,
+   "rclass": "character"
+  },
+  {
+   "call": "readLines(textConnection(\"a\\n\\nc\"), warn = FALSE)",
+   "expected": [
+    "a",
+    "",
+    "c"
+   ],
+   "error": "AttributeError: 'dict' object has no attribute 'read'",
+   "core": true,
+   "rclass": "character"
+  },
+  {
+   "call": "readLines(textConnection(\"line1\\nline2\"), encoding = \"UTF-8\")",
+   "expected": [
+    "line1",
+    "line2"
+   ],
+   "error": "AttributeError: 'dict' object has no attribute 'read'",
+   "core": true,
+   "rclass": "character"
+  },
+  {
+   "call": "readLines(textConnection(\"1\\n-1\\n0\"))",
+   "expected": [
+    "1",
+    "-1",
+    "0"
+   ],
+   "error": "AttributeError: 'dict' object has no attribute 'read'",
+   "core": true,
+   "rclass": "character"
+  }
+ ],
+ "tag": "corpus frequency (base)"
+}

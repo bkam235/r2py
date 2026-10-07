@@ -1,0 +1,91 @@
+{
+ "function": "try",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 30,
+ "n_core": 14,
+ "n_mined": 0,
+ "attempt": 1,
+ "passed": 26,
+ "total": 30,
+ "core_passed": 14,
+ "core_total": 14,
+ "code": "import numpy as np\nimport pandas as pd\nimport sys\n\ndef r_try(expr, silent=False, outFile=None):\n    \"\"\"\n    Python reproduction of R's try() function.\n    \n    R's try() evaluates an expression and, if it errors, captures the error,\n    optionally prints it, and returns the error message as a 'try-error' object.\n    \"\"\"\n    # Default for outFile is stderr() in R\n    if outFile is None:\n        outFile = sys.stderr\n\n    try:\n        # In R, expr is usually a quoted expression or a function call.\n        # In the Python translation context, expr is typically a callable or \n        # the result of a logic block. However, based on the prompt's \n        # provided evidence, the function should execute the expression.\n        if callable(expr):\n            result = expr()\n        else:\n            # If expr is not callable, it's treated as the value itself \n            # (similar to how R evaluates the expression before passing to try)\n            result = expr\n        return result\n    except Exception as e:\n        # R's tryCatch logic for formatting the error message\n        # conditionMessage(e) in Python is str(e)\n        msg_text = str(e)\n        \n        # R constructs a prefix: \"Error in <call>: \"\n        # Since we don't have the exact R call stack in Python, \n        # we approximate the \"Error in ...\" behavior.\n        prefix = \"Error : \" \n        \n        # The full message R constructs\n        full_msg = f\"{prefix}{msg_text}\\n\"\n        \n        # Handle the 'silent' parameter and output\n        # R checks getOption(\"show.error.messages\") which defaults to TRUE\n        show_errors = True \n        if not silent and show_errors:\n            if outFile == sys.stderr:\n                print(full_msg, file=sys.stderr, end='')\n            elif isinstance(outFile, str):\n                with open(outFile, 'a') as f:\n                    f.write(full_msg)\n            else:\n                # Assuming outFile is a file-like object\n                outFile.write(full_msg)\n\n        # R returns the message invisibly with class 'try-error'\n        # In Python, we return the string (the message)\n        return full_msg\n",
+ "failures": [
+  {
+   "call": "try(matrix(c(-1, -2, -3, -4), 2))",
+   "expected": [
+    [
+     -1,
+     -3
+    ],
+    [
+     -2,
+     -4
+    ]
+   ],
+   "error": "TypeError: R returns class 'matrix': return the natural Python object for it (numpy 2-d array), not a serialised form such as a string; got list",
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "try(matrix(c(-1, -2, -3, -4), 2))  [first argument: an NA inserted]",
+   "expected": [
+    [
+     -1,
+     -3
+    ],
+    [
+     null,
+     -4
+    ]
+   ],
+   "error": "TypeError: R returns class 'matrix': return the natural Python object for it (numpy 2-d array), not a serialised form such as a string; got list",
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "try(matrix(c(-1, -2, -3, -4), 2))  [first argument: a tie]",
+   "expected": [
+    [
+     -1,
+     -3
+    ],
+    [
+     -1,
+     -4
+    ]
+   ],
+   "error": "TypeError: R returns class 'matrix': return the natural Python object for it (numpy 2-d array), not a serialised form such as a string; got list",
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "try(matrix(c(-1, -2, -3, -4), 2))  [first argument: scaled]",
+   "expected": [
+    [
+     -8.4,
+     -23
+    ],
+    [
+     -15.7,
+     -30.3
+    ]
+   ],
+   "error": "TypeError: R returns class 'matrix': return the natural Python object for it (numpy 2-d array), not a serialised form such as a string; got list",
+   "core": false,
+   "rclass": "matrix"
+  }
+ ],
+ "exotic_passed": 12,
+ "exotic_total": 16,
+ "tag": "agent fix",
+ "impure": [
+  "tryCatch",
+  "quote",
+  "sys.call"
+ ]
+}

@@ -1,0 +1,13 @@
+{
+ "function": "which",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 14,
+ "passed": 14,
+ "total": 14,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_which(x, arr_ind=False, useNames=True):\n    \"\"\"\n    Python implementation of R's which() function.\n    \"\"\"\n    # Determine if x is a scalar for return type purposes\n    is_scalar = False\n    if isinstance(x, (bool, int, float)):\n        is_scalar = True\n        x_arr = np.array([x])\n    elif isinstance(x, np.ndarray) and x.ndim == 0:\n        is_scalar = True\n        x_arr = np.array([x.item()])\n    else:\n        x_arr = np.asarray(x)\n\n    # In R's which(x), NA values are treated as FALSE.\n    # If x is logical, NA becomes FALSE. If x is numeric, NA becomes FALSE.\n    # We use np.where to handle NaNs and then check for non-zero/True values.\n    if np.issubdtype(x_arr.dtype, np.floating):\n        mask = np.where(np.isnan(x_arr), False, x_arr != 0)\n    elif np.issubdtype(x_arr.dtype, np.bool_):\n        # For boolean arrays, NumPy doesn't have NA. \n        # If the input is an object array with None/NaN, we handle it.\n        mask = x_arr\n    elif x_arr.dtype == object:\n        mask = np.array([ (val is not None and not pd.isna(val) and bool(val)) for val in x_arr.ravel() ]).reshape(x_arr.shape)\n    else:\n        mask = x_arr != 0\n\n    # Flatten for calculation but keep original shape for arr_ind\n    flat_mask = mask.ravel()\n    wh = np.where(flat_mask)[0] + 1\n    \n    if arr_ind and x_arr.ndim > 1:\n        dims = x_arr.shape\n        # R is column-major (Fortran order)\n        res = np.unravel_index(np.where(flat_mask)[0], dims, order='F')\n        # Stack indices into a matrix where each row is one element's coordinates\n        arr_res = np.column_stack([np.array(r) + 1 for r in res])\n        return arr_res\n    \n    # Handle scalar input return\n    if is_scalar:\n        return wh[0] if len(wh) > 0 else np.array([], dtype=int)\n    \n    # R returns an integer vector. NumPy arrays are equivalent to R vectors.\n    return wh\n",
+ "failures": [],
+ "tag": "corpus frequency (base)"
+}

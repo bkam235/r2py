@@ -1,0 +1,316 @@
+{"script": "rematch__rd_example__re_match_Rd.R", "vars": [["dates", "character"], ["isodate", "character"], ["isodaten", "character"]], "seconds": 9.2}
+{"script": "utf8__rd_example__utf8_print_Rd.R", "vars": [["oldlocale", "character"]], "seconds": 9.5}
+{"script": "magrittr__rd_example__aliases_Rd.R", "vars": [], "seconds": 11.4}
+{"script": "purrr__vignette__purrr_s3.R", "vars": [["x", "integer"], ["triple", "function"], ["out", "list"]], "seconds": 11.8}
+{"script": "blob__rd_example__blob_Rd.R", "vars": [["x1", "raw"], ["x2", "raw"]], "seconds": 11.7}
+{"script": "tidyr__vignette__tidy-data_s3.R", "vars": [], "seconds": 16.0}
+{"script": "vctrs__rd_example__new_date_Rd.R", "vars": [], "seconds": 9.6}
+{"script": "lubridate__vignette__lubridate_s18.R", "vars": [["jan31", "Date"]], "seconds": 9.7}
+{"script": "sparsevctrs__rd_example__coerce_to_sparse_tibble_Rd.R", "vars": [["mat", "matrix, array"], ["sparse_mat", "dgCMatrix"], ["res", "tbl_df, tbl, data.frame"]], "seconds": 13.4}
+{"script": "reshape2__rd_example__melt_array_Rd.R", "vars": [["a", "array"]], "seconds": 11.6}
+{"script": "dplyr__vignette__colwise_chunk17.R", "vars": [["rescale01", "function"], ["df", "tbl_df, tbl, data.frame"]], "seconds": 13.3}
+{"script": "timeDate__rd_example__earlyCloseNYSE_Rd.R", "vars": [], "seconds": 8.6}
+{"script": "timechange__rd_example__time_add_Rd.R", "vars": [["x", "POSIXct, POSIXt"], ["tt", "POSIXct, POSIXt"], ["cst", "POSIXlt, POSIXt"], ["cdt", "POSIXlt, POSIXt"], ["y", "POSIXlt, POSIXt"]], "seconds": 8.3}
+{"script": "hms__rd_example__hms_Rd.R", "vars": [["d", "data.frame"]], "seconds": 10.3}
+{"script": "lubridate__vignette__lubridate_s19.R", "vars": [["last_day", "function"]], "seconds": 9.1}
+{"script": "timeDate__rd_example__base-sample_Rd.R", "vars": [["dts", "character"], ["tms", "character"], ["GMT", "timeDate"], ["ZUR", "timeDate"]], "seconds": 9.2}
+{"script": "clock__rd_example__zoned_time_info_Rd.R", "vars": [["x", "clock_year_month_day, clock_calendar, clock_rcrd, vctrs_rcrd, vctrs_vctr"], ["info", "data.frame"]], "seconds": 12.4}
+{"script": "hms__rd_example__round_hms_Rd.R", "vars": [], "seconds": 9.5}
+{"script": "timechange__rd_example__time_update_Rd.R", "vars": [["date", "Date"], ["time", "POSIXct, POSIXt"]], "seconds": 6.7}
+{"script": "shape__rd_example__femmecol_Rd.R", "vars": [], "seconds": 6.9}
+{"script": "textshaping__vignette__c_interface.R", "vars": [], "seconds": 7.6}
+{"script": "clock__vignette__faq_s28.R", "vars": [["raw", "character"], ["x", "clock_sys_time, clock_time_point, clock_rcrd, vctrs_rcrd, vctrs_vctr"]], "seconds": 9.8}
+{"script": "isoband__rd_example__isobands_Rd.R", "vars": [["m", "matrix, array"], ["df_bands", "list"], ["df_lines", "list"], ["g", "data.frame"]], "seconds": 9.5}
+{"script": "systemfonts__rd_example__font_feature_Rd.R", "vars": [], "seconds": 6.8}
+{"script": "gtable__rd_example__gtable_show_layout_Rd.R", "vars": [["gt", "gtable, gTree, grob, gDesc"]], "seconds": 8.8}
+{"script": "RColorBrewer__rd_example__ColorBrewer_Rd.R", "vars": [["mypalette", "character"]], "seconds": 8.6}
+{"script": "ragg__rd_example__agg_png_Rd.R", "vars": [["file", "character"]], "seconds": 13.6}
+{"script": "farver__rd_example__decode_colour_Rd.R", "vars": [], "seconds": 6.5}
+{"script": "highr__rd_example__hilight_Rd.R", "vars": [["txt", "character"]], "seconds": 6.7}
+{"script": "shiny__rd_example__httpResponse_Rd.R", "vars": [], "seconds": 11.1}
+{"script": "xml2__rd_example__xml_cdata_Rd.R", "vars": [["x", "xml_document, xml_node"]], "seconds": 8.6}
+{"script": "rmarkdown__rd_example__output_format_dependency_Rd.R", "vars": [], "seconds": 9.9}
+{"script": "htmlwidgets__vignette__develop_advanced_chunk6.R", "vars": [["fooWidget", "function"]], "seconds": 10.1}
+{"script": "sass__rd_example__sass_layer_Rd.R", "vars": [], "seconds": 16.2}
+{"script": "htmltools__rd_example__capturePlot_Rd.R", "vars": [["res", "character"], ["pngpath", "character"], ["svgpath", "character"]], "seconds": 16.3}
+{"script": "diagram__rd_example__diagram_Rd.R", "vars": [["arr.length", "matrix, array"], ["arrlwd", "matrix, array"], ["cextxt", "matrix, array"], ["col", "matrix, array"], ["M", "matrix, array"], ["names", "expression"], ["pm", "list"], ["pos", "matrix, array"], ["pp", "list"], ["ArrCol", "matrix, array"], ["A", "numeric"], ["arrpos", "matrix, array"], ["dd", "numeric"], ["elpos", "matrix, array"], ["fromto", "matrix, array"], ["i", "integer"], ["lab", "character"], ["mar", "list"], ["mf", "list"], ["nr", "integer"], ["pin", "numeric"], ["rx", "numeric"], ["ry", "numeric"], ["sx", "numeric"], ["sy", "numeric"], ["xx", "numeric"], ["yy", "numeric"], ["AA", "data.frame"], ["curves", "matrix, array"], ["detritus", "numeric"], ["DiffMat", "matrix, array"], ["DiffMatrix", "matrix, array"], ["Fecundity", "numeric"], ["fish", "numeric"], ["m1", "numeric"], ["m2", "numeric"], ["mid", "numeric"], ["name", "character"], ["nh3", "numeric"], ["NumClass", "numeric"], ["Numgenerations", "numeric"], ["p2", "list"], ["phyto", "numeric"], ["PP", "list"], ["Survival", "numeric"], ["zoo", "numeric"], ["feed", "matrix, array"]], "seconds": 34.2}
+{"script": "ggplot2__rd_example__aes_linetype_size_shape_Rd.R", "vars": [], "seconds": 43.5}
+{"script": "rvest__vignette__rvest_s9.R", "vars": [["html", "xml_document, xml_node"]], "seconds": 10.0}
+{"script": "bslib__rd_example__layout_columns_Rd.R", "vars": [["x", "bslib_fragment, shiny.tag"]], "seconds": 20.7}
+{"script": "downlit__rd_example__downlit_md_path_Rd.R", "vars": [], "seconds": 12.8}
+{"script": "proxy__rd_example__dist_Rd.R", "vars": [["x", "matrix, array"], ["f", "function"], ["z", "list"], ["d", "dist"]], "seconds": 10.1}
+{"script": "pROC__rd_example__geom_polygon_auc_roc_Rd.R", "vars": [["aSAH", "data.frame"], ["roc.s100b", "roc"], ["roc.s100b.percent", "roc"], ["auc.s100b.partial.sp", "auc, numeric"], ["auc.s100b.partial.se", "auc, numeric"]], "seconds": 21.1}
+{"script": "broom__rd_example__glance_factanal_Rd.R", "vars": [["m1", "tbl_df, tbl, data.frame"], ["m2", "tbl_df, tbl, data.frame"], ["fit1", "factanal"], ["fit2", "factanal"]], "seconds": 22.0}
+{"script": "lava__vignette__influencefunction_s34.R", "vars": [["y", "matrix, array"], ["N", "numeric"], ["id", "integer"], ["e", "estimate"]], "seconds": 28.0}
+{"script": "e1071__rd_example__hamming_window_Rd.R", "vars": [["x", "numeric"], ["y", "stft"]], "seconds": 8.9}
+{"script": "ranger__rd_example__predict_ranger_Rd.R", "vars": [["train.idx", "integer"], ["iris.train", "data.frame"], ["iris.test", "data.frame"], ["rg.iris", "ranger"], ["pred.iris", "ranger.prediction"], ["rf", "ranger"], ["pred", "ranger.prediction"]], "seconds": 30.1}
+{"script": "ModelMetrics__rd_example__ppv_Rd.R", "vars": [["testDF", "data.frame"], ["glmModel", "glm, lm"], ["Preds", "numeric"]], "seconds": 10.2}
+{"script": "cachem__rd_example__cache_layered_Rd.R", "vars": [["m", "cache_mem, cachem"], ["d", "cache_disk, cachem"], ["cl", "cache_layered, cachem"]], "seconds": 8.9}
+{"script": "tinytex__rd_example__tlmgr_Rd.R", "vars": [], "seconds": 7.5}
+{"script": "openssl__rd_example__base64_encode_Rd.R", "vars": [["input", "raw"], ["message", "character"], ["output", "raw"]], "seconds": 7.6}
+{"script": "prodlim__rd_example__predict_prodlim_Rd.R", "vars": [["dat", "data.frame"], ["fit", "prodlim"], ["mfit", "prodlim"]], "seconds": 28.2}
+{"script": "prettyunits__rd_example__pretty_bytes_Rd.R", "vars": [["bytes", "numeric"]], "seconds": 6.5}
+{"script": "base64enc__rd_example__base64_Rd.R", "vars": [["x", "raw"], ["y", "raw"]], "seconds": 6.5}
+{"script": "fansi__rd_example__make_styles_Rd.R", "vars": [["classes", "character"], ["css0", "character"], ["css1", "character"], ["string", "character"], ["html", "character"], ["mix", "matrix, array"], ["css2", "character"]], "seconds": 10.8}
+{"script": "uuid__rd_example__UUID_Rd.R", "vars": [["u", "UUID"], ["uv", "UUID"]], "seconds": 6.8}
+{"script": "conflicted__rd_example__conflicts_prefer_Rd.R", "vars": [], "seconds": 9.3}
+{"script": "sessioninfo__rd_example__package_info_Rd.R", "vars": [], "seconds": 12.1}
+{"script": "isoband__vignette__isoband1_chunk1.R", "vars": [], "seconds": 8.7}
+{"script": "base64enc__rd_example__dataURI_Rd.R", "vars": [["img", "matrix, array"]], "seconds": 7.2}
+{"script": "caret__rd_example__createDataPartition_Rd.R", "vars": [], "seconds": 71.5}
+{"script": "clock__rd_example__posixt-group_Rd.R", "vars": [["x", "POSIXct, POSIXt"], ["y", "POSIXct, POSIXt"]], "seconds": 10.9}
+{"script": "timechange__rd_example__time-zones_Rd.R", "vars": [["x", "POSIXct, POSIXt"], ["y", "POSIXct, POSIXt"]], "seconds": 7.2}
+{"script": "vctrs__vignette__type-size_s23.R", "vars": [], "seconds": 8.8}
+{"script": "highr__vignette__highr-custom_s2.R", "vars": [["m", "data.frame"]], "seconds": 6.8}
+{"script": "ggplot2__vignette__ggplot2-in-packages_s13.R", "vars": [["plot.discrete_distr", "function"]], "seconds": 17.4}
+{"script": "googledrive__rd_example__drive_create_Rd.R", "vars": [], "seconds": 44.9}
+{"script": "gtable__rd_example__bind_Rd.R", "vars": [["a", "rect, grob, gDesc"], ["b", "circle, grob, gDesc"], ["c", "lines, grob, gDesc"], ["row", "matrix, array"], ["col", "matrix, array"], ["mat", "matrix, array"], ["row_gt", "gtable, gTree, grob, gDesc"], ["col_gt", "gtable, gTree, grob, gDesc"], ["mat_gt", "gtable, gTree, grob, gDesc"], ["c_binded", "gtable, gTree, grob, gDesc"], ["r_binded", "gtable, gTree, grob, gDesc"]], "seconds": 11.5}
+{"script": "proxy__rd_example__registry_Rd.R", "vars": [["mydist", "function"]], "seconds": 7.8}
+{"script": "lubridate__rd_example__date_Rd.R", "vars": [["x", "POSIXct, POSIXt"]], "seconds": 6.9}
+{"script": "recipes__rd_example__step_integer_Rd.R", "vars": [], "seconds": 69.2}
+{"script": "magrittr__rd_example__pipe-eager_Rd.R", "vars": [["f", "function"], ["g", "function"], ["h", "function"]], "seconds": 4.9}
+{"script": "systemfonts__rd_example__shape_string_Rd.R", "vars": [["string", "character"]], "seconds": 6.0}
+{"script": "rvest__vignette__rvest_s17.R", "vars": [["html", "xml_document, xml_node"]], "seconds": 6.1}
+{"script": "htmltools__rd_example__tagQuery_Rd.R", "vars": [], "seconds": 5.4}
+{"script": "openssl__rd_example__encrypt_envelope_Rd.R", "vars": [["key", "key, rsa"], ["pubkey", "pubkey, rsa"], ["msg", "raw"], ["out", "list"], ["orig", "raw"]], "seconds": 5.3}
+{"script": "ModelMetrics__rd_example__tnr_Rd.R", "vars": [["testDF", "data.frame"], ["glmModel", "glm, lm"], ["Preds", "numeric"]], "seconds": 5.9}
+{"script": "purrr__vignette__purrr_s10.R", "vars": [["my_lm", "function"], ["by_cyl", "list"]], "seconds": 6.1}
+{"script": "e1071__rd_example__sigmoid_Rd.R", "vars": [], "seconds": 5.8}
+{"script": "tidyr__rd_example__separate_rows_Rd.R", "vars": [["df", "tbl_df, tbl, data.frame"]], "seconds": 8.3}
+{"script": "uuid__rd_example__UUIDgenerate_Rd.R", "vars": [["u", "UUID"], ["DNS.namespace", "character"]], "seconds": 4.8}
+{"script": "utf8__rd_example__utf8_format_Rd.R", "error": "RuntimeError: R script exited with code 1:\nFehler in collapse(tmp, indent = indent) : \r\n  \u00dcbersetzung von Zeichenketten mit \"bytes\"-Kodierung nicht erlaubt\r\nRuft auf: source ... .local -> vapply -> FU"}
+{"script": "farver__rd_example__native_encoding_Rd.R", "vars": [["native_col", "integer"]], "seconds": 4.7}
+{"script": "sessioninfo__rd_example__external_info_Rd.R", "vars": [], "seconds": 11.6}
+{"script": "prodlim__rd_example__row_match_Rd.R", "vars": [["tab", "data.frame"], ["x", "character"]], "seconds": 16.5}
+{"script": "pROC__rd_example__plot_ci_Rd.R", "vars": [], "seconds": 18.9}
+{"script": "ranger__rd_example__hshrink_Rd.R", "vars": [["rf", "ranger"]], "seconds": 19.6}
+{"script": "sparsevctrs__rd_example__sparse_logical_Rd.R", "vars": [], "seconds": 6.7}
+{"script": "bslib__rd_example__bs_get_variables_Rd.R", "vars": [["vars", "character"]], "seconds": 9.6}
+{"script": "recipes__vignette__Roles_chunk11.R", "vars": [], "seconds": 27.8}
+{"script": "fansi__rd_example__substr_ctl_Rd.R", "vars": [["x", "character"], ["bleed", "character"], ["end", "character"], ["x0", "character"], ["x1", "character"], ["x2", "character"], ["x3", "character"], ["val", "character"], ["val2", "character"]], "seconds": 5.9}
+{"script": "ragg__rd_example__agg_webp_anim_Rd.R", "vars": [["file", "character"]], "seconds": 13.3}
+{"script": "tinytex__rd_example__check_installed_Rd.R", "vars": [], "seconds": 6.2}
+{"script": "reshape2__rd_example__melt_list_Rd.R", "vars": [["a", "list"]], "seconds": 8.7}
+{"script": "googledrive__rd_example__drive_about_Rd.R", "vars": [], "seconds": 39.6}
+{"script": "dplyr__vignette__programming_chunk10.R", "vars": [], "seconds": 10.9}
+{"script": "xml2__rd_example__xml_dtd_Rd.R", "vars": [["r", "xml_document"], ["d", "xml_document, xml_node"]], "seconds": 6.4}
+{"script": "hms__rd_example__parse_hms_Rd.R", "vars": [], "seconds": 6.9}
+{"script": "shiny__rd_example__observe_Rd.R", "vars": [["values", "reactivevalues"], ["obsB", "Observer, R6"], ["myquo", "quosure, formula"], ["obsC", "Observer, R6"], ["obsD", "Observer, R6"]], "seconds": 10.1}
+{"script": "prettyunits__rd_example__pretty_ms_Rd.R", "vars": [], "seconds": 5.2}
+{"script": "htmlwidgets__vignette__develop_advanced_chunk5.R", "vars": [["fooWidget", "function"]], "seconds": 6.7}
+{"script": "sass__rd_example__sass_options_Rd.R", "vars": [["x", "character"], ["old_options", "list"]], "seconds": 7.3}
+{"script": "timeDate__rd_example__timeDate-Calendar_Rd.R", "vars": [], "seconds": 6.7}
+{"script": "caret__rd_example__lift_Rd.R", "vars": [["simulated", "data.frame"], ["lift1", "lift"], ["lift2", "lift"]], "seconds": 30.7}
+{"script": "diagram__rd_example__textmulti_Rd.R", "vars": [], "seconds": 8.3}
+{"script": "downlit__rd_example__highlight_Rd.R", "vars": [], "seconds": 6.8}
+{"script": "shape__rd_example__getellipse_Rd.R", "vars": [], "seconds": 9.4}
+{"script": "rmarkdown__rd_example__pkg_file_lua_Rd.R", "vars": [], "seconds": 7.7}
+{"script": "textshaping__vignette__c_interface_chunk1.R", "vars": [], "seconds": 7.0}
+{"script": "htmlwidgets__rd_example__JS_Rd.R", "vars": [], "seconds": 5.4}
+{"script": "broom__rd_example__tidy_binWidth_Rd.R", "vars": [["bw", "binWidth"]], "seconds": 11.6}
+{"script": "purrr__rd_example__attr_getter_Rd.R", "vars": [["get_rownames", "function"], ["obj1", "character"], ["obj2", "character"], ["x", "list"]], "seconds": 7.0}
+{"script": "lava__rd_example__fplot_Rd.R", "vars": [["iris", "data.frame"]], "seconds": 13.3}
+{"script": "fansi__rd_example__state_at_end_Rd.R", "vars": [["x", "character"], ["close", "character"]], "seconds": 5.9}
+{"script": "utf8__rd_example__utf8_encode_Rd.R", "error": "RuntimeError: R script exited with code 1:\nFehler in collapse(tmp, indent = indent) : \r\n  \u00dcbersetzung von Zeichenketten mit \"bytes\"-Kodierung nicht erlaubt\r\nRuft auf: source ... .local -> vapply -> FU"}
+{"script": "downlit__rd_example__evaluate_and_highlight_Rd.R", "error": "RuntimeError: R script exited with code 1:\nThis is a message. My favourite fruit is \u001b[34mblueberries\u001b[39m\r\nFehler: No method asJSON S3 class: environment\r\nAusf\u00fchrung angehalten"}
+{"script": "bslib__rd_example__layout_column_wrap_Rd.R", "vars": [["x", "bslib_fragment, shiny.tag"]], "seconds": 11.4}
+{"script": "shape__rd_example__Arrowhead_Rd.R", "vars": [], "seconds": 6.0}
+{"script": "proxy__rd_example__rowSums_dist_Rd.R", "vars": [["x", "matrix, array"], ["d", "dist"]], "seconds": 5.3}
+{"script": "pROC__rd_example__coords_Rd.R", "vars": [["aSAH", "data.frame"], ["roc.s100b", "roc"], ["cc", "data.frame"], ["roc.ndka", "roc"]], "seconds": 6.6}
+{"script": "diagram__rd_example__textround_Rd.R", "vars": [], "seconds": 7.8}
+{"script": "prettyunits__rd_example__time_ago_Rd.R", "vars": [["now", "POSIXct, POSIXt"]], "seconds": 5.0}
+{"script": "recipes__rd_example__step_YeoJohnson_Rd.R", "vars": [["biomass", "data.frame"], ["biomass_tr", "data.frame"], ["biomass_te", "data.frame"], ["rec", "recipe"], ["yj_transform", "recipe"], ["yj_estimates", "recipe"], ["yj_te", "tbl_df, tbl, data.frame"]], "seconds": 30.0}
+{"script": "openssl__rd_example__keygen_Rd.R", "vars": [["key", "key, rsa"], ["pubkey", "pubkey, rsa"]], "seconds": 5.4}
+{"script": "htmltools__rd_example__tagAppendAttributes_Rd.R", "vars": [["html", "shiny.tag"]], "seconds": 6.2}
+{"script": "caret__vignette__caret_s3.R", "vars": [["Sonar", "data.frame"], ["inTrain", "matrix, array"]], "seconds": 27.3}
+{"script": "xml2__rd_example__xml_children_Rd.R", "vars": [["x", "xml_document, xml_node"]], "seconds": 6.4}
+{"script": "ggplot2__rd_example__position_jitterdodge_Rd.R", "vars": [], "seconds": 16.2}
+{"script": "reshape2__rd_example__parse_formula_Rd.R", "vars": [], "seconds": 9.1}
+{"script": "sparsevctrs__rd_example__sparse_which_na_Rd.R", "vars": [], "seconds": 5.6}
+{"script": "sass__rd_example__sass_import_Rd.R", "vars": [["tmp_scss_file", "character"]], "seconds": 6.4}
+{"script": "googledrive__rd_example__drive_cp_Rd.R", "vars": [], "seconds": 39.2}
+{"script": "sessioninfo__rd_example__session_info_Rd.R", "vars": [], "seconds": 9.2}
+{"script": "timeDate__rd_example__timeDate-midnightStandard_Rd.R", "vars": [["ch", "character"], ["ms2", "POSIXct, POSIXt"]], "seconds": 5.8}
+{"script": "shiny__rd_example__isolate_Rd.R", "vars": [["values", "reactivevalues"], ["fun", "reactiveExpr, reactive, function"]], "seconds": 7.7}
+{"script": "gtable__rd_example__gtable_add_grob_Rd.R", "vars": [["gt", "gtable, gTree, grob, gDesc"], ["pts", "points, grob, gDesc"]], "seconds": 7.3}
+{"script": "textshaping__rd_example__plot_shape_Rd.R", "vars": [["arab_text", "character"], ["shape", "list"]], "seconds": 6.3}
+{"script": "dplyr__vignette__dplyr_s21.R", "vars": [], "seconds": 8.7}
+{"script": "rvest__vignette__rvest_s7.R", "vars": [], "seconds": 7.8}
+{"script": "prodlim__rd_example__as_data_table_prodlim_Rd.R", "vars": [["d", "data.frame"], ["fit", "prodlim"]], "seconds": 14.1}
+{"script": "magrittr__vignette__tradeoffs_s12.R", "vars": [], "seconds": 4.4}
+{"script": "systemfonts__rd_example__glyph_raster_Rd.R", "vars": [], "seconds": 8.3}
+{"script": "ragg__rd_example__agg_ppm_Rd.R", "vars": [["file", "character"]], "seconds": 6.4}
+{"script": "vctrs__vignette__s3-vector_s6.R", "vars": [["is_percent", "function"]], "seconds": 5.8}
+{"script": "lubridate__vignette__lubridate_s2.R", "vars": [], "seconds": 4.5}
+{"script": "clock__rd_example__seq_clock_time_point_Rd.R", "vars": [["x", "clock_naive_time, clock_time_point, clock_rcrd, vctrs_rcrd, vctrs_vctr"], ["from", "clock_naive_time, clock_time_point, clock_rcrd, vctrs_rcrd, vctrs_vctr"], ["to", "clock_naive_time, clock_time_point, clock_rcrd, vctrs_rcrd, vctrs_vctr"]], "seconds": 7.7}
+{"script": "ModelMetrics__rd_example__mse_Rd.R", "vars": [["testDF", "data.frame"], ["glmModel", "glm, lm"], ["Preds", "numeric"]], "seconds": 6.0}
+{"script": "rmarkdown__vignette__lua-filters_s1.R", "vars": [], "seconds": 6.0}
+{"script": "farver__rd_example__manip_channel_Rd.R", "vars": [["spectrum", "character"]], "seconds": 4.9}
+{"script": "isoband__vignette__isoband1_s5.R", "vars": [["m", "matrix, array"]], "seconds": 6.5}
+{"script": "broom__vignette__broom_chunk6.R", "vars": [["glmfit", "glm, lm"]], "seconds": 10.4}
+{"script": "e1071__rd_example__read_matrix_csr_Rd.R", "vars": [], "seconds": 9.6}
+{"script": "tidyr__vignette__pivot_s18.R", "vars": [], "seconds": 10.3}
+{"script": "lava__rd_example__csplit_Rd.R", "vars": [], "seconds": 11.7}
+{"script": "diagram__rd_example__textempty_Rd.R", "vars": [], "seconds": 7.8}
+{"script": "rvest__rd_example__html_attr_Rd.R", "vars": [["html", "xml_document, xml_node"]], "seconds": 7.4}
+{"script": "fansi__rd_example__strsplit_ctl_Rd.R", "vars": [], "seconds": 4.4}
+{"script": "lava__vignette__nonlinear_s1.R", "vars": [["mets", "logical"], ["fullVignette", "logical"]], "seconds": 13.4}
+{"script": "shiny__rd_example__resourcePaths_Rd.R", "vars": [], "seconds": 8.0}
+{"script": "rmarkdown__rd_example__pandoc_args_Rd.R", "vars": [], "seconds": 5.3}
+{"script": "ranger__rd_example__importance_pvalues_Rd.R", "vars": [["n", "numeric"], ["p", "numeric"], ["dat", "data.frame"], ["rf.sim", "ranger"], ["rf.iris", "ranger"]], "seconds": 23.2}
+{"script": "prettyunits__rd_example__pretty_sec_Rd.R", "vars": [], "seconds": 4.5}
+{"script": "magrittr__vignette__magrittr_s1.R", "vars": [], "seconds": 3.9}
+{"script": "tidyr__vignette__tidy-data_s9.R", "vars": [["billboard2", "tbl_df, tbl, data.frame"]], "seconds": 9.4}
+{"script": "gtable__rd_example__gtable_add_padding_Rd.R", "vars": [["gt", "gtable, gTree, grob, gDesc"], ["pad", "gtable, gTree, grob, gDesc"]], "seconds": 8.1}
+{"script": "proxy__vignette__overview.R", "vars": [["x", "summary.pr_DB"], ["FUN", "function"]], "seconds": 5.9}
+{"script": "ModelMetrics__rd_example__gini_Rd.R", "vars": [["testDF", "data.frame"], ["glmModel", "glm, lm"], ["Preds", "numeric"]], "seconds": 6.1}
+{"script": "sparsevctrs__vignette__design_s1.R", "vars": [], "seconds": 5.6}
+{"script": "shape__rd_example__plotcircle_Rd.R", "vars": [], "seconds": 5.8}
+{"script": "reshape2__rd_example__cast_Rd.R", "vars": [["airquality", "data.frame"], ["aqm", "data.frame"], ["ChickWeight", "nfnGroupedData, nfGroupedData, groupedData, data.frame"], ["chick_m", "data.frame"], ["ff_d", "data.frame"]], "seconds": 8.2}
+{"script": "farver__rd_example__as_white_ref_Rd.R", "vars": [], "seconds": 4.4}
+{"script": "ggplot2__rd_example__geom_bin_2d_Rd.R", "vars": [["d", "ggplot2::ggplot, ggplot, ggplot2::gg, S7_object, gg"]], "seconds": 16.0}
+{"script": "e1071__rd_example__boxplot_bclust_Rd.R", "vars": [["iris", "data.frame"], ["bc1", "bclust"]], "seconds": 5.0}
+{"script": "sass__rd_example__as_sass_Rd.R", "vars": [["someFile", "character"], ["input", "sass, html, character"]], "seconds": 5.9}
+{"script": "clock__vignette__clock_s13.R", "vars": [["x", "character"], ["formats", "character"]], "seconds": 6.5}
+{"script": "htmltools__rd_example__parseCssColors_Rd.R", "vars": [], "seconds": 4.8}
+{"script": "purrr__rd_example__keep_Rd.R", "vars": [], "seconds": 6.7}
+{"script": "htmlwidgets__vignette__develop_advanced_chunk8.R", "vars": [["fooWidget", "function"]], "seconds": 4.7}
+{"script": "timeDate__rd_example__timeDate-Sequence_Rd.R", "vars": [["t1", "timeDate"]], "seconds": 4.7}
+{"script": "sessioninfo__rd_example__session_diff_Rd.R", "vars": [], "seconds": 6.7}
+{"script": "textshaping__rd_example__shape_text_Rd.R", "vars": [["string", "character"]], "seconds": 5.3}
+{"script": "caret__rd_example__preProcess_Rd.R", "vars": [["bbbDescr", "data.frame"], ["logBBB", "numeric"], ["preProc", "preProcess"], ["training", "data.frame"], ["test", "data.frame"]], "seconds": 21.4}
+{"script": "lubridate__rd_example__hms_Rd.R", "vars": [["x", "character"]], "seconds": 5.0}
+{"script": "broom__rd_example__augment_survreg_Rd.R", "vars": [], "seconds": 25.2}
+{"script": "ragg__rd_example__agg_capture_Rd.R", "vars": [], "seconds": 7.0}
+{"script": "isoband__vignette__isoband1_s4.R", "vars": [["m", "matrix, array"]], "seconds": 5.0}
+{"script": "pROC__rd_example__lines_roc_Rd.R", "vars": [], "seconds": 6.2}
+{"script": "ranger__rd_example__csrf_Rd.R", "vars": [["train.idx", "integer"], ["iris.train", "data.frame"], ["iris.test", "data.frame"]], "seconds": 10.3}
+{"script": "vctrs__vignette__type-size_s17.R", "vars": [], "seconds": 5.1}
+{"script": "systemfonts__vignette__fonts_basics_chunk1.R", "vars": [], "seconds": 5.2}
+{"script": "googledrive__rd_example__shortcut_resolve_Rd.R", "vars": [], "seconds": 37.8}
+{"script": "openssl__rd_example__ec_dh_Rd.R", "vars": [["alice_key", "key, ecdsa"], ["bob_key", "key, ecdsa"], ["alice_pub", "pubkey, ecdsa"], ["bob_pub", "pubkey, ecdsa"]], "seconds": 4.4}
+{"script": "utf8__rd_example__utf8_width_Rd.R", "error": "RuntimeError: R script exited with code 1:\nFehler in collapse(tmp, indent = indent) : \r\n  \u00dcbersetzung von Zeichenketten mit \"bytes\"-Kodierung nicht erlaubt\r\nRuft auf: source ... .local -> vapply -> FU"}
+{"script": "xml2__rd_example__xml_attr_Rd.R", "vars": [], "seconds": 6.6}
+{"script": "downlit__rd_example__href_topic_Rd.R", "vars": [], "seconds": 6.8}
+{"script": "dplyr__rd_example__glimpse_Rd.R", "vars": [], "seconds": 9.7}
+{"script": "textshaping__rd_example__lorem_text_Rd.R", "vars": [], "seconds": 7.1}
+{"script": "prodlim__rd_example__backGround_Rd.R", "vars": [], "seconds": 16.5}
+{"script": "recipes__rd_example__step_filter_missing_Rd.R", "vars": [], "seconds": 36.0}
+{"script": "downlit__rd_example__autolink_Rd.R", "vars": [], "seconds": 7.4}
+{"script": "openssl__vignette__bignum_s2.R", "vars": [["y", "bignum"], ["z", "bignum"], ["div", "bignum"], ["mod", "bignum"], ["z2", "bignum"]], "seconds": 5.9}
+{"script": "htmlwidgets__rd_example__htmlwidgets-shiny_Rd.R", "vars": [["fooOutput", "function"], ["renderFoo", "function"]], "seconds": 8.6}
+{"script": "shape__rd_example__filledmultigonal_Rd.R", "vars": [], "seconds": 7.1}
+{"script": "gtable__rd_example__gtable_add_cols_Rd.R", "vars": [["rect", "rect, grob, gDesc"], ["tab", "gtable, gTree, grob, gDesc"], ["tab2", "gtable, gTree, grob, gDesc"], ["tab3", "gtable, gTree, grob, gDesc"]], "seconds": 7.7}
+{"script": "timeDate__rd_example__methods-mathOps_Rd.R", "vars": [["dts", "character"], ["tms", "character"], ["GMT", "timeDate"], ["ZUR", "timeDate"]], "seconds": 5.1}
+{"script": "htmltools__rd_example__tagAddRenderHook_Rd.R", "vars": [["obj", "shiny.tag"], ["spanExtra", "shiny.tag"], ["divExtra", "shiny.tag"], ["spanExtended", "shiny.tag"], ["newDep", "shiny.tag"], ["newObj", "shiny.tag"]], "seconds": 5.8}
+{"script": "bslib__rd_example__page_fillable_Rd.R", "vars": [["ui", "bslib_page, shiny.tag.list, list"], ["server", "function"]], "seconds": 22.6}
+{"script": "sass__rd_example__output_template_Rd.R", "vars": [["func", "function"]], "seconds": 5.8}
+{"script": "lubridate__rd_example__period_Rd.R", "vars": [["x", "Date"], ["y", "Date"], ["boundary", "POSIXct, POSIXt"]], "seconds": 6.0}
+{"script": "rvest__rd_example__html_table_Rd.R", "vars": [], "seconds": 7.1}
+{"script": "isoband__vignette__isoband3_s2.R", "vars": [["x", "numeric"], ["y", "numeric"], ["lines", "isolines, iso"], ["g", "isolines_grob, gTree, grob, gDesc"]], "seconds": 6.5}
+{"script": "sparsevctrs__rd_example__sparse_lag_Rd.R", "vars": [["vec_dbl", "numeric"], ["vec_int", "integer"], ["vec_chr", "character"], ["vec_lgl", "logical"]], "seconds": 5.3}
+{"script": "xml2__rd_example__xml_type_Rd.R", "vars": [["x", "xml_document, xml_node"]], "seconds": 5.0}
+{"script": "vctrs__vignette__s3-vector_s76.R", "vars": [["percent", "function"]], "seconds": 5.0}
+{"script": "caret__rd_example__modelLookup_Rd.R", "vars": [], "seconds": 23.9}
+{"script": "ggplot2__vignette__ggplot2-in-packages_s8.R", "vars": [["col_summary", "function"]], "seconds": 12.3}
+{"script": "shiny__rd_example__actionButton_Rd.R", "vars": [["ui", "shiny.tag.list, list"], ["server", "function"]], "seconds": 8.8}
+{"script": "pROC__rd_example__aSAH_Rd.R", "vars": [["aSAH", "data.frame"]], "seconds": 7.1}
+{"script": "reshape2__rd_example__colsplit_Rd.R", "vars": [["x", "character"], ["vars", "data.frame"]], "seconds": 9.0}
+{"script": "e1071__rd_example__write_svm_Rd.R", "vars": [["iris", "data.frame"], ["model", "svm.formula, svm"], ["svm_file", "character"], ["scale_file", "character"]], "seconds": 6.4}
+{"script": "utf8__rd_example__output_utf8_Rd.R", "vars": [["tmp", "character"]], "seconds": 5.5}
+{"script": "prettyunits__rd_example__pretty_num_Rd.R", "vars": [["numbers", "numeric"]], "seconds": 5.4}
+{"script": "farver__rd_example__convert_colour_Rd.R", "vars": [["spectrum", "matrix, array"], ["spec_lab", "matrix, array"]], "seconds": 5.4}
+{"script": "magrittr__vignette__tradeoffs_s1.R", "vars": [["fail", "function"], ["pass", "function"]], "seconds": 7.4}
+{"script": "broom__rd_example__augment_felm_Rd.R", "vars": [["est0", "felm"], ["est1", "felm"], ["est2", "felm"]], "seconds": 17.9}
+{"script": "sessioninfo__rd_example__python_info_Rd.R", "vars": [], "seconds": 9.5}
+{"script": "rmarkdown__rd_example__pandoc_available_Rd.R", "vars": [], "seconds": 6.7}
+{"script": "ModelMetrics__rd_example__logLoss_Rd.R", "vars": [["testDF", "data.frame"], ["glmModel", "glm, lm"], ["Preds", "numeric"]], "seconds": 6.4}
+{"script": "clock__vignette__recipes_s68.R", "vars": [["x", "clock_zoned_time, clock_rcrd, vctrs_rcrd, vctrs_vctr"], ["info", "data.frame"]], "seconds": 8.3}
+{"script": "bslib__rd_example__bs_global_theme_Rd.R", "error": "TimeoutExpired: Command '['C:\\\\Users\\\\bened\\\\Desktop\\\\r2py_v0.3\\\\r2py\\\\stage0\\\\r_env\\\\runtime\\\\bin\\\\R.exe', '--vanilla', '--quiet', '-e', 'source(\"C:/Users/bened/AppData/Local/Temp/r2py_sandbox_ufpm_h"}
+{"script": "dplyr__vignette__recoding-replacing_s22.R", "vars": [["likert", "tbl_df, tbl, data.frame"]], "seconds": 9.3}
+{"script": "fansi__vignette__sgr-in-rmd_s6.R", "vars": [], "seconds": 5.1}
+{"script": "ragg__rd_example__agg_webp_Rd.R", "vars": [["file", "character"]], "seconds": 7.3}
+{"script": "googledrive__rd_example__dribble-checks_Rd.R", "vars": [], "seconds": 41.1}
+{"script": "lava__rd_example__scheffe_Rd.R", "vars": [], "seconds": 17.5}
+{"script": "diagram__rd_example__coordinates_Rd.R", "vars": [], "seconds": 7.5}
+{"script": "tidyr__rd_example__complete_Rd.R", "vars": [], "seconds": 14.0}
+{"script": "purrr__rd_example__slowly_Rd.R", "vars": [["rate", "purrr_rate_delay, purrr_rate"], ["slow_runif", "function"], ["out", "list"]], "seconds": 9.1}
+{"script": "systemfonts__rd_example__register_variant_Rd.R", "vars": [["sans", "character"]], "seconds": 8.4}
+{"script": "ranger__rd_example__deforest_Rd.R", "vars": [["rfo", "ranger"], ["dfo", "deforest.ranger, ranger"], ["preds.rfo", "array"], ["preds.dfo", "array"]], "seconds": 17.1}
+{"script": "fansi__rd_example__normalize_state_Rd.R", "vars": [["red", "character"]], "seconds": 5.6}
+{"script": "prodlim__rd_example__plotIllnessDeathModel_Rd.R", "vars": [], "seconds": 17.7}
+{"script": "e1071__rd_example__matchClasses_Rd.R", "vars": [["g1", "integer"], ["g2", "integer"], ["tab", "table"], ["k", "integer"]], "seconds": 5.9}
+{"script": "sparsevctrs__rd_example__coerce-vector_Rd.R", "vars": [["x_dense", "numeric"], ["x_sparse", "numeric"]], "seconds": 7.0}
+{"script": "prettyunits__rd_example__vague_dt_Rd.R", "vars": [], "seconds": 5.7}
+{"script": "isoband__rd_example__plot_iso_Rd.R", "vars": [["m", "matrix, array"]], "seconds": 7.0}
+{"script": "magrittr__vignette__magrittr_s11.R", "vars": [], "seconds": 5.8}
+{"script": "shiny__rd_example__modalDialog_Rd.R", "vars": [], "seconds": 19.9}
+{"script": "farver__rd_example__encode_colour_Rd.R", "vars": [["spectrum", "matrix, array"], ["spectrum_hcl", "matrix, array"]], "seconds": 5.8}
+{"script": "ggplot2__rd_example__stat_summary_2d_Rd.R", "vars": [["d", "ggplot2::ggplot, ggplot, ggplot2::gg, S7_object, gg"]], "seconds": 19.5}
+{"script": "recipes__rd_example__step_rm_Rd.R", "vars": [["biomass", "data.frame"], ["biomass_tr", "data.frame"], ["biomass_te", "data.frame"], ["rec", "recipe"], ["smaller_set", "recipe"], ["filtered_te", "tbl_df, tbl, data.frame"]], "seconds": 35.8}
+{"script": "htmltools__rd_example__builder_Rd.R", "vars": [], "seconds": 7.3}
+{"script": "clock__rd_example__time-point-rounding_Rd.R", "vars": [], "seconds": 13.7}
+{"script": "lubridate__rd_example__within-interval_Rd.R", "vars": [["int", "Interval"], ["int2", "Interval"], ["dates", "Date"], ["blackout_vector", "Interval"], ["lst", "list"]], "seconds": 6.6}
+{"script": "ModelMetrics__rd_example__auc_Rd.R", "vars": [["testDF", "data.frame"], ["glmModel", "glm, lm"], ["Preds", "numeric"]], "seconds": 7.5}
+{"script": "diagram__rd_example__selfarrow_Rd.R", "vars": [], "seconds": 11.3}
+{"script": "openssl__rd_example__certificates_Rd.R", "vars": [["chain", "list"], ["cert_data", "list"]], "seconds": 7.8}
+{"script": "xml2__rd_example__xml_name_Rd.R", "vars": [["x", "xml_document, xml_node"], ["y", "xml_document, xml_node"], ["z", "xml_nodeset"]], "seconds": 7.3}
+{"script": "timeDate__rd_example__calendar-isBizday_Rd.R", "vars": [["currentYear", "numeric"], ["tS", "timeDate"]], "seconds": 7.4}
+{"script": "ragg__rd_example__agg_tiff_Rd.R", "vars": [["file", "character"]], "seconds": 7.8}
+{"script": "textshaping__rd_example__get_font_features_Rd.R", "vars": [["sys_fonts", "tbl_df, tbl, data.frame"], ["random_font", "character"]], "seconds": 7.2}
+{"script": "lava__rd_example__covariance_Rd.R", "vars": [["m", "lvm"]], "seconds": 12.5}
+{"script": "shape__rd_example__Arrows_Rd.R", "vars": [], "seconds": 7.8}
+{"script": "sass__vignette__sass_s1.R", "vars": [], "seconds": 5.0}
+{"script": "sessioninfo__rd_example__platform_info_Rd.R", "vars": [], "seconds": 8.4}
+{"script": "reshape2__rd_example__melt_data_frame_Rd.R", "vars": [["airquality", "data.frame"], ["ChickWeight", "nfnGroupedData, nfGroupedData, groupedData, data.frame"]], "seconds": 8.8}
+{"script": "pROC__rd_example__print_Rd.R", "vars": [["aSAH", "data.frame"], ["rocobj", "roc"]], "seconds": 7.1}
+{"script": "broom__rd_example__augment_drc_Rd.R", "vars": [["mod", "drc"]], "seconds": 21.5}
+{"script": "vctrs__rd_example__vec_cast_Rd.R", "vars": [], "seconds": 8.8}
+{"script": "googledrive__rd_example__drive_read_string_Rd.R", "vars": [], "seconds": 39.1}
+{"script": "dplyr__rd_example__storms_Rd.R", "vars": [], "seconds": 29.2}
+{"script": "caret__rd_example__update_train_Rd.R", "vars": [["iris", "data.frame"], ["TrainData", "data.frame"], ["TrainClasses", "factor"], ["knnFit1", "train"]], "seconds": 35.9}
+{"script": "bslib__rd_example__page_sidebar_Rd.R", "vars": [["ui", "bslib_page, shiny.tag.list, list"], ["server", "function"]], "seconds": 22.5}
+{"script": "gtable__rd_example__gtable_add_space_Rd.R", "vars": [["rect", "rect, grob, gDesc"], ["rect_mat", "matrix, array"], ["gt", "gtable, gTree, grob, gDesc"]], "seconds": 10.6}
+{"script": "downlit__rd_example__downlit_html_path_Rd.R", "vars": [["node", "xml_document, xml_node"]], "seconds": 8.2}
+{"script": "rmarkdown__rd_example__includes_Rd.R", "vars": [], "seconds": 9.2}
+{"script": "systemfonts__rd_example__match_fonts_Rd.R", "vars": [], "seconds": 7.6}
+{"script": "prodlim__rd_example__summary_prodlim_Rd.R", "vars": [["m", "lvm"], ["d", "data.frame"], ["fit0", "prodlim"], ["sx", "summary.prodlim, data.table, data.frame"], ["fit1", "prodlim"], ["fit2", "prodlim"], ["fit3", "prodlim"], ["fit4", "prodlim"], ["x", "summary.prodlim, data.table, data.frame"], ["crfit", "prodlim"], ["sumfit", "summary.prodlim, data.table, data.frame"]], "seconds": 21.8}
+{"script": "purrr__rd_example__invoke_Rd.R", "vars": [["args", "list"], ["funs", "list"], ["df", "tbl_df, tbl, data.frame"]], "seconds": 10.5}
+{"script": "rvest__rd_example__html_element_Rd.R", "vars": [["html", "xml_document, xml_node"], ["li", "xml_nodeset"]], "seconds": 10.0}
+{"script": "purrr__rd_example__chuck_Rd.R", "vars": [["x", "list"]], "seconds": 9.6}
+{"script": "tidyr__rd_example__chop_Rd.R", "vars": [["df", "tbl_df, tbl, data.frame"]], "seconds": 14.2}
+{"script": "isoband__vignette__isoband1_s1.R", "vars": [], "seconds": 9.4}
+{"script": "openssl__rd_example__aes_cbc_Rd.R", "vars": [["passphrase", "raw"], ["key", "hash, sha256"], ["x", "raw"], ["y", "raw"], ["x2", "raw"]], "seconds": 7.9}
+{"script": "e1071__rd_example__predict_svm_Rd.R", "vars": [], "seconds": 13.2}
+{"script": "broom__rd_example__augment_loess_Rd.R", "vars": [["lo", "loess"]], "seconds": 15.2}
+{"script": "lubridate__rd_example__leap_year_Rd.R", "vars": [["x", "Date"]], "seconds": 8.0}
+{"script": "vctrs__vignette__type-size_s29.R", "vars": [], "seconds": 8.6}
+{"script": "systemfonts__vignette__c_interface_s1.R", "vars": [], "seconds": 8.2}
+{"script": "shape__rd_example__plotellipse_Rd.R", "vars": [], "seconds": 8.4}
+{"script": "ggplot2__vignette__ggplot2-in-packages_s6.R", "vars": [["mpg_drv_summary", "function"]], "seconds": 17.5}
+{"script": "ModelMetrics__rd_example__rmse_Rd.R", "vars": [["testDF", "data.frame"], ["glmModel", "glm, lm"], ["Preds", "numeric"]], "seconds": 8.2}
+{"script": "htmltools__rd_example__htmlPreserve_Rd.R", "vars": [["markup", "character"], ["extracted", "list"], ["output", "character"]], "seconds": 7.9}
+{"script": "sparsevctrs__rd_example__sparse_replace_na_Rd.R", "vars": [], "seconds": 7.5}
+{"script": "bslib__rd_example__value_box_Rd.R", "vars": [], "seconds": 14.7}
+{"script": "pROC__rd_example__multiclass_Rd.R", "vars": [["aSAH", "data.frame"], ["iris", "data.frame"], ["iris.sample", "integer"], ["iris.train", "data.frame"], ["iris.test", "data.frame"], ["mn.net", "multinom, nnet"], ["iris.predictions", "matrix, array"], ["n", "numeric"], ["responses", "factor"], ["preds", "list"], ["predictor", "matrix, array"], ["data", "data.frame"]], "seconds": 7.6}
+{"script": "tidyr__vignette__pivot_s4.R", "vars": [], "seconds": 11.5}
+{"script": "farver__rd_example__compare_colour_Rd.R", "vars": [["r", "matrix, array"], ["h", "matrix, array"], ["h_luv", "matrix, array"]], "seconds": 6.2}
+{"script": "sass__rd_example__sass_file_cache_Rd.R", "vars": [["cache", "FileCache, R6"]], "seconds": 7.8}
+{"script": "diagram__rd_example__splitarrow_Rd.R", "vars": [], "seconds": 11.8}
+{"script": "ragg__rd_example__agg_jpeg_Rd.R", "vars": [["file", "character"]], "seconds": 8.3}
+{"script": "fansi__rd_example__strwrap_ctl_Rd.R", "vars": [["hello.1", "character"], ["hello.2", "character"], ["NEWS", "character"], ["NEWS.C", "character"], ["W", "character"]], "seconds": 6.6}
+{"script": "xml2__vignette__modification_s7.R", "vars": [["x", "xml_document, xml_node"], ["children", "xml_nodeset"], ["t1", "xml_node"], ["t2", "xml_node"], ["t3", "xml_node"]], "seconds": 7.5}
+{"script": "rvest__rd_example__html_children_Rd.R", "vars": [["html", "xml_document, xml_node"], ["ul", "xml_nodeset"], ["p", "xml_nodeset"]], "seconds": 8.6}
+{"script": "recipes__rd_example__step_kpca_Rd.R", "vars": [], "seconds": 70.8}
+{"script": "gtable__rd_example__gtable_trim_Rd.R", "vars": [["rect", "rect, grob, gDesc"], ["base", "gtable, gTree, grob, gDesc"], ["center", "gtable, gTree, grob, gDesc"], ["col", "gtable, gTree, grob, gDesc"], ["row", "gtable, gTree, grob, gDesc"]], "seconds": 9.6}
+{"script": "lava__demo__inference.R", "vars": [["d", "data.frame"], ["dd", "data.frame"], ["e", "lvmfit"], ["m", "lvm"], ["rr", "estimate"], ["a", "estimate"], ["a1", "estimate"], ["a2", "estimate"], ["b", "estimate"], ["B", "matrix, array"], ["d1", "data.frame"], ["d2", "data.frame"], ["e1", "estimate"], ["e2", "estimate"], ["e3", "estimate"], ["ee", "estimate"], ["f", "function"], ["g", "glm, lm"], ["g0", "glm, lm"], ["id1", "numeric"], ["id2", "numeric"], ["id3", "integer"], ["l1", "glm, lm"], ["l2", "glm, lm"], ["l3", "glm, lm"], ["m0", "lvm"], ["r", "matrix, array"]], "seconds": 28.8}
+{"script": "dplyr__vignette__rowwise_s36.R", "vars": [], "seconds": 12.1}
+{"script": "caret__rd_example__knn3_Rd.R", "vars": [["irisFit1", "knn3"], ["irisFit2", "knn3"], ["iris3", "array"], ["train", "matrix, array"], ["test", "matrix, array"], ["cl", "factor"]], "seconds": 34.1}
+{"script": "shiny__rd_example__updateRadioButtons_Rd.R", "vars": [["ui", "shiny.tag.list, list"], ["server", "function"]], "seconds": 9.7}
+{"script": "rmarkdown__vignette__lua-filters_s3.R", "vars": [["custom_format", "function"]], "seconds": 8.7}
+{"script": "magrittr__vignette__tradeoffs_s25.R", "vars": [], "seconds": 5.6}
+{"script": "clock__rd_example__iso-year-week-day-getters_Rd.R", "vars": [["x", "clock_iso_year_week_day, clock_calendar, clock_rcrd, vctrs_rcrd, vctrs_vctr"], ["iso", "clock_iso_year_week_day, clock_calendar, clock_rcrd, vctrs_rcrd, vctrs_vctr"], ["ymd", "clock_year_month_day, clock_calendar, clock_rcrd, vctrs_rcrd, vctrs_vctr"]], "seconds": 9.7}
+{"script": "timeDate__rd_example__timeDate-finCenter_Rd.R", "vars": [["date", "timeDate"]], "seconds": 6.7}
+{"script": "googledrive__rd_example__drive_download_Rd.R", "vars": [], "seconds": 40.1}
+{"script": "prodlim__rd_example__Hist_Rd.R", "vars": [["TwoStateFrame", "data.frame"], ["SurvHist", "Hist"], ["CompRiskFrame", "data.frame"], ["CRHist", "Hist"], ["icensFrame", "data.frame"], ["MultiStateFrame", "data.frame"], ["MultiStateFrame1", "data.frame"], ["MultiStateFrame2", "data.frame"]], "seconds": 15.2}
+{"script": "recipes__rd_example__discretize_Rd.R", "vars": [["biomass", "data.frame"], ["biomass_tr", "data.frame"], ["biomass_te", "data.frame"], ["carbon_binned", "discretize"], ["carbon_no_infs", "discretize"]], "seconds": 28.2}

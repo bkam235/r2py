@@ -1,0 +1,230 @@
+{
+ "function": "knit_meta_add",
+ "package": "knitr",
+ "status": "failed",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 29,
+ "n_core": 20,
+ "n_mined": 1,
+ "attempt": 1,
+ "passed": 1,
+ "total": 29,
+ "core_passed": 1,
+ "core_total": 20,
+ "code": "import numpy as np\n\n# The R code refers to .knitEnv, which is a persistent environment in R.\n# In Python, we simulate this using a global object or a class instance.\nclass _KnitEnv:\n    def __init__(self):\n        self.meta = []\n        self.knit_meta_id = []\n\n_knitEnv = _KnitEnv()\n\ndef r_knit_meta_add(meta, label=\"\"):\n    \"\"\"\n    Reproduces knitr::knit_meta_add.\n    Updates the global .knitEnv$meta and its attribute 'knit_meta_id'.\n    \"\"\"\n    # R's length(meta) is 0 for NULL or empty vectors.\n    # Since meta arrives as numpy arrays or lists:\n    meta_len = 0\n    if meta is not None:\n        if isinstance(meta, (list, np.ndarray)):\n            meta_len = len(meta)\n        else:\n            # Scalar value is treated as length 1 in R\n            meta_len = 1\n\n    if meta_len > 0:\n        # Convert meta to a list to append to the persistent store\n        if isinstance(meta, list):\n            meta_to_add = meta\n        elif isinstance(meta, np.ndarray):\n            # Handle NA (NaN) and types for numpy arrays\n            meta_to_add = meta.tolist()\n        else:\n            meta_to_add = [meta]\n        \n        # .knitEnv$meta = c(.knitEnv$meta, meta)\n        _knitEnv.meta.extend(meta_to_add)\n        \n        # attr(.knitEnv$meta, \"knit_meta_id\") = c(meta_id, rep_len(label, length(meta)))\n        # We store the attribute separately in the _knitEnv object\n        _knitEnv.knit_meta_id.extend([label] * meta_len)\n        \n    return _knitEnv.meta\n",
+ "failures": [
+  {
+   "call": "knitr::knit_meta_add(c(\"a\", \"b\"), \"label1\")",
+   "expected": [
+    "a",
+    "b"
+   ],
+   "got": [
+    {
+     "name": "lua_filter2",
+     "knitr": {},
+     "pandoc": {
+      "lua_filters": "example2.lua"
+     },
+     "pre_processor": {},
+     "keep_md": {},
+     "clean_supporting": {},
+     "post_processor": {},
+     "file_scope": {},
+     "on_exit": {}
+    },
+    "a",
+    "b"
+   ],
+   "core": false,
+   "rclass": "list"
+  },
+  {
+   "call": "knitr::knit_meta_add(meta = \"value\", label = \"label2\")",
+   "expected": [
+    "a",
+    "b",
+    "value"
+   ],
+   "got": [
+    {
+     "name": "lua_filter2",
+     "knitr": {},
+     "pandoc": {
+      "lua_filters": "example2.lua"
+     },
+     "pre_processor": {},
+     "keep_md": {},
+     "clean_supporting": {},
+     "post_processor": {},
+     "file_scope": {},
+     "on_exit": {}
+    },
+    "a",
+    "b",
+    "value"
+   ],
+   "core": false,
+   "rclass": "list"
+  },
+  {
+   "call": "knitr::knit_meta_add(matrix(1:4, 2), \"label3\")",
+   "expected": [
+    "a",
+    "b",
+    "value",
+    1,
+    2,
+    3,
+    4
+   ],
+   "got": [
+    {
+     "name": "lua_filter2",
+     "knitr": {},
+     "pandoc": {
+      "lua_filters": "example2.lua"
+     },
+     "pre_processor": {},
+     "keep_md": {},
+     "clean_supporting": {},
+     "post_processor": {},
+     "file_scope": {},
+     "on_exit": {}
+    },
+    "a",
+    "b",
+    "value",
+    [
+     1.0,
+     3.0
+    ],
+    [
+     2.0,
+     4.0
+    ]
+   ],
+   "core": false,
+   "rclass": "list"
+  },
+  {
+   "call": "knitr::knit_meta_add(matrix(1:4, 2), \"label3\")  [first argument: an NA inserted]",
+   "expected": [
+    "a",
+    "b",
+    "value",
+    1,
+    2,
+    3,
+    4,
+    1,
+    null,
+    3,
+    4
+   ],
+   "got": [
+    {
+     "name": "lua_filter2",
+     "knitr": {},
+     "pandoc": {
+      "lua_filters": "example2.lua"
+     },
+     "pre_processor": {},
+     "keep_md": {},
+     "clean_supporting": {},
+     "post_processor": {},
+     "file_scope": {},
+     "on_exit": {}
+    },
+    "a",
+    "b",
+    "value",
+    [
+     1.0,
+     3.0
+    ],
+    [
+     2.0,
+     4.0
+    ],
+    [
+     1.0,
+     3.0
+    ],
+    [
+     null,
+     4.0
+    ]
+   ],
+   "core": false,
+   "rclass": "list"
+  },
+  {
+   "call": "knitr::knit_meta_add(matrix(1:4, 2), \"label3\")  [first argument: a tie]",
+   "expected": [
+    "a",
+    "b",
+    "value",
+    1,
+    2,
+    3,
+    4,
+    1,
+    null,
+    3,
+    4,
+    1,
+    1,
+    3,
+    4
+   ],
+   "got": [
+    {
+     "name": "lua_filter2",
+     "knitr": {},
+     "pandoc": {
+      "lua_filters": "example2.lua"
+     },
+     "pre_processor": {},
+     "keep_md": {},
+     "clean_supporting": {},
+     "post_processor": {},
+     "file_scope": {},
+     "on_exit": {}
+    },
+    "a",
+    "b",
+    "value",
+    [
+     1.0,
+     3.0
+    ],
+    [
+     2.0,
+     4.0
+    ],
+    [
+     1.0,
+     3.0
+    ],
+    [
+     null,
+     4.0
+    ],
+    [
+     1.0,
+     3.0
+    ],
+    [
+     1.0,
+     4.0
+    ]
+   ],
+   "core": false,
+   "rclass": "list"
+  }
+ ],
+ "tag": "agent fix"
+}

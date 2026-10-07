@@ -1,0 +1,13 @@
+{
+ "function": "createTimeSlices",
+ "package": "caret",
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 35,
+ "passed": 35,
+ "total": 35,
+ "code": "import numpy as np\n\ndef r_createTimeSlices(y, initialWindow, horizon=1, fixedWindow=True, skip=0):\n    \"\"\"\n    Python reproduction of caret::createTimeSlices\n    \"\"\"\n    # y is provided as a numpy array.\n    n = len(y)\n    \n    # R's seq(from, to, by)\n    # stops <- seq(initialWindow, (length(y) - horizon), by = skip + 1)\n    # In R, seq handles limits such that if to < from, it returns an empty sequence.\n    start_val = initialWindow\n    end_val = n - horizon\n    step = skip + 1\n    \n    if start_val > end_val:\n        stops = np.array([], dtype=int)\n    else:\n        # Calculate number of elements: floor((to - from)/by) + 1\n        num = int((end_val - start_val) // step) + 1\n        stops = np.arange(start_val, start_val + num * step, step)\n\n    if fixedWindow:\n        # starts <- stops - initialWindow + 1\n        starts = stops - initialWindow + 1\n    else:\n        # starts <- rep(1, length(stops))\n        starts = np.full(len(stops), 1)\n\n    train_dict = {}\n    test_dict = {}\n    \n    for i in range(len(stops)):\n        s_start = int(starts[i])\n        s_stop = int(stops[i])\n        \n        # R: seq(starts, stops) -> 1-based inclusive\n        # Python: range(s_start, s_stop + 1)\n        train_indices = list(range(s_start, s_stop + 1))\n        \n        # R: seq(stops + 1, stops + horizon)\n        test_start = s_stop + 1\n        test_stop = s_stop + horizon\n        test_indices = list(range(test_start, test_stop + 1))\n        \n        # Formatting logic for names\n        # nums <- gsub(\" \", \"0\", format(stops))\n        # In R, format() on a number usually results in a string. \n        # For simple integers, it's just the string representation.\n        num_str = str(s_stop)\n        \n        train_key = f\"Training{num_str}\"\n        test_key = f\"Testing{num_str}\"\n        \n        train_dict[train_key] = train_indices\n        \n        # If horizon is 1, R returns a single value instead of a sequence for the test set\n        # based on the example output provided in the prompt.\n        if horizon == 1:\n            test_dict[test_key] = test_indices[0]\n        else:\n            test_dict[test_key] = test_indices\n\n    return {\"train\": train_dict, \"test\": test_dict}\n",
+ "failures": [],
+ "tag": "failing entity"
+}

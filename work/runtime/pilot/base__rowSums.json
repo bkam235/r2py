@@ -1,0 +1,13 @@
+{
+ "function": "rowSums",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 26,
+ "passed": 26,
+ "total": 26,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_rowSums(x, na_rm=False, dims=1):\n    \"\"\"\n    Python implementation of R's rowSums.\n    \"\"\"\n    # Handle data frames\n    if isinstance(x, pd.DataFrame):\n        # as.matrix(x) in R converts to numeric if possible, \n        # but generally we convert to numpy array.\n        x = x.to_numpy()\n    \n    # Convert to numpy array if not already\n    if not isinstance(x, np.ndarray):\n        x = np.array(x)\n\n    # R check: !is.array(x) || length(dn <- dim(x)) < 2L\n    # In numpy, x.ndim gives the number of dimensions.\n    if x.ndim < 2:\n        raise ValueError(\"'x' must be an array of at least two dimensions\")\n\n    # R check: length(dims) != 1L || dims < 1L || dims > length(dn) - 1L\n    # dims is expected to be an integer.\n    if not isinstance(dims, (int, np.integer)):\n        raise ValueError(\"invalid 'dims'\")\n    \n    dn = x.shape\n    if dims < 1 or dims > len(dn) - 1:\n        raise ValueError(\"invalid 'dims'\")\n\n    # R logic:\n    # p <- prod(dn[-(id <- seq_len(dims))])\n    # dn <- dn[id]\n    # z <- .Internal(rowSums(x, prod(dn), p, na.rm))\n    # Essentially, it sums over all dimensions AFTER the 'dims'-th dimension.\n    \n    # Create a tuple of axes to sum over: from dims (0-indexed) to the end\n    axes_to_sum = tuple(range(dims, len(dn)))\n    \n    if na_rm:\n        # np.nansum treats NaN as 0. If all elements are NaN, it returns 0.\n        # R's rowSums(na.rm=TRUE) returns 0 if all are NA.\n        res = np.nansum(x, axis=axes_to_sum)\n    else:\n        # np.sum returns NaN if any element is NaN, matching R's default.\n        res = np.sum(x, axis=axes_to_sum)\n\n    # Return result as a numpy array.\n    # R's rowSums returns a vector (1D array).\n    return np.asarray(res)\n",
+ "failures": [],
+ "tag": "corpus frequency (base)"
+}

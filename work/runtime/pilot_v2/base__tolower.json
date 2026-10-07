@@ -1,0 +1,44 @@
+{
+ "function": "tolower",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 16,
+ "n_core": 12,
+ "attempt": 1,
+ "passed": 14,
+ "total": 16,
+ "core_passed": 12,
+ "core_total": 12,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_tolower(x):\n    \"\"\"\n    Python implementation of R's tolower function.\n    Converts characters to lowercase.\n    \"\"\"\n    # If x is not character-like (e.g., numeric, logical), \n    # R's as.character(x) conversion is simulated.\n    # In R, tolower handles vectors.\n    \n    if isinstance(x, (list, np.ndarray, pd.Series)):\n        # Convert elements to string, then to lowercase\n        # Handle NaN as NA (which remains NaN or becomes 'nan' depending on implementation)\n        # R's as.character(NA) is \"NA\" (character), but in the context of \n        # tolower, NA character vectors are preserved as NA.\n        res = []\n        for item in x:\n            if pd.isna(item):\n                res.append(np.nan)\n            else:\n                res.append(str(item).lower())\n        return np.array(res, dtype=object)\n    \n    elif pd.isna(x):\n        return np.nan\n    \n    else:\n        # Single value case\n        return str(x).lower()\n",
+ "failures": [
+  {
+   "call": "tolower(matrix(\"TEXT\", 2, 2))",
+   "expected": [
+    [
+     "text",
+     "text"
+    ],
+    [
+     "text",
+     "text"
+    ]
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "tolower(data.frame(v = \"NAME\"))",
+   "expected": "name",
+   "got": "{'v': 'name'}",
+   "core": false,
+   "rclass": "character"
+  }
+ ],
+ "exotic_passed": 2,
+ "exotic_total": 4,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

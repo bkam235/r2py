@@ -1,0 +1,61 @@
+{
+ "function": "dist",
+ "package": null,
+ "status": "failed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 43,
+ "n_core": 43,
+ "attempt": 1,
+ "passed": 35,
+ "total": 43,
+ "core_passed": 35,
+ "core_total": 43,
+ "code": "import numpy as np\nimport pandas as pd\nfrom scipy.spatial.distance import pdist\n\ndef r_dist(x, method=\"euclidean\", diag=False, upper=False, p=2):\n    \"\"\"\n    Reproduce R's dist function.\n    \"\"\"\n    # Handle pmatch-like behavior for method\n    methods = [\"euclidean\", \"maximum\", \"manhattan\", \"canberra\", \"binary\", \"minkowski\"]\n    \n    if method == \"euclidian\":\n        method = \"euclidean\"\n        \n    if method not in methods:\n        match = [m for m in methods if m.startswith(method)]\n        if len(match) == 1:\n            method = match[0]\n        elif len(match) > 1:\n            raise ValueError(\"ambiguous distance method\")\n        else:\n            raise ValueError(\"invalid distance method\")\n\n    # Convert x to numpy array\n    if isinstance(x, pd.DataFrame):\n        x_mat = x.values\n    else:\n        x_mat = np.asanyarray(x)\n\n    # R's as.matrix behavior for scalars or 1D\n    if x_mat.ndim == 0:\n        # If x is a single value, R's matrix(x) creates a 1x1 matrix.\n        # dist(matrix(1)) returns an empty dist object.\n        x_mat = x_mat.reshape(1, 1)\n    elif x_mat.ndim == 1:\n        x_mat = x_mat.reshape(-1, 1)\n\n    # Handle NAs: R's dist() ignores NAs in the sense that it calculates \n    # distances normally, but any pair containing NaN results in NaN.\n    # Wait, the test cases suggest a different behavior:\n    # dist(matrix(1:9, 3, 3)) with an NA inserted -> [1.73, 3.46, 1.73]\n    # This implies R's dist() ignores the NA column/row during the calculation\n    # or the specific NA insertion in the test case is actually replacing a \n    # value that doesn't affect the result or the test is using 'na.rm' logic internally.\n    # Actually, R's dist() does NOT have an na.rm parameter. \n    # However, if the input is a matrix, the C code handles it.\n    # Let's re-examine: R's dist(matrix(1:9, 3, 3)) is:\n    # [1 2 3]\n    # [4 5 6]\n    # [7 8 9]\n    # dist(1,2) = sqrt(3^2 + 3^2 + 3^2) = sqrt(27) = 5.196\n    # Wait, the example output in the prompt says: dist(matrix(1:9, 3, 3)) -> 1.732051\n    # That's sqrt((1-2)^2 + (4-5)^2 + (7-8)^2) = sqrt(3) = 1.732051.\n    # This means R's matrix(1:9, 3, 3) fills by COLUMN.\n    \n    # R matrix(1:9, 3, 3) is:\n    # 1 4 7\n    # 2 5 8\n    # 3 6 9\n    # Row 1: [1, 4, 7], Row 2: [2, 5, 8], Row 3: [3, 6, 9]\n    # dist(Row1, Row2) = sqrt(1^2 + 1^2 + 1^2) = 1.732051\n    \n    # If an NA is inserted, and R returns the same value, it means R is\n    # ignoring the NAs in the distance calculation (omitting them).\n    # scipy.spatial.distance.pdist doesn't omit NAs.\n    # We must implement a manual distance calculation that omits NAs.\n\n    def nan_dist(u, v, m):\n        mask = ~np.isnan(u) & ~np.isnan(v)\n        if not np.any(mask):\n            return np.nan\n        \n        u_m = u[mask]\n        v_m = v[mask]\n        \n        if m == \"euclidean\":\n            return np.sqrt(np.sum((u_m - v_m)**2))\n        elif m == \"maximum\":\n            return np.max(np.abs(u_m - v_m))\n        elif m == \"manhattan\":\n            return np.sum(np.abs(u_m - v_m))\n        elif m == \"canberra\":\n            denom = np.abs(u_m) + np.abs(v_m)\n            # R's canberra: sum(|u-v| / (|u|+|v|))\n            # Handle division by zero (0/0 = 0)\n            term = np.divide(np.abs(u_m - v_m), denom, out=np.zeros_like(u_m), where=denom!=0)\n            return np.sum(term)\n        elif m == \"binary\":\n            # R's binary: count of elements that differ (ignoring NAs)\n            # Binary distance treats non-zero as 1 and zero as 0\n            u_b = (u_m != 0).astype(int)\n            v_b = (v_m != 0).astype(int)\n            return np.sum(u_b != v_b)\n        elif m == \"minkowski\":\n            return np.sum(np.abs(u_m - v_m)**p)**(1/p)\n        return np.nan\n\n    n_rows = x_mat.shape[0]\n    if n_rows < 2:\n        return np.array([], dtype=float)\n\n    res = []\n    for i in range(n_rows):\n        for j in range(i + 1, n_rows):\n            res.append(nan_dist(x_mat[i], x_mat[j], method))\n            \n    return np.array(res)\n",
+ "failures": [
+  {
+   "call": "dist(matrix(1:9, 3, 3))  [first argument: an NA inserted]",
+   "expected": [
+    1.73205080756888,
+    3.46410161513775,
+    1.73205080756888
+   ],
+   "got": [
+    1.4142135623730951,
+    3.4641016151377544,
+    1.4142135623730951
+   ],
+   "core": true,
+   "rclass": "dist"
+  },
+  {
+   "call": "dist(x = matrix(1:4, 2, 2), method = \"manhattan\")  [first argument: an NA inserted]",
+   "expected": 2,
+   "got": 1.0,
+   "core": true,
+   "rclass": "dist"
+  },
+  {
+   "call": "dist(matrix(c(1, 2, 3, 4), 2, 2), diag = TRUE)  [first argument: an NA inserted]",
+   "expected": 1.4142135623731,
+   "got": 1.0,
+   "core": true,
+   "rclass": "dist"
+  },
+  {
+   "call": "dist(matrix(c(1, NA, 3, 4), 2, 2))",
+   "expected": 1.4142135623731,
+   "got": 1.0,
+   "core": true,
+   "rclass": "dist"
+  },
+  {
+   "call": "dist(matrix(c(1, NA, 3, 4), 2, 2))  [first argument: an NA inserted]",
+   "expected": 1.4142135623731,
+   "got": 1.0,
+   "core": true,
+   "rclass": "dist"
+  }
+ ],
+ "tag": "corpus frequency (stats)"
+}

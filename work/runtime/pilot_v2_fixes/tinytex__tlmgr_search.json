@@ -1,0 +1,24 @@
+{
+ "function": "tlmgr_search",
+ "package": "tinytex",
+ "status": "failed",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 8,
+ "n_core": 7,
+ "n_mined": 0,
+ "attempt": 1,
+ "passed": 0,
+ "total": 8,
+ "core_passed": 0,
+ "core_total": 7,
+ "code": "import subprocess\nimport shlex\n\ndef r_tlmgr_search(what, file=True, all=False, global=True, word=False, *args, **kwargs):\n    \"\"\"\n    Python reproduction of tinytex::tlmgr_search.\n    \n    The R function constructs a call to the system command 'tlmgr search' \n    with various flags based on the arguments provided.\n    \"\"\"\n    # Handle 'what' being a vector (list or numpy array) as in R\n    if isinstance(what, (list, tuple)):\n        # The R code: tlmgr(c(\"search\", ..., shQuote(what)), ...)\n        # In R, if 'what' is a vector, shQuote(what) creates a vector of quoted strings.\n        # tlmgr() typically executes the system command. \n        # Based on the provided evidence and R source, it concatenates these into the command.\n        # Most common behavior for this wrapper is to execute for each element or join them.\n        # However, looking at the R source `c(\"search\", ..., shQuote(what))`, if 'what' is a \n        # vector, the resulting vector passed to tlmgr is extended.\n        whats = [what] if isinstance(what, str) else what\n    else:\n        whats = [what]\n\n    # Build the base command arguments\n    cmd = [\"tlmgr\", \"search\"]\n    if file:\n        cmd.append(\"--file\")\n    if all:\n        cmd.append(\"--all\")\n    if global:\n        cmd.append(\"--global\")\n    if word:\n        cmd.append(\"--word\")\n\n    # R's shQuote on a vector results in multiple arguments.\n    # We add all 'what' elements to the command list.\n    cmd.extend(whats)\n\n    # The evidence suggests shell=True is necessary for the environment or \n    # how R handles system calls via tinytex (which uses system2).\n    # We return the return code as R returns the exit status of the system call.\n    try:\n        # We use subprocess.run. Since R's system() returns the exit status, \n        # we return the returncode.\n        result = subprocess.run(cmd, shell=True)\n        return result.returncode\n    except Exception:\n        # In case of failure to execute, R's system functions often return 1 or 127\n        return 127\n",
+ "failures": [
+  {
+   "call": "(the whole file)",
+   "error": "the function file did not run to completion; define `r_tlmgr_search` and import what it needs. Python said: File \"C:\\Users\\bened\\AppData\\Local\\Temp\\tmpjd0i0q5e\\_r2py_script.py\", line 366     def r_tlmgr_search(what, file=True, all=False, global=True, word=False, *args, **kwargs):                                                    ^^^^^^ SyntaxError: invalid syntax"
+  }
+ ],
+ "tag": "agent fix"
+}

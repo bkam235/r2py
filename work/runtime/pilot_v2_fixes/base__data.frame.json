@@ -1,0 +1,94 @@
+{
+ "function": "data.frame",
+ "package": null,
+ "status": "failed",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 34,
+ "n_core": 15,
+ "n_mined": 1,
+ "attempt": 2,
+ "passed": 28,
+ "total": 34,
+ "core_passed": 14,
+ "core_total": 15,
+ "code": "import numpy as np\nimport pandas as pd\nimport warnings\n\ndef r_data_frame(*args, **kwargs):\n    \"\"\"\n    Python reproduction of R's data.frame function.\n    \"\"\"\n    row_names = kwargs.pop('row_names', None)\n    check_rows = kwargs.pop('check_rows', False)\n    check_names = kwargs.pop('check_names', True)\n    fix_empty_names = kwargs.pop('fix_empty_names', True)\n    strings_as_factors = kwargs.pop('stringsAsFactors', False)\n\n    # Handle the case where no data arguments are provided\n    if not args and not kwargs:\n        if row_names is not None:\n            # Basic R validation for row.names\n            rn = np.array(row_names, dtype=object)\n            if np.any(pd.isna(rn)):\n                raise ValueError(\"row names contain missing values\")\n            if len(rn) != len(np.unique(rn)):\n                raise ValueError(f\"duplicate row.names: {', '.join(map(str, np.unique(rn[np.unique(rn, return_counts=True)[1] > 1])))}\")\n            return pd.DataFrame(index=rn.tolist())\n        else:\n            return pd.DataFrame()\n\n    # Combine positional and keyword arguments\n    # In R, data.frame(a=1, b=2) is like a list of named arguments\n    data_dict = {}\n    \n    # Process positional args (which may be named in the R call but are passed as *args here if not captured by kwargs)\n    # However, in the provided R source, ... is the primary input.\n    # We simulate the R data.frame behavior by collecting all inputs.\n    \n    # Extract names for the inputs\n    inputs = []\n    input_names = []\n    \n    # In Python, if they are passed as kwargs, they are named. \n    # If passed as *args, they are unnamed unless we have a way to know.\n    # R's `...` captures both.\n    \n    # Since we cannot get the exact expression names from Python's *args, \n    # we follow pandas' logic which is close to R's.\n    \n    # Gather all data\n    all_data = {}\n    \n    # Handle *args (unnamed)\n    for i, val in enumerate(args):\n        name = f\"V{i+1}\" # Default R-like name if missing\n        all_data[name] = val\n        \n    # Handle **kwargs (named)\n    for name, val in kwargs.items():\n        all_data[name] = val\n\n    # R's data.frame is essentially a list of vectors.\n    # We need to handle recycling (the \"differing number of rows\" error)\n    \n    processed_cols = {}\n    max_len = 0\n    \n    # First pass: determine lengths and convert to arrays\n    for name, val in all_data.items():\n        # Convert to numpy array to handle R-like vectorization\n        if isinstance(val, (list, np.ndarray, pd.Series)):\n            arr = np.array(val, dtype=object)\n        elif np.isscalar(val):\n            arr = np.array([val], dtype=object)\n        else:\n            # Handle other types (like DataFrames passed into data.frame)\n            if isinstance(val, pd.DataFrame):\n                # If a DataFrame is passed, its columns are expanded\n                # This is a complex part of R's data.frame\n                for col in val.columns:\n                    processed_cols[f\"{name}.{col}\" if name != \"V1\" else col] = val[col].values\n                continue\n            arr = np.array([val], dtype=object)\n        \n        processed_cols[name] = arr\n        max_len = max(max_len, len(arr))\n\n    # Second pass: Recycling and validation\n    final_data = {}\n    for name, arr in processed_cols.items():\n        n = len(arr)\n        if n == 0:\n            # R handles 0-length vectors by creating an empty df\n            # but if other columns have length, this is usually an error or 0-row df\n            final_data[name] = np.array([], dtype=object)\n            continue\n            \n        if n != max_len:\n            if max_len % n == 0:\n                # Recycle\n                final_data[name] = np.tile(arr, max_len // n)\n            else:\n                raise ValueError(f\"arguments imply differing number of rows: {n}, {max_len}\")\n        else:\n            final_data[name] = arr\n\n    # Construct DataFrame\n    df = pd.DataFrame(final_data)\n\n    # Handle row.names\n    if row_names is not None:\n        # If row_names is a single value and max_len > 1, R checks if it's a column name\n        if np.isscalar(row_names) or (isinstance(row_names, (list, np.ndarray)) and len(row_names) == 1):\n            rn_val = row_names[0] if isinstance(row_names, (list, np.ndarray)) else row_names\n            if rn_val in df.columns:\n                df.index = df[rn_val].values\n                df = df.drop(columns=[rn_val])\n            else:\n                # In R, if it's not a column, it's treated as a literal name for the first row\n                # but usually it's an error if length doesn't match.\n                if max_len != 1:\n                    # This is a simplification of R's logic\n                    pass \n        else:\n            rn = np.array(row_names, dtype=object)\n            if len(rn) != max_len:\n                raise ValueError(\"row names supplied are of the wrong length\")\n            if np.any(pd.isna(rn)):\n                raise ValueError(\"row names contain missing values\")\n            if len(rn) != len(np.unique(rn)):\n                raise ValueError(\"duplicate row.names\")\n            df.index = rn\n\n    # Handle check_names / make.names\n    if check_names:\n        # pandas doesn't have a direct 'make.names', so we approximate \n        # by ensuring names are strings and unique (pandas does uniqueness automatically)\n        df.columns = [str(c) for c in df.columns]\n    \n    # Reset index if it's default (R's 1-based vs Python's 0-based is handled by the harness)\n    # But the return must be the DataFrame object.\n    \n    return df\n",
+ "failures": [
+  {
+   "call": "data.frame(val = 1:3, check.names = FALSE)  [first argument: a single value]",
+   "expected": {
+    "val": 1
+   },
+   "got": {
+    "val": [
+     1
+    ]
+   },
+   "core": false,
+   "rclass": "data.frame"
+  },
+  {
+   "call": "data.frame(single = 100)",
+   "expected": {
+    "single": 100
+   },
+   "got": {
+    "single": [
+     100
+    ]
+   },
+   "core": true,
+   "rclass": "data.frame"
+  },
+  {
+   "call": "data.frame(matrix(1:4, 2, 2), row.names = c(\"R1\", \"R2\"))",
+   "expected": {
+    "X1": [
+     1,
+     2
+    ],
+    "X2": [
+     3,
+     4
+    ]
+   },
+   "error": "ValueError: Per-column arrays must each be 1-dimensional",
+   "core": false,
+   "rclass": "data.frame"
+  },
+  {
+   "call": "data.frame(matrix(1:4, 2, 2), row.names = c(\"R1\", \"R2\"))  [first argument: an NA inserted]",
+   "expected": {
+    "X1": [
+     1,
+     null
+    ],
+    "X2": [
+     3,
+     4
+    ]
+   },
+   "error": "ValueError: Per-column arrays must each be 1-dimensional",
+   "core": false,
+   "rclass": "data.frame"
+  },
+  {
+   "call": "data.frame(matrix(1:4, 2, 2), row.names = c(\"R1\", \"R2\"))  [first argument: a tie]",
+   "expected": {
+    "X1": [
+     1,
+     1
+    ],
+    "X2": [
+     3,
+     4
+    ]
+   },
+   "error": "ValueError: Per-column arrays must each be 1-dimensional",
+   "core": false,
+   "rclass": "data.frame"
+  }
+ ],
+ "tag": "agent fix"
+}

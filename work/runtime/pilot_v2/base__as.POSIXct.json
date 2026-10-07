@@ -1,0 +1,85 @@
+{
+ "function": "as.POSIXct",
+ "package": null,
+ "status": "failed",
+ "rounds": 5,
+ "n_calls": 8,
+ "n_cases": 17,
+ "n_core": 10,
+ "attempt": 2,
+ "passed": 9,
+ "total": 17,
+ "core_passed": 9,
+ "core_total": 10,
+ "code": "import numpy as np\nimport pandas as pd\nfrom datetime import datetime\nimport pytz\n\ndef r_as_POSIXct(x, tz=\"\", *args, **kwargs):\n    \"\"\"\n    Python reproduction of R's as.POSIXct.\n    \"\"\"\n    # Handle case where x is already a POSIXct-like object\n    if isinstance(x, (pd.Timestamp, pd.DatetimeIndex)):\n        if tz == \"\":\n            return x\n        if isinstance(x, pd.Timestamp):\n            return x.tz_localize(None).tz_localize(tz) if x.tz is None else x.tz_convert(tz)\n        return x.tz_localize(None).tz_localize(tz) if x.tz is None else x.tz_convert(tz)\n\n    if x is None:\n        return np.array([], dtype='datetime64[ns]')\n\n    # Handle logical/numeric NAs\n    if isinstance(x, np.ndarray) and np.issubdtype(x.dtype, np.bool_):\n        if np.all(pd.isna(x)):\n            return pd.to_datetime(x.astype(float), unit='s')\n\n    # Detect scalar versus sequence\n    is_scalar = isinstance(x, (str, int, float, np.integer, np.floating))\n    \n    if is_scalar:\n        x_input = [x]\n    elif isinstance(x, (list, np.ndarray, pd.Series)):\n        x_input = x\n    else:\n        try:\n            x_input = list(x)\n        except TypeError:\n            x_input = [x]\n            is_scalar = True\n\n    # R's as.POSIXct behavior for numeric types:\n    # If numeric, it's treated as seconds since 1970-01-01.\n    # We must check if the input is numeric before using pd.to_datetime strings.\n    input_is_numeric = False\n    if isinstance(x_input, (list, np.ndarray, pd.Series)):\n        # Check if the first non-NaN element is numeric\n        flat_x = np.array(x_input, dtype=object)\n        non_na = flat_x[~pd.isna(flat_x)]\n        if len(non_na) > 0 and isinstance(non_na[0], (int, float, np.integer, np.floating)):\n            input_is_numeric = True\n    elif isinstance(x_input, (int, float, np.integer, np.floating)):\n        input_is_numeric = True\n\n    if input_is_numeric:\n        # R's numeric conversion to POSIXct is seconds since epoch\n        s = pd.to_datetime(np.array(x_input, dtype=float), unit='s')\n    else:\n        # String/Factor conversion\n        # R's as.POSIXct calls as.POSIXlt which handles timezone\n        s = pd.to_datetime(x_input, errors='coerce')\n        if tz != \"\":\n            # If tz is provided and we have strings, we localize them\n            # Note: pd.to_datetime often assumes UTC or naive. \n            # R interprets the string as being in that tz.\n            if isinstance(s, pd.DatetimeIndex):\n                s = s.tz_localize(tz, ambiguous='infer').tz_convert(None)\n            else:\n                s = s.tz_localize(tz, ambiguous='infer').tz_convert(None)\n\n    # Final output formatting to match R's POSIXct (which the harness sees as a list of timestamps/nulls)\n    if is_scalar:\n        res = s[0] if isinstance(s, pd.DatetimeIndex) else s\n        return res if pd.notna(res) else None\n    \n    if isinstance(s, pd.DatetimeIndex):\n        # Return a numpy array of objects where NaT is converted to None to match \"null\" in harness\n        out = s.to_numpy(dtype=object)\n        mask = pd.isna(out)\n        out[mask] = None\n        return out\n    \n    return np.array([s], dtype=object)\n",
+ "failures": [
+  {
+   "call": "as.POSIXct(\"2023-01-01\", tz = \"America/New_York\")",
+   "expected": "2023-01-01T00:00:00",
+   "got": "2023-01-01T05:00:00",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "as.POSIXct(c(-100000, 0, 100000), origin = \"1970-01-01\")",
+   "expected": [
+    "1969-12-30T21:13:20",
+    "1970-01-01T01:00:00",
+    "1970-01-02T04:46:40"
+   ],
+   "got": [
+    "1969-12-30T20:13:20",
+    "1970-01-01T00:00:00",
+    "1970-01-02T03:46:40"
+   ],
+   "core": false,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "as.POSIXct(c(-100000, 0, 100000), origin = \"1970-01-01\")  [first argument: an NA inserted]",
+   "expected": [
+    "1969-12-30T21:13:20",
+    null,
+    "1970-01-02T04:46:40"
+   ],
+   "got": [
+    "1969-12-30T20:13:20",
+    null,
+    "1970-01-02T03:46:40"
+   ],
+   "core": false,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "as.POSIXct(c(-100000, 0, 100000), origin = \"1970-01-01\")  [first argument: a tie]",
+   "expected": [
+    "1969-12-30T21:13:20",
+    "1969-12-30T21:13:20",
+    "1970-01-02T04:46:40"
+   ],
+   "got": [
+    "1969-12-30T20:13:20",
+    "1969-12-30T20:13:20",
+    "1970-01-02T03:46:40"
+   ],
+   "core": false,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "as.POSIXct(c(-100000, 0, 100000), origin = \"1970-01-01\")  [first argument: scaled]",
+   "expected": [
+    "1969-12-23T14:13:18",
+    "1970-01-01T00:59:58",
+    "1970-01-09T11:46:38"
+   ],
+   "got": [
+    "1969-12-23T13:13:18",
+    "1969-12-31T23:59:58",
+    "1970-01-09T10:46:38"
+   ],
+   "core": false,
+   "rclass": "POSIXct"
+  }
+ ],
+ "tag": "corpus frequency (base)"
+}

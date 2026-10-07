@@ -1,0 +1,13 @@
+{
+ "function": "rowMeans",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 22,
+ "passed": 22,
+ "total": 22,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_rowMeans(x, na_rm=False, dims=1):\n    \"\"\"\n    Python implementation of R's rowMeans.\n    \"\"\"\n    # If x is a data frame, convert to numpy array (like as.matrix in R)\n    if isinstance(x, pd.DataFrame):\n        x_arr = x.to_numpy()\n    elif isinstance(x, np.ndarray):\n        x_arr = x\n    else:\n        # Fallback for other array-like inputs\n        x_arr = np.asanyarray(x)\n\n    # Validate dimensions\n    if x_arr.ndim < 2:\n        raise ValueError(\"'x' must be an array of at least two dimensions\")\n\n    # R's dims parameter specifies how many leading dimensions to keep.\n    # For rowMeans, usually dims=1.\n    if not isinstance(dims, (int, np.integer)) or dims < 1 or dims > x_arr.ndim - 1:\n        raise ValueError(\"invalid 'dims'\")\n\n    # Calculate means along the axes starting from index 'dims' to the end.\n    # R's rowMeans(x, dims=1) computes mean over columns for each row.\n    # If dims=2, it computes mean over all dimensions after the 2nd.\n    axes_to_reduce = tuple(range(dims, x_arr.ndim))\n    \n    if na_rm:\n        # nanmean ignores NaNs\n        res = np.nanmean(x_arr, axis=axes_to_reduce)\n    else:\n        # In R, if any value is NA and na.rm=FALSE, the result is NA\n        # np.mean handles NaNs by returning NaN, which matches R's behavior.\n        res = np.mean(x_arr, axis=axes_to_reduce)\n\n    # The output of np.mean on an ndarray is a numpy array.\n    # R returns a vector if the result is 1D, or an array if higher dim.\n    # Since we are reducing from index 'dims' onwards, the result has shape x_arr.shape[:dims].\n    \n    # Handle result shape and type to match R's behavior\n    # R's rowMeans typically returns a numeric vector.\n    if res.ndim == 1:\n        return res\n    else:\n        return res\n",
+ "failures": [],
+ "tag": "corpus frequency (base)"
+}

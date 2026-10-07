@@ -1,0 +1,19 @@
+{
+ "function": "sprintf",
+ "package": null,
+ "status": "passed",
+ "rounds": 3,
+ "n_calls": 8,
+ "n_cases": 8,
+ "n_core": 8,
+ "attempt": 1,
+ "passed": 8,
+ "total": 8,
+ "core_passed": 8,
+ "core_total": 8,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_sprintf(fmt=None, *args, **kwargs):\n    \"\"\"\n    Reproduces R's sprintf function.\n    R's sprintf handles vectorization of arguments by recycling them.\n    NA in R's sprintf is converted to the string \"NA\".\n    \"\"\"\n    # Python's function signature (fmt=None, *args) causes a TypeError \n    # if the user passes both a positional argument (which goes to fmt) \n    # and a keyword argument for fmt. However, R's sprintf allows \n    # calling it as sprintf(\"fmt\", arg) or sprintf(fmt=\"fmt\", arg).\n    # To avoid \"multiple values for argument 'fmt'\", we handle \n    # positional vs keyword separately.\n    \n    # Because of the way Python handles arguments, if the user calls \n    # r_sprintf(\"Hello %s\", \"World\"), \"Hello %s\" is fmt and \"World\" is in args.\n    # If the user calls r_sprintf(fmt=\"Hello %s\", \"World\"), this is a SyntaxError \n    # in Python (positional args cannot follow keyword args).\n    # If they call r_sprintf(fmt=\"Hello %s\", width=10), \"Hello %s\" is fmt and \n    # width=10 is in kwargs.\n    \n    # The error \"multiple values for argument 'fmt'\" happens if the test \n    # harness is calling the function in a way that conflicts with the signature.\n    # Let's use a more flexible signature.\n    pass\n\ndef r_sprintf(*args, **kwargs):\n    # Map the first argument to fmt, whether it was positional or keyword\n    if 'fmt' in kwargs:\n        fmt = kwargs.pop('fmt')\n        # Positionals are the ... part\n        pos_args = list(args)\n    else:\n        if not args:\n            return \"\"\n        fmt = args[0]\n        pos_args = list(args[1:])\n\n    # R's ... collects all positional arguments and then any named ones\n    # based on the example: sprintf(\"%s %s\", letters[1:2], width = 10)\n    # 'width' becomes an argument in the ... sequence.\n    all_args = pos_args + list(kwargs.values())\n\n    if not all_args:\n        return fmt\n\n    # Convert args to numpy arrays for easy handling of lengths and NAs\n    processed_args = []\n    for arg in all_args:\n        if isinstance(arg, (list, np.ndarray, pd.Series)):\n            arr = np.array(arg, dtype=object)\n        else:\n            arr = np.array([arg], dtype=object)\n        \n        def is_na(x):\n            try:\n                return x is None or (isinstance(x, (float, np.floating)) and np.isnan(x))\n            except:\n                return False\n        \n        mask = np.array([is_na(x) for x in arr])\n        arr[mask] = \"NA\"\n        processed_args.append(arr)\n\n    # Determine the length of the output vector (R recycling)\n    max_len = max(len(a) for a in processed_args)\n    \n    final_args = []\n    for a in processed_args:\n        repeated = np.resize(a, max_len)\n        final_args.append(repeated)\n\n    zipped_args = zip(*final_args)\n    \n    results = []\n    for args_tuple in zipped_args:\n        try:\n            # Python's % operator\n            res = fmt % args_tuple\n            results.append(res)\n        except TypeError:\n            # Handle cases where types don't match % specifier (e.g. %d with string)\n            # R is more lenient or handles internal casting.\n            results.append(fmt % tuple(str(x) for x in args_tuple))\n\n    if len(results) == 1:\n        return results[0]\n    else:\n        return results\n",
+ "failures": [],
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "corpus frequency (base)"
+}

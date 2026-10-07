@@ -1,0 +1,89 @@
+{
+ "function": "local",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 13,
+ "n_core": 5,
+ "attempt": 1,
+ "passed": 9,
+ "total": 13,
+ "core_passed": 5,
+ "core_total": 5,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_local(expr, envir=None):\n    \"\"\"\n    Reproduces R's local() function.\n    In R, local({expr}, envir) evaluates expr in a new environment \n    that inherits from envir.\n    \n    Since this is a Python reproduction and 'expr' in the R examples \n    are blocks of code returning values, we interpret the Python 'expr' \n    as a callable or a piece of logic to be executed. \n    However, based on the provided examples, the 'expr' passed to local() \n    is effectively the code being executed, and it returns the value of the \n    last expression.\n    \"\"\"\n    # In R, local creates a new environment. \n    # In Python, we simulate this by executing the expression.\n    # If expr is passed as a function (simulating the block { ... }), we call it.\n    # If it's a value, we return it.\n    \n    # The provided R examples show blocks like {print(1)}.\n    # In a Python harness simulating R, these blocks are typically \n    # passed as functions or lambdas.\n    \n    if callable(expr):\n        # R's local returns the value of the last expression in the block.\n        # The examples show print() being used, but in R print() returns the object.\n        return expr()\n    else:\n        return expr\n",
+ "failures": [
+  {
+   "call": "local({print(matrix(1:4, 2))})",
+   "expected": [
+    [
+     1,
+     3
+    ],
+    [
+     2,
+     4
+    ]
+   ],
+   "error": "TypeError: R returns class 'matrix': return the natural Python object for it (numpy 2-d array), not a serialised form such as a string; got list",
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "local({print(matrix(1:4, 2))})  [first argument: an NA inserted]",
+   "expected": [
+    [
+     1,
+     3
+    ],
+    [
+     null,
+     4
+    ]
+   ],
+   "error": "TypeError: R returns class 'matrix': return the natural Python object for it (numpy 2-d array), not a serialised form such as a string; got list",
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "local({print(matrix(1:4, 2))})  [first argument: a tie]",
+   "expected": [
+    [
+     1,
+     3
+    ],
+    [
+     1,
+     4
+    ]
+   ],
+   "error": "TypeError: R returns class 'matrix': return the natural Python object for it (numpy 2-d array), not a serialised form such as a string; got list",
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "local({print(matrix(1:4, 2))})  [first argument: scaled]",
+   "expected": [
+    [
+     6.2,
+     20.8
+    ],
+    [
+     13.5,
+     28.1
+    ]
+   ],
+   "error": "TypeError: R returns class 'matrix': return the natural Python object for it (numpy 2-d array), not a serialised form such as a string; got list",
+   "core": false,
+   "rclass": "matrix"
+  }
+ ],
+ "exotic_passed": 4,
+ "exotic_total": 8,
+ "tag": "corpus frequency (base)",
+ "impure": [
+  "substitute",
+  "eval",
+  "quote"
+ ]
+}

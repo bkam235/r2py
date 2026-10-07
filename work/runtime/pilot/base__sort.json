@@ -1,0 +1,13 @@
+{
+ "function": "sort",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 43,
+ "passed": 43,
+ "total": 43,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_sort(x, decreasing=False, na_last=float('nan'), **kwargs):\n    \"\"\"\n    Python implementation of R's sort() function.\n    \n    R's sort() function removes NAs by default. \n    If na.last is provided as TRUE or FALSE, NAs are kept and placed \n    accordingly. If na.last is NA (default), NAs are removed.\n    \"\"\"\n    x = np.asanyarray(x)\n    \n    mask = np.isnan(x)\n    non_nas = x[~mask]\n    nas = x[mask]\n    \n    # Sort the non-NA values\n    sorted_non_nas = np.sort(non_nas)\n    if decreasing:\n        sorted_non_nas = sorted_non_nas[::-1]\n        \n    # Handle NA placement based on na_last\n    # In R, sort(x) defaults to na.last = NA, which removes NAs.\n    # If na.last is True, NAs are at the end.\n    # If na.last is False, NAs are at the beginning.\n    \n    if np.isnan(na_last) if isinstance(na_last, (float, np.float64)) else na_last is None:\n        # R's default behavior: na.last = NA means remove NAs\n        return sorted_non_nas\n    elif na_last is True:\n        return np.concatenate([sorted_non_nas, nas])\n    elif na_last is False:\n        return np.concatenate([nas, sorted_non_nas])\n    else:\n        # Fallback for cases where na_last might be passed as something else \n        # that evaluates to the default NA state.\n        return sorted_non_nas\n",
+ "failures": [],
+ "tag": "corpus frequency (base)"
+}

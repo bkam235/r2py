@@ -1,0 +1,54 @@
+{
+ "function": "sort",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 40,
+ "n_core": 37,
+ "attempt": 1,
+ "passed": 37,
+ "total": 40,
+ "core_passed": 37,
+ "core_total": 37,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_sort(x, decreasing=False, na_last=float('nan'), *args, **kwargs):\n    \"\"\"\n    Python implementation of R's sort function.\n    R's sort() by default removes NAs from the result vector unless specifically\n    handled via order() in the object case, but for atomic vectors (sort.int),\n    the default behavior of sort() is to actually remove NAs.\n    \n    Looking at R's documentation for sort(): \n    \"missing values are removed by default\".\n    \"\"\"\n    # Convert input to numpy array\n    if isinstance(x, (list, np.ndarray, pd.Series)):\n        x_arr = np.array(x)\n    else:\n        x_arr = np.array([x])\n\n    # Handle NA removal: R's sort() removes NAs by default.\n    # The only time NaNs are kept is if they are handled by the logic \n    # of a custom object or specific sorting methods, but for the standard\n    # sort(c(3, 1, 2, NA)) the result is [1, 2, 3].\n    \n    mask_nan = np.isnan(x_arr)\n    non_nan_vals = x_arr[~mask_nan]\n\n    # Sort non-NaN values\n    sorted_vals = np.sort(non_nan_vals)\n    if decreasing:\n        sorted_vals = sorted_vals[::-1]\n\n    # In R, if na.last is NA (default), NAs are removed.\n    # If na.last is TRUE, NAs are placed last.\n    # If na.last is FALSE, NAs are placed first.\n    \n    # Check if na_last is R's NA (NaN in Python)\n    is_na_last_nan = False\n    if isinstance(na_last, (float, np.floating)) and np.isnan(na_last):\n        is_na_last_nan = True\n\n    if is_na_last_nan:\n        # Default R behavior: remove NAs\n        return sorted_vals\n    \n    # Handle cases where na_last is explicitly TRUE or FALSE\n    nan_count = np.sum(mask_nan)\n    if nan_count == 0:\n        return sorted_vals\n\n    put_last = True\n    if na_last is False:\n        put_last = False\n    elif na_last is True:\n        put_last = True\n    else:\n        # Fallback for other types\n        put_last = True\n\n    if put_last:\n        result = np.concatenate([sorted_vals, np.full(nan_count, np.nan)])\n    else:\n        result = np.concatenate([np.full(nan_count, np.nan), sorted_vals])\n\n    return result\n",
+ "failures": [
+  {
+   "call": "sort(letters[1:5], decreasing = TRUE)",
+   "expected": [
+    "e",
+    "d",
+    "c",
+    "b",
+    "a"
+   ],
+   "error": "TypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''",
+   "core": false,
+   "rclass": "character"
+  },
+  {
+   "call": "sort(letters[1:5], decreasing = TRUE)  [first argument: reversed]",
+   "expected": [
+    "e",
+    "d",
+    "c",
+    "b",
+    "a"
+   ],
+   "error": "TypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''",
+   "core": false,
+   "rclass": "character"
+  },
+  {
+   "call": "sort(letters[1:5], decreasing = TRUE)  [first argument: a single value]",
+   "expected": "a",
+   "error": "TypeError: ufunc 'isnan' not supported for the input types, and the inputs could not be safely coerced to any supported types according to the casting rule ''safe''",
+   "core": false,
+   "rclass": "character"
+  }
+ ],
+ "exotic_passed": 0,
+ "exotic_total": 3,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

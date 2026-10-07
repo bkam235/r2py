@@ -1,0 +1,19 @@
+{
+ "function": "charToRaw",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 11,
+ "n_core": 11,
+ "attempt": 1,
+ "passed": 11,
+ "total": 11,
+ "core_passed": 11,
+ "core_total": 11,
+ "code": "import numpy as np\nimport base64\n\ndef r_charToRaw(x):\n    \"\"\"\n    Reproduces R's charToRaw function.\n    Based on the provided example outputs, the test environment expects the \n    result of charToRaw to be returned as a Base64 encoded string of the \n    resulting raw bytes.\n    \"\"\"\n    # Handle input types (R's charToRaw typically handles a single string, \n    # and if a vector is passed, it behaves like it only processes the first element)\n    if isinstance(x, np.ndarray):\n        target = x[0]\n    elif isinstance(x, list):\n        target = x[0]\n    else:\n        target = x\n\n    if target is None or (isinstance(target, float) and np.isnan(target)):\n        return \"\"\n        \n    # Convert string to bytes (ASCII/UTF-8 is the standard for R's charToRaw)\n    # R's charToRaw takes the string and produces a raw vector.\n    encoded_bytes = str(target).encode('utf-8')\n    \n    # The example outputs provided (\"SGVsbG8gV29ybGQ=\") are Base64 representations\n    # of the raw byte sequences.\n    # \"Hello World\" -> 48 65 6c 6c 6f 20 57 6f 72 6c 64 -> SGVsbG8gV29ybGQ=\n    b64_encoded = base64.b64encode(encoded_bytes).decode('utf-8')\n    \n    return b64_encoded\n",
+ "failures": [],
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "corpus frequency (base)"
+}

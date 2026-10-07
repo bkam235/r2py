@@ -1,0 +1,22 @@
+{
+ "function": "httpResponse",
+ "package": "shiny",
+ "status": "passed",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 9,
+ "n_core": 5,
+ "n_mined": 1,
+ "attempt": 1,
+ "passed": 9,
+ "total": 9,
+ "core_passed": 5,
+ "core_total": 5,
+ "code": "import numpy as np\n\ndef r_httpResponse(status=200, content_type=\"text/html; charset=UTF-8\", content=\"\", headers=None):\n    \"\"\"\n    Python implementation of shiny::httpResponse.\n    \n    Args:\n        status (int): HTTP status code.\n        content_type (str): Content type of the response.\n        content (str): Response body content.\n        headers (dict): Optional dictionary of HTTP headers.\n        \n    Returns:\n        dict: A dictionary representing the httpResponse object.\n    \"\"\"\n    if headers is None:\n        headers = {}\n    else:\n        # Ensure headers is a dictionary to mimic R's as.list(headers)\n        headers = dict(headers)\n    \n    # R: if (is.null(headers$`X-UA-Compatible`)) headers$`X-UA-Compatible` <- \"IE=edge,chrome=1\"\n    if 'X-UA-Compatible' not in headers or headers['X-UA-Compatible'] is None:\n        headers['X-UA-Compatible'] = \"IE=edge,chrome=1\"\n        \n    # R returns a list with class 'httpResponse'\n    # In Python, returning a dict is the natural equivalent for an R named list.\n    resp = {\n        'status': status,\n        'content_type': content_type,\n        'content': content,\n        'headers': headers\n    }\n    \n    return resp\n",
+ "failures": [],
+ "exotic_passed": 4,
+ "exotic_total": 4,
+ "tag": "agent fix",
+ "impure": []
+}

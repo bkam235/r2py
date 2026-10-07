@@ -1,0 +1,32 @@
+{
+ "function": "filter",
+ "package": null,
+ "status": "failed",
+ "rounds": 4,
+ "n_calls": 8,
+ "n_cases": 42,
+ "n_core": 27,
+ "attempt": 1,
+ "passed": 40,
+ "total": 42,
+ "core_passed": 25,
+ "core_total": 27,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_filter(x, filter, method=\"convolution\", sides=2, circular=False, init=None):\n    \"\"\"\n    Python reproduction of R's filter function.\n    \"\"\"\n    # Handle method match.arg logic\n    if method not in [\"convolution\", \"recursive\"]:\n        raise ValueError(\"method must be 'convolution' or 'recursive'\")\n    \n    # Convert x to numpy array (simulate as.ts and storage.mode double)\n    x_arr = np.asarray(x, dtype=float)\n    if x_arr.ndim == 1:\n        x_matrix = x_arr.reshape(-1, 1)\n    else:\n        x_matrix = x_arr\n    \n    n, nser = x_matrix.shape\n    \n    # Ensure filter is a numpy array (simulate as.double)\n    filter_arr = np.asarray(filter, dtype=float)\n    # R handles scalar filters as vectors of length 1\n    if filter_arr.ndim == 0:\n        filter_arr = filter_arr.reshape(1)\n        \n    nfilt = len(filter_arr)\n    \n    if np.isnan(filter_arr).any():\n        raise ValueError(\"missing values in 'filter'\")\n\n    if method == \"convolution\":\n        if nfilt > n:\n            raise ValueError(\"'filter' is longer than time series\")\n        if sides not in [1, 2]:\n            raise ValueError(\"argument 'sides' must be 1 or 2\")\n        \n        y = np.full((n, nser), np.nan)\n        \n        for j in range(nser):\n            col = x_matrix[:, j]\n            res = np.full(n, np.nan)\n            \n            if sides == 2:\n                # In R, sides=2 uses (nfilt-1)//2 as the offset\n                offset = (nfilt - 1) // 2\n            else:\n                # In R, sides=1 uses nfilt-1 as the offset\n                offset = nfilt - 1\n                \n            for i in range(n):\n                start = i - offset\n                end = start + nfilt\n                \n                if circular:\n                    indices = np.arange(start, end) % n\n                    res[i] = np.sum(col[indices] * filter_arr)\n                else:\n                    if start < 0 or end > n:\n                        res[i] = np.nan\n                    else:\n                        res[i] = np.sum(col[start:end] * filter_arr)\n            y[:, j] = res\n            \n    else:  # recursive\n        # Handle init\n        if init is None:\n            init_mat = np.zeros((nfilt, nser))\n        else:\n            init_mat = np.asarray(init, dtype=float)\n            # Handle scalar init for recursive filter\n            if init_mat.ndim == 0:\n                init_mat = init_mat.reshape(1, 1)\n            \n            if init_mat.ndim == 1:\n                if len(init_mat) != nfilt:\n                    raise ValueError(\"length of 'init' must equal length of 'filter'\")\n                init_mat = init_mat.reshape(-1, 1)\n            else:\n                if init_mat.shape[0] != nfilt:\n                    raise ValueError(\"length of 'init' must equal length of 'filter'\")\n            \n            if init_mat.shape[1] != 1 and init_mat.shape[1] != nser:\n                raise ValueError(f\"'init' must have 1 or {nser} columns\")\n            \n            if init_mat.shape[1] == 1 and nser > 1:\n                init_mat = np.tile(init_mat, (1, nser))\n\n        y = np.full((n, nser), np.nan)\n        \n        for j in range(nser):\n            col = x_matrix[:, j]\n            # The R recursive filter logic (C_rfilter):\n            # y[i] = x[i] + filter[1]*y[i-1] + filter[2]*y[i-2]...\n            # The init vector provides the values for y[0], y[-1] etc.\n            # R's internal C_rfilter stores a buffer where the last nfilt elements\n            # are the 'init' values in reverse order.\n            \n            y_buf = np.zeros(nfilt + n)\n            y_buf[:nfilt] = init_mat[:, j][::-1]\n            \n            for i in range(n):\n                val = col[i]\n                sum_val = 0\n                # R's recursive filter: y[i] = x[i] + sum_{k=1 to nfilt} filter[k] * y[i-k]\n                # The buffer stores previous y values.\n                for k in range(nfilt):\n                    sum_val += filter_arr[k] * y_buf[nfilt + i - 1 - k]\n                \n                y_buf[nfilt + i] = val + sum_val\n            \n            # R's recursive filter returns the full series including the shifted components\n            # but the wrapper r_filter removes the first nfilt elements: [-ind]\n            y[:, j] = y_buf[nfilt:]\n\n    if nser == 1:\n        return y.flatten()\n    else:\n        return y\n",
+ "failures": [
+  {
+   "call": "filter(1:10, c(1, 1), method = \"recursive\")  [first argument: a single value]",
+   "expected": 1,
+   "error": "ValueError: not enough values to unpack (expected 2, got 0)",
+   "core": true,
+   "rclass": "ts"
+  },
+  {
+   "call": "filter(1:10, 0.5)  [first argument: a single value]",
+   "expected": 0.5,
+   "error": "ValueError: not enough values to unpack (expected 2, got 0)",
+   "core": true,
+   "rclass": "ts"
+  }
+ ],
+ "tag": "corpus frequency (stats)"
+}

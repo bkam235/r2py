@@ -1,0 +1,134 @@
+{
+ "function": "createFolds",
+ "package": "caret",
+ "status": "failed",
+ "rounds": 3,
+ "n_calls": 8,
+ "n_cases": 24,
+ "n_core": 13,
+ "attempt": 3,
+ "passed": 6,
+ "total": 24,
+ "core_passed": 2,
+ "core_total": 13,
+ "code": "import numpy as np\nimport pandas as pd\nimport random\n\ndef r_createFolds(y, k=10, list=True, returnTrain=False):\n    import builtins\n    \n    # Handle Surv object\n    if isinstance(y, pd.DataFrame) and 'time' in y.columns:\n        y = y['time'].values\n    elif hasattr(y, 'columns') and 'time' in y.columns:\n        y = y['time'].values\n        \n    y = np.asanyarray(y)\n    n = len(y)\n    \n    # Use a local variable for 'list' to avoid conflict with builtins.list\n    # The error 'bool object is not callable' occurred because the parameter \n    # 'list' shadowed the built-in list() constructor.\n    use_list = list\n    \n    # Numeric handling: Binning into factors\n    if np.issubdtype(y.dtype, np.number):\n        cuts = n // k\n        if cuts < 2:\n            cuts = 2\n        if cuts > 5:\n            cuts = 5\n        \n        probs = np.linspace(0, 1, cuts)\n        breaks = np.unique(np.quantile(y, probs))\n        \n        # R's cut(y, breaks, include.lowest=TRUE)\n        # We convert values to bins.\n        bins = np.digitize(y, breaks, right=False)\n        # Handle the boundary cases to mimic R's cut include_lowest=True\n        y_labels = np.array([str(b) for b in bins])\n    else:\n        y_labels = np.array([str(val) for val in y])\n\n    if k < n:\n        # R's table(y) returns counts sorted by factor levels (alphabetical for strings)\n        unique_classes = np.unique(y_labels)\n        \n        fold_vector = np.zeros(n, dtype=int)\n        \n        for cls in unique_classes:\n            indices = np.where(y_labels == cls)[0]\n            count = len(indices)\n            \n            min_reps = count // k\n            if min_reps > 0:\n                spares = count % k\n                # Use builtins.list to avoid shadowing from parameter 'list'\n                seq_vector = builtins.list(range(1, k + 1)) * min_reps\n                if spares > 0:\n                    seq_vector += random.sample(range(1, k + 1), spares)\n                \n                # R's sample(seqVector) is a permutation\n                random.shuffle(seq_vector)\n                fold_vector[indices] = seq_vector\n            else:\n                # sample(1:k, size = numInClass[i])\n                fold_vector[indices] = random.sample(range(1, k + 1), count)\n    else:\n        fold_vector = np.arange(1, n + 1)\n\n    if use_list:\n        out = {}\n        indices_1based = np.arange(1, n + 1)\n        # Caret generates folds 1 to k\n        for f in range(1, k + 1):\n            fold_idx = indices_1based[fold_vector == f].tolist()\n            out[f\"Fold{f}\"] = fold_idx\n        \n        if returnTrain:\n            train_out = {}\n            for f in range(1, k + 1):\n                # train = all indices except those in the fold\n                fold_set = set(out[f\"Fold{f}\"])\n                train_out[f\"Fold{f}\"] = [i for i in indices_1based if i not in fold_set]\n            out = train_out\n        return out\n    else:\n        return fold_vector\n",
+ "failures": [
+  {
+   "call": "caret::createFolds(c(\"a\", \"b\", \"a\", \"b\"))",
+   "expected": {
+    "Fold1": 1,
+    "Fold2": 2,
+    "Fold3": 3,
+    "Fold4": 4
+   },
+   "got": {
+    "Fold1": [
+     1
+    ],
+    "Fold2": [
+     2
+    ],
+    "Fold3": [
+     3
+    ],
+    "Fold4": [
+     4
+    ],
+    "Fold5": [],
+    "Fold6": [],
+    "Fold7": [],
+    "Fold8": [],
+    "Fold9": [],
+    "Fold10": []
+   },
+   "core": false
+  },
+  {
+   "call": "caret::createFolds(c(\"a\", \"b\", \"a\", \"b\"))  [first argument: reversed]",
+   "expected": {
+    "Fold1": 1,
+    "Fold2": 2,
+    "Fold3": 3,
+    "Fold4": 4
+   },
+   "got": {
+    "Fold1": [
+     1
+    ],
+    "Fold2": [
+     2
+    ],
+    "Fold3": [
+     3
+    ],
+    "Fold4": [
+     4
+    ],
+    "Fold5": [],
+    "Fold6": [],
+    "Fold7": [],
+    "Fold8": [],
+    "Fold9": [],
+    "Fold10": []
+   },
+   "core": false
+  },
+  {
+   "call": "caret::createFolds(c(\"a\", \"b\", \"a\", \"b\"))  [first argument: a single value]",
+   "expected": {
+    "Fold1": 1
+   },
+   "error": "TypeError: len() of unsized object",
+   "core": false
+  },
+  {
+   "call": "caret::createFolds(y = c(1, 1, 2, 2), k = 2)",
+   "expected": {
+    "Fold1": [
+     1,
+     3
+    ],
+    "Fold2": [
+     2,
+     4
+    ]
+   },
+   "got": {
+    "Fold1": [
+     1,
+     4
+    ],
+    "Fold2": [
+     2,
+     3
+    ]
+   },
+   "core": true
+  },
+  {
+   "call": "caret::createFolds(y = c(1, 1, 2, 2), k = 2)  [first argument: a tie]",
+   "expected": {
+    "Fold1": [
+     2,
+     3
+    ],
+    "Fold2": [
+     1,
+     4
+    ]
+   },
+   "got": {
+    "Fold1": [
+     1,
+     3
+    ],
+    "Fold2": [
+     2,
+     4
+    ]
+   },
+   "core": true
+  }
+ ],
+ "tag": "failing entity"
+}

@@ -1,0 +1,258 @@
+{
+ "function": "createDataPartition",
+ "package": "caret",
+ "status": "failed",
+ "rounds": 3,
+ "n_calls": 8,
+ "n_cases": 20,
+ "n_core": 8,
+ "attempt": 1,
+ "passed": 12,
+ "total": 20,
+ "core_passed": 4,
+ "core_total": 8,
+ "code": "import numpy as np\nimport pandas as pd\nimport random\nimport builtins\n\ndef r_createDataPartition(y, times=1, p=0.5, list=True, groups=None):\n    # The error 'bool' object is not callable was caused by the parameter name 'list' \n    # shadowing the built-in list() constructor. \n    # We use builtins.list to avoid this.\n    \n    if groups is None:\n        groups = min(5, len(y))\n    \n    y_arr = np.asanyarray(y)\n    \n    if len(y_arr) < 2:\n        raise ValueError(\"y must have at least 2 data points\")\n    \n    if groups < 2:\n        groups = 2\n        \n    # Handle numeric y (simulate R's cut(quantile))\n    if np.issubdtype(y_arr.dtype, np.number):\n        # Handle NaNs for quantile\n        y_valid = y_arr[~np.isnan(y_arr)]\n        probs = np.linspace(0, 1, groups)\n        q = np.quantile(y_valid, probs)\n        unique_q = np.unique(q)\n        \n        # R's cut behavior: we use digitize to group values\n        # We need to handle NaN as a separate category if present, though numeric cut usually ignores them.\n        # However, createDataPartition treats them as distinct if they aren't removed.\n        y_groups = np.digitize(y_arr, unique_q[1:-1])\n    else:\n        # Handle strings/factors.\n        # In R, NA is a distinct category in factors.\n        # Using pd.factorize handles unique strings and NaN as -1.\n        y_series = pd.Series(y_arr)\n        # Use a placeholder for NaN to keep them as a group\n        y_filled = y_series.fillna(\"R_NA_HACK\")\n        y_groups = pd.factorize(y_filled)[0]\n\n    # Prepare for sampling\n    indices = np.arange(1, len(y_arr) + 1) # R's 1-based indexing\n    df = pd.DataFrame({'y': y_groups, 'index': indices})\n    \n    out_results = []\n    for j in range(times):\n        resample_indices = []\n        # Group by the calculated categories\n        grouped = df.groupby('y')\n        for name, group in grouped:\n            group_indices = group['index'].values\n            if len(group_indices) == 1:\n                resample_indices.append(group_indices[0])\n            else:\n                num = int(np.ceil(len(group_indices) * p))\n                # R's sample without replacement\n                # Convert to standard python list using builtins.list\n                idx_list = builtins.list(group_indices)\n                sampled = random.sample(idx_list, num)\n                resample_indices.extend(sampled)\n        \n        # Sort the indices as per R code: sort(as.vector(unlist(tmp)))\n        resample_indices.sort()\n        out_results.append(np.array(resample_indices))\n        \n    if not list:\n        # R returns a matrix if list=FALSE.\n        # Note: if lengths are inconsistent, R's matrix conversion might fail or pad.\n        # But here, if they are the same size, it's a simple column stack.\n        # If lengths vary, we must ensure the output matches the expected shape.\n        res = np.column_stack(out_results)\n        return res\n    else:\n        # R returns a named list (Python dict)\n        res_dict = {}\n        for i in range(times):\n            res_dict[f\"Resample{i+1}\"] = out_results[i].tolist()\n        return res_dict\n",
+ "failures": [
+  {
+   "call": "caret::createDataPartition(c(\"A\", \"A\", \"B\", \"B\"), p = 0.5)",
+   "expected": {
+    "Resample1": [
+     1,
+     4
+    ]
+   },
+   "got": {
+    "Resample1": [
+     1,
+     1
+    ]
+   },
+   "core": true
+  },
+  {
+   "call": "caret::createDataPartition(y = rep(1:2, 10), times = 2)",
+   "expected": {
+    "Resample1": [
+     4,
+     7,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     18,
+     19
+    ],
+    "Resample2": [
+     2,
+     4,
+     9,
+     10,
+     11,
+     13,
+     16,
+     17,
+     18,
+     19
+    ]
+   },
+   "got": {
+    "Resample1": [
+     4,
+     5,
+     6,
+     7,
+     7,
+     9,
+     10,
+     11,
+     13,
+     19
+    ],
+    "Resample2": [
+     2,
+     4,
+     5,
+     6,
+     7,
+     9,
+     10,
+     12,
+     14,
+     18
+    ]
+   },
+   "core": false
+  },
+  {
+   "call": "caret::createDataPartition(y = rep(1:2, 10), times = 2)  [first argument: a tie]",
+   "expected": {
+    "Resample1": [
+     3,
+     4,
+     5,
+     9,
+     10,
+     13,
+     15,
+     16,
+     17,
+     20
+    ],
+    "Resample2": [
+     1,
+     4,
+     9,
+     10,
+     12,
+     14,
+     15,
+     17,
+     18,
+     19
+    ]
+   },
+   "got": {
+    "Resample1": [
+     3,
+     4,
+     5,
+     9,
+     10,
+     13,
+     15,
+     16,
+     17,
+     20
+    ],
+    "Resample2": [
+     3,
+     4,
+     5,
+     9,
+     10,
+     13,
+     15,
+     16,
+     17,
+     20
+    ]
+   },
+   "core": false
+  },
+  {
+   "call": "caret::createDataPartition(y = rep(1:2, 10), times = 2)  [first argument: scaled]",
+   "expected": {
+    "Resample1": [
+     2,
+     3,
+     6,
+     7,
+     8,
+     13,
+     15,
+     16,
+     18,
+     19
+    ],
+    "Resample2": [
+     2,
+     3,
+     6,
+     7,
+     8,
+     11,
+     12,
+     15,
+     18,
+     19
+    ]
+   },
+   "got": {
+    "Resample1": [
+     2,
+     3,
+     4,
+     7,
+     7,
+     8,
+     10,
+     13,
+     15,
+     19
+    ],
+    "Resample2": [
+     1,
+     2,
+     3,
+     4,
+     6,
+     8,
+     8,
+     9,
+     16,
+     18
+    ]
+   },
+   "core": false
+  },
+  {
+   "call": "caret::createDataPartition(y = rep(1:2, 10), times = 2)  [first argument: reversed]",
+   "expected": {
+    "Resample1": [
+     1,
+     2,
+     3,
+     5,
+     7,
+     10,
+     12,
+     15,
+     16,
+     18
+    ],
+    "Resample2": [
+     7,
+     8,
+     10,
+     11,
+     12,
+     13,
+     16,
+     17,
+     18,
+     19
+    ]
+   },
+   "got": {
+    "Resample1": [
+     1,
+     2,
+     5,
+     6,
+     8,
+     9,
+     10,
+     12,
+     16,
+     18
+    ],
+    "Resample2": [
+     1,
+     1,
+     2,
+     3,
+     3,
+     4,
+     5,
+     7,
+     8,
+     15
+    ]
+   },
+   "core": false
+  }
+ ],
+ "tag": "failing entity"
+}

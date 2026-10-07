@@ -1,0 +1,50 @@
+{
+ "function": "inherits",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 30,
+ "n_core": 8,
+ "attempt": 1,
+ "passed": 14,
+ "total": 30,
+ "core_passed": 8,
+ "core_total": 8,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_inherits(x, what, which=False):\n    \"\"\"\n    Python implementation of R's inherits() function.\n    \n    In R, inherits(x, what) checks if an object x has the class 'what'.\n    In the context of Python/Numpy/Pandas:\n    - Numpy arrays are generally considered 'numeric' if their dtype is numeric.\n    - Pandas DataFrames/Series are checked via their class or attributes.\n    - In R, numeric vectors are of class \"numeric\".\n    \"\"\"\n    \n    # Handle cases where x is a numpy array\n    if isinstance(x, np.ndarray):\n        # R's 'numeric' usually refers to double-precision floats\n        if what == \"numeric\":\n            return np.issubdtype(x.dtype, np.number)\n        if what == \"integer\":\n            return np.issubdtype(x.dtype, np.integer)\n        if what == \"logical\":\n            return np.issubdtype(x.dtype, np.bool_)\n        if what == \"character\":\n            return np.issubdtype(x.dtype, np.flexible) or x.dtype == object\n            \n    # Handle Pandas objects\n    if isinstance(x, (pd.DataFrame, pd.Series)):\n        if what == \"data.frame\" and isinstance(x, pd.DataFrame):\n            return True\n        # Pandas Series are often treated as vectors in R context\n        if isinstance(x, pd.Series):\n            if what == \"numeric\":\n                return np.issubdtype(x.dtype, np.number)\n            if what == \"integer\":\n                return np.issubdtype(x.dtype, np.integer)\n            if what == \"logical\":\n                return np.issubdtype(x.dtype, np.bool_)\n            if what == \"character\":\n                return np.issubdtype(x.dtype, np.flexible) or x.dtype == object\n\n    # General Python type mapping to R class names\n    type_map = {\n        float: \"numeric\",\n        int: \"numeric\", # In R, integers are a subset of numeric, but often have \"integer\" class\n        bool: \"logical\",\n        str: \"character\",\n        list: \"list\",\n        dict: \"environment\"\n    }\n    \n    # Check if the python type of x maps to the requested R class\n    python_type = type(x)\n    if python_type in type_map and type_map[python_type] == what:\n        return True\n    \n    # Check if 'what' is a Python class and x is an instance of it\n    if isinstance(what, type) and isinstance(x, what):\n        return True\n\n    return False\n",
+ "failures": [
+  {
+   "call": "inherits(1:10, \"integer\")",
+   "expected": true,
+   "got": false,
+   "core": false
+  },
+  {
+   "call": "inherits(1:10, \"integer\")  [first argument: an NA inserted]",
+   "expected": true,
+   "got": false,
+   "core": false
+  },
+  {
+   "call": "inherits(1:10, \"integer\")  [first argument: a tie]",
+   "expected": true,
+   "got": false,
+   "core": false
+  },
+  {
+   "call": "inherits(1:10, \"integer\")  [first argument: reversed]",
+   "expected": true,
+   "got": false,
+   "core": false
+  },
+  {
+   "call": "inherits(1:10, \"integer\")  [first argument: a single value]",
+   "expected": true,
+   "got": false,
+   "core": false
+  }
+ ],
+ "exotic_passed": 6,
+ "exotic_total": 22,
+ "tag": "corpus frequency (base)"
+}

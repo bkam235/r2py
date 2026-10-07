@@ -1,0 +1,20 @@
+{
+ "function": "sub",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 8,
+ "n_core": 8,
+ "attempt": 1,
+ "passed": 8,
+ "total": 8,
+ "core_passed": 8,
+ "core_total": 8,
+ "code": "import numpy as np\nimport pandas as pd\nimport re\n\ndef r_sub(pattern, replacement, x, ignore_case=False, perl=False, fixed=False, useBytes=False):\n    # Handle factor-like input (pandas Category)\n    if isinstance(x, pd.Series) and isinstance(x.dtype, pd.CategoricalDtype):\n        levels = x.cat.categories.tolist()\n        # R's sub on factors: replace in levels, then remap\n        # Note: The logic 'length(levels(x)) < length(x)' is a shortcut in R.\n        # We apply the substitution to the levels.\n        new_levels = r_sub(pattern, replacement, np.array(levels), ignore_case, perl, fixed, useBytes)\n        # Create a mapping from old levels to new levels\n        mapping = dict(zip(levels, new_levels))\n        return np.array([mapping[val] if val in mapping else np.nan for val in x])\n\n    # Ensure x is handled as a vector of strings\n    if isinstance(x, (pd.Series, pd.Index)):\n        x_vals = x.values\n    elif isinstance(x, np.ndarray):\n        x_vals = x\n    elif hasattr(x, \"__iter__\") and not isinstance(x, (str, bytes)):\n        x_vals = np.array(x)\n    else:\n        x_vals = np.array([x])\n\n    # Cast to string/character (handling NA/NaN)\n    # In R, sub(..., NA) returns NA.\n    # We use object array to preserve NaNs.\n    \n    # Convert pattern and replacement to strings (R's as.character)\n    pat = str(pattern) if not pd.isna(pattern) else \"\"\n    rep = str(replacement) if not pd.isna(replacement) else \"\"\n\n    results = []\n    for item in x_vals:\n        if pd.isna(item):\n            results.append(np.nan)\n            continue\n        \n        s = str(item)\n        \n        if fixed:\n            # Fixed string replacement (only first occurrence)\n            # R's sub replaces only the first match.\n            # Python's replace(old, new, 1) does exactly this.\n            results.append(s.replace(pat, rep, 1))\n        else:\n            # Regular expression replacement\n            flags = 0\n            if ignore_case:\n                flags |= re.IGNORECASE\n            \n            # R's sub replaces only the first match.\n            # re.sub(pattern, repl, string, count=1)\n            # Note: R uses a different regex engine than Python (PCRE vs Python),\n            # but for standard 'sub' calls, re.sub is the closest equivalent.\n            # We use re.sub with count=1.\n            try:\n                res = re.sub(pat, rep, s, count=1, flags=flags)\n                results.append(res)\n            except re.error:\n                # If regex is invalid, R usually returns the original string \n                # or throws error. Based on typical behavior:\n                results.append(s)\n\n    # Return as a numpy array (which is the Python equivalent of R's character vector)\n    # However, if input x was a single string (scalar), R returns a single string.\n    res_array = np.array(results, dtype=object)\n    \n    # Handle return shape to match R's behavior\n    # If original x was a scalar, return a scalar.\n    if not isinstance(x, (np.ndarray, pd.Series, pd.Index, list)):\n        return res_array[0]\n    \n    # For character vectors, R returns a character vector.\n    # We return a numpy array of strings/NaNs.\n    return res_array\n",
+ "failures": [],
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

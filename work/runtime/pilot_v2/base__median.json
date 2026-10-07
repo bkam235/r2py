@@ -1,0 +1,42 @@
+{
+ "function": "median",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 43,
+ "n_core": 37,
+ "attempt": 1,
+ "passed": 40,
+ "total": 43,
+ "core_passed": 37,
+ "core_total": 37,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_median(x, na_rm=False, *args, **kwargs):\n    # R stops if x is a factor (represented as list of str) or data frame\n    if isinstance(x, pd.DataFrame) or (isinstance(x, list) and all(isinstance(i, str) for i in x)):\n        raise TypeError(\"need numeric data\")\n    \n    # Ensure x is a numpy array.\n    # Using np.atleast_1d ensures that scalars are converted to arrays with len > 0,\n    # which avoids \"TypeError: len() of unsized object\" for single values.\n    x_arr = np.atleast_1d(np.asanyarray(x, dtype=float))\n    \n    # Handle NA (NaN in numpy)\n    if na_rm:\n        # x <- x[!is.na(x)]\n        x_arr = x_arr[~np.isnan(x_arr)]\n    else:\n        # else if (any(is.na(x))) return(x[NA_integer_])\n        if np.any(np.isnan(x_arr)):\n            return np.nan\n\n    n = len(x_arr)\n    \n    # if (n == 0L) return(x[NA_integer_])\n    if n == 0:\n        return np.nan\n\n    # R's logic for median:\n    # half <- (n + 1L)%/%2L\n    half = (n + 1) // 2\n    \n    # Sort the array to mimic R's sort(x, partial = ...)\n    sorted_x = np.sort(x_arr)\n    \n    if n % 2 == 1:\n        # n%%2L == 1L: sort(x, partial = half)[half]\n        # R uses 1-based indexing. index [half] in R is index [half-1] in Python.\n        return float(sorted_x[half - 1])\n    else:\n        # else mean(sort(x, partial = half + 0L:1L)[half + 0L:1L])\n        # For n=4: half=2. R takes indices 2 and 3. Python takes indices 1 and 2.\n        val1 = sorted_x[half - 1]\n        val2 = sorted_x[half]\n        return float((val1 + val2) / 2.0)\n",
+ "failures": [
+  {
+   "call": "median(matrix(1:9, nrow = 3))",
+   "expected": 5,
+   "error": "TypeError: only 0-dimensional arrays can be converted to Python scalars",
+   "core": false,
+   "rclass": "integer"
+  },
+  {
+   "call": "median(matrix(1:9, nrow = 3))  [first argument: a tie]",
+   "expected": 5,
+   "error": "TypeError: only 0-dimensional arrays can be converted to Python scalars",
+   "core": false,
+   "rclass": "integer"
+  },
+  {
+   "call": "median(matrix(1:9, nrow = 3))  [first argument: scaled]",
+   "expected": 35.4,
+   "error": "TypeError: only 0-dimensional arrays can be converted to Python scalars",
+   "core": false,
+   "rclass": "numeric"
+  }
+ ],
+ "exotic_passed": 3,
+ "exotic_total": 6,
+ "tag": "corpus frequency (stats)",
+ "impure": []
+}

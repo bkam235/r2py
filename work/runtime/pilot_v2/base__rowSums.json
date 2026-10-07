@@ -1,0 +1,20 @@
+{
+ "function": "rowSums",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 29,
+ "n_core": 28,
+ "attempt": 1,
+ "passed": 29,
+ "total": 29,
+ "core_passed": 28,
+ "core_total": 28,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_rowSums(x, na_rm=False, dims=1):\n    \"\"\"\n    Python implementation of R's rowSums function.\n    \"\"\"\n    # Handle data frames by converting to matrix (numpy array)\n    if isinstance(x, pd.DataFrame):\n        x = x.to_numpy()\n    \n    # Validate input is an array-like object\n    if not isinstance(x, np.ndarray):\n        x = np.asanyarray(x)\n        \n    # R's rowSums requires at least two dimensions\n    if x.ndim < 2:\n        raise ValueError(\"'x' must be an array of at least two dimensions\")\n        \n    # Validate 'dims' parameter\n    # R: dims must be 1 <= dims < length(dn)\n    if not isinstance(dims, (int, np.integer)) or dims < 1 or dims > x.ndim - 1:\n        raise ValueError(\"invalid 'dims'\")\n    \n    # In R, rowSums(x, dims=1) sums over all dimensions except the 1st.\n    # rowSums(x, dims=2) sums over all dimensions except the 2nd, etc.\n    # The result should have the length of the dimension specified by 'dims'.\n    \n    # Determine which axis to keep (1-indexed in R -> 0-indexed in Python)\n    keep_axis = dims - 1\n    \n    # Determine axes to sum over (all except keep_axis)\n    sum_axes = tuple(i for i in range(x.ndim) if i != keep_axis)\n    \n    if na_rm:\n        # np.nansum treats NaN as zero. \n        # Note: if all values in a slice are NaN, nansum returns 0, \n        # but R's rowSums(na.rm=TRUE) also returns 0 for all-NA slices.\n        result = np.nansum(x, axis=sum_axes)\n    else:\n        # np.sum with NaNs returns NaN, matching R's default behavior\n        result = np.sum(x, axis=sum_axes)\n    \n    # R returns a vector (1D array) if the original x was a matrix.\n    # If x was a higher-dimensional array, it returns an array with the \n    # dimension specified by 'dims'.\n    \n    # Since the prompt asks for the result as R returns it:\n    # If x is 2D, R returns a numeric vector.\n    # If x is > 2D, R returns an array with the shape of the kept dimension.\n    \n    # Ensure the result is a numpy array of floats (numeric)\n    return result.astype(float)\n",
+ "failures": [],
+ "exotic_passed": 1,
+ "exotic_total": 1,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

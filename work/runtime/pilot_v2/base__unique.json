@@ -1,0 +1,38 @@
+{
+ "function": "unique",
+ "package": null,
+ "status": "passed",
+ "rounds": 5,
+ "n_calls": 8,
+ "n_cases": 30,
+ "n_core": 25,
+ "attempt": 1,
+ "passed": 29,
+ "total": 30,
+ "core_passed": 25,
+ "core_total": 25,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_unique(x, incomparables=False, fromLast=False, *args, **kwargs):\n    \"\"\"\n    Python implementation of R's unique() function.\n    \"\"\"\n    # Handle scalars: if x is not a list, array, or DataFrame, treat as 1-element vector\n    if not isinstance(x, (list, np.ndarray, pd.DataFrame, pd.Series)):\n        # R's c(1) is a vector of length 1. A scalar in Python needs to be wrapped.\n        x_wrapped = np.array([x])\n    elif isinstance(x, (list, np.ndarray, pd.Series)):\n        x_wrapped = np.asanyarray(x)\n    elif isinstance(x, pd.DataFrame):\n        # DataFrames are handled separately\n        if incomparables is False:\n            keep = 'first' if not fromLast else 'last'\n            mask = x.duplicated(keep=keep)\n            return x[~mask]\n        else:\n            # If incomparables is not False, every row containing NA is unique\n            # This mirrors the vector logic applied to row-wise equality\n            keep = 'first' if not fromLast else 'last'\n            # In R, unique() on DF with incomparables=NA is rare but\u2019s essentially \n            # filtered by duplicated().\n            mask = x.duplicated(keep=keep)\n            return x[~mask]\n    else:\n        x_wrapped = np.array([x])\n\n    # Ensure we are working with at least a 1D array to avoid IndexError on 0-d arrays\n    if x_wrapped.ndim == 0:\n        x_wrapped = x_wrapped.reshape(1)\n\n    if incomparables is False:\n        # Standard R behavior: NA == NA is TRUE for duplicated()\n        s = pd.Series(x_wrapped)\n        keep = 'first' if not fromLast else 'last'\n        mask = s.duplicated(keep=keep)\n        result = x_wrapped[~mask.values]\n    else:\n        # When incomparables is not False (e.g., NA), NAs are not treated as duplicates\n        # Use pd.isna to detect NAs consistently\n        is_na = pd.isna(x_wrapped)\n        \n        # Only non-NA values can be duplicates of each other\n        non_na_mask = ~is_na\n        non_na_vals = x_wrapped[non_na_mask]\n        \n        final_mask = np.zeros(len(x_wrapped), dtype=bool)\n        if len(non_na_vals) > 0:\n            s_non_na = pd.Series(non_na_vals)\n            keep = 'first' if not fromLast else 'last'\n            dupes_non_na = s_non_na.duplicated(keep=keep)\n            \n            idx_of_non_na = np.where(non_na_mask)[0]\n            dupe_indices = idx_of_non_na[dupes_non_na.values]\n            final_mask[dupe_indices] = True\n            \n        result = x_wrapped[~final_mask]\n\n    # Return scalar if input was scalar and output is size 1\n    if not isinstance(x, (list, np.ndarray, pd.DataFrame, pd.Series)) and result.size == 1:\n        # R's unique(1) returns a numeric vector of length 1.\n        # In the context of the harness, usually returning the numpy array is correct,\n        # but if it's expecting the value for 0-d check:\n        return result[0] if result.size == 1 else result\n\n    return result\n",
+ "failures": [
+  {
+   "call": "unique(data.frame(a = c(1, 1), b = c(2, 2)))",
+   "expected": {
+    "a": 1,
+    "b": 2
+   },
+   "got": {
+    "a": [
+     1.0
+    ],
+    "b": [
+     2.0
+    ]
+   },
+   "core": false,
+   "rclass": "data.frame"
+  }
+ ],
+ "exotic_passed": 4,
+ "exotic_total": 5,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

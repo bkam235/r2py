@@ -1,0 +1,56 @@
+{
+ "function": "inherits",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 20,
+ "n_core": 9,
+ "attempt": 1,
+ "passed": 11,
+ "total": 20,
+ "core_passed": 9,
+ "core_total": 9,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_inherits(x, what, which=False):\n    \"\"\"\n    Python implementation of R's inherits() function.\n    \n    R's inherits(x, what) checks if the class attribute of x contains 'what'.\n    In R:\n    - Numbers are 'numeric' by default (doubles).\n    - Only explicitly defined integers are 'integer'.\n    - Matrices are numpy arrays but in R they have a class \"matrix\".\n    \"\"\"\n    # R's 'numeric' class corresponds to float64 (double) in R's internal representation.\n    # R's 'integer' class corresponds to int32 in R's internal representation.\n    \n    # If x is a numpy array, we need to check if it simulates an R matrix\n    # In the harness, matrices are typically passed as numpy arrays.\n    # Since we cannot know if the original R object was a matrix or a vector\n    # just from the numpy array, we look for common R-to-Python mapping patterns.\n    \n    # Handling for 'integer'\n    if what == \"integer\":\n        # In R, 1 is numeric (double), not integer. Only 1L is integer.\n        # Python ints are generally treated as R numeric unless specifically typed.\n        # However, numpy integer types are closer to R's 'integer'.\n        if isinstance(x, (int, float)) and not isinstance(x, np.integer):\n            return False\n        if isinstance(x, np.ndarray):\n            return np.issubdtype(x.dtype, np.integer)\n        return isinstance(x, np.integer)\n\n    # Handling for 'numeric'\n    if what == \"numeric\":\n        if isinstance(x, np.ndarray):\n            return np.issubdtype(x.dtype, np.number)\n        if isinstance(x, (int, float, np.number)):\n            return True\n        return False\n\n    # Handling for 'matrix'\n    if what == \"matrix\":\n        # R matrices are numpy arrays. If the input was matrix(1:4), \n        # it's a numpy array. In R, inherits(matrix(1), \"matrix\") is TRUE.\n        # Since the test indicates matrices are passing as numpy arrays,\n        # we check for ndarray.\n        return isinstance(x, np.ndarray)\n\n    # Handling for 'data.frame'\n    if what == \"data.frame\":\n        return isinstance(x, pd.DataFrame)\n\n    # Handling for 'character'\n    if what == \"character\":\n        if isinstance(x, np.ndarray):\n            return np.issubdtype(x.dtype, np.string_) or x.dtype == object\n        return isinstance(x, str)\n\n    # Handling for 'logical'\n    if what == \"logical\":\n        if isinstance(x, np.ndarray):\n            return np.issubdtype(x.dtype, np.bool_)\n        return isinstance(x, (bool, np.bool_))\n\n    # General class name check\n    type_name = type(x).__name__\n    if what == type_name:\n        return True\n\n    return False\n",
+ "failures": [
+  {
+   "call": "inherits(x = matrix(1:4), what = \"matrix\")",
+   "expected": true,
+   "got": false,
+   "core": false,
+   "rclass": "logical"
+  },
+  {
+   "call": "inherits(x = matrix(1:4), what = \"matrix\")  [first argument: an NA inserted]",
+   "expected": true,
+   "got": false,
+   "core": false,
+   "rclass": "logical"
+  },
+  {
+   "call": "inherits(x = matrix(1:4), what = \"matrix\")  [first argument: a tie]",
+   "expected": true,
+   "got": false,
+   "core": false,
+   "rclass": "logical"
+  },
+  {
+   "call": "inherits(x = matrix(1:4), what = \"matrix\")  [first argument: scaled]",
+   "expected": true,
+   "got": false,
+   "core": false,
+   "rclass": "logical"
+  },
+  {
+   "call": "inherits(x = matrix(1:4), what = \"matrix\")  [first argument: reversed]",
+   "expected": false,
+   "got": true,
+   "core": false,
+   "rclass": "logical"
+  }
+ ],
+ "exotic_passed": 2,
+ "exotic_total": 11,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

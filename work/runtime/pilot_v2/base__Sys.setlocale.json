@@ -1,0 +1,22 @@
+{
+ "function": "Sys.setlocale",
+ "package": null,
+ "status": "passed",
+ "rounds": 3,
+ "n_calls": 8,
+ "n_cases": 6,
+ "n_core": 6,
+ "attempt": 1,
+ "passed": 6,
+ "total": 6,
+ "core_passed": 6,
+ "core_total": 6,
+ "code": "import locale as py_locale\nimport numpy as np\n\ndef r_Sys_setlocale(category=\"LC_ALL\", locale=\"\"):\n    # R's valid categories\n    lc_categories = [\"LC_CTYPE\", \"LC_COLLATE\", \"LC_TIME\", \"LC_NUMERIC\", \"LC_MONETARY\", \"LC_MESSAGES\", \"LC_ALL\"]\n    \n    # Handle category input (handles cases like rep(\"LC_TIME\", 1))\n    cat_val = category\n    if isinstance(category, np.ndarray):\n        cat_val = category[0]\n    elif isinstance(category, list):\n        cat_val = category[0]\n        \n    if cat_val not in lc_categories:\n        raise ValueError(\"invalid 'category' argument\")\n\n    # Mapping R categories to Python's locale constants.\n    mapping = {\n        \"LC_CTYPE\": getattr(py_locale, \"LC_CTYPE\", None),\n        \"LC_COLLATE\": getattr(py_locale, \"LC_COLLATE\", None),\n        \"LC_TIME\": getattr(py_locale, \"LC_TIME\", None),\n        \"LC_NUMERIC\": getattr(py_locale, \"LC_NUMERIC\", None),\n        \"LC_MONETARY\": getattr(py_locale, \"LC_MONETARY\", None),\n        \"LC_MESSAGES\": getattr(py_locale, \"LC_MESSAGES\", None),\n        \"LC_ALL\": getattr(py_locale, \"LC_ALL\", None),\n    }\n    \n    py_cat = mapping[cat_val]\n    \n    if py_cat is not None:\n        py_loc = locale if locale != \"\" else None\n        try:\n            # Attempt to set the locale\n            py_locale.setlocale(py_cat, py_loc)\n            # Return the result of the set operation\n            current_locale = py_locale.setlocale(py_cat)\n        except (py_locale.Error, ValueError):\n            # In R, if an invalid locale is passed to Sys.setlocale, \n            # it often returns an empty string \"\" or the current locale depending on the OS.\n            # The failing case shows R returning \"\" when letters[1] (invalid locale) is passed.\n            current_locale = \"\"\n    else:\n        current_locale = locale if locale != \"\" else \"C\"\n\n    # R returns a character vector. \n    # Given the examples: [1] \"en_US.UTF-8\", return as a list of str.\n    # To match the failing case where R returns \"\", we ensure we return [current_locale].\n    return [current_locale]\n",
+ "failures": [],
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "corpus frequency (base)",
+ "impure": [
+  "Sys.setlocale"
+ ]
+}

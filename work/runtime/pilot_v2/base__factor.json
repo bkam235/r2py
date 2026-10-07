@@ -1,0 +1,89 @@
+{
+ "function": "factor",
+ "package": null,
+ "status": "passed",
+ "rounds": 4,
+ "n_calls": 8,
+ "n_cases": 24,
+ "n_core": 18,
+ "attempt": 1,
+ "passed": 20,
+ "total": 24,
+ "core_passed": 18,
+ "core_total": 18,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_factor(x=None, levels=None, labels=None, exclude=np.nan, ordered=False, nmax=np.nan):\n    # Handle R's default for x = character()\n    if x is None:\n        x_values = np.array([], dtype=object)\n    else:\n        # Ensure x is treated as an array-like object even if it's a scalar\n        if isinstance(x, (pd.Series, pd.Index)):\n            x_values = x.values\n        elif isinstance(x, (list, np.ndarray)):\n            x_values = np.asanyarray(x, dtype=object)\n        else:\n            # Scalar case\n            x_values = np.array([x], dtype=object)\n\n    # matchAsChar logic: is.object(x) || !(is.character(x) || is.integer(x) || is.logical(x))\n    is_char = (x_values.dtype == object)\n    is_int = np.issubdtype(x_values.dtype, np.integer)\n    is_bool = np.issubdtype(x_values.dtype, np.bool_)\n    \n    match_as_char = not (is_char or is_int or is_bool)\n    \n    if match_as_char:\n        x_values = x_values.astype(str)\n\n    # Determine levels if missing\n    if levels is None:\n        # R's unique(x, nmax = nmax)\n        y_list = []\n        seen = set()\n        \n        limit = int(nmax) if not pd.isna(nmax) else len(x_values)\n        search_space = x_values[:limit]\n        \n        for val in search_space:\n            # Handle NaN as a distinct key for the set\n            key = (val,) if pd.isna(val) else val\n            if key not in seen:\n                y_list.append(val)\n                seen.add(key)\n        \n        # R's factor levels are sorted unique values (excluding NAs)\n        clean_y = [val for val in y_list if not pd.isna(val)]\n        # Sort using R's sort order (strings sorted alphabetically)\n        clean_y.sort()\n        levels = np.array(clean_y, dtype=object)\n    else:\n        levels = np.asanyarray(levels, dtype=object)\n\n    # exclude logic: levels <- levels[is.na(match(levels, exclude))]\n    if not pd.isna(exclude):\n        exclude_vals = {exclude} if np.isscalar(exclude) else set(exclude)\n        levels = np.array([l for l in levels if l not in exclude_vals], dtype=object)\n\n    # f <- match(x, levels)\n    res_indices = []\n    lev_list = levels.tolist()\n    for val in x_values:\n        if pd.isna(val):\n            res_indices.append(np.nan)\n        else:\n            try:\n                res_indices.append(lev_list.index(val) + 1)\n            except ValueError:\n                res_indices.append(np.nan)\n    \n    f_indices = np.array(res_indices, dtype=float)\n\n    # labels logic\n    if labels is None:\n        final_levels = [str(l) for l in levels]\n    else:\n        labels = np.asanyarray(labels, dtype=object)\n        nlab = len(labels)\n        nlev = len(levels)\n        if nlab == nlev:\n            xlevs = [str(l) for l in labels]\n            nlevs = []\n            seen_levs = set()\n            for v in xlevs:\n                if v not in seen_levs:\n                    nlevs.append(v)\n                    seen_levs.add(v)\n            \n            mapping = {val: i + 1 for i, val in enumerate(nlevs)}\n            xlevs_ranks = np.array([mapping[v] for v in xlevs])\n            \n            new_f_indices = []\n            for val in f_indices:\n                if pd.isna(val):\n                    new_f_indices.append(np.nan)\n                else:\n                    new_f_indices.append(xlevs_ranks[int(val)-1])\n            f_indices = np.array(new_f_indices, dtype=float)\n            final_levels = nlevs\n        elif nlab == 1:\n            label_prefix = str(labels[0])\n            final_levels = [f\"{label_prefix}{i+1}\" for i in range(nlev)]\n        else:\n            raise ValueError(f\"invalid 'labels'; length {nlab} should be 1 or {nlev}\")\n\n    # Convert indices back to the levels (labels)\n    result_vals = []\n    for val in f_indices:\n        if pd.isna(val):\n            result_vals.append(np.nan)\n        else:\n            idx = int(val) - 1\n            if 0 <= idx < len(final_levels):\n                result_vals.append(final_levels[idx])\n            else:\n                result_vals.append(np.nan)\n                \n    # The R harness expects a result compatible with the input shape.\n    # If input x was a scalar, return a scalar.\n    is_scalar_input = not isinstance(x, (list, np.ndarray, pd.Series, pd.Index))\n    if is_scalar_input and len(result_vals) == 1:\n        return result_vals[0]\n        \n    return result_vals\n",
+ "failures": [
+  {
+   "call": "factor(c(-1, 0, 1, -1))",
+   "expected": [
+    "-1",
+    "0",
+    "1",
+    "-1"
+   ],
+   "got": [
+    "-1.0",
+    "0.0",
+    "1.0",
+    "-1.0"
+   ],
+   "core": false,
+   "rclass": "factor"
+  },
+  {
+   "call": "factor(c(-1, 0, 1, -1))  [first argument: an NA inserted]",
+   "expected": [
+    "-1",
+    null,
+    "1",
+    "-1"
+   ],
+   "got": [
+    "-1.0",
+    null,
+    "1.0",
+    "-1.0"
+   ],
+   "core": false,
+   "rclass": "factor"
+  },
+  {
+   "call": "factor(c(-1, 0, 1, -1))  [first argument: a tie]",
+   "expected": [
+    "-1",
+    "-1",
+    "1",
+    "-1"
+   ],
+   "got": [
+    "-1.0",
+    "-1.0",
+    "1.0",
+    "-1.0"
+   ],
+   "core": false,
+   "rclass": "factor"
+  },
+  {
+   "call": "factor(c(-1, 0, 1, -1))  [first argument: reversed]",
+   "expected": [
+    "-1",
+    "1",
+    "0",
+    "-1"
+   ],
+   "got": [
+    "-1.0",
+    "1.0",
+    "0.0",
+    "-1.0"
+   ],
+   "core": false,
+   "rclass": "factor"
+  }
+ ],
+ "exotic_passed": 2,
+ "exotic_total": 6,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

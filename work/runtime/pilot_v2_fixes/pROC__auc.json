@@ -1,0 +1,27 @@
+{
+ "function": "auc",
+ "package": "pROC",
+ "status": "failed",
+ "rounds": 3,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 12,
+ "n_core": 12,
+ "n_mined": 1,
+ "attempt": 1,
+ "passed": 11,
+ "total": 12,
+ "core_passed": 11,
+ "core_total": 12,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_auc(response=None, predictor=None, *args, **kwargs):\n    \"\"\"\n    Reproduces pROC::auc.\n    The R function is essentially a wrapper: roc.default(response, predictor, auc = TRUE, ...)$auc\n    \"\"\"\n    # In R, auc(roc_obj, ...) can be called where roc_obj is the first argument.\n    # If response is provided but predictor is not, we check if response is the ROC object.\n    if response is not None and predictor is None:\n        roc_obj = response\n        # check if it's the dictionary representation of a pROC roc object\n        if isinstance(roc_obj, dict) and \"numbers\" in roc_obj:\n            partial_auc = kwargs.get('partial_auc', None)\n            nums = roc_obj['numbers']\n            # R's pROC sensitivities and specificities\n            sens = np.asarray(nums.get('sensitivities', []))\n            spec = np.asarray(nums.get('specificities', []))\n            \n            if len(spec) == 0:\n                return np.nan\n            \n            # Ensure sorted by specificity for trapezoidal integration\n            # pROC typically provides them in a specific order, but sorting is safer.\n            idx = np.argsort(spec)\n            spec_sorted = spec[idx]\n            sens_sorted = sens[idx]\n            \n            if partial_auc is not None:\n                lower, upper = partial_auc[0], partial_auc[1]\n                mask = (spec_sorted >= lower) & (spec_sorted <= upper)\n                # Use np.trapezoid for numpy >= 1.20, else np.trapz\n                # Since the environment may vary, use a fallback or the formula\n                return _trapezoid(sens_sorted[mask], spec_sorted[mask])\n            \n            return _trapezoid(sens_sorted, spec_sorted)\n        else:\n            # This case handles if response was passed as positional but it's not a roc object\n            # and predictor is missing. In R this would usually error.\n            return np.nan\n\n    if response is None or predictor is None:\n        return np.nan\n\n    # Standard case: response and predictor are vectors\n    response = np.asarray(response)\n    predictor = np.asarray(predictor)\n    \n    # Handle NAs\n    mask = ~np.isnan(response) & ~np.isnan(predictor)\n    response = response[mask]\n    predictor = predictor[mask]\n    \n    if len(response) == 0:\n        return np.nan\n\n    # Determine classes\n    classes = np.unique(response)\n    if len(classes) != 2:\n        return np.nan\n\n    # R pROC defaults: the second level is usually the \"positive\" class\n    pos_val = classes[1]\n    \n    # Sort predictors in descending order\n    desc_idx = np.argsort(predictor)[::-1]\n    response = response[desc_idx]\n    predictor = predictor[desc_idx]\n    \n    # Handle ties in predictor values\n    distinct_indices = np.where(np.diff(predictor))[0]\n    threshold_indices = np.concatenate([distinct_indices, [len(predictor) - 1]])\n    \n    tp = np.cumsum(response == pos_val)[threshold_indices]\n    fp = np.cumsum(response != pos_val)[threshold_indices]\n    \n    total_pos = np.sum(response == pos_val)\n    total_neg = np.sum(response != pos_val)\n    \n    if total_pos == 0 or total_neg == 0:\n        return np.nan\n        \n    tpr = tp / total_pos\n    fpr = fp / total_neg\n    \n    # Add (0,0) point\n    tpr = np.concatenate(([0], tpr))\n    fpr = np.concatenate(([0], fpr))\n    \n    return _trapezoid(tpr, fpr)\n\ndef _trapezoid(y, x):\n    \"\"\"Manual implementation of the trapezoidal rule to avoid numpy version issues with trapz/trapezoid\"\"\"\n    if len(x) < 2:\n        return 0.0\n    return np.sum((x[1:] - x[:-1]) * (y[1:] + y[:-1]) / 2.0)\n",
+ "failures": [
+  {
+   "call": "auc(roc.s100b, partial.auc = c(0.9, 1))",
+   "expected": 0.0327574525745257,
+   "got": null,
+   "core": true,
+   "rclass": "auc"
+  }
+ ],
+ "tag": "agent fix"
+}

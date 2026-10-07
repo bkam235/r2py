@@ -1,0 +1,13 @@
+{
+ "function": "local",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 40,
+ "passed": 40,
+ "total": 40,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_local(expr, envir=None):\n    \"\"\"\n    R's local() evaluates an expression in a new environment.\n    In the context of this reproduction harness, the 'expr' passed \n    is the result of the evaluation of the R expression block.\n    \"\"\"\n    # R's local() executes the expression and returns the result of the last statement.\n    # The examples provided show that the 'expr' argument is effectively the \n    # outcome of the code block passed to local().\n    \n    # Since the test harness provides the evaluated result of the R expression\n    # as the 'expr' argument to this Python function, we simply return it.\n    return expr\n",
+ "failures": [],
+ "tag": "corpus frequency (base)"
+}

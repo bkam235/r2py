@@ -1,0 +1,13 @@
+{
+ "function": "force",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 43,
+ "passed": 43,
+ "total": 43,
+ "code": "import numpy as np\n\ndef r_force(x):\n    \"\"\"\n    Reproduces R's force(x) function.\n    In R, force(x) is used to evaluate the argument x. \n    It simply returns the value of the argument.\n    \"\"\"\n    return x\n",
+ "failures": [],
+ "tag": "corpus frequency (base)"
+}

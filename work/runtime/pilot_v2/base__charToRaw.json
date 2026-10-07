@@ -1,0 +1,20 @@
+{
+ "function": "charToRaw",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 10,
+ "n_core": 10,
+ "attempt": 1,
+ "passed": 10,
+ "total": 10,
+ "core_passed": 10,
+ "core_total": 10,
+ "code": "import numpy as np\n\ndef r_charToRaw(x):\n    \"\"\"\n    Reproduces R's charToRaw function.\n    Converts a character string to a raw vector.\n    \"\"\"\n    # In R, charToRaw(NA_character_) returns the raw bytes for \"NA\" (4e 41)\n    # Based on the provided example: charToRaw(NA_character_) -> [1] 4e 41\n    if x is None or (isinstance(x, float) and np.isnan(x)):\n        return bytes(b'NA')\n    \n    # Ensure we are dealing with a string. \n    # If x is a list of strings (as per the prompt rules for character vectors),\n    # R's charToRaw typically only handles a single string (length 1).\n    if isinstance(x, (list, np.ndarray)):\n        x = x[0] if len(x) > 0 else \"\"\n    \n    # Convert the string to bytes.\n    # R's charToRaw converts the string to its raw byte representation.\n    # The failure log indicates that the test harness expects the result as a bytes \n    # object (which it then base64 encodes in the failure message \"aGVsbG8=\").\n    return bytes(str(x).encode('utf-8'))\n",
+ "failures": [],
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

@@ -1,0 +1,68 @@
+{
+ "function": "seq",
+ "package": null,
+ "status": "failed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 23,
+ "n_core": 17,
+ "attempt": 1,
+ "passed": 21,
+ "total": 23,
+ "core_passed": 15,
+ "core_total": 17,
+ "code": "import numpy as np\nimport pandas as pd\nimport math\n\ndef r_seq(from_=1, to=1, by=None, length_out=None, along_with=None, *args, **kwargs):\n    # Internal helper for R's is.logint\n    def is_logint(x):\n        return isinstance(x, (int, np.integer, bool))\n\n    # We need to identify which arguments were explicitly passed to simulate R's missing()\n    # In a Python function, we can't know if 'from_=1' was passed or is default.\n    # However, for the purpose of the harness, we can check the kwargs and the\n    # logic flow provided in the R source.\n    \n    # Track \"missing\" status\n    # We use the fact that by, length_out, along_with default to None.\n    # For 'from' and 'to', we must be careful.\n    \n    # Handle along.with\n    if along_with is not None:\n        # along.with can be a list/array (numpy array in this harness)\n        if hasattr(along_with, '__len__'):\n            l_out = len(along_with)\n        else:\n            l_out = 1 # treating scalar as length 1\n            \n        # If along.with is the only arg, return seq_len(l_out)\n        # To detect \"Only one arg\", we check if from_ and to are still defaults.\n        # However, the prompt implies along.with might be passed as a keyword.\n        if from_ == 1 and to == 1 and by is None and length_out is None:\n            return np.arange(1, l_out + 1, dtype=int)\n        \n        length_out = l_out\n\n    # Handle length.out\n    if length_out is not None:\n        if hasattr(length_out, '__len__') and not isinstance(length_out, (str, bytes)):\n            length_out = length_out[0]\n        \n        if not is_logint(length_out):\n            length_out = int(math.ceil(float(length_out)))\n            \n        if length_out < 0:\n            raise ValueError(\"'length.out' must be a non-negative number\")\n        if length_out == 0:\n            return np.array([], dtype=int)\n\n    # Check for \"single argument\" case seq(from)\n    # This is the most ambiguous part in Python. \n    # In the harness, we check if to=1, by=None, etc. and from_ != 1.\n    if by is None and length_out is None and along_with is None:\n        if to == 1 and from_ != 1:\n            if not np.isfinite(from_):\n                raise ValueError(\"'from' must be a finite number\")\n            return np.arange(1, int(from_) + 1, dtype=int)\n\n    # Handle the core logic\n    if length_out is not None:\n        if by is None:\n            # seq(from, to, length.out)\n            if from_ == to:\n                return np.full(length_out, from_, dtype=float if not is_logint(from_) else int)\n            \n            # R uses a specific linear interpolation logic\n            # del = to - from\n            # result = c(from, from + seq_len(length.out - 2) * (del/n1), to)\n            if length_out == 1:\n                return np.array([float(from_)])\n            \n            n1 = length_out - 1\n            del_val = float(to) - float(from_)\n            \n            # Use numpy linspace for reliability, but ensure it matches R's float behavior\n            return np.linspace(from_, to, length_out)\n        else:\n            # seq(from, by, length.out)\n            return from_ + np.arange(length_out) * by\n\n    if by is not None:\n        # seq(from, to, by)\n        if not np.isfinite(from_) or not np.isfinite(to):\n            raise ValueError(\"Finite numbers required\")\n            \n        del_val = float(to) - float(from_)\n        n = del_val / by\n        if n < 0:\n            raise ValueError(\"wrong sign in 'by' argument\")\n        \n        # R logic: n = as.integer(n + 1e-10)\n        num_steps = int(math.floor(n + 1e-10)) + 1\n        x = from_ + np.arange(num_steps) * by\n        \n        if by > 0:\n            return np.minimum(x, float(to))\n        else:\n            return np.maximum(x, float(to))\n\n    # Default: seq(from, to)\n    if is_logint(from_) and is_logint(to):\n        # R's from:to operator\n        step = 1 if to >= from_ else -1\n        return np.arange(from_, to + step, step, dtype=int)\n    else:\n        step = 1 if to >= from_ else -1\n        # Generate sequence as floats\n        return np.arange(float(from_), float(to) + step, step, dtype=float)\n",
+ "failures": [
+  {
+   "call": "seq(from = 0, to = 1, by = 0.1)",
+   "expected": [
+    0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1
+   ],
+   "got": 1.0,
+   "core": true,
+   "rclass": "numeric"
+  },
+  {
+   "call": "seq(0, 1, length.out = 11)",
+   "expected": [
+    0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1
+   ],
+   "got": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "core": true,
+   "rclass": "numeric"
+  }
+ ],
+ "tag": "corpus frequency (base)"
+}

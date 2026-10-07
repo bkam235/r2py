@@ -1,0 +1,20 @@
+{
+ "function": "paste0",
+ "package": null,
+ "status": "passed",
+ "rounds": 3,
+ "n_calls": 8,
+ "n_cases": 12,
+ "n_core": 12,
+ "attempt": 1,
+ "passed": 12,
+ "total": 12,
+ "core_passed": 12,
+ "core_total": 12,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_paste0(*args, collapse=None, recycle0=False, **kwargs):\n    # Combine positional and keyword arguments into one sequence\n    items = list(args)\n    if kwargs:\n        items.extend(kwargs.values())\n    \n    if not items:\n        return [\"\"]\n\n    processed = []\n    max_len = 1\n    for item in items:\n        if isinstance(item, (list, np.ndarray, pd.Series)):\n            item_strs = []\n            for val in item:\n                if pd.isna(val):\n                    item_strs.append(\"NA\")\n                # R converts numeric to string without .0 if it's a whole number\n                elif isinstance(val, (float, np.floating)) and float(val).is_integer():\n                    item_strs.append(str(int(val)))\n                else:\n                    item_strs.append(str(val))\n            processed.append(np.array(item_strs))\n            max_len = max(max_len, len(item_strs))\n        else:\n            # Scalar handling\n            if pd.isna(item):\n                val_str = \"NA\"\n            elif isinstance(item, (float, np.floating)) and float(item).is_integer():\n                val_str = str(int(item))\n            else:\n                val_str = str(item)\n            processed.append(val_str)\n\n    results = []\n    for i in range(max_len):\n        current_str = \"\"\n        for item in processed:\n            if isinstance(item, np.ndarray):\n                # R recycles vectors to match the longest one\n                current_str += item[i % len(item)]\n            else:\n                current_str += item\n        results.append(current_str)\n\n    if collapse is not None:\n        # R's collapse returns a single string (scalar)\n        return collapse.join(results)\n    else:\n        # Return as a character vector (list of strings)\n        # If max_len was 1 and we only have one element, it's still a vector in R\n        return results\n",
+ "failures": [],
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

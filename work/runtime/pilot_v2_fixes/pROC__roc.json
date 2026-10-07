@@ -1,0 +1,603 @@
+{
+ "function": "roc",
+ "package": "pROC",
+ "status": "failed",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 37,
+ "n_core": 37,
+ "n_mined": 1,
+ "attempt": 1,
+ "passed": 2,
+ "total": 37,
+ "core_passed": 2,
+ "core_total": 37,
+ "code": "import numpy as np\nimport pandas as pd\nfrom scipy import stats\n\ndef r_roc(response, predictor, controls=None, cases=None, density_controls=None, \n          density_cases=None, levels=None, percent=False, na_rm=True, \n          direction=\"auto\", algorithm=2, quiet=False, smooth=False, auc=True, \n          ci=False, plot=False, smooth_method=\"binormal\", smooth_n=512, \n          ci_method=None, density=None, *args, **kwargs):\n    \n    # Handle direction argument\n    if direction not in [\"auto\", \"<\", \">\"]:\n        raise ValueError(\"direction must be 'auto', '<', or '>'\")\n\n    # Case 1: response and predictor are provided\n    if response is not None and predictor is not None:\n        if (controls is not None) or (cases is not None):\n            raise ValueError(\"'cases/controls' argument incompatible with 'response/predictor'.\")\n        if (density_cases is not None) or (density_controls is not None):\n            raise ValueError(\"'density.*' arguments incompatible with 'response/predictor'.\")\n\n        original_predictor = np.array(predictor)\n        original_response = np.array(response)\n\n        # Factor levels handling\n        if levels is None:\n            # Convert response to factor (categorical) and get levels\n            resp_series = pd.Series(original_response).astype('category')\n            levels = resp_series.cat.categories.tolist()\n            if len(levels) > 2:\n                # Warning is issued in R, here we truncate to first two\n                levels = levels[:2]\n            elif len(levels) < 2:\n                raise ValueError(\"'response' must have two levels\")\n        elif len(levels) != 2:\n            raise ValueError(\"'levels' argument must have length 2\")\n\n        # Predictor type checking\n        predictor = np.array(original_predictor, dtype=float)\n        if np.any(np.isnan(predictor)) and not na_rm:\n            # Check for NAs in logic matching R\n            pass # handled below\n\n        # Length check\n        if len(predictor) != len(original_response):\n            raise ValueError(\"Response and predictor must be vectors of the same length.\")\n\n        # NA handling\n        if na_rm:\n            mask = ~(pd.isna(original_response) | pd.isna(predictor))\n            original_response = np.array(original_response)[mask]\n            predictor = predictor[mask]\n        else:\n            # Return NA if any NA is present in relevant subsets\n            if pd.isna(original_response).any() or pd.isna(predictor).any():\n                return np.nan\n\n        # Filter response to keep only the specified levels\n        mask_levels = np.isin(original_response, levels)\n        original_response = original_response[mask_levels]\n        predictor = predictor[mask_levels]\n\n        if np.any(np.isinf(predictor)):\n            return np.nan\n\n        # Split into controls and cases based on levels\n        # levels[0] is control, levels[1] is case\n        ctrl_mask = (original_response == levels[0])\n        case_mask = (original_response == levels[1])\n        \n        controls = predictor[ctrl_mask]\n        cases = predictor[case_mask]\n\n        if len(controls) == 0:\n            raise ValueError(\"No control observation.\")\n        if len(cases) == 0:\n            raise ValueError(\"No case observation.\")\n\n    # Case 2: cases and controls are provided\n    elif cases is not None and controls is not None:\n        if (density_cases is not None) or (density_controls is not None):\n            raise ValueError(\"'density.*' arguments incompatible with 'response/predictor'.\")\n\n        controls = np.array(controls, dtype=float)\n        cases = np.array(cases, dtype=float)\n\n        if na_rm:\n            controls = controls[~np.isnan(controls)]\n            cases = cases[~np.isnan(cases)]\n        else:\n            if np.isnan(controls).any() or np.isnan(cases).any():\n                return np.nan\n\n        if len(controls) == 0:\n            raise ValueError(\"No control observation.\")\n        if len(cases) == 0:\n            raise ValueError(\"No case observation.\")\n\n        predictor = np.concatenate([controls, cases])\n        original_predictor = predictor\n        original_response = np.concatenate([np.zeros(len(controls)), np.ones(len(cases))])\n        levels = [0, 1]\n        \n        if np.any(np.isinf(predictor)):\n            return np.nan\n\n    # Case 3: densities provided (Simplified as smooth_roc_density is internal)\n    elif density_cases is not None and density_controls is not None:\n        # This part of pROC handles pre-calculated densities. \n        # Implementation depends on internal pROC functions not provided here.\n        # Based on requirements, we focus on the primary roc usage.\n        raise NotImplementedError(\"Density-based ROC is not implemented in this snippet.\")\n    else:\n        raise ValueError(\"No valid data provided.\")\n\n    # Determine direction\n    if direction == \"auto\":\n        if np.median(controls) <= np.median(cases):\n            direction = \"<\"\n        else:\n            direction = \">\"\n\n    # Calculate ROC coordinates\n    # Controls: levels[0], Cases: levels[1]\n    # direction '<' means higher predictor = case (Standard ROC)\n    # direction '>' means lower predictor = case\n    \n    if direction == \">\":\n        # Swap groups for calculation\n        ctrl_vals = cases\n        case_vals = controls\n    else:\n        ctrl_vals = controls\n        case_vals = cases\n\n    # Standard AUC (Mann-Whitney U)\n    # AUC = (sum(rank_cases) - n_cases*(n_cases+1)/2) / (n_cases * n_controls)\n    combined = np.concatenate([ctrl_vals, case_vals])\n    ranks = stats.rankdata(combined)\n    case_ranks = ranks[len(ctrl_vals):]\n    auc_val = (np.sum(case_ranks) - (len(case_vals) * (len(case_vals) + 1) / 2)) / (len(case_vals) * len(ctrl_vals))\n\n    # Compute Sensitivities and Specificities (Algorithm 2)\n    all_thresholds = np.unique(combined)\n    # pROC sorts thresholds. We need to evaluate TPR/FPR at each.\n    # For direction '<', case is higher.\n    # Sens = P(pred >= thresh | case), Spec = P(pred < thresh | control)\n    \n    # To match R's exact 'roc' output shape:\n    # It calculates a sequence of thresholds and the corresponding spec/sens.\n    # The simplest way to get the ROC curve points:\n    t_sorted = np.sort(all_thresholds)\n    \n    # In pROC, thresholds are the values in the predictor\n    # We compute the empirical ROC curve\n    sens = []\n    spec = []\n    \n    # Sort predictors for efficient calculation\n    case_vals_sorted = np.sort(case_vals)\n    ctrl_vals_sorted = np.sort(ctrl_vals)\n    \n    # R's roc() creates points where the curve changes\n    # We simulate this by iterating through unique values of predictor\n    for t in t_sorted:\n        # Sensitivity: Proportion of cases >= t\n        s = np.sum(case_vals >= t) / len(case_vals)\n        # Specificity: Proportion of controls < t\n        sp = np.sum(ctrl_vals < t) / len(ctrl_vals)\n        sens.append(s)\n        spec.append(sp)\n\n    sens = np.array(sens)\n    spec = np.array(spec)\n\n    # Add endpoints (0,0) and (1,1) to match R\n    # R's roc object typically includes the boundaries\n    sens = np.concatenate([[1.0], sens, [0.0]])\n    spec = np.concatenate([[0.0], spec, [1.0]])\n    \n    # However, pROC's internal logic for 'roc_cc_nochecks' is specific.\n    # The key return values are sensitivities and specificities.\n    \n    # Handle percent\n    if percent:\n        sens *= 100\n        spec *= 100\n\n    # Build the result dictionary (mimicking the R list/object)\n    res = {\n        \"sensitivities\": sens,\n        \"specificities\": spec,\n        \"thresholds\": t_sorted,\n        \"auc\": auc_val if auc else None,\n        \"direction\": direction,\n        \"percent\": percent,\n        \"predictor\": predictor,\n        \"response\": original_response,\n        \"levels\": levels,\n        \"original.predictor\": original_predictor,\n        \"original.response\": original_response\n    }\n    \n    return res\n",
+ "failures": [
+  {
+   "call": "roc(c(0, 1, 0, 1), c(0.1, 0.4, 0.3, 0.8))",
+   "expected": {
+    "__r2py_fp__": true,
+    "class": [
+     "roc"
+    ],
+    "numbers": {
+     "sensitivities": [
+      1,
+      1,
+      1,
+      0.5,
+      0
+     ],
+     "specificities": [
+      0,
+      0.5,
+      1,
+      1,
+      1
+     ],
+     "thresholds": [
+      0.2,
+      0.35,
+      0.6
+     ],
+     "cases": [
+      0.4,
+      0.8
+     ],
+     "controls": [
+      0.1,
+      0.3
+     ],
+     "auc": 1,
+     "original.predictor": [
+      0.1,
+      0.4,
+      0.3,
+      0.8
+     ],
+     "original.response": [
+      0,
+      1,
+      0,
+      1
+     ],
+     "predictor": [
+      0.1,
+      0.4,
+      0.3,
+      0.8
+     ],
+     "response": [
+      0,
+      1,
+      0,
+      1
+     ]
+    }
+   },
+   "got": {
+    "sensitivities": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     0.5,
+     0.0
+    ],
+    "specificities": [
+     0.0,
+     0.0,
+     0.5,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "thresholds": [
+     0.1,
+     0.3,
+     0.4,
+     0.8
+    ],
+    "auc": 1.0,
+    "direction": "<",
+    "percent": false,
+    "predictor": [
+     0.1,
+     0.4,
+     0.3,
+     0.8
+    ],
+    "response": [
+     0.0,
+     1.0,
+     0.0,
+     1.0
+    ],
+    "levels": [
+     0.0,
+     1.0
+    ],
+    "original.predictor": [
+     0.1,
+     0.4,
+     0.3,
+     0.8
+    ],
+    "original.response": [
+     0.0,
+     1.0,
+     0.0,
+     1.0
+    ]
+   },
+   "core": true,
+   "rclass": "roc"
+  },
+  {
+   "call": "roc(c(0, 1, 0, 1), c(0.1, 0.4, 0.3, 0.8))  [first argument: an NA inserted]",
+   "expected": {
+    "__r2py_fp__": true,
+    "class": [
+     "roc"
+    ],
+    "numbers": {
+     "sensitivities": [
+      1,
+      1,
+      1,
+      0
+     ],
+     "specificities": [
+      0,
+      0.5,
+      1,
+      1
+     ],
+     "thresholds": [
+      0.2,
+      0.55
+     ],
+     "cases": 0.8,
+     "controls": [
+      0.1,
+      0.3
+     ],
+     "auc": 1,
+     "original.predictor": [
+      0.1,
+      0.4,
+      0.3,
+      0.8
+     ],
+     "original.response": [
+      0,
+      0,
+      1
+     ],
+     "predictor": [
+      0.1,
+      0.3,
+      0.8
+     ],
+     "response": [
+      0,
+      0,
+      1
+     ]
+    }
+   },
+   "got": {
+    "sensitivities": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0
+    ],
+    "specificities": [
+     0.0,
+     0.0,
+     0.5,
+     1.0,
+     1.0
+    ],
+    "thresholds": [
+     0.1,
+     0.3,
+     0.8
+    ],
+    "auc": 1.0,
+    "direction": "<",
+    "percent": false,
+    "predictor": [
+     0.1,
+     0.3,
+     0.8
+    ],
+    "response": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "levels": [
+     0.0,
+     1.0
+    ],
+    "original.predictor": [
+     0.1,
+     0.4,
+     0.3,
+     0.8
+    ],
+    "original.response": [
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "core": true,
+   "rclass": "roc"
+  },
+  {
+   "call": "roc(c(0, 1, 0, 1), c(0.1, 0.4, 0.3, 0.8))  [first argument: a tie]",
+   "expected": {
+    "__r2py_fp__": true,
+    "class": [
+     "roc"
+    ],
+    "numbers": {
+     "sensitivities": [
+      1,
+      1,
+      1,
+      1,
+      0
+     ],
+     "specificities": [
+      0,
+      0.333333333333333,
+      0.666666666666667,
+      1,
+      1
+     ],
+     "thresholds": [
+      0.2,
+      0.35,
+      0.6
+     ],
+     "cases": 0.8,
+     "controls": [
+      0.1,
+      0.4,
+      0.3
+     ],
+     "auc": 1,
+     "original.predictor": [
+      0.1,
+      0.4,
+      0.3,
+      0.8
+     ],
+     "original.response": [
+      0,
+      0,
+      0,
+      1
+     ],
+     "predictor": [
+      0.1,
+      0.4,
+      0.3,
+      0.8
+     ],
+     "response": [
+      0,
+      0,
+      0,
+      1
+     ]
+    }
+   },
+   "got": {
+    "sensitivities": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     0.0
+    ],
+    "specificities": [
+     0.0,
+     0.0,
+     0.3333333333333333,
+     0.6666666666666666,
+     1.0,
+     1.0
+    ],
+    "thresholds": [
+     0.1,
+     0.3,
+     0.4,
+     0.8
+    ],
+    "auc": 1.0,
+    "direction": "<",
+    "percent": false,
+    "predictor": [
+     0.1,
+     0.4,
+     0.3,
+     0.8
+    ],
+    "response": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ],
+    "levels": [
+     0.0,
+     1.0
+    ],
+    "original.predictor": [
+     0.1,
+     0.4,
+     0.3,
+     0.8
+    ],
+    "original.response": [
+     0.0,
+     0.0,
+     0.0,
+     1.0
+    ]
+   },
+   "core": true,
+   "rclass": "roc"
+  },
+  {
+   "call": "roc(c(0, 1, 0, 1), c(0.1, 0.4, 0.3, 0.8))  [first argument: scaled]",
+   "expected": {
+    "__r2py_fp__": true,
+    "class": [
+     "roc"
+    ],
+    "numbers": {
+     "sensitivities": [
+      1,
+      1,
+      1,
+      0.5,
+      0
+     ],
+     "specificities": [
+      0,
+      0.5,
+      1,
+      1,
+      1
+     ],
+     "thresholds": [
+      0.2,
+      0.35,
+      0.6
+     ],
+     "cases": [
+      0.4,
+      0.8
+     ],
+     "controls": [
+      0.1,
+      0.3
+     ],
+     "auc": 1,
+     "original.predictor": [
+      0.1,
+      0.4,
+      0.3,
+      0.8
+     ],
+     "original.response": [
+      -1.1,
+      6.2,
+      -1.1,
+      6.2
+     ],
+     "predictor": [
+      0.1,
+      0.4,
+      0.3,
+      0.8
+     ],
+     "response": [
+      -1.1,
+      6.2,
+      -1.1,
+      6.2
+     ]
+    }
+   },
+   "got": {
+    "sensitivities": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     0.5,
+     0.0
+    ],
+    "specificities": [
+     0.0,
+     0.0,
+     0.5,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "thresholds": [
+     0.1,
+     0.3,
+     0.4,
+     0.8
+    ],
+    "auc": 1.0,
+    "direction": "<",
+    "percent": false,
+    "predictor": [
+     0.1,
+     0.4,
+     0.3,
+     0.8
+    ],
+    "response": [
+     -1.1,
+     6.2,
+     -1.1,
+     6.2
+    ],
+    "levels": [
+     -1.1,
+     6.2
+    ],
+    "original.predictor": [
+     0.1,
+     0.4,
+     0.3,
+     0.8
+    ],
+    "original.response": [
+     -1.1,
+     6.2,
+     -1.1,
+     6.2
+    ]
+   },
+   "core": true,
+   "rclass": "roc"
+  },
+  {
+   "call": "roc(c(0, 1, 0, 1), c(0.1, 0.4, 0.3, 0.8))  [first argument: reversed]",
+   "expected": {
+    "__r2py_fp__": true,
+    "class": [
+     "roc"
+    ],
+    "numbers": {
+     "sensitivities": [
+      1,
+      1,
+      1,
+      0.5,
+      0
+     ],
+     "specificities": [
+      0,
+      0.5,
+      1,
+      1,
+      1
+     ],
+     "thresholds": [
+      0.6,
+      0.35,
+      0.2
+     ],
+     "cases": [
+      0.1,
+      0.3
+     ],
+     "controls": [
+      0.4,
+      0.8
+     ],
+     "auc": 1,
+     "original.predictor": [
+      0.1,
+      0.4,
+      0.3,
+      0.8
+     ],
+     "original.response": [
+      1,
+      0,
+      1,
+      0
+     ],
+     "predictor": [
+      0.1,
+      0.4,
+      0.3,
+      0.8
+     ],
+     "response": [
+      1,
+      0,
+      1,
+      0
+     ]
+    }
+   },
+   "got": {
+    "sensitivities": [
+     1.0,
+     1.0,
+     1.0,
+     1.0,
+     0.5,
+     0.0
+    ],
+    "specificities": [
+     0.0,
+     0.0,
+     0.5,
+     1.0,
+     1.0,
+     1.0
+    ],
+    "thresholds": [
+     0.1,
+     0.3,
+     0.4,
+     0.8
+    ],
+    "auc": 1.0,
+    "direction": ">",
+    "percent": false,
+    "predictor": [
+     0.1,
+     0.4,
+     0.3,
+     0.8
+    ],
+    "response": [
+     1.0,
+     0.0,
+     1.0,
+     0.0
+    ],
+    "levels": [
+     0.0,
+     1.0
+    ],
+    "original.predictor": [
+     0.1,
+     0.4,
+     0.3,
+     0.8
+    ],
+    "original.response": [
+     1.0,
+     0.0,
+     1.0,
+     0.0
+    ]
+   },
+   "core": true,
+   "rclass": "roc"
+  }
+ ],
+ "tag": "agent fix"
+}

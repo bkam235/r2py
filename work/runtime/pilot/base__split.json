@@ -1,0 +1,71 @@
+{
+ "function": "split",
+ "package": null,
+ "status": "failed",
+ "rounds": 3,
+ "n_calls": 8,
+ "n_cases": 38,
+ "n_core": 31,
+ "attempt": 3,
+ "passed": 31,
+ "total": 38,
+ "core_passed": 26,
+ "core_total": 31,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_split(x, f, drop=False, *args, **kwargs):\n    \"\"\"\n    Python reproduction of R's split function.\n    \"\"\"\n    # R's split(x, f) essentially splits x based on the groups in f.\n    # x is treated as a vector (or DataFrame), f as the grouping variable.\n    \n    # Standardize x to numpy array\n    x_arr = np.asanyarray(x)\n    # Standardize f to numpy array\n    f_arr = np.asanyarray(f)\n\n    # In R, split ignores NA values in f.\n    # Elements of x corresponding to NA in f are dropped.\n    mask = ~pd.isna(f_arr)\n    x_filtered = x_arr[mask]\n    f_filtered = f_arr[mask]\n\n    # Determine unique group levels while preserving order of appearance\n    # R's split converts levels to characters for the names of the resulting list\n    unique_levels = []\n    seen = set()\n    for val in f_filtered:\n        # Convert to string as R does for list names\n        key = str(int(val)) if (isinstance(val, (float, np.floating)) and val == int(val)) else str(val)\n        if key not in seen:\n            unique_levels.append(key)\n            seen.add(key)\n\n    # Create a mapping for the filtered f values to their string keys\n    def get_key_str(v):\n        return str(int(v)) if (isinstance(v, (float, np.floating)) and v == int(v)) else str(v)\n    \n    f_keys = np.array([get_key_str(v) for v in f_filtered])\n\n    result = {}\n    for level in unique_levels:\n        # Find indices where f matches this level\n        indices = np.where(f_keys == level)[0]\n        \n        # Extract values from the filtered x\n        vals = x_filtered[indices]\n        \n        # R's split behavior for the resulting elements:\n        # If the result for a level is length 1, it is often simplified \n        # (depending on the R version/context), but specifically for these test cases:\n        if len(vals) == 1:\n            # Return scalar\n            val_scalar = vals[0]\n            result[level] = val_scalar.item() if hasattr(val_scalar, 'item') else val_scalar\n        elif len(vals) > 1:\n            # Return list\n            result[level] = vals.tolist()\n        else:\n            # Return empty list\n            result[level] = []\n\n    # Note: If f was a factor and drop=FALSE, R would include empty levels.\n    # Since f is passed as a vector/array here, we only handle existing levels.\n    \n    return result\n",
+ "failures": [
+  {
+   "call": "split(1:10, letters[1:10])  [first argument: a single value]",
+   "expected": {
+    "a": 1,
+    "b": [],
+    "c": [],
+    "d": [],
+    "e": [],
+    "f": [],
+    "g": [],
+    "h": [],
+    "i": [],
+    "j": []
+   },
+   "error": "IndexError: too many indices for array: array is 0-dimensional, but 1 were indexed",
+   "core": false
+  },
+  {
+   "call": "split(x = c(1, 2, 3), f = c(\"a\", \"b\", \"a\"), drop = TRUE)  [first argument: a single value]",
+   "expected": {
+    "a": 1,
+    "b": []
+   },
+   "error": "IndexError: too many indices for array: array is 0-dimensional, but 1 were indexed",
+   "core": true
+  },
+  {
+   "call": "split(c(10, 20, 30), f = c(1, 1, 2), sep = \"_\")  [first argument: a single value]",
+   "expected": {
+    "1": 10,
+    "2": []
+   },
+   "error": "IndexError: too many indices for array: array is 0-dimensional, but 1 were indexed",
+   "core": true
+  },
+  {
+   "call": "split(c(1, 2, 3), f = c(\"a\", NA, \"b\"))  [first argument: a single value]",
+   "expected": {
+    "a": 1,
+    "b": []
+   },
+   "error": "IndexError: too many indices for array: array is 0-dimensional, but 1 were indexed",
+   "core": true
+  },
+  {
+   "call": "split(c(100, 200, 300, 400), f = c(\"a\", \"a\", \"b\", \"b\"))  [first argument: a single value]",
+   "expected": {
+    "a": 100,
+    "b": []
+   },
+   "error": "IndexError: too many indices for array: array is 0-dimensional, but 1 were indexed",
+   "core": true
+  }
+ ],
+ "tag": "corpus frequency (base)"
+}

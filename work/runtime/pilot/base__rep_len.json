@@ -1,0 +1,132 @@
+{
+ "function": "rep_len",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 25,
+ "n_core": 9,
+ "attempt": 1,
+ "passed": 21,
+ "total": 25,
+ "core_passed": 9,
+ "core_total": 9,
+ "code": "import numpy as np\n\ndef r_rep_len(x, length_out):\n    \"\"\"\n    Reproduces R's rep_len function.\n    Repeats the values of x until the resulting vector has length length_out.\n    \"\"\"\n    # Ensure x is a numpy array\n    x = np.asanyarray(x)\n    \n    if length_out <= 0:\n        # Return an empty array with the same dtype as x\n        return np.array([], dtype=x.dtype)\n    \n    if length_out == 0:\n        return np.array([], dtype=x.dtype)\n\n    # If x is empty, R's rep_len typically returns a vector of NAs or empty \n    # depending on the context, but for a standard vector input:\n    if x.size == 0:\n        # R's rep_len with empty x returns a vector of length length_out filled with NA\n        # However, the dtype depends on what x would have been.\n        # In R, rep_len(numeric(0), 5) -> [NA, NA, NA, NA, NA]\n        return np.full(length_out, np.nan)\n\n    # Calculate how many times x needs to be tiled and how many elements of the last tile\n    num_repeats = length_out // x.size\n    remainder = length_out % x.size\n    \n    # Create the repeated array\n    # np.tile repeats the whole array, then we slice to get exactly length_out\n    res = np.tile(x, num_repeats + (1 if remainder > 0 else 0))\n    \n    return res[:length_out]\n",
+ "failures": [
+  {
+   "call": "rep_len(matrix(1:4, 2), 8)",
+   "expected": [
+    1,
+    2,
+    3,
+    4,
+    1,
+    2,
+    3,
+    4
+   ],
+   "got": [
+    [
+     1.0,
+     3.0,
+     1.0,
+     3.0
+    ],
+    [
+     2.0,
+     4.0,
+     2.0,
+     4.0
+    ]
+   ],
+   "core": false
+  },
+  {
+   "call": "rep_len(matrix(1:4, 2), 8)  [first argument: an NA inserted]",
+   "expected": [
+    1,
+    null,
+    3,
+    4,
+    1,
+    null,
+    3,
+    4
+   ],
+   "got": [
+    [
+     1.0,
+     3.0,
+     1.0,
+     3.0
+    ],
+    [
+     null,
+     4.0,
+     null,
+     4.0
+    ]
+   ],
+   "core": false
+  },
+  {
+   "call": "rep_len(matrix(1:4, 2), 8)  [first argument: a tie]",
+   "expected": [
+    1,
+    1,
+    3,
+    4,
+    1,
+    1,
+    3,
+    4
+   ],
+   "got": [
+    [
+     1.0,
+     3.0,
+     1.0,
+     3.0
+    ],
+    [
+     1.0,
+     4.0,
+     1.0,
+     4.0
+    ]
+   ],
+   "core": false
+  },
+  {
+   "call": "rep_len(matrix(1:4, 2), 8)  [first argument: scaled]",
+   "expected": [
+    6.2,
+    13.5,
+    20.8,
+    28.1,
+    6.2,
+    13.5,
+    20.8,
+    28.1
+   ],
+   "got": [
+    [
+     6.2,
+     20.8,
+     6.2,
+     20.8
+    ],
+    [
+     13.5,
+     28.1,
+     13.5,
+     28.1
+    ]
+   ],
+   "core": false
+  }
+ ],
+ "exotic_passed": 12,
+ "exotic_total": 16,
+ "tag": "corpus frequency (base)"
+}

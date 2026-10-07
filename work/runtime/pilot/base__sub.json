@@ -1,0 +1,13 @@
+{
+ "function": "sub",
+ "package": null,
+ "status": "passed",
+ "rounds": 3,
+ "n_calls": 8,
+ "n_cases": 8,
+ "passed": 8,
+ "total": 8,
+ "code": "import numpy as np\nimport pandas as pd\nimport re\n\ndef r_sub(pattern, replacement, x, ignore_case=False, perl=False, fixed=False, useBytes=False):\n    # Handle potential pandas NA types safely\n    def is_na(val):\n        if val is None: return True\n        try:\n            if pd.isna(val): return True\n        except:\n            pass\n        return False\n\n    # Detect if x is a single string or a collection\n    is_single_string = isinstance(x, str)\n    \n    if is_single_string:\n        x_arr = np.array([x], dtype=object)\n    elif isinstance(x, (list, np.ndarray, pd.Series)):\n        x_arr = np.array(x, dtype=object)\n    else:\n        x_arr = np.array([str(x)], dtype=object)\n\n    pattern_str = str(pattern)\n    replacement_str = str(replacement)\n\n    flat_x = x_arr.ravel()\n    flat_res = np.empty(flat_x.shape, dtype=object)\n\n    for i in range(len(flat_x)):\n        val = flat_x[i]\n        \n        if is_na(val):\n            flat_res[i] = np.nan\n            continue\n        \n        val_str = str(val)\n        \n        if fixed:\n            # Replace first occurrence of literal string\n            idx = val_str.find(pattern_str)\n            if idx != -1:\n                val_str = val_str[:idx] + replacement_str + val_str[idx + len(pattern_str):]\n        else:\n            # Regular expression replacement (first match only)\n            flags = re.IGNORECASE if ignore_case else 0\n            # R's sub() replaces only the first occurrence\n            val_str = re.sub(pattern_str, replacement_str, val_str, count=1, flags=flags)\n            \n        flat_res[i] = val_str\n\n    res_arr = flat_res.reshape(x_arr.shape)\n\n    if is_single_string:\n        return res_arr.item()\n    \n    # Return as numpy array to match R vector behavior\n    return res_arr\n",
+ "failures": [],
+ "tag": "corpus frequency (base)"
+}

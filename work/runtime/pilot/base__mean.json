@@ -1,0 +1,13 @@
+{
+ "function": "mean",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 43,
+ "passed": 43,
+ "total": 43,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_mean(x, trim=0, na_rm=False, *args, **kwargs):\n    # Handle input type conversion to numpy array\n    if isinstance(x, (list, tuple)):\n        x = np.array(x)\n    elif isinstance(x, pd.Series):\n        x = x.to_numpy()\n    elif isinstance(x, (int, float, np.float64, np.int64)):\n        x = np.array([x])\n    \n    # R: if (!is.numeric(x) && !is.complex(x) && !is.logical(x))\n    # In Python context, we check if the dtype is numeric or boolean\n    if not (np.issubdtype(x.dtype, np.number) or np.issubdtype(x.dtype, np.bool_)):\n        # R returns NA_real_\n        return np.nan\n\n    # Handle na.rm\n    if na_rm:\n        # x <- x[!is.na(x)]\n        x = x[~np.isnan(x) if np.issubdtype(x.dtype, np.number) else x]\n    \n    # Validate trim\n    if not isinstance(trim, (int, float, np.number)) or np.ndim(trim) != 0:\n        raise ValueError(\"'trim' must be numeric of length one\")\n\n    n = len(x)\n    if n == 0:\n        return np.nan\n\n    if trim > 0:\n        # Trimmed means are not defined for complex data (handled by dtype check above for this impl)\n        # if (anyNA(x)) return(NA_real_)\n        if np.any(np.isnan(x)):\n            return np.nan\n        \n        if trim >= 0.5:\n            # return(stats::median(x, na.rm = FALSE))\n            # np.median handles the logic; R's median handles NA by returning NA if na.rm=FALSE\n            return np.median(x)\n        \n        # lo <- floor(n * trim) + 1\n        # hi <- n + 1 - lo\n        # x <- sort.int(x, partial = unique(c(lo, hi)))[lo:hi]\n        lo = int(np.floor(n * trim))\n        # R is 1-indexed, [lo+1:hi] in R is [lo:hi] in 0-indexed Python slicing\n        # lo_r = floor(n*trim)+1. hi_r = n + 1 - lo_r. \n        # Slicing [lo_r : hi_r] in R means indices from lo_r to hi_r inclusive.\n        # In 0-index: index (lo_r - 1) to (hi_r - 1).\n        # lo_idx = floor(n*trim).\n        # hi_idx = (n + 1 - (floor(n*trim)+1)) - 1 = n - floor(n*trim) - 1.\n        # Python slice [lo_idx : hi_idx + 1]\n        hi = n - lo\n        \n        sorted_x = np.sort(x)\n        x = sorted_x[lo:hi]\n\n    # .Internal(mean(x))\n    # If x is empty after trim or contains NaN and na.rm was False, \n    # np.mean returns NaN which matches R's behavior.\n    result = np.mean(x)\n    \n    # Return as a scalar if it's a single value, matching R's behavior for mean()\n    return float(result) if isinstance(result, (np.float64, np.float32)) else result\n",
+ "failures": [],
+ "tag": "corpus frequency (base)"
+}

@@ -1,0 +1,80 @@
+{
+ "function": "as.Date",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 17,
+ "n_core": 10,
+ "attempt": 1,
+ "passed": 10,
+ "total": 17,
+ "core_passed": 10,
+ "core_total": 10,
+ "code": "import numpy as np\nimport pandas as pd\nfrom datetime import datetime, date\nimport builtins\n\ndef r_as_Date(x, format=None, tryFormats=None, optional=False, *args, **kwargs):\n    if tryFormats is None:\n        tryFormats = [\"%Y-%m-%d\", \"%Y/%m/%d\"]\n    \n    # Handle input types to ensure we work with arrays/lists\n    if isinstance(x, (str, int, float)):\n        x_arr = np.array([x], dtype=object)\n    elif isinstance(x, (list, np.ndarray, pd.Series)):\n        x_arr = np.array(x, dtype=object)\n    else:\n        # For other types, let pandas attempt conversion or treat as object\n        x_arr = np.array([x], dtype=object)\n\n    def strptime_r(vals, fmt):\n        \"\"\"Helper to mimic R's strptime returning NaT/NaN for failures.\"\"\"\n        results = []\n        for v in vals:\n            if pd.isna(v) or (isinstance(v, str) and not v.strip()):\n                results.append(pd.NaT)\n            else:\n                try:\n                    # R's strptime is based on C strptime; pandas to_datetime is close\n                    # We use %z=GMT logic implicitly by not specifying TZ unless needed\n                    dt = pd.to_datetime(v, format=fmt, errors='coerce')\n                    results.append(dt)\n                except:\n                    results.append(pd.NaT)\n        return pd.DatetimeIndex(results)\n\n    if format is not None:\n        # Use the specified format\n        res_dt = strptime_r(x_arr, format)\n    else:\n        # charToDate logic\n        # Normalize inputs: empty strings are NA\n        normalized_x = []\n        for val in x_arr:\n            if isinstance(val, str) and not val:\n                normalized_x.append(np.nan)\n            else:\n                normalized_x.append(val)\n        \n        # Find the first non-NA value to determine the format\n        xx = None\n        for val in normalized_x:\n            if not pd.isna(val):\n                xx = val\n                break\n        \n        if xx is None:\n            # All are NA, default to %Y-%m-%d (though it won't matter)\n            res_dt = strptime_r(normalized_x, \"%Y-%m-%d\")\n        else:\n            # Try the provided tryFormats\n            found_fmt = None\n            for ff in tryFormats:\n                # Test only the first non-NA value\n                test_dt = strptime_r([xx], ff)\n                if not pd.isna(test_dt[0]):\n                    found_fmt = ff\n                    break\n            \n            if found_fmt:\n                res_dt = strptime_r(normalized_x, found_fmt)\n            elif optional:\n                # Return array of NAs\n                res_dt = pd.DatetimeIndex([pd.NaT] * len(normalized_x))\n            else:\n                raise ValueError(\"character string is not in a standard unambiguous format\")\n\n    # Convert DatetimeIndex to a numpy array of datetime.date (R's Date class)\n    # R's as.Date converts the result of strptime (POSIXct) to Date.\n    final_dates = []\n    for dt in res_dt:\n        if pd.isna(dt):\n            final_dates.append(np.nan)\n        else:\n            final_dates.append(dt.date())\n    \n    result = np.array(final_dates, dtype=object)\n    \n    # Return scalar if input was scalar\n    if isinstance(x, (str, int, float)) and not isinstance(x, (list, np.ndarray, pd.Series)):\n        return result[0]\n    \n    return result\n",
+ "failures": [
+  {
+   "call": "as.Date(-10)",
+   "expected": "1969-12-22",
+   "error": "ValueError: character string is not in a standard unambiguous format",
+   "core": false,
+   "rclass": "Date"
+  },
+  {
+   "call": "as.Date(1:5, origin = \"2020-01-01\")",
+   "expected": [
+    "2020-01-02",
+    "2020-01-03",
+    "2020-01-04",
+    "2020-01-05",
+    "2020-01-06"
+   ],
+   "error": "ValueError: character string is not in a standard unambiguous format",
+   "core": false,
+   "rclass": "Date"
+  },
+  {
+   "call": "as.Date(1:5, origin = \"2020-01-01\")  [first argument: an NA inserted]",
+   "expected": [
+    "2020-01-02",
+    null,
+    "2020-01-04",
+    "2020-01-05",
+    "2020-01-06"
+   ],
+   "error": "ValueError: character string is not in a standard unambiguous format",
+   "core": false,
+   "rclass": "Date"
+  },
+  {
+   "call": "as.Date(1:5, origin = \"2020-01-01\")  [first argument: a tie]",
+   "expected": [
+    "2020-01-02",
+    "2020-01-02",
+    "2020-01-04",
+    "2020-01-05",
+    "2020-01-06"
+   ],
+   "error": "ValueError: character string is not in a standard unambiguous format",
+   "core": false,
+   "rclass": "Date"
+  },
+  {
+   "call": "as.Date(1:5, origin = \"2020-01-01\")  [first argument: scaled]",
+   "expected": [
+    "2020-01-07",
+    "2020-01-14",
+    "2020-01-21",
+    "2020-01-29",
+    "2020-02-05"
+   ],
+   "error": "ValueError: character string is not in a standard unambiguous format",
+   "core": false,
+   "rclass": "Date"
+  }
+ ],
+ "exotic_passed": 0,
+ "exotic_total": 7,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

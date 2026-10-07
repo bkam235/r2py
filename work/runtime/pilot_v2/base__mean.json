@@ -1,0 +1,20 @@
+{
+ "function": "mean",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 43,
+ "n_core": 31,
+ "attempt": 1,
+ "passed": 43,
+ "total": 43,
+ "core_passed": 31,
+ "core_total": 31,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_mean(x, trim=0, na_rm=False, *args, **kwargs):\n    \"\"\"\n    Python implementation of R's mean() function.\n    \"\"\"\n    # Ensure x is a numpy array. If it is a scalar, make it a 1D array.\n    if np.isscalar(x):\n        x = np.array([x])\n    else:\n        x = np.asanyarray(x)\n\n    # R's type check: !is.numeric(x) && !is.complex(x) && !is.logical(x)\n    if not np.issubdtype(x.dtype, np.number) and not np.issubdtype(x.dtype, np.bool_):\n        return np.nan\n\n    # Handle na.rm (remove NA values)\n    if na_rm:\n        # Convert to float to use isnan safely across types\n        mask = ~np.isnan(x.astype(float))\n        x = x[mask]\n\n    # Check trim parameter\n    if not isinstance(trim, (int, float, np.number)) or np.ndim(trim) != 0:\n        raise TypeError(\"'trim' must be numeric of length one\")\n\n    n = len(x)\n    \n    if trim > 0 and n > 0:\n        # trimmed means are not defined for complex data\n        if np.iscomplexobj(x):\n            raise TypeError(\"trimmed means are not defined for complex data\")\n        \n        # if any NA exists in the sequence before trimming\n        if np.any(np.isnan(x.astype(float))):\n            return np.nan\n        \n        if trim >= 0.5:\n            # R returns stats::median(x, na.rm = FALSE)\n            # Note: np.median handles the median calculation. \n            # If trim >= 0.5, R returns the median.\n            return np.median(x).item() if hasattr(np.median(x), 'item') else np.median(x)\n        \n        # Calculate indices for trimming\n        # R: lo <- floor(n * trim) + 1; hi <- n + 1 - lo\n        # Python 0-indexing: lo_idx = floor(n * trim)\n        lo_idx = int(np.floor(n * trim))\n        hi_idx = n - lo_idx\n        \n        sorted_x = np.sort(x)\n        x = sorted_x[lo_idx:hi_idx]\n\n    # Final mean calculation\n    if len(x) == 0:\n        # R's mean() of an empty vector returns NaN\n        return np.nan\n    \n    res = np.mean(x)\n    return res.item() if hasattr(res, 'item') else res\n",
+ "failures": [],
+ "exotic_passed": 12,
+ "exotic_total": 12,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

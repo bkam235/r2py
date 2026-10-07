@@ -1,0 +1,41 @@
+{
+ "function": "tolower",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "n_calls": 8,
+ "n_cases": 18,
+ "n_core": 14,
+ "attempt": 2,
+ "passed": 16,
+ "total": 18,
+ "core_passed": 14,
+ "core_total": 14,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_tolower(x):\n    \"\"\"\n    Reproduce R's tolower function.\n    R's tolower converts all characters in a character vector to lowercase.\n    If x is not character, it is coerced to character.\n    \"\"\"\n    # R's is.character check and as.character coercion\n    # In Python, if x is a scalar string, we handle it. \n    # If it's a list/numpy array/pandas Series, we process each element.\n    \n    if isinstance(x, (np.ndarray, pd.Series, list)):\n        # Convert elements to string, handling NaN (which remains NaN in R's tolower)\n        # R's as.character(NA) is \"NA\", but tolower(NA) returns NA.\n        # However, standard numpy/pandas NaN behavior for character vectors is handled here.\n        res = []\n        for item in x:\n            if pd.isna(item):\n                res.append(np.nan)\n            else:\n                res.append(str(item).lower())\n        \n        # Return as numpy array to match R vector output type for lists/arrays\n        return np.array(res, dtype=object)\n    \n    elif pd.isna(x):\n        return np.nan\n    \n    else:\n        # Scalar case\n        return str(x).lower()\n",
+ "failures": [
+  {
+   "call": "tolower(matrix(c(\"A\", \"B\", \"C\", \"D\"), nrow = 2))",
+   "expected": [
+    [
+     "a",
+     "c"
+    ],
+    [
+     "b",
+     "d"
+    ]
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": false
+  },
+  {
+   "call": "tolower(data.frame(col1 = \"Text\"))",
+   "expected": "text",
+   "got": "{'col1': 'text'}",
+   "core": false
+  }
+ ],
+ "exotic_passed": 2,
+ "exotic_total": 4,
+ "tag": "corpus frequency (base)"
+}

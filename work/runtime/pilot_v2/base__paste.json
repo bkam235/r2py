@@ -1,0 +1,69 @@
+{
+ "function": "paste",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 17,
+ "n_core": 11,
+ "attempt": 1,
+ "passed": 13,
+ "total": 17,
+ "core_passed": 11,
+ "core_total": 11,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_paste(*args, sep=\" \", collapse=None, recycle0=False, **kwargs):\n    processed_args = []\n    for arg in args:\n        # Handle matrices/dataframes/arrays by flattening to 1D as R does for paste()\n        if isinstance(arg, (np.ndarray, pd.Series, pd.DataFrame)):\n            # R's paste() flattens matrices column-major (Fortran order)\n            if isinstance(arg, pd.DataFrame):\n                # Convert DF to numpy and flatten in F order\n                flat = arg.values.flatten(order='F')\n            else:\n                # numpy arrays: ensure we flatten in Fortran order to match R's matrix behavior\n                flat = np.array(arg).flatten(order='F')\n            processed_args.append(flat.astype(object))\n        elif isinstance(arg, list):\n            processed_args.append(np.array(arg, dtype=object))\n        elif isinstance(arg, (int, float, str, bool, type(None))):\n            processed_args.append(np.array([arg], dtype=object))\n        else:\n            processed_args.append(np.array([str(arg)], dtype=object))\n\n    if not processed_args:\n        res_list = [\"\"]\n    else:\n        # Determine target length (max of all input lengths)\n        lengths = [len(a) for a in processed_args]\n        target_len = max(lengths)\n\n        # Recycling shorter vectors\n        expanded = []\n        for a in processed_args:\n            curr_len = len(a)\n            if curr_len == target_len:\n                expanded.append(a)\n            else:\n                reps = (target_len // curr_len) + 1\n                tiled = np.tile(a, reps)[:target_len]\n                expanded.append(tiled)\n\n        def to_r_str(x):\n            # Check for NaN/NA\n            if pd.isna(x):\n                return \"NA\"\n            # Specifically handle the case where ints might be floats (e.g. 1.0 -> \"1\")\n            if isinstance(x, float) and x.is_integer():\n                return str(int(x))\n            return str(x)\n\n        res_list = []\n        for i in range(target_len):\n            row = [to_r_str(expanded[j][i]) for j in range(len(expanded))]\n            res_list.append(sep.join(row))\n\n    if collapse is not None:\n        # collapse returns a single string as a vector element\n        c_val = str(collapse)\n        collapsed_str = c_val.join(res_list)\n        return [collapsed_str]\n    \n    # Return as a list of strings (R character vector)\n    return res_list\n",
+ "failures": [
+  {
+   "call": "paste(matrix(1:4, 2), \"Text\")",
+   "expected": [
+    "1 Text",
+    "2 Text",
+    "3 Text",
+    "4 Text"
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": false,
+   "rclass": "character"
+  },
+  {
+   "call": "paste(matrix(1:4, 2), \"Text\")  [first argument: an NA inserted]",
+   "expected": [
+    "1 Text",
+    "NA Text",
+    "3 Text",
+    "4 Text"
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": false,
+   "rclass": "character"
+  },
+  {
+   "call": "paste(matrix(1:4, 2), \"Text\")  [first argument: a tie]",
+   "expected": [
+    "1 Text",
+    "1 Text",
+    "3 Text",
+    "4 Text"
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": false,
+   "rclass": "character"
+  },
+  {
+   "call": "paste(matrix(1:4, 2), \"Text\")  [first argument: scaled]",
+   "expected": [
+    "6.2 Text",
+    "13.5 Text",
+    "20.8 Text",
+    "28.1 Text"
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": false,
+   "rclass": "character"
+  }
+ ],
+ "exotic_passed": 2,
+ "exotic_total": 6,
+ "tag": "corpus frequency (base)",
+ "impure": []
+}

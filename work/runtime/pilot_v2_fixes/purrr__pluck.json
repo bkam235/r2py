@@ -1,0 +1,55 @@
+{
+ "function": "pluck",
+ "package": "purrr",
+ "status": "failed",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 10,
+ "n_core": 4,
+ "n_mined": 0,
+ "attempt": 1,
+ "passed": 3,
+ "total": 10,
+ "core_passed": 0,
+ "core_total": 4,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_pluck(x, *args, **kwargs):\n    \"\"\"\n    Reproduces purrr::pluck in Python.\n    \n    x: The object to pluck from (list, dict, or pandas DataFrame/Series).\n    *args: The indices/names to pluck.\n    kwargs: contains .default (since .default is not a valid Python variable name).\n    \"\"\"\n    # Handle .default from kwargs since it's not a valid Python parameter name\n    default = kwargs.get('.default', None)\n    curr = x\n    \n    for arg in args:\n        # In R, pluck is designed for lists (represented here as dicts or lists).\n        \n        # Case 1: curr is a dict (R's named list representation)\n        if isinstance(curr, dict):\n            if arg in curr:\n                curr = curr[arg]\n            else:\n                # R allows numeric indexing on named lists (1-based)\n                try:\n                    # Treat the dict as a sequence for positional indexing\n                    idx = int(arg) - 1\n                    values = list(curr.values())\n                    if 0 <= idx < len(values):\n                        curr = values[idx]\n                    else:\n                        return default\n                except (ValueError, TypeError):\n                    return default\n        \n        # Case 2: curr is a list or numpy array (R's unnamed list or vector)\n        elif isinstance(curr, (list, np.ndarray)):\n            try:\n                # R's pluck is 1-indexed for numeric arguments\n                if isinstance(arg, (int, float, np.integer)):\n                    idx = int(arg) - 1\n                    if 0 <= idx < len(curr):\n                        curr = curr[idx]\n                    else:\n                        return default\n                else:\n                    # Cannot pluck a non-dict by name\n                    return default\n            except (IndexError, TypeError, ValueError):\n                return default\n                \n        # Case 3: pandas DataFrame or Series (R's data frame/column)\n        elif isinstance(curr, (pd.DataFrame, pd.Series)):\n            try:\n                if isinstance(arg, (int, float, np.integer)):\n                    idx = int(arg) - 1\n                    if isinstance(curr, pd.Series):\n                        curr = curr.iloc[idx]\n                    else: # DataFrame\n                        # Plucking from a DF usually refers to columns\n                        curr = curr.iloc[:, idx]\n                elif isinstance(arg, str):\n                    if isinstance(curr, pd.Series):\n                        curr = curr.loc[arg]\n                    else: # DataFrame\n                        curr = curr[arg]\n                else:\n                    return default\n            except (IndexError, KeyError, TypeError):\n                return default\n                \n        # Case 4: Scalar or other types\n        else:\n            return default\n            \n    return curr\n",
+ "failures": [
+  {
+   "call": "purrr::pluck(list(a = 1, b = 2), \"a\")",
+   "expected": 1,
+   "got": "a",
+   "core": true,
+   "rclass": "numeric"
+  },
+  {
+   "call": "purrr::pluck(list(a = 1), \"b\", .default = \"Missing\")",
+   "expected": "Missing",
+   "got": "b",
+   "core": true,
+   "rclass": "character"
+  },
+  {
+   "call": "purrr::pluck(list(a = NA), \"a\")",
+   "expected": null,
+   "got": "a",
+   "core": true,
+   "rclass": "logical"
+  },
+  {
+   "call": "purrr::pluck(list(-1, -2, -3), 2)",
+   "expected": -2,
+   "got": 2,
+   "core": true,
+   "rclass": "numeric"
+  },
+  {
+   "call": "purrr::pluck(1:10, 5)  [first argument: scaled]",
+   "expected": 35.4,
+   "got": 5,
+   "core": false,
+   "rclass": "numeric"
+  }
+ ],
+ "tag": "agent fix"
+}

@@ -1,0 +1,24 @@
+{
+ "function": "suppressPackageStartupMessages",
+ "package": null,
+ "status": "passed",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 17,
+ "n_core": 13,
+ "n_mined": 1,
+ "attempt": 1,
+ "passed": 17,
+ "total": 17,
+ "core_passed": 13,
+ "core_total": 13,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_suppressPackageStartupMessages(expr):\n    \"\"\"\n    R's suppressPackageStartupMessages suppresses messages produced during \n    package loading. In the context of the provided examples, it acts as a \n    wrapper that executes the expression and returns its result.\n    \n    Based on the provided evidence and the nature of the R function, \n    it essentially returns the result of the evaluated expression.\n    \"\"\"\n    # In R, this function uses withCallingHandlers to muffle packageStartupMessage.\n    # In a Python reproduction where 'expr' is passed as the result of the \n    # expression (or a callable), we return that result.\n    return expr\n",
+ "failures": [],
+ "exotic_passed": 4,
+ "exotic_total": 4,
+ "tag": "agent fix",
+ "impure": [
+  "withCallingHandlers"
+ ]
+}

@@ -1,0 +1,61 @@
+{
+ "function": "holidayNYSE",
+ "package": "timeDate",
+ "status": "failed",
+ "rounds": 7,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 7,
+ "n_core": 7,
+ "n_mined": 1,
+ "attempt": 1,
+ "passed": 5,
+ "total": 7,
+ "core_passed": 5,
+ "core_total": 7,
+ "code": "import numpy as np\nimport pandas as pd\nfrom datetime import datetime, date, timedelta\nimport calendar\n\ndef get_nth_weekday(year, month, weekday, n=1):\n    # weekday: 0=Mon, 6=Sun\n    first_day = date(year, month, 1)\n    first_wday = first_day.weekday()\n    offset = (weekday - first_wday + 7) % 7\n    target_day = 1 + offset + (n - 1) * 7\n    return date(year, month, target_day)\n\ndef get_last_weekday(year, month, weekday):\n    last_day_num = calendar.monthrange(year, month)[1]\n    last_day = date(year, month, last_day_num)\n    offset = (last_day.weekday() - weekday + 7) % 7\n    return last_day - timedelta(days=offset)\n\ndef get_good_friday(y):\n    # Computes Good Friday (Easter - 2 days)\n    # Using a robust algorithm for Gregorian Easter\n    a = y % 19\n    b = y // 100\n    c = y % 100\n    d = (19 * a + b) % 30\n    e = (2 * (b // 4) - (b % 4) - (8 * b + 13) // 25 + 19 * a + 15) % 30\n    # This is tricky, using the standard Meeus/Butcher algorithm\n    a = y % 19\n    b = y // 100\n    c = y % 100\n    d = (19 * a + b) % 30\n    e = (2 * (b // 4) - (b % 4) - ((8 * b + 13) // 25) + 19 * a + 15) % 30\n    # Simplified reliable way via pandas/datetime:\n    # Easter date calculation\n    a = y % 19\n    b = y // 100\n    c = y % 100\n    d = (19 * a + b) % 30\n    e = (2 * (b // 4) - (b % 4) - ((8 * b + 13) // 25) + 19 * a + 15) % 30\n    f = (2 * (b // 4) - (b % 4) - ((8 * b + 13) // 25) + 19 * a + 15) % 7 # Still tricky\n    # Let's use a known Python library approach for Easter\n    from dateutil.easter import easter\n    return easter(y) - timedelta(days=2)\n\ndef USNewYearsDay(y): return date(y, 1, 1)\ndef USIndependenceDay(y): return date(y, 7, 4)\ndef USThanksgivingDay(y): return get_nth_weekday(y, 11, 3, 4)\ndef USChristmasDay(y): return date(y, 12, 25)\ndef USLaborDay(y): return get_nth_weekday(y, 9, 0, 1)\ndef USLincolnsBirthday(y): return date(y, 2, 12)\ndef USColumbusDay(y): return get_nth_weekday(y, 10, 0, 2)\ndef USVeteransDay(y): return date(y, 11, 11)\ndef USElectionDay(y): return get_nth_weekday(y, 11, 1, 1)\ndef USWashingtonsBirthday(y): return date(y, 2, 22)\ndef USDecorationMemorialDay(y): return get_last_weekday(y, 5, 0)\ndef USPresidentsDay(y): return get_nth_weekday(y, 2, 0, 3)\ndef USMemorialDay(y): return get_last_weekday(y, 5, 0)\ndef USMLKingsBirthday(y): return get_nth_weekday(y, 1, 0, 3)\ndef USJuneteenthNationalIndependenceDay(y): return date(y, 6, 19)\n\nnyse_special_closings = np.array([])\n\ndef r_holidayNYSE(year=None, type=\"\", *args, **kwargs):\n    if year is None:\n        # Mocking getRmetricsOptions(\"currentYear\")\n        year = [datetime.now().year]\n    \n    year_arr = np.atleast_1d(year).astype(int)\n    valid_types = [\"\", \"standard\", \"special\"]\n    if type not in valid_types:\n        type = \"\"\n\n    ans_dates = []\n    if type == \"\" or type == \"standard\":\n        for y in year_arr:\n            hols = []\n            if y >= 1885: hols.extend([USNewYearsDay(y), USIndependenceDay(y), USThanksgivingDay(y), USChristmasDay(y)])\n            if y >= 1887: hols.append(USLaborDay(y))\n            if y not in [1898, 1906, 1907]: hols.append(get_good_friday(y))\n            if 1896 <= y <= 1953: hols.append(USLincolnsBirthday(y))\n            if 1909 <= y <= 1953: hols.append(USColumbusDay(y))\n            if y == 1918 or y == 1921 or (1934 <= y <= 1953): hols.append(USVeteransDay(y))\n            if y <= 1968 or y in [1972, 1976, 1980]: hols.append(USElectionDay(y))\n            if y <= 1970: hols.extend([USWashingtonsBirthday(y), USDecorationMemorialDay(y)])\n            else: hols.extend([USPresidentsDay(y), USMemorialDay(y)])\n            if y >= 1998: hols.append(USMLKingsBirthday(y))\n            if y >= 2022: hols.append(USJuneteenthNationalIndependenceDay(y))\n            ans_dates.extend(hols)\n        \n        # The R code does `ans <- timeDate(format(holidays), zone = \"NewYork\", FinCenter = \"NewYork\")`\n        # Then it shifts Sundays to Mondays.\n        observed = []\n        # Sort all collected holidays first\n        sorted_hols = sorted(list(set(ans_dates)))\n        for d in sorted_hols:\n            if d.weekday() == 6: # Sunday\n                observed.append(d + timedelta(days=1))\n            else:\n                observed.append(d)\n        \n        # July 4th Sat -> Friday rule (since 1959)\n        final_observed = []\n        for d in observed:\n            if d >= date(1959, 7, 3) and d.weekday() == 5:\n                # If the original date was July 4 and it's Saturday, move to Friday\n                # we need to check if this date actually corresponds to the July 4th holiday\n                # but the R logic is simpler: if the *observed* date is Sat and it's July 4th, move back.\n                # Actually, NYSE rule is: if July 4 is Sat, observed on July 3. If July 4 is Sun, observed on July 5.\n                if d.month == 7 and d.day == 4:\n                    final_observed.append(d - timedelta(days=1))\n                else:\n                    final_observed.append(d)\n            else:\n                final_observed.append(d)\n        \n        ans_dates = sorted(list(set(final_observed)))\n\n    if type == \"\" or type == \"special\":\n        sp = []\n        if nyse_special_closings.size > 0:\n            for s in nyse_special_closings:\n                if s.year in year_arr:\n                    sp.append(date(s.year, s.month, s.day))\n        ans_dates = sorted(list(set(ans_dates + sp)))\n\n    # Final filter: remove weekends\n    final = [d for d in ans_dates if d.weekday() != 5 and d.weekday() != 6]\n    \n    # Return as pandas Timestamps. To match the \"T05:00:00\" (EST) or \"T04:00:00\" (EDT)\n    # seen in R's output, we must treat the date as a local New York date and \n    # convert it to UTC. \n    res = []\n    for d in final:\n        # Create a Timestamp for midnight in NY, then localize to NY, then convert to UTC\n        # This matches the R `timeDate` behavior where the internal value is UTC.\n        ts = pd.Timestamp(d).tz_localize('America/New_York').tz_convert('UTC')\n        res.append(ts)\n        \n    return np.array(res)\n",
+ "failures": [
+  {
+   "call": "holidayNYSE(year = -1)",
+   "expected": {
+    "Data": null,
+    "format": "",
+    "FinCenter": "NewYork"
+   },
+   "error": "ValueError: year -1 is out of range",
+   "core": true,
+   "rclass": "timeDate"
+  },
+  {
+   "call": "holidayNYSE(year = 2021)",
+   "expected": {
+    "Data": [
+     "2021-01-01T05:00:00",
+     "2021-01-18T05:00:00",
+     "2021-02-15T05:00:00",
+     "2021-04-02T04:00:00",
+     "2021-05-31T04:00:00",
+     "2021-07-05T04:00:00",
+     "2021-09-06T04:00:00",
+     "2021-11-25T05:00:00",
+     "2021-12-24T05:00:00"
+    ],
+    "format": "%Y-%m-%d",
+    "FinCenter": "NewYork"
+   },
+   "got": [
+    "2021-01-01T05:00:00",
+    "2021-01-18T05:00:00",
+    "2021-02-15T05:00:00",
+    "2021-04-02T04:00:00",
+    "2021-05-31T04:00:00",
+    "2021-07-05T04:00:00",
+    "2021-09-06T04:00:00",
+    "2021-11-25T05:00:00"
+   ],
+   "core": true,
+   "rclass": "timeDate"
+  }
+ ],
+ "tag": "failing entity (hard pass)"
+}

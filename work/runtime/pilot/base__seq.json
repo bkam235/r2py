@@ -1,0 +1,77 @@
+{
+ "function": "seq",
+ "package": null,
+ "status": "failed",
+ "rounds": 2,
+ "n_calls": 8,
+ "n_cases": 14,
+ "n_core": 11,
+ "attempt": 3,
+ "passed": 12,
+ "total": 14,
+ "core_passed": 9,
+ "core_total": 11,
+ "code": "import numpy as np\nimport pandas as pd\nimport math\n\ndef r_seq(from_=1, to=1, by=None, length_out=None, along_with=None, *args, **kwargs):\n    # Internal helper to mimic R's is.logint\n    def is_logint(x):\n        return isinstance(x, (int, np.integer, np.bool_))\n\n    # Track which arguments were explicitly provided to mimic R's missing()\n    # In Python, we check against the defaults provided in the signature\n    # but the tests suggest we need to know if they were explicitly passed.\n    # We use a trick to check if they are the same as defaults, but \n    # we must be careful with positional vs keyword.\n    \n    # The R function signature is: from = 1, to = 1, by = ((to - from)/(length.out - 1))\n    # In R, 'by' is missing by default.\n    \n    # Check if only 'from' was passed (nargs == 1)\n    # Based on typical R use, this is the most common failure point.\n    # We determine if only 'from' was provided by checking if others are at default\n    # and not explicitly in kwargs.\n    explicit_args = kwargs.keys()\n    # This is a simplification of R's missing() logic\n    is_from_missing = (from_ == 1 and 'from' not in explicit_args) # approx\n    is_to_missing = (to == 1 and 'to' not in explicit_args)\n    is_by_missing = (by is None)\n    is_len_missing = (length_out is None)\n    is_along_missing = (along_with is None)\n\n    # The \"nargs == 1\" case: seq(from)\n    # This usually happens when only one positional argument is passed.\n    # To perfectly mimic this, we check if 'to', 'by', 'length_out', 'along_with' are all missing.\n    # We use a simple heuristic: if only one value is not default/None and it's 'from'.\n    # However, let's check the actual calls.\n    \n    # Detect if this was a single-argument call like seq(10)\n    # This is the most fragile part of translating R to Python.\n    # We assume if to=1, by=None, length_out=None, along_with=None, then it's seq(from)\n    # unless from was explicitly 1.\n    if to == 1 and is_by_missing and is_len_missing and is_along_missing:\n        # We need to distinguish seq(1) from seq(1, 1).\n        # If 'to' was not explicitly passed as 1, treat as seq(from).\n        if 'to' not in explicit_args:\n            if np.isscalar(from_):\n                if not np.isfinite(from_):\n                    raise ValueError(\"'from' must be a finite number\")\n                # R: 1L:from\n                f_val = int(from_)\n                if f_val < 1: return np.array([], dtype=int)\n                return np.arange(1, f_val + 1, dtype=int)\n            else:\n                # R: 1L:length(from)\n                lf = len(from_)\n                if lf == 0: return np.array([], dtype=int)\n                return np.arange(1, lf + 1, dtype=int)\n\n    # Handle 'along.with'\n    if along_with is not None:\n        length_out = len(along_with) if hasattr(along_with, '__len__') else 1\n        # If length_out is now set, and we only had along.with, it's seq_len(length_out)\n        if to == 1 and is_by_missing and 'to' not in explicit_args:\n            return np.arange(1, length_out + 1, dtype=int)\n\n    # Handle 'length.out' logic\n    if length_out is not None:\n        if hasattr(length_out, '__len__') and len(length_out) > 0:\n            length_out = length_out[0]\n        \n        if not np.isfinite(length_out) or length_out < 0:\n            raise ValueError(\"'length.out' must be a non-negative number\")\n        \n        length_out = int(math.ceil(length_out))\n        if length_out == 0:\n            return np.array([], dtype=int)\n\n    # Final check for 'from' and 'to' as scalars\n    if not np.isscalar(from_) or len(np.atleast_1d(from_)) != 1:\n        raise ValueError(\"'from' must be of length 1\")\n    if not np.isscalar(to) or len(np.atleast_1d(to)) != 1:\n        raise ValueError(\"'to' must be of length 1\")\n\n    # Finite checks\n    if not np.isfinite(from_):\n        raise ValueError(\"'from' must be a finite number\")\n    if not np.isfinite(to):\n        raise ValueError(\"'to' must be a finite number\")\n\n    # If length_out is set\n    if length_out is not None:\n        if is_by_missing:\n            if from_ == to:\n                return np.full(length_out, from_, dtype=float if not (is_logint(from_) and is_logint(to)) else int)\n            # R's linspace-like behavior\n            return np.linspace(from_, to, length_out)\n        else:\n            # from + (0:(length.out-1)) * by\n            return from_ + np.arange(length_out) * by\n\n    # If by is set\n    if by is not None:\n        diff = to - from_\n        if diff == 0 and to == 0:\n            return np.array([0.0])\n        \n        if by == 0:\n            if diff == 0: return np.array([float(from_)])\n            raise ValueError(\"invalid '(to - from)/by'\")\n        \n        n = diff / by\n        if n < 0:\n            raise ValueError(\"wrong sign in 'by' argument\")\n        \n        n_int = int(math.floor(n + 1e-10))\n        res = from_ + np.arange(n_int + 1) * by\n        \n        # Correct for precision at the end\n        if by > 0:\n            res = np.minimum(res, to)\n        else:\n            res = np.maximum(res, to)\n        return res\n\n    # Default case: from:to\n    if from_ <= to:\n        # R's from:to creates a sequence with step 1\n        return np.arange(from_, to + 1, dtype=int if (is_logint(from_) and is_logint(to)) else float)\n    else:\n        # R's from:to with from > to creates a sequence with step -1\n        return np.arange(from_, to - 1, -1, dtype=int if (is_logint(from_) and is_logint(to)) else float)\n",
+ "failures": [
+  {
+   "call": "seq(from = 0, to = 100, by = 10)",
+   "expected": [
+    0,
+    10,
+    20,
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90,
+    100
+   ],
+   "got": [
+    1,
+    11,
+    21,
+    31,
+    41,
+    51,
+    61,
+    71,
+    81,
+    91
+   ],
+   "core": true
+  },
+  {
+   "call": "seq(0, 1, length.out = 11)",
+   "expected": [
+    0,
+    0.1,
+    0.2,
+    0.3,
+    0.4,
+    0.5,
+    0.6,
+    0.7,
+    0.8,
+    0.9,
+    1
+   ],
+   "got": [
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+   ],
+   "core": true
+  }
+ ],
+ "tag": "corpus frequency (base)"
+}

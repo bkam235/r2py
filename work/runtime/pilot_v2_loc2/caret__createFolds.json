@@ -1,0 +1,415 @@
+{
+ "function": "createFolds",
+ "package": "caret",
+ "status": "failed",
+ "rounds": 3,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 22,
+ "n_core": 22,
+ "n_mined": 1,
+ "attempt": 1,
+ "passed": 9,
+ "total": 22,
+ "core_passed": 9,
+ "core_total": 22,
+ "code": "import numpy as np\nimport pandas as pd\nimport random\n\ndef r_createFolds(y, k=10, list=True, returnTrain=False):\n    # Use builtins to avoid conflict with the parameter name 'list'\n    import builtins\n\n    # Handle Surv objects (essentially data frames or matrices with a time column)\n    if isinstance(y, pd.DataFrame) and \"time\" in y.columns:\n        y = y[\"time\"].values\n    elif hasattr(y, 'time'):\n        y = y.time\n\n    y_arr = np.asanyarray(y)\n    n = len(y_arr)\n\n    # Binning numeric y\n    if np.issubdtype(y_arr.dtype, np.number):\n        cuts = int(np.floor(n / k))\n        if cuts < 2:\n            cuts = 2\n        if cuts > 5:\n            cuts = 5\n        \n        # R's quantile uses Type 7 by default\n        probs = np.linspace(0, 1, cuts)\n        breaks = np.unique(np.nanquantile(y_arr, probs))\n        \n        # R's cut(..., include.lowest = TRUE)\n        # We create labels based on the bins to mimic R's factor output\n        bins = np.digitize(y_arr, breaks, right=False)\n        # adjust digitize to be 1-indexed and handle the lowest value correctly\n        y_processed = np.array([str(b) for b in bins])\n    else:\n        y_processed = np.array([str(val) for val in y_arr])\n\n    if k < n:\n        # R: y <- factor(as.character(y))\n        # R: numInClass <- table(y)\n        # table() counts are ordered by the levels (alphabetically for characters)\n        unique_vals, counts = np.unique(y_processed, return_counts=True)\n        \n        fold_vector = np.zeros(n, dtype=int)\n        \n        # R: for (i in 1:length(numInClass))\n        for i in range(len(unique_vals)):\n            val = unique_vals[i]\n            cnt = counts[i]\n            indices = np.where(y_processed == val)[0]\n            \n            min_reps = cnt // k\n            if min_reps > 0:\n                spares = cnt % k\n                # R: seqVector <- rep(1:k, min_reps)\n                seq_vector = builtins.list(range(1, k + 1)) * min_reps\n                if spares > 0:\n                    # R: sample(1:k, spares)\n                    seq_vector.extend(random.sample(range(1, k + 1), spares))\n                \n                # R: foldVector[which(y == names(numInClass)[i])] <- sample(seqVector)\n                # We must shuffle the seq_vector to mimic sample(seqVector)\n                sampled_folds = random.sample(seq_vector, len(seq_vector))\n                fold_vector[indices] = sampled_folds\n            else:\n                # R: sample(1:k, size = numInClass[i])\n                # Note: random.sample without replacement is used for size > 1 if possible, \n                # but R's sample(1:k, size=cnt) is without replacement by default.\n                # If cnt > k, R would fail unless replace=TRUE. Here cnt < k because min_reps=0.\n                sampled_folds = random.sample(range(1, k + 1), cnt)\n                fold_vector[indices] = sampled_folds\n    else:\n        fold_vector = np.arange(1, n + 1)\n\n    if list:\n        # R: split(seq(along.with = y), foldVector)\n        indices = np.arange(1, n + 1)\n        out_dict = {}\n        \n        # Match R's \"Fold01\" vs \"Fold1\" logic\n        # R: paste(\"Fold\", gsub(\" \", \"0\", format(seq(along.with = out))), sep = \"\")\n        # format() on a sequence adds leading spaces to align with the largest number.\n        max_f = int(np.max(fold_vector)) if n > 0 else 0\n        width = len(str(max_f))\n        \n        # we iterate through actual folds present in fold_vector to mimic split()\n        unique_folds = np.unique(fold_vector)\n        for f in unique_folds:\n            f = int(f)\n            fold_idx = indices[fold_vector == f]\n            \n            # R's format(seq) result: \" 1\", \" 2\" ... \"10\"\n            # gsub(\" \", \"0\", ...) -> \"01\", \"02\" ... \"10\"\n            f_str = str(f).rjust(width).replace(' ', '0')\n            name = \"Fold\" + f_str\n            out_dict[name] = fold_idx.tolist()\n        \n        if returnTrain:\n            train_dict = {}\n            # R's lapply maintains order of the split list\n            # The names are already in the dict. We need to ensure they match.\n            for name in out_dict:\n                fold_indices = np.array(out_dict[name])\n                mask = np.ones(n, dtype=bool)\n                mask[fold_indices - 1] = False\n                train_dict[name] = indices[mask].tolist()\n            return train_dict\n        \n        return out_dict\n    else:\n        return fold_vector\n",
+ "failures": [
+  {
+   "call": "createFolds(oilType, 10)",
+   "expected": {
+    "Fold01": [
+     1,
+     7,
+     22,
+     25,
+     32,
+     47,
+     54,
+     67,
+     75,
+     76,
+     93
+    ],
+    "Fold02": [
+     3,
+     8,
+     33,
+     37,
+     44,
+     56,
+     77,
+     82,
+     95
+    ],
+    "Fold03": [
+     5,
+     15,
+     34,
+     36,
+     38,
+     46,
+     55,
+     57,
+     62,
+     83
+    ],
+    "Fold04": [
+     10,
+     20,
+     26,
+     28,
+     31,
+     52,
+     68,
+     70,
+     71
+    ],
+    "Fold05": [
+     51,
+     64,
+     65,
+     72,
+     85,
+     89,
+     90,
+     92
+    ],
+    "Fold06": [
+     2,
+     6,
+     29,
+     35,
+     40,
+     45,
+     73,
+     78,
+     80,
+     91
+    ],
+    "Fold07": [
+     4,
+     12,
+     16,
+     19,
+     53,
+     58,
+     74,
+     79,
+     96
+    ],
+    "Fold08": [
+     9,
+     11,
+     17,
+     24,
+     27,
+     41,
+     48,
+     59,
+     81,
+     84
+    ],
+    "Fold09": [
+     13,
+     18,
+     21,
+     23,
+     43,
+     49,
+     60,
+     61,
+     69,
+     87
+    ],
+    "Fold10": [
+     14,
+     30,
+     39,
+     42,
+     50,
+     63,
+     66,
+     86,
+     88,
+     94
+    ]
+   },
+   "got": {
+    "Fold01": [
+     32,
+     47,
+     54,
+     75,
+     93
+    ],
+    "Fold02": [
+     8,
+     44,
+     82,
+     95
+    ],
+    "Fold03": [
+     15,
+     42,
+     46,
+     57,
+     62,
+     83
+    ],
+    "Fold04": [
+     26,
+     28,
+     31,
+     43,
+     70
+    ],
+    "Fold05": [
+     51,
+     64,
+     89,
+     90,
+     92
+    ],
+    "Fold06": [
+     6,
+     29,
+     35,
+     45,
+     55,
+     91
+    ],
+    "Fold07": [
+     12,
+     19,
+     56,
+     58,
+     96
+    ],
+    "Fold08": [
+     11,
+     24,
+     27,
+     48,
+     52,
+     59
+    ],
+    "Fold09": [
+     23,
+     49,
+     60,
+     61,
+     69
+    ],
+    "Fold10": [
+     30,
+     50,
+     53,
+     66,
+     94
+    ],
+    "Fold11": [
+     1,
+     25,
+     76
+    ],
+    "Fold12": [
+     3,
+     33
+    ],
+    "Fold13": [
+     34,
+     36
+    ],
+    "Fold14": [
+     10,
+     20
+    ],
+    "Fold15": [
+     65,
+     85
+    ],
+    "Fold16": [
+     2,
+     78
+    ],
+    "Fold17": [
+     4,
+     79
+    ],
+    "Fold18": [
+     41,
+     81
+    ],
+    "Fold19": [
+     18,
+     21
+    ],
+    "Fold20": [
+     39,
+     86
+    ],
+    "Fold21": [
+     67,
+     84
+    ],
+    "Fold22": [
+     37,
+     80
+    ],
+    "Fold23": [
+     38,
+     88
+    ],
+    "Fold24": [
+     22,
+     71
+    ],
+    "Fold25": [
+     72,
+     77
+    ],
+    "Fold26": [
+     40,
+     87
+    ],
+    "Fold27": [
+     74
+    ],
+    "Fold28": [
+     17
+    ],
+    "Fold29": [
+     13
+    ],
+    "Fold30": [
+     14
+    ],
+    "Fold31": [
+     5
+    ],
+    "Fold32": [
+     68
+    ],
+    "Fold33": [
+     9
+    ],
+    "Fold34": [
+     63
+    ],
+    "Fold35": [
+     7
+    ],
+    "Fold36": [
+     73
+    ],
+    "Fold37": [
+     16
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createFolds(c(1, 1, 0, 0), k = 2)",
+   "expected": {
+    "Fold1": [
+     1,
+     4
+    ],
+    "Fold2": [
+     2,
+     3
+    ]
+   },
+   "got": {
+    "Fold1": [
+     2,
+     3
+    ],
+    "Fold2": [
+     1,
+     4
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createFolds(c(1, 1, 0, 0), k = 2)  [first argument: a tie]",
+   "expected": {
+    "Fold1": [
+     2,
+     4
+    ],
+    "Fold2": [
+     1,
+     3
+    ]
+   },
+   "got": {
+    "Fold1": [
+     1,
+     3
+    ],
+    "Fold2": [
+     2,
+     4
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createFolds(c(1, 1, 0, 0), k = 2)  [first argument: scaled]",
+   "expected": {
+    "Fold1": [
+     1,
+     2
+    ],
+    "Fold2": [
+     3,
+     4
+    ]
+   },
+   "got": {
+    "Fold1": [
+     2,
+     4
+    ],
+    "Fold2": [
+     1,
+     3
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  },
+  {
+   "call": "caret::createFolds(c(1, 1, 0, 0), k = 2)  [first argument: reversed]",
+   "expected": {
+    "Fold1": [
+     1,
+     4
+    ],
+    "Fold2": [
+     2,
+     3
+    ]
+   },
+   "got": {
+    "Fold1": [
+     2,
+     3
+    ],
+    "Fold2": [
+     1,
+     4
+    ]
+   },
+   "core": true,
+   "rclass": "list"
+  }
+ ],
+ "tag": "failing entity (hard pass)"
+}
