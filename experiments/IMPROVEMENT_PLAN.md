@@ -167,6 +167,24 @@ example into its entity and re-verify - no model calls at all, so it is nearly f
 helps when it *is* used; (2) only if that is positive, make the knowledge about the code in front of the model
 (example rewritten into the script's own variable names, placed last, as a required edit) and re-run the paired replay.
 
+**Why package functions fail (same day, all offline).** Decomposing the pilot's attempts by best result per
+function: base/stats/utils (49 functions) 61% passed, 12% within 80% of their core cases, 8% clearly wrong, 18% never
+tested; **package functions (34) 21% passed, 9% near, 21% wrong, 50% never tested** (`no_cases`: R accepted fewer than
+three of the proposed calls). So the dominant obstacle for package functions is **getting three valid test cases**,
+not implementing them. Two things that might have been the lever are already in place and are not: the model is shown
+the function's R source (`propose.SOURCE_LIMIT` 6000, 15000 in the pilot) and 49% of all held-out loss is on candidate
+functions whose whole R source is <= 6000 characters (68.7 of 71.1 points are <= 2000); and real calls are already
+mined from the target script (`difftest.mine_cases`; 4 of the 10 package passes used mined cases).
+
+Corpus-wide mining will not fix it, because **the loss is in the long tail**: scripts in the 3,988-script corpus
+containing a call to the biggest candidates - `time_add@timechange` 1, `createTimeSlices@caret` 1,
+`time_subtract@timechange` 1, `ggroc@pROC` 2, `font_feature@systemfonts` 2, `page_fillable@bslib` 5 - while the
+recurring ones (`matrix` 116, `tempfile` 73) are base functions that mostly pass already. Cases for the tail have to
+come from R rather than from our corpus: every exported function ships an Rd examples block, and the harness can
+already intercept calls in a whole R namespace (`difftest._R_INTERCEPT_RNG`). Measuring the yield of
+"run the package's own examples, record the real calls" on the top-loss functions is free and is the next step for
+coverage.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
