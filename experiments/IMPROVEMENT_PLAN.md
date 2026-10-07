@@ -185,6 +185,40 @@ already intercept calls in a whole R namespace (`difftest._R_INTERCEPT_RNG`). Me
 "run the package's own examples, record the real calls" on the top-loss functions is free and is the next step for
 coverage.
 
+**What keeps the model from using knowledge: the unit, not the prompt (2026-10-07, two free measurements).**
+
+*Mechanical substitution* (`scripts/substitution_probe.py`, 51 substitutions over 15 frozen states, no model calls):
+each oracle example was pasted into its own entity, keeping the sentinels, and the result verified.
+
+```
+entity worse (stopped running)  22      mean entity score     0.496 -> 0.143
+entity unchanged                21      mean script aggregate 0.431 -> 0.101
+entity worse                     6
+entity better                    2
+```
+
+Restricted to the 45 substitutions where the example was for the entity's **own** (package, function) key, not
+just a base-R call inside it: 2 better, 19 unchanged, 24 worse. So this is not the known base-call noise. An example
+carries its source script's variable names and purpose - one retrieved for an assignment `y <- ...` in
+`lava__vignette__influencefunction_s34` was a matplotlib rectangle-drawing snippet, which made Python write files and
+cost the whole script its file comparison. Examples from other scripts are therefore **not drop-in usable by the
+harness** either, which closes the pattern-library line of work on mechanism rather than on a null score alone:
+the content cannot be applied mechanically, and the model will not adapt it (imitation at chance, 6.3% vs 6.6%).
+
+*Does the model call a pasted verified function?* (existing `rewrite_rt` trajectories, `work/replay_v5/`, the older
+store.) Five runs had sources and 8 opportunities between them - an entity whose R call matches a store function -
+and the model called the `r_*` function in **8 of 8**, already in its first rewrite:
+`r_charToRaw`, `r_createTimeSlices`, `r_sort`, `r_table`, `r_factor`, `r_as_POSIXct`, `r_as_hms`, `r_expand_grid`.
+Small sample and an old store, and being called is not the same as scoring better (the `rewrite_rt` replay remains
+inconclusive), but it is the opposite of the examples' chance-level adoption.
+
+**Conclusion.** The obstacle is not prompt position, framing or attention: it is that an example requires a transfer
+step (rename, re-situate, adapt) that this model does not perform and the harness cannot perform for it. Knowledge
+that is **self-contained and callable** - a verified `r_*` function - needs no transfer and is used immediately. The
+two dimensions therefore separate: *coverage* (how to verify functions for the long tail of package functions, where
+half of attempts never get three test cases) and *behaviour*, which looks solved for callable units and unsolvable
+for analogical ones.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
