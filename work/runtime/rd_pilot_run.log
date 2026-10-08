@@ -1,0 +1,22 @@
+8 functions to attempt: time_add@timechange (20 cases), time_subtract@timechange (13 cases), charToRaw@base (3 cases), createTimeSlices@caret (7 cases), timeDate@timeDate (17 cases), matrix@base (3 cases), ggroc@pROC (7 cases), time_update@timechange (11 cases)
+   createTimeSlices        passed    core 32/32  rounds 2
+   charToRaw               passed    core 13/13  rounds 7
+   matrix                  passed    core 28/28  rounds 2
+   ggroc                   passed    core 7/7  rounds 4
+   time_subtract           failed    core 20/23  rounds 6
+   timeDate                failed    core 19/24  rounds 6
+   time_add                failed    core 12/28  rounds 8
+   time_update             failed    core 13/18  rounds 8
+
+8 functions attempted with Rd-harvested cases
+function                    status        core  cases  rounds
+charToRaw@base              passed       13/13      3       7
+createTimeSlices@caret      passed       32/32      7       2
+ggroc@pROC                  passed         7/7      7       4
+matrix@base                 passed       28/28      3       2
+timeDate@timeDate           failed       19/24     17       6
+time_add@timechange         failed       12/28     20       8
+time_subtract@timechange    failed       20/23     13       6
+time_update@timechange      failed       13/18     11       8
+
+passed 4/8: createTimeSlices, charToRaw, matrix, ggroc

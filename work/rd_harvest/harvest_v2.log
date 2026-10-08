@@ -1,0 +1,20 @@
+15 functions: time_add@timechange, tempfile@base, predict@stats, time_subtract@timechange, page_fillable@bslib, createTimeSlices@caret, charToRaw@base, ggroc@pROC, augment@broom, font_feature@systemfonts, timeDate@timeDate, matrix@base, auc@pROC, time_update@timechange, drive_create@googledrive
+   tempfile@base                     ok                      cases   1 (1 distinct)  0.4s
+   predict@stats                     ok                      cases   0 (0 distinct)  0.5s
+   time_add@timechange               ok                      cases  38 (38 distinct)  0.6s
+   time_subtract@timechange          ok                      cases  16 (16 distinct)  0.6s
+   charToRaw@base                    ok                      cases   3 (3 distinct)  0.5s
+   augment@broom                     no_examples             cases   0 (0 distinct)  0.8s
+   font_feature@systemfonts          ok                      cases   2 (2 distinct)  0.7s
+   page_fillable@bslib               ok                      cases   1 (1 distinct)  2.6s
+   createTimeSlices@caret            ok                      cases   7 (7 distinct)  2.7s
+   timeDate@timeDate                 ok                      cases  18 (17 distinct)  0.8s
+   matrix@base                       ok                      cases   5 (3 distinct)  0.6s
+   ggroc@pROC                        ok                      cases   8 (7 distinct)  3.0s
+   auc@pROC                          ok                      cases   2 (2 distinct)  0.7s
+   time_update@timechange            ok                      cases  12 (12 distinct)  0.6s
+   drive_create@googledrive          ok                      cases   0 (0 distinct)  0.8s
+
+8/15 functions reach the 3 distinct cases the pilot needs
+held-out loss on those functions: 17.8 of 32.9 points covered (54% of the targeted loss)
+status counts: {"no_examples": 1, "ok": 14}

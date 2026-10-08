@@ -1,0 +1,191 @@
+{
+ "function": "timeDate",
+ "package": "timeDate",
+ "status": "failed",
+ "rounds": 6,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 24,
+ "n_core": 24,
+ "n_mined": 17,
+ "attempt": 1,
+ "passed": 19,
+ "total": 24,
+ "core_passed": 19,
+ "core_total": 24,
+ "code": "import numpy as np\nimport pandas as pd\nimport pytz\n\ndef r_timeDate(charvec, format=None, zone=\"\", FinCenter=\"\", *args, **kwargs):\n    \"\"\"\n    Reproduces the behavior of timeDate::timeDate.\n    \"\"\"\n    # Handle the 'FinC' alias seen in example calls\n    fin_center = FinCenter\n    if 'FinC' in kwargs:\n        fin_center = kwargs['FinC']\n\n    if charvec is None:\n        return None\n\n    # Determine if input is a scalar or a sequence\n    is_scalar = not isinstance(charvec, (list, np.ndarray, pd.Series))\n    \n    if is_scalar:\n        charvec_list = [charvec]\n    elif isinstance(charvec, np.ndarray):\n        charvec_list = charvec.tolist()\n    elif isinstance(charvec, pd.Series):\n        charvec_list = charvec.tolist()\n    else:\n        charvec_list = list(charvec)\n\n    # Parse strings to timestamps\n    # R's as.POSIXct uses the provided format or tries to guess.\n    if format is not None:\n        # Convert R-style format to pandas-style if necessary\n        # For the specific failing case %d.%m.%Y, pandas accepts it.\n        dates = pd.to_datetime(charvec_list, format=format, errors='coerce')\n    else:\n        dates = pd.to_datetime(charvec_list, errors='coerce')\n\n    # Timezone handling\n    # R's timeDate defaults to GMT if FinCenter is empty or not provided.\n    try:\n        input_tz = pytz.timezone(zone) if zone else pytz.UTC\n    except pytz.UnknownTimeZoneError:\n        input_tz = pytz.UTC\n\n    if dates.tz is None:\n        # R's as.POSIXct creates naive dates and interprets them in the given zone\n        dates_utc = dates.tz_localize(input_tz, ambiguous='NaT').tz_convert('UTC')\n    else:\n        dates_utc = dates.tz_convert('UTC')\n\n    # Convert to ISO format \"YYYY-MM-DDTHH:MM:SS\"\n    data_list = []\n    for ts in dates_utc:\n        if pd.isna(ts):\n            data_list.append(None)\n        else:\n            # R's timeDate internally stores as POSIXct (UTC seconds since epoch)\n            # The printed format is ISO 8601\n            data_list.append(ts.strftime('%Y-%m-%dT%H:%M:%S'))\n\n    # Resolve output shape for 'Data'\n    final_data = data_list[0] if is_scalar else data_list\n\n    # Determine the 'format' slot\n    # If format is provided, R often preserves it or returns a canonical form.\n    # Looking at the failures, if format was \"%d.%m.%Y\", R returns \"%Y-%m-%d\".\n    if format is not None:\n        time_indicators = ['%H', '%M', '%S', '%X']\n        if any(ind in format for ind in time_indicators):\n            res_format = \"%Y-%m-%d %H:%M:%S\"\n        else:\n            res_format = \"%Y-%m-%d\"\n    else:\n        # Auto-detect if time components were present in input strings\n        has_time = False\n        for s in charvec_list:\n            if s and (' ' in str(s) or ':' in str(s)):\n                has_time = True\n                break\n        res_format = \"%Y-%m-%d %H:%M:%S\" if has_time else \"%Y-%m-%d\"\n\n    # Special case: if non-GMT FinCenter is used, time is always present\n    if fin_center and fin_center not in [\"GMT\", \"UTC\"]:\n        res_format = \"%Y-%m-%d %H:%M:%S\"\n\n    # Default FinCenter to \"GMT\" if not provided, as seen in R examples\n    if not fin_center:\n        fin_center = \"GMT\"\n\n    result = {\n        \"Data\": final_data,\n        \"format\": res_format,\n        \"FinCenter\": fin_center\n    }\n    \n    return result\n",
+ "failures": [
+  {
+   "call": "timeDate(lsec)   [from the package's own examples]",
+   "expected": {
+    "Data": [
+     "1972-07-01T00:00:00",
+     null,
+     "1974-01-01T00:00:00",
+     null,
+     null,
+     null,
+     "1978-01-01T00:00:00",
+     "1979-01-01T00:00:00",
+     "1980-01-01T00:00:00",
+     "1981-07-01T00:00:00",
+     "1982-07-01T00:00:00",
+     "1983-07-01T00:00:00",
+     "1985-07-01T00:00:00",
+     "1988-01-01T00:00:00",
+     "1990-01-01T00:00:00",
+     "1991-01-01T00:00:00",
+     "1992-07-01T00:00:00",
+     "1993-07-01T00:00:00",
+     "1994-07-01T00:00:00",
+     "1996-01-01T00:00:00",
+     "1997-07-01T00:00:00",
+     "1999-01-01T00:00:00",
+     "2006-01-01T00:00:00",
+     "2009-01-01T00:00:00",
+     "2012-07-01T00:00:00",
+     "2015-07-01T00:00:00",
+     "2017-01-01T00:00:00"
+    ],
+    "format": "%Y-%m-%d",
+    "FinCenter": "GMT"
+   },
+   "got": {
+    "Data": [
+     "1972-07-01T00:00:00",
+     null,
+     "1974-01-01T00:00:00",
+     null,
+     null,
+     null,
+     "1978-01-01T00:00:00",
+     "1979-01-01T00:00:00",
+     "1980-01-01T00:00:00",
+     "1981-07-01T00:00:00",
+     "1982-07-01T00:00:00",
+     "1983-07-01T00:00:00",
+     "1985-07-01T00:00:00",
+     "1988-01-01T00:00:00",
+     "1990-01-01T00:00:00",
+     "1991-01-01T00:00:00",
+     "1992-07-01T00:00:00",
+     "1993-07-01T00:00:00",
+     "1994-07-01T00:00:00",
+     "1996-01-01T00:00:00",
+     "1997-07-01T00:00:00",
+     "1999-01-01T00:00:00",
+     "2006-01-01T00:00:00",
+     "2009-01-01T00:00:00",
+     "2012-07-01T00:00:00",
+     "2015-07-01T00:00:00",
+     "2017-01-01T00:00:00"
+    ],
+    "format": "%Y-%m-%d %H:%M:%S",
+    "FinCenter": "GMT"
+   },
+   "core": true,
+   "rclass": "timeDate"
+  },
+  {
+   "call": "timeDate(Sofia_to_DST_char, zone = \"Sofia\", FinCenter = \"Sofia\")   [from the package's own examples]",
+   "expected": {
+    "Data": [
+     "1983-03-26T21:00:00",
+     "1983-03-26T22:00:00",
+     "1983-03-26T22:00:00",
+     "1983-03-26T23:00:00",
+     "1983-03-27T00:00:00"
+    ],
+    "format": "%Y-%m-%d %H:%M:%S",
+    "FinCenter": "Sofia"
+   },
+   "got": {
+    "Data": [
+     "1983-03-26T23:00:00",
+     "1983-03-27T00:00:00",
+     "1983-03-27T01:00:00",
+     "1983-03-27T02:00:00",
+     "1983-03-27T03:00:00"
+    ],
+    "format": "%Y-%m-%d %H:%M:%S",
+    "FinCenter": "Sofia"
+   },
+   "core": true,
+   "rclass": "timeDate"
+  },
+  {
+   "call": "timeDate(Sofia_to_DST_char, zone = \"Sofia\", FinCenter = \"Sofia\",      dst_gap = \"NA\")   [from the package's own examples]",
+   "expected": {
+    "Data": [
+     "1983-03-26T21:00:00",
+     null,
+     "1983-03-26T22:00:00",
+     "1983-03-26T23:00:00",
+     "1983-03-27T00:00:00"
+    ],
+    "format": "%Y-%m-%d %H:%M:%S",
+    "FinCenter": "Sofia"
+   },
+   "got": {
+    "Data": [
+     "1983-03-26T23:00:00",
+     "1983-03-27T00:00:00",
+     "1983-03-27T01:00:00",
+     "1983-03-27T02:00:00",
+     "1983-03-27T03:00:00"
+    ],
+    "format": "%Y-%m-%d %H:%M:%S",
+    "FinCenter": "Sofia"
+   },
+   "core": true,
+   "rclass": "timeDate"
+  },
+  {
+   "call": "timeDate(Sofia_to_DST_char, zone = \"Sofia\", FinCenter = \"Sofia\",      dst_gap = \"-\")   [from the package's own examples]",
+   "expected": {
+    "Data": [
+     "1983-03-26T21:00:00",
+     "1983-03-26T21:00:00",
+     "1983-03-26T22:00:00",
+     "1983-03-26T23:00:00",
+     "1983-03-27T00:00:00"
+    ],
+    "format": "%Y-%m-%d %H:%M:%S",
+    "FinCenter": "Sofia"
+   },
+   "got": {
+    "Data": [
+     "1983-03-26T23:00:00",
+     "1983-03-27T00:00:00",
+     "1983-03-27T01:00:00",
+     "1983-03-27T02:00:00",
+     "1983-03-27T03:00:00"
+    ],
+    "format": "%Y-%m-%d %H:%M:%S",
+    "FinCenter": "Sofia"
+   },
+   "core": true,
+   "rclass": "timeDate"
+  },
+  {
+   "call": "timeDate::timeDate(c(\"-2023-01-01\", \"2023-01-02\"))",
+   "expected": {
+    "Data": null,
+    "format": "",
+    "FinCenter": "GMT"
+   },
+   "got": {
+    "Data": [
+     "2023-01-01T00:00:00",
+     null
+    ],
+    "format": "%Y-%m-%d",
+    "FinCenter": "GMT"
+   },
+   "core": true,
+   "rclass": "timeDate"
+  }
+ ],
+ "tag": "rd examples",
+ "n_rd_cases": 17
+}

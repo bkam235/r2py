@@ -50,6 +50,10 @@ local({
     if (ok && length(.r2py_rec) < 60L) {
       .r2py_rec[[length(.r2py_rec) + 1L]] <<- list(
         args = .r2py_json_args(a), value = .r2py_serialize_var(r),
+        rclass = class(r)[1],
+        shown = paste(utils::head(tryCatch(capture.output(print(r)), error = function(e) ""), 12), collapse = "
+"),
+        call = paste(utils::head(deparse(sys.call(0)), 3), collapse = " "),
         nargs = length(a), names = if (is.null(names(a))) list() else as.list(names(a)))
     }
     r
@@ -110,6 +114,12 @@ def harvest(spec: str, timeout_s: float = 240) -> dict:
                 cases = cases if isinstance(cases, list) else [cases]
                 row["status"] = got.get("status")
                 row["example_lines"] = got.get("n_lines")
+                # An argument the R serialiser could only fingerprint (`__r2py_fp__`) is a hash of an
+                # object, not a value: a Python function handed that dict can "pass" vacuously, which
+                # is exactly what happened to ggroc@pROC (7/7 on roc-object fingerprints).
+                usable = [c for c in cases if "__r2py_fp__" not in json.dumps(c.get("args"))]
+                row["n_fingerprint_args"] = len(cases) - len(usable)
+                cases = usable
                 row["cases"] = cases
                 row["n_cases"] = len(cases)
                 row["n_distinct"] = len({json.dumps(c.get("args"), sort_keys=True) for c in cases})

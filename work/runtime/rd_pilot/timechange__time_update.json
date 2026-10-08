@@ -1,0 +1,69 @@
+{
+ "function": "time_update",
+ "package": "timechange",
+ "status": "failed",
+ "rounds": 8,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 18,
+ "n_core": 18,
+ "n_mined": 11,
+ "attempt": 2,
+ "passed": 13,
+ "total": 18,
+ "core_passed": 13,
+ "core_total": 18,
+ "code": "import numpy as np\nimport pandas as pd\nfrom datetime import datetime, timedelta\nimport pytz\n\ndef r_time_update(time, updates=None, year=None, month=None, yday=None, \n                  mday=None, wday=None, hour=None, minute=None, second=None, \n                  tz=None, roll_month=\"preday\", roll_dst=(\"boundary\", \"post\"), \n                  week_start=1, exact=False):\n    \n    if time is None:\n        return None\n\n    # Convert input to pandas Series of Timestamps\n    if isinstance(time, (str, datetime, pd.Timestamp)):\n        time_arr = pd.to_datetime(pd.Series([time]))\n    elif isinstance(time, np.ndarray):\n        time_arr = pd.to_datetime(pd.Series(time))\n    else:\n        time_arr = pd.to_datetime(pd.Series(time))\n\n    if len(time_arr) == 0:\n        return time\n\n    # Track if input was 'Date'\n    is_date_input = False\n    if isinstance(time, np.ndarray) and (time.dtype == 'datetime64[D]' or 'datetime' not in str(time.dtype)):\n        is_date_input = True\n    elif isinstance(time, str) and len(time) == 10: \n        is_date_input = True\n\n    # Merge updates\n    final_updates = {}\n    if updates is not None:\n        if isinstance(updates, dict):\n            final_updates = updates.copy()\n        elif isinstance(updates, list): # Handle case where updates is a list of values without names\n            final_updates = {}\n    \n    updts_named = {\n        'year': year, 'month': month, 'yday': yday, 'mday': mday, \n        'wday': wday, 'hour': hour, 'minute': minute, 'second': second\n    }\n\n    for nm, val in updts_named.items():\n        if val is not None:\n            if nm not in final_updates or final_updates[nm] is None:\n                final_updates[nm] = val\n            else:\n                final_updates[nm] = final_updates[nm] + val\n\n    # R's time_update: if tz is provided, it sets the timezone for the update operation.\n    # If no tz is provided, it uses the timezone of the input time.\n    target_tz_name = tz if tz is not None else \"UTC\"\n    target_tz = pytz.timezone(target_tz_name)\n    \n    results = []\n    for ts in time_arr:\n        if pd.isna(ts):\n            results.append(pd.NaT)\n            continue\n            \n        # Work with the \"wall clock\" time in the target timezone\n        if ts.tz is None:\n            dt_local = ts.tz_localize('UTC').tz_convert(target_tz)\n        else:\n            dt_local = ts.tz_convert(target_tz)\n            \n        y, m, d = dt_local.year, dt_local.month, dt_local.day\n        h, mi, s = dt_local.hour, dt_local.minute, dt_local.second\n\n        # Apply absolute updates (overriding)\n        if 'year' in final_updates: y = int(final_updates['year'])\n        if 'month' in final_updates: m = int(final_updates['month'])\n        if 'mday' in final_updates: d = int(final_updates['mday'])\n        if 'hour' in final_updates: h = int(final_updates['hour'])\n        if 'minute' in final_updates: mi = int(final_updates['minute'])\n        if 'second' in final_updates: s = int(final_updates['second'])\n        \n        if 'yday' in final_updates:\n            # yday is 1-based day of year\n            base_date = datetime(y, 1, 1)\n            res_date = base_date + timedelta(days=int(final_updates['yday']) - 1)\n            m, d = res_date.month, res_date.day\n\n        # Month overflow/underflow (R's date arithmetic)\n        # 13th month becomes 1st month of next year\n        month_idx = m - 1\n        y += month_idx // 12\n        m = (month_idx % 12) + 1\n        \n        # Day overflow/underflow\n        # In R, time_update handles day overflow by rolling based on roll_month\n        if m == 12:\n            next_month_start = datetime(y + 1, 1, 1)\n        else:\n            next_month_start = datetime(y, m + 1, 1)\n        \n        last_day_of_month = (next_month_start - timedelta(days=1)).day\n        \n        if d > last_day_of_month:\n            if roll_month == \"preday\":\n                d = last_day_of_month\n            else: # \"post\" or others: roll into next month(s)\n                base_date = datetime(y, m, 1)\n                res_date = base_date + timedelta(days=d - 1)\n                y, m, d = res_date.year, res_date.month, res_date.day\n        elif d < 1:\n            # Roll backwards\n            base_date = datetime(y, m, 1)\n            res_date = base_date + timedelta(days=d - 1)\n            y, m, d = res_date.year, res_date.month, res_date.day\n        \n        try:\n            final_dt = datetime(y, m, d, h, mi, s)\n            localized_dt = target_tz.localize(final_dt)\n            results.append(localized_dt)\n        except:\n            results.append(pd.NaT)\n\n    # Determine return type\n    time_updated = any(k in final_updates for k in ['hour', 'minute', 'second']) or (tz is not None)\n    \n    if not time_updated and is_date_input:\n        # Return Date: numpy array of datetime64[D]\n        return np.array([pd.Timestamp(x).date() if pd.notna(x) else np.datetime64('NaT') for x in results], dtype='datetime64[D]')\n    else:\n        # Return POSIXct: pandas timestamps in UTC\n        out = []\n        for x in results:\n            if pd.isna(x):\n                out.append(pd.NaT)\n            else:\n                out.append(pd.Timestamp(x).tz_convert('UTC'))\n        return np.array(out)\n",
+ "failures": [
+  {
+   "call": "time_update(time, month = 2, mday = 31, roll_month = \"boundary\")   [from the package's own examples]",
+   "expected": "2015-03-01T00:00:00",
+   "got": "2015-03-03T01:02:03",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "time_update(time, month = 2, mday = 31, roll_month = \"postday\")   [from the package's own examples]",
+   "expected": "2015-03-01T01:02:03",
+   "got": "2015-03-03T01:02:03",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "timechange::time_update(as.POSIXct(c(\"2023-01-01 00:00:00\")), month = c(1, NA))",
+   "expected": [
+    "2023-01-01T00:00:00",
+    null
+   ],
+   "error": "TypeError: only 0-dimensional arrays can be converted to Python scalars",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "timechange::time_update(as.POSIXct(rep(\"2023-01-01 00:00:00\", 2)), hour = c(10, 10))",
+   "expected": [
+    "2023-01-01T10:00:00",
+    "2023-01-01T10:00:00"
+   ],
+   "error": "TypeError: only 0-dimensional arrays can be converted to Python scalars",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "timechange::time_update(as.POSIXct(c(\"2023-01-01 00:00:00\")), second = -1)",
+   "expected": "2022-11-30T23:59:59",
+   "got": {
+    "__r2py_fp__": true,
+    "type": "numpy.ndarray",
+    "numbers": {},
+    "texts": [
+     "[NaT]"
+    ]
+   },
+   "core": true,
+   "rclass": "POSIXct"
+  }
+ ],
+ "tag": "rd examples",
+ "n_rd_cases": 11
+}

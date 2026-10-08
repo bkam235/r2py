@@ -397,6 +397,40 @@ This is the missing input for the runtime path: the pilot's dominant failure for
 corpus. Next: feed the harvested cases to `propose.attempt` for those 8 functions and count how many produce a
 *verified* implementation - the first test of the pilot's 22% package pass rate under decent cases.
 
+**Rd-harvested cases through `propose.attempt` (2026-10-08, `scripts/rd_pilot.py`, 8 functions, 4 workers,
+1800 s budget each, locator on).** Case supply was the problem; it was not the only problem.
+
+| function | status | core cases | rounds | held-out loss |
+|---|---|---|---|---|
+| createTimeSlices@caret | **passed** | 32/32 | 2 | 2.41 |
+| charToRaw@base | **passed** | 13/13 | 7 | 2.25 |
+| matrix@base | **passed** | 28/28 | 2 | 1.50 |
+| ~~ggroc@pROC~~ | *void* | 7/7 | 4 | 2.00 |
+| time_subtract@timechange | failed | 20/23 | 6 | 2.97 |
+| timeDate@timeDate | failed | 19/24 | 6 | 1.50 |
+| time_update@timechange | failed | 13/18 | 8 | 1.38 |
+| time_add@timechange | failed | 12/28 | 8 | 3.79 |
+
+**`ggroc`'s pass is discarded.** All 8 of its cases have a `roc` object as first argument, which the R serialiser
+does not reject but *fingerprints* (`__r2py_fp__`), so the model's function was handed a hash of a model and
+"passed" vacuously - the trap predicted when probing `predict`. `rd_harvest` now drops any case with a fingerprint
+argument (10 of 113 harvested cases, all in pROC).
+
+Honest scoring: **3 of 7 usable functions passed, 6.16 points = 4.3% of all held-out loss.** Of the five *package*
+functions with usable cases only `createTimeSlices` passed - 20%, no better than the pilot's old 22% - but
+`createTimeSlices` is the function that had failed twice at 8/11 and 9/22 with invented calls and now passes 32/32.
+So harvesting removed the `no_cases` barrier (all five got real cases) without removing the implementation barrier.
+
+**What the failures are is specific and consistent:** the Rd examples exist to demonstrate edge behaviour, so the
+harvested cases are the hard ones. Every timechange failure is a rolling rule -
+`time_add(x, hour = 1, minute = 50, roll_dst = ...)` expected `01:52`, got `02:52` (a DST spring-forward boundary);
+`time_update(time, month = 2, mday = 31, roll_month = ...)` expected `2015-03-01`, got `2015-03-03`. Three of the
+four failures are near misses (20/23, 19/24, 13/18) that yield nothing under all-core-cases acceptance.
+
+So the next question for the runtime path is the **acceptance rule and the repair loop**, not case supply: whether
+targeted repair on the one failing rolling rule (the locator already ran) closes 83% to 100%, and whether a function
+that is right on everything except one documented edge rule is worth admitting with its failing inputs recorded.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.

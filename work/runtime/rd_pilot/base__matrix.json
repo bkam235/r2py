@@ -1,0 +1,153 @@
+{
+ "function": "matrix",
+ "package": null,
+ "status": "passed",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 42,
+ "n_core": 28,
+ "n_mined": 3,
+ "attempt": 1,
+ "passed": 30,
+ "total": 42,
+ "core_passed": 28,
+ "core_total": 28,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_matrix(data=np.nan, nrow=1, ncol=1, byrow=False, dimnames=None):\n    # R's matrix() treats data as a vector.\n    # If data is an object (DataFrame, Series), it is flattened.\n    if isinstance(data, (pd.DataFrame, pd.Series)):\n        data = data.values.flatten()\n    \n    # Ensure data is a numpy array. \n    # If data is a scalar (including np.nan), wrap it in an array.\n    if np.isscalar(data):\n        data = np.array([data])\n    else:\n        data = np.asanyarray(data).flatten()\n\n    # R's logic for determining dimensions if missing:\n    # In the provided wrapper, missing(nrow) and missing(ncol) are passed.\n    # In the Python signature, we have defaults.\n    # R's matrix() behavior: if data is length 1 and nrow/ncol are defaults, \n    # the result is a 1x1 matrix. If data is longer, it fills the requested size.\n    \n    # Calculate total elements needed\n    total_elements = nrow * ncol\n    \n    # R recycles the data vector to fill the matrix.\n    # If data is length 1, it fills the whole matrix with that value.\n    if data.size == 0:\n        # Handle cases like matrix(NA_character_, 0, 4)\n        res = np.empty((nrow, ncol), dtype=data.dtype)\n    elif data.size == 1:\n        res_flat = np.full(total_elements, data[0], dtype=data.dtype)\n    else:\n        # Use np.tile to emulate R's recycling: \n        # data is repeated until it fills total_elements.\n        reps = int(np.ceil(total_elements / data.size))\n        res_flat = np.tile(data, reps)[:total_elements]\n\n    # R fills by column by default (order='F'), unless byrow=True (order='C')\n    if byrow:\n        res = res_flat.reshape((nrow, ncol), order='C')\n    else:\n        res = res_flat.reshape((nrow, ncol), order='F')\n\n    # The test harness expects the values of the matrix.\n    # R's 'matrix' class is essentially a numpy array in terms of values.\n    # The failure cases show the harness expects a list of lists or numpy array \n    # for 'as values', and the previous DataFrame return was converted to a dict.\n    # We return the numpy array. If dimnames were to be preserved in the return \n    # object type, the harness should handle it, but based on \"as values\", \n    # a numpy array is the standard representation of R's matrix values.\n    \n    return res\n",
+ "failures": [
+  {
+   "call": "matrix(1:6)",
+   "expected": [
+    [
+     1
+    ],
+    [
+     2
+    ],
+    [
+     3
+    ],
+    [
+     4
+    ],
+    [
+     5
+    ],
+    [
+     6
+    ]
+   ],
+   "got": 1.0,
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "matrix(1:6)  [first argument: an NA inserted]",
+   "expected": [
+    [
+     1
+    ],
+    [
+     null
+    ],
+    [
+     3
+    ],
+    [
+     4
+    ],
+    [
+     5
+    ],
+    [
+     6
+    ]
+   ],
+   "got": 1.0,
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "matrix(1:6)  [first argument: a tie]",
+   "expected": [
+    [
+     1
+    ],
+    [
+     1
+    ],
+    [
+     3
+    ],
+    [
+     4
+    ],
+    [
+     5
+    ],
+    [
+     6
+    ]
+   ],
+   "got": 1.0,
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "matrix(1:6)  [first argument: scaled]",
+   "expected": [
+    [
+     6.2
+    ],
+    [
+     13.5
+    ],
+    [
+     20.8
+    ],
+    [
+     28.1
+    ],
+    [
+     35.4
+    ],
+    [
+     42.7
+    ]
+   ],
+   "got": 6.2,
+   "core": false,
+   "rclass": "matrix"
+  },
+  {
+   "call": "matrix(1:6)  [first argument: reversed]",
+   "expected": [
+    [
+     6
+    ],
+    [
+     5
+    ],
+    [
+     4
+    ],
+    [
+     3
+    ],
+    [
+     2
+    ],
+    [
+     1
+    ]
+   ],
+   "got": 6.0,
+   "core": false,
+   "rclass": "matrix"
+  }
+ ],
+ "exotic_passed": 2,
+ "exotic_total": 14,
+ "tag": "rd examples",
+ "n_rd_cases": 3
+}

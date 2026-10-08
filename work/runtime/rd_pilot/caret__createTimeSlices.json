@@ -1,0 +1,22 @@
+{
+ "function": "createTimeSlices",
+ "package": "caret",
+ "status": "passed",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 42,
+ "n_core": 32,
+ "n_mined": 7,
+ "attempt": 1,
+ "passed": 42,
+ "total": 42,
+ "core_passed": 32,
+ "core_total": 32,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_createTimeSlices(y, initialWindow, horizon=1, fixedWindow=True, skip=0):\n    \"\"\"\n    Reproduces caret::createTimeSlices in Python.\n    \"\"\"\n    # Convert y to numpy array to handle length correctly\n    y = np.asanyarray(y)\n    n = len(y)\n    \n    # R: stops <- seq(initialWindow, (length(y) - horizon), by = skip + 1)\n    start_val = initialWindow\n    end_val = n - horizon\n    step = skip + 1\n    \n    if start_val > end_val:\n        stops = np.array([], dtype=int)\n    else:\n        # np.arange is exclusive, so we add step to ensure end_val is included if it falls on the sequence\n        stops = np.arange(start_val, end_val + 1, step).astype(int)\n    \n    if fixedWindow:\n        # R: starts <- stops - initialWindow + 1\n        starts = stops - initialWindow + 1\n    else:\n        # R: starts <- rep(1, length(stops))\n        starts = np.full(len(stops), 1)\n        \n    train_dict = {}\n    test_dict = {}\n    \n    for s, e in zip(starts, stops):\n        # R: seq(starts, stops) -> 1-based indices\n        train_indices = np.arange(s, e + 1).tolist()\n        \n        # R: seq(stops + 1, stops + horizon) -> 1-based indices\n        test_indices = np.arange(e + 1, e + horizon + 1).tolist()\n        \n        # R simplification for single-element vectors:\n        # When horizon = 1, R's seq(stops + 1, stops + 1) returns a vector of length 1.\n        # However, the provided test harness suggests that if the result is a \n        # single-element vector, it is returned as a scalar in the output dict.\n        if len(test_indices) == 1:\n            test_val = test_indices[0]\n        else:\n            test_val = test_indices\n            \n        # R: nums <- gsub(\" \", \"0\", format(stops))\n        # In R, format() for integers can result in leading spaces for padding \n        # depending on the width of the largest number in the vector.\n        # For the example createTimeSlices(1:15, 5, 3), the sequence of stops\n        # is 5, 6, 7, 8, 9, 10, 11, 12. The max is 12 (2 digits).\n        # R's format() pads others to 2 digits with a space, e.g., \" 5\", \" 6\".\n        # gsub(\" \", \"0\", ...) then turns \" 5\" into \"05\".\n        \n        # To reproduce this: find the width of the largest number in the 'stops' array.\n        if len(stops) > 0:\n            max_width = len(str(np.max(stops)))\n            num_str = str(e).rjust(max_width, '0')\n        else:\n            num_str = str(e)\n            \n        train_dict[f\"Training{num_str}\"] = train_indices\n        test_dict[f\"Testing{num_str}\"] = test_val\n        \n    return {\n        \"train\": train_dict,\n        \"test\": test_dict\n    }\n",
+ "failures": [],
+ "exotic_passed": 10,
+ "exotic_total": 10,
+ "tag": "rd examples",
+ "n_rd_cases": 7
+}
