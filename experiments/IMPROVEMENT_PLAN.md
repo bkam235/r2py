@@ -368,6 +368,35 @@ it needs is already captured. It is not a snippet-delivery artifact: these 134 r
 Caveat from the shadow auto-fixers (16 valid -> invalid against 3 invalid -> valid): any such normaliser is measured
 on the paired instruments before it is trusted, and the 8% is an upper bound that assumes a perfect fix.
 
+**Rd-example harvesting: the long tail does have test cases (2026-10-08, `scripts/rd_harvest.py`).** For each
+target function the probe loads its package, replaces the function in its own namespace and in the attached package
+environment with a recorder, runs the package's own `\examples` block statement by statement under `try`, and keeps
+every call whose arguments and return value serialise. No model calls; 0.6-3 s per function.
+
+Top 15 candidate functions by held-out loss:
+
+| function | distinct cases | | function | distinct cases |
+|---|---|---|---|---|
+| time_add@timechange | **38** | | createTimeSlices@caret | **7** |
+| timeDate@timeDate | **17** | | matrix@base | 3 |
+| time_subtract@timechange | **16** | | charToRaw@base | 3 |
+| time_update@timechange | **12** | | font_feature@systemfonts | 2 |
+| ggroc@pROC | **7** | | auc@pROC | 2 |
+
+**8 of 15 reach the three distinct cases `propose.attempt` needs, covering 17.8 of the 32.9 targeted points (54% of
+the targeted loss, 12% of all held-out loss).** The wins are exactly the functions corpus mining cannot reach:
+`time_add` appears in **one** script in the 3,988-script corpus and its own examples yield 38 cases;
+`createTimeSlices`, which defeated the pilot twice, yields 7 real calls with real arguments.
+
+What stays out of reach: `predict@stats` and `augment@broom` (generics over fitted models - no examples recorded, the
+arguments are model objects that do not serialise), `drive_create@googledrive` (examples need authentication, so they
+sit in `\dontrun`), and functions whose Rd examples are one line (`tempfile`, `page_fillable`).
+
+This is the missing input for the runtime path: the pilot's dominant failure for package functions was `no_cases`
+(50% of attempts), and for more than half of the targeted loss that is now fixable from R itself rather than from our
+corpus. Next: feed the harvested cases to `propose.attempt` for those 8 functions and count how many produce a
+*verified* implementation - the first test of the pilot's 22% package pass rate under decent cases.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
