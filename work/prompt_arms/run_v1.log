@@ -1,0 +1,1098 @@
+37 cases, 4 arms, 2 model(s), 1 sample(s): 294 calls to make (2 done)
+[1/294] blob__rd_example__blob_Rd   new_blob          library         claude-haiku-4  0.5 -> 0.5  adopt 0.0  verified
+[2/294] blob__rd_example__blob_Rd   new_blob          entity_only     claude-haiku-4  0.5 -> 1.0  adopt 1.0  verified
+[3/294] blob__rd_example__blob_Rd   new_blob          none            gemma-4-31b-it  0.5 -> 1.0  adopt 0.0  verified
+[4/294] blob__rd_example__blob_Rd   new_blob          entity_only     gemma-4-31b-it  0.5 -> 1.0  adopt 0.6667  verified
+[5/294] blob__rd_example__blob_Rd   blob              none            claude-haiku-4  0.5 -> 1.0  adopt 1.0  verified
+[6/294] blob__rd_example__blob_Rd   blob              none            gemma-4-31b-it  0.5 -> 1.0  adopt 0.0  verified
+[7/294] blob__rd_example__blob_Rd   new_blob          last_imperative gemma-4-31b-it  0.5 -> 1.0  adopt 0.1111  verified
+[8/294] blob__rd_example__blob_Rd   blob              library         claude-haiku-4  0.5 -> 1.0  adopt 1.0  verified
+[9/294] blob__rd_example__blob_Rd   new_blob          library         gemma-4-31b-it  0.5 -> 1.0  adopt 0.0  verified
+[10/294] blob__rd_example__blob_Rd   blob              last_imperative claude-haiku-4  0.5 -> 1.0  adopt 1.0  verified
+[11/294] blob__rd_example__blob_Rd   blob              entity_only     gemma-4-31b-it  0.5 -> 0.5  adopt 0.0  verified
+[12/294] blob__rd_example__blob_Rd   blob              library         gemma-4-31b-it  0.5 -> 1.0  adopt 0.0  verified
+[13/294] blob__rd_example__blob_Rd   blob              entity_only     claude-haiku-4  0.5 -> 0.5  adopt 0.0  verified
+[14/294] blob__rd_example__blob_Rd   as.blob           none            claude-haiku-4  0.6493 -> 0.1667  adopt 0.0  verified
+[15/294] blob__rd_example__blob_Rd   as.blob           none            gemma-4-31b-it  0.6493 -> 1.0  adopt 0.6154  verified
+[16/294] blob__rd_example__blob_Rd   as.blob           library         gemma-4-31b-it  0.6493 -> 1.0  adopt 0.0  verified
+[17/294] blob__rd_example__blob_Rd   as.blob           last_imperative claude-haiku-4  0.6493 -> 1.0  adopt 0.0  verified
+[18/294] blob__rd_example__blob_Rd   as.blob           library         claude-haiku-4  0.6493 -> 1.0  adopt 0.6154  verified
+[19/294] blob__rd_example__blob_Rd   as.blob           last_imperative gemma-4-31b-it  0.6493 -> 0.75  adopt 0.0  verified
+[20/294] blob__rd_example__blob_Rd   as.blob           entity_only     claude-haiku-4  0.6493 -> 1.0  adopt 1.0  verified
+[21/294] clock__rd_example__zoned_t  import_clock      none            claude-haiku-4  0.0 -> None  adopt None  no code
+[22/294] blob__rd_example__blob_Rd   as.blob           entity_only     gemma-4-31b-it  0.6493 -> 1.0  adopt 0.0  verified
+[23/294] clock__rd_example__zoned_t  import_clock      last_imperative claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[24/294] clock__rd_example__zoned_t  import_clock      library         gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[25/294] clock__rd_example__zoned_t  import_clock      library         claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[26/294] clock__rd_example__zoned_t  import_clock      entity_only     claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[27/294] clock__rd_example__zoned_t  import_clock      none            gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[28/294] clock__rd_example__zoned_t  x_1               none            claude-haiku-4  0.0 -> 1.0  adopt None  verified
+[29/294] clock__rd_example__zoned_t  import_clock      last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[30/294] clock__rd_example__zoned_t  x_1               library         claude-haiku-4  0.0 -> 0.0  adopt None  verified
+[31/294] clock__rd_example__zoned_t  x_1               none            gemma-4-31b-it  0.0 -> 0.0  adopt None  verified
+[32/294] clock__rd_example__zoned_t  x_1               library         gemma-4-31b-it  0.0 -> 1.0  adopt None  verified
+[33/294] clock__rd_example__zoned_t  import_clock      entity_only     gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[34/294] clock__rd_example__zoned_t  x_1               last_imperative claude-haiku-4  0.0 -> 1.0  adopt None  verified
+[35/294] clock__rd_example__zoned_t  x_1               entity_only     claude-haiku-4  0.0 -> 0.0  adopt None  verified
+[36/294] clock__rd_example__zoned_t  x_1               last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt None  verified
+[37/294] clock__rd_example__zoned_t  x_2               none            claude-haiku-4  0.4667 -> 1.0  adopt 0.0  verified
+[38/294] clock__rd_example__zoned_t  x_2               library         claude-haiku-4  0.4667 -> 1.0  adopt 0.0  verified
+[39/294] clock__rd_example__zoned_t  x_1               entity_only     gemma-4-31b-it  0.0 -> 1.0  adopt None  verified
+[40/294] clock__rd_example__zoned_t  x_2               last_imperative claude-haiku-4  0.4667 -> 0.0  adopt 0.0  verified
+[41/294] clock__rd_example__zoned_t  x_2               entity_only     claude-haiku-4  0.4667 -> 0.0  adopt 0.0  verified
+[42/294] clock__rd_example__zoned_t  x_2               none            gemma-4-31b-it  0.4667 -> 0.4667  adopt 0.0  verified
+[43/294] clock__rd_example__zoned_t  x_3               none            claude-haiku-4  0.5618 -> 0.5618  adopt 0.0  verified
+[44/294] clock__rd_example__zoned_t  x_2               library         gemma-4-31b-it  0.4667 -> 1.0  adopt 0.0  verified
+[45/294] clock__rd_example__zoned_t  x_2               last_imperative gemma-4-31b-it  0.4667 -> 1.0  adopt 0.0  verified
+[46/294] clock__rd_example__zoned_t  x_3               library         claude-haiku-4  0.5618 -> 0.75  adopt 0.0  verified
+[47/294] clock__rd_example__zoned_t  x_3               last_imperative claude-haiku-4  0.5618 -> 0.8122  adopt 0.0  verified
+[48/294] clock__rd_example__zoned_t  x_2               entity_only     gemma-4-31b-it  0.4667 -> 1.0  adopt 0.0  verified
+[49/294] clock__rd_example__zoned_t  x_3               last_imperative gemma-4-31b-it  0.5618 -> 0.7549  adopt 0.0  verified
+[50/294] clock__rd_example__zoned_t  x_3               library         gemma-4-31b-it  0.5618 -> 0.9073  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[51/294] clock__rd_example__zoned_t  x_3               none            gemma-4-31b-it  0.5618 -> 0.8122  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[52/294] clock__rd_example__zoned_t  x_3               entity_only     claude-haiku-4  0.5618 -> 0.0  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[53/294] clock__rd_example__zoned_t  x_3               entity_only     gemma-4-31b-it  0.5618 -> 0.7905  adopt 0.0  verified
+[54/294] googledrive__rd_example__d  suppressPackageS  none            claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[55/294] googledrive__rd_example__d  suppressPackageS  none            gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[56/294] googledrive__rd_example__d  suppressPackageS  library         claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[57/294] googledrive__rd_example__d  suppressPackageS  library         gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[58/294] googledrive__rd_example__d  suppressPackageS  last_imperative claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[59/294] googledrive__rd_example__d  suppressPackageS  entity_only     gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[60/294] blob__rd_example__blob_Rd   blob              last_imperative gemma-4-31b-it  0.5 -> 1.0  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[61/294] googledrive__rd_example__d  suppressPackageS  entity_only     claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[62/294] googledrive__rd_example__d  import_googledri  none            claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[63/294] googledrive__rd_example__d  import_googledri  none            gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[64/294] googledrive__rd_example__d  import_googledri  library         claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[65/294] googledrive__rd_example__d  import_googledri  last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[66/294] googledrive__rd_example__d  import_googledri  library         gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[67/294] googledrive__rd_example__d  import_googledri  entity_only     gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[68/294] googledrive__rd_example__d  import_googledri  entity_only     claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[69/294] googledrive__rd_example__d  drive_has_token   none            gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[70/294] googledrive__rd_example__d  suppressPackageS  last_imperative gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[71/294] googledrive__rd_example__d  import_googledri  last_imperative claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[72/294] googledrive__rd_example__d  drive_has_token   none            claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[73/294] googledrive__rd_example__d  drive_has_token   library         gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[74/294] googledrive__rd_example__d  drive_has_token   library         claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[75/294] googledrive__rd_example__d  drive_has_token   last_imperative claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[76/294] googledrive__rd_example__d  drive_has_token   entity_only     gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[77/294] googledrive__rd_example__d  drive_has_token   last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[78/294] googledrive__rd_example__d  drive_has_token   entity_only     claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[79/294] googledrive__rd_example__d  wordstar          none            claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[80/294] googledrive__rd_example__d  wordstar          none            gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[81/294] googledrive__rd_example__d  wordstar          library         claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[82/294] googledrive__rd_example__d  wordstar          library         gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[83/294] highr__rd_example__hilight  hilight           none            claude-haiku-4  0.7639 -> None  adopt None  no code
+[84/294] googledrive__rd_example__d  wordstar          last_imperative claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[85/294] highr__rd_example__hilight  hilight           none            gemma-4-31b-it  0.7639 -> None  adopt None  no code
+[86/294] highr__rd_example__hilight  hilight           library         claude-haiku-4  0.7639 -> 0.0  adopt None  verified
+[87/294] googledrive__rd_example__d  wordstar          entity_only     claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[88/294] googledrive__rd_example__d  wordstar          last_imperative gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[89/294] highr__rd_example__hilight  hilight           last_imperative claude-haiku-4  0.7639 -> None  adopt None  no code
+[90/294] googledrive__rd_example__d  wordstar          entity_only     gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[91/294] highr__rd_example__hilight  hilight           entity_only     claude-haiku-4  0.7639 -> None  adopt None  no code
+[92/294] highr__rd_example__hilight  hilight           entity_only     gemma-4-31b-it  0.7639 -> None  adopt None  no code
+[93/294] hms__rd_example__hms_Rd     suppressPackageS  none            claude-haiku-4  0.0 -> None  adopt None  no code
+[94/294] hms__rd_example__hms_Rd     suppressPackageS  library         claude-haiku-4  0.0 -> 1.0  adopt 0.5  verified
+[95/294] highr__rd_example__hilight  hilight           library         gemma-4-31b-it  0.7639 -> 0.5  adopt None  verified
+[96/294] hms__rd_example__hms_Rd     suppressPackageS  last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[97/294] hms__rd_example__hms_Rd     suppressPackageS  library         gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[98/294] hms__rd_example__hms_Rd     suppressPackageS  entity_only     claude-haiku-4  0.0 -> None  adopt None  no code
+[99/294] hms__rd_example__hms_Rd     import_hms        none            claude-haiku-4  0.0 -> None  adopt None  no code
+[100/294] hms__rd_example__hms_Rd     suppressPackageS  none            gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[101/294] hms__rd_example__hms_Rd     import_hms        none            gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[102/294] hms__rd_example__hms_Rd     suppressPackageS  last_imperative claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+<unknown>:1: SyntaxWarning: invalid escape sequence '\_'
+[103/294] highr__rd_example__hilight  hilight           last_imperative gemma-4-31b-it  0.7639 -> 0.0  adopt None  verified
+[104/294] hms__rd_example__hms_Rd     import_hms        library         claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[105/294] hms__rd_example__hms_Rd     import_hms        library         gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[106/294] hms__rd_example__hms_Rd     import_hms        last_imperative claude-haiku-4  0.0 -> None  adopt None  no code
+[107/294] hms__rd_example__hms_Rd     suppressPackageS  entity_only     gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[108/294] hms__rd_example__hms_Rd     import_hms        entity_only     claude-haiku-4  0.0 -> None  adopt None  no code
+[109/294] hms__rd_example__hms_Rd     import_hms        entity_only     gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[110/294] hms__rd_example__hms_Rd     hms               none            claude-haiku-4  0.4653 -> None  adopt None  no code
+[111/294] hms__rd_example__hms_Rd     hms               library         claude-haiku-4  0.4653 -> None  adopt None  no code
+[112/294] hms__rd_example__hms_Rd     hms               none            gemma-4-31b-it  0.4653 -> 0.5147  adopt 0.0  verified
+[113/294] hms__rd_example__hms_Rd     hms               last_imperative claude-haiku-4  0.4653 -> None  adopt None  no code
+[114/294] hms__rd_example__hms_Rd     import_hms        last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[115/294] hms__rd_example__hms_Rd     hms               entity_only     claude-haiku-4  0.4653 -> None  adopt None  no code
+[116/294] hms__rd_example__hms_Rd     hms               library         gemma-4-31b-it  0.4653 -> 0.5147  adopt 0.0  verified
+[117/294] hms__rd_example__hms_Rd     hms_1             library         claude-haiku-4  0.0833 -> None  adopt None  no code
+[118/294] hms__rd_example__hms_Rd     hms_1             none            claude-haiku-4  0.0833 -> None  adopt None  no code
+[119/294] hms__rd_example__hms_Rd     hms               last_imperative gemma-4-31b-it  0.4653 -> 0.0  adopt 0.0  verified
+[120/294] hms__rd_example__hms_Rd     hms_1             last_imperative claude-haiku-4  0.0833 -> 0.5  adopt 1.0  verified
+[121/294] hms__rd_example__hms_Rd     hms_1             library         gemma-4-31b-it  0.0833 -> 1.0  adopt 0.0  verified
+[122/294] hms__rd_example__hms_Rd     hms_1             entity_only     claude-haiku-4  0.0833 -> None  adopt None  no code
+[123/294] hms__rd_example__hms_Rd     hms_1             none            gemma-4-31b-it  0.0833 -> 0.0  adopt 0.0  verified
+[124/294] hms__rd_example__hms_Rd     hms               entity_only     gemma-4-31b-it  0.4653 -> 0.0  adopt 0.0  verified
+[125/294] lava__vignette__influencef  Print             none            claude-haiku-4  0.9625 -> 0.5  adopt 0.25  verified
+[126/294] hms__rd_example__hms_Rd     hms_1             last_imperative gemma-4-31b-it  0.0833 -> 0.0  adopt 0.0  verified
+[127/294] hms__rd_example__hms_Rd     hms_1             entity_only     gemma-4-31b-it  0.0833 -> 0.0  adopt 0.0  verified
+[128/294] lava__vignette__influencef  Print             library         claude-haiku-4  0.9625 -> None  adopt None  no code
+[129/294] lava__vignette__influencef  Print             last_imperative claude-haiku-4  0.9625 -> None  adopt None  no code
+[130/294] lava__vignette__influencef  Print             entity_only     gemma-4-31b-it  0.9625 -> None  adopt None  no code
+[131/294] lava__vignette__influencef  object.size       none            gemma-4-31b-it  0.6429 -> None  adopt None  no code
+[132/294] lava__vignette__influencef  Print             library         gemma-4-31b-it  0.9625 -> 1.0  adopt 0.0  verified
+[133/294] lava__vignette__influencef  object.size       none            claude-haiku-4  0.6429 -> None  adopt None  no code
+[134/294] lava__vignette__influencef  Print             entity_only     claude-haiku-4  0.9625 -> 1.0  adopt 0.8929  verified
+[135/294] lava__vignette__influencef  Print             last_imperative gemma-4-31b-it  0.9625 -> 1.0  adopt 0.0  verified
+[136/294] lava__vignette__influencef  object.size       library         claude-haiku-4  0.6429 -> None  adopt None  no code
+[137/294] lava__vignette__influencef  object.size       last_imperative claude-haiku-4  0.6429 -> None  adopt None  no code
+[138/294] lava__vignette__influencef  object.size       entity_only     claude-haiku-4  0.6429 -> None  adopt None  no code
+[139/294] lava__vignette__influencef  e_1               none            gemma-4-31b-it  0.7518 -> None  adopt None  no code
+[140/294] lava__vignette__influencef  Print             none            gemma-4-31b-it  0.9625 -> 0.9934  adopt 0.0  verified
+[141/294] lava__vignette__influencef  object.size       library         gemma-4-31b-it  0.6429 -> 1.0  adopt 0.0  verified
+[142/294] lava__vignette__influencef  e_1               library         gemma-4-31b-it  0.7518 -> None  adopt None  no code
+[143/294] lava__vignette__influencef  e_1               library         claude-haiku-4  0.7518 -> None  adopt None  no code
+[144/294] lava__vignette__influencef  e_1               none            claude-haiku-4  0.7518 -> 0.7518  adopt 0.0  verified
+[145/294] lava__vignette__influencef  e_1               entity_only     gemma-4-31b-it  0.7518 -> None  adopt None  no code
+[146/294] lava__vignette__influencef  e_1               entity_only     claude-haiku-4  0.7518 -> None  adopt None  no code
+[147/294] lubridate__vignette__lubri  months            none            gemma-4-31b-it  0.5081 -> None  adopt None  no code
+[148/294] lava__vignette__influencef  object.size       last_imperative gemma-4-31b-it  0.6429 -> 0.0  adopt 0.0  verified
+[149/294] lava__vignette__influencef  e_1               last_imperative claude-haiku-4  0.7518 -> 0.7518  adopt 0.0  verified
+[150/294] lubridate__vignette__lubri  months            none            claude-haiku-4  0.5081 -> 0.5  adopt 0.0  verified
+[151/294] lubridate__vignette__lubri  months            library         claude-haiku-4  0.5081 -> None  adopt None  no code
+[152/294] lubridate__vignette__lubri  months            last_imperative claude-haiku-4  0.5081 -> None  adopt None  no code
+[153/294] lubridate__vignette__lubri  months            last_imperative gemma-4-31b-it  0.5081 -> 0.741  adopt 0.0  verified
+[154/294] lava__vignette__influencef  e_1               last_imperative gemma-4-31b-it  0.7518 -> 1.0  adopt 0.0  verified
+[155/294] lubridate__vignette__lubri  months            entity_only     claude-haiku-4  0.5081 -> None  adopt None  no code
+[156/294] lubridate__vignette__lubri  months            library         gemma-4-31b-it  0.5081 -> 0.7271  adopt 0.0  verified
+[157/294] lava__vignette__influencef  object.size       entity_only     gemma-4-31b-it  0.6429 -> 1.0  adopt 0.0  verified
+[158/294] lubridate__vignette__lubri  floor_date        none            claude-haiku-4  0.5302 -> 0.5  adopt 0.186  verified
+[159/294] lubridate__vignette__lubri  floor_date        library         claude-haiku-4  0.5302 -> None  adopt None  no code
+[160/294] lubridate__vignette__lubri  floor_date        last_imperative gemma-4-31b-it  0.5302 -> 1.0  adopt 0.0  verified
+[161/294] lubridate__vignette__lubri  floor_date        last_imperative claude-haiku-4  0.5302 -> 0.5  adopt 0.0  verified
+[162/294] lubridate__vignette__lubri  floor_date        library         gemma-4-31b-it  0.5302 -> 0.8701  adopt 0.0  verified
+[163/294] lubridate__vignette__lubri  floor_date        entity_only     gemma-4-31b-it  0.5302 -> 0.5  adopt 0.814  verified
+[164/294] lubridate__vignette__lubri  floor_date        none            gemma-4-31b-it  0.5302 -> 0.5302  adopt 0.0  verified
+[165/294] lubridate__vignette__lubri  months            entity_only     gemma-4-31b-it  0.5081 -> 0.7271  adopt 0.0  verified
+[166/294] lubridate__vignette__lubri  months_2          library         gemma-4-31b-it  0.522 -> 0.522  adopt 0.0  verified
+[167/294] lubridate__vignette__lubri  months_2          last_imperative claude-haiku-4  0.522 -> None  adopt None  no code
+[168/294] lubridate__vignette__lubri  months_2          library         claude-haiku-4  0.522 -> 0.0  adopt 0.0  verified
+[169/294] lubridate__vignette__lubri  floor_date        entity_only     claude-haiku-4  0.5302 -> 0.5  adopt 0.0  verified
+[170/294] lubridate__vignette__lubri  months_2          entity_only     claude-haiku-4  0.522 -> None  adopt None  no code
+[171/294] lubridate__vignette__lubri  months_2          last_imperative gemma-4-31b-it  0.522 -> 0.522  adopt 0.0  verified
+[172/294] lubridate__vignette__lubri  months_2          none            claude-haiku-4  0.522 -> None  adopt None  no code
+[173/294] lubridate__vignette__lubri  months_2          entity_only     gemma-4-31b-it  0.522 -> 0.522  adopt 0.0  verified
+[174/294] pROC__rd_example__geom_pol  suppressPackageS  library         claude-haiku-4  0.0 -> None  adopt None  no code
+[175/294] pROC__rd_example__geom_pol  suppressPackageS  none            claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[176/294] pROC__rd_example__geom_pol  suppressPackageS  none            gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[177/294] pROC__rd_example__geom_pol  suppressPackageS  last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[178/294] pROC__rd_example__geom_pol  suppressPackageS  last_imperative claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[179/294] lubridate__vignette__lubri  months_2          none            gemma-4-31b-it  0.522 -> 0.0  adopt 0.0  verified
+[180/294] pROC__rd_example__geom_pol  import_pROC       none            claude-haiku-4  0.0 -> None  adopt None  no code
+[181/294] pROC__rd_example__geom_pol  import_pROC       library         claude-haiku-4  0.0 -> None  adopt None  no code
+[182/294] pROC__rd_example__geom_pol  import_pROC       none            gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[183/294] pROC__rd_example__geom_pol  suppressPackageS  entity_only     claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[184/294] pROC__rd_example__geom_pol  suppressPackageS  entity_only     gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[185/294] pROC__rd_example__geom_pol  import_pROC       last_imperative claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[186/294] pROC__rd_example__geom_pol  import_pROC       library         gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[187/294] pROC__rd_example__geom_pol  suppressPackageS  library         gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[188/294] pROC__rd_example__geom_pol  data              none            claude-haiku-4  0.0 -> None  adopt None  no code
+[189/294] pROC__rd_example__geom_pol  import_pROC       entity_only     gemma-4-31b-it  0.0 -> None  adopt None  splice refused: unknown entity 'import_p
+Collecting rpy2
+  Downloading rpy2-3.6.8-py3-none-any.whl.metadata (5.5 kB)
+Collecting rpy2-rinterface>=3.6.7 (from rpy2)
+  Downloading rpy2_rinterface-3.6.7.tar.gz (82 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+[190/294] pROC__rd_example__geom_pol  data              none            gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[191/294] pROC__rd_example__geom_pol  data              last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[192/294] pROC__rd_example__geom_pol  data              library         gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[193/294] pROC__rd_example__geom_pol  data              last_imperative claude-haiku-4  0.0 -> None  adopt None  no code
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+[194/294] pROC__rd_example__geom_pol  import_pROC       entity_only     claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[195/294] pROC__rd_example__geom_pol  data              entity_only     claude-haiku-4  0.0 -> None  adopt None  no code
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting rpy2-robjects>=3.6.5 (from rpy2)
+  Downloading rpy2_robjects-3.6.5-py3-none-any.whl.metadata (3.2 kB)
+Requirement already satisfied: packaging in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from rpy2) (26.3)
+Requirement already satisfied: cffi>=1.15.1 in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from rpy2-rinterface>=3.6.7->rpy2) (2.1.1)
+Requirement already satisfied: pycparser in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from cffi>=1.15.1->rpy2-rinterface>=3.6.7->rpy2) (3.0)
+Requirement already satisfied: jinja2 in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from rpy2-robjects>=3.6.5->rpy2) (3.1.6)
+Collecting tzlocal (from rpy2-robjects>=3.6.5->rpy2)
+  Using cached tzlocal-5.4.4-py3-none-any.whl.metadata (7.7 kB)
+Requirement already satisfied: MarkupSafe>=2.0 in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from jinja2->rpy2-robjects>=3.6.5->rpy2) (3.0.3)
+Requirement already satisfied: tzdata in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from tzlocal->rpy2-robjects>=3.6.5->rpy2) (2026.4)
+Downloading rpy2-3.6.8-py3-none-any.whl (9.9 kB)
+Downloading rpy2_robjects-3.6.5-py3-none-any.whl (125 kB)
+Using cached tzlocal-5.4.4-py3-none-any.whl (18 kB)
+Building wheels for collected packages: rpy2-rinterface
+  Building wheel for rpy2-rinterface (pyproject.toml): started
+[196/294] pROC__rd_example__geom_pol  data              entity_only     gemma-4-31b-it  0.0 -> 0.1  adopt 0.0  verified
+[197/294] pROC__rd_example__geom_pol  import_pROC       last_imperative gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+  Building wheel for rpy2-rinterface (pyproject.toml): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  Building wheel for rpy2-rinterface (pyproject.toml) did not run successfully.
+  exit code: 1
+  
+  [244 lines of output]
+  test_pw_r.c
+  Code wird generiert.
+  Codegenerierung ist abgeschlossen.
+  cffi mode is CFFI_MODE.ANY
+  Looking for R home with: R RHOME
+  R home found: C:\Program Files\R\R-4.5.3
+  R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+  Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --ldflags
+  ['  -LC:/PROGRA~1/R/R-45~1.3/bin/x64 -lR -lm']
+  R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+  Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --cppflags
+  ['-IC:/PROGRA~1/R/R-45~1.3/include -IC:/PROGRA~1/R/R-45~1.3/include/x64']
+  cffi mode is CFFI_MODE.ANY
+  Looking for R home with: R RHOME
+  R home found: C:\Program Files\R\R-4.5.3
+  R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+  Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --ldflags
+  ['  -LC:/PROGRA~1/R/R-45~1.3/bin/x64 -lR -lm']
+  R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+  Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --cppflags
+  ['-IC:/PROGRA~1/R/R-45~1.3/include -IC:/PROGRA~1/R/R-45~1.3/include/x64']
+  C:\Users\bened\AppData\Local\Temp\pip-build-env-9k3_7j79\overlay\Lib\site-packages\setuptools\config\expand.py:128: SetuptoolsWarning: File 'C:\\Users\\bened\\AppData\\Local\\Temp\\pip-install-rtmermqx\\rpy2-rinterface_0211c1c017204f07ad8e370b539d8930\\README.md' cannot be found
+    for path in _filter_existing_files(_filepaths)
+  C:\Users\bened\AppData\Local\Temp\pip-build-env-9k3_7j79\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+  !!
+  
+          ********************************************************************************
+          Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+  
+          By 2027-Feb-18, you need to update your project and remove deprecated calls
+          or your builds will no longer be supported.
+  
+          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+          ********************************************************************************
+  
+  !!
+    corresp(dist, value, root_dir)
+  running bdist_wheel
+  running build
+  cffi mode: CFFI_MODE.ANY
+  running build_py
+  file src\_rinterface_cffi_abi.py (for module _rinterface_cffi_abi) not found
+  creating build\lib.win-amd64-cpython-313\rpy2\rinterface
+  copying src\rpy2\rinterface\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface
+  creating build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\bufferprotocol.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\callbacks.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\conversion.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\embedded.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\ffi_proxy.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\memorymanagement.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\na_values.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\openrlib.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\sexp.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\_rinterface_capi.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\_rinterface_cffi_build.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  creating build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\rlike\container.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\rlike\functional.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\rlike\indexing.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\rlike\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  creating build\lib.win-amd64-cpython-313\rpy2\situation
+  copying src\rpy2\situation\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\situation
+  copying src\rpy2\situation\__main__.py -> build\lib.win-amd64-cpython-313\rpy2\situation
+  creating build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_bufferprotocol.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_callbacks.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_conversion.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_embedded_r.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_endr.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_environment.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_externalptr.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_functions.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_memorymanagement.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_na.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_noinitialization.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_openrlib.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_sexp.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_symbol.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_threading.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vectors.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_bool.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_byte.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_complex.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_float.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_int.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_lang.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_list.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_numpy.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_pairlist.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_str.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\utils.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  creating build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+  copying src\rpy2\rinterface\tests\rlike\test_container.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+  copying src\rpy2\rinterface\tests\rlike\test_functional.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+  copying src\rpy2\rinterface\tests\rlike\test_indexing.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+  running egg_info
+  writing src\rpy2_rinterface.egg-info\PKG-INFO
+  writing dependency_links to src\rpy2_rinterface.egg-info\dependency_links.txt
+  writing requirements to src\rpy2_rinterface.egg-info\requires.txt
+  writing top-level names to src\rpy2_rinterface.egg-info\top_level.txt
+  reading manifest file 'src\rpy2_rinterface.egg-info\SOURCES.txt'
+  writing manifest file 'src\rpy2_rinterface.egg-info\SOURCES.txt'
+  copying src\rpy2\rinterface\py.typed -> build\lib.win-amd64-cpython-313\rpy2\rinterface
+  copying src\rpy2\rinterface_lib\RPY2.h -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\R_API.h -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\R_API_eventloop.c -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\R_API_eventloop.h -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\_bufferprotocol.c -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\py.typed -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rlike\py.typed -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\situation\py.typed -> build\lib.win-amd64-cpython-313\rpy2\situation
+  file src\_rinterface_cffi_abi.py (for module _rinterface_cffi_abi) not found
+  warning: build_py_make_mod: byte-compiling is disabled, skipping.
+  
+  generating cffi module 'build\\lib.win-amd64-cpython-313\\_rinterface_cffi_abi.py'
+  running build_ext
+  generating cffi module 'build\\temp.win-amd64-cpython-313\\Release\\_rinterface_cffi_api.c'
+  creating build\temp.win-amd64-cpython-313\Release
+  building 'rpy2.rinterface_lib._bufferprotocol' extension
+  "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64\cl.exe" /c /nologo /O2 /W3 /GL /DNDEBUG /MD -IC:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\include -IC:\Users\bened\anaconda3\include -IC:\Users\bened\anaconda3\Include "-IC:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\include" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt" /Tcsrc/rpy2/rinterface_lib/_bufferprotocol.c /Fobuild\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.obj
+  _bufferprotocol.c
+  "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64\link.exe" /nologo /INCREMENTAL:NO /LTCG /DLL /MANIFEST:EMBED,ID=2 /MANIFESTUAC:NO /LIBPATH:C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\libs /LIBPATH:C:\Users\bened\anaconda3\libs /LIBPATH:C:\Users\bened\anaconda3 /LIBPATH:C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\PCbuild\amd64 "/LIBPATH:C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\lib\x64" "/LIBPATH:C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\ucrt\x64" "/LIBPATH:C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\um\x64" /EXPORT:PyInit__bufferprotocol build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.obj /OUT:build\lib.win-amd64-cpython-313\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.pyd /IMPLIB:build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.lib
+     Bibliothek "build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.lib" und Objekt "build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.exp" werden erstellt.
+  Code wird generiert.
+  Codegenerierung ist abgeschlossen.
+  building '_rinterface_cffi_api' extension
+  "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64\cl.exe" /c /nologo /O2 /W3 /GL /DNDEBUG /MD -DRPY2_RLEN_LONG=True -DOSNAME_NT=True -Isrc/rpy2/rinterface_lib/ -IC:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\include -IC:\Users\bened\anaconda3\include -IC:\Users\bened\anaconda3\Include "-IC:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\include" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt" /Tcbuild\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c /Fobuild\temp.win-amd64-cpython-313\Release\build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.obj -std=c99
+  cl : Befehlszeile warning D9002 : Unbekannte Option "-std=c99" wird ignoriert.
+  _rinterface_cffi_api.c
+  src/rpy2/rinterface_lib/R_API.h(45): error C2146: Syntaxfehler: Fehlendes ";" vor Bezeichner "private_data_c"
+  src/rpy2/rinterface_lib/R_API.h(45): error C2061: Syntaxfehler: Bezeichner "private_data_c"
+  src/rpy2/rinterface_lib/R_API.h(46): error C2059: Syntaxfehler: "}"
+  src/rpy2/rinterface_lib/R_API.h(221): error C2146: Syntaxfehler: Fehlendes ")" vor Bezeichner "c"
+  src/rpy2/rinterface_lib/R_API.h(221): error C2061: Syntaxfehler: Bezeichner "c"
+  src/rpy2/rinterface_lib/R_API.h(221): error C2059: Syntaxfehler: ";"
+  src/rpy2/rinterface_lib/R_API.h(221): error C2059: Syntaxfehler: ")"
+  src/rpy2/rinterface_lib/R_API.h(244): error C2091: Funktionsergebnis ist eine Funktion
+  src/rpy2/rinterface_lib/R_API.h(245): error C2143: Syntaxfehler: Es fehlt "{" vor "*"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(986): warning C4113: "DL_FUNC *" weicht in der Parameterliste von "void *(__cdecl **)(void)" ab
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(998): warning C4113: "DL_FUNC *" weicht in der Parameterliste von "void *(__cdecl **)(void)" ab
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1018): error C2143: Syntaxfehler: Es fehlt ")" vor "*"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1018): error C2143: Syntaxfehler: Es fehlt "{" vor "*"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1018): error C2059: Syntaxfehler: ")"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1019): error C2054: Nach "p" muss "(" folgen
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1026): error C2061: Syntaxfehler: Bezeichner "Rcomplex"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1026): error C2059: Syntaxfehler: "}"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1548): error C2143: Syntaxfehler: Es fehlt "{" vor "*"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1559): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1559): error C2296: "*": Ung\x81ltig, da der linke Operand vom Typ "int (__cdecl *(__cdecl *)())(SEXP,R_xlen_t)" ist
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1573): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1573): warning C4047: "=": Anzahl der Dereferenzierungen bei "int" und "int *" unterschiedlich
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1578): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1578): warning C4312: "Typumwandlung": Konvertierung von "int" in gr”áeren Typ "char *"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1586): error C2061: Syntaxfehler: Bezeichner "_cffi_d_COMPLEX_ELT"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1586): error C2059: Syntaxfehler: ";"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1586): error C2059: Syntaxfehler: "<parameter-list>"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1598): error C2146: Syntaxfehler: Fehlendes ";" vor Bezeichner "result"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1598): warning C4550: Ausdruck wird als Funktion ausgewertet, der eine Argumentliste fehlt
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1598): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1621): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1621): warning C4013: "COMPLEX_ELT" undefiniert; Annahme: extern mit R\x81ckgabetyp int
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1626): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2146: Syntaxfehler: Fehlendes ")" vor Bezeichner "x0"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2061: Syntaxfehler: Bezeichner "x0"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2059: Syntaxfehler: ";"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2059: Syntaxfehler: ")"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3467): error C2449: "{" auf Dateiebene gefunden - fehlt der Funktionsheader?
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3469): error C2059: Syntaxfehler: "}"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6823): error C2065: "_cffi_d_COMPLEX_ELT": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6823): warning C4312: "Typumwandlung": Konvertierung von "int" in gr”áeren Typ "void *"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): error C2065: "_cffi_f_Rf_ScalarComplex": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): warning C4312: "Typumwandlung": Konvertierung von "int" in gr”áeren Typ "void *"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): error C2065: "_cffi_d_Rf_ScalarComplex": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): warning C4312: "Typumwandlung": Konvertierung von "int" in gr”áeren Typ "void *"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6823): error C2099: Initialisierung ist keine Konstante
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): error C2099: Initialisierung ist keine Konstante
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7041): error C2059: Syntaxfehler: ")"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7046): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7049): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7052): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7055): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7058): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7061): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7064): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7067): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7070): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7073): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7076): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7079): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7082): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7085): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7088): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7091): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7094): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7097): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7100): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7103): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7106): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7109): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7112): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7115): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7118): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7121): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7124): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7127): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7130): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7133): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7136): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7139): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7142): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7145): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7148): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7151): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7154): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7157): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7160): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7163): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7166): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7169): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7172): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7175): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7178): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7181): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7184): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7187): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7190): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7193): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7196): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7199): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7202): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7205): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7208): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7211): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7214): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7217): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7220): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7223): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7226): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7229): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7229): fatal error C1003: Mehr als 100 Fehler gefunden; Kompilierung wird abgebrochen.
+  error: Command '['C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX86\\x64\\cl.exe', '/c', '/nologo', '/O2', '/W3', '/GL', '/DNDEBUG', '/MD', '-DRPY2_RLEN_LONG=True', '-DOSNAME_NT=True', '-Isrc/rpy2/rinterface_lib/', '-IC:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\include', '-IC:\\Users\\bened\\anaconda3\\include', '-IC:\\Users\\bened\\anaconda3\\Include', '-IC:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\include', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\ucrt', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\shared', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\um', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\winrt', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\cppwinrt', '/Tcbuild\\temp.win-amd64-cpython-313\\Release\\_rinterface_cffi_api.c', '/Fobuild\\temp.win-amd64-cpython-313\\Release\\build\\temp.win-amd64-cpython-313\\Release\\_rinterface_cffi_api.obj', '-std=c99']' returned non-zero exit status 2.
+  [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for rpy2-rinterface
+Failed to build rpy2-rinterface
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+error: failed-wheel-build-for-install
+
+Failed to build installable wheels for some pyproject.toml based projects
+
+rpy2-rinterface
+[198/294] pROC__rd_example__geom_pol  data              library         claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[199/294] pROC__rd_example__geom_pol  geom_polygon_auc  library         claude-haiku-4  0.0 -> None  adopt None  no code
+[200/294] pROC__rd_example__geom_pol  geom_polygon_auc  none            gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+Collecting rpy2
+  Using cached rpy2-3.6.8-py3-none-any.whl.metadata (5.5 kB)
+Collecting rpy2-rinterface>=3.6.7 (from rpy2)
+  Using cached rpy2_rinterface-3.6.7.tar.gz (82 kB)
+  Installing build dependencies: started
+[201/294] pROC__rd_example__geom_pol  geom_polygon_auc  library         gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+[202/294] pROC__rd_example__geom_pol  geom_polygon_auc  entity_only     claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[203/294] rmarkdown__rd_example__out  output_format_de  none            gemma-4-31b-it  0.5 -> 0.0  adopt 0.0  verified
+[204/294] pROC__rd_example__geom_pol  geom_polygon_auc  last_imperative claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+[205/294] pROC__rd_example__geom_pol  geom_polygon_auc  last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[206/294] rmarkdown__rd_example__out  output_format_de  none            claude-haiku-4  0.5 -> 0.5  adopt 0.3913  verified
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting rpy2-robjects>=3.6.5 (from rpy2)
+  Using cached rpy2_robjects-3.6.5-py3-none-any.whl.metadata (3.2 kB)
+Requirement already satisfied: packaging in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from rpy2) (26.3)
+Requirement already satisfied: cffi>=1.15.1 in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from rpy2-rinterface>=3.6.7->rpy2) (2.1.1)
+Requirement already satisfied: pycparser in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from cffi>=1.15.1->rpy2-rinterface>=3.6.7->rpy2) (3.0)
+Requirement already satisfied: jinja2 in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from rpy2-robjects>=3.6.5->rpy2) (3.1.6)
+Collecting tzlocal (from rpy2-robjects>=3.6.5->rpy2)
+  Using cached tzlocal-5.4.4-py3-none-any.whl.metadata (7.7 kB)
+Requirement already satisfied: MarkupSafe>=2.0 in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from jinja2->rpy2-robjects>=3.6.5->rpy2) (3.0.3)
+Requirement already satisfied: tzdata in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (from tzlocal->rpy2-robjects>=3.6.5->rpy2) (2026.4)
+Using cached rpy2-3.6.8-py3-none-any.whl (9.9 kB)
+Using cached rpy2_robjects-3.6.5-py3-none-any.whl (125 kB)
+Using cached tzlocal-5.4.4-py3-none-any.whl (18 kB)
+Building wheels for collected packages: rpy2-rinterface
+  Building wheel for rpy2-rinterface (pyproject.toml): started
+[207/294] pROC__rd_example__geom_pol  geom_polygon_auc  entity_only     gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[208/294] rmarkdown__rd_example__out  output_format_de  library         claude-haiku-4  0.5 -> 0.5  adopt 0.0  verified
+[209/294] rmarkdown__rd_example__out  output_format_de  library         gemma-4-31b-it  0.5 -> 0.0  adopt 0.0  verified
+[210/294] rmarkdown__rd_example__out  output_format_de  last_imperative claude-haiku-4  0.5 -> 0.5  adopt 0.4348  verified
+  Building wheel for rpy2-rinterface (pyproject.toml): finished with status 'error'
+  error: subprocess-exited-with-error
+  
+  Building wheel for rpy2-rinterface (pyproject.toml) did not run successfully.
+  exit code: 1
+  
+  [244 lines of output]
+  test_pw_r.c
+  Code wird generiert.
+  Codegenerierung ist abgeschlossen.
+  cffi mode is CFFI_MODE.ANY
+  Looking for R home with: R RHOME
+  R home found: C:\Program Files\R\R-4.5.3
+  R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+  Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --ldflags
+  ['  -LC:/PROGRA~1/R/R-45~1.3/bin/x64 -lR -lm']
+  R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+  Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --cppflags
+  ['-IC:/PROGRA~1/R/R-45~1.3/include -IC:/PROGRA~1/R/R-45~1.3/include/x64']
+  cffi mode is CFFI_MODE.ANY
+  Looking for R home with: R RHOME
+  R home found: C:\Program Files\R\R-4.5.3
+  R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+  Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --ldflags
+  ['  -LC:/PROGRA~1/R/R-45~1.3/bin/x64 -lR -lm']
+  R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+  Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --cppflags
+  ['-IC:/PROGRA~1/R/R-45~1.3/include -IC:/PROGRA~1/R/R-45~1.3/include/x64']
+  C:\Users\bened\AppData\Local\Temp\pip-build-env-j10g65n3\overlay\Lib\site-packages\setuptools\config\expand.py:128: SetuptoolsWarning: File 'C:\\Users\\bened\\AppData\\Local\\Temp\\pip-install-z3gstjpo\\rpy2-rinterface_f7260f77c40943f5a6cffa94ce0b4211\\README.md' cannot be found
+    for path in _filter_existing_files(_filepaths)
+  C:\Users\bened\AppData\Local\Temp\pip-build-env-j10g65n3\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+  !!
+  
+          ********************************************************************************
+          Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+  
+          By 2027-Feb-18, you need to update your project and remove deprecated calls
+          or your builds will no longer be supported.
+  
+          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+          ********************************************************************************
+  
+  !!
+    corresp(dist, value, root_dir)
+  running bdist_wheel
+  running build
+  cffi mode: CFFI_MODE.ANY
+  running build_py
+  file src\_rinterface_cffi_abi.py (for module _rinterface_cffi_abi) not found
+  creating build\lib.win-amd64-cpython-313\rpy2\rinterface
+  copying src\rpy2\rinterface\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface
+  creating build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\bufferprotocol.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\callbacks.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\conversion.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\embedded.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\ffi_proxy.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\memorymanagement.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\na_values.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\openrlib.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\sexp.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\_rinterface_capi.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\_rinterface_cffi_build.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  creating build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\rlike\container.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\rlike\functional.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\rlike\indexing.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\rlike\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  creating build\lib.win-amd64-cpython-313\rpy2\situation
+  copying src\rpy2\situation\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\situation
+  copying src\rpy2\situation\__main__.py -> build\lib.win-amd64-cpython-313\rpy2\situation
+  creating build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_bufferprotocol.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_callbacks.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_conversion.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_embedded_r.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_endr.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_environment.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_externalptr.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_functions.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_memorymanagement.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_na.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_noinitialization.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_openrlib.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_sexp.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_symbol.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_threading.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vectors.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_bool.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_byte.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_complex.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_float.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_int.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_lang.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_list.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_numpy.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_pairlist.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\test_vector_str.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\utils.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  copying src\rpy2\rinterface\tests\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+  creating build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+  copying src\rpy2\rinterface\tests\rlike\test_container.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+  copying src\rpy2\rinterface\tests\rlike\test_functional.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+  copying src\rpy2\rinterface\tests\rlike\test_indexing.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+  running egg_info
+  writing src\rpy2_rinterface.egg-info\PKG-INFO
+  writing dependency_links to src\rpy2_rinterface.egg-info\dependency_links.txt
+  writing requirements to src\rpy2_rinterface.egg-info\requires.txt
+  writing top-level names to src\rpy2_rinterface.egg-info\top_level.txt
+  reading manifest file 'src\rpy2_rinterface.egg-info\SOURCES.txt'
+  writing manifest file 'src\rpy2_rinterface.egg-info\SOURCES.txt'
+  copying src\rpy2\rinterface\py.typed -> build\lib.win-amd64-cpython-313\rpy2\rinterface
+  copying src\rpy2\rinterface_lib\RPY2.h -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\R_API.h -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\R_API_eventloop.c -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\R_API_eventloop.h -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\_bufferprotocol.c -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rinterface_lib\py.typed -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+  copying src\rpy2\rlike\py.typed -> build\lib.win-amd64-cpython-313\rpy2\rlike
+  copying src\rpy2\situation\py.typed -> build\lib.win-amd64-cpython-313\rpy2\situation
+  file src\_rinterface_cffi_abi.py (for module _rinterface_cffi_abi) not found
+  warning: build_py_make_mod: byte-compiling is disabled, skipping.
+  
+  generating cffi module 'build\\lib.win-amd64-cpython-313\\_rinterface_cffi_abi.py'
+  running build_ext
+  generating cffi module 'build\\temp.win-amd64-cpython-313\\Release\\_rinterface_cffi_api.c'
+  creating build\temp.win-amd64-cpython-313\Release
+  building 'rpy2.rinterface_lib._bufferprotocol' extension
+  "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64\cl.exe" /c /nologo /O2 /W3 /GL /DNDEBUG /MD -IC:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\include -IC:\Users\bened\anaconda3\include -IC:\Users\bened\anaconda3\Include "-IC:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\include" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt" /Tcsrc/rpy2/rinterface_lib/_bufferprotocol.c /Fobuild\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.obj
+  _bufferprotocol.c
+  "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64\link.exe" /nologo /INCREMENTAL:NO /LTCG /DLL /MANIFEST:EMBED,ID=2 /MANIFESTUAC:NO /LIBPATH:C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\libs /LIBPATH:C:\Users\bened\anaconda3\libs /LIBPATH:C:\Users\bened\anaconda3 /LIBPATH:C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\PCbuild\amd64 "/LIBPATH:C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\lib\x64" "/LIBPATH:C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\ucrt\x64" "/LIBPATH:C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\um\x64" /EXPORT:PyInit__bufferprotocol build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.obj /OUT:build\lib.win-amd64-cpython-313\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.pyd /IMPLIB:build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.lib
+     Bibliothek "build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.lib" und Objekt "build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.exp" werden erstellt.
+  Code wird generiert.
+  Codegenerierung ist abgeschlossen.
+  building '_rinterface_cffi_api' extension
+  "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64\cl.exe" /c /nologo /O2 /W3 /GL /DNDEBUG /MD -DRPY2_RLEN_LONG=True -DOSNAME_NT=True -Isrc/rpy2/rinterface_lib/ -IC:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\include -IC:\Users\bened\anaconda3\include -IC:\Users\bened\anaconda3\Include "-IC:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\include" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt" /Tcbuild\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c /Fobuild\temp.win-amd64-cpython-313\Release\build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.obj -std=c99
+  cl : Befehlszeile warning D9002 : Unbekannte Option "-std=c99" wird ignoriert.
+  _rinterface_cffi_api.c
+  src/rpy2/rinterface_lib/R_API.h(45): error C2146: Syntaxfehler: Fehlendes ";" vor Bezeichner "private_data_c"
+  src/rpy2/rinterface_lib/R_API.h(45): error C2061: Syntaxfehler: Bezeichner "private_data_c"
+  src/rpy2/rinterface_lib/R_API.h(46): error C2059: Syntaxfehler: "}"
+  src/rpy2/rinterface_lib/R_API.h(221): error C2146: Syntaxfehler: Fehlendes ")" vor Bezeichner "c"
+  src/rpy2/rinterface_lib/R_API.h(221): error C2061: Syntaxfehler: Bezeichner "c"
+  src/rpy2/rinterface_lib/R_API.h(221): error C2059: Syntaxfehler: ";"
+  src/rpy2/rinterface_lib/R_API.h(221): error C2059: Syntaxfehler: ")"
+  src/rpy2/rinterface_lib/R_API.h(244): error C2091: Funktionsergebnis ist eine Funktion
+  src/rpy2/rinterface_lib/R_API.h(245): error C2143: Syntaxfehler: Es fehlt "{" vor "*"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(986): warning C4113: "DL_FUNC *" weicht in der Parameterliste von "void *(__cdecl **)(void)" ab
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(998): warning C4113: "DL_FUNC *" weicht in der Parameterliste von "void *(__cdecl **)(void)" ab
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1018): error C2143: Syntaxfehler: Es fehlt ")" vor "*"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1018): error C2143: Syntaxfehler: Es fehlt "{" vor "*"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1018): error C2059: Syntaxfehler: ")"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1019): error C2054: Nach "p" muss "(" folgen
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1026): error C2061: Syntaxfehler: Bezeichner "Rcomplex"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1026): error C2059: Syntaxfehler: "}"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1548): error C2143: Syntaxfehler: Es fehlt "{" vor "*"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1559): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1559): error C2296: "*": Ung\x81ltig, da der linke Operand vom Typ "int (__cdecl *(__cdecl *)())(SEXP,R_xlen_t)" ist
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1573): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1573): warning C4047: "=": Anzahl der Dereferenzierungen bei "int" und "int *" unterschiedlich
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1578): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1578): warning C4312: "Typumwandlung": Konvertierung von "int" in gr”áeren Typ "char *"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1586): error C2061: Syntaxfehler: Bezeichner "_cffi_d_COMPLEX_ELT"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1586): error C2059: Syntaxfehler: ";"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1586): error C2059: Syntaxfehler: "<parameter-list>"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1598): error C2146: Syntaxfehler: Fehlendes ";" vor Bezeichner "result"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1598): warning C4550: Ausdruck wird als Funktion ausgewertet, der eine Argumentliste fehlt
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1598): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1621): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1621): warning C4013: "COMPLEX_ELT" undefiniert; Annahme: extern mit R\x81ckgabetyp int
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1626): error C2065: "result": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2146: Syntaxfehler: Fehlendes ")" vor Bezeichner "x0"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2061: Syntaxfehler: Bezeichner "x0"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2059: Syntaxfehler: ";"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2059: Syntaxfehler: ")"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3467): error C2449: "{" auf Dateiebene gefunden - fehlt der Funktionsheader?
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3469): error C2059: Syntaxfehler: "}"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6823): error C2065: "_cffi_d_COMPLEX_ELT": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6823): warning C4312: "Typumwandlung": Konvertierung von "int" in gr”áeren Typ "void *"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): error C2065: "_cffi_f_Rf_ScalarComplex": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): warning C4312: "Typumwandlung": Konvertierung von "int" in gr”áeren Typ "void *"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): error C2065: "_cffi_d_Rf_ScalarComplex": nichtdeklarierter Bezeichner
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): warning C4312: "Typumwandlung": Konvertierung von "int" in gr”áeren Typ "void *"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6823): error C2099: Initialisierung ist keine Konstante
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): error C2099: Initialisierung ist keine Konstante
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7041): error C2059: Syntaxfehler: ")"
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7046): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7049): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7052): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7055): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7058): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7061): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7064): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7067): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7070): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7073): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7076): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7079): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7082): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7085): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7088): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7091): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7094): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7097): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7100): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7103): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7106): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7109): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7112): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7115): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7118): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7121): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7124): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7127): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7130): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7133): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7136): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7139): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7142): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7145): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7148): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7151): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7154): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7157): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7160): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7163): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7166): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7169): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7172): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7175): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7178): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7181): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7184): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7187): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7190): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7193): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7196): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7199): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7202): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7205): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7208): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7211): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7214): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7217): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7220): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7223): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7226): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7229): error C2059: Syntaxfehler: ","
+  build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7229): fatal error C1003: Mehr als 100 Fehler gefunden; Kompilierung wird abgebrochen.
+  error: Command '['C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX86\\x64\\cl.exe', '/c', '/nologo', '/O2', '/W3', '/GL', '/DNDEBUG', '/MD', '-DRPY2_RLEN_LONG=True', '-DOSNAME_NT=True', '-Isrc/rpy2/rinterface_lib/', '-IC:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\include', '-IC:\\Users\\bened\\anaconda3\\include', '-IC:\\Users\\bened\\anaconda3\\Include', '-IC:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\include', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\ucrt', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\shared', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\um', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\winrt', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\cppwinrt', '/Tcbuild\\temp.win-amd64-cpython-313\\Release\\_rinterface_cffi_api.c', '/Fobuild\\temp.win-amd64-cpython-313\\Release\\build\\temp.win-amd64-cpython-313\\Release\\_rinterface_cffi_api.obj', '-std=c99']' returned non-zero exit status 2.
+  [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for rpy2-rinterface
+Failed to build rpy2-rinterface
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+error: failed-wheel-build-for-install
+
+Failed to build installable wheels for some pyproject.toml based projects
+
+rpy2-rinterface
+[211/294] pROC__rd_example__geom_pol  geom_polygon_auc  none            claude-haiku-4  0.0 -> 0.0  adopt 0.0  verified
+[212/294] rmarkdown__rd_example__out  knit_meta_add     none            gemma-4-31b-it  0.5 -> 0.0  adopt 0.0  verified
+[213/294] rmarkdown__rd_example__out  output_format_de  entity_only     gemma-4-31b-it  0.5 -> 0.1667  adopt 0.913  verified
+[214/294] rmarkdown__rd_example__out  knit_meta_add     none            claude-haiku-4  0.5 -> 0.6579  adopt 0.4259  verified
+[215/294] rmarkdown__rd_example__out  output_format_de  entity_only     claude-haiku-4  0.5 -> 0.9917  adopt 0.7391  verified
+[216/294] rmarkdown__rd_example__out  knit_meta_add     library         gemma-4-31b-it  0.5 -> 0.1667  adopt 0.7037  verified
+[217/294] rmarkdown__rd_example__out  output_format_de  last_imperative gemma-4-31b-it  0.5 -> 0.5  adopt 0.0  verified
+[218/294] rmarkdown__rd_example__out  knit_meta_add     entity_only     gemma-4-31b-it  0.5 -> 0.0  adopt 0.7778  verified
+[219/294] rmarkdown__rd_example__out  knit_meta_add     last_imperative claude-haiku-4  0.5 -> 0.835  adopt 0.5741  verified
+[220/294] rmarkdown__rd_example__out  knit_meta_add     library         claude-haiku-4  0.5 -> 0.7599  adopt 0.0  verified
+[221/294] rmarkdown__rd_example__out  str               none            gemma-4-31b-it  0.637 -> 0.0  adopt 0.0  verified
+[222/294] rmarkdown__rd_example__out  knit_meta_add     entity_only     claude-haiku-4  0.5 -> 0.8399  adopt 0.5741  verified
+[223/294] rmarkdown__rd_example__out  knit_meta_add     last_imperative gemma-4-31b-it  0.5 -> 0.8421  adopt 0.0  verified
+[224/294] rmarkdown__rd_example__out  str               none            claude-haiku-4  0.637 -> 0.6185  adopt 0.1134  verified
+[225/294] rmarkdown__rd_example__out  str               library         gemma-4-31b-it  0.637 -> 0.0  adopt 0.0  verified
+[226/294] rmarkdown__rd_example__out  str               library         claude-haiku-4  0.637 -> 0.8368  adopt 0.0  verified
+[227/294] rmarkdown__rd_example__out  str               entity_only     claude-haiku-4  0.637 -> 0.8368  adopt 0.0  verified
+[228/294] rmarkdown__rd_example__out  str               last_imperative claude-haiku-4  0.637 -> 1.0  adopt 0.0  verified
+[229/294] shape__rd_example__femmeco  image             none            gemma-4-31b-it  0.8333 -> 1.0  adopt 0.0  verified
+[230/294] rmarkdown__rd_example__out  str               last_imperative gemma-4-31b-it  0.637 -> 0.0  adopt 0.4948  verified
+[231/294] rmarkdown__rd_example__out  str               entity_only     gemma-4-31b-it  0.637 -> 0.0  adopt 0.567  verified
+[232/294] shape__rd_example__femmeco  image             none            claude-haiku-4  0.8333 -> 0.5  adopt 0.25  verified
+[233/294] shape__rd_example__femmeco  image             library         claude-haiku-4  0.8333 -> 0.8333  adopt 0.5  verified
+[234/294] shape__rd_example__femmeco  image             last_imperative claude-haiku-4  0.8333 -> 0.0  adopt 0.5833  verified
+[235/294] shiny__rd_example__httpRes  suppressPackageS  none            gemma-4-31b-it  0.0 -> None  adopt None  no code
+[236/294] shape__rd_example__femmeco  image             library         gemma-4-31b-it  0.8333 -> 1.0  adopt 0.0  verified
+[237/294] shape__rd_example__femmeco  image             entity_only     gemma-4-31b-it  0.8333 -> 1.0  adopt 0.0  verified
+[238/294] shiny__rd_example__httpRes  suppressPackageS  library         gemma-4-31b-it  0.0 -> None  adopt None  no code
+[239/294] shape__rd_example__femmeco  image             entity_only     claude-haiku-4  0.8333 -> 0.0  adopt 0.4167  verified
+[240/294] shiny__rd_example__httpRes  suppressPackageS  last_imperative gemma-4-31b-it  0.0 -> None  adopt None  no code
+[241/294] shiny__rd_example__httpRes  suppressPackageS  last_imperative claude-haiku-4  0.0 -> None  adopt None  no code
+[242/294] shiny__rd_example__httpRes  suppressPackageS  none            claude-haiku-4  0.0 -> None  adopt None  no code
+[243/294] shiny__rd_example__httpRes  suppressPackageS  library         claude-haiku-4  0.0 -> None  adopt None  no code
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+[244/294] shiny__rd_example__httpRes  suppressPackageS  entity_only     gemma-4-31b-it  0.0 -> None  adopt None  no code
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+[245/294] shiny__rd_example__httpRes  suppressPackageS  entity_only     claude-haiku-4  0.0 -> None  adopt None  no code
+[246/294] textshaping__vignette__c_i  suppressPackageS  none            gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+[247/294] textshaping__vignette__c_i  suppressPackageS  library         gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[248/294] textshaping__vignette__c_i  suppressPackageS  none            claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+ERROR: Could not find a version that satisfies the requirement textshaping (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for textshaping
+[249/294] textshaping__vignette__c_i  suppressPackageS  last_imperative gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[250/294] textshaping__vignette__c_i  suppressPackageS  last_imperative claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[251/294] textshaping__vignette__c_i  suppressPackageS  entity_only     gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[252/294] textshaping__vignette__c_i  suppressPackageS  library         claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[253/294] textshaping__vignette__c_i  suppressPackageS  entity_only     claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[254/294] textshaping__vignette__c_i  import_textshapi  none            gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[255/294] textshaping__vignette__c_i  import_textshapi  library         gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[256/294] textshaping__vignette__c_i  import_textshapi  none            claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[257/294] textshaping__vignette__c_i  import_textshapi  last_imperative gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[258/294] textshaping__vignette__c_i  import_textshapi  library         claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[259/294] textshaping__vignette__c_i  import_textshapi  entity_only     gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[260/294] textshaping__vignette__c_i  import_textshapi  entity_only     claude-haiku-4  0.0 -> None  adopt None  splice refused: unknown entity 'import_t
+[261/294] textshaping__vignette__c_i  opts_chunk$set    none            gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[262/294] textshaping__vignette__c_i  import_textshapi  last_imperative claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[263/294] textshaping__vignette__c_i  opts_chunk$set    none            claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[264/294] textshaping__vignette__c_i  opts_chunk$set    library         gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[265/294] textshaping__vignette__c_i  opts_chunk$set    last_imperative gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[266/294] textshaping__vignette__c_i  opts_chunk$set    library         claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[267/294] textshaping__vignette__c_i  opts_chunk$set    entity_only     gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[268/294] textshaping__vignette__c_i  opts_chunk$set    last_imperative claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[269/294] shape__rd_example__femmeco  image             last_imperative gemma-4-31b-it  0.8333 -> 1.0  adopt 0.0  verified
+[270/294] textshaping__vignette__c_i  opts_chunk$set    entity_only     claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[271/294] tidyr__vignette__tidy-data  tribble           none            claude-haiku-4  0.8496 -> 0.0  adopt 0.0  verified
+[272/294] tidyr__vignette__tidy-data  tribble           library         claude-haiku-4  0.8496 -> 1.0  adopt 0.0  verified
+[273/294] tidyr__vignette__tidy-data  tribble           last_imperative claude-haiku-4  0.8496 -> 1.0  adopt 0.0  verified
+[274/294] tidyr__vignette__tidy-data  tribble           last_imperative gemma-4-31b-it  0.8496 -> 1.0  adopt 0.0  verified
+[275/294] tidyr__vignette__tidy-data  tribble           entity_only     gemma-4-31b-it  0.8496 -> 0.9858  adopt 0.0  verified
+[276/294] tidyr__vignette__tidy-data  tribble           entity_only     claude-haiku-4  0.8496 -> 1.0  adopt 0.0  verified
+[277/294] xml2__rd_example__xml_cdat  import_xml2       none            claude-haiku-4  0.0 -> None  adopt None  no code
+[278/294] xml2__rd_example__xml_cdat  import_xml2       library         claude-haiku-4  0.0 -> None  adopt None  no code
+[279/294] xml2__rd_example__xml_cdat  import_xml2       none            gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[280/294] tidyr__vignette__tidy-data  tribble           none            gemma-4-31b-it  0.8496 -> 0.5  adopt 0.0  verified
+[281/294] xml2__rd_example__xml_cdat  import_xml2       last_imperative claude-haiku-4  0.0 -> None  adopt None  no code
+[282/294] tidyr__vignette__tidy-data  tribble           library         gemma-4-31b-it  0.8496 -> 1.0  adopt 0.0  verified
+[283/294] xml2__rd_example__xml_cdat  import_xml2       entity_only     claude-haiku-4  0.0 -> 1.0  adopt 0.0  verified
+[284/294] xml2__rd_example__xml_cdat  xml_add_child     none            claude-haiku-4  0.1667 -> None  adopt None  no code
+[285/294] xml2__rd_example__xml_cdat  import_xml2       library         gemma-4-31b-it  0.0 -> 1.0  adopt 0.0  verified
+[286/294] xml2__rd_example__xml_cdat  import_xml2       last_imperative gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[287/294] xml2__rd_example__xml_cdat  xml_add_child     none            gemma-4-31b-it  0.1667 -> 1.0  adopt 0.7778  verified
+[288/294] xml2__rd_example__xml_cdat  import_xml2       entity_only     gemma-4-31b-it  0.0 -> 0.0  adopt 0.0  verified
+[289/294] xml2__rd_example__xml_cdat  xml_add_child     library         claude-haiku-4  0.1667 -> 0.1667  adopt 0.6667  verified
+[290/294] xml2__rd_example__xml_cdat  xml_add_child     entity_only     claude-haiku-4  0.1667 -> 1.0  adopt 0.6667  verified
+[291/294] xml2__rd_example__xml_cdat  xml_add_child     library         gemma-4-31b-it  0.1667 -> 1.0  adopt 0.7778  verified
+[292/294] xml2__rd_example__xml_cdat  xml_add_child     last_imperative gemma-4-31b-it  0.1667 -> 1.0  adopt 0.6667  verified
+[293/294] xml2__rd_example__xml_cdat  xml_add_child     last_imperative claude-haiku-4  0.1667 -> None  adopt None  no code
+[294/294] xml2__rd_example__xml_cdat  xml_add_child     entity_only     gemma-4-31b-it  0.1667 -> 1.0  adopt 0.0  verified
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_565ba997eb.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+r2py: sentinel mapping failed (attempt 1/3): Invalid line range for hilight: 14-75 (file has 1 lines)
+r2py: sentinel mapping failed (attempt 2/3): Invalid line range for hilight: 11-88 (file has 1 lines)
+r2py: sentinel mapping failed (attempt 3/3): Invalid line range for hilight: 13-88 (file has 1 lines)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_7a32aaa2c6.py
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_8ae2fdabf1.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_0a279705cb.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_4920a98697.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_7bbb8607db.py
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+r2py: sentinel mapping failed (attempt 1/3): Invalid line range for jan31: 35-35 (file has 1 lines)
+r2py: sentinel mapping failed (attempt 2/3): Invalid line range for jan31: 35-35 (file has 1 lines)
+r2py: sentinel mapping failed (attempt 3/3): Invalid line range for jan31: 7-34 (file has 1 lines)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_edad40aa0f.py
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_db2447b67a.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'rpy2' ...
+[r2py] Warning: failed to install 'rpy2': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'rpy2']' returned non-zero exit status 1.
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_7fb027966b.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_240cd328b0.py
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_5eeece12fc.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_2620866bd8.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_f1b2110296.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_d1aa82c662.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_9ef5629829.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_1e50f7d180.py
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_8b24316292.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_34e510d6fd.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_366477be9e.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'rpy2' ...
+[r2py] Warning: failed to install 'rpy2': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'rpy2']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_ef39dcfe78.py
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'tidyr' (known unavailable)
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_dc5c102b13.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_9bb3da78bd.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_79030fb316.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_7a3add2f7d.py
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_36a15fb1ff.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a332e63a4f.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_d36a1a5e12.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_5ba64b5db4.py
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'shiny' ...
+[r2py] Installing Python package 'textshaping' ...
+[r2py] Warning: failed to install 'textshaping': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'textshaping']' returned non-zero exit status 1.
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+[r2py] Skipping install of 'textshaping' (known unavailable)
+
+claude-haiku-4-5: 148 runs over 37 cases
+arm              runs  adoption  entity before   after  better  worse                action
+none               24    13.8%          0.365   0.677      12      6   (unparsed):5,lookup
+library            25    14.3%          0.298   0.614      14      2   (unparsed):1,lookup
+last_imperative    26    18.4%          0.283   0.650      16      3   lookup_docs:3,probe
+entity_only        25    22.0%          0.306   0.707      17      4   (unparsed):2,lookup
+
+library - none, paired: n=18  mean +0.010  better/worse 6/3
+last_imperative - none, paired: n=22  mean -0.039  better/worse 5/4
+entity_only - none, paired: n=21  mean +0.032  better/worse 7/5
+
+openrouter:google/gemma-4-31b-it: 148 runs over 37 cases
+arm              runs  adoption  entity before   after  better  worse                action
+none               32     4.5%          0.273   0.526      16      6   (unparsed):2,lookup
+library            35     4.5%          0.304   0.635      22      4   lookup_docs:1,probe
+last_imperative    36     3.7%          0.317   0.531      19      5   lookup_docs:1,rewri
+entity_only        32    12.1%          0.279   0.603      19      6   lookup_docs:1,probe
+
+library - none, paired: n=32  mean +0.099  better/worse 10/3
+last_imperative - none, paired: n=32  mean +0.017  better/worse 7/6
+entity_only - none, paired: n=30  mean +0.058  better/worse 7/6

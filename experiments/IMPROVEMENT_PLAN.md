@@ -307,6 +307,43 @@ does not depend on the rest of the program being right. A self-contained callabl
 8 of 8 when available); a statement-level example is not, however correct it is. Before any power-up run, case
 construction has to require complete, non-trivial donor code.
 
+**Clean rerun with usable cases only, and the failure diagnosis (2026-10-08).** Case selection now requires a
+donor snippet that dedents and parses on its own and holds >= 2 real code lines (`usable_guidance`): 37 cases become
+**21** over 9 scripts, median 4 code lines. Arms `none` and `entity_only`, both models, 2 samples, 168 calls, no
+provider failures; every run saves its produced source and why the entity scored what it did.
+
+| model | n paired | control -> entity_only | p | adoption |
+|---|---|---|---|---|
+| Gemma | 32 | 0.609 -> 0.608 (**-0.001**) | 0.81 | 0.3% -> **11.7%** |
+| Haiku | 23 | 0.510 -> 0.617 (+0.107) | 0.33 | 15.1% -> 13.1% |
+
+Gemma copies the guidance when the action is restricted and gains **nothing**. Haiku's +0.107 comes with *no* rise in
+adoption, so it is not an effect of copying the guidance, and at p = 0.33 it is most likely noise.
+
+**The diagnosis, which is not what was predicted.** Of the 15 runs that demonstrably used the guidance
+(adoption >= 50%), **9 took the entity to 1.0** and the group mean went 0.564 -> 0.775: guidance that is actually used
+helps a lot (selection caveat: adoption is not randomly assigned). The 6 that used it and still failed break down as
+3 "ran, but values still differ", 2 "entity did not execute", 1 "program crashed in another entity" - so the
+"surrounding program is broken" story explains 1 of 6, not the bulk. What the feedback actually shows is
+**side-effect mismatch in context**:
+
+```
+blob    gemma   0.50 -> 0.50   stdout: R printed '' but Python printed '<blob[2...'
+months  gemma   0.51 -> 0.73   stdout: R printed '' but Python printed '[datetime...'
+x_3     haiku   0.56 -> 0.00   stdout: R printed '' but Python printed '<zoned_...'
+as.POSIXct haiku 0.00 -> 0.00  files:  R wrote no files but Python wrote some
+```
+
+The snippet is correct *as a statement* and wrong *as a statement in this position*: in its source script the call
+sat at top level, where R auto-prints, so the example carries a print; in the target the same call is an assignment,
+where R prints nothing. The extra line scores 0 on stdout. This is a mechanical, harness-fixable mismatch (normalise
+a snippet's printing and file side effects to the target position) rather than something a model must infer - and it
+is a much narrower notion of "adapting to context" than the one considered earlier.
+
+**So the two live problems are now separate and both concrete:** (1) Gemma adopts guidance only 12% of the time even
+when the action is restricted to a single entity; (2) when guidance *is* adopted, roughly 40% of the remaining
+failures are auto-print/file side-effect mismatches introduced by the snippet's original position.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.

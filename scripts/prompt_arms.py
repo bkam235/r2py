@@ -107,6 +107,8 @@ def run_one(task: dict) -> dict:
             base = tools.verify(source)
             row["before"] = round(ho.entity_score(base.by_entity[eid]), 4)
             row["aggregate_before"] = round(base.aggregate, 4)
+            row["exit_before"] = base.py_exit_code
+            row["ran_before"] = bool(base.by_entity[eid].executed_ok)
             if row["before"] > 0.999:
                 row["outcome"] = "already correct"     # nothing to repair: no model call made
                 return row
@@ -158,6 +160,19 @@ def run_one(task: dict) -> dict:
             got = "\n".join(l for a, b in ranges.get(eid, []) for l in lines[a:b + 1])
             want = distinctive(task["code"], r_text)
             row["adoption"] = round(len(want & set(IDENT.findall(got))) / len(want), 4) if want else None
+            # Why does a correctly copied statement still score badly? Record what the run looked
+            # like, and keep the source: an entity can only be judged inside its whole program.
+            row["exit_after"] = rep.py_exit_code
+            row["ran_after"] = bool(after and after.executed_ok)
+            row["crash_entities"] = list(rep.crash_entities or [])[:3]
+            row["crash_before_entity"] = bool(rep.crash_entities) and eid not in (rep.crash_entities or [])
+            row["entity_feedback"] = [f"{fb.effect_class.value}: {fb.message}"[:200]
+                                      for fb in rep.feedback if fb.entity_id == eid][:2]
+            row["entity_code"] = got[:2000]
+            src_dir = OUT.parent / "sources"
+            src_dir.mkdir(parents=True, exist_ok=True)
+            tag = f"{stem}.{eid}.{treatment}.{agent_model.split('/')[-1]}.{task['sample']}"
+            (src_dir / f"{tag}.py").write_text(new_source, encoding="utf-8")
             row["outcome"] = "verified"
     except Exception as exc:
         # A provider outage is not a result: the row is discarded by the caller and the case repeated.
@@ -172,6 +187,27 @@ def run_one(task: dict) -> dict:
     row["llm_calls"] = calls[0]
     row["seconds"] = round(time.monotonic() - started, 1)
     return row
+
+
+def usable_guidance(code: str) -> bool:
+    """Is this donor snippet something a model could actually be asked to use?
+
+    The first run accepted whatever fell between two sentinels, so 16 of 37 cases handed the model
+    0-1 real code lines: a bare comment, or a `def` line whose body held the next entity's sentinel
+    and was cut off. Such a case cannot show adoption of anything, and pooling them produced a
+    spurious +0.099 for Gemma. A usable snippet parses on its own and carries real code.
+    """
+    import ast
+    import textwrap
+
+    body = textwrap.dedent(code)
+    if len([l for l in body.splitlines() if l.strip() and not l.strip().startswith("#")]) < 2:
+        return False
+    try:
+        ast.parse(body)
+    except SyntaxError:
+        return False
+    return True
 
 
 def build_cases() -> list[dict]:
@@ -227,7 +263,7 @@ def build_cases() -> list[dict]:
     per_script: dict = {}
     kept = []
     for c in cases:                       # at most 4 failing entities per script, so none dominates
-        if (c["script"], c["entity"]) not in want:
+        if (c["script"], c["entity"]) not in want or not usable_guidance(c["code"]):
             continue
         n = per_script.get(c["script"], 0)
         if n < 4:

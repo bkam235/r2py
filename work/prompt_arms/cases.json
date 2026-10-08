@@ -17,10 +17,6 @@
  },
  {
   "script": "clock__rd_example__zoned_time_info_Rd",
-  "entity": "x_1"
- },
- {
-  "script": "clock__rd_example__zoned_time_info_Rd",
   "entity": "x_2"
  },
  {
@@ -29,31 +25,15 @@
  },
  {
   "script": "googledrive__rd_example__drive_create_Rd",
-  "entity": "suppressPackageStartupMessages"
- },
- {
-  "script": "googledrive__rd_example__drive_create_Rd",
-  "entity": "import_googledrive"
- },
- {
-  "script": "googledrive__rd_example__drive_create_Rd",
   "entity": "drive_has_token"
  },
  {
   "script": "googledrive__rd_example__drive_create_Rd",
-  "entity": "wordstar"
+  "entity": "drive_browse"
  },
  {
-  "script": "highr__rd_example__hilight_Rd",
-  "entity": "hilight"
- },
- {
-  "script": "hms__rd_example__hms_Rd",
-  "entity": "suppressPackageStartupMessages"
- },
- {
-  "script": "hms__rd_example__hms_Rd",
-  "entity": "import_hms"
+  "script": "googledrive__rd_example__drive_create_Rd",
+  "entity": "drive_ls"
  },
  {
   "script": "hms__rd_example__hms_Rd",
@@ -61,31 +41,23 @@
  },
  {
   "script": "hms__rd_example__hms_Rd",
-  "entity": "hms_1"
+  "entity": "new_hms"
+ },
+ {
+  "script": "hms__rd_example__hms_Rd",
+  "entity": "as_hms_1"
+ },
+ {
+  "script": "hms__rd_example__hms_Rd",
+  "entity": "as.POSIXct"
  },
  {
   "script": "lava__vignette__influencefunction_s34",
   "entity": "Print"
  },
  {
-  "script": "lava__vignette__influencefunction_s34",
-  "entity": "object.size"
- },
- {
-  "script": "lava__vignette__influencefunction_s34",
-  "entity": "e_1"
- },
- {
   "script": "lubridate__vignette__lubridate_s18",
   "entity": "months"
- },
- {
-  "script": "lubridate__vignette__lubridate_s18",
-  "entity": "floor_date"
- },
- {
-  "script": "lubridate__vignette__lubridate_s18",
-  "entity": "months_2"
  },
  {
   "script": "pROC__rd_example__geom_polygon_auc_roc_Rd",
@@ -97,54 +69,18 @@
  },
  {
   "script": "pROC__rd_example__geom_polygon_auc_roc_Rd",
-  "entity": "data"
+  "entity": "geom_polygon_auc_2"
  },
  {
   "script": "pROC__rd_example__geom_polygon_auc_roc_Rd",
-  "entity": "geom_polygon_auc"
+  "entity": "geom_polygon_auc_3"
  },
  {
   "script": "rmarkdown__rd_example__output_format_dependency_Rd",
   "entity": "output_format_dependency"
  },
  {
-  "script": "rmarkdown__rd_example__output_format_dependency_Rd",
-  "entity": "knit_meta_add"
- },
- {
-  "script": "rmarkdown__rd_example__output_format_dependency_Rd",
-  "entity": "str"
- },
- {
-  "script": "shape__rd_example__femmecol_Rd",
-  "entity": "image"
- },
- {
-  "script": "shiny__rd_example__httpResponse_Rd",
-  "entity": "suppressPackageStartupMessages"
- },
- {
-  "script": "textshaping__vignette__c_interface",
-  "entity": "suppressPackageStartupMessages"
- },
- {
-  "script": "textshaping__vignette__c_interface",
-  "entity": "import_textshaping"
- },
- {
-  "script": "textshaping__vignette__c_interface",
-  "entity": "opts_chunk$set"
- },
- {
   "script": "tidyr__vignette__tidy-data_s3",
   "entity": "tribble"
- },
- {
-  "script": "xml2__rd_example__xml_cdata_Rd",
-  "entity": "import_xml2"
- },
- {
-  "script": "xml2__rd_example__xml_cdata_Rd",
-  "entity": "xml_add_child"
  }
 ]
