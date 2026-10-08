@@ -344,6 +344,30 @@ is a much narrower notion of "adapting to context" than the one considered earli
 when the action is restricted to a single entity; (2) when guidance *is* adopted, roughly 40% of the remaining
 failures are auto-print/file side-effect mismatches introduced by the snippet's original position.
 
+**Output side effects, sized on the whole training corpus (2026-10-08).** The re-verification pass was repeated with
+per-entity comparison feedback recorded (`scripts/reverify_training.py`, `work/reverify/rows_v2.jsonl`, 247 scripts,
+1,672 entities, 613.4 lost points, no model calls). Every output class is strongly one-directional:
+
+| class | items | dominant direction |
+|---|---|---|
+| stdout | 1,283 | 885 (69%) "R printed '' but Python printed ..." |
+| files | 885 | 804 (91%) "R wrote no files but Python wrote some" |
+| graphics | 273 | 145 R drew figures and Python drew none; only 4 the reverse |
+
+Loss on entities that are *otherwise* correct and lose only on output:
+
+- only complaints are output **Python produced and R did not** (stray prints, stray files): **125 entities, 50.1
+  points, 8% of all loss**. This is the deterministically fixable class: R's reference run already records, per
+  entity, whether that statement printed or wrote anything.
+- only complaints are output side effects of any kind, including mixed directions: 302 entities, 110.1 points, 18%.
+- only complaint is a figure R drew and Python did not: **0 entities** - a missing plot never comes alone, so
+  graphics cannot be fixed by normalisation; it travels with other failures.
+
+So normalising stray output is worth up to 8% of the loss (50 points), it needs no model cooperation, and the signal
+it needs is already captured. It is not a snippet-delivery artifact: these 134 runs include the no-guidance controls.
+Caveat from the shadow auto-fixers (16 valid -> invalid against 3 invalid -> valid): any such normaliser is measured
+on the paired instruments before it is trusted, and the 8% is an upper bound that assumes a perfect fix.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.

@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT))
 
 MANIFEST = ROOT / "experiments" / "heldout" / "manifest.json"
 TRANSLATIONS = ROOT / "work" / "heldout" / "train_outputs"
-OUT = ROOT / "work" / "reverify"
+OUT = ROOT / "work" / "reverify"   # rows.jsonl; the v2 pass adds per-entity feedback
 MAX_R, MAX_PY = 1000, 2000
 
 
@@ -106,9 +106,15 @@ def one(script: str) -> dict:
         for rec in ho._entity_records(sm, report):
             entity = sm.entities[rec["id"]]
             r_text, py_text = _snippets(sm, entity, source, ranges.get(rec["id"]))
-            ents.append({**rec, "r_snippet": r_text, "py_snippet": py_text})
+            # Which comparison complained, and in which direction: the prompt-arms sweep found every
+            # stdout/files/graphics complaint pointing one way (Python produced output R never did).
+            fb = [f"{f.effect_class.value}: {f.message}"[:220]
+                  for f in report.feedback if f.entity_id == rec["id"]][:4]
+            ents.append({**rec, "r_snippet": r_text, "py_snippet": py_text, "feedback": fb})
         row.update(aggregate=round(report.aggregate, 4), py_exit=report.py_exit_code,
-                   infra_crash=report.infra_crash, entities=ents)
+                   infra_crash=report.infra_crash, entities=ents,
+                   by_effect={k.value if hasattr(k, "value") else str(k): v
+                              for k, v in (report.by_effect or {}).items()})
     except Exception as exc:
         row["error"] = f"{type(exc).__name__}: {exc}"[:300]
     row["llm_calls"] = calls[0]
@@ -122,7 +128,7 @@ def run(workers: int) -> None:
     scripts = [e["script"] for e in manifest["train"]
                if (TRANSLATIONS / f"{Path(e['script']).stem}.py").exists()]
     OUT.mkdir(parents=True, exist_ok=True)
-    path = OUT / "rows.jsonl"
+    path = OUT / "rows_v2.jsonl"
     done = {json.loads(l)["script"] for l in path.open(encoding="utf-8")} if path.exists() else set()
     todo = [s for s in scripts if s not in done]
     print(f"{len(scripts)} translations saved, {len(done)} done, {len(todo)} to go, {workers} workers",
@@ -139,7 +145,8 @@ def run(workers: int) -> None:
 
 def summary() -> str:
     import statistics
-    rows = [json.loads(l) for l in (OUT / "rows.jsonl").open(encoding="utf-8")]
+    name = "rows_v2.jsonl" if (OUT / "rows_v2.jsonl").exists() else "rows.jsonl"
+    rows = [json.loads(l) for l in (OUT / name).open(encoding="utf-8")]
     ok = [r for r in rows if "error" not in r]
     ents = [e for r in ok for e in r["entities"]]
     verified = [e for e in ents if e["score"] >= 0.9 and e["py_snippet"]]
