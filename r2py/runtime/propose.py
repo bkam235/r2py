@@ -131,7 +131,9 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
                 code = _code(raw)
                 res = difftest.run_python(code, fname, cases)
                 cur = dict(attempt=attempt_no, rounds=rnd, passed=res.passed, total=res.total, core_passed=res.core_passed,
-                           core_total=res.core_total, code=code, failures=res.failures[:5])
+                           core_total=res.core_total, code=code, failures=res.failures[:60],
+                           n_failures=len(res.failures))   # the whole list: admitting a function with its
+                                                            # failures fenced needs every one of them
                 if best is None or (res.core_passed, res.passed) > (best["core_passed"], best["passed"]):
                     best = cur
                 if res.ok_core:

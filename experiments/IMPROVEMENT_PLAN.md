@@ -431,6 +431,35 @@ So the next question for the runtime path is the **acceptance rule and the repai
 targeted repair on the one failing rolling rule (the locator already ran) closes 83% to 100%, and whether a function
 that is right on everything except one documented edge rule is worth admitting with its failing inputs recorded.
 
+**Regime-restricted admission (2026-10-08, `scripts/regime_admit.py`, `tests/test_regime_admit.py`).** A near-miss
+function can be admitted with the option values it fails on fenced behind a guard that raises
+`NotImplementedError` instead of guessing; the runtime store loads such entries (`status passed_restricted`) and the
+translator is told the exception. The fence rule took three tries, each caught by printing what it fenced:
+
+1. fencing every scalar keyword in a failing call also fenced `hour = 1`, `minute = 50`, `month = 2` - numeric
+   *inputs*, so the function would have refused every February. **Numeric amounts are never fenced.**
+2. fencing only option values that never pass rejected `time_add`, which is right with `roll_dst = "pre"` until a
+   call crosses a DST boundary. **An option value that fails on some inputs is unverified, and is fenced.**
+3. the check ran only on the Rd cases, which are scalar - but the pilot had *recorded* vectorisation failures for
+   `time_subtract` and `time_update` (R returns 3 values, Python 1). **Every recorded failure must be covered by the
+   fence, or the function is not admitted**; vectorisation is a bug, not a regime.
+
+And the pilot record itself was incomplete: `propose` saved only the first five failures (`res.failures[:5]`), and
+`time_add` had sixteen - including, by arithmetic, all eight of the model-invented cases, which is exactly where its
+siblings' vectorisation bugs were. Admission now refuses any incomplete record, and `propose` keeps every failure
+(up to 60) plus `n_failures`.
+
+| function | verdict |
+|---|---|
+| time_add | record incomplete (5 of 16): re-run |
+| time_subtract | vectorisation failures outside the fence |
+| time_update | vectorisation, NA and negative-second failures outside the fence |
+| timeDate | value failures with no option value |
+
+**Admitted today: none**, and that is the correct outcome - every one would have shipped a known or unknown wrong
+case. Only fenced DST/month rolling is a regime; the rest is repair work. Full suite 913 passed, 12 skipped, the one
+pre-existing `test_stage2` locale failure.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.

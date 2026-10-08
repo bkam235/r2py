@@ -28,6 +28,7 @@ class Entry:
     function: str            # the R function name
     package: str | None      # its package, None for base/stats/utils
     code: str                # Python source defining ``r_<name>``
+    unverified: dict | None = None   # option values it refuses (status ``passed_restricted``): {arg: [values]}
 
     @property
     def py(self) -> str:
@@ -43,6 +44,13 @@ class Entry:
         return f"{self.py}(...)"
 
 
+def _restriction(e: Entry) -> str:
+    if not e.unverified:
+        return ""
+    fenced = "; ".join(f"{k} = " + ", ".join(repr(v) for v in vals) for k, vals in sorted(e.unverified.items()))
+    return f" - except {fenced}, where it raises NotImplementedError: write that case yourself"
+
+
 class RuntimeStore:
     def __init__(self, directory: str | Path) -> None:
         self.directory = Path(directory)
@@ -53,8 +61,11 @@ class RuntimeStore:
             except (OSError, json.JSONDecodeError):
                 continue
             code_file = f.with_suffix(".py")
-            if rec.get("status") == "passed" and code_file.exists() and not rec.get("impure"):
-                e = Entry(rec["function"], rec.get("package"), code_file.read_text(encoding="utf-8"))
+            # ``passed_restricted``: verified on every case except some option values, for which the
+            # code raises instead of guessing (scripts/regime_admit.py).
+            if rec.get("status") in ("passed", "passed_restricted") and code_file.exists() and not rec.get("impure"):
+                e = Entry(rec["function"], rec.get("package"), code_file.read_text(encoding="utf-8"),
+                          rec.get("unverified") if rec.get("status") == "passed_restricted" else None)
                 self.entries[e.py] = e
 
     def __len__(self) -> int:
@@ -85,7 +96,8 @@ class RuntimeStore:
         needed = self.needed_by(r_source)
         if not needed:
             return ""
-        lines = [f"- `{e.signature()}` reproduces R's `{(e.package + '::') if e.package else ''}{e.function}`" for e in needed]
+        lines = [f"- `{e.signature()}` reproduces R's `{(e.package + '::') if e.package else ''}{e.function}`"
+                 + _restriction(e) for e in needed]
         return ("These Python functions were tested against R's own answers on many inputs. Call them instead of "
                 "reimplementing the R function; the harness adds their code to your file, so never define or import them. "
                 "Arguments keep R's names (dots become underscores), vectors may be numpy arrays or lists, NA is NaN.\n"
