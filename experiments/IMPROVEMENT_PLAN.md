@@ -280,6 +280,33 @@ Next, in order: (a) power up Gemma's `library` and `entity_only` arms to 3 sampl
 mechanism can produce - the recorded real calls of that function with their evaluated arguments and R's returns.
 If perfect content cannot move the score, recorded content will not either.
 
+**Correction to the table above, found 2026-10-08 by splitting the cases by how much content the guidance
+actually held.** 16 of the 37 cases hand the model 0-1 real code lines: a comment ("# (No-op in Python)"), or a `def`
+line truncated at the sentinel boundary with no body ("def pluck(x, key, index, subkey):"). The donor code is cut
+from sentinel ranges, which do not always enclose a complete construct, so in 43% of cases the "silver plate" was
+empty or malformed. Split on that (n per cell 6-18, so directional):
+
+| model | guidance | library | imperative | entity_only | adoption, entity_only vs control |
+|---|---|---|---|---|---|
+| Gemma | >= 2 real code lines | -0.020 | +0.057 | +0.007 | **23.4% vs 3.9%** |
+| Gemma | 0-1 lines | +0.252 | -0.034 | +0.116 | 0.0% vs 5.6% |
+| Haiku | >= 2 real code lines | **+0.107** | +0.076 | **+0.111** | 30.8% vs 21.1% |
+| Haiku | 0-1 lines | -0.143 | -0.286 | -0.167 | 0.0% vs 0.0% |
+
+1. **Gemma's pooled +0.099 is an artifact**: it comes from the cases where the guidance was trivial, i.e. where it
+   cannot have caused anything. On real guidance Gemma is flat (-0.020).
+2. **Haiku gains about +0.1 from real guidance in all three arms** - and loses 0.14 to 0.29 when handed a broken
+   fragment. Bad guidance is worse than none.
+3. **Gemma copies the guidance when the action is restricted (3.9% -> 23.4% adoption) and still gains no score.**
+   Compliance is not the bottleneck for Gemma; the surrounding program is. A correct statement inside an otherwise
+   wrong 137-line file does not score, which is the same fact as the crash cliff (42% of training loss is entities
+   that did not execute) and the same fact the substitution probe ran into.
+
+**Implication.** The unit of value is the whole program, not the statement, so knowledge must arrive in a form that
+does not depend on the rest of the program being right. A self-contained callable function is such a form (called
+8 of 8 when available); a statement-level example is not, however correct it is. Before any power-up run, case
+construction has to require complete, non-trivial donor code.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
