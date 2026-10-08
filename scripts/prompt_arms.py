@@ -22,6 +22,7 @@ what the entity's score does. If no presentation beats `none`, presentation is n
 from __future__ import annotations
 
 import argparse
+import contextlib
 import json
 import multiprocessing
 import pickle
@@ -40,6 +41,8 @@ ARMS_DIRS = [f"work/smoke/{a}" for a in ("20261001_112951", "20261001_140509", "
 MAPS = ROOT / "work" / "replay" / "script_maps"
 OUT = ROOT / "work" / "prompt_arms" / "results.jsonl"
 TREATMENTS = ("none", "library", "last_imperative", "entity_only")
+GEMMA = "openrouter:google/gemma-4-31b-it"
+HAIKU = "claude-haiku-4-5"          # a control for the model factor, not a candidate translator
 IDENT = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 
 
@@ -76,7 +79,7 @@ def run_one(task: dict) -> dict:
     from r2py.stage2.sentinel_mapper import ranges_from_sentinels
     from r2py.stage2.stitch import hide_data_shim, show_data_shim, splice_entity
 
-    row = {k: task[k] for k in ("script", "entity", "treatment", "sample")}
+    row = {k: task[k] for k in ("script", "entity", "treatment", "sample", "model")}
     started = time.monotonic()
     calls = [0]
     real = llm.call
@@ -89,12 +92,17 @@ def run_one(task: dict) -> dict:
         cfg = manifest["protocol"]["translate"]
         stem, eid, treatment = task["script"], task["entity"], task["treatment"]
         sm = pickle.loads((MAPS / f"{stem}.pkl").read_bytes())
+        # The harness side (verification, any attribution fallback) keeps the manifest's model in
+        # every arm, so only the agent call differs between models.
         tools = HarnessTools(sm, PatternLibrary(ROOT / "work/dev_run/checkpoints/empty"),
                              model=cfg["model"], data_compare=cfg["data_compare"],
                              timeout_s=cfg["timeout_s"], sidecar_filename=f"{stem}.r2py_data.json")
         source = task["source"]
         tools.note_reference(source)
-        with ho.pinned_llm(cfg["model"], ho.llm_settings(manifest)):
+        agent_model = task["model"]
+        pin = (ho.pinned_llm(cfg["model"], ho.llm_settings(manifest))
+               if agent_model.startswith("openrouter:") else contextlib.nullcontext())
+        with pin:
             llm.call = counted
             base = tools.verify(source)
             row["before"] = round(ho.entity_score(base.by_entity[eid]), 4)
@@ -127,7 +135,7 @@ def run_one(task: dict) -> dict:
                 messages[-1]["content"] += "\n\n" + extra
             system = AGENT_SYSTEM_PROMPT if treatment == "entity_only" else without_replace_entity(AGENT_SYSTEM_PROMPT)
             row["prompt_chars"] = sum(len(m["content"]) for m in messages)
-            raw = llm.call(messages, system, model=cfg["model"], max_tokens=16384)
+            raw = llm.call(messages, system, model=agent_model, max_tokens=16384)
             action = _parse_action(raw)
             row["action"] = (action or {}).get("action", "(unparsed)")
             new_source = (action or {}).get("new_source")
@@ -232,10 +240,17 @@ def build_cases() -> list[dict]:
 
 
 def summarise(rows: list[dict]) -> str:
+    out = []
+    for model in sorted({r.get("model", GEMMA) for r in rows}):
+        out.append(_summarise_model([r for r in rows if r.get("model", GEMMA) == model], model))
+    return ("\n" + "\n").join(out)
+
+
+def _summarise_model(rows: list[dict], model: str) -> str:
     by: dict = defaultdict(list)
     for r in rows:
         by[r["treatment"]].append(r)
-    lines = [f"{len(rows)} runs over {len({(r['script'], r['entity']) for r in rows})} cases", "",
+    lines = [f"{model}: {len(rows)} runs over {len({(r['script'], r['entity']) for r in rows})} cases",
              f"{'arm':<16}{'runs':>5}{'adoption':>10}{'entity before':>15}{'after':>8}"
              f"{'better':>8}{'worse':>7}{'action':>22}"]
     for t in TREATMENTS:
@@ -275,6 +290,8 @@ def main() -> int:
     ap.add_argument("--workers", type=int, default=6)
     ap.add_argument("--limit", type=int, default=None, help="smoke test: this many cases")
     ap.add_argument("--treatments", nargs="+", default=list(TREATMENTS))
+    ap.add_argument("--models", nargs="+", default=[GEMMA],
+                    help="agent models to compare (a control for the model factor)")
     ap.add_argument("--summary-only", action="store_true")
     args = ap.parse_args()
 
@@ -287,12 +304,13 @@ def main() -> int:
     cases = build_cases()
     if args.limit:
         cases = cases[:args.limit]
-    finished = {(r["script"], r["entity"], r["treatment"], r["sample"]) for r in done}
-    tasks = [dict(c, treatment=t, sample=s)
-             for s in range(args.samples) for c in cases for t in args.treatments
-             if (c["script"], c["entity"], t, s) not in finished]
-    print(f"{len(cases)} cases, {len(args.treatments)} arms, {args.samples} sample(s): "
-          f"{len(tasks)} calls to make ({len(finished)} done)", flush=True)
+    finished = {(r["script"], r["entity"], r["treatment"], r["sample"], r.get("model", GEMMA))
+                for r in done}
+    tasks = [dict(c, treatment=t, sample=s, model=m)
+             for s in range(args.samples) for c in cases for t in args.treatments for m in args.models
+             if (c["script"], c["entity"], t, s, m) not in finished]
+    print(f"{len(cases)} cases, {len(args.treatments)} arms, {len(args.models)} model(s), "
+          f"{args.samples} sample(s): {len(tasks)} calls to make ({len(finished)} done)", flush=True)
     ctx = multiprocessing.get_context("spawn")
     outages = 0
     with ctx.Pool(args.workers) as pool, OUT.open("a", encoding="utf-8") as fh:
@@ -311,7 +329,8 @@ def main() -> int:
             fh.flush()
             done.append(row)
             print(f"[{i}/{len(tasks)}] {row['script'][:26]:<28}{row['entity'][:16]:<18}"
-                  f"{row['treatment']:<16}{row.get('before')} -> {row.get('after')}  "
+                  f"{row['treatment']:<16}{row['model'].split('/')[-1][:14]:<16}"
+                  f"{row.get('before')} -> {row.get('after')}  "
                   f"adopt {row.get('adoption')}  {row.get('outcome', '')[:40]}", flush=True)
     print("\n" + summarise(done))
     return 0

@@ -248,6 +248,38 @@ self-contained verified `r_*` function on sight (8 of 8). The two dimensions sep
 functions for the long tail, where half of package attempts never get three test cases) and *behaviour*, which is
 solved for callable units and, for analogical ones, has one test left before it is called unsolvable.
 
+**Prompt-treatment experiment with a model control (2026-10-08, `scripts/prompt_arms.py`).** 37 cases (a frozen
+state plus one entity it gets wrong, 14 scripts), content held fixed at the strongest value - the correct Python for
+that very entity from a run that scored it 1.0 - and only the presentation varied; one model call per case per arm,
+the action applied through the harness and verified. Gemma 4 31B and Haiku 4.5 as a control for the model factor
+(Haiku is an instrument here, not a candidate translator). 294 calls, no provider failures.
+
+| model | arm | n paired | score vs control | adoption vs control |
+|---|---|---|---|---|
+| Gemma | library section | 32 | **+0.099** [-0.076, +0.263] p = 0.21 | +0.3% |
+| Gemma | imperative, last in prompt | 32 | +0.017 [-0.140, +0.168] p = 0.85 | -0.4% |
+| Gemma | imperative + one-entity answer | 30 | +0.058 [-0.098, +0.218] p = 0.44 | **+7.8%** |
+| Haiku | library section | 18 | +0.010 [-0.224, +0.236] p = 0.86 | -3.4% |
+| Haiku | imperative, last in prompt | 22 | -0.039 [-0.252, +0.161] p = 0.63 | +3.0% |
+| Haiku | imperative + one-entity answer | 21 | +0.032 [-0.194, +0.257] p = 0.94 | **+6.9%** |
+
+1. **No presentation moves the score significantly for either model**, even with content that *is* the answer. Every
+   interval spans zero and is about +-0.2 wide: this run decides the adoption question, not the score question.
+2. **The one lever that works is the same in both models: restricting the action.** Demanding a single-entity answer
+   raises adoption by 7.8 points (Gemma) and 6.9 (Haiku). Position and imperative framing move adoption by less
+   than a point. So where guidance *is* used, it is because the model was not asked to regenerate the whole file.
+3. **Information-seeking is model-bound, not harness-bound.** Of 148 runs, Haiku answered with `probe_r` or
+   `lookup_docs` instead of rewriting in 39 (26%), Gemma in 10 (7%); only 8 and 2 were truly unparsable. The claim
+   from 2026-10-03 that "the model does not look for information" is a fact about Gemma, not about the prompt.
+4. **Consequence: this rig is the wrong instrument for Haiku.** A single step truncates its investigate-then-fix
+   strategy, so its arms are conditioned on "chose to rewrite immediately" (n = 18-22 of 37) and its score effects
+   are not comparable with Gemma's. A fair Haiku comparison needs up to three steps.
+
+Next, in order: (a) power up Gemma's `library` and `entity_only` arms to 3 samples (n about 90-100, interval about
++-0.1) before anything is built on +0.099; (b) only then swap the content from the correct translation to what a real
+mechanism can produce - the recorded real calls of that function with their evaluated arguments and R's returns.
+If perfect content cannot move the score, recorded content will not either.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
