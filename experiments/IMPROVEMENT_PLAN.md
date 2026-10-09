@@ -587,6 +587,53 @@ A baseline (no runtime), B on-demand from an empty store (intra-script only), C 
 off (inter-script curve), D full store plus on-demand (both). Primary tests: B vs A (intra), the slope of C over
 snapshots (inter). Endpoints, power and the masking fix are settled in the registration, after C1 and C2.
 
+**C1 - intra-script curve, cheap (2026-10-09, `work/replay_ondemand/`).** Paired replay on the 20 frozen dev states,
+`rewrite_w3` vs `rewrite_w3_ondemand` (empty starting store, at most 2 functions, 900 s), 2 samples, 80 runs, no
+provider failures. Run time 5.9 -> 7.9 min (the on-demand step 2.5 min).
+
+| | n | paired diff | p | better / worse / tied |
+|---|---|---|---|---|
+| all states | 20 | **+0.033** (SE 0.037) | 0.20 | 5 / 3 / 12 |
+| something admitted | 5 | +0.083 (SE 0.089) | 1.00 | 1 / 1 / 3 |
+| nothing admitted | 15 | +0.016 (SE 0.040) | 0.26 | 4 / 2 / 9 |
+
+- **The step rarely fires.** 56 attempts: **28 no_cases (50%)**, 19 failed, **9 passed (16%)**, in 5 states.
+- Where it fires it can matter: `hms` went **0.000 -> 0.439** with `hms@hms` admitted in both samples. The other
+  admissions changed nothing (`blob` was already 1.0, `isoband`, `xml2`, `caret`).
+- The admitted functions were called in the agent's final source **5 of 9** times - less than the earlier 8 of 8.
+- The nothing-admitted states are the noise floor: identical treatment, yet `ggplot2` +0.465 and `clock` -0.348.
+  At n = 20 and 2 samples this cannot resolve +0.03.
+
+**C2 - inter-script curve, mechanism (`work/store_growth/`).** The on-demand step alone over the first 64 training
+scripts' saved translations, store persisting.
+
+| after N scripts | 8 | 16 | 32 | 64 |
+|---|---|---|---|---|
+| functions in the store | 0 | 0 | 1 | 3 |
+| held-out loss covered | 0.0% | 0.0% | 0.0% | **1.1%** |
+| recurrence prediction (discounted) | 1.5% | 2.6% | 4.0% | 5.6% |
+
+43 attempts: **24 no_cases (56%)**, 16 failed, **3 passed (7%)** (`row.match@prodlim`, `rowMeans.dist@proxy`,
+`matrix@base`). Real coverage is about a fifth of the prediction, because the prediction assumed the pilot's pass
+rates on attempted functions, while the real step first loses more than half its attempts to missing test cases.
+
+**Reading.** Both mechanisms work end to end and both are throttled by the same thing: **per failing function,
+P(admitted) is 7-16%, and the largest single loss is `no_cases` (50-56% of attempts).** That is a general
+constraint, not a package-specific one, and it caps both curves at once - intra-script (few functions admitted per
+script) and inter-script (3 functions after 64 scripts). **Why the cases are missing** (37 distinct `no_cases` functions from C1 and C2, Rd harvest re-run alone, no model
+calls): 12 got only 1-2 cases from their Rd examples (thin examples, below the threshold of 3); 8 ran their examples
+but recorded no call - `as.POSIXct@base`, `group_by@dplyr`, `separate_rows@tidyr`, `months` (masked) - where the
+recorder either did not intercept (base namespace) or silently dropped an argument it could not serialise (data
+frames, tibbles); 6 have no examples; 4 have only object arguments (fingerprints); 5 harvest errors or timeouts.
+The two largest groups are general, not package-specific: **mutants of the real calls** (the first-argument
+variants `difftest` already makes for invented calls, applied to harvested and mined calls, with R's answer for
+each) would lift the thin-example functions over the threshold, and **telling "not intercepted" from "not
+serialisable"** in the recorder would show which of the silent eight are fixable.
+
+Neither curve is ready for the thorough experiment: the
+inter-script arm would measure ~1-3% coverage, and the intra-script effect (+0.03) is about 1.3 standard errors at 60
+held-out scripts. Raise the yield first; case supply is where most of it goes.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
