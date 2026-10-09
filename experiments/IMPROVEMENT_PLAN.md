@@ -704,6 +704,21 @@ cannot produce a learning curve worth a thorough experiment. The binding constra
 implementations the model writes for package functions**, and the decision about it is a scope decision (whether
 anything other than Gemma may write verified harness knowledge), not an engineering one.
 
+**Gemma vs Haiku for building the store - design and decision rule, fixed before the run (2026-10-09).** The C2 yield
+meter twice, identical except for the model that writes the synthetic calls *and* the implementations: the first 64
+training scripts in manifest order, fresh store per arm, `max_functions` 2, **8 attempts x 2 rounds**, and a 3,600 s
+budget per script so that attempts, not seconds, bind (a slower model must not get fewer tries). Both arms run at the
+same time with 4 workers each. Haiku is an instrument for the question "does the model limit admission?", and a
+candidate only for writing verified harness knowledge offline - every translation stays with Gemma.
+Fairness fixes made first (commit 2551a29): the Anthropic path now retries and records every API error as the
+OpenRouter path does, and a truncated answer is kept on both paths instead of ending the attempt on one of them.
+
+- Primary: admission rate per attempted function (passed, or restricted under the corrected fence rule), Fisher's
+  exact test; also paired on the functions both arms attempted.
+- Secondary: no-case rate, held-out loss covered after 64 scripts, model calls, worker-hours.
+- **Decision:** C2 builds the store with Haiku if Haiku's admission rate is at least twice Gemma's **and** at least
+  25%; otherwise with Gemma, accepting that the inter-script curve is shallow. Then C1 is decided.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
