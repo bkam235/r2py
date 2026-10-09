@@ -142,7 +142,12 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
             for rnd in range(1, rounds + 1):
                 if time.monotonic() > deadline:
                     break
-                raw = _llm.call(messages, _IMPL_SYSTEM, model=model, max_tokens=6000)
+                try:
+                    raw = _llm.call(messages, _IMPL_SYSTEM, model=model, max_tokens=6000)
+                except _llm.TruncatedResponseError as exc:
+                    # The OpenRouter path returns a truncated answer with a warning; the Anthropic path raised, which
+                    # ended the whole attempt (every remaining try). Same event, same handling: keep what was written.
+                    raw = exc.partial_text
                 code = _code(raw)
                 res = difftest.run_python(code, fname, cases)
                 cur = dict(attempt=attempt_no, rounds=rnd, passed=res.passed, total=res.total, core_passed=res.core_passed,

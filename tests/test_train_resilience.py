@@ -232,3 +232,37 @@ class TestTranslateOnceGuard(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestAnthropicPathRecordsOutages(unittest.TestCase):
+    """An overloaded or failing Anthropic API is retried and recorded, as on the OpenRouter path."""
+
+    def setUp(self):
+        llm.drain_provider_failures()
+
+    def tearDown(self):
+        llm._clients.clear()
+        llm.drain_provider_failures()
+
+    def test_an_overloaded_api_is_retried_then_recorded_not_raised_silently(self):
+        import anthropic
+        import httpx
+        calls = []
+
+        class Client:
+            class messages:
+                @staticmethod
+                def create(**kw):
+                    calls.append(1)
+                    resp = httpx.Response(529, request=httpx.Request("POST", "https://api.anthropic.com/v1/messages"))
+                    raise anthropic.InternalServerError("Overloaded", response=resp, body=None)
+        llm._clients["k"] = Client
+        with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "k"}), patch.object(llm.time, "sleep"):
+            with self.assertRaises(RuntimeError):
+                llm.call([{"role": "user", "content": "x"}], "s", model="claude-haiku-4-5")
+        self.assertEqual(len(calls), llm._MAX_RETRIES)
+        self.assertEqual(llm.peek_provider_failures(), {"server": 1})
+
+    def test_a_billing_error_counts_as_credits(self):
+        self.assertEqual(llm.classify_failure(RuntimeError("Your credit balance is too low to access the API")),
+                         "credits")

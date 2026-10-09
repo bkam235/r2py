@@ -58,7 +58,9 @@ def report_from_row(row: dict) -> SimpleNamespace:
 
 
 def task(args: tuple) -> dict:
-    index, script, row, store_dir, out_dir = args
+    index, script, row, store_dir, out_dir, model, ondemand = args
+    import contextlib
+    import time
     from dotenv import load_dotenv
     load_dotenv(ROOT / ".env", override=True)
     from r2py import heldout as ho
@@ -68,15 +70,28 @@ def task(args: tuple) -> dict:
 
     man = ho.load_manifest(str(ROOT / "experiments/dev_run/manifest.json"))
     cfg = man["protocol"]["translate"]
+    model = model or cfg["model"]
+    calls = [0]
+    real = llm.call
+
+    def counted(*a, **k):
+        calls[0] += 1
+        return real(*a, **k)
+    llm.call = counted
+    started = time.monotonic()
     sm = pickle.loads((MAPS / f"{Path(script).stem}.pkl").read_bytes())
     store = RuntimeStore(store_dir)
     before = set(store.entries)
     llm.drain_provider_failures()
-    with ho.pinned_llm(cfg["model"], ho.llm_settings(man)):
-        recs = verify_needed(sm, report_from_row(row), store, model=cfg["model"], log=lambda *_: None,
-                             attempt_log=str(Path(out_dir) / "attempts"), **ONDEMAND)
+    # Settings pinning is for OpenRouter models; another provider's model (the A/B arm) runs unpinned.
+    pin = ho.pinned_llm(model, ho.llm_settings(man)) if model.startswith("openrouter:") else contextlib.nullcontext()
+    with pin:
+        recs = verify_needed(sm, report_from_row(row), store, model=model, log=lambda *_: None,
+                             attempt_log=str(Path(out_dir) / "attempts"), **ondemand)
+    llm.call = real
     failed = llm.drain_provider_failures()
-    out = {"index": index, "script": script, "records": recs, "store_before": len(before)}
+    out = {"index": index, "script": script, "records": recs, "store_before": len(before), "model": model,
+           "llm_calls": calls[0], "seconds": round(time.monotonic() - started, 1)}
     if failed:
         out["provider_unavailable"] = failed
         return out
@@ -85,7 +100,7 @@ def task(args: tuple) -> dict:
     return out
 
 
-def run(n: int, workers: int) -> None:
+def run(n: int, workers: int, model: str = "", ondemand: dict | None = None) -> None:
     """Workers get the store and output directories as arguments: they are spawned processes and do not
     see globals changed by --tag."""
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
@@ -96,7 +111,9 @@ def run(n: int, workers: int) -> None:
     STORE.mkdir(parents=True, exist_ok=True)
     path = OUT / "results.jsonl"
     done = {json.loads(l)["script"] for l in path.open(encoding="utf-8")} if path.exists() else set()
-    tasks = [(i, s, rows[s], str(STORE), str(OUT)) for i, s in enumerate(order) if s not in done]
+    ondemand = ondemand or ONDEMAND
+    tasks = [(i, s, rows[s], str(STORE), str(OUT), model, ondemand) for i, s in enumerate(order) if s not in done]
+    print(f"model {model or '(manifest)'}, on-demand settings {ondemand}", flush=True)
     print(f"{len(order)} scripts in order, {len(done)} done, {len(tasks)} to go, {workers} workers", flush=True)
     outages = 0
     ctx = multiprocessing.get_context("spawn")
@@ -138,7 +155,13 @@ def report() -> str:
     for rec in attempts:
         k = rec.get("admitted") or rec.get("status") or "?"
         status[k] = status.get(k, 0) + 1
-    lines = [f"{len(res)} scripts processed; {len(attempts)} function attempts: {status}", "",
+    calls = sum(r.get("llm_calls") or 0 for r in res)
+    secs = sum(r.get("seconds") or 0 for r in res)
+    admitted = sum(1 for rec in attempts if rec.get("admitted"))
+    model = next((r.get("model") for r in res if r.get("model")), "?")
+    lines = [f"model {model}: {len(res)} scripts processed; {len(attempts)} function attempts: {status}",
+             f"admitted {admitted}/{len(attempts)} ({admitted / max(1, len(attempts)):.0%}); "
+             f"{calls} model calls, {secs / 3600:.1f} worker-hours", "",
              f"{'after N scripts':<17}{'functions':>10}{'held-out loss covered':>24}{'recurrence prediction':>24}"]
     for n in [k for k in SNAPSHOTS if k <= len(res)] + ([len(res)] if len(res) not in SNAPSHOTS else []):
         names = {f for r in res if r["index"] < n for f in r.get("admitted", [])}
@@ -158,6 +181,10 @@ def main() -> int:
     p = sub.add_parser("run")
     p.add_argument("--n", type=int, default=64)
     p.add_argument("--workers", type=int, default=4)
+    p.add_argument("--model", default="", help="the model that writes calls and implementations (default: manifest's)")
+    p.add_argument("--attempts", type=int, default=ONDEMAND["attempts"])
+    p.add_argument("--rounds", type=int, default=ONDEMAND["rounds"])
+    p.add_argument("--budget-s", type=float, default=ONDEMAND["budget_s"], help="per script")
     rp = sub.add_parser("report")
     for q in (p, rp):
         q.add_argument("--tag", default="", help="separate store and results, e.g. v2 for a rerun after a change")
@@ -167,7 +194,8 @@ def main() -> int:
         STORE = STORE.with_name(f"{STORE.name}_{args.tag}")
         OUT = OUT.with_name(f"{OUT.name}_{args.tag}")
     if args.cmd == "run":
-        run(args.n, args.workers)
+        run(args.n, args.workers, args.model,
+            dict(ONDEMAND, attempts=args.attempts, rounds=args.rounds, budget_s=args.budget_s))
     text = report()
     print("\n" + text)
     (OUT / "report.txt").write_text(text + "\n", encoding="utf-8")

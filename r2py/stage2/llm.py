@@ -42,7 +42,8 @@ def classify_failure(exc: BaseException) -> str:
     """'credits' (HTTP 402), 'rate_limit' (429), 'server' (5xx), 'network' (connection, timeout) or 'other'."""
     code = getattr(exc, "status_code", None)
     text = str(exc)
-    if code == 402 or "Error code: 402" in text or "more credits" in text or "credits" in text.lower() and "402" in text:
+    if (code == 402 or "Error code: 402" in text or "more credits" in text or "credits" in text.lower() and "402" in text
+            or "credit balance" in text.lower()):                    # Anthropic: "Your credit balance is too low"
         return "credits"
     if code == 429 or "Error code: 429" in text:
         return "rate_limit"
@@ -134,7 +135,11 @@ def call(
             return response.content[0].text
         except RuntimeError:
             raise  # truncation is deterministic — do not retry
-        except (anthropic.RateLimitError, anthropic.APIConnectionError) as exc:
+        except anthropic.APIError as exc:
+            # Every API error is retried and, if it persists, recorded - as the OpenRouter path does. Before
+            # 2026-10-09 only rate-limit and connection errors were: an overloaded API (529), a server error or a
+            # billing error was raised unrecorded, so a caller counted it as its own failure (a failed
+            # implementation, an empty seed) and no outage guard ever saw it.
             last_exc = exc
             wait = 2 ** attempt  # 1, 2, 4, 8 s
             time.sleep(wait)
