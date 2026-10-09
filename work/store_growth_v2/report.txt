@@ -1,0 +1,7 @@
+64 scripts processed; 43 function attempts: {'failed': 26, 'no_cases': 7, 'restricted': 3, 'passed': 3, 'skipped: budget': 4}
+
+after N scripts   functions   held-out loss covered   recurrence prediction
+8                         0                   0.0%                    1.5%
+16                        0                   0.0%                    2.6%
+32                        3                   0.0%                    4.0%
+64                        6                   0.0%                    5.6%

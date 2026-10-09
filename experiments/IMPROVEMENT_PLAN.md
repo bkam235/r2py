@@ -670,6 +670,40 @@ functions without examples, compiled-code semantics (the DST gap), and genuinely
 Yield meter: C2 rerun as `store_growth.py --tag v2` on the same 64 scripts, fresh store, every attempt logged in
 `work/store_growth_v2/attempts/`. Before: 3 of 43 attempts admitted (7%), 1.1% of held-out loss covered.
 
+**Yield meter after the admission fixes (C2 v2, 2026-10-09, `work/store_growth_v2/`).** Same 64 training scripts,
+fresh store, every attempt logged.
+
+| | C2 v1 | C2 v2 |
+|---|---|---|
+| attempts | 43 | 43 |
+| no test cases | 24 (56%) | **7 (16%)** |
+| failed implementation | 16 | **29** |
+| admitted | 3 (7%) | **4 (9%)** - 3 passed, 1 restricted |
+| skipped for the 900 s budget | 0 | 4 |
+| held-out loss covered after 64 scripts | 1.1% | **0.0%** |
+
+*A flaw found and fixed on the way:* the option-value fence fenced **data** - `read_xml` was admitted with
+`x = '<!DOCTYPE doc ...>'` fenced and `encode_native` with `colour = 'grey10'`, refusing those exact strings and
+staying silently wrong on every other input. An option is now a flag or an enum keyword (logical, or a short
+identifier-like string such as "pre"), never the first argument (`admit.option_values`, 4 tests). Re-judging all
+logged attempts under the corrected rule leaves only `state_at_end@fansi` (normalize = TRUE fenced, 17/17 inside,
+1/1 refused); the two wrong entries were moved out of the store (`store_growth_v2_invalid/`).
+
+**The case-supply fixes worked, and moved the bottleneck.** No-case attempts fell from 56% to 16%, but the 17
+functions that now reach the implementation stage almost all fail there, so admission barely moved (7% -> 9%). The
+248 core-case failures of the failed attempts are genuine semantics, not harness artefacts: **wrong value 63%**,
+wrong length or shape 11%, raised an exception 25% (TypeError, ValueError, ImportError, ...); none were "code does
+not run" or "serialised instead of natural object". Later attempts or rounds beat the first version in 16 of 32
+attempts, so breadth still pays, but from a low base: 15 of 29 failures pass under 30% of their core cases.
+
+**What this says about the inter-script curve.** With Gemma building the functions, about 1 in 10 failing functions
+gets admitted, the long tail means admitted functions rarely recur (0 of 6 in v2 touch held-out loss), and the
+recurrence ceiling (25% of held-out loss at 250 scripts with perfect admission) shrinks to about 2-3%. The store
+mechanism is sound - cases, verification, fences, sharing all work - but at this implementation success rate it
+cannot produce a learning curve worth a thorough experiment. The binding constraint is now **the quality of the
+implementations the model writes for package functions**, and the decision about it is a scope decision (whether
+anything other than Gemma may write verified harness knowledge), not an engineering one.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.

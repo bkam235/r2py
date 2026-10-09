@@ -116,3 +116,25 @@ class TestInputClassFences(unittest.TestCase):
         with self.assertRaises(NotImplementedError) as cm:
             ns["r_shift"](1, roll="wrap")
         self.assertIn("roll='wrap'", str(cm.exception))
+
+
+class TestWhatCountsAsAnOption(unittest.TestCase):
+    """Options are flags and enum keywords; the data a function works on is never fenced."""
+
+    def opts(self, *args):
+        from r2py.runtime.admit import option_values
+        return option_values({"args": [list(a) for a in args]})
+
+    def test_enum_keywords_and_flags_are_options(self):
+        self.assertEqual(self.opts((None, [1.0]), ("roll_dst", ["pre"]), ("as_html", [True])),
+                         {("roll_dst", "pre"), ("as_html", "True")})
+
+    def test_the_first_argument_is_data_even_when_named(self):
+        self.assertEqual(self.opts(("colour", ["grey10"]), ("alpha", ["keep"])), {("alpha", "keep")})
+
+    def test_strings_that_are_not_keywords_are_data(self):
+        self.assertEqual(self.opts((None, [1]), ("x", ["<!DOCTYPE doc>"]), ("encoding", [""]),
+                                   ("sep", [", "])), set())
+
+    def test_numbers_are_amounts_not_options(self):
+        self.assertEqual(self.opts((None, [1]), ("hour", [1]), ("minute", [50.0])), set())

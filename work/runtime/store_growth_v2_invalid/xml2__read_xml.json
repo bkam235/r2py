@@ -1,0 +1,32 @@
+{
+ "function": "read_xml",
+ "package": "xml2",
+ "status": "passed_restricted",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 11,
+ "n_core": 11,
+ "n_mined": 5,
+ "attempt": 1,
+ "passed": 6,
+ "total": 11,
+ "core_passed": 6,
+ "core_total": 11,
+ "code": "import numpy as np\nimport pandas as pd\nfrom lxml import etree\n\ndef _r2py_impl_r_read_xml(x, encoding=\"\", *args, **kwargs):\n    \"\"\"\n    Python reproduction of xml2::read_xml.\n    In R, read_xml returns an S4 object of class 'xml_document'.\n    In Python, the closest equivalent is an lxml element tree.\n    \"\"\"\n    as_html = kwargs.get('as_html', False)\n    options = kwargs.get('options', \"NOBLANKS\")\n    \n    # R's check_string(x) implies x must be a single string\n    if not isinstance(x, str):\n        # If it's a numpy array or list of one string, extract it\n        if hasattr(x, 'tolist'):\n            x = x.tolist()\n        if isinstance(x, list) and len(x) == 1:\n            x = x[0]\n        else:\n            # This simulates the error R throws when x is not a string\n            raise TypeError(\"x must be a character string\")\n\n    # Logic from R source: if x contains < or >, it's treated as XML content\n    if '<' in x or '>' in x:\n        # R calls read_xml.raw with UTF-8. \n        # NOBLANKS option in xml2 corresponds to stripping insignificant whitespace.\n        parser_kwargs = {}\n        if options == \"NOBLANKS\" or (isinstance(options, int) and (options & 1)): \n            # Note: In R, options is often a bitmask. \n            # 'NOBLANKS' is the default.\n            parser_kwargs['remove_blank_text'] = True\n            \n        if as_html:\n            # Parse as HTML\n            parser = etree.HTMLParser(encoding=encoding if encoding else 'utf-8')\n            doc = etree.html.fromstring(x.encode('utf-8'), parser=parser)\n        else:\n            # Parse as XML\n            parser = etree.XMLParser(remove_blank_text=True) if options == \"NOBLANKS\" else etree.XMLParser()\n            doc = etree.fromstring(x.encode('utf-8'), parser=parser)\n        \n        # To match the R object return, we wrap it in an object that identifies as 'xml_document'\n        # since the harness expects the return value to be the \"natural Python object\"\n        # for the R value. In this case, the result of read_xml is the document.\n        return doc\n    else:\n        # Otherwise, treat x as a path to a file or a URL\n        try:\n            if as_html:\n                parser = etree.HTMLParser(encoding=encoding if encoding else 'utf-8')\n                doc = etree.html.fromstring(x, parser=parser) # lxml handles URLs/files in fromstring sometimes, but better:\n            else:\n                parser = etree.XMLParser(remove_blank_text=True) if options == \"NOBLANKS\" else etree.XMLParser()\n                # Using etree.parse for files/URLs\n                tree = etree.parse(x, parser=parser)\n                doc = tree.getroot()\n                \n            # For HTML, we need the root\n            if as_html and not hasattr(doc, 'tag'):\n                # This part handles the case where etree.html.fromstring is used\n                pass\n                \n            return doc\n        except Exception as e:\n            # If it fails, we attempt to handle it as a raw string again just in case\n            # though the grepl check usually prevents this.\n            raise e\n\n\n_R2PY_UNVERIFIED_r_read_xml = {'as_html': ['True'], 'encoding': [''], 'x': ['<!DOCTYPE doc [\\n<!ELEMENT doc (#PCDATA)>\\n<!ENTITY foo \" test \">\\n]>\\n<doc>This is a valid document &foo; !</doc>', \"<html lang='en'><body><h1>Title</h1></body></html>\"]}\n_R2PY_UNVERIFIED_CLASSES_r_read_xml = []\n\n\ndef _r2py_items_r_read_xml(v):\n    if isinstance(v, (str, bytes, dict)) or not hasattr(v, \"__len__\"):\n        return None\n    try:\n        return list(v)\n    except TypeError:\n        return None\n\n\ndef r_read_xml(*args, **kwargs):\n    \"\"\"r_read_xml reproduces R on every tested ordinary call except the option values in _R2PY_UNVERIFIED_r_read_xml\n    and the input classes in _R2PY_UNVERIFIED_CLASSES_r_read_xml; for those it refuses rather than guess.\"\"\"\n    import inspect\n    import math\n    try:\n        bound = inspect.signature(_r2py_impl_r_read_xml).bind(*args, **kwargs).arguments\n    except TypeError:\n        bound = kwargs\n    for name, bad in _R2PY_UNVERIFIED_r_read_xml.items():\n        v = bound.get(name)\n        if isinstance(v, (list, tuple)) and len(v) == 1:\n            v = v[0]\n        if v is not None and str(v) in bad:\n            raise NotImplementedError(\n                f\"r_read_xml: {name}={v!r} is not verified against R; handle this case in your own code\")\n    if _R2PY_UNVERIFIED_CLASSES_r_read_xml and bound:\n        first = next(iter(bound.values()))\n        items = _r2py_items_r_read_xml(first)\n        if \"vector input\" in _R2PY_UNVERIFIED_CLASSES_r_read_xml and items is not None and len(items) > 1:\n            raise NotImplementedError(\n                f\"r_read_xml: input of length {len(items)} is not verified against R (verified for single values); \"\n                \"loop over the elements or write this case yourself\")\n        vals = items if items is not None else [first]\n        if \"NA input\" in _R2PY_UNVERIFIED_CLASSES_r_read_xml and any(\n                x is None or (isinstance(x, float) and math.isnan(x)) for x in vals):\n            raise NotImplementedError(f\"r_read_xml: input containing NA is not verified against R; handle NA yourself\")\n    return _r2py_impl_r_read_xml(*args, **kwargs)\n",
+ "n_failures": 5,
+ "unverified": {
+  "x": [
+   "<!DOCTYPE doc [\n<!ELEMENT doc (#PCDATA)>\n<!ENTITY foo \" test \">\n]>\n<doc>This is a valid document &foo; !</doc>",
+   "<html lang='en'><body><h1>Title</h1></body></html>"
+  ],
+  "encoding": [
+   ""
+  ],
+  "as_html": [
+   "True"
+  ]
+ },
+ "unverified_classes": [],
+ "tag": "on demand"
+}

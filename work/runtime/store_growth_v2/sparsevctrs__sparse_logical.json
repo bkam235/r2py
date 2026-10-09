@@ -1,0 +1,21 @@
+{
+ "function": "sparse_logical",
+ "package": "sparsevctrs",
+ "status": "passed",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 6,
+ "n_core": 6,
+ "n_mined": 2,
+ "attempt": 1,
+ "passed": 6,
+ "total": 6,
+ "core_passed": 6,
+ "core_total": 6,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_sparse_logical(values, positions, length, default=False):\n    \"\"\"\n    Python reproduction of sparsevctrs::sparse_logical.\n    \n    Args:\n        values (np.ndarray): Logical values to place at positions.\n        positions (np.ndarray): 1-based indices for the values.\n        length (int): The total length of the resulting logical vector.\n        default (bool): The default value for elements not specified.\n        \n    Returns:\n        np.ndarray: A logical numpy array.\n    \"\"\"\n    # Ensure length is an integer\n    length = int(length)\n    \n    # Force inputs to numpy arrays to handle scalars or lists\n    values = np.atleast_1d(np.array(values, dtype=object))\n    positions = np.atleast_1d(np.array(positions, dtype=int))\n    \n    # R error check: if (any(values == default, na.rm = TRUE))\n    if values.size > 0:\n        for val in values:\n            # Check if val is not NA/NaN\n            if val is not None and not (isinstance(val, float) and np.isnan(val)):\n                if val == default:\n                    raise ValueError(f\"values value must not be equal to the default {default}.\")\n\n    # Initialize result array with the default value\n    res = np.full(length, default, dtype=object)\n    \n    # Map the values to the positions (1-based to 0-based)\n    if values.size > 0:\n        for i in range(len(values)):\n            # bounds check is typically handled by R's validate_positions\n            res[positions[i] - 1] = values[i]\n            \n    # Convert to the natural Python/Numpy representation of R's logical vector\n    # If the result contains NAs, return as an object array with np.nan for NA.\n    # Otherwise, return as a boolean array.\n    has_nan = False\n    final_list = []\n    for x in res:\n        if x is None or (isinstance(x, float) and np.isnan(x)):\n            has_nan = True\n            final_list.append(np.nan)\n        else:\n            final_list.append(bool(x))\n            \n    if has_nan:\n        return np.array(final_list, dtype=object)\n    else:\n        return np.array(final_list, dtype=bool)\n",
+ "n_failures": 0,
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "on demand"
+}

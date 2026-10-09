@@ -72,6 +72,33 @@ def _numeric(v) -> bool:
     return isinstance(v, (int, float)) and not isinstance(v, bool)
 
 
+_OPTION_WORD = None
+
+
+def option_values(case: dict) -> set[tuple[str, str]]:
+    """The option values a call passes: flags (logical) and enum keywords (short identifier-like strings such as
+    "pre", "postday", "boundary"), never the first argument - that is the data the function works on.
+
+    The first version fenced any character-valued keyword argument, and so fenced data: read_xml was "admitted"
+    with x = '<!DOCTYPE doc ...>' fenced and encode_native with colour = 'grey10' - refusing those exact strings
+    and staying silently wrong on every other input of the same kind (2026-10-09).
+    """
+    import re
+    global _OPTION_WORD
+    if _OPTION_WORD is None:
+        _OPTION_WORD = re.compile(r"[A-Za-z_.][A-Za-z0-9_.\-]{0,23}")
+    out = set()
+    for i, (name, val) in enumerate(case.get("args") or []):
+        if i == 0 or not name:
+            continue
+        raw = val[0] if isinstance(val, list) and len(val) == 1 else val
+        if isinstance(raw, bool):
+            out.add((name, str(raw)))
+        elif isinstance(raw, str) and _OPTION_WORD.fullmatch(raw):
+            out.add((name, raw))
+    return out
+
+
 def input_classes(case: dict) -> set[str]:
     """The input classes of a case's first argument, as the serialiser wrote it (R NA -> null)."""
     if not case.get("args"):
@@ -128,8 +155,7 @@ def assess(rec: dict, cases: list[dict]) -> dict:
         return out
 
     def options(c):
-        return {(name, _scalar(val)) for name, val in c["args"]
-                if name and _scalar(val) is not None and not _numeric(val)}
+        return option_values(c)
 
     fenced: dict[str, set[str]] = {}
     classes: set[str] = set()
