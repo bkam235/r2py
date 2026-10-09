@@ -23,30 +23,7 @@ HARVEST = ROOT / "work" / "rd_harvest" / "rows.jsonl"
 OUT = ROOT / "work" / "runtime" / "rd_pilot"
 
 
-def as_mined(row: dict) -> list[dict]:
-    """Harvested calls in the shape `difftest.run_python` and `propose` expect of mined cases."""
-    cases = []
-    for c in row.get("cases") or []:
-        if c.get("value") is None:
-            continue
-        cases.append({
-            "call": (c.get("call") or f"{row['function']}(...)") + "   [from the package's own examples]",
-            "args": c["args"],
-            "expected": c["value"],
-            "rclass": c.get("rclass") or "",
-            "shown": c.get("shown") or "",
-            "mined": True,
-            "core": True,
-            "draws": [],
-        })
-    # the same arguments twice teaches nothing, and the budget is per function
-    seen, out = set(), []
-    for c in cases:
-        k = json.dumps(c["args"], sort_keys=True)
-        if k not in seen:
-            seen.add(k)
-            out.append(c)
-    return out[:20]
+from r2py.runtime.harvest import as_mined  # noqa: E402,F401 (moved into the package)
 
 
 def task(args: tuple) -> dict:

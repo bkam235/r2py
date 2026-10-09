@@ -102,6 +102,7 @@ def run_loop(
     agent_entity_width: int = 1,
     agent_locate: bool = False,
     runtime_dir: "str | Path | None" = None,
+    ondemand: "dict | None" = None,
     **verify_kwargs,
 ) -> TranslateResult:
     """Cheap path → reasoning agent escalation loop.
@@ -295,6 +296,14 @@ def run_loop(
             print("[Audit]   No structural issues found")
     except Exception as exc:
         print(f"[Audit]   Audit failed (non-fatal): {exc}")
+
+    # Intra-script runtime: verify the R functions the best seed still fails on, before the agent starts,
+    # so its prompt lists them and the harness can paste their code (r2py/runtime/ondemand.py). The store
+    # directory persists, so what is verified here is there for the next script too.
+    if ondemand and runtime is not None:
+        from .runtime.ondemand import verify_needed as _verify_needed
+        _ondemand_records = _verify_needed(script_map, best_decomp, runtime, model=escalation_model, **ondemand)
+        _trajectory.log("ondemand", records=_ondemand_records)
 
     agent_result = _reason_wide(
         [harness] + [_new_harness() for _ in range(max(1, agent_width) - 1)],

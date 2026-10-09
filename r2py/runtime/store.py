@@ -55,6 +55,12 @@ class RuntimeStore:
     def __init__(self, directory: str | Path) -> None:
         self.directory = Path(directory)
         self.entries: dict[str, Entry] = {}
+        self.reload()
+
+    def reload(self) -> None:
+        """Re-read the directory: the on-demand step adds functions while a translation runs, and
+        other workers may add them to a shared store at any time."""
+        self.entries = {}
         for f in sorted(self.directory.glob("*.json")):
             try:
                 rec = json.loads(f.read_text(encoding="utf-8"))
@@ -67,6 +73,23 @@ class RuntimeStore:
                 e = Entry(rec["function"], rec.get("package"), code_file.read_text(encoding="utf-8"),
                           rec.get("unverified") if rec.get("status") == "passed_restricted" else None)
                 self.entries[e.py] = e
+
+    def add(self, rec: dict, code: str) -> Entry | None:
+        """Save one admitted function (``passed`` or ``passed_restricted``) into the store directory and load it.
+
+        Written to a temporary name and renamed, code before record: parallel translations share a store, and a
+        reader must never see a record whose code is missing or half written.
+        """
+        if rec.get("status") not in ("passed", "passed_restricted") or not code:
+            return None
+        self.directory.mkdir(parents=True, exist_ok=True)
+        stem = f"{rec.get('package') or 'base'}__{rec['function']}"
+        for suffix, text in ((".py", code), (".json", json.dumps(dict(rec, code=code), indent=1, default=str))):
+            tmp = self.directory / f".{stem}{suffix}.tmp"
+            tmp.write_text(text, encoding="utf-8")
+            tmp.replace(self.directory / f"{stem}{suffix}")
+        self.reload()
+        return next((e for e in self.entries.values() if e.function == rec["function"]), None)
 
     def __len__(self) -> int:
         return len(self.entries)

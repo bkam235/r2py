@@ -419,6 +419,7 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         agent_entity_width=cfg.get("entity_width", 1),
         agent_locate=cfg.get("locate", False),
         runtime_dir=cfg.get("runtime_dir"),
+        ondemand=cfg.get("ondemand"),
     )
     failures = _llm.drain_provider_failures()
     if failures:

@@ -43,6 +43,13 @@ POLICIES = {
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
     # script calls, built by scripts/oracle_library.py (perfect coverage, perfect retrieval).
     "rewrite_w3_oracle": dict(entity_repair=False, escalate_after=None, width=3, oracle=True),
+    # Intra-script runtime: before the agent starts, verify the R functions the frozen state fails on
+    # (r2py/runtime/ondemand.py), in a private copy of the starting store (--runtime-dir, default empty)
+    # so that no run can hand a verified function to another.
+    "rewrite_w3_ondemand": dict(entity_repair=False, escalate_after=None, width=3,
+                                ondemand=dict(max_functions=2, budget_s=900, rounds=4, attempts=2)),
+    # The same agent with a fixed store and no on-demand step: the inter-script arm (--runtime-dir).
+    "rewrite_w3_store": dict(entity_repair=False, escalate_after=None, width=3, runtime="from --runtime-dir"),
 }
 
 
@@ -113,9 +120,18 @@ def run_one(task: dict) -> dict:
                 lib = PatternLibrary(Path(tmp) / "lib")
                 row["lib_patterns"] = len(list((Path(tmp) / "lib" / "patterns").glob("*.md")))
                 store = None
-                if runtime_dir:
+                ondemand = policy.pop("ondemand", None)
+                if runtime_dir == "from --runtime-dir":
+                    runtime_dir = task.get("runtime_dir") or None
+                if runtime_dir or ondemand:
                     from r2py.runtime.store import RuntimeStore
-                    store = RuntimeStore(runtime_dir)
+                    private = Path(tmp) / "runtime"
+                    start_store = task.get("runtime_dir") if ondemand else runtime_dir
+                    if start_store and Path(start_store).is_dir():
+                        shutil.copytree(start_store, private)
+                    private.mkdir(exist_ok=True)
+                    store = RuntimeStore(private)
+                    row["store_start"] = len(store)
 
                 def new_harness():
                     return HarnessTools(sm, lib, model=cfg["model"], data_compare=cfg["data_compare"],
@@ -134,6 +150,12 @@ def run_one(task: dict) -> dict:
                     audit = format_audit_for_agent(findings) if findings else ""
                 except Exception:
                     pass
+                if ondemand and store is not None:
+                    from r2py.runtime.ondemand import verify_needed
+                    recs = verify_needed(sm, start_report, store, model=cfg["model"], **ondemand)
+                    row["ondemand"] = recs
+                    row["store_after_ondemand"] = len(store)
+                    trajectory.log("ondemand", records=recs)
                 drain_agent_stats()
                 width = policy.pop("width", 1)
                 beam_cfg = policy.pop("beam", None)
@@ -211,6 +233,8 @@ def main() -> int:
     ap.add_argument("--budget-s", type=float, default=1200)
     ap.add_argument("--manifest", default=str(ROOT / "experiments/dev_run/manifest.json"))
     ap.add_argument("--library", default=str(ROOT / "work/dev_run/checkpoints/empty"))
+    ap.add_argument("--runtime-dir", default=None,
+                    help="starting runtime store for rewrite_w3_store / rewrite_w3_ondemand (copied per run)")
     ap.add_argument("--out", default=str(ROOT / "work/replay/results.jsonl"))
     ap.add_argument("--summary-only", action="store_true")
     args = ap.parse_args()
@@ -237,7 +261,7 @@ def main() -> int:
                 if (name, policy, sample) in finished:
                     continue
                 tasks.append(dict(script=name, policy=policy, sample=sample, source=s["source"], label=s["label"],
-                                  start_hash=s["hash"], manifest=args.manifest, library=args.library,
+                                  start_hash=s["hash"], manifest=args.manifest, library=args.library, runtime_dir=args.runtime_dir,
                                   cache=str(ROOT / "work/replay/script_maps"), out_dir=str(out.parent),
                                   budget_s=args.budget_s))
     listing = ", ".join("%s(%.2f)" % (n[:18], s["aggregate"]) for n, s in sorted(states.items()))
