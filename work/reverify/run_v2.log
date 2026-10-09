@@ -1,0 +1,301 @@
+250 translations saved, 0 done, 250 to go, 5 workers
+1/250 base64enc__rd_example__dataURI_Rd.R                0.933  3.5s  llm=0
+2/250 timechange__rd_example__time-zones_Rd.R            0.000  3.9s  llm=0
+3/250 clock__rd_example__posixt-group_Rd.R               0.750  4.1s  llm=0
+4/250 ggplot2__vignette__ggplot2-in-packages_s13.R       1.000  4.5s  llm=0
+5/250 vctrs__vignette__type-size_s23.R                   1.000  2.0s  llm=0
+6/250 highr__vignette__highr-custom_s2.R                 0.598  2.1s  llm=0
+7/250 proxy__rd_example__registry_Rd.R                   0.811  2.4s  llm=0
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+8/250 gtable__rd_example__bind_Rd.R                      0.365  3.3s  llm=0
+9/250 lubridate__rd_example__date_Rd.R                   0.850  2.2s  llm=0
+10/250 isoband__vignette__isoband1_chunk1.R               1.000  8.3s  llm=1
+11/250 rvest__vignette__rvest_s17.R                       0.250  1.8s  llm=0
+12/250 googledrive__rd_example__drive_about_Rd.R          1.000  1.7s  llm=0
+13/250 magrittr__rd_example__pipe-eager_Rd.R              1.000  3.3s  llm=0
+14/250 systemfonts__rd_example__shape_string_Rd.R         0.709  2.7s  llm=0
+15/250 htmltools__rd_example__tagQuery_Rd.R               0.963  1.7s  llm=0
+16/250 openssl__rd_example__encrypt_envelope_Rd.R         0.362  2.1s  llm=0
+17/250 recipes__vignette__Roles_chunk11.R                 0.932  1.7s  llm=0
+18/250 tidyr__rd_example__separate_rows_Rd.R              0.912  1.7s  llm=0
+19/250 uuid__rd_example__UUIDgenerate_Rd.R                RuntimeError: R script exited with code 1:
+Fehler in prettyNum(.Internal(format(x, trim, digits, nsmall, width, 3L,  : 
+  ungültiger Wert -2147483648 für 'digits' Argument
+Ruft auf: source ... prettyNum -> vapply -> FUN -> format.default -> prettyNum
+Ausführung angehalten  1.4s  llm=0
+20/250 e1071__rd_example__sigmoid_Rd.R                    0.827  2.9s  llm=0
+21/250 ModelMetrics__rd_example__tnr_Rd.R                 0.731  7.1s  llm=0
+22/250 farver__rd_example__native_encoding_Rd.R           0.727  4.5s  llm=0
+23/250 prodlim__rd_example__row_match_Rd.R                0.931  5.7s  llm=0
+24/250 sessioninfo__rd_example__external_info_Rd.R        0.575  5.0s  llm=0
+25/250 purrr__vignette__purrr_s10.R                       0.980  12.4s  llm=0
+26/250 ranger__rd_example__hshrink_Rd.R                   0.643  10.4s  llm=0
+27/250 bslib__rd_example__bs_get_variables_Rd.R           0.996  4.5s  llm=0
+28/250 caret__rd_example__lift_Rd.R                       0.778  3.6s  llm=0
+29/250 fansi__rd_example__substr_ctl_Rd.R                 0.916  3.0s  llm=0
+30/250 reshape2__rd_example__melt_list_Rd.R               0.907  2.9s  llm=0
+31/250 dplyr__vignette__programming_chunk10.R             0.000  2.3s  llm=0
+32/250 tinytex__rd_example__check_installed_Rd.R          1.000  2.4s  llm=0
+33/250 xml2__rd_example__xml_dtd_Rd.R                     0.291  3.3s  llm=0
+34/250 hms__rd_example__parse_hms_Rd.R                    0.985  3.3s  llm=0
+35/250 shiny__rd_example__observe_Rd.R                    0.500  5.5s  llm=0
+36/250 prettyunits__rd_example__pretty_ms_Rd.R            0.960  2.0s  llm=0
+37/250 sass__rd_example__sass_options_Rd.R                1.000  2.1s  llm=0
+38/250 timeDate__rd_example__timeDate-Calendar_Rd.R       0.995  1.8s  llm=0
+39/250 htmlwidgets__vignette__develop_advanced_chunk5.R   1.000  3.1s  llm=0
+40/250 diagram__rd_example__textmulti_Rd.R                0.895  2.8s  llm=0
+41/250 downlit__rd_example__highlight_Rd.R                1.000  2.2s  llm=0
+42/250 rmarkdown__rd_example__pkg_file_lua_Rd.R           0.959  2.3s  llm=0
+43/250 shape__rd_example__getellipse_Rd.R                 0.000  4.0s  llm=0
+44/250 lava__rd_example__fplot_Rd.R                       0.000  1.9s  llm=0
+45/250 textshaping__vignette__c_interface_chunk1.R        1.000  1.6s  llm=0
+46/250 broom__rd_example__tidy_binWidth_Rd.R              0.817  3.6s  llm=0
+47/250 htmlwidgets__rd_example__JS_Rd.R                   1.000  1.8s  llm=0
+48/250 sparsevctrs__rd_example__sparse_logical_Rd.R       1.000  26.7s  llm=0
+49/250 purrr__rd_example__attr_getter_Rd.R                0.630  2.7s  llm=0
+50/250 recipes__rd_example__step_YeoJohnson_Rd.R          0.579  5.9s  llm=0
+51/250 fansi__rd_example__state_at_end_Rd.R               0.922  2.0s  llm=0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+52/250 bslib__rd_example__layout_column_wrap_Rd.R         0.549  3.2s  llm=0
+53/250 caret__vignette__caret_s3.R                        0.409  1.7s  llm=0
+54/250 shape__rd_example__Arrowhead_Rd.R                  0.911  2.4s  llm=0
+55/250 googledrive__rd_example__drive_cp_Rd.R             0.000  6.6s  llm=0
+56/250 proxy__rd_example__rowSums_dist_Rd.R               0.611  2.4s  llm=0
+57/250 diagram__rd_example__textround_Rd.R                0.930  2.6s  llm=0
+58/250 openssl__rd_example__keygen_Rd.R                   0.333  2.9s  llm=0
+59/250 prettyunits__rd_example__time_ago_Rd.R             0.957  6.1s  llm=0
+60/250 pROC__rd_example__coords_Rd.R                      0.411  12.6s  llm=0
+61/250 reshape2__rd_example__parse_formula_Rd.R           0.000  0.7s  llm=0
+62/250 htmltools__rd_example__tagAppendAttributes_Rd.R    0.000  7.3s  llm=0
+63/250 xml2__rd_example__xml_children_Rd.R                0.975  6.4s  llm=0
+64/250 sparsevctrs__rd_example__sparse_which_na_Rd.R      0.773  1.7s  llm=0
+65/250 sessioninfo__rd_example__session_info_Rd.R         0.704  2.8s  llm=0
+66/250 ragg__rd_example__agg_webp_anim_Rd.R               0.450  42.0s  llm=0
+67/250 ggplot2__rd_example__position_jitterdodge_Rd.R     0.930  15.7s  llm=0
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+68/250 sass__rd_example__sass_import_Rd.R                 0.450  2.0s  llm=0
+69/250 timeDate__rd_example__timeDate-midnightStandard_   1.000  2.0s  llm=0
+70/250 prodlim__rd_example__as_data_table_prodlim_Rd.R    0.443  3.2s  llm=0
+71/250 dplyr__vignette__dplyr_s21.R                       0.500  3.0s  llm=0
+72/250 rvest__vignette__rvest_s7.R                        0.000  2.9s  llm=0
+73/250 gtable__rd_example__gtable_add_grob_Rd.R           0.750  3.2s  llm=0
+74/250 shiny__rd_example__isolate_Rd.R                    0.321  4.3s  llm=0
+75/250 ragg__rd_example__agg_ppm_Rd.R                     0.583  2.0s  llm=0
+76/250 vctrs__vignette__s3-vector_s6.R                    1.000  1.6s  llm=0
+77/250 magrittr__vignette__tradeoffs_s12.R                1.000  3.0s  llm=0
+78/250 textshaping__rd_example__plot_shape_Rd.R           0.288  3.4s  llm=0
+79/250 clock__rd_example__seq_clock_time_point_Rd.R       0.719  1.8s  llm=0
+80/250 lubridate__vignette__lubridate_s2.R                1.000  1.6s  llm=0
+81/250 rmarkdown__vignette__lua-filters_s1.R              1.000  1.6s  llm=0
+82/250 isoband__vignette__isoband1_s5.R                   1.000  1.8s  llm=0
+83/250 ModelMetrics__rd_example__mse_Rd.R                 0.539  4.2s  llm=0
+84/250 farver__rd_example__manip_channel_Rd.R             0.480  2.4s  llm=0
+85/250 broom__vignette__broom_chunk6.R                    0.625  4.3s  llm=0
+86/250 tidyr__vignette__pivot_s18.R                       0.500  2.0s  llm=0
+87/250 e1071__rd_example__read_matrix_csr_Rd.R            1.000  2.4s  llm=0
+88/250 lava__rd_example__csplit_Rd.R                      0.000  2.4s  llm=0
+89/250 lava__vignette__nonlinear_s1.R                     1.000  1.7s  llm=0
+90/250 diagram__rd_example__textempty_Rd.R                0.931  2.3s  llm=0
+91/250 rvest__rd_example__html_attr_Rd.R                  0.450  2.4s  llm=0
+92/250 fansi__rd_example__strsplit_ctl_Rd.R               0.897  2.6s  llm=0
+93/250 shiny__rd_example__resourcePaths_Rd.R              1.000  3.5s  llm=0
+94/250 ranger__rd_example__importance_pvalues_Rd.R        0.536  8.8s  llm=0
+95/250 rmarkdown__rd_example__pandoc_args_Rd.R            1.000  2.5s  llm=0
+96/250 tidyr__vignette__tidy-data_s9.R                    0.918  2.2s  llm=0
+97/250 gtable__rd_example__gtable_add_padding_Rd.R        0.812  2.3s  llm=0
+98/250 prettyunits__rd_example__pretty_sec_Rd.R           1.000  1.6s  llm=0
+99/250 proxy__vignette__overview.R                        0.470  1.8s  llm=0
+100/250 magrittr__vignette__magrittr_s1.R                  1.000  4.2s  llm=0
+101/250 ModelMetrics__rd_example__gini_Rd.R                0.306  3.5s  llm=0
+102/250 reshape2__rd_example__cast_Rd.R                    0.000  2.5s  llm=0
+103/250 ggplot2__rd_example__geom_bin_2d_Rd.R              0.500  5.4s  llm=0
+104/250 farver__rd_example__as_white_ref_Rd.R              0.821  2.4s  llm=0
+105/250 shape__rd_example__plotcircle_Rd.R                 0.932  3.2s  llm=0
+106/250 clock__vignette__clock_s13.R                       0.934  1.5s  llm=0
+107/250 sass__rd_example__as_sass_Rd.R                     0.743  1.7s  llm=0
+108/250 e1071__rd_example__boxplot_bclust_Rd.R             0.375  4.4s  llm=0
+109/250 googledrive__rd_example__shortcut_resolve_Rd.R     1.000  1.6s  llm=0
+110/250 broom__rd_example__augment_survreg_Rd.R            0.000  3.1s  llm=0
+111/250 caret__rd_example__preProcess_Rd.R                 0.312  3.9s  llm=0
+112/250 htmltools__rd_example__parseCssColors_Rd.R         0.507  2.4s  llm=0
+113/250 purrr__rd_example__keep_Rd.R                       0.930  1.9s  llm=0
+114/250 sparsevctrs__vignette__design_s1.R                 1.000  11.5s  llm=1
+115/250 htmlwidgets__vignette__develop_advanced_chunk8.R   1.000  3.0s  llm=0
+116/250 timeDate__rd_example__timeDate-Sequence_Rd.R       0.905  1.8s  llm=0
+117/250 sessioninfo__rd_example__session_diff_Rd.R         0.560  2.2s  llm=0
+118/250 lubridate__rd_example__hms_Rd.R                    0.974  1.7s  llm=0
+119/250 textshaping__rd_example__shape_text_Rd.R           0.678  2.7s  llm=0
+120/250 ranger__rd_example__csrf_Rd.R                      0.000  3.1s  llm=0
+121/250 isoband__vignette__isoband1_s4.R                   1.000  2.7s  llm=0
+122/250 vctrs__vignette__type-size_s17.R                   0.990  1.8s  llm=0
+123/250 pROC__rd_example__lines_roc_Rd.R                   0.868  4.0s  llm=0
+124/250 ragg__rd_example__agg_capture_Rd.R                 0.404  8.4s  llm=0
+125/250 systemfonts__vignette__fonts_basics_chunk1.R       1.000  2.9s  llm=0
+126/250 openssl__rd_example__ec_dh_Rd.R                    0.666  2.3s  llm=0
+127/250 prodlim__rd_example__backGround_Rd.R               0.638  3.4s  llm=0
+128/250 xml2__rd_example__xml_attr_Rd.R                    0.757  3.0s  llm=0
+129/250 downlit__rd_example__href_topic_Rd.R               0.987  2.2s  llm=0
+130/250 textshaping__rd_example__lorem_text_Rd.R           0.594  1.6s  llm=0
+131/250 dplyr__rd_example__glimpse_Rd.R                    0.966  1.7s  llm=0
+132/250 downlit__rd_example__autolink_Rd.R                 1.000  1.7s  llm=0
+133/250 bslib__rd_example__page_fillable_Rd.R              0.250  3.1s  llm=0
+134/250 openssl__vignette__bignum_s2.R                     0.362  2.2s  llm=0
+135/250 htmlwidgets__rd_example__htmlwidgets-shiny_Rd.R    1.000  3.4s  llm=0
+136/250 shape__rd_example__filledmultigonal_Rd.R           0.620  4.6s  llm=0
+137/250 gtable__rd_example__gtable_add_cols_Rd.R           0.700  2.7s  llm=0
+[r2py] Installing Python package 'ranger' ...
+[r2py] WARNING: 'divExtra' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'newDep' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'newObj' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'obj' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'spanExtended' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'spanExtra' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'newDep' is a data entity but Python could not serialize it — excluded from comparison
+138/250 htmltools__rd_example__tagAddRenderHook_Rd.R       0.597  3.1s  llm=0
+139/250 caret__rd_example__modelLookup_Rd.R                0.523  7.6s  llm=0
+140/250 lubridate__rd_example__period_Rd.R                 0.000  0.3s  llm=0
+141/250 timeDate__rd_example__methods-mathOps_Rd.R         0.913  2.7s  llm=0
+142/250 rvest__rd_example__html_table_Rd.R                 0.270  2.0s  llm=0
+143/250 sass__rd_example__output_template_Rd.R             0.863  1.6s  llm=0
+144/250 sparsevctrs__rd_example__sparse_lag_Rd.R           0.812  2.0s  llm=0
+145/250 ggplot2__vignette__ggplot2-in-packages_s8.R        0.500  2.2s  llm=0
+146/250 isoband__vignette__isoband3_s2.R                   0.000  4.6s  llm=0
+147/250 xml2__rd_example__xml_type_Rd.R                    0.824  1.8s  llm=0
+148/250 vctrs__vignette__s3-vector_s76.R                   1.000  2.0s  llm=0
+149/250 googledrive__rd_example__dribble-checks_Rd.R       1.000  2.5s  llm=0
+150/250 reshape2__rd_example__colsplit_Rd.R                0.812  2.1s  llm=0
+151/250 shiny__rd_example__actionButton_Rd.R               0.552  3.8s  llm=0
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+152/250 pROC__rd_example__aSAH_Rd.R                        0.800  1.8s  llm=0
+153/250 utf8__rd_example__output_utf8_Rd.R                 0.776  1.9s  llm=0
+154/250 e1071__rd_example__write_svm_Rd.R                  0.437  3.4s  llm=0
+155/250 prettyunits__rd_example__pretty_num_Rd.R           1.000  2.1s  llm=0
+156/250 broom__rd_example__augment_felm_Rd.R               0.000  6.1s  llm=0
+157/250 farver__rd_example__convert_colour_Rd.R            0.443  2.0s  llm=0
+158/250 sessioninfo__rd_example__python_info_Rd.R          0.805  2.4s  llm=0
+159/250 magrittr__vignette__tradeoffs_s1.R                 1.000  3.4s  llm=0
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+160/250 clock__vignette__recipes_s68.R                     0.323  1.8s  llm=0
+161/250 rmarkdown__rd_example__pandoc_available_Rd.R       0.000  4.1s  llm=0
+162/250 dplyr__vignette__recoding-replacing_s22.R          1.000  1.7s  llm=0
+163/250 ModelMetrics__rd_example__logLoss_Rd.R             0.562  4.9s  llm=0
+164/250 ragg__rd_example__agg_webp_Rd.R                    0.583  2.9s  llm=0
+165/250 lava__rd_example__scheffe_Rd.R                     0.422  5.9s  llm=0
+166/250 fansi__vignette__sgr-in-rmd_s6.R                   0.800  1.6s  llm=0
+167/250 tidyr__rd_example__complete_Rd.R                   0.965  1.8s  llm=0
+168/250 diagram__rd_example__coordinates_Rd.R              0.932  2.3s  llm=0
+169/250 recipes__rd_example__step_rm_Rd.R                  0.802  2.1s  llm=0
+170/250 ranger__rd_example__deforest_Rd.R                  0.746  4.5s  llm=0
+171/250 purrr__rd_example__slowly_Rd.R                     0.674  3.1s  llm=0
+172/250 prodlim__rd_example__plotIllnessDeathModel_Rd.R    0.333  4.3s  llm=0
+173/250 systemfonts__rd_example__register_variant_Rd.R     0.801  4.1s  llm=0
+174/250 fansi__rd_example__normalize_state_Rd.R            0.771  1.8s  llm=0
+175/250 shiny__rd_example__modalDialog_Rd.R                1.000  2.6s  llm=0
+176/250 ggplot2__rd_example__stat_summary_2d_Rd.R          0.000  2.8s  llm=0
+177/250 e1071__rd_example__matchClasses_Rd.R               0.583  1.9s  llm=0
+178/250 sparsevctrs__rd_example__coerce-vector_Rd.R        0.715  1.7s  llm=0
+179/250 prettyunits__rd_example__vague_dt_Rd.R             0.970  1.8s  llm=0
+180/250 magrittr__vignette__magrittr_s11.R                 1.000  2.3s  llm=0
+181/250 isoband__rd_example__plot_iso_Rd.R                 1.000  2.6s  llm=0
+182/250 farver__rd_example__encode_colour_Rd.R             0.695  4.0s  llm=0
+183/250 clock__rd_example__time-point-rounding_Rd.R        0.393  5.0s  llm=0
+184/250 diagram__rd_example__selfarrow_Rd.R                0.407  4.4s  llm=0
+185/250 lubridate__rd_example__within-interval_Rd.R        0.582  3.7s  llm=0
+186/250 htmltools__rd_example__builder_Rd.R                0.500  5.4s  llm=0
+187/250 openssl__rd_example__certificates_Rd.R             0.000  4.5s  llm=0
+188/250 ModelMetrics__rd_example__auc_Rd.R                 0.000  8.2s  llm=0
+189/250 xml2__rd_example__xml_name_Rd.R                    0.850  3.5s  llm=0
+190/250 timeDate__rd_example__calendar-isBizday_Rd.R       0.868  3.6s  llm=0
+191/250 lava__rd_example__covariance_Rd.R                  0.625  3.5s  llm=0
+192/250 ragg__rd_example__agg_tiff_Rd.R                    0.583  3.8s  llm=0
+193/250 shape__rd_example__Arrows_Rd.R                     0.000  4.4s  llm=0
+<unknown>:42: SyntaxWarning: invalid escape sequence '\('
+<unknown>:43: SyntaxWarning: invalid escape sequence '\('
+194/250 caret__rd_example__update_train_Rd.R               0.550  8.8s  llm=0
+195/250 googledrive__rd_example__drive_read_string_Rd.R    1.000  21.7s  llm=1
+196/250 sass__vignette__sass_s1.R                          1.000  6.2s  llm=0
+197/250 dplyr__rd_example__storms_Rd.R                     0.928  8.1s  llm=0
+198/250 sessioninfo__rd_example__platform_info_Rd.R        0.689  3.8s  llm=0
+199/250 reshape2__rd_example__melt_data_frame_Rd.R         0.375  3.4s  llm=0
+200/250 broom__rd_example__augment_drc_Rd.R                0.450  6.0s  llm=0
+201/250 pROC__rd_example__print_Rd.R                       0.818  6.7s  llm=0
+202/250 bslib__rd_example__page_sidebar_Rd.R               0.250  6.3s  llm=0
+203/250 vctrs__rd_example__vec_cast_Rd.R                   0.948  3.6s  llm=0
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+[r2py] WARNING: 'rect_mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'rect_mat' is a data entity but Python could not serialize it — excluded from comparison
+204/250 gtable__rd_example__gtable_add_space_Rd.R          0.550  5.2s  llm=0
+205/250 systemfonts__rd_example__glyph_raster_Rd.R         0.663  156.1s  llm=0
+206/250 textshaping__rd_example__get_font_features_Rd.R    0.739  47.1s  llm=0
+207/250 prodlim__rd_example__summary_prodlim_Rd.R          0.536  9.7s  llm=0
+208/250 downlit__rd_example__downlit_html_path_Rd.R        0.895  3.4s  llm=0
+209/250 purrr__rd_example__invoke_Rd.R                     0.000  0.3s  llm=0
+210/250 rmarkdown__rd_example__includes_Rd.R               0.750  6.3s  llm=0
+211/250 rvest__rd_example__html_element_Rd.R               0.000  3.3s  llm=0
+212/250 purrr__rd_example__chuck_Rd.R                      1.000  3.4s  llm=0
+213/250 tidyr__rd_example__chop_Rd.R                       0.831  3.8s  llm=0
+214/250 systemfonts__rd_example__match_fonts_Rd.R          0.941  9.5s  llm=0
+215/250 recipes__rd_example__step_kpca_Rd.R                0.360  10.2s  llm=0
+216/250 broom__rd_example__augment_loess_Rd.R              0.438  6.7s  llm=0
+217/250 isoband__vignette__isoband1_s1.R                   1.000  7.0s  llm=1
+218/250 openssl__rd_example__aes_cbc_Rd.R                  0.550  6.8s  llm=0
+219/250 e1071__rd_example__predict_svm_Rd.R                0.415  9.6s  llm=0
+220/250 lubridate__rd_example__leap_year_Rd.R              1.000  3.4s  llm=0
+221/250 ggplot2__vignette__ggplot2-in-packages_s6.R        1.000  4.5s  llm=0
+222/250 vctrs__vignette__type-size_s29.R                   1.000  3.4s  llm=0
+223/250 shape__rd_example__plotellipse_Rd.R                0.932  4.9s  llm=0
+224/250 bslib__rd_example__value_box_Rd.R                  0.500  5.0s  llm=0
+225/250 htmltools__rd_example__htmlPreserve_Rd.R           0.722  3.4s  llm=0
+226/250 tidyr__vignette__pivot_s4.R                        0.500  3.3s  llm=0
+227/250 systemfonts__vignette__c_interface_s1.R            1.000  10.4s  llm=1
+228/250 ModelMetrics__rd_example__rmse_Rd.R                0.531  8.2s  llm=0
+229/250 sparsevctrs__rd_example__sparse_replace_na_Rd.R    1.000  3.5s  llm=0
+230/250 farver__rd_example__compare_colour_Rd.R            0.630  4.9s  llm=0
+231/250 sass__rd_example__sass_file_cache_Rd.R             1.000  3.5s  llm=0
+232/250 diagram__rd_example__splitarrow_Rd.R               0.896  6.6s  llm=0
+233/250 pROC__rd_example__multiclass_Rd.R                  0.563  8.1s  llm=0
+234/250 ragg__rd_example__agg_jpeg_Rd.R                    0.583  4.0s  llm=0
+235/250 caret__rd_example__knn3_Rd.R                       0.571  7.1s  llm=0
+236/250 googledrive__rd_example__drive_download_Rd.R       1.000  3.4s  llm=0
+237/250 xml2__vignette__modification_s7.R                  0.714  3.6s  llm=0
+238/250 lava__demo__inference.R                            0.161  11.1s  llm=0
+239/250 rvest__rd_example__html_children_Rd.R              0.000  3.3s  llm=0
+240/250 gtable__rd_example__gtable_trim_Rd.R               0.667  5.1s  llm=0
+241/250 shiny__rd_example__updateRadioButtons_Rd.R         0.250  5.0s  llm=0
+242/250 rmarkdown__vignette__lua-filters_s3.R              0.000  0.4s  llm=0
+243/250 recipes__rd_example__discretize_Rd.R               0.742  3.8s  llm=0
+244/250 clock__rd_example__iso-year-week-day-getters_Rd.   0.731  3.6s  llm=0
+245/250 dplyr__vignette__rowwise_s36.R                     0.965  9.5s  llm=0
+246/250 timeDate__rd_example__timeDate-finCenter_Rd.R      0.850  3.5s  llm=0
+247/250 prodlim__rd_example__Hist_Rd.R                     0.738  4.9s  llm=0
+248/250 magrittr__vignette__tradeoffs_s25.R                1.000  5.9s  llm=0
+249/250 recipes__rd_example__step_filter_missing_Rd.R      0.482  884.8s  llm=0
+250/250 fansi__rd_example__strwrap_ctl_Rd.R                0.755  1652.2s  llm=0
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.

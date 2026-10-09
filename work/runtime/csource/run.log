@@ -1,0 +1,15 @@
+6 runs: time_add/r_only, time_add/with_cpp, time_subtract/r_only, time_subtract/with_cpp, time_update/r_only, time_update/with_cpp
+   time_add       r_only    failed   core 17/30  rounds 7
+   time_update    r_only    failed   core 15/20  rounds 8
+   time_subtract  with_cpp  failed   core 17/23  rounds 7
+   time_subtract  r_only    failed   core 15/19  rounds 4
+   time_add       with_cpp  failed   core 21/30  rounds 7
+   time_update    with_cpp  failed   core 18/20  rounds 6
+
+function       arm       status       core  fails rounds  verdict
+time_add       r_only    failed      17/30     13      7  not admissible: recorded failures outside the fence (a bug, not a regime)
+time_add       with_cpp  failed      21/30      9      7  not admissible: recorded failures outside the fence (a bug, not a regime)
+time_subtract  r_only    failed      15/19      5      4  passes every Rd case already
+time_subtract  with_cpp  failed      17/23      6      7  not admissible: recorded failures outside the fence (a bug, not a regime)
+time_update    r_only    failed      15/20      5      8  not admissible: recorded failures outside the fence (a bug, not a regime)
+time_update    with_cpp  failed      18/20      2      6  passes every Rd case already

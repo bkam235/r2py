@@ -106,7 +106,10 @@ def assess(rec: dict, cases: list[dict]) -> dict:
     failing = [c for c in cases if c["call"] in failed_calls]
     out["failing"] = len(failing)
     if not failing:
-        out["verdict"] = "passes every Rd case already"
+        # Right on every documented case, wrong on cases the pilot added (vector input, NA, ...):
+        # with no option value to fence, those failures are a bug.
+        out["verdict"] = ("not admissible: passes every Rd case, fails the pilot's other cases (a bug, not a regime)"
+                          if n_failed else "passes every case")
         return out
     # Fence only *option* values: character-valued keyword arguments (enums such as roll_dst = "pre").
     # Numeric amounts (hour = 1, month = 2) are inputs, not regimes - fencing them would refuse every

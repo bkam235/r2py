@@ -1,0 +1,91 @@
+{
+ "function": "time_add",
+ "package": "timechange",
+ "status": "failed",
+ "rounds": 7,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 30,
+ "n_core": 30,
+ "n_mined": 20,
+ "attempt": 2,
+ "passed": 21,
+ "total": 30,
+ "core_passed": 21,
+ "core_total": 30,
+ "code": "import numpy as np\nimport pandas as pd\nfrom datetime import datetime, date, timedelta\nimport zoneinfo\nfrom dateutil.relativedelta import relativedelta\nimport re\n\ndef r_time_add(time, periods=None, year=None, month=None, week=None, \n               day=None, hour=None, minute=None, second=None, \n               roll_month=\"preday\", roll_dst=\"post\", *args, **kwargs):\n    \n    # Handle ... (dots)\n    formal_params = {'year', 'month', 'week', 'day', 'hour', 'minute', 'second', 'roll_month', 'roll_dst'}\n    dots = {k: v for k, v in kwargs.items() if k not in formal_params}\n    for k in list(dots.keys()):\n        new_k = re.sub(r's$', '', k)\n        dots[new_k] = dots.pop(k)\n\n    if periods is None:\n        periods_dict = {}\n    elif isinstance(periods, dict):\n        periods_dict = periods.copy()\n    else:\n        raise TypeError(\"character periods are not implemented yet\")\n\n    for k, v in dots.items():\n        periods_dict[k] = v\n\n    prds = {'year': year, 'month': month, 'week': week, 'day': day, \n            'hour': hour, 'minute': minute, 'second': second}\n    \n    for nm, val in prds.items():\n        if val is not None:\n            if nm not in periods_dict or periods_dict[nm] is None:\n                periods_dict[nm] = val\n            else:\n                periods_dict[nm] = periods_dict[nm] + val\n\n    periods_dict = {k: v for k, v in periods_dict.items() if v is not None}\n\n    if time is None:\n        return None\n    \n    t_series = pd.Series(time)\n    if len(t_series) == 0:\n        return time\n\n    tz_name = \"UTC\"\n    first_val = t_series.iloc[0]\n    if hasattr(first_val, 'tzinfo') and first_val.tzinfo is not None:\n        tz_name = str(first_val.tzinfo)\n    elif isinstance(first_val, pd.Timestamp) and first_val.tz is not None:\n        tz_name = str(first_val.tz)\n            \n    try:\n        tz = zoneinfo.ZoneInfo(tz_name)\n    except Exception:\n        tz = zoneinfo.ZoneInfo(\"UTC\")\n\n    def get_vec(name):\n        val = periods_dict.get(name, 0)\n        if isinstance(val, (list, np.ndarray, pd.Series)):\n            return np.array(val)\n        return np.array([val])\n\n    v_year = get_vec('year')\n    v_month = get_vec('month')\n    v_week = get_vec('week')\n    v_day = get_vec('day')\n    v_hour = get_vec('hour')\n    v_minute = get_vec('minute')\n    v_second = get_vec('second')\n\n    if isinstance(roll_dst, str):\n        dst_repeated = roll_dst\n        dst_skipped = roll_dst\n    elif isinstance(roll_dst, (list, np.ndarray)):\n        dst_repeated = roll_dst[0]\n        dst_skipped = roll_dst[1] if len(roll_dst) > 1 else roll_dst[0]\n    else:\n        dst_repeated = \"post\"\n        dst_skipped = \"post\"\n\n    results = []\n    for i in range(len(t_series)):\n        dt_val = t_series.iloc[i]\n        if pd.isna(dt_val):\n            results.append(np.nan)\n            continue\n        \n        curr = pd.Timestamp(dt_val)\n        if curr.tz is None:\n            curr = curr.tz_localize(tz)\n        else:\n            curr = curr.astimezone(tz)\n        \n        orig_h, orig_m, orig_s, orig_ms = curr.hour, curr.minute, curr.second, curr.microsecond\n        \n        y_add = v_year[i] if len(v_year) > 1 else v_year[0]\n        m_add = v_month[i] if len(v_month) > 1 else v_month[0]\n        \n        # Civil arithmetic: logic exactly matching C++ update.cpp\n        res_naive = curr.replace(tzinfo=None)\n        \n        # Year addition\n        res_naive += relativedelta(years=int(y_add))\n        \n        # Month addition\n        if m_add != 0:\n            target_month = (res_naive.month - 1 + int(m_add)) % 12 + 1\n            target_year = res_naive.year + (res_naive.month - 1 + int(m_add)) // 12\n            \n            try:\n                # Check if the original day exists in the target month\n                res_naive = res_naive.replace(year=target_year, month=target_month, day=res_naive.day)\n                month_rolled = False\n            except ValueError:\n                # Month rolling kicks in\n                month_rolled = True\n                # Find last day of target month\n                last_day_of_target = (datetime(target_year, target_month, 1) + relativedelta(months=1)) - timedelta(days=1)\n                \n                if roll_month == \"preday\":\n                    res_naive = last_day_of_target\n                elif roll_month == \"postday\":\n                    res_naive = last_day_of_target + timedelta(days=1)\n                elif roll_month == \"boundary\":\n                    res_naive = last_day_of_target + timedelta(days=1)\n                elif roll_month == \"full\":\n                    # In C++ \"full\" means we let the overflow pass naturally\n                    res_naive = datetime(target_year, target_month, 1) + timedelta(days=res_naive.day - 1)\n                elif roll_month == \"NA\":\n                    results.append(np.nan)\n                    continue\n                else: # NAym\n                    res_naive = last_day_of_target\n        else:\n            month_rolled = False\n\n        hms_disabled = (roll_month == \"boundary\" and month_rolled)\n        \n        # Week and Day addition\n        w_add = v_week[i] if len(v_week) > 1 else v_week[0]\n        d_add = v_day[i] if len(v_day) > 1 else v_day[0]\n        res_naive = res_naive + timedelta(weeks=int(w_add), days=int(d_add))\n        \n        # HMS addition\n        if not hms_disabled:\n            res_naive = res_naive.replace(hour=orig_h, minute=orig_m, second=orig_s, microsecond=orig_ms)\n        else:\n            res_naive = res_naive.replace(hour=0, minute=0, second=0, microsecond=0)\n        \n        h_add = v_hour[i] if len(v_hour) > 1 else v_hour[0]\n        m_add_hms = v_minute[i] if len(v_minute) > 1 else v_minute[0]\n        s_add = v_second[i] if len(v_second) > 1 else v_second[0]\n        res_naive = res_naive + timedelta(hours=int(h_add), minutes=int(m_add_hms), seconds=float(s_add))\n        \n        # DST Resolution (fold)\n        t_fold0 = res_naive.replace(tzinfo=tz).replace(fold=0)\n        t_fold1 = res_naive.replace(tzinfo=tz).replace(fold=1)\n        \n        if t_fold0.timestamp() == t_fold1.timestamp():\n            final_t = t_fold0\n        else:\n            final_t = t_fold1 if dst_repeated == \"post\" else t_fold0\n                \n        results.append(final_t)\n\n    if len(results) == 0:\n        return np.array([])\n\n    is_date_input = False\n    if len(t_series) > 0:\n        first_val = t_series.iloc[0]\n        if isinstance(first_val, date) and not isinstance(first_val, datetime):\n            is_date_input = True\n    \n    hms_provided = any(periods_dict.get(k) is not None for k in ['hour', 'minute', 'second'])\n    \n    if is_date_input and not hms_provided:\n        return np.array([x.date() if pd.notna(x) else np.nan for x in results], dtype=object)\n\n    return np.array(results, dtype=object)\n",
+ "failures": [
+  {
+   "call": "time_add(x, hour = 1, minute = 50, roll_dst = \"pre\")   [from the package's own examples]",
+   "expected": "2010-03-14T01:52:03",
+   "got": "2010-03-14T02:52:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "time_add(x, hour = 1, minute = 50, roll_dst = \"boundary\")   [from the package's own examples]",
+   "expected": "2010-03-14T03:00:00",
+   "got": "2010-03-14T02:52:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "time_add(x, hour = 1, minute = 50, roll_dst = \"post\")   [from the package's own examples]",
+   "expected": "2010-03-14T03:52:03",
+   "got": "2010-03-14T02:52:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "time_add(cst, hour = 1, roll_dst = \"xfirst\")   [from the package's own examples]",
+   "expected": "2010-03-14T01:02:03",
+   "got": "2010-03-14T02:02:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "time_add(cst, hour = 1, roll_dst = \"xlast\")   [from the package's own examples]",
+   "expected": "2010-03-14T03:02:03",
+   "got": "2010-03-14T02:02:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "time_add(cdt, hour = -1, roll_dst = \"xfirst\")   [from the package's own examples]",
+   "expected": "2010-03-14T03:02:03",
+   "got": "2010-03-14T02:02:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "time_add(cdt, hour = -1, roll_dst = \"xlast\")   [from the package's own examples]",
+   "expected": "2010-03-14T01:02:03",
+   "got": "2010-03-14T02:02:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "time_add(cst, hour = -1, minute = 170, roll_dst = \"xfirst\")   [from the package's own examples]",
+   "expected": "2010-03-14T03:52:03",
+   "got": "2010-03-14T02:52:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "timechange::time_add(rep(Sys.time(), 3), week = c(1, 1, 1))  [first argument: a single value]",
+   "expected": [
+    "2026-10-15T22:49:23",
+    "2026-10-15T22:49:23",
+    "2026-10-15T22:49:23"
+   ],
+   "got": "2026-10-15T22:49:23",
+   "core": true,
+   "rclass": "POSIXct"
+  }
+ ],
+ "n_failures": 9,
+ "tag": "csource with_cpp",
+ "arm": "with_cpp",
+ "n_rd_cases": 20,
+ "hint_chars": 17264
+}

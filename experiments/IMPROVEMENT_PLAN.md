@@ -460,6 +460,45 @@ siblings' vectorisation bugs were. Admission now refuses any incomplete record, 
 case. Only fenced DST/month rolling is a regime; the rest is repair work. Full suite 913 passed, 12 skipped, the one
 pre-existing `test_stage2` locale failure.
 
+**Compiled-source experiment (2026-10-09, `scripts/csource_pilot.py`).** `time_add`, `time_subtract` and
+`time_update` are ~1,600-character R wrappers around `.Call(_timechange_C_time_add/_update)`; the rolling rules are in
+C++. Arm `with_cpp` added the routine (193 / 261 lines from `src/update.cpp`), the `RollDST`/`RollMonth` enums and the
+DST resolver `civil_lookup_to_posix` (`src/common.*`), and cctz's `civil_lookup` struct with its worked example
+(17.7-20.9 KB per hint; source: CRAN `timechange_0.4.0.tar.gz`, 103,966 bytes, `src/` read as text, never compiled).
+Same Rd cases, one run per arm, every failure recorded:
+
+| function | arm | core | failures: rolling rule / vectorisation / other |
+|---|---|---|---|
+| time_add | r_only | 17/30 | 8 / 5 / 0 |
+| time_add | with_cpp | 21/30 | 8 / 1 / 0 |
+| time_subtract | r_only | 15/19 | 0 / 1 / 4 (array truth-value errors) |
+| time_subtract | with_cpp | 17/23 | 5 / 0 / 1 |
+| time_update | r_only | 15/20 | 2 / 1 / 2 |
+| time_update | with_cpp | **18/20** | **0** / 1 / 1 (return type) |
+
+1. **The C++ fixed `time_update`'s month rolling (2 -> 0)** and its NA/minute errors; it now fails only two
+   model-invented cases (one vector input, one return type).
+2. **It did not fix `time_add`'s DST rolling (8 -> 8), and the failures say exactly why.** In every DST case Python
+   returns the *same* time whatever `roll_dst` says - `02:52:03` where R gives 01:52 (pre), 03:00 (boundary) or
+   03:52 (post). On 2010-03-14 in Chicago 02:xx does not exist: the code does naive local arithmetic, lands in the
+   spring-forward gap without noticing, and its `roll_dst` branch never runs. The C++ says what to do with a
+   SKIPPED civil time; nothing in Python *tells* the code a time was skipped, and `zoneinfo` has no lookup call -
+   detecting a gap takes a fold-and-offset round trip the model did not write.
+3. **It helped vectorisation** (`time_add` 5 -> 1): the C++ loops over elements explicitly.
+4. **Run-to-run variance is large**: `time_subtract` got its one Rd DST case right without the C++ this time and
+   wrong with it. One run per arm cannot rank arms on that case.
+
+No function is admissible: every one fails at least one case with no option value to fence (vector input, return
+type, NA), which is a bug. (Fixed in passing: `regime_admit` reported "passes every Rd case already" without checking
+the pilot's other recorded failures.)
+
+**What this points to is a verified primitive, not more context.** Everything in timechange goes through one
+operation - cctz's `lookup(civil_second) -> {kind, pre, trans, post}` - and the C++ is a set of branches on its
+result. A verified Python `civil_lookup(tz, y, m, d, H, M, S)` (differential-tested against R on DST gaps and
+overlaps) would let the model translate the branching it can now read, on top of a primitive it cannot get right
+alone - and the same primitive serves `force_tz`, `floor_date`, `update`, `round_date`. That is composition one level
+down: verify the shared primitive once, then the functions built on it.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.

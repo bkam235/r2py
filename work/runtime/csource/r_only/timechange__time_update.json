@@ -1,0 +1,68 @@
+{
+ "function": "time_update",
+ "package": "timechange",
+ "status": "failed",
+ "rounds": 8,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 20,
+ "n_core": 20,
+ "n_mined": 11,
+ "attempt": 3,
+ "passed": 15,
+ "total": 20,
+ "core_passed": 15,
+ "core_total": 20,
+ "code": "import numpy as np\nimport pandas as pd\nfrom datetime import datetime, date, timedelta\nimport calendar\n\ndef r_time_update(time, updates=None, year=None, month=None, yday=None, \n                  mday=None, wday=None, hour=None, minute=None, second=None, \n                  tz=None, roll_month=\"preday\", roll_dst=(\"boundary\", \"post\"), \n                  week_start=1, exact=False):\n    \n    if time is None:\n        return time\n    \n    # Handle array-like check\n    if isinstance(time, (np.ndarray, pd.Series, list)) and len(time) == 0:\n        return time\n\n    # Handle scalar input conversion\n    is_scalar = not isinstance(time, (np.ndarray, pd.Series, list))\n    time_arr = np.atleast_1d(time)\n    \n    # 1. Resolve updates mapping (R's logic: updates_list + updts_params)\n    updts_params = {\n        'year': year, 'month': month, 'yday': yday, 'mday': mday, \n        'wday': wday, 'hour': hour, 'minute': minute, 'second': second\n    }\n    \n    final_updates = {}\n    if updates is not None:\n        if isinstance(updates, dict):\n            final_updates = updates.copy()\n        else:\n            final_updates = {}\n\n    for nm, val in updts_params.items():\n        if val is not None:\n            if nm not in final_updates or final_updates[nm] is None:\n                final_updates[nm] = val\n            else:\n                final_updates[nm] = np.array(final_updates[nm]) + np.array(val)\n\n    final_updates = {k: v for k, v in final_updates.items() if v is not None}\n\n    # Detect input type for return type logic\n    is_date_input = False\n    if len(time_arr) > 0:\n        first_el = time_arr[0]\n        if isinstance(first_el, (date, np.datetime64)) and not isinstance(first_el, datetime):\n            is_date_input = True\n        elif isinstance(first_el, str) and len(first_el) <= 10 and ' ' not in first_el:\n            is_date_input = True\n        elif pd.api.types.is_datetime64_any_dtype(time_arr) and not pd.api.types.is_datetime64_ns_dtype(time_arr):\n            is_date_input = True\n\n    # Convert to pandas DatetimeIndex for consistent access\n    ts_index = pd.to_datetime(time_arr, errors='coerce')\n    target_tz = tz if tz else 'UTC'\n\n    def update_single(t, upd_row):\n        if pd.isna(t):\n            return pd.NaT\n        \n        # Base values\n        y, m, d = t.year, t.month, t.day\n        h, mi, s = t.hour, t.minute, t.second\n        \n        # Update logic matching C_time_update behavior\n        if 'year' in upd_row:\n            y = int(upd_row['year'])\n            \n        if 'month' in upd_row:\n            m_val = int(upd_row['month'])\n            # R month rollover: 13 becomes next year, month 1\n            y += (m_val - 1) // 12\n            m = (m_val - 1) % 12 + 1\n            \n        if 'yday' in upd_row:\n            yday_val = int(upd_row['yday'])\n            # yday is 1-indexed from Jan 1st\n            dt_yday = datetime(y, 1, 1) + timedelta(days=yday_val - 1)\n            y, m, d = dt_yday.year, dt_yday.month, dt_yday.day\n        elif 'mday' in upd_row:\n            mday_val = int(upd_row['mday'])\n            last_day = calendar.monthrange(y, m)[1]\n            if mday_val > last_day:\n                if roll_month == \"preday\":\n                    d = last_day\n                else: # postday etc\n                    dt_rolled = datetime(y, m, 1) + timedelta(days=mday_val - 1)\n                    y, m, d = dt_rolled.year, dt_rolled.month, dt_rolled.day\n            else:\n                d = mday_val\n        \n        if 'hour' in upd_row: h = int(upd_row['hour'])\n        if 'minute' in upd_row: mi = int(upd_row['minute'])\n        if 'second' in upd_row: s = int(upd_row['second'])\n        \n        try:\n            res = pd.Timestamp(year=y, month=m, day=d, hour=h, minute=mi, second=s)\n        except ValueError:\n            res = pd.Timestamp(year=y, month=m, day=1, hour=h, minute=mi, second=s)\n            res += timedelta(days=d-1)\n            \n        if res.tzinfo is None:\n            res = res.tz_localize(target_tz)\n        else:\n            res = res.tz_convert(target_tz)\n            \n        return res\n\n    n = len(time_arr)\n    results = []\n    for i in range(n):\n        row = {}\n        for k, v in final_updates.items():\n            if isinstance(v, np.ndarray):\n                row[k] = v[i] if v.size == n else v[0]\n            else:\n                row[k] = v\n        results.append(update_single(ts_index[i], row))\n    \n    # R Return Type logic\n    no_time_updates = not any(k in final_updates for k in ['hour', 'minute', 'second', 'tz'])\n    \n    if is_date_input and no_time_updates:\n        # Return as Date (numpy datetime64[D] or list of date)\n        final_res = np.array([t.date() if pd.notnull(t) else np.nan for t in results])\n    else:\n        # Return as POSIXct (numpy array of datetimes)\n        final_res = np.array(results)\n\n    if is_scalar:\n        return final_res[0]\n    return final_res\n",
+ "failures": [
+  {
+   "call": "time_update(time, month = 2, mday = 31, roll_month = \"boundary\")   [from the package's own examples]",
+   "expected": "2015-03-01T00:00:00",
+   "got": "2015-03-03T01:02:03",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "time_update(time, month = 2, mday = 31, roll_month = \"postday\")   [from the package's own examples]",
+   "expected": "2015-03-01T01:02:03",
+   "got": "2015-03-03T01:02:03",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "time_update(as.POSIXct(c(\"2023-01-01\", \"2023-01-02\")), month = c(1, NA))",
+   "expected": [
+    "2023-01-01T00:00:00",
+    null
+   ],
+   "error": "ValueError: cannot convert float NaN to integer",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "time_update(as.POSIXct(\"2023-01-01 12:00:00\"), minute = -10)",
+   "expected": "2023-01-01T11:50:00",
+   "error": "ValueError: minute must be in 0..59",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "time_update(as.POSIXct(seq(as.POSIXct(\"2023-01-01\"), by = \"day\", length.out = 5)), mday = 1:5)  [first argument: a single value]",
+   "expected": [
+    "2023-01-01T00:00:00",
+    "2023-01-02T00:00:00",
+    "2023-01-03T00:00:00",
+    "2023-01-04T00:00:00",
+    "2023-01-05T00:00:00"
+   ],
+   "got": "2023-01-01T00:00:00",
+   "core": true,
+   "rclass": "POSIXct"
+  }
+ ],
+ "n_failures": 5,
+ "tag": "csource r_only",
+ "arm": "r_only",
+ "n_rd_cases": 11,
+ "hint_chars": 0
+}

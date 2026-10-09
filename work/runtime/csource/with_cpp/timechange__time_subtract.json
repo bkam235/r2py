@@ -1,0 +1,70 @@
+{
+ "function": "time_subtract",
+ "package": "timechange",
+ "status": "failed",
+ "rounds": 7,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 23,
+ "n_core": 23,
+ "n_mined": 13,
+ "attempt": 2,
+ "passed": 17,
+ "total": 23,
+ "core_passed": 17,
+ "core_total": 23,
+ "code": "import numpy as np\nimport pandas as pd\nfrom datetime import datetime, timedelta\nimport zoneinfo\nfrom dateutil.relativedelta import relativedelta\nimport calendar\n\ndef r_time_add(time, periods=None, roll_month=\"preday\", roll_dst=(\"pre\", \"post\"), **kwargs):\n    \"\"\"\n    Implementation of the logic in the timechange package's time_add.\n    \"\"\"\n    if isinstance(time, (list, np.ndarray, pd.Series, pd.Index)):\n        t_arr = np.asarray(time, dtype=float)\n    else:\n        t_arr = np.array([float(time)], dtype=float)\n\n    if t_arr.size == 0:\n        return t_arr\n\n    if periods is None:\n        periods = {}\n    \n    n = t_arr.size\n    \n    def get_val(name):\n        val = periods.get(name, 0)\n        if isinstance(val, (list, np.ndarray, pd.Series)):\n            val = np.asarray(val)\n            if val.size != 1 and val.size != n:\n                raise ValueError(f\"time_add: Incompatible size of '{name}' vector\")\n            return val if val.size == n else np.full(n, val[0])\n        return np.full(n, val)\n\n    y = get_val(\"year\") if \"year\" in periods else None\n    m = get_val(\"month\") if \"month\" in periods else None\n    w = get_val(\"week\") if \"week\" in periods else None\n    d = get_val(\"day\") if \"day\" in periods else None\n    h = get_val(\"hour\") if \"hour\" in periods else None\n    mi = get_val(\"minute\") if \"minute\" in periods else None\n    s = get_val(\"second\") if \"second\" in periods else None\n\n    results = []\n    for i in range(n):\n        t_val = t_arr[i]\n        if np.isnan(t_val):\n            results.append(np.nan)\n            continue\n        \n        # Convert POSIXct to civil time in UTC\n        ts = pd.Timestamp(t_val, unit='s', tz='UTC')\n        cy, cm, cd = ts.year, ts.month, ts.day\n        tH, tM, tS = ts.hour, ts.minute, ts.second\n        rem = t_val - np.floor(t_val)\n\n        if y is not None:\n            cy += int(y[i])\n        \n        # Month logic\n        target_date = datetime(cy, 1, 1) + relativedelta(months=cm - 1)\n        if m is not None:\n            target_date += relativedelta(months=int(m[i]))\n        \n        cy, cm = target_date.year, target_date.month\n        \n        original_day = cd\n        last_day_of_target = calendar.monthrange(cy, cm)[1]\n        \n        add_my_hms = True\n        if original_day > last_day_of_target:\n            if roll_month == \"preday\":\n                cd = last_day_of_target\n            elif roll_month == \"boundary\":\n                cd = 1\n                add_my_hms = False\n            elif roll_month == \"postday\":\n                target_dt = datetime(cy, cm, 1)\n                next_month = target_dt + relativedelta(months=1)\n                cy, cm, cd = next_month.year, next_month.month, next_month.day\n            elif roll_month == \"full\":\n                res_date = datetime(cy, cm, 1) + timedelta(days=original_day - 1)\n                cy, cm, cd = res_date.year, res_date.month, res_date.day\n            elif roll_month == \"NA\":\n                results.append(np.nan)\n                continue\n            else: # NAym\n                cd = original_day\n        else:\n            cd = original_day\n\n        if w is not None:\n            res_date = datetime(cy, cm, cd) + timedelta(weeks=int(w[i]))\n            cy, cm, cd = res_date.year, res_date.month, res_date.day\n\n        if d is not None:\n            res_date = datetime(cy, cm, cd) + timedelta(days=int(d[i]))\n            cy, cm, cd = res_date.year, res_date.month, res_date.day\n\n        final_dt = datetime(cy, cm, cd)\n        if add_my_hms:\n            final_dt = final_dt.replace(hour=tH, minute=tM, second=tS)\n            \n        if h is not None:\n            final_dt += timedelta(hours=int(h[i]))\n        if mi is not None:\n            final_dt += timedelta(minutes=int(mi[i]))\n        if s is not None:\n            S_int = int(np.floor(s[i]))\n            final_dt += timedelta(seconds=S_int)\n            rem += (s[i] - S_int)\n        \n        dt_utc = final_dt.replace(tzinfo=zoneinfo.ZoneInfo(\"UTC\"))\n        results.append(dt_utc.timestamp() + rem)\n\n    return np.array(results, dtype=float)\n\ndef r_time_subtract(time, periods=None, year=None, month=None, week=None, \n                    day=None, hour=None, minute=None, second=None, \n                    roll_month=\"preday\", roll_dst=(\"pre\", \"post\"), **kwargs):\n    \n    if isinstance(roll_month, (np.ndarray, np.generic)):\n        roll_month = str(roll_month)\n    \n    # Handle time input and track if it's a scalar\n    is_scalar = not isinstance(time, (np.ndarray, pd.Series, pd.Index, list))\n    \n    if is_scalar:\n        if pd.isnull(time):\n            return np.nan\n        t_arr = np.array([pd.Timestamp(time).timestamp()], dtype=float)\n    elif len(time) == 0:\n        return time\n    else:\n        t_arr = np.array([pd.Timestamp(x).timestamp() if pd.notnull(x) else np.nan for x in time], dtype=float)\n\n    dots = kwargs\n    if dots:\n        cleaned_dots = {k.rstrip('s') if k.endswith('s') else k: v for k, v in dots.items()}\n        if periods is None:\n            periods = cleaned_dots\n        elif isinstance(periods, dict):\n            periods = {**periods, **cleaned_dots}\n        else:\n            raise TypeError(\"character periods are not implemented yet\")\n    \n    if periods is None:\n        periods = {}\n    \n    final_periods = {}\n    for k, v in periods.items():\n        if v is not None:\n            final_periods[k] = -np.array(v) if isinstance(v, (np.ndarray, list)) else -v\n\n    prds = {\n        \"year\": year, \"month\": month, \"week\": week, \"day\": day,\n        \"hour\": hour, \"minute\": minute, \"second\": second\n    }\n    \n    for nm, val in prds.items():\n        if val is not None:\n            if nm not in final_periods:\n                final_periods[nm] = -val\n            else:\n                final_periods[nm] = final_periods[nm] - val\n\n    res_floats = r_time_add(t_arr, periods=final_periods, roll_month=roll_month, roll_dst=roll_dst)\n    \n    def to_timestamp(val):\n        if np.isnan(val):\n            return np.nan\n        return pd.Timestamp(val, unit='s', tz='UTC').tz_localize(None)\n\n    if is_scalar:\n        return to_timestamp(res_floats[0])\n    \n    return np.array([to_timestamp(v) for v in res_floats])\n",
+ "failures": [
+  {
+   "call": "time_subtract(x, month = 1, roll_month = \"boundary\")   [from the package's own examples]",
+   "expected": "2000-03-01T00:00:00",
+   "got": "2000-02-01T00:00:00",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "time_subtract(x, month = 1, day = 3, roll_month = \"boundary\")   [from the package's own examples]",
+   "expected": "2000-02-27T00:00:00",
+   "got": "2000-01-29T00:00:00",
+   "core": true,
+   "rclass": "POSIXct"
+  },
+  {
+   "call": "time_subtract(y, hour = 22, minute = 50, roll_dst = \"pre\")   [from the package's own examples]",
+   "expected": "2010-03-14T01:12:03",
+   "got": "2010-03-14T02:12:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "time_subtract(y, hour = 22, minute = 50, roll_dst = \"boundary\")   [from the package's own examples]",
+   "expected": "2010-03-14T03:00:00",
+   "got": "2010-03-14T02:12:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "time_subtract(y, hour = 22, minute = 50, roll_dst = \"post\")   [from the package's own examples]",
+   "expected": "2010-03-14T03:12:03",
+   "got": "2010-03-14T02:12:03",
+   "core": true,
+   "rclass": "POSIXlt"
+  },
+  {
+   "call": "timechange::time_subtract(rep(Sys.time(), 3), hour = c(1, 1, 1))  [first argument: a single value]",
+   "expected": [
+    "2026-10-08T21:49:26",
+    "2026-10-08T21:49:26",
+    "2026-10-08T21:49:26"
+   ],
+   "error": "ValueError: time_add: Incompatible size of 'hour' vector",
+   "core": true,
+   "rclass": "POSIXct"
+  }
+ ],
+ "n_failures": 6,
+ "tag": "csource with_cpp",
+ "arm": "with_cpp",
+ "n_rd_cases": 13,
+ "hint_chars": 17264
+}

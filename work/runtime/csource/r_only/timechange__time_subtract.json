@@ -1,0 +1,77 @@
+{
+ "function": "time_subtract",
+ "package": "timechange",
+ "status": "failed",
+ "rounds": 4,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 21,
+ "n_core": 19,
+ "n_mined": 13,
+ "attempt": 4,
+ "passed": 16,
+ "total": 21,
+ "core_passed": 15,
+ "core_total": 19,
+ "code": "import numpy as np\nimport pandas as pd\nimport calendar\n\ndef r_time_subtract(time, periods=None, year=None, month=None, week=None, \n                    day=None, hour=None, minute=None, second=None, \n                    roll_month=\"preday\", roll_dst=\"pre\", *args, **kwargs):\n    \n    # Handle empty input\n    if time is None:\n        return None\n    if isinstance(time, (np.ndarray, pd.Series, list)) and len(time) == 0:\n        return time\n\n    # Handle ... (dots)\n    dots = kwargs\n    if len(dots) > 0:\n        cleaned_dots = {k[:-1] if k.endswith('s') else k: v for k, v in dots.items()}\n        if periods is None:\n            periods = cleaned_dots\n        elif isinstance(periods, dict):\n            periods = periods.copy()\n            periods.update(cleaned_dots)\n\n    if periods is None:\n        periods = {}\n    elif not isinstance(periods, dict):\n        raise TypeError(\"character periods are not implemented yet\")\n\n    # R logic: Negate periods for subtract\n    # Need to handle vectors in periods (R's c(1, 1, 1))\n    def negate(val):\n        if isinstance(val, (np.ndarray, list, pd.Series)):\n            return np.array(val) * -1\n        return -val if val is not None else None\n\n    periods = {k: negate(v) for k, v in periods.items()}\n\n    # Merge named arguments\n    prds = {\n        'year': year, 'month': month, 'week': week, 'day': day, \n        'hour': hour, 'minute': minute, 'second': second\n    }\n    for nm, val in prds.items():\n        if val is not None:\n            if nm not in periods or periods[nm] is None:\n                periods[nm] = negate(val)\n            else:\n                # Handle potential vectors in either periods[nm] or val\n                periods[nm] = np.array(periods[nm]) - np.array(val)\n\n    # Filter nulls\n    periods = {k: v for k, v in periods.items() if v is not None}\n\n    # Convert time to a common format (Timestamp)\n    # Store if the original was Date (no time component)\n    is_date = False\n    if isinstance(time, (np.ndarray, pd.Series, list)):\n        # Check if elements look like dates (no hour/min/sec)\n        sample = pd.to_datetime(time[0]) if len(time) > 0 else None\n        if sample and sample.hour == 0 and sample.minute == 0 and sample.second == 0:\n            # This is a heuristic, but R's as.Date is specific. \n            # Usually, if it's passed as Date in the harness, we check type.\n            pass\n    \n    # Determine if input is Date or POSIXct\n    # In the harness, Date objects are often represented as strings or datetime.date\n    is_date_input = False\n    if hasattr(time, 'dtype') and np.issubdtype(time.dtype, np.datetime64):\n        if time.dtype == 'datetime64[D]':\n            is_date_input = True\n    elif isinstance(time, list) and len(time) > 0 and isinstance(time[0], (pd.Timestamp, np.datetime64)):\n        # Simple check for date-like\n        pass\n    \n    # To correctly detect R's 'Date' vs 'POSIXct' from the harness:\n    # We check if the time objects are datetime.date or if they are timestamps with 0 time.\n    # Actually, the most reliable way is to see if the input was passed as a date.\n    \n    times = pd.to_datetime(time)\n    if not isinstance(times, pd.Series):\n        times = pd.Series([times])\n\n    # Determine the length of the time vector for broadcasting periods\n    n_times = len(times)\n    \n    results = []\n    for i in range(n_times):\n        ts = times[i]\n        if pd.isna(ts):\n            results.append(pd.NaT)\n            continue\n            \n        # Extract shift for this specific element (handle vector periods)\n        def get_shift(name):\n            val = periods.get(name, 0)\n            if isinstance(val, (np.ndarray, list, pd.Series)):\n                return val[i] if i < len(val) else val[-1]\n            return val\n\n        y_shift = get_shift('year')\n        m_shift = get_shift('month')\n        w_shift = get_shift('week')\n        d_shift = get_shift('day')\n        h_shift = get_shift('hour')\n        mi_shift = get_shift('minute')\n        s_shift = get_shift('second')\n\n        orig_h, orig_m, orig_s = ts.hour, ts.minute, ts.second\n        \n        # 1. Month/Year shifts (Calendar)\n        if y_shift != 0 or m_shift != 0:\n            total_months = ts.month - 1 + (int(y_shift) * 12) + int(m_shift)\n            target_year = ts.year + (total_months // 12)\n            target_month = (total_months % 12) + 1\n            last_day_of_target = calendar.monthrange(target_year, target_month)[1]\n            \n            if roll_month == \"preday\":\n                target_day = min(ts.day, last_day_of_target)\n                current_ts = pd.Timestamp(year=target_year, month=target_month, day=target_day, \n                                          hour=orig_h, minute=orig_m, second=orig_s)\n            elif roll_month == \"postday\":\n                if ts.day > last_day_of_target:\n                    next_month = target_month + 1\n                    next_year = target_year\n                    if next_month > 12:\n                        next_month = 1\n                        next_year += 1\n                    current_ts = pd.Timestamp(year=next_year, month=next_month, day=1, \n                                              hour=orig_h, minute=orig_m, second=orig_s)\n                else:\n                    current_ts = pd.Timestamp(year=target_year, month=target_month, day=ts.day, \n                                              hour=orig_h, minute=orig_m, second=orig_s)\n            elif roll_month == \"boundary\":\n                if ts.day > last_day_of_target:\n                    next_month = target_month + 1\n                    next_year = target_year\n                    if next_month > 12:\n                        next_month = 1\n                        next_year += 1\n                    current_ts = pd.Timestamp(year=next_year, month=next_month, day=1, hour=0, minute=0, second=0)\n                else:\n                    current_ts = pd.Timestamp(year=target_year, month=target_month, day=1, hour=0, minute=0, second=0)\n            elif roll_month == \"full\":\n                base = pd.Timestamp(year=target_year, month=target_month, day=1, \n                                    hour=orig_h, minute=orig_m, second=orig_s)\n                current_ts = base + pd.Timedelta(days=ts.day - 1)\n            else:\n                target_day = min(ts.day, last_day_of_target)\n                current_ts = pd.Timestamp(year=target_year, month=target_month, day=target_day, \n                                          hour=orig_h, minute=orig_m, second=orig_s)\n        else:\n            current_ts = ts\n\n        # 2. Time shifts\n        delta = pd.Timedelta(\n            weeks=w_shift, days=d_shift, hours=h_shift, \n            minutes=mi_shift, seconds=s_shift\n        )\n        \n        res_ts = current_ts + delta\n        \n        # Simplified roll_dst logic\n        if roll_dst == \"boundary\" and h_shift != 0:\n            if res_ts.hour == 2:\n                res_ts = res_ts.replace(hour=3, minute=0, second=0)\n        elif roll_dst == \"post\" and h_shift != 0:\n            if res_ts.hour == 2:\n                res_ts = res_ts + pd.Timedelta(hours=1)\n        elif roll_dst == \"pre\" and h_shift != 0:\n            if res_ts.hour == 2:\n                res_ts = res_ts - pd.Timedelta(hours=1)\n        \n        results.append(res_ts)\n\n    # Handle Return Type (Date vs POSIXct)\n    # If the original input was explicitly a date or all inputs are dates, return dates.\n    # Check the first non-NA result to decide formatting.\n    is_date_result = False\n    # In R, as.Date results in \"YYYY-MM-DD\"\n    # If original input had no time, and we didn't add time shifts, return date.\n    if (year is not None or month is not None or week is not None or day is not None) \\\n       and (hour is None and minute is None and second is None) \\\n       and (not periods or all(k in ['year', 'month', 'week', 'day'] for k in periods)):\n        # Check if the first time element has no time\n        first_time = times[0] if len(times) > 0 else None\n        if first_time and first_time.hour == 0 and first_time.minute == 0 and first_time.second == 0:\n            is_date_result = True\n\n    if is_date_result:\n        final_res = [res.date() if pd.notna(res) else np.nan for res in results]\n        if isinstance(time, (np.ndarray, pd.Series, list)) or len(final_res) > 1:\n            return np.array(final_res, dtype='datetime64[D]')\n        return final_res[0]\n    else:\n        # POSIXct\n        res_array = np.array(results, dtype='datetime64[s]')\n        if isinstance(time, (np.ndarray, pd.Series, list)) or len(results) > 1:\n            return res_array\n        return results[0]\n",
+ "failures": [
+  {
+   "call": "timechange::time_subtract(as.Date(c(\"2023-01-01\", NA)), day = 1)",
+   "expected": [
+    "2022-12-31",
+    null
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": true,
+   "rclass": "Date"
+  },
+  {
+   "call": "timechange::time_subtract(as.Date(rep(\"2023-01-01\", 3)), week = c(1, 1, 1))",
+   "expected": [
+    "2022-12-25",
+    "2022-12-25",
+    "2022-12-25"
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": true,
+   "rclass": "Date"
+  },
+  {
+   "call": "timechange::time_subtract(as.Date(rep(\"2023-01-01\", 3)), week = c(1, 1, 1))  [first argument: reversed]",
+   "expected": [
+    "2022-12-25",
+    "2022-12-25",
+    "2022-12-25"
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": true,
+   "rclass": "Date"
+  },
+  {
+   "call": "timechange::time_subtract(as.Date(rep(\"2023-01-01\", 3)), week = c(1, 1, 1))  [first argument: a single value]",
+   "expected": [
+    "2022-12-25",
+    "2022-12-25",
+    "2022-12-25"
+   ],
+   "got": "2022-12-25",
+   "core": true,
+   "rclass": "Date"
+  },
+  {
+   "call": "timechange::time_subtract(as.POSIXct(seq(as.POSIXct(\"2023-01-01\"), by = \"day\", length.out = 2)), minute = 1:2)",
+   "expected": [
+    "2022-12-31T23:59:00",
+    "2023-01-01T23:58:00"
+   ],
+   "error": "ValueError: The truth value of an array with more than one element is ambiguous. Use a.any() or a.all()",
+   "core": false,
+   "rclass": "POSIXct"
+  }
+ ],
+ "n_failures": 5,
+ "tag": "csource r_only",
+ "arm": "r_only",
+ "n_rd_cases": 13,
+ "hint_chars": 0
+}
