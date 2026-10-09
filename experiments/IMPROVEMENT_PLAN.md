@@ -548,6 +548,45 @@ translation verifies the functions *it* needs while it runs (harvest the functio
 fence what fails), it gets per-script competence immediately, and the store accumulates those functions as a side
 effect, which is exactly the rising function curve. "Learn by doing, keep what you verified."
 
+**Intra-script runtime: built (2026-10-09, commit 5c65561).** `r2py/runtime/ondemand.py` runs between the best seed
+and the agent loop (`run_loop(ondemand=...)`, manifest key `translate.ondemand`): for the entities the seed still
+gets wrong it takes the R function each depends on, keeps pure candidates the store lacks (`runtime/purity.py`),
+builds cases from R (the script's own calls via `mine_cases`, then the package's Rd examples via
+`runtime/harvest.py`), runs `propose.attempt`, admits strictly or with fenced option values (`runtime/admit.py`),
+and adds the function to the store (`RuntimeStore.add`, atomic; `reload`). The agent reads its runtime section once,
+at the start, so the new functions are in its prompt and the harness pastes their code. Because the store directory
+persists, the same step is how the store grows across scripts. Per-script cost is capped (`max_functions`,
+`budget_s`). `replay.py` gains `rewrite_w3_ondemand` (private copy of the starting store per run, so no run can
+hand a function to another) and `rewrite_w3_store` (a fixed store, no on-demand: the inter-script arm).
+
+Smoke test on three frozen states (one function each, 400 s cap): `createTimeSlices@caret` - 10 cases, passed 30/30,
+admitted in 156 s, listed in the agent prompt; `as_hms@hms` - 13/14 core, not admitted (a bug, not a regime);
+`months` in the lubridate vignette attributed to *base* by stage 1 (the known masking limitation: lubridate::months
+masks base::months), so only 1 case - **fix before any thorough run**.
+
+**Experiment design: two curves, cheap first, then thorough.**
+
+*Intra-script curve* - does verifying the functions a script needs, during its translation, raise its score?
+- Cheap (C1): paired replay on the 20 frozen dev states, `rewrite_w3` vs `rewrite_w3_ondemand` (empty starting store),
+  2 samples, 80 runs, ~2 h. Primary: paired final-score difference. Secondary: functions admitted per state, whether
+  the agent calls them (`r_*` calls in its sources, as in the 8-of-8 measurement), cost in seconds and model calls.
+  A dose-response arm (`max_functions` 0 / 1 / 2 / 4) is the within-script curve proper, if C1 shows an effect.
+
+*Inter-script curve* - does a store grown on earlier scripts help later ones? The recurrence curve predicts the
+size: about 5.6% of held-out loss reachable after 64 scripts, discounted. No cheap score experiment can resolve that,
+so the cheap step measures the mechanism instead:
+- Cheap (C2): run the on-demand step alone over the first 64 training scripts' saved translations (re-verified for
+  their failing entities; no new translations), store persisting, snapshots after 8 / 16 / 32 / 64. Measure the
+  **hit rate**: the share of held-out failing candidate loss whose function is in each snapshot (structural, no
+  model calls), against curve 1's prediction made with hypothetical functions. ~1 h of on-demand model calls.
+
+*Thorough* (pre-registered): a **fresh held-out set** drawn from the 3,988-script pool and never touched in
+development (the dev states are held-out scripts and have been replayed many times); training on 256 scripts with
+on-demand on and the store persisting, snapshots 0 / 64 / 128 / 256; held-out scoring, 3 reps, arms:
+A baseline (no runtime), B on-demand from an empty store (intra-script only), C each store snapshot with on-demand
+off (inter-script curve), D full store plus on-demand (both). Primary tests: B vs A (intra), the slope of C over
+snapshots (inter). Endpoints, power and the masking fix are settled in the registration, after C1 and C2.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
