@@ -123,12 +123,12 @@ def one(script: str) -> dict:
     return row
 
 
-def run(workers: int) -> None:
+def run(workers: int, rows_name: str = "rows_v2.jsonl") -> None:
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     scripts = [e["script"] for e in manifest["train"]
                if (TRANSLATIONS / f"{Path(e['script']).stem}.py").exists()]
     OUT.mkdir(parents=True, exist_ok=True)
-    path = OUT / "rows_v2.jsonl"
+    path = OUT / rows_name
     done = {json.loads(l)["script"] for l in path.open(encoding="utf-8")} if path.exists() else set()
     todo = [s for s in scripts if s not in done]
     print(f"{len(scripts)} translations saved, {len(done)} done, {len(todo)} to go, {workers} workers",
@@ -169,6 +169,7 @@ if __name__ == "__main__":
     sub = ap.add_subparsers(dest="cmd", required=True)
     p = sub.add_parser("run")
     p.add_argument("--workers", type=int, default=5)
+    p.add_argument("--rows", default="rows_v2.jsonl", help="output file under work/reverify/ (rows_v3: after the sidecar fix)")
     p.add_argument("--limit", type=int, default=None, help="smoke test: only this many scripts")
     sub.add_parser("summary")
     args = ap.parse_args()
@@ -184,7 +185,7 @@ if __name__ == "__main__":
                     print(json.dumps({k: v for k, v in r.items() if k != "entities"}), flush=True)
                     fh.write(json.dumps(r) + "\n")
         else:
-            run(args.workers)
+            run(args.workers, args.rows)
     else:
         text = summary()
         print(text)

@@ -111,6 +111,14 @@ class PySandbox:
         if EffectClass.HTML in capture:
             epi_parts.append(_html_effects.PY_EPILOGUE)
 
+        # Stage sidecar files (data-loading shim payload, etc.) next to the script so its
+        # ``Path(__file__).parent / "<name>"`` lookup resolves - and BEFORE the files snapshot: they are
+        # inputs the harness provides, not files the program wrote. Staged after it, every script with a
+        # data shim "wrote" its own <stem>.r2py_data.json and lost its files comparison (2026-10-09).
+        if sidecar_files:
+            for fn, content in sidecar_files.items():
+                (workdir / fn).write_text(content, encoding="utf-8")
+
         before_files = _files_effects.snapshot(workdir) if EffectClass.FILES in capture else {}
         home_snap = snapshot_home()
 
@@ -128,12 +136,6 @@ class PySandbox:
 
         script_path = workdir / "_r2py_script.py"
         script_path.write_text(full_script, encoding="utf-8")
-
-        # Stage sidecar files (data-loading shim payload, etc.) next to the
-        # script so its ``Path(__file__).parent / "<name>"`` lookup resolves.
-        if sidecar_files:
-            for fn, content in sidecar_files.items():
-                (workdir / fn).write_text(content, encoding="utf-8")
 
         t_start = time.monotonic()
         try:

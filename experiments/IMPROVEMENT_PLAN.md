@@ -499,6 +499,55 @@ overlaps) would let the model translate the branching it can now read, on top of
 alone - and the same primitive serves `force_tz`, `floor_date`, `update`, `round_date`. That is composition one level
 down: verify the shared primitive once, then the functions built on it.
 
+**Backlog (user, 2026-10-09): inter-script versus intra-script improvement.** If knowledge learned in one script
+does not recur in others (flat recurrence curves), the harness cannot get much better *globally*, across scripts - but
+that does not mean it cannot get better *within* a script, inside the agent loop. If the focus moves intra-script, it
+will rely less on recorded knowledge and much more on verification, lookup and tools that work out automatically how a
+package function behaves (probing R, harvesting a function's own examples, locating the first diverging call).
+
+**Measurement bug: the data-shim sidecar counted as a file the program wrote (found and fixed 2026-10-09).**
+`PySandbox.run` took its files snapshot *before* staging sidecar files, so every script with a data shim "wrote" its
+own `<stem>.r2py_data.json` and drew "R wrote no files but Python wrote some" (the `_r2py_` prefix filter does not
+match a sidecar name). Fixed by staging sidecars before the snapshot (`tests/test_sidecar_files.py`; both tests fail on
+the old code). Re-verifying the 250 training translations (`rows_v3.jsonl`): those complaints fall **774 -> 45**, but
+the loss does not move (599.6 -> 600.4 points; mean aggregate 0.674 -> 0.671, 24 scripts up, 8 down). Entity scores
+mostly do not use the files effect; the damage was to the **feedback**: since the shim was introduced the agent has
+been told about a phantom file write on hundreds of entities - sometimes as the *only* message on an entity that
+lost points for another, unexplained reason (`data` entities scoring 0 on every dimension). Scores before and after
+are comparable; agent feedback is not. The stray-output estimate above (8%) included this artifact.
+
+**Recurrence curves (2026-10-09, `scripts/recurrence_curves.py`, no model calls).** The question: does what one
+translation could teach recur in the next? Experience = the first N of 183 training scripts (20 random orders, mean
+[min-max]); evaluation = the last 64 training scripts, and the real held-out loss for the function curve. On the
+corrected `rows_v3`:
+
+| N scripts | 8 | 16 | 32 | 64 | 128 | 183 / 247 |
+|---|---|---|---|---|---|---|
+| function, held-out loss reachable | 3.3% | 5.8% | 9.2% | 13.8% | 19.2% | 25.1% |
+| ... discounted by measured pass rates | 1.5% | 2.6% | 4.0% | 5.6% | 7.4% | 9.3% |
+| function, unseen training scripts | 3.6% | 6.3% | 9.8% | 16.3% | 24.9% | 28.3% |
+| failure *kind* (20 coarse kinds) | 29% | 51% | 78% | 89% | 99% | 100% |
+| failure *instance* (which var, which exception) | 17% | 26% | 39% | 51% | 64% | 69% |
+
+Distinct kinds after 8 / 32 / 128 / 247 scripts: 7 / 13 / 20 / 20. Distinct instances: 8 / 30 / 103 / 210.
+
+1. **Function-level learning is not flat - it rises with every doubling and has not saturated at 250 scripts** -
+   but slowly: about +5 points of reachable held-out loss per doubling, **+1.5-2 after discounting by what we can
+   verify today** (9% at 250 scripts). The held-out curve matches the within-training one, so package sharing in the
+   split does not flatter it much. This is the only unit measured so far that keeps improving with more translations.
+2. **Failure kinds saturate almost immediately**: 20 kinds, 13 of them met within 32 scripts, all by 128. Rules
+   keyed by failure kind transfer to new scripts at once - which also means they are a one-off investment, not a
+   learning curve: after ~100 translations there is nothing new to learn at that level. And most of the large kinds
+   are not rule-shaped (crash 12%, warnings differ 12%, printed text differs 11%, data variable missing 11%).
+3. **Failure instances keep arriving**: 210 distinct after 247 scripts, still growing linearly. That is the long tail
+   again, and no inter-script store catches it.
+
+**What follows.** Global learning has a real but slow ceiling, and the long tail has to be handled where it occurs:
+inside the script (the backlog note above). The two are not alternatives - the same machinery serves both. If each
+translation verifies the functions *it* needs while it runs (harvest the function's own examples, propose, verify,
+fence what fails), it gets per-script competence immediately, and the store accumulates those functions as a side
+effect, which is exactly the rising function curve. "Learn by doing, keep what you verified."
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
