@@ -68,7 +68,7 @@ class TestVerifyNeeded(unittest.TestCase):
         probe = lambda specs: {s: {"found": True, "kind": "closure", "impure": []} for s in specs}  # noqa: E731
         cases = [{"call": f"f({i})", "args": [[None, i]], "expected": i} for i in range(5)]
         with patch("r2py.runtime.purity.probe", probe), \
-                patch.object(ondemand, "cases_for", lambda need, src: cases), \
+                patch.object(ondemand, "cases_for", lambda need, src: (cases, "")), \
                 patch("r2py.runtime.propose.attempt", attempt), \
                 patch("r2py.runtime.admit.assess", assess or (lambda rec, cs: {"verdict": "not admissible"})):
             return ondemand.verify_needed(self.sm, self.report, self.store, model="m", log=lambda *_: None, **kw)

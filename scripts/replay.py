@@ -47,7 +47,7 @@ POLICIES = {
     # (r2py/runtime/ondemand.py), in a private copy of the starting store (--runtime-dir, default empty)
     # so that no run can hand a verified function to another.
     "rewrite_w3_ondemand": dict(entity_repair=False, escalate_after=None, width=3,
-                                ondemand=dict(max_functions=2, budget_s=900, rounds=4, attempts=2)),
+                                ondemand=dict(max_functions=2, budget_s=900, rounds=2, attempts=4)),
     # The same agent with a fixed store and no on-demand step: the inter-script arm (--runtime-dir).
     "rewrite_w3_store": dict(entity_repair=False, escalate_after=None, width=3, runtime="from --runtime-dir"),
 }

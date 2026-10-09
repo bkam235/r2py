@@ -43,7 +43,7 @@ ROWS = ROOT / "work" / "reverify" / "rows_v3.jsonl"
 MAPS = ROOT / "work" / "reverify" / "script_maps"
 STORE = ROOT / "work" / "runtime" / "store_growth"
 OUT = ROOT / "work" / "store_growth"
-ONDEMAND = dict(max_functions=2, budget_s=900, rounds=4, attempts=2)     # = replay's rewrite_w3_ondemand
+ONDEMAND = dict(max_functions=2, budget_s=900, rounds=2, attempts=4)     # = replay's rewrite_w3_ondemand
 SNAPSHOTS = (8, 16, 32, 64)
 
 

@@ -29,6 +29,7 @@ class Entry:
     package: str | None      # its package, None for base/stats/utils
     code: str                # Python source defining ``r_<name>``
     unverified: dict | None = None   # option values it refuses (status ``passed_restricted``): {arg: [values]}
+    unverified_classes: list | None = None   # input classes it refuses: "vector input", "NA input"
 
     @property
     def py(self) -> str:
@@ -45,10 +46,11 @@ class Entry:
 
 
 def _restriction(e: Entry) -> str:
-    if not e.unverified:
+    parts = [f"{k} = " + ", ".join(repr(v) for v in vals) for k, vals in sorted((e.unverified or {}).items())]
+    parts += [f"a {c} as first argument" for c in (e.unverified_classes or [])]
+    if not parts:
         return ""
-    fenced = "; ".join(f"{k} = " + ", ".join(repr(v) for v in vals) for k, vals in sorted(e.unverified.items()))
-    return f" - except {fenced}, where it raises NotImplementedError: write that case yourself"
+    return f" - except {'; '.join(parts)}, where it raises NotImplementedError: write that case yourself"
 
 
 class RuntimeStore:
@@ -70,8 +72,10 @@ class RuntimeStore:
             # ``passed_restricted``: verified on every case except some option values, for which the
             # code raises instead of guessing (scripts/regime_admit.py).
             if rec.get("status") in ("passed", "passed_restricted") and code_file.exists() and not rec.get("impure"):
+                restricted = rec.get("status") == "passed_restricted"
                 e = Entry(rec["function"], rec.get("package"), code_file.read_text(encoding="utf-8"),
-                          rec.get("unverified") if rec.get("status") == "passed_restricted" else None)
+                          rec.get("unverified") if restricted else None,
+                          rec.get("unverified_classes") if restricted else None)
                 self.entries[e.py] = e
 
     def add(self, rec: dict, code: str) -> Entry | None:
@@ -84,7 +88,8 @@ class RuntimeStore:
             return None
         self.directory.mkdir(parents=True, exist_ok=True)
         stem = f"{rec.get('package') or 'base'}__{rec['function']}"
-        for suffix, text in ((".py", code), (".json", json.dumps(dict(rec, code=code), indent=1, default=str))):
+        slim = {k: v for k, v in rec.items() if k not in ("cases", "history", "failures")}   # a store entry, not a log
+        for suffix, text in ((".py", code), (".json", json.dumps(dict(slim, code=code), indent=1, default=str))):
             tmp = self.directory / f".{stem}{suffix}.tmp"
             tmp.write_text(text, encoding="utf-8")
             tmp.replace(self.directory / f"{stem}{suffix}")

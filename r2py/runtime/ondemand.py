@@ -77,9 +77,12 @@ def failing_functions(script_map, report, store, threshold: float = 0.9) -> list
     return sorted(needs.values(), key=lambda n: -n.loss)
 
 
-def cases_for(need: Need, r_source: str) -> list[dict]:
+def cases_for(need: Need, r_source: str) -> tuple[list[dict], str]:
     """Real calls from this script first (the inputs the translation will face), then the package's own
-    Rd examples; one case per distinct argument list, none whose arguments only fingerprint an object."""
+    Rd examples; one case per distinct argument list, none whose arguments only fingerprint an object.
+
+    Also returns the example text (the Rd example code and the real calls recorded from it): `propose`
+    uses it as the template for the calls it has the model invent, which R then answers."""
     from . import difftest
     from .harvest import as_mined, harvest
 
@@ -102,13 +105,21 @@ def cases_for(need: Need, r_source: str) -> list[dict]:
         c.setdefault("core", True)
         c["mined"] = True
         out.append(c)
-    return out[:20]
+    calls = sorted({c["call"].split("   [")[0].split("  [first argument")[0] for c in out})[:12]
+    examples = (row.get("example_text") or "").strip()
+    if calls:
+        examples += "\n\n# calls recorded from these examples and this script:\n" + "\n".join(calls)
+    return out[:20], examples.strip()
 
 
 def verify_needed(script_map, report, store, *, model: str, max_functions: int = 2, budget_s: float = 900,
-                  rounds: int = 4, attempts: int = 2, threshold: float = 0.9, log=print) -> list[dict]:
+                  rounds: int = 2, attempts: int = 4, threshold: float = 0.9, log=print,
+                  attempt_log: "str | None" = None) -> list[dict]:
     """Verify up to ``max_functions`` functions this script needs, within ``budget_s``; return one record each.
 
+    Breadth over depth by default (4 independent attempts of 2 rounds, the same calls as 2 x 4): in C1/C2 the
+    best version was the first one in 14 of 35 failures - counterexample rounds rarely improved on it.
+    ``attempt_log``: a directory that receives every attempt's full record (cases, history, failures).
     Never raises: a translation does not fail because its on-demand step did.
     """
     from . import propose
@@ -130,25 +141,38 @@ def verify_needed(script_map, report, store, *, model: str, max_functions: int =
                 continue
             rec: dict = {"function": need.function, "package": need.package, "loss": round(need.loss, 3)}
             t0 = time.monotonic()
-            cases = cases_for(need, getattr(script_map, "source", "") or "")
-            rec["n_cases"] = len(cases)
-            if len(cases) < 3:
-                rec["status"] = "no_cases"
-            else:
-                package = None if need.package in BASE else need.package
-                got = propose.attempt(need.function, package, model, rounds=rounds, attempts=attempts, mined=cases,
-                                      source_limit=15000, budget_s=remaining, locate=True)
-                rec.update({k: got.get(k) for k in ("status", "core_passed", "core_total", "rounds", "n_failures")})
-                if got.get("status") == "passed":
-                    store.add(dict(got, package=need.package or None, tag="on demand"), got["code"])
-                    rec["admitted"] = "passed"
-                elif got.get("code"):
-                    verdict = assess(dict(got, function=need.function), cases)
-                    rec["verdict"] = verdict["verdict"]
-                    if verdict.get("code"):
-                        store.add(dict(got, package=need.package or None, status="passed_restricted",
-                                       unverified=verdict["fenced"], tag="on demand"), verdict["code"])
-                        rec["admitted"] = "restricted"
+            cases, examples = cases_for(need, getattr(script_map, "source", "") or "")
+            rec["n_real_cases"] = len(cases)
+            # No gate on the real cases: propose adds the calls it has the model write (templated on the
+            # examples) and their variants, all answered by R, and gives up itself below three ordinary
+            # cases. Gating here at three real cases dropped half of all attempts in C1 and C2 unseen.
+            package = None if need.package in BASE else need.package
+            got = propose.attempt(need.function, package, model, rounds=rounds, attempts=attempts,
+                                  mined=cases or None, source_limit=15000, budget_s=remaining, locate=True,
+                                  examples=examples)
+            rec.update({k: got.get(k) for k in ("status", "core_passed", "core_total", "rounds", "n_failures",
+                                                "n_cases", "n_core", "history")})
+            if got.get("status") == "passed":
+                store.add(dict(got, package=need.package or None, tag="on demand"), got["code"])
+                rec["admitted"] = "passed"
+            elif got.get("code"):
+                verdict = assess(dict(got, function=need.function), got.get("cases") or cases)
+                rec["verdict"] = verdict["verdict"]
+                for k in ("fenced", "classes", "in_regime", "out_of_regime"):
+                    if k in verdict:
+                        rec[k] = verdict[k]
+                if verdict.get("code"):
+                    store.add(dict(got, package=need.package or None, status="passed_restricted",
+                                   unverified=verdict["fenced"], unverified_classes=verdict.get("classes", []),
+                                   tag="on demand"), verdict["code"])
+                    rec["admitted"] = "restricted"
+            if attempt_log:
+                from pathlib import Path
+                d = Path(attempt_log)
+                d.mkdir(parents=True, exist_ok=True)
+                stamp = time.strftime("%Y%m%d_%H%M%S")
+                (d / f"{need.package or 'base'}__{need.function}.{stamp}.json").write_text(
+                    json.dumps(dict(got, examples=examples[:2000]), default=str), encoding="utf-8")
             rec["seconds"] = round(time.monotonic() - t0, 1)
             records.append(rec)
             log(f"[OnDemand] {need.function}@{need.package or 'base'}: {rec.get('status')} "

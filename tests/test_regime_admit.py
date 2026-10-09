@@ -77,3 +77,42 @@ class TestStoreLoadsRestrictedEntries(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestInputClassFences(unittest.TestCase):
+    """A near miss that fails only on vector or NA input is admitted with that input class refused."""
+
+    VEC_IMPL = "def r_first(x):\n    return x[0] if isinstance(x, list) else x\n"
+
+    def test_the_first_arguments_input_class(self):
+        from r2py.runtime.admit import NA, VECTOR, input_classes
+        self.assertEqual(input_classes({"args": [[None, [1, 2, 3]]]}), {VECTOR})
+        self.assertEqual(input_classes({"args": [[None, [1, None]]]}), {VECTOR, NA})
+        self.assertEqual(input_classes({"args": [[None, None]]}), {NA})
+        self.assertEqual(input_classes({"args": [[None, 5]]}), set())
+
+    def test_a_vector_fence_refuses_vectors_and_runs_single_values(self):
+        from r2py.runtime.admit import VECTOR, guarded
+        ns: dict = {}
+        exec(guarded(self.VEC_IMPL, "r_first", {}, {VECTOR}), ns)
+        self.assertEqual(ns["r_first"](7), 7)
+        self.assertEqual(ns["r_first"]([7]), 7)                 # length one is a single value
+        with self.assertRaises(NotImplementedError) as cm:
+            ns["r_first"]([7, 8, 9])
+        self.assertIn("length 3", str(cm.exception))            # the message carries the value, not "{len(items)}"
+
+    def test_an_na_fence_refuses_na_and_nan(self):
+        from r2py.runtime.admit import NA, guarded
+        ns: dict = {}
+        exec(guarded(self.VEC_IMPL, "r_first", {}, {NA}), ns)
+        self.assertEqual(ns["r_first"](3), 3)
+        for bad in (None, float("nan"), [1, None]):
+            with self.assertRaises(NotImplementedError):
+                ns["r_first"](bad)
+
+    def test_the_option_fence_message_names_the_value(self):
+        ns: dict = {}
+        exec(ra.guarded(IMPL, "r_shift", {"roll": {"wrap"}}), ns)
+        with self.assertRaises(NotImplementedError) as cm:
+            ns["r_shift"](1, roll="wrap")
+        self.assertIn("roll='wrap'", str(cm.exception))

@@ -44,12 +44,23 @@ def _code(raw: str) -> str:
     return (m.group(1) if m else raw).strip() + "\n"
 
 
-def propose_calls(fname: str, package: str | None, usage: str, model: str) -> list[str]:
+def propose_calls(fname: str, package: str | None, usage: str, model: str, examples: str = "") -> list[str]:
+    """Calls for R to answer. With ``examples`` (the package's own Rd example code and the real calls recorded from it)
+    the model writes new calls in their style: for package functions, calls invented from the usage line alone are often
+    rejected by R (wrong object types), which left half the pilot's package functions without cases."""
     qual = f"{package}::{fname}" if package else fname
-    prompt = (f"Write 8 different R calls to `{qual}`, one per line. Use only literal values and simple constructors "
-              "(c(), seq(), rep(), 1:10, letters, matrix(), data.frame()); no set.seed, no files, no assignments. Cover a typical "
-              "call, named arguments, a non-default option, NA values, tied values, negative numbers and a length-one input.\n"
-              f"Usage: {usage}")
+    if examples:
+        prompt = (f"Real calls to `{qual}` from its package's own documentation, with the code that builds their inputs:\n"
+                  f"{examples[:4000]}\n\n"
+                  f"Write 8 new R calls to `{qual}`, one per line, each self-contained: build every input inside the call "
+                  "(use the constructors the examples use, or c(), seq(), rep(), data.frame()), no assignments, no files, "
+                  "no set.seed. Vary what the examples vary, and cover a non-default option, NA values, a length-one input "
+                  f"and a longer vector input.\nUsage: {usage}")
+    else:
+        prompt = (f"Write 8 different R calls to `{qual}`, one per line. Use only literal values and simple constructors "
+                  "(c(), seq(), rep(), 1:10, letters, matrix(), data.frame()); no set.seed, no files, no assignments. Cover a "
+                  "typical call, named arguments, a non-default option, NA values, tied values, negative numbers and a "
+                  f"length-one input.\nUsage: {usage}")
     raw = _llm.call([{"role": "user", "content": prompt}], _CALLS_SYSTEM, model=model, max_tokens=1500)
     lines = [l.strip() for l in re.sub(r"```\w*", "", raw).splitlines()]
     return [l for l in lines if re.match(rf"^({re.escape(package)}::)?{re.escape(fname)}\(", l or "")][:10] if package else \
@@ -91,7 +102,7 @@ def _locate(fname: str, package: str | None, code: str, res: difftest.Result, ca
 
 def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, attempts: int = ATTEMPTS,
             mined: list[dict] | None = None, source_limit: int = SOURCE_LIMIT, budget_s: float = BUDGET_S,
-            locate: bool = False, hint: str = "") -> dict:
+            locate: bool = False, hint: str = "", examples: str = "") -> dict:
     """Try to build a verified Python implementation of one R function; returns a record (never raises).
 
     The cases are built once.  The model gets up to ``attempts`` independent tries (fresh conversations: the sampled
@@ -101,15 +112,19 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
     rec: dict = {"function": fname, "package": package, "status": "error", "rounds": 0, "locate": locate}
     try:
         probe = difftest.build_cases(fname, [f"{fname}(1:5)"], package)            # usage and source need no model
-        calls = propose_calls(fname, package, probe.get("usage", ""), model)
+        calls = propose_calls(fname, package, probe.get("usage", ""), model, examples=examples)
         built = difftest.build_cases(fname, calls, package)
-        cases = difftest.label_core(list(built["cases"])) if not mined else list(built["cases"])
+        # Invented calls are always labelled. Before 2026-10-09 they were labelled only when there were no real calls,
+        # so with real calls present every invented call and variant - odd input classes included - silently counted as
+        # a required case (``core`` defaults to True), against the rule in the docstring.
+        cases = difftest.label_core(list(built["cases"]))
         if mined:                       # real calls come first and always count as ordinary use
             for m in mined:
                 m["core"] = True
             cases = list(mined) + [c for c in cases if c["call"] not in {m["call"] for m in mined}]
         core = [c for c in cases if c.get("core", True)]
-        rec.update(n_calls=len(calls), n_cases=len(cases), n_core=len(core), n_mined=len(mined or []))
+        rec.update(n_calls=len(calls), n_cases=len(cases), n_core=len(core), n_mined=len(mined or []),
+                   cases=cases, history=[])   # cases: so admission can judge every failure, not only the recorded text
         if len(core) < 3:
             rec["status"] = "no_cases"                                              # R accepted fewer than three ordinary calls
             return rec
@@ -134,6 +149,7 @@ def attempt(fname: str, package: str | None, model: str, rounds: int = ROUNDS, a
                            core_total=res.core_total, code=code, failures=res.failures[:60],
                            n_failures=len(res.failures))   # the whole list: admitting a function with its
                                                             # failures fenced needs every one of them
+                rec["history"].append([attempt_no, rnd, res.core_passed, res.core_total])
                 if best is None or (res.core_passed, res.passed) > (best["core_passed"], best["passed"]):
                     best = cur
                 if res.ok_core:
