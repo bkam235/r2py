@@ -58,7 +58,7 @@ def report_from_row(row: dict) -> SimpleNamespace:
 
 
 def task(args: tuple) -> dict:
-    index, script, row = args
+    index, script, row, store_dir, out_dir = args
     from dotenv import load_dotenv
     load_dotenv(ROOT / ".env", override=True)
     from r2py import heldout as ho
@@ -69,22 +69,25 @@ def task(args: tuple) -> dict:
     man = ho.load_manifest(str(ROOT / "experiments/dev_run/manifest.json"))
     cfg = man["protocol"]["translate"]
     sm = pickle.loads((MAPS / f"{Path(script).stem}.pkl").read_bytes())
-    store = RuntimeStore(STORE)
+    store = RuntimeStore(store_dir)
     before = set(store.entries)
     llm.drain_provider_failures()
     with ho.pinned_llm(cfg["model"], ho.llm_settings(man)):
-        recs = verify_needed(sm, report_from_row(row), store, model=cfg["model"], log=lambda *_: None, **ONDEMAND)
+        recs = verify_needed(sm, report_from_row(row), store, model=cfg["model"], log=lambda *_: None,
+                             attempt_log=str(Path(out_dir) / "attempts"), **ONDEMAND)
     failed = llm.drain_provider_failures()
     out = {"index": index, "script": script, "records": recs, "store_before": len(before)}
     if failed:
         out["provider_unavailable"] = failed
         return out
-    out["added"] = sorted(set(RuntimeStore(STORE).entries) - before)
+    out["added"] = sorted(set(RuntimeStore(store_dir).entries) - before)
     out["admitted"] = sorted(r["function"] for r in recs if r.get("admitted"))
     return out
 
 
 def run(n: int, workers: int) -> None:
+    """Workers get the store and output directories as arguments: they are spawned processes and do not
+    see globals changed by --tag."""
     manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
     rows = {r["script"]: r for r in map(json.loads, ROWS.open(encoding="utf-8")) if "error" not in r}
     order = [e["script"] for e in manifest["train"]
@@ -93,7 +96,7 @@ def run(n: int, workers: int) -> None:
     STORE.mkdir(parents=True, exist_ok=True)
     path = OUT / "results.jsonl"
     done = {json.loads(l)["script"] for l in path.open(encoding="utf-8")} if path.exists() else set()
-    tasks = [(i, s, rows[s]) for i, s in enumerate(order) if s not in done]
+    tasks = [(i, s, rows[s], str(STORE), str(OUT)) for i, s in enumerate(order) if s not in done]
     print(f"{len(order)} scripts in order, {len(done)} done, {len(tasks)} to go, {workers} workers", flush=True)
     outages = 0
     ctx = multiprocessing.get_context("spawn")
@@ -155,8 +158,14 @@ def main() -> int:
     p = sub.add_parser("run")
     p.add_argument("--n", type=int, default=64)
     p.add_argument("--workers", type=int, default=4)
-    sub.add_parser("report")
+    rp = sub.add_parser("report")
+    for q in (p, rp):
+        q.add_argument("--tag", default="", help="separate store and results, e.g. v2 for a rerun after a change")
     args = ap.parse_args()
+    global STORE, OUT
+    if args.tag:
+        STORE = STORE.with_name(f"{STORE.name}_{args.tag}")
+        OUT = OUT.with_name(f"{OUT.name}_{args.tag}")
     if args.cmd == "run":
         run(args.n, args.workers)
     text = report()

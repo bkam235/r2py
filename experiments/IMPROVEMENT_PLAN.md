@@ -634,6 +634,42 @@ Neither curve is ready for the thorough experiment: the
 inter-script arm would measure ~1-3% coverage, and the intra-script effect (+0.03) is about 1.3 standard errors at 60
 held-out scripts. Raise the yield first; case supply is where most of it goes.
 
+**What limits runtime admission, and what was fixed (2026-10-09, commit 518571d).** Of 99 on-demand attempts in C1+C2:
+52 never got cases, 35 got cases and failed, 12 were admitted. Every cause found, in order of size:
+
+1. *My own gate* (52 of 99). `ondemand` skipped a function with fewer than three **real** cases before calling
+   `propose.attempt` - which already adds model-written calls and first-argument variants answered by R. Removed:
+   real cases (zero or more) go to `propose`, which gives up itself below three ordinary cases.
+2. *Synthetic calls ignored the examples* (user's idea). `propose_calls` wrote calls from the usage line alone, and
+   R rejects many such calls for package functions (wrong object types). With the package's Rd example code and the
+   real calls recorded from it, the model now writes new calls in their style; R validates each and supplies the answer.
+3. *The recorder broke the examples it observed.* Its wrapper forced the arguments (`list(...)`) before calling the
+   function, so every function with unevaluated arguments (`group_by(cyl)`: there is no variable `cyl`) failed, and
+   with it the example statement and everything after. It now calls first and captures after; NSE arguments are
+   counted as unrecordable instead of breaking the run.
+4. *`\donttest{}` examples never ran.* `utils::example` defaults to `run.donttest = interactive()`, false under
+   Rscript, so those blocks came back commented out (`##D`) - base R keeps nearly all its examples there (`seen 0`
+   for `as.POSIXct` until then; 60 cases after). `\dontrun{}` stays off.
+5. *Variants of real calls.* The recorder applies difftest's first-argument variants (NA inserted, tie, scaled,
+   reversed, single value) to each intercepted call, answered by R (`createTimeSlices`: 7 calls -> 35 cases).
+6. *An acceptance bug.* With real cases present, invented cases were never labelled core/exotic, and `core` defaults
+   to True: every invented call and variant, odd input classes included, silently became a required case, against
+   the stated rule. Now always labelled; admission (`admit.assess`) also judges core cases only.
+7. *Near misses failed all-or-nothing on input classes.* The pilot's near misses were mostly vectorisation and NA
+   failures. A fence can now refuse an input class of the first argument (vector, NA) as well as an option value -
+   correct where verified, an explicit `NotImplementedError` elsewhere - and admission uses the full case list
+   `propose` built, so every failure is judged directly.
+8. *Depth did not pay.* The best version was the first in 14 of 35 failures. Default now 4 independent attempts x 2
+   rounds (the same 8 calls) instead of 2 x 4; `propose` records the per-round history so this can be checked.
+
+Recorder diagnostics on the 37 previously case-less functions, Rd harvest alone after fixes 3-5: 6 now >= 3 real
+cases, 10 with 1-2 (now passed on to `propose`), 7 with unevaluated (NSE) arguments, 6 without examples, 5 errors,
+3 still unseen. Structural limits that remain: NSE functions (dplyr, tidyr verbs), object arguments (fingerprints),
+functions without examples, compiled-code semantics (the DST gap), and genuinely wrong implementations.
+
+Yield meter: C2 rerun as `store_growth.py --tag v2` on the same 64 scripts, fresh store, every attempt logged in
+`work/store_growth_v2/attempts/`. Before: 3 of 43 attempts admitted (7%), 1.1% of held-out loss covered.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.
