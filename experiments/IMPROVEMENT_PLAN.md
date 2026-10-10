@@ -1983,3 +1983,18 @@ Revised sequencing (2026-09-29), replacing the original suggestion:
 The first experiment is closed and archived. Nothing in this plan may be used to re-analyse it;
 `RESULTS.md` stands as written, with the one exception named in the Stage 0 decision gate — if the
 endpoint turns out to be largely pinned, that is a correction to record, not a re-analysis to run.
+
+**Depth instead of breadth - design fixed before the run (2026-10-10).** Same C2 yield meter as the Gemma arm:
+- Gemma, the first 64 training scripts, a fresh store (`--tag rounds4`).
+- **4 attempts x 4 rounds**, the same 16 calls per function as the A/B arm's 8 x 2.
+- The locator was already on in both runs (`ondemand.verify_needed` passes `locate=True`), so rounds are the only
+  change.
+
+Why rounds: in the A/B Gemma arm, round 2 improved on round 1 within an attempt in 67 of 268 attempts (same in 194,
+worse in 7).
+
+Primary: admission rate per attempted function against 16.3% (7/43), Fisher, and paired on the functions both runs
+attempted.
+
+Then the C2 estimate: held-out loss covered after 64 scripts, extrapolated along the recurrence curve. If admission
+reaches about 30% or more, the thorough C1 experiment is worth running.
