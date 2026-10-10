@@ -1,0 +1,23 @@
+{
+ "function": "matrix",
+ "package": "base",
+ "status": "passed_restricted",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 46,
+ "n_core": 42,
+ "n_mined": 11,
+ "attempt": 1,
+ "passed": 43,
+ "total": 46,
+ "core_passed": 39,
+ "core_total": 42,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef _r2py_impl_r_matrix(data=None, nrow=1, ncol=1, byrow=False, dimnames=None):\n    \"\"\"\n    Reproduce R's matrix function.\n    \n    Parameters:\n    data: array-like or scalar (default NA)\n    nrow: number of rows (default 1)\n    ncol: number of columns (default 1)\n    byrow: fill by rows if True, by columns if False (default False)\n    dimnames: row and column names (default None)\n    \n    Returns:\n    numpy ndarray with shape (nrow, ncol)\n    \"\"\"\n    \n    # Handle the case where data is None (represents R's NA)\n    if data is None:\n        data = np.nan\n    \n    # Convert data to a list/array if needed\n    if isinstance(data, (list, tuple)):\n        data_vec = list(data)\n    elif isinstance(data, np.ndarray):\n        data_vec = data.flatten().tolist()\n    elif np.isscalar(data):\n        data_vec = [data]\n    else:\n        # Try to convert to list\n        try:\n            data_vec = list(data)\n        except TypeError:\n            data_vec = [data]\n    \n    # Calculate total elements needed\n    total_elements = nrow * ncol\n    \n    # Recycle or truncate data to match matrix size\n    if len(data_vec) == 0:\n        data_vec = [np.nan] * total_elements\n    else:\n        # Recycle data to fill the matrix\n        if len(data_vec) < total_elements:\n            # Recycle data\n            cycles = (total_elements + len(data_vec) - 1) // len(data_vec)\n            data_vec = (data_vec * cycles)[:total_elements]\n        else:\n            # Truncate if too long\n            data_vec = data_vec[:total_elements]\n    \n    # Create matrix\n    if byrow:\n        # Fill by rows\n        matrix = np.array(data_vec, dtype=object).reshape((nrow, ncol))\n    else:\n        # Fill by columns (default R behavior)\n        matrix = np.array(data_vec, dtype=object).reshape((nrow, ncol), order='F')\n    \n    return matrix\n\n\n_R2PY_UNVERIFIED_r_matrix = {}\n_R2PY_UNVERIFIED_CLASSES_r_matrix = ['vector input']\n\n\ndef _r2py_items_r_matrix(v):\n    if isinstance(v, (str, bytes, dict)) or not hasattr(v, \"__len__\"):\n        return None\n    try:\n        return list(v)\n    except TypeError:\n        return None\n\n\ndef r_matrix(*args, **kwargs):\n    \"\"\"r_matrix reproduces R on every tested ordinary call except the option values in _R2PY_UNVERIFIED_r_matrix\n    and the input classes in _R2PY_UNVERIFIED_CLASSES_r_matrix; for those it refuses rather than guess.\"\"\"\n    import inspect\n    import math\n    try:\n        bound = inspect.signature(_r2py_impl_r_matrix).bind(*args, **kwargs).arguments\n    except TypeError:\n        bound = kwargs\n    for name, bad in _R2PY_UNVERIFIED_r_matrix.items():\n        v = bound.get(name)\n        if isinstance(v, (list, tuple)) and len(v) == 1:\n            v = v[0]\n        if v is not None and str(v) in bad:\n            raise NotImplementedError(\n                f\"r_matrix: {name}={v!r} is not verified against R; handle this case in your own code\")\n    if _R2PY_UNVERIFIED_CLASSES_r_matrix and bound:\n        first = next(iter(bound.values()))\n        items = _r2py_items_r_matrix(first)\n        if \"vector input\" in _R2PY_UNVERIFIED_CLASSES_r_matrix and items is not None and len(items) > 1:\n            raise NotImplementedError(\n                f\"r_matrix: input of length {len(items)} is not verified against R (verified for single values); \"\n                \"loop over the elements or write this case yourself\")\n        vals = items if items is not None else [first]\n        if \"NA input\" in _R2PY_UNVERIFIED_CLASSES_r_matrix and any(\n                x is None or (isinstance(x, float) and math.isnan(x)) for x in vals):\n            raise NotImplementedError(f\"r_matrix: input containing NA is not verified against R; handle NA yourself\")\n    return _r2py_impl_r_matrix(*args, **kwargs)\n",
+ "n_failures": 3,
+ "unverified": {},
+ "unverified_classes": [
+  "vector input"
+ ],
+ "tag": "on demand"
+}

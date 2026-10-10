@@ -719,6 +719,34 @@ OpenRouter path does, and a truncated answer is kept on both paths instead of en
 - **Decision:** C2 builds the store with Haiku if Haiku's admission rate is at least twice Gemma's **and** at least
   25%; otherwise with Gemma, accepting that the inter-script curve is shallow. Then C1 is decided.
 
+**Result (2026-10-10): no model effect - C2 stays with Gemma.** Both arms ran all 64 scripts and attempted the
+same 43 functions. (The runs were interrupted twice: Haiku ran out of Anthropic credits, and Gemma froze when the
+laptop went into standby. Both resumed from `results.jsonl`. Neither interruption left a truncated attempt or a
+budget skip.)
+
+| | Gemma 4 31B | Haiku 4.5 |
+|---|---|---|
+| admitted (passed + restricted) | 7/43 = 16.3% (5 + 2) | 6/43 = 14.0% (1 + 5) |
+| no cases | 6 | 5 |
+| held-out loss covered after 64 scripts | 1.6% | 1.1% |
+| model calls | 580 | 636 |
+| worker-hours | 5.3 | 2.5 |
+
+- Fisher's exact test gives p = 1.0.
+- Paired on the 43 functions:
+  - both arms admitted 4;
+  - neither admitted 34;
+  - only Gemma admitted 3;
+  - only Haiku admitted 2.
+- Haiku is neither twice Gemma's rate nor at 25%, so under the fixed rule C2 uses Gemma. It falls short on both counts.
+- The functions that resist are the same ones for both models (`as.POSIXct`, `time_force_tz` and the rest).
+- Gemma got more outright passes; Haiku got more fenced near-misses.
+- The limit is therefore not this model swap. It is the task as posed: write a whole package function from its usage,
+  its source and a few cases, then make up to 2 repairs per attempt.
+- Haiku's only advantage was speed (2x per worker).
+- Gemma's admission rate (16%) is higher than in v2 (9%). That is consistent with 8 attempts instead of 4: more tries
+  help a little, and the model does not matter.
+
 Not pursued on the evidence: more prompt-based retrieval, MCTS (beam search over restarts = independent width),
 more seed styles, entity-level width, seed recombination. Model capability is out of scope by design: the point is to
 make a small model (Gemma 4) translate well through knowledge and structure in the harness.

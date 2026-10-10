@@ -1,0 +1,8 @@
+model openrouter:google/gemma-4-31b-it: 64 scripts processed; 43 function attempts: {'failed': 30, 'restricted': 2, 'no_cases': 6, 'passed': 5}
+admitted 7/43 (16%); 580 model calls, 5.3 worker-hours
+
+after N scripts   functions   held-out loss covered   recurrence prediction
+8                         1                   1.1%                    1.5%
+16                        1                   1.1%                    2.6%
+32                        3                   1.1%                    4.0%
+64                        7                   1.6%                    5.6%

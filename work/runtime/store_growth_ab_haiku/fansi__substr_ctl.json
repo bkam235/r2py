@@ -1,0 +1,39 @@
+{
+ "function": "substr_ctl",
+ "package": "fansi",
+ "status": "passed_restricted",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 27,
+ "n_core": 27,
+ "n_mined": 13,
+ "attempt": 5,
+ "passed": 14,
+ "total": 27,
+ "core_passed": 14,
+ "core_total": 27,
+ "code": "import numpy as np\nimport re\n\ndef _r2py_impl_r_substr_ctl(x, start, stop, warn=True, term_cap=\"truecolor\", ctl=\"all\", \n                 normalize=False, carry=False, terminate=True):\n    \"\"\"\n    Substring extraction that respects ANSI control sequences.\n    \n    This function extracts substrings while preserving ANSI escape sequences\n    that affect the appearance of the visible characters.\n    \"\"\"\n    \n    if isinstance(x, list):\n        # Handle character vector\n        return [_r2py_impl_r_substr_ctl(xi, start, stop, warn, term_cap, ctl, normalize, carry, terminate) \n                for xi in x]\n    \n    # Convert start and stop to 0-based Python indexing\n    # R uses 1-based indexing\n    start_idx = int(start) - 1\n    stop_idx = int(stop)\n    \n    # Pattern to match ANSI escape sequences\n    ansi_pattern = r'\\x1b\\[[0-9;]*[a-zA-Z]'\n    \n    # Find all ANSI sequences and their positions in the original string\n    ansi_matches = list(re.finditer(ansi_pattern, x))\n    \n    # Build a map of visible character positions to string positions\n    visible_pos = 0\n    pos_map = []  # (visible_pos, string_pos, char_type) where char_type: 'char' or 'ansi'\n    string_pos = 0\n    \n    while string_pos < len(x):\n        # Check if there's an ANSI sequence at current position\n        found_ansi = False\n        for match in ansi_matches:\n            if match.start() == string_pos:\n                # Add ANSI sequence to map\n                pos_map.append((visible_pos, string_pos, 'ansi', match.end() - string_pos))\n                string_pos = match.end()\n                found_ansi = True\n                break\n        \n        if not found_ansi:\n            # Regular character\n            pos_map.append((visible_pos, string_pos, 'char', 1))\n            visible_pos += 1\n            string_pos += 1\n    \n    # Extract the substring based on visible character positions\n    result = []\n    ansi_codes = []\n    \n    for vis_pos, str_pos, char_type, length in pos_map:\n        if char_type == 'ansi':\n            ansi_codes.append(x[str_pos:str_pos + length])\n            result.append(x[str_pos:str_pos + length])\n        elif start_idx <= vis_pos < stop_idx:\n            result.append(x[str_pos:str_pos + length])\n    \n    # Reconstruct the result with proper ANSI sequences\n    output = ''.join(result)\n    \n    # If terminate is True and there are SGR codes, add reset at the end\n    if terminate and any('\\x1b[' in code for code in ansi_codes):\n        # Check if there's already a reset code\n        if '\\x1b[0m' not in output and '\\x1b[m' not in output:\n            output += '\\x1b[0m'\n    \n    return output\n\n\n_R2PY_UNVERIFIED_r_substr_ctl = {'carry': ['True'], 'ctl': ['sgr'], 'normalize': ['True'], 'terminate': ['False'], 'warn': ['False']}\n_R2PY_UNVERIFIED_CLASSES_r_substr_ctl = ['vector input']\n\n\ndef _r2py_items_r_substr_ctl(v):\n    if isinstance(v, (str, bytes, dict)) or not hasattr(v, \"__len__\"):\n        return None\n    try:\n        return list(v)\n    except TypeError:\n        return None\n\n\ndef r_substr_ctl(*args, **kwargs):\n    \"\"\"r_substr_ctl reproduces R on every tested ordinary call except the option values in _R2PY_UNVERIFIED_r_substr_ctl\n    and the input classes in _R2PY_UNVERIFIED_CLASSES_r_substr_ctl; for those it refuses rather than guess.\"\"\"\n    import inspect\n    import math\n    try:\n        bound = inspect.signature(_r2py_impl_r_substr_ctl).bind(*args, **kwargs).arguments\n    except TypeError:\n        bound = kwargs\n    for name, bad in _R2PY_UNVERIFIED_r_substr_ctl.items():\n        v = bound.get(name)\n        if isinstance(v, (list, tuple)) and len(v) == 1:\n            v = v[0]\n        if v is not None and str(v) in bad:\n            raise NotImplementedError(\n                f\"r_substr_ctl: {name}={v!r} is not verified against R; handle this case in your own code\")\n    if _R2PY_UNVERIFIED_CLASSES_r_substr_ctl and bound:\n        first = next(iter(bound.values()))\n        items = _r2py_items_r_substr_ctl(first)\n        if \"vector input\" in _R2PY_UNVERIFIED_CLASSES_r_substr_ctl and items is not None and len(items) > 1:\n            raise NotImplementedError(\n                f\"r_substr_ctl: input of length {len(items)} is not verified against R (verified for single values); \"\n                \"loop over the elements or write this case yourself\")\n        vals = items if items is not None else [first]\n        if \"NA input\" in _R2PY_UNVERIFIED_CLASSES_r_substr_ctl and any(\n                x is None or (isinstance(x, float) and math.isnan(x)) for x in vals):\n            raise NotImplementedError(f\"r_substr_ctl: input containing NA is not verified against R; handle NA yourself\")\n    return _r2py_impl_r_substr_ctl(*args, **kwargs)\n",
+ "n_failures": 13,
+ "unverified": {
+  "carry": [
+   "True"
+  ],
+  "terminate": [
+   "False"
+  ],
+  "ctl": [
+   "sgr"
+  ],
+  "warn": [
+   "False"
+  ],
+  "normalize": [
+   "True"
+  ]
+ },
+ "unverified_classes": [
+  "vector input"
+ ],
+ "tag": "on demand"
+}

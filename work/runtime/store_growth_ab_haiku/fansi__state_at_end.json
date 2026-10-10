@@ -1,0 +1,31 @@
+{
+ "function": "state_at_end",
+ "package": "fansi",
+ "status": "passed_restricted",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 22,
+ "n_core": 22,
+ "n_mined": 4,
+ "attempt": 8,
+ "passed": 19,
+ "total": 22,
+ "core_passed": 19,
+ "core_total": 22,
+ "code": "import numpy as np\nimport re\n\ndef _r2py_impl_r_state_at_end(x, warn=True, term_cap=\"auto\", normalize=False, carry=False):\n    \"\"\"\n    Determine ANSI SGR state at end of each string in character vector.\n    \n    Parameters:\n    x: string or numpy array of strings (may contain NaN for NA)\n    warn: whether to warn about issues\n    term_cap: terminal capability\n    normalize: whether to normalize SGR sequences\n    carry: whether to carry state from one element to the next\n    \n    Returns:\n    numpy array of strings representing SGR codes at end of each input string\n    \"\"\"\n    \n    # Handle scalar input\n    if isinstance(x, str):\n        x = np.array([x], dtype=object)\n    elif not isinstance(x, np.ndarray):\n        x = np.array(x, dtype=object)\n    else:\n        # Ensure we're working with object dtype\n        x = x.astype(object)\n    \n    result = np.empty(len(x), dtype=object)\n    \n    # Current state as we process strings\n    current_state = set()  # Set of active SGR codes\n    \n    # Pattern to match ANSI SGR sequences: ESC [ ... m\n    sgr_pattern = re.compile(r'\\x1b\\[([0-9;]*)m')\n    \n    for i, s in enumerate(x):\n        # Handle NaN/None (NA values)\n        if s is None or (isinstance(s, float) and np.isnan(s)):\n            result[i] = None\n            continue\n        \n        if not isinstance(s, str):\n            s = str(s)\n        \n        # Find all SGR codes in this string\n        matches = list(sgr_pattern.finditer(s))\n        \n        if not matches:\n            # No SGR codes, state stays same (or empty if carry=False)\n            if carry:\n                result[i] = _sgr_from_state(current_state)\n            else:\n                result[i] = \"\"\n        else:\n            if carry:\n                # Update state with all codes found in this string\n                for match in matches:\n                    codes_str = match.group(1)\n                    _update_state(current_state, codes_str)\n                result[i] = _sgr_from_state(current_state)\n            else:\n                # Just get the state from all SGR codes in this string\n                state = set()\n                for match in matches:\n                    codes_str = match.group(1)\n                    _update_state(state, codes_str)\n                result[i] = _sgr_from_state(state)\n    \n    return result\n\n\ndef _update_state(state, codes_str):\n    \"\"\"Update graphics state with new SGR codes.\"\"\"\n    if not codes_str:\n        # Empty codes mean reset\n        state.clear()\n        return\n    \n    codes = []\n    for c in codes_str.split(';'):\n        if c:\n            codes.append(int(c))\n    \n    for code in codes:\n        if code == 0:\n            # Reset all\n            state.clear()\n        elif code == 1:\n            state.add(1)  # Bold\n        elif code == 4:\n            state.add(4)  # Underline\n        elif code == 7:\n            state.add(7)  # Reverse\n        elif 30 <= code <= 37:\n            # Foreground colors - remove old foreground, add new\n            for fg in range(30, 38):\n                state.discard(fg)\n            state.add(code)\n        elif 40 <= code <= 47:\n            # Background colors - remove old background, add new\n            for bg in range(40, 48):\n                state.discard(bg)\n            state.add(code)\n\n\ndef _sgr_from_state(state):\n    \"\"\"Convert state set back to SGR escape sequence.\"\"\"\n    if not state:\n        return \"\"\n    \n    codes = sorted(list(state))\n    return f\"\\x1b[{';'.join(str(c) for c in codes)}m\"\n\n\n_R2PY_UNVERIFIED_r_state_at_end = {'carry': ['True'], 'normalize': ['True'], 'warn': ['False']}\n_R2PY_UNVERIFIED_CLASSES_r_state_at_end = []\n\n\ndef _r2py_items_r_state_at_end(v):\n    if isinstance(v, (str, bytes, dict)) or not hasattr(v, \"__len__\"):\n        return None\n    try:\n        return list(v)\n    except TypeError:\n        return None\n\n\ndef r_state_at_end(*args, **kwargs):\n    \"\"\"r_state_at_end reproduces R on every tested ordinary call except the option values in _R2PY_UNVERIFIED_r_state_at_end\n    and the input classes in _R2PY_UNVERIFIED_CLASSES_r_state_at_end; for those it refuses rather than guess.\"\"\"\n    import inspect\n    import math\n    try:\n        bound = inspect.signature(_r2py_impl_r_state_at_end).bind(*args, **kwargs).arguments\n    except TypeError:\n        bound = kwargs\n    for name, bad in _R2PY_UNVERIFIED_r_state_at_end.items():\n        v = bound.get(name)\n        if isinstance(v, (list, tuple)) and len(v) == 1:\n            v = v[0]\n        if v is not None and str(v) in bad:\n            raise NotImplementedError(\n                f\"r_state_at_end: {name}={v!r} is not verified against R; handle this case in your own code\")\n    if _R2PY_UNVERIFIED_CLASSES_r_state_at_end and bound:\n        first = next(iter(bound.values()))\n        items = _r2py_items_r_state_at_end(first)\n        if \"vector input\" in _R2PY_UNVERIFIED_CLASSES_r_state_at_end and items is not None and len(items) > 1:\n            raise NotImplementedError(\n                f\"r_state_at_end: input of length {len(items)} is not verified against R (verified for single values); \"\n                \"loop over the elements or write this case yourself\")\n        vals = items if items is not None else [first]\n        if \"NA input\" in _R2PY_UNVERIFIED_CLASSES_r_state_at_end and any(\n                x is None or (isinstance(x, float) and math.isnan(x)) for x in vals):\n            raise NotImplementedError(f\"r_state_at_end: input containing NA is not verified against R; handle NA yourself\")\n    return _r2py_impl_r_state_at_end(*args, **kwargs)\n",
+ "n_failures": 3,
+ "unverified": {
+  "normalize": [
+   "True"
+  ],
+  "carry": [
+   "True"
+  ],
+  "warn": [
+   "False"
+  ]
+ },
+ "unverified_classes": [],
+ "tag": "on demand"
+}

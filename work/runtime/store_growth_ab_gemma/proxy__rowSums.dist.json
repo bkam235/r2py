@@ -1,0 +1,21 @@
+{
+ "function": "rowSums.dist",
+ "package": "proxy",
+ "status": "passed",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 19,
+ "n_core": 19,
+ "n_mined": 2,
+ "attempt": 2,
+ "passed": 19,
+ "total": 19,
+ "core_passed": 19,
+ "core_total": 19,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_rowSums_dist(x, na_rm=False):\n    \"\"\"\n    Python reproduction of proxy::rowSums.dist.\n    \n    In R's proxy package, 'dist' objects can be presented as vectors or\n    objects that may arrive as pandas Series or numpy arrays. \n    The failing cases suggest x might be passed as a scalar or a 0-d array\n    if the distance vector is empty or if the harness passes it as a specific\n    object. However, the primary issue 'TypeError: len() of unsized object' \n    indicates that x is sometimes a numpy scalar or an object that doesn't \n    support len().\n    \"\"\"\n    # Ensure x is a numpy array.\n    # If x is a scalar (which happens if distance vector is empty/singular), \n    # np.atleast_1d ensures we can call len() and iterate.\n    x_arr = np.atleast_1d(np.asanyarray(x, dtype=float))\n    \n    # Calculate the number of observations n from the length of the \n    # lower triangle vector: L = n * (n - 1) / 2\n    # n^2 - n - 2L = 0 => n = (1 + sqrt(1 + 8L)) / 2\n    L = len(x_arr)\n    \n    # Handle cases where L might be 0 (e.g., distance matrix of 1 element)\n    if L == 0:\n        # If the distance object represents a 1x1 matrix, rowSum is 0.\n        # However, standard proxy::dist(matrix(1:4, 2)) results in L=1 (for 2 rows).\n        # We need to determine n.\n        # Based on typical R behavior for dist, if L is 0, n is likely 1.\n        n = 1\n    else:\n        n = int(round((1 + np.sqrt(1 + 8 * L)) / 2))\n    \n    # Reconstruct the distance matrix (symmetric, diagonal=0)\n    dist_matrix = np.zeros((n, n))\n    \n    # The proxy::dist object stores elements in the order:\n    # (1,2), (1,3) ... (1,n), (2,3), (2,4) ... (2,n), ..., (n-1, n)\n    curr = 0\n    for i in range(n):\n        for j in range(i + 1, n):\n            if curr < L:\n                val = x_arr[curr]\n                dist_matrix[i, j] = val\n                dist_matrix[j, i] = val\n                curr += 1\n            \n    # R's rowSums handling of NA\n    if na_rm:\n        # np.nansum treats NaN as 0.\n        result = np.nansum(dist_matrix, axis=1)\n    else:\n        # np.sum with NaNs returns NaN.\n        result = np.sum(dist_matrix, axis=1)\n        \n    return result\n",
+ "n_failures": 0,
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "on demand"
+}

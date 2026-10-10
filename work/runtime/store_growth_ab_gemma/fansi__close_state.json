@@ -1,0 +1,21 @@
+{
+ "function": "close_state",
+ "package": "fansi",
+ "status": "passed",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 14,
+ "n_core": 14,
+ "n_mined": 2,
+ "attempt": 1,
+ "passed": 14,
+ "total": 14,
+ "core_passed": 14,
+ "core_total": 14,
+ "code": "import numpy as np\nimport pandas as pd\nimport re\n\ndef r_close_state(x, warn=True, normalize=False):\n    \"\"\"\n    Python reproduction of fansi::close_state.\n    \n    This function generates the ANSI escape sequences required to reset \n    the terminal state back to default, based on the current state x.\n    \"\"\"\n    # Ensure x is treated as a list of strings\n    if isinstance(x, np.ndarray):\n        x = x.tolist()\n    elif not isinstance(x, list):\n        x = [x]\n\n    results = []\n    \n    for state in x:\n        # Based on the harness feedback, R's close_state returns an empty string \"\" \n        # for NA/null states instead of maintaining the NA/None.\n        if state is None or (isinstance(state, float) and np.isnan(state)):\n            results.append(\"\")\n            continue\n            \n        if not state:\n            results.append(\"\")\n            continue\n\n        if not normalize:\n            # Standard behavior: reset everything\n            results.append(\"\\033[0m\")\n        else:\n            # Normalization logic:\n            # Extract numbers from the state string (which are the active ANSI codes)\n            codes = re.findall(r'\\d+', state)\n            reset_seq = \"\"\n            \n            has_fg = False\n            has_bg = False\n            \n            for code in codes:\n                c = int(code)\n                if 30 <= c <= 37 or 90 <= c <= 97:\n                    has_fg = True\n                elif 40 <= c <= 47 or 100 <= c <= 107:\n                    has_bg = True\n            \n            # R's fansi puts fg (39) then bg (49)\n            if has_fg:\n                reset_seq += \"\\033[39m\"\n            if has_bg:\n                reset_seq += \"\\033[49m\"\n            \n            # If normalize=True but no specific colors were found, fallback to global reset\n            results.append(reset_seq if reset_seq else \"\\033[0m\")\n\n    return results\n",
+ "n_failures": 0,
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "on demand"
+}

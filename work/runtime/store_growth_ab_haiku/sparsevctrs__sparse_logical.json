@@ -1,0 +1,21 @@
+{
+ "function": "sparse_logical",
+ "package": "sparsevctrs",
+ "status": "passed",
+ "rounds": 1,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 8,
+ "n_core": 8,
+ "n_mined": 2,
+ "attempt": 1,
+ "passed": 8,
+ "total": 8,
+ "core_passed": 8,
+ "core_total": 8,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_sparse_logical(values, positions, length, default=False):\n    \"\"\"\n    Create a sparse logical vector.\n    \n    Parameters:\n    - values: numpy array of logical values (with NaN for NA)\n    - positions: numpy array of positions (1-based indexing)\n    - length: integer length of the result\n    - default: logical default value (False or True)\n    \n    Returns:\n    - numpy array of logical values with NaN for NA\n    \"\"\"\n    \n    # Validate default is bool\n    if not isinstance(default, (bool, np.bool_)):\n        raise TypeError(\"default must be logical\")\n    \n    # Validate length is integer\n    if not isinstance(length, (int, np.integer)):\n        length = int(length)\n    \n    # Validate length is positive\n    if length < 0:\n        raise ValueError(\"length must be non-negative\")\n    \n    # Convert inputs to numpy arrays\n    if values is None or (isinstance(values, np.ndarray) and values.size == 0):\n        values = np.array([], dtype=float)\n    else:\n        values = np.asarray(values, dtype=float)\n    \n    if positions is None or (isinstance(positions, np.ndarray) and positions.size == 0):\n        positions = np.array([], dtype=int)\n    else:\n        positions = np.asarray(positions, dtype=int)\n    \n    # Validate values are logical (boolean or NaN)\n    if values.size > 0:\n        valid_mask = np.isnan(values) | (values == 0.0) | (values == 1.0)\n        if not np.all(valid_mask):\n            raise ValueError(\"values must be logical (TRUE/FALSE/NA)\")\n    \n    # Validate positions\n    if positions.size != values.size:\n        raise ValueError(\"positions and values must have the same length\")\n    \n    if positions.size > 0:\n        if np.any(positions < 1) or np.any(positions > length):\n            raise ValueError(f\"positions must be between 1 and {length}\")\n    \n    # Check that values don't equal default (except for NA)\n    if values.size > 0:\n        # Check non-NA values\n        non_na_mask = ~np.isnan(values)\n        non_na_values = values[non_na_mask]\n        default_as_float = float(default)\n        \n        if np.any(non_na_values == default_as_float):\n            offenders = np.where((values == default_as_float) & ~np.isnan(values))[0] + 1  # 1-based\n            raise ValueError(f\"values value must not be equal to the default {default}. {default} values at index: {offenders.tolist()}\")\n    \n    # Create result array filled with default value\n    result = np.full(length, float(default), dtype=float)\n    \n    # Fill in the sparse values at specified positions (convert from 1-based to 0-based)\n    if positions.size > 0:\n        result[positions - 1] = values\n    \n    return result\n",
+ "n_failures": 0,
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "on demand"
+}
