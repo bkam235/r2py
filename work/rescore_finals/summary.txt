@@ -1,0 +1,46 @@
+100 runs re-scored, 1 errors, 17 model calls
+aggregate vs logged: mean |diff| 0.016, 5 runs differ by > 0.05
+entities below 0.9: {'partial': 303, 'not executed': 34, 'zero': 12}
+loss by (band, dimension), share of all dimension loss:
+  partial       data_output           15.0%
+  partial       type_match            15.0%
+  partial       variable_output       15.0%
+  partial       side_effects          14.4%
+  not executed  control_flow_match     4.9%
+  not executed  data_output            4.9%
+  not executed  type_match             4.9%
+  not executed  variable_output        4.9%
+  not executed  callable_output        3.6%
+  partial       control_flow_match     3.5%
+  partial       callable_output        3.5%
+  zero          callable_output        1.7%
+  zero          control_flow_match     1.7%
+  zero          data_output            1.7%
+  zero          type_match             1.7%
+  zero          variable_output        1.7%
+  not executed  side_effects           1.2%
+  zero          side_effects           0.5%
+worst dimension per entity:
+  partial       side_effects         210
+  partial       data_output          84
+  not executed  callable_output      25
+  zero          callable_output      12
+  not executed  control_flow_match   9
+  partial       callable_output      9
+feedback items by effect class:
+  partial       stdout               284
+  partial       warnings             147
+  partial       graphics             126
+  partial       env                  101
+  partial       data                 82
+  partial       syntax               40
+  not executed  stdout               32
+  not executed  data                 23
+  not executed  syntax               23
+  not executed  warnings             20
+  not executed  graphics             20
+  partial       files                15
+  zero          stdout               12
+  zero          graphics             11
+  zero          warnings             9
+  zero          data                 9

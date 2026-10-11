@@ -2039,3 +2039,45 @@ and 1,111 steps; no new model calls.
 - **Reading:** the remaining loss is mostly *nearly right* entities that 3 independent rewrites fail to finish, not
   missing knowledge or missing time. The trajectories do not say which score dimension the partial entities lose
   (value, type, shape, printing). That needs the final sources re-verified, the next measurement.
+
+**C1 step 1b - the final translations re-scored per dimension (2026-10-11).** `scripts/rescore_finals.py`: the
+best accepted source of each of the 100 `rewrite_w3` runs (or the start state, for the 20 that never improved),
+verified again with the replay's settings.
+- **Fidelity:** re-scored aggregates match the logged ones (mean |diff| 0.016; 5 runs differ by > 0.05). 1 error.
+- **Model calls:** 17 rows used a sentinel-mapping model call.
+
+Remaining loss, 178.6 entity units, by kind:
+
+| Kind | Share |
+|---|---|
+| Values wrong (data, type, variable), side effects fine | 34% |
+| Side effects only (values all ≥ 0.9) | 24% |
+| Both | 20% |
+| Not executed | 16% |
+
+What the side-effect-only entities get wrong:
+- **Mostly printed output:** right values, wrong print format. Examples: R prints a tibble and the Python prints a
+  pandas frame (`broom` `tidy`, stdout 0.19); clock's zoned time printed differently (0.44); highr's highlight class
+  `def` vs `kwc` (0.74).
+- A few graphics figure counts and data details.
+
+**A feedback bug found on the way.** Stage 1 sinks R's output into per-entity checkpoints, so the whole-script R
+stdout the verifier compares is empty: in 42 of 59 replay scripts, R prints per entity but the script-level R
+stdout holds nothing.
+
+Scoring is not affected: entity scores use the per-entity bundles. What the agent reads is:
+1. The script-level comparison "R printed '' but Python printed <its correct output>", broadcast as a feedback item
+   to every entity. `format_score_report` shows the first 10 feedback items. In the broom final state all 10 are
+   this false claim, attached to unrelated entities (`set.seed`, `import_dplyr` ...), and they crowd out real
+   feedback.
+2. The per-entity stdout comparisons, which show the right R and Python text but carry the script-level score
+   (0.000 instead of the entity's 0.191).
+
+So for the 24% side-effects-only loss, the agent is told both "R printed this tibble" and, ten times, "R printed
+nothing". This is the same class of defect as the sidecar bug: the score is right, the feedback is corrupted.
+
+**Step 2 follows from this.**
+1. Fix the feedback: build the script-level R stdout from the per-entity outputs, or drop the broadcast when
+   per-entity bundles exist, and give per-entity comparisons their own score. Scoring is unchanged, so replays stay
+   comparable.
+2. Replay the fix against the baseline on the same frozen states.
