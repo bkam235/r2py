@@ -2252,3 +2252,27 @@ What the agent gets for an unmarked entity:
   Only a whole-file rewrite can reach it, and nothing tells the agent where the code for it should go.
 
 The size of the model re-mapping loss needs those 38 mappings re-run, about 38 model calls, not done yet.
+
+**Follow-up: system prompt vs content, a 2x2 registered before the run (2026-10-11).** Same 21 cases, Gemma, 5
+samples. All four cells run together into `work/prompt_load_sys2x2/`; A2 and A5 are re-run, not reused.
+
+| | agent system prompt (5,003 chars) | one-entity system prompt (929 chars) |
+|---|---|---|
+| full agent turn | A2 (median total 17.0k) | B1 (12.9k) |
+| this entity only | B2 (7.0k) | A5 (2.9k) |
+
+Every cell asks for a one-entity answer and ends with the same guidance block.
+
+Outcomes: canary followed, guidance adopted (as before), entity score change.
+
+Main effects on adoption, each averaged over the other factor:
+- system effect = short - agent;
+- content effect = local - full;
+- 95% interval by bootstrap over cases.
+
+A factor **matters** if its effect is >= 10 points and its interval excludes 0. The canary is reported the same
+way.
+- System matters, content does not: slim the agent system prompt. This is cheap and applies to every package.
+- Content matters, system does not: give the loop entity-local context.
+- Both: both.
+- Neither: the A2/A5 gap of the main run was not one of these two factors.
