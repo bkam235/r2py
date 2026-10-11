@@ -2305,3 +2305,40 @@ So the overload hypothesis explains instruction neglect, not the failure to use 
 - **trust:** Gemma prefers its own version; test framing with verification evidence;
 - **usability:** the guidance cannot work in that position (literal pastes; adoption without gain); look at the
   adopted-but-unchanged cases.
+
+**Adopted but no gain - inspected (2026-10-11), both prompt-load runs, 1,144 verified calls, no model calls.**
+
+The premise was wrong in the pooled form. **246 of 383 adoptions raised the entity's score.** The 137 that did not
+share one feature: **every one ended with the program crashing**, and they come from 4 entities in 3 scripts
+(clock, hms, pROC).
+
+Split by whether the start state runs:
+
+| start state | calls | adopted -> gain (mean) | not adopted -> gain (mean) |
+|---|---|---|---|
+| crashes (7 cases: clock, hms, pROC) | 384 | 26% (-0.065) | 20% (+0.040) |
+| runs (14 cases) | 760 | **98% (+0.257)** | 38% (-0.082) |
+
+Within the same case (10 running cases with both outcomes), adopted calls beat non-adopted ones in **10 of 10**,
+by a mean of +0.53.
+
+*Caveat.* For print cases, "adopted" means the entity's stdout matches R (>= 0.95), which is part of the score, so
+some of that gain holds by definition. Only one snippet case in a running state has both outcomes (tidyr
+`tribble`: +0.15 vs +0.08).
+
+Why the crashing cases cannot gain, re-verified with the adopted code spliced in:
+1. **The program already crashes before the target entity** (clock at `info`, hms at `new_hms`, pROC
+   unattributed). No change to the target can score until that crash is fixed: the crash cliff again.
+2. **The donor snippet is not self-contained.** It calls helpers that existed in the donor's program and not in
+   this one (`year_month_day`, `format_hms`), so the crash moves *into* the target entity.
+3. **Answer-format slips.** One replace_entity answer carried the whole file, data shim included. One print answer
+   pasted R's output as literals.
+
+**Reading.**
+- When the program runs and Gemma uses the guidance, the guidance works.
+- Use depends heavily on the case. In the running print cases it ranges from 1 of 55 calls (broom `tidy`, a
+  tibble print) to 52 of 55 (purrr `str`). That looks like how hard the requested output is to produce rather than
+  distrust.
+- The two levers this points to are general, not package-specific:
+  - fix crashes before guidance (an upstream crash nullifies everything after it);
+  - make guidance self-contained (donor code must carry or name its helpers).
