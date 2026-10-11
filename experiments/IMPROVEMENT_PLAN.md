@@ -2108,3 +2108,21 @@ Secondary:
 - the side-effects-only share of remaining loss (`rescore_finals.py` on the new finals).
 
 Runs with provider failures in the log are reported and excluded.
+
+**Result (2026-10-11): correct feedback, no measurable effect.** 60 runs, 0 errors, no provider failures.
+- **Primary:** per-state mean final score 0.767 fixed against 0.747 baseline. Paired diff +0.020, SE 0.038,
+  better/worse/tied 5/4/11, Wilcoxon p = 0.58.
+- **Large swings are noise:** hms +0.60 and clock -0.41 are states that start crashed (0.0) and either get unstuck
+  or not, with both outcomes in both arms across samples.
+- **Secondary:**
+  - P(final >= 0.9) 0.43 against 0.40.
+  - Stalled share of branches 0.59 against 0.64.
+- **Print-only loss did not move:** 0.45 against 0.48 entity units per run; 22% of remaining loss in both. The
+  re-scored finals are in `work/rescore_finals_feedback/`.
+
+The fix stays: the feedback was false, and the change costs nothing.
+
+Telling the agent the truth about print format does not make it fix print format. This is the same pattern as
+every prompt-side measurement before: information in the prompt barely changes what the model writes; code the
+harness owns and verifies does. The intra-script lever for the side-effect loss is therefore not feedback but a
+harness-owned, R-verified way to print, analogous to the runtime store.
