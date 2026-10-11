@@ -2342,3 +2342,27 @@ Why the crashing cases cannot gain, re-verified with the adopted code spliced in
 - The two levers this points to are general, not package-specific:
   - fix crashes before guidance (an upstream crash nullifies everything after it);
   - make guidance self-contained (donor code must carry or name its helpers).
+
+**Three fixes after the adopted-but-no-gain finding (2026-10-11).** All three are tested; the full suite passes
+except the known `test_stage2` locale failure.
+
+1. **Crash first, in every policy** (`r2py/harness/agent.py`).
+   - Before: the crash culprit was targeted only with `entity_repair=True`. `rewrite_w3` runs without it, and even
+     with it the targeting was skipped at step 1 on a crashing start (score 0.0).
+   - Now, while the best program crashes, each step repairs the traceback's culprit (`_pick_crash_entity`: the
+     outermost frame first; without attribution, the first entity that did not run).
+   - When the culprit cannot be replaced as one block (no marker, several spans) or has had 2 tries, the step is
+     a full rewrite with a pinned "Fix the crash first" note naming the entity and the error
+     (`_crash_first_note`).
+   - Fixing one crash lets the program reach the next, which becomes the next target. `objective.search_key`
+     already accepts a crash that moves later as progress.
+   - Programs that run are left to the policy.
+2. **Self-contained guidance** (`r2py/stage2/stitch.py: self_contained`). A snippet is preceded by the top-level
+   functions, classes and imports of its program that it uses, transitively. Script variables are left out. Used
+   by the library harvest (`_extract_entity_snippet`) and the donor snippets of the probe rigs
+   (`substitution_probe.donors`).
+3. **Crash-aware status** (`objective.entity_status`): `ran` / `crashed` / `blocked` / `not_run`.
+   - Carried by the held-out entity records (`status`), `rescore_finals.py` and `prompt_load.py` (`start_runs`,
+     `status_before`, `status_after`).
+   - `prompt_load` summaries add a table restricted to cases whose starting program runs. A blocked entity's
+     score is not evidence about what was done to it.

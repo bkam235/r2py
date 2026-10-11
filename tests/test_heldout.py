@@ -158,14 +158,15 @@ class TestEntityRecords(unittest.TestCase):
         })
         es = lambda ok: SimpleNamespace(executed_ok=ok, active_dims=frozenset({"d"}), d=0.8)
         report = SimpleNamespace(by_entity={"e1": es(True), "e2": es(True), "e3": es(False)},
-                                 uncomparable=["e3"])  # e4 not scored
+                                 uncomparable=["e3"], py_exit_code=1, crash_entities=["e3"])  # e4 not scored
         recs = {r["id"]: r for r in ho._entity_records(script_map, report)}
         self.assertEqual(set(recs), {"e1", "e3"})  # imports and unscored entities left out
         self.assertEqual(recs["e1"], {"id": "e1", "name": "x", "key": "base.paste",
                                       "calls": ["base.paste"], "score": 0.8,  # c() is not informative
                                       "active_dims": ["d"], "dim_scores": {"d": 0.8},
-                                      "executed_ok": True, "uncomparable": False})
+                                      "executed_ok": True, "status": "ran", "uncomparable": False})
         self.assertTrue(recs["e3"]["uncomparable"])
+        self.assertEqual(recs["e3"]["status"], "crashed")
         self.assertEqual((recs["e3"]["key"], recs["e3"]["score"]), ("dplyr.mutate", 0.0))
 
     def test_no_records_without_a_report(self):

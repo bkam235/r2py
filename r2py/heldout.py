@@ -315,6 +315,7 @@ def _entity_records(script_map, report) -> list[dict]:
     The analysis decides from these, and the trained library alone, which entities the
     translator could have been told something about.
     """
+    from r2py.harness.objective import entity_status
     from r2py.library.pattern import correction_functions, pattern_id, pattern_key
     from r2py.types import EntityKind
 
@@ -329,6 +330,8 @@ def _entity_records(script_map, report) -> list[dict]:
             "active_dims": dims,
             "dim_scores": {d: getattr(es, d) for d in dims},
             "executed_ok": es.executed_ok,
+            # blocked = never reached because the program crashed earlier: not evidence about this entity
+            "status": entity_status(report, eid),
             "uncomparable": eid in report.uncomparable,
             "id": eid, "name": entity.name,
             "key": pattern_id(*key) if key else None,

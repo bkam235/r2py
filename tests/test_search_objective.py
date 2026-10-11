@@ -74,3 +74,23 @@ class TestLoop(unittest.TestCase):
         worse = crash(es("a", False, 0.0), es("b", False, 0.0))
         out, _ = self.run_loop(start, [worse, worse, worse])
         self.assertIsNone(out)                         # nothing better was found
+
+
+class TestEntityStatus(unittest.TestCase):
+    """Crash-aware status for analyses (2026-10-11): an entity that never ran because an earlier entity
+    crashed says nothing about what was done to it - the prompt-load runs read 137 such outcomes as
+    'guidance adopted, no gain'."""
+
+    def test_statuses(self):
+        rep = crash(es("a", True, 1.0), es("b", False, 0.0), es("c", False, 0.0))
+        rep.crash_entities = ["b"]
+        self.assertEqual([objective.entity_status(rep, e) for e in "abc"], ["ran", "crashed", "blocked"])
+
+    def test_without_attribution_the_first_unrun_entity_is_the_crash_site(self):
+        rep = crash(es("a", True, 1.0), es("b", False, 0.0), es("c", False, 0.0))
+        self.assertEqual([objective.entity_status(rep, e) for e in "abc"], ["ran", "crashed", "blocked"])
+
+    def test_a_program_that_runs_blocks_nothing(self):
+        rep = ran(0.5, es("a", True, 1.0), es("b", False, 0.0))
+        self.assertEqual(objective.entity_status(rep, "b"), "not_run")
+        self.assertEqual(objective.entity_status(rep, "zz"), "unknown")

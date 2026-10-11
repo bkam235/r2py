@@ -228,6 +228,7 @@ def run_one(task: dict) -> dict:
     from r2py.stage2 import llm
     from r2py.stage2.sentinel_mapper import ranges_from_sentinels
     from r2py.stage2.stitch import show_data_shim, splice_entity
+    from r2py.harness.objective import entity_status
     from r2py.stage4.comparators.stdout import StdoutComparator
     import replay
 
@@ -253,6 +254,8 @@ def run_one(task: dict) -> dict:
             llm.call = counted
             base = tools.verify(source)
             row["before"] = round(ho.entity_score(base.by_entity[eid]), 4)
+            row["start_runs"] = base.py_exit_code == 0          # a crashing start blocks what follows the crash
+            row["status_before"] = entity_status(base, eid)
             r_out = _r_stdout(sm, eid)
             py_eb = (base.py_entity_bundles or {}).get(eid)
             if case["kind"] == "print":
@@ -282,6 +285,7 @@ def run_one(task: dict) -> dict:
         rep = tools.verify(new_source)
         after = rep.by_entity.get(eid)
         row["after"] = round(ho.entity_score(after), 4) if after else None
+        row["status_after"] = entity_status(rep, eid)
         row["aggregate_before"], row["aggregate_after"] = round(base.aggregate, 4), round(rep.aggregate, 4)
         row["exit_after"] = rep.py_exit_code
         if case["kind"] == "snippet":
@@ -342,7 +346,18 @@ def run(samples: int, workers: int, only_arms: list[str] | None = None) -> None:
 def summary() -> str:
     rows = [json.loads(l) for l in (OUT / "results.jsonl").open(encoding="utf-8")]
     rows = [r for r in rows if r.get("outcome") != "provider_unavailable"]
-    lines = [f"{len(rows)} calls (provider outages excluded)"]
+    text = _table(rows, f"{len(rows)} calls (provider outages excluded)")
+    if any("start_runs" in r for r in rows):
+        # An upstream crash nullifies whatever is done to the entity: report the cases that can show an effect.
+        runs = [r for r in rows if r.get("start_runs")]
+        text += "\n\n" + _table(runs, f"cases whose starting program runs: {len(runs)} calls; outcomes blocked "
+                                       f"by an earlier crash afterwards: "
+                                       f"{sum(r.get('status_after') == 'blocked' for r in runs)}")
+    return text
+
+
+def _table(rows: list[dict], title: str) -> str:
+    lines = [title]
     by = defaultdict(list)
     for r in rows:
         by[r["arm"]].append(r)

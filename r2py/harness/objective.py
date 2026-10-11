@@ -19,6 +19,27 @@ def entity_score(es) -> float:
     return sum(dims) / len(dims) if dims else 1.0
 
 
+def entity_status(report, eid: str) -> str:
+    """``ran`` | ``crashed`` (the crash happened here) | ``blocked`` (never reached: the program crashed
+    earlier) | ``not_run`` (the program ran, the entity did not) | ``unknown`` (not scored).
+
+    For analyses: a blocked entity's score says nothing about what was done to it. The prompt-load runs
+    read 137 such outcomes as "guidance adopted, no gain" (2026-10-11). Without traceback attribution
+    the first entity, in script order, that did not run is taken as the crash site.
+    """
+    es = report.by_entity.get(eid)
+    if es is None:
+        return "unknown"
+    if es.executed_ok:
+        return "ran"
+    if report.py_exit_code == 0:
+        return "not_run"
+    culprits = list(getattr(report, "crash_entities", None) or [])
+    if not culprits:
+        culprits = [next(e for e, s in report.by_entity.items() if not s.executed_ok)]
+    return "crashed" if eid in culprits else "blocked"
+
+
 def search_key(report) -> tuple[int, float]:
     """``(runs_to_completion, shaped)``, compared lexicographically.
 

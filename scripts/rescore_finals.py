@@ -70,6 +70,7 @@ def one(task: dict) -> dict:
     from dotenv import load_dotenv
     load_dotenv(ROOT / ".env", override=True)
     from r2py import heldout as ho
+    from r2py.harness.objective import entity_status
     from r2py.harness.tools import HarnessTools
     from r2py.library import PatternLibrary
     from r2py.stage2 import llm
@@ -100,7 +101,8 @@ def one(task: dict) -> dict:
             ents.append({k: rec[k] for k in ("id", "name", "active_dims", "dim_scores", "executed_ok", "uncomparable")}
                         | {"score": (report.by_entity[rec["id"]].aggregate
                                      if hasattr(report.by_entity[rec["id"]], "aggregate") else None),
-                           "logged": task["logged_per_entity"].get(rec["id"]), "feedback": fb})
+                           "logged": task["logged_per_entity"].get(rec["id"]), "feedback": fb,
+                           "status": entity_status(report, rec["id"])})
         row.update(aggregate=round(report.aggregate, 4), py_exit=report.py_exit_code, entities=ents)
     except Exception as exc:
         row["error"] = f"{type(exc).__name__}: {exc}"[:300]
