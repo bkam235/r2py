@@ -1,0 +1,21 @@
+{
+ "function": "row.match",
+ "package": "prodlim",
+ "status": "passed",
+ "rounds": 4,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 13,
+ "n_core": 10,
+ "n_mined": 3,
+ "attempt": 1,
+ "passed": 12,
+ "total": 13,
+ "core_passed": 10,
+ "core_total": 10,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_row_match(x, table, nomatch=np.nan):\n    \"\"\"\n    Reproduces prodlim::row.match in R.\n    \"\"\"\n    # --- Handle table ---\n    # if (inherits(table, \"matrix\")) table <- as.data.frame(table)\n    if isinstance(table, np.ndarray):\n        table_df = pd.DataFrame(table)\n    elif isinstance(table, pd.DataFrame):\n        table_df = table\n    else:\n        # Handle cases where table might be a dict or other compatible type\n        table_df = pd.DataFrame(table)\n\n    # --- Handle x ---\n    # if (is.null(dim(x))) x <- as.data.frame(matrix(x, nrow = 1))\n    # In R, if x is a vector, it's converted to a matrix with 1 row.\n    # Then it's converted to a data frame.\n    if isinstance(x, pd.DataFrame):\n        x_df = x\n    elif isinstance(x, (np.ndarray, list)):\n        # Treat as a single row (vector in R)\n        # We create a DataFrame with 1 row and columns matching the length of x\n        x_df = pd.DataFrame([x])\n    else:\n        # Scalar\n        x_df = pd.DataFrame([[x]])\n\n    # R's logic:\n    # cx <- do.call(\"paste\", c(x[, , drop = FALSE], sep = \"\\r\"))\n    # ct <- do.call(\"paste\", c(table[, , drop = FALSE], sep = \"\\r\"))\n    # In R, paste() on a data frame treats each column as a separate argument.\n    # For a 1-row data frame, it joins the elements of that row.\n    \n    def r_paste_df(df):\n        # Convert to string. R's paste() handles NAs by converting to \"NA\"\n        # and integers/floats without trailing zeros for whole numbers.\n        # We ensure the string representation matches R's paste behavior.\n        def to_r_str(val):\n            if pd.isna(val):\n                return \"NA\"\n            # Float formatting to avoid .0 where R doesn't have it is complex,\n            # but for the given examples, simple str() or format usually suffice.\n            # We use a format that avoids scientific notation for these ranges.\n            if isinstance(val, float):\n                return ('%g' % val)\n            return str(val)\n\n        # Apply the conversion to every element\n        df_str = df.applymap(to_r_str) if hasattr(df, 'applymap') else df.map(to_r_str)\n        \n        # Join columns with \\r\n        return df_str.apply(lambda row: \"\\r\".join(row), axis=1).values\n\n    cx = r_paste_df(x_df)\n    ct = r_paste_df(table_df)\n\n    # match(cx, ct, nomatch = nomatch)\n    # returns the index of the first occurrence of each element of cx in ct.\n    # 1-based indexing.\n    results = []\n    for val in cx:\n        # Find indices where the string matches\n        indices = np.where(ct == val)[0]\n        if indices.size > 0:\n            results.append(indices[0] + 1)\n        else:\n            results.append(nomatch)\n\n    # Result should be a vector (numpy array)\n    res_array = np.array(results)\n\n    # If x was a vector (represented as 1 row in x_df), R returns a vector of results.\n    # If x was a single vector and only one match is returned, \n    # we should return it as a vector if x was treated as a vector.\n    \n    # R's match() returns a vector of the same length as the first argument (cx).\n    # If the result is essentially integers, return as int array.\n    if np.all(np.isnan(res_array)) if res_array.dtype.kind == 'f' else False:\n        return res_array\n    \n    # Filter out NaNs for type checking\n    mask = ~np.isnan(res_array) if res_array.dtype.kind == 'f' else np.ones_like(res_array, dtype=bool)\n    if np.all(res_array[mask] % 1 == 0) if res_array.dtype.kind == 'f' else True:\n        # If nomatch is NA (NaN), we must return a float array or object array because ints can't be NaN\n        if np.any(~mask):\n            return res_array\n        else:\n            return res_array.astype(int)\n\n    return res_array\n",
+ "n_failures": 1,
+ "exotic_passed": 2,
+ "exotic_total": 3,
+ "tag": "on demand"
+}

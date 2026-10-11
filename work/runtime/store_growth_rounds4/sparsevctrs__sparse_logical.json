@@ -1,0 +1,21 @@
+{
+ "function": "sparse_logical",
+ "package": "sparsevctrs",
+ "status": "passed",
+ "rounds": 3,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 9,
+ "n_core": 9,
+ "n_mined": 2,
+ "attempt": 1,
+ "passed": 9,
+ "total": 9,
+ "core_passed": 9,
+ "core_total": 9,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_sparse_logical(values, positions, length, default=False):\n    \"\"\"\n    Reproduces the behavior of sparsevctrs::sparse_logical.\n    \"\"\"\n    # Ensure length is an integer\n    length = int(length)\n    \n    # Convert inputs to numpy arrays.\n    # If input is a scalar (e.g., TRUE), asarray makes it a 0-d array.\n    values = np.asarray(values)\n    positions = np.asarray(positions)\n    \n    # Ensure positions is integer\n    if positions.size > 0:\n        positions = positions.astype(int)\n    \n    # Check if values contains the default value (ignoring NAs)\n    if values.size > 0:\n        # Mask out NaNs to match na.rm = TRUE\n        mask_non_na = ~pd.isna(values)\n        if np.any(values[mask_non_na] == default):\n            raise ValueError(f\"values value must not be equal to the default {default}.\")\n\n    # Initialize the vector with the default value\n    # We use dtype=object to support both booleans and np.nan (R's NA)\n    res = np.full(length, default, dtype=object)\n    \n    # Handle the case where values/positions might be 0-d arrays (scalars)\n    # We convert them to 1-d to iterate correctly\n    v_flat = np.atleast_1d(values)\n    p_flat = np.atleast_1d(positions)\n    \n    if v_flat.size > 0:\n        # R uses 1-based indexing for positions\n        idx = p_flat - 1\n        \n        for i in range(len(v_flat)):\n            pos = idx[i]\n            val = v_flat[i]\n            \n            if pd.isna(val):\n                res[pos] = np.nan\n            else:\n                res[pos] = bool(val)\n\n    # Final conversion: if there are no NaNs, cast to boolean for the return type\n    if not np.any(pd.isna(res)):\n        return res.astype(bool)\n    \n    return res\n",
+ "n_failures": 0,
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "on demand"
+}

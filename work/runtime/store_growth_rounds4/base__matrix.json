@@ -1,0 +1,28 @@
+{
+ "function": "matrix",
+ "package": "base",
+ "status": "passed_restricted",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 51,
+ "n_core": 39,
+ "n_mined": 9,
+ "attempt": 1,
+ "passed": 19,
+ "total": 51,
+ "core_passed": 17,
+ "core_total": 39,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef _r2py_impl_r_matrix(data=np.nan, nrow=1, ncol=1, byrow=False, dimnames=None):\n    \"\"\"\n    Python implementation of R's matrix function.\n    \"\"\"\n    # 1. Handle data conversion\n    # R's as.vector flattens objects and treats scalars as length 1 vectors\n    if isinstance(data, (pd.DataFrame, np.ndarray)):\n        data_flat = np.array(data).flatten()\n    elif isinstance(data, list):\n        data_flat = np.array(data)\n    elif data is None:\n        data_flat = np.array([np.nan])\n    else:\n        # Handles scalars, including np.nan or \"NA\" strings\n        data_flat = np.array([data])\n\n    # 2. Handle recycling and empty dimensions\n    # In R, if nrow or ncol is 0, it returns a matrix with 0 rows or cols\n    total_elements = nrow * ncol\n    \n    if total_elements == 0:\n        # Create an empty array with appropriate shape\n        # We use data_flat.dtype to maintain consistency\n        res_mat = np.empty((nrow, ncol), dtype=data_flat.dtype)\n    else:\n        # R recycles the input vector to fill the matrix\n        if len(data_flat) == 0:\n            # If input is empty, R usually fills with NAs based on the type\n            # Since we don't know the exact type, we'll use the dtype of the empty array\n            fill_data = np.full(total_elements, np.nan, dtype=data_flat.dtype)\n        else:\n            reps = int(np.ceil(total_elements / len(data_flat)))\n            fill_data = np.tile(data_flat, reps)[:total_elements]\n\n        # 3. Reshape based on byrow\n        if byrow:\n            # R's byrow=TRUE: fill by rows (standard C-order)\n            res_mat = fill_data.reshape((nrow, ncol))\n        else:\n            # R's byrow=FALSE: fill by columns (Fortran-order)\n            # reshape((ncol, nrow)).T is equivalent to filling column-major\n            res_mat = fill_data.reshape((ncol, nrow)).T\n\n    # 4. Handle dimnames\n    # The harness expects the \"values\" part of the return.\n    # Based on the failing cases, R returns values as a nested list/array.\n    # If dimnames are provided, R returns a matrix. In Python, a numpy array \n    # with values corresponds to the 'values' part of the R matrix.\n    # The test failures show the harness expects a numpy-like array/list of lists, \n    # not a pandas DataFrame dictionary.\n    \n    # If the input was strings/objects, ensure numpy array is dtype object\n    # to handle mixed types (like ints and \"NA\" strings) as R does.\n    if data_flat.dtype == object:\n        res_mat = res_mat.astype(object)\n\n    # Return the result as a numpy array (which the harness serializes as nested lists)\n    return res_mat\n\n\n_R2PY_UNVERIFIED_r_matrix = {'byrow': ['True']}\n_R2PY_UNVERIFIED_CLASSES_r_matrix = ['NA input', 'vector input']\n\n\ndef _r2py_items_r_matrix(v):\n    if isinstance(v, (str, bytes, dict)) or not hasattr(v, \"__len__\"):\n        return None\n    try:\n        return list(v)\n    except TypeError:\n        return None\n\n\ndef r_matrix(*args, **kwargs):\n    \"\"\"r_matrix reproduces R on every tested ordinary call except the option values in _R2PY_UNVERIFIED_r_matrix\n    and the input classes in _R2PY_UNVERIFIED_CLASSES_r_matrix; for those it refuses rather than guess.\"\"\"\n    import inspect\n    import math\n    try:\n        bound = inspect.signature(_r2py_impl_r_matrix).bind(*args, **kwargs).arguments\n    except TypeError:\n        bound = kwargs\n    for name, bad in _R2PY_UNVERIFIED_r_matrix.items():\n        v = bound.get(name)\n        if isinstance(v, (list, tuple)) and len(v) == 1:\n            v = v[0]\n        if v is not None and str(v) in bad:\n            raise NotImplementedError(\n                f\"r_matrix: {name}={v!r} is not verified against R; handle this case in your own code\")\n    if _R2PY_UNVERIFIED_CLASSES_r_matrix and bound:\n        first = next(iter(bound.values()))\n        items = _r2py_items_r_matrix(first)\n        if \"vector input\" in _R2PY_UNVERIFIED_CLASSES_r_matrix and items is not None and len(items) > 1:\n            raise NotImplementedError(\n                f\"r_matrix: input of length {len(items)} is not verified against R (verified for single values); \"\n                \"loop over the elements or write this case yourself\")\n        vals = items if items is not None else [first]\n        if \"NA input\" in _R2PY_UNVERIFIED_CLASSES_r_matrix and any(\n                x is None or (isinstance(x, float) and math.isnan(x)) for x in vals):\n            raise NotImplementedError(f\"r_matrix: input containing NA is not verified against R; handle NA yourself\")\n    return _r2py_impl_r_matrix(*args, **kwargs)\n",
+ "n_failures": 32,
+ "unverified": {
+  "byrow": [
+   "True"
+  ]
+ },
+ "unverified_classes": [
+  "NA input",
+  "vector input"
+ ],
+ "tag": "on demand"
+}

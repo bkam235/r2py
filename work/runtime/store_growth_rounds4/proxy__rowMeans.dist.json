@@ -1,0 +1,25 @@
+{
+ "function": "rowMeans.dist",
+ "package": "proxy",
+ "status": "passed_restricted",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 15,
+ "n_core": 15,
+ "n_mined": 3,
+ "attempt": 2,
+ "passed": 14,
+ "total": 15,
+ "core_passed": 14,
+ "core_total": 15,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_rowSums_dist(x, na_rm=False):\n    \"\"\"\n    Helper function to reproduce proxy::rowSums.dist.\n    A dist object in R is stored as a numeric vector of the lower triangle.\n    \"\"\"\n    # Handle potential scalar inputs if x is passed as float (though usually array)\n    if isinstance(x, (float, int, np.float64, np.int64)):\n        # A single distance implies N=2\n        # But based on the harness, it arrives as a numpy array. \n        # If it is a scalar, we treat it as a 1-element array.\n        x = np.atleast_1d(x)\n    \n    # Calculate N from length of distance vector: len(x) = N*(N-1)/2\n    # N^2 - N - 2*len(x) = 0  => N = (1 + sqrt(1 + 8*len(x))) / 2\n    n = int(np.round((1 + np.sqrt(1 + 8 * len(x))) / 2))\n    \n    # Reconstruct full matrix\n    mat = np.zeros((n, n))\n    idx = 0\n    for i in range(n - 1):\n        for j in range(i + 1, n):\n            val = x[idx]\n            mat[i, j] = val\n            mat[j, i] = val\n            idx += 1\n            \n    if na_rm:\n        return np.nansum(mat, axis=1)\n    else:\n        # np.sum returns NaN if any element is NaN, matching R's behavior for na.rm=FALSE\n        return np.sum(mat, axis=1)\n\ndef _r2py_impl_r_rowMeans_dist(x, na_rm=False, diag=True):\n    # Ensure x is a numpy array\n    if not isinstance(x, np.ndarray):\n        x = np.atleast_1d(x)\n        \n    if not isinstance(diag, (bool, np.bool_)):\n        raise TypeError(\"'diag' not of type logical\")\n    \n    # Step 1: s <- rowSums.dist(x, na.rm)\n    s = r_rowSums_dist(x, na_rm=na_rm)\n    \n    if na_rm:\n        # Step 2: x[!(is.na(x) | is.nan(x))] <- 1\n        # Create a copy to avoid mutating the original input array\n        x_dummy = x.copy().astype(float)\n        mask = ~np.isnan(x_dummy)\n        x_dummy[mask] = 1.0\n        \n        # Step 3: s/(rowSums.dist(x, na.rm) + (diag == TRUE))\n        # In R code provided: s / (rowSums.dist(x_dummy, na.rm) + (diag == TRUE))\n        # Note: The R source says 'rowSums.dist(x, na.rm)', but logically it uses the \n        # modified x (where non-NAs are 1) to count the non-NA values.\n        counts = r_rowSums_dist(x_dummy, na_rm=True)\n        denom = counts + (1.0 if diag else 0.0)\n        return s / denom\n    else:\n        # Step 4: s/(length(s) - (diag == FALSE))\n        # length(s) is the number of rows N.\n        n = len(s)\n        denom = n - (0 if diag else 1)\n        return s / denom\n\n\n_R2PY_UNVERIFIED_r_rowMeans_dist = {'diag': ['False']}\n_R2PY_UNVERIFIED_CLASSES_r_rowMeans_dist = []\n\n\ndef _r2py_items_r_rowMeans_dist(v):\n    if isinstance(v, (str, bytes, dict)) or not hasattr(v, \"__len__\"):\n        return None\n    try:\n        return list(v)\n    except TypeError:\n        return None\n\n\ndef r_rowMeans_dist(*args, **kwargs):\n    \"\"\"r_rowMeans_dist reproduces R on every tested ordinary call except the option values in _R2PY_UNVERIFIED_r_rowMeans_dist\n    and the input classes in _R2PY_UNVERIFIED_CLASSES_r_rowMeans_dist; for those it refuses rather than guess.\"\"\"\n    import inspect\n    import math\n    try:\n        bound = inspect.signature(_r2py_impl_r_rowMeans_dist).bind(*args, **kwargs).arguments\n    except TypeError:\n        bound = kwargs\n    for name, bad in _R2PY_UNVERIFIED_r_rowMeans_dist.items():\n        v = bound.get(name)\n        if isinstance(v, (list, tuple)) and len(v) == 1:\n            v = v[0]\n        if v is not None and str(v) in bad:\n            raise NotImplementedError(\n                f\"r_rowMeans_dist: {name}={v!r} is not verified against R; handle this case in your own code\")\n    if _R2PY_UNVERIFIED_CLASSES_r_rowMeans_dist and bound:\n        first = next(iter(bound.values()))\n        items = _r2py_items_r_rowMeans_dist(first)\n        if \"vector input\" in _R2PY_UNVERIFIED_CLASSES_r_rowMeans_dist and items is not None and len(items) > 1:\n            raise NotImplementedError(\n                f\"r_rowMeans_dist: input of length {len(items)} is not verified against R (verified for single values); \"\n                \"loop over the elements or write this case yourself\")\n        vals = items if items is not None else [first]\n        if \"NA input\" in _R2PY_UNVERIFIED_CLASSES_r_rowMeans_dist and any(\n                x is None or (isinstance(x, float) and math.isnan(x)) for x in vals):\n            raise NotImplementedError(f\"r_rowMeans_dist: input containing NA is not verified against R; handle NA yourself\")\n    return _r2py_impl_r_rowMeans_dist(*args, **kwargs)\n",
+ "n_failures": 1,
+ "unverified": {
+  "diag": [
+   "False"
+  ]
+ },
+ "unverified_classes": [],
+ "tag": "on demand"
+}

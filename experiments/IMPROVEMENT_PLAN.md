@@ -1998,3 +1998,21 @@ attempted.
 
 Then the C2 estimate: held-out loss covered after 64 scripts, extrapolated along the recurrence curve. If admission
 reaches about 30% or more, the thorough C1 experiment is worth running.
+
+**Result (2026-10-11): depth barely helps - 8/43 (19%) against 7/43 (16%), Fisher p = 1.0.** Paired on the 42
+functions both runs attempted: both admitted 6, neither 34, only the 4x4 run 2 (fansi `substr_ctl`, proxy
+`rowMeans.dist`), only 8x2 none (proxy `rowSums.dist` was not attempted in the 4x4 run).
+- Later rounds keep improving the code, but rarely: round 2 improved on round 1 in 37 of 126 attempts, round 3 in
+  28 of 124, round 4 in 19 of 123.
+- 3 of the 5 outright passes came at round 3 or 4.
+- No provider failures; 558 calls; 4.1 worker-hours.
+- Held-out loss covered after 64 scripts: 1.6%, the same as the 8x2 run.
+
+**C2 estimate.** Across four runs and two models, admission is 9-19% per attempted function. At 64 scripts the store
+covers 1.6% of held-out loss, against 5.6% if every attempt were admitted (29%).
+
+Along the recurrence curve (25.1% of held-out loss at 247 scripts with perfect admission), that projects to roughly
+4-7% after the whole training set. Discounted for functions that are reached but not used, it is about 2%.
+
+The inter-script curve exists but is shallow. A thorough C2 experiment would measure a slope too small to detect at a
+feasible held-out size, so it is not run. The store stays on as part of the harness. Next: C1.

@@ -1,0 +1,21 @@
+{
+ "function": "xml_new_root",
+ "package": "xml2",
+ "status": "passed",
+ "rounds": 4,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 8,
+ "n_core": 7,
+ "n_mined": 1,
+ "attempt": 2,
+ "passed": 8,
+ "total": 8,
+ "core_passed": 7,
+ "core_total": 7,
+ "code": "import numpy as np\nimport pandas as pd\nfrom lxml import etree\n\ndef r_xml_new_root(_value, *args, **kwargs):\n    \"\"\"\n    Python reproduction of xml2::xml_new_root.\n    \n    Returns an object that matches the serialization expected by the harness\n    for an 'xml_document' (a dict with 'class' and 'text').\n    \"\"\"\n    version = kwargs.get('.version', '1.0')\n    encoding = kwargs.get('.encoding', 'UTF-8')\n    \n    # Handle NA values (converted to <NA/> in R's xml2)\n    if _value is None or (isinstance(_value, float) and np.isnan(_value)):\n        root_name = \"NA\"\n    elif isinstance(_value, dict):\n        # Handle the xml_dtd case: {\"name\": \"...\", \"external_id\": \"...\", \"system_id\": \"...\"}\n        name = _value.get('name')\n        ext_id = _value.get('external_id')\n        sys_id = _value.get('system_id')\n        \n        # Construct the XML declaration and DOCTYPE string manually to match R's output\n        # R's xml2 prints DOCTYPE as: <!DOCTYPE name PUBLIC \"ext\" \"sys\">\n        xml_dec = f'<?xml version=\"{version}\" encoding=\"{encoding}\"?>\\n'\n        doctype = f'<!DOCTYPE {name} PUBLIC \"{ext_id}\" \"{sys_id}\">\\n'\n        text = xml_dec + doctype\n        \n        return {\n            \"__r2py_fp__\": True,\n            \"class\": [\"xml_document\"],\n            \"text\": text\n        }\n    else:\n        # Standard case: root is a character string\n        root_name = str(_value)\n        \n    # Create an XML document with a root node\n    root = etree.Element(root_name)\n    # We use etree.tostring to get the XML content, then prepend the declaration\n    # R's xml_new_root produces a document that, when serialized, includes the \n    # declaration and the root element.\n    content = etree.tostring(root, encoding='utf-8').decode('utf-8')\n    \n    # R's serialization for xml_document includes a newline after the declaration \n    # and a newline after the root element.\n    xml_dec = f'<?xml version=\"{version}\" encoding=\"{encoding}\"?>\\n'\n    # Since tostring of a single element doesn't add a trailing newline in some versions,\n    # we ensure it matches R's pattern: <root/>\\n\n    if not content.endswith('\\n'):\n        content += '\\n'\n        \n    text = xml_dec + content\n    \n    # Map the R class hierarchy: xml_document inherits from xml_node\n    return {\n        \"__r2py_fp__\": True,\n        \"class\": [\"xml_document\", \"xml_node\"],\n        \"text\": text\n    }\n",
+ "n_failures": 0,
+ "exotic_passed": 1,
+ "exotic_total": 1,
+ "tag": "on demand"
+}

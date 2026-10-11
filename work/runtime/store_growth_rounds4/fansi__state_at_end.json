@@ -1,0 +1,21 @@
+{
+ "function": "state_at_end",
+ "package": "fansi",
+ "status": "passed",
+ "rounds": 2,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 16,
+ "n_core": 16,
+ "n_mined": 4,
+ "attempt": 1,
+ "passed": 16,
+ "total": 16,
+ "core_passed": 16,
+ "core_total": 16,
+ "code": "import numpy as np\nimport re\n\ndef r_state_at_end(x, warn=True, term_cap=None, normalize=False, carry=False):\n    \"\"\"\n    Reproduces the fansi::state_at_end R function.\n    The function extracts the ANSI escape sequences that determine the \n    visual state (SGR - Select Graphic Rendition) at the end of each string.\n    \"\"\"\n    # Handle input types to match R's vector behavior\n    if x is None:\n        return np.array([], dtype=object)\n    \n    # If x is a single string, R treats it as a vector of length 1\n    if isinstance(x, str):\n        x_vec = [x]\n    elif isinstance(x, (list, np.ndarray)):\n        x_vec = x\n    else:\n        x_vec = [x]\n    \n    results = []\n    # State stores current active SGR codes\n    # Use a dictionary to track categories\n    current_state = {\"fg\": None, \"bg\": None, \"others\": set()}\n    \n    for text in x_vec:\n        # Handle NA (NaN in numpy array)\n        if text is None or (isinstance(text, float) and np.isnan(text)):\n            # R's fansi::state_at_end typically returns NA for NA input\n            results.append(np.nan)\n            continue\n            \n        # Ensure text is a string\n        text = str(text)\n        \n        # If carry is False, we reset state for every element in the vector\n        if not carry:\n            current_state = {\"fg\": None, \"bg\": None, \"others\": set()}\n\n        # Find all SGR sequences: \\x1b[...m\n        matches = re.finditer(r'\\x1b\\[([0-9;]*)m', text)\n        \n        for match in matches:\n            params_str = match.group(1)\n            if not params_str:\n                # \\x1b[m is a reset all\n                current_state = {\"fg\": None, \"bg\": None, \"others\": set()}\n            else:\n                params = params_str.split(';')\n                for p in params:\n                    if not p: continue\n                    try:\n                        val = int(p)\n                    except ValueError:\n                        continue\n                    \n                    if val == 0:\n                        current_state = {\"fg\": None, \"bg\": None, \"others\": set()}\n                    elif 30 <= val <= 37 or 90 <= val <= 97:\n                        current_state[\"fg\"] = val\n                    elif 40 <= val <= 47 or 100 <= val <= 107:\n                        current_state[\"bg\"] = val\n                    else:\n                        # Toggle logic for other SGR codes (like Bold 1, Underline 4)\n                        if val in current_state[\"others\"]:\n                            current_state[\"others\"].remove(val)\n                        else:\n                            current_state[\"others\"].add(val)\n        \n        # Reconstruct the state string\n        # Order usually: others (sorted), then fg, then bg\n        final_codes = []\n        for v in sorted(list(current_state[\"others\"])):\n            final_codes.append(str(v))\n        if current_state[\"fg\"] is not None:\n            final_codes.append(str(current_state[\"fg\"]))\n        if current_state[\"bg\"] is not None:\n            final_codes.append(str(current_state[\"bg\"]))\n            \n        if not final_codes:\n            results.append(\"\")\n        else:\n            results.append(f\"\\x1b[{';'.join(final_codes)}m\")\n\n    # Return as numpy array of objects to allow mixed strings and NaNs\n    res_array = np.array(results, dtype=object)\n    \n    # If the input was a single string (scalar-like in R), \n    # R returns a character vector. In Python, we maintain the array \n    # unless the harness expects a specific scalar.\n    return res_array\n",
+ "n_failures": 0,
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "on demand"
+}
