@@ -2189,3 +2189,18 @@ Provider outages are discarded and the case repeated, as in the prompt-arms rig.
 - **Neither:** adoption flat across arms while the canary is followed. The model reads the guidance and declines
   it, so the problem is trust, not attention. Next: framing with verification evidence.
 - The canary on its own failing in long arms and passing in short ones is direct evidence of an attention deficit.
+
+*Changes after a 14-call smoke test, before any data (2026-10-11).* The smoke calls are not part of the results.
+1. **Cases.** 21 of the first 42 cases were entities split over several places in the file. `splice_entity`
+   refuses those, which would fail the one-entity arms for reasons unrelated to the prompt, so cases now require a
+   single span.
+   - Drawn from all 24 dev states (not only the 20 with start < 0.9), at most 3 per kind per script.
+   - Result: **21 cases (10 snippet, 11 print)**.
+   - To keep the planned number of calls, **5 samples instead of 3**: 735 calls.
+2. **Sizes are total prompt sizes.** The 5,000-character agent system prompt kept "local" at 6.7k against 9.4k.
+   - The local arms (A5, A6) now use the harness's own one-entity system prompt (`ENTITY_REPAIR_SYSTEM`).
+   - A6 is padded to A1's total and A7 to twice A1's total.
+   - Medians over the 21 cases: A1 13,974, A2 14,034, A3 9,906, A4 9,969, **A5 2,894**, A6 14,112, **A7 28,026**
+     characters.
+3. **Local answers are always spliced.** In a local arm, an answer is spliced into the entity whatever action it
+   names, since the model saw only that entity.
