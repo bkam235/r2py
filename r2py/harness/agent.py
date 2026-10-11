@@ -200,7 +200,16 @@ def reason(
             print("[Agent]   Escalating to a full rewrite after failed entity repairs")
             _stat("outcome", "escalated_to_rewrite")
             repair_misses = 0
-        if entity_repair and not escalate and not (step == 1 and best_score == 0.0):
+        crash_note = ""
+        if report.py_exit_code != 0:
+            # Crash first, whatever the policy: an upstream crash nullifies every fix after it (all 137
+            # adopted-but-no-gain fixes in the prompt-load runs, 2026-10-11). Repair the culprit; a
+            # culprit that cannot be replaced as one block gets a full rewrite told to fix the crash.
+            if not escalate:
+                repair_eid = _pick_crash_entity(report, best_source, entity_tries)
+            if repair_eid is None:
+                crash_note = _crash_first_note(report)
+        elif entity_repair and not escalate and not (step == 1 and best_score == 0.0):
             repair_eid = _pick_repair_entity(report, best_source, entity_tries)
         turn_system = system_prompt
 
@@ -220,6 +229,8 @@ def reason(
             audit_feedback=audit_feedback,
             runtime_section=runtime_section,
         )
+        if crash_note:
+            messages[-1]["content"] += "\n\n" + crash_note
 
         if repair_eid is not None:
             entity_tries[repair_eid] = entity_tries.get(repair_eid, 0) + 1
@@ -496,14 +507,9 @@ def reason(
             print(f"[Agent]   Rewrite scored: {new_report.aggregate:.3f} "
                   f"(was {best_score:.3f}), "
                   f"exit_code={new_report.py_exit_code}")
-            crash_msg = ""
-            if new_report.py_exit_code != 0 and new_report.feedback:
-                crash_fb = [fb for fb in new_report.feedback if fb.effect_class.value == "syntax"]
-                if crash_fb:
-                    detailed = [fb for fb in crash_fb
-                                if "Python crashed" in fb.message and len(fb.message) > 60]
-                    crash_msg = (detailed[0] if detailed else crash_fb[0]).message
-                    print(f"[Agent]   Crash: {crash_msg[:300]}")
+            crash_msg = _crash_message(new_report) if new_report.py_exit_code != 0 else ""
+            if crash_msg:
+                print(f"[Agent]   Crash: {crash_msg[:300]}")
 
             _ctx.update(
                 aggregate=round(new_report.aggregate, 4), exit_code=new_report.py_exit_code,
@@ -1220,6 +1226,45 @@ def _pick_repair_entity(report, best_source: str, tries: dict[str, int], max_tri
     if crashed:
         return min(crashed)[1]
     return min(weak)[1] if weak else None
+
+
+def _crash_message(report) -> str:
+    """The most informative crash feedback of a report ("" if none)."""
+    crash_fb = [fb for fb in (getattr(report, "feedback", None) or []) if fb.effect_class.value == "syntax"]
+    if not crash_fb:
+        return ""
+    detailed = [fb for fb in crash_fb if "Python crashed" in fb.message and len(fb.message) > 60]
+    return (detailed[0] if detailed else crash_fb[0]).message
+
+
+def _pick_crash_entity(report, best_source: str, tries: dict[str, int], max_tries: int = 2) -> str | None:
+    """The entity to repair while the program crashes: the traceback's culprit (outermost frame first), or,
+    without attribution, the first entity in source order that did not run. None when the culprit cannot
+    be replaced as one block (no marker, several spans) or is exhausted: the caller then asks for a full
+    rewrite that fixes the crash (``_crash_first_note``)."""
+    spans = rebuild_entity_line_map(best_source)
+
+    def ok(eid):
+        return tries.get(eid, 0) < max_tries and len(spans.get(eid, [])) == 1 and eid in report.by_entity
+    culprits = list(getattr(report, "crash_entities", None) or [])
+    for eid in culprits:
+        if ok(eid):
+            return eid
+    if culprits:
+        return None
+    not_run = sorted((spans[e][0][0], e) for e, es in report.by_entity.items() if not es.executed_ok and ok(e))
+    return not_run[0][1] if not_run else None
+
+
+def _crash_first_note(report) -> str:
+    """The instruction pinned to a full rewrite while the program crashes and no culprit can be targeted."""
+    culprits = list(getattr(report, "crash_entities", None) or [])
+    where = f" in entity `{culprits[0]}`" if culprits else ""
+    msg = _crash_message(report) or "Python exited with an error."
+    return ("### Fix the crash first\n"
+            f"The program crashes{where}: {msg[:600]}\n"
+            "Every entity after the crash scores nothing until the program runs past it. In this step fix this "
+            "crash; keep all other code as it is.")
 
 
 def _build_entity_repair(script_map, r_source, best_source, report, eid, notes) -> list[dict]:

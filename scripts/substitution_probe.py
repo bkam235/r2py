@@ -68,6 +68,7 @@ def donors(stem: str) -> dict[str, str]:
     """
     from r2py.harness import trajectory
     from r2py.stage2.sentinel_mapper import ranges_from_sentinels
+    from r2py.stage2.stitch import self_contained
 
     best: dict[str, str] = {}
     for f in (ROOT / "work" / "replay_oracle" / "trajectories").glob(f"{stem}.*.jsonl"):
@@ -83,7 +84,7 @@ def donors(stem: str) -> dict[str, str]:
                 code = "\n".join(l for a, b in ranges[eid] for l in lines[a:b + 1]
                                  if "r2py:entity:" not in l)
                 if code.strip():
-                    best[eid] = code
+                    best[eid] = self_contained(code, rec["source"])   # carry its helpers (2026-10-11)
     return best
 
 

@@ -90,3 +90,82 @@ class TestSpliceIndent(unittest.TestCase):
         from r2py.stage2.stitch import splice_entity
         out, _ = splice_entity("# r2py:entity:e1\na = 1\n", "e1", "a = 2\n")
         self.assertEqual(out, "# r2py:entity:e1\na = 2\n")
+
+
+class TestCrashFirst(unittest.TestCase):
+    """While the program crashes, every step targets the crash (2026-10-11): an upstream crash nullifies any
+    fix after it - in the prompt-load runs all 137 adopted-but-no-gain fixes were in crashing programs."""
+
+    SRC = "# r2py:entity:e1\na = 1\n# r2py:entity:e2\nb = a + q\n# r2py:entity:e3\nc = b\n"
+
+    @staticmethod
+    def full(eid, ok=True, v=1.0):
+        from r2py.types import EntityScore
+        return EntityScore(entity_id=eid, executed_ok=ok, type_match=v, control_flow_match=v, data_output=v,
+                           variable_output=v, callable_output=v, side_effects=v,
+                           active_dims=frozenset({"data_output"}))
+
+    def crashing(self, culprits=("e2",)):
+        from r2py.types import FeedbackItem, EffectClass
+        fb = [FeedbackItem(entity_id="e2", effect_class=EffectClass.SYNTAX, score=0.0,
+                           message="R succeeded but Python crashed (exit 1). NameError: name 'q' is not defined")]
+        return NS(by_entity={"e1": self.full("e1"), "e2": self.full("e2", False, 0.0),
+                             "e3": self.full("e3", False, 0.0)}, crash_entities=list(culprits),
+                  py_exit_code=1, aggregate=0.0, feedback=fb, comparisons=[], uncomparable=[])
+
+    def test_the_traceback_culprit_is_picked(self):
+        self.assertEqual(agent._pick_crash_entity(self.crashing(), self.SRC, {}), "e2")
+
+    def test_a_culprit_that_cannot_be_replaced_as_one_block_gives_no_target(self):
+        src = self.SRC.replace("# r2py:entity:e2\n", "")              # culprit lost its marker
+        self.assertIsNone(agent._pick_crash_entity(self.crashing(), src, {}))
+        self.assertIsNone(agent._pick_crash_entity(self.crashing(), self.SRC, {"e2": 2}))
+
+    def test_without_attribution_the_first_entity_that_did_not_run_is_picked(self):
+        self.assertEqual(agent._pick_crash_entity(self.crashing(culprits=()), self.SRC, {}), "e2")
+
+    def test_the_crash_note_names_the_culprit_and_the_error(self):
+        note = agent._crash_first_note(self.crashing())
+        self.assertIn("`e2`", note)
+        self.assertIn("NameError", note)
+
+    def first_turn(self, report, source):
+        from unittest.mock import patch
+        sent = []
+
+        def call(messages, system, **kw):
+            sent.append((system, messages[-1]["content"]))
+            return "ACTION: rewrite\n```python\nb = 1\n```"
+        harness = NS(verify=lambda src: report, _probe_count=0, last_annotated_source="", _sidecar_filename="")
+        ent = NS(source_span=NS(start_line=1, end_line=1), name="b")
+        sm = NS(source="a <- 1\nb <- a + 1\nc <- b\n", entities={"e1": ent, "e2": ent, "e3": ent},
+                entity_bundles={})
+        with patch.object(agent._llm, "call", side_effect=call), \
+             patch.object(agent, "_prefetch_patterns", return_value={}), \
+             patch.object(agent, "_prefetch_r_sources", return_value=([], "")), \
+             patch.object(agent, "_get_unavailable_packages", return_value=[]), \
+             patch.object(agent, "unavailable_imports", return_value=[]), \
+             patch.object(agent, "_check_syntax", return_value=None), \
+             patch.object(agent, "review_translation", return_value=(True, "")):
+            agent.reason(source, report, harness, sm, model="openrouter:m", max_steps=1, entity_repair=False)
+        agent.drain_agent_stats()
+        return sent[0]
+
+    def test_a_crashing_program_gets_an_entity_repair_of_the_culprit_even_with_entity_repair_off(self):
+        system, user = self.first_turn(self.crashing(), self.SRC)
+        self.assertEqual(system, prompt.ENTITY_REPAIR_SYSTEM)
+        self.assertIn("Repair entity `e2`", user)
+
+    def test_an_untargetable_culprit_gets_a_full_rewrite_told_to_fix_the_crash_first(self):
+        src = self.SRC.replace("# r2py:entity:e2\n", "")
+        system, user = self.first_turn(self.crashing(), src)
+        self.assertNotEqual(system, prompt.ENTITY_REPAIR_SYSTEM)
+        self.assertIn("Fix the crash first", user)
+
+    def test_a_program_that_runs_is_left_to_the_policy(self):
+        rep = NS(by_entity={"e1": self.full("e1"), "e2": self.full("e2", True, 0.5), "e3": self.full("e3")},
+                 crash_entities=[], py_exit_code=0,
+                 aggregate=0.8, feedback=[], comparisons=[], uncomparable=[])
+        system, user = self.first_turn(rep, self.SRC)
+        self.assertNotEqual(system, prompt.ENTITY_REPAIR_SYSTEM)
+        self.assertNotIn("Fix the crash first", user)

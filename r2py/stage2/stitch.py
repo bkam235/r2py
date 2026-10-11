@@ -347,6 +347,59 @@ def rebuild_entity_line_map(source: str) -> dict[str, list[tuple[int, int]]]:
     return result
 
 
+def self_contained(snippet: str, source: str) -> str:
+    """*snippet* preceded by the top-level functions, classes and imports of *source* it uses (transitively).
+
+    Guidance cut from one program and shown for another must run on its own: donor snippets that called
+    `format_hms` or `year_month_day`, defined elsewhere in the donor's program, moved the crash into the
+    target entity (prompt-load runs, 2026-10-11). Script variables are not carried - the target script has
+    its own data. Returns *snippet* unchanged when either side does not parse.
+    """
+    import builtins
+    import textwrap
+
+    try:
+        tree = _ast.parse(source)
+        snip = _ast.parse(textwrap.dedent(snippet))
+    except SyntaxError:
+        return snippet
+
+    def bound_and_loaded(node):
+        bound, loaded = set(), set()
+        for n in _ast.walk(node):
+            if isinstance(n, _ast.Name):
+                (loaded if isinstance(n.ctx, _ast.Load) else bound).add(n.id)
+            elif isinstance(n, (_ast.FunctionDef, _ast.AsyncFunctionDef, _ast.ClassDef)):
+                bound.add(n.name)
+            elif isinstance(n, _ast.arg):
+                bound.add(n.arg)
+            elif isinstance(n, (_ast.Import, _ast.ImportFrom)):
+                bound |= {(a.asname or a.name).split(".")[0] for a in n.names}
+        return bound, loaded
+
+    defs: dict[str, _ast.stmt] = {}
+    for node in tree.body:
+        if isinstance(node, (_ast.FunctionDef, _ast.AsyncFunctionDef, _ast.ClassDef)):
+            defs[node.name] = node
+        elif isinstance(node, (_ast.Import, _ast.ImportFrom)):
+            for a in node.names:
+                defs[(a.asname or a.name).split(".")[0]] = node
+    bound, loaded = bound_and_loaded(snip)
+    todo = [n for n in loaded - bound - set(dir(builtins)) if n in defs]
+    needed: dict[int, _ast.stmt] = {}
+    while todo:
+        node = defs[todo.pop()]
+        if id(node) in needed:
+            continue
+        needed[id(node)] = node
+        b, l = bound_and_loaded(node)
+        todo += [n for n in l - b - bound - set(dir(builtins)) if n in defs and id(defs[n]) not in needed]
+    if not needed:
+        return snippet
+    parts = [_ast.get_source_segment(source, n) for n in sorted(needed.values(), key=lambda n: n.lineno)]
+    return "\n\n".join(p for p in parts if p) + "\n\n" + snippet
+
+
 def splice_entity(source: str, eid: str, body: str) -> tuple[str | None, str]:
     """Replace one entity's body in *source*, leaving every other line untouched.
 

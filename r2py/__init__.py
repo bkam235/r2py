@@ -172,13 +172,17 @@ def seed_from_translation(
     def _extract_entity_snippet(source, elmap, eid):
         if not eid or eid not in elmap:
             return ""
+        from .stage2.stitch import self_contained
         ranges = elmap[eid]
         lines = source.splitlines()
         if isinstance(ranges, list):
             parts = ["\n".join(lines[s:e]) for s, e in sorted(ranges)]
-            return clip_snippet("\n\n".join(p for p in parts if p.strip()), MAX_PY_SNIPPET)
-        start, end = ranges
-        return clip_snippet("\n".join(lines[start:end]), MAX_PY_SNIPPET)
+            text = "\n\n".join(p for p in parts if p.strip())
+        else:
+            start, end = ranges
+            text = "\n".join(lines[start:end])
+        # an example must run where it is shown: carry the helpers it calls from this program
+        return clip_snippet(self_contained(text, source), MAX_PY_SNIPPET)
 
     if library is None:
         library = get_library()
