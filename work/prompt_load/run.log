@@ -1,0 +1,1084 @@
+21 cases (10 snippet, 11 print), 7 arms, 5 samples: 735 calls to do, 6 workers
+[1/735] broom__rd_example__glance_fact  tidy              A5_local        s0 verified                       canary=True adopted=False 0.5129->0.0
+[2/735] broom__rd_example__glance_fact  tidy              A4_trim_entity  s0 verified                       canary=True adopted=False 0.5129->0.0
+[3/735] broom__rd_example__glance_fact  tidy              A6_local_pad    s0 verified                       canary=True adopted=False 0.5129->0.0
+[4/735] broom__rd_example__glance_fact  tidy              A7_full_x2      s0 verified                       canary=False adopted=False 0.5129->0.5951
+[5/735] broom__rd_example__glance_fact  tidy              A3_trim_whole   s0 verified                       canary=False adopted=False 0.5129->0.0
+[6/735] broom__rd_example__glance_fact  tidy              A2_full_entity  s0 verified                       canary=False adopted=False 0.5129->0.5954
+[7/735] broom__rd_example__glance_fact  tidy_1            A4_trim_entity  s0 verified                       canary=True adopted=False 0.5129->0.0
+[8/735] broom__rd_example__glance_fact  tidy_1            A1_full_whole   s0 verified                       canary=True adopted=False 0.5129->0.5954
+[9/735] broom__rd_example__glance_fact  tidy              A1_full_whole   s0 verified                       canary=False adopted=False 0.5129->0.9292
+[10/735] broom__rd_example__glance_fact  tidy_1            A5_local        s0 verified                       canary=True adopted=False 0.5129->0.7099
+[11/735] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s0 verified                       canary=False adopted=False 0.5129->0.5954
+[12/735] broom__rd_example__glance_fact  tidy_1            A6_local_pad    s0 verified                       canary=True adopted=False 0.5129->0.7124
+[13/735] broom__rd_example__glance_fact  tidy_1            A3_trim_whole   s0 verified                       canary=False adopted=False 0.5129->0.5933
+[14/735] broom__rd_example__glance_fact  tidy_1            A7_full_x2      s0 verified                       canary=True adopted=False 0.5129->0.5954
+[15/735] broom__rd_example__glance_fact  augment           A5_local        s0 verified                       canary=False adopted=False 0.5055->0.5256
+[16/735] broom__rd_example__glance_fact  augment           A2_full_entity  s0 verified                       canary=False adopted=False 0.5055->0.0
+[17/735] broom__rd_example__glance_fact  augment           A4_trim_entity  s0 verified                       canary=True adopted=False 0.5055->0.0
+[18/735] broom__rd_example__glance_fact  augment           A6_local_pad    s0 verified                       canary=False adopted=False 0.5055->0.5381
+[19/735] broom__rd_example__glance_fact  augment           A3_trim_whole   s0 verified                       canary=True adopted=False 0.5055->0.5257
+[20/735] clock__rd_example__zoned_time_  x_2               A3_trim_whole   s0 verified                       canary=True adopted=True 0.5->1.0
+[21/735] clock__rd_example__zoned_time_  x_2               A5_local        s0 verified                       canary=True adopted=True 0.5->0.0
+[22/735] clock__rd_example__zoned_time_  x_2               A6_local_pad    s0 verified                       canary=True adopted=True 0.5->0.0
+[23/735] broom__rd_example__glance_fact  augment           A7_full_x2      s0 verified                       canary=False adopted=False 0.5055->0.5256
+[24/735] clock__rd_example__zoned_time_  x_2               A4_trim_entity  s0 verified                       canary=False adopted=False 0.5->1.0
+[25/735] broom__rd_example__glance_fact  augment           A1_full_whole   s0 verified                       canary=False adopted=False 0.5055->0.5256
+[26/735] clock__rd_example__zoned_time_  x_2               A1_full_whole   s0 verified                       canary=False adopted=False 0.5->0.0
+[27/735] clock__rd_example__zoned_time_  x_3               A4_trim_entity  s0 verified                       canary=False adopted=False 0.5618->0.428
+[28/735] clock__rd_example__zoned_time_  x_3               A1_full_whole   s0 verified                       canary=False adopted=False 0.5618->0.7549
+[29/735] clock__rd_example__zoned_time_  x_3               A5_local        s0 verified                       canary=True adopted=True 0.5618->0.5
+[30/735] clock__rd_example__zoned_time_  x_3               A6_local_pad    s0 verified                       canary=True adopted=True 0.5618->0.5
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[31/735] clock__rd_example__zoned_time_  x_3               A2_full_entity  s0 verified                       canary=False adopted=False 0.5618->1.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[32/735] clock__rd_example__zoned_time_  x_3               A7_full_x2      s0 verified                       canary=True adopted=True 0.5618->1.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[33/735] googledrive__rd_example__drive  drive_browse      A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[34/735] googledrive__rd_example__drive  drive_browse      A4_trim_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[35/735] clock__rd_example__zoned_time_  x_2               A2_full_entity  s0 verified                       canary=False adopted=False 0.5->0.0
+[36/735] clock__rd_example__zoned_time_  x_3               A3_trim_whole   s0 verified                       canary=True adopted=True 0.5618->0.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[37/735] googledrive__rd_example__drive  drive_browse      A5_local        s0 verified                       canary=False adopted=False 0.0->0.0
+[38/735] googledrive__rd_example__drive  drive_browse      A6_local_pad    s0 verified                       canary=False adopted=False 0.0->0.0
+[39/735] googledrive__rd_example__drive  drive_browse      A1_full_whole   s0 verified                       canary=False adopted=False 0.0->1.0
+[40/735] googledrive__rd_example__drive  drive_ls          A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[41/735] googledrive__rd_example__drive  drive_ls          A4_trim_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[42/735] clock__rd_example__zoned_time_  x_2               A7_full_x2      s0 verified                       canary=False adopted=False 0.5->0.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[43/735] googledrive__rd_example__drive  drive_ls          A5_local        s0 verified                       canary=False adopted=False 0.0->0.0
+[44/735] googledrive__rd_example__drive  drive_ls          A6_local_pad    s0 verified                       canary=False adopted=False 0.0->0.0
+[45/735] googledrive__rd_example__drive  drive_browse      A7_full_x2      s0 verified                       canary=False adopted=False 0.0->1.0
+[46/735] googledrive__rd_example__drive  drive_ls          A7_full_x2      s0 verified                       canary=False adopted=False 0.0->1.0
+[47/735] googledrive__rd_example__drive  drive_ls          A3_trim_whole   s0 verified                       canary=False adopted=False 0.0->1.0
+[48/735] googledrive__rd_example__drive  drive_ls          A1_full_whole   s0 verified                       canary=False adopted=False 0.0->1.0
+[49/735] highr__rd_example__hilight_Rd   cat               A2_full_entity  s0 no code                        canary=None adopted=None 0.7376->None
+[50/735] googledrive__rd_example__drive  drive_browse      A3_trim_whole   s0 verified                       canary=False adopted=False 0.0->0.0
+[51/735] highr__rd_example__hilight_Rd   cat               A5_local        s0 verified                       canary=False adopted=False 0.7376->0.5188
+[52/735] highr__rd_example__hilight_Rd   cat               A6_local_pad    s0 verified                       canary=False adopted=False 0.7376->0.5188
+[53/735] highr__rd_example__hilight_Rd   cat               A3_trim_whole   s0 verified                       canary=True adopted=False 0.7376->0.8407
+[54/735] highr__rd_example__hilight_Rd   cat               A4_trim_entity  s0 verified                       canary=True adopted=False 0.7376->0.0
+[55/735] highr__rd_example__hilight_Rd   cat               A7_full_x2      s0 verified                       canary=False adopted=False 0.7376->0.9319
+[56/735] highr__rd_example__hilight_Rd   cat_1             A5_local        s0 verified                       canary=True adopted=False 0.5299->0.5289
+[57/735] highr__rd_example__hilight_Rd   cat_1             A1_full_whole   s0 verified                       canary=True adopted=False 0.5299->0.8802
+[58/735] highr__rd_example__hilight_Rd   cat_1             A6_local_pad    s0 verified                       canary=True adopted=False 0.5299->0.5289
+[59/735] highr__rd_example__hilight_Rd   cat               A1_full_whole   s0 verified                       canary=True adopted=False 0.7376->0.8929
+[60/735] highr__rd_example__hilight_Rd   cat_1             A3_trim_whole   s0 verified                       canary=True adopted=False 0.5299->0.8398
+[61/735] highr__rd_example__hilight_Rd   cat_1             A4_trim_entity  s0 no code                        canary=None adopted=None 0.5299->None
+[62/735] hms__rd_example__hms_Rd         hms               A4_trim_entity  s0 verified                       canary=True adopted=True 0.4653->0.0
+[63/735] hms__rd_example__hms_Rd         hms               A5_local        s0 verified                       canary=True adopted=True 0.4653->0.0
+[64/735] hms__rd_example__hms_Rd         hms               A6_local_pad    s0 verified                       canary=True adopted=True 0.4653->0.0
+[65/735] highr__rd_example__hilight_Rd   cat_1             A7_full_x2      s0 verified                       canary=True adopted=False 0.5299->0.8259
+[66/735] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s0 verified                       canary=False adopted=False 0.5299->0.1667
+[67/735] hms__rd_example__hms_Rd         hms               A1_full_whole   s0 verified                       canary=False adopted=False 0.4653->0.0
+[68/735] hms__rd_example__hms_Rd         hms               A3_trim_whole   s0 verified                       canary=False adopted=False 0.4653->0.7353
+[69/735] hms__rd_example__hms_Rd         hms               A2_full_entity  s0 verified                       canary=False adopted=False 0.4653->0.5147
+[70/735] hms__rd_example__hms_Rd         new_hms           A5_local        s0 verified                       canary=True adopted=True 0.0->0.1667
+[71/735] hms__rd_example__hms_Rd         new_hms           A4_trim_entity  s0 verified                       canary=True adopted=False 0.0->0.1667
+[72/735] hms__rd_example__hms_Rd         new_hms           A6_local_pad    s0 verified                       canary=True adopted=True 0.0->0.1667
+[73/735] hms__rd_example__hms_Rd         new_hms           A1_full_whole   s0 verified                       canary=False adopted=False 0.0->0.0
+[74/735] hms__rd_example__hms_Rd         new_hms           A3_trim_whole   s0 verified                       canary=True adopted=True 0.0->1.0
+[75/735] hms__rd_example__hms_Rd         hms               A7_full_x2      s0 verified                       canary=False adopted=False 0.4653->0.0
+[76/735] hms__rd_example__hms_Rd         as_hms_1          A4_trim_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[77/735] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[78/735] hms__rd_example__hms_Rd         as_hms_1          A5_local        s0 verified                       canary=False adopted=False 0.0->0.0
+[79/735] hms__rd_example__hms_Rd         as_hms_1          A6_local_pad    s0 verified                       canary=False adopted=False 0.0->0.0
+[80/735] hms__rd_example__hms_Rd         new_hms           A7_full_x2      s0 verified                       canary=True adopted=True 0.0->0.0
+[81/735] hms__rd_example__hms_Rd         as_hms_1          A1_full_whole   s0 verified                       canary=False adopted=False 0.0->1.0
+[82/735] hms__rd_example__hms_Rd         as_hms_1          A3_trim_whole   s0 verified                       canary=True adopted=True 0.0->1.0
+[83/735] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s0 verified                       canary=True adopted=True 0.0->0.0
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] WARNING: 'e' is a data entity but Python could not serialize it — excluded from comparison
+[84/735] lava__vignette__influencefunct  e_1               A3_trim_whole   s0 verified                       canary=False adopted=False 0.7518->0.9756
+[85/735] hms__rd_example__hms_Rd         as_hms_1          A7_full_x2      s0 verified                       canary=False adopted=True 0.0->0.0
+[86/735] lava__vignette__influencefunct  e_1               A2_full_entity  s0 verified                       canary=False adopted=False 0.7518->0.8184
+[87/735] lava__vignette__influencefunct  e_1               A5_local        s0 verified                       canary=True adopted=True 0.7518->1.0
+[88/735] lava__vignette__influencefunct  e_1               A6_local_pad    s0 verified                       canary=True adopted=True 0.7518->1.0
+[89/735] lubridate__vignette__lubridate  months_2          A1_full_whole   s0 verified                       canary=False adopted=True 0.522->1.0
+[90/735] lava__vignette__influencefunct  e_1               A1_full_whole   s0 verified                       canary=False adopted=True 0.7518->1.0
+[91/735] lubridate__vignette__lubridate  months_2          A5_local        s0 verified                       canary=True adopted=True 0.522->1.0
+[92/735] lubridate__vignette__lubridate  months_2          A4_trim_entity  s0 verified                       canary=True adopted=False 0.522->0.1333
+[93/735] lubridate__vignette__lubridate  months_2          A2_full_entity  s0 verified                       canary=False adopted=False 0.522->0.5
+[94/735] lubridate__vignette__lubridate  months_2          A6_local_pad    s0 verified                       canary=True adopted=True 0.522->1.0
+[95/735] lava__vignette__influencefunct  e_1               A4_trim_entity  s0 verified                       canary=False adopted=False 0.7518->0.9626
+[96/735] lubridate__vignette__lubridate  months_2          A3_trim_whole   s0 verified                       canary=False adopted=True 0.522->1.0
+[97/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[98/735] lava__vignette__influencefunct  e_1               A7_full_x2      s0 verified                       canary=True adopted=True 0.7518->1.0
+[99/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s0 verified                       canary=True adopted=False 0.0->0.0
+[100/735] lubridate__vignette__lubridate  months_2          A7_full_x2      s0 verified                       canary=False adopted=False 0.522->0.0
+[101/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s0 verified                       canary=False adopted=False 0.0->0.0
+[102/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[103/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[104/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s0 verified                       canary=False adopted=False 0.0->0.0
+[105/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s0 verified                       canary=True adopted=False 0.0->0.0
+[106/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s0 verified                       canary=False adopted=False 0.0->0.0
+[107/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[108/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s0 verified                       canary=True adopted=False 0.0->0.0
+[109/735] purrr__vignette__purrr_s3       str               A2_full_entity  s0 verified                       canary=False adopted=True 0.7951->1.0
+[110/735] purrr__vignette__purrr_s3       str               A1_full_whole   s0 verified                       canary=False adopted=True 0.7951->1.0
+<unknown>:20: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:21: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:22: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:23: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:24: SyntaxWarning: invalid escape sequence '\ '
+[111/735] purrr__vignette__purrr_s3       str               A4_trim_entity  s0 verified                       canary=False adopted=True 0.7951->0.9783
+[112/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s0 verified                       canary=False adopted=False 0.0->0.0
+[113/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s0 verified                       canary=True adopted=False 0.0->0.0
+[114/735] purrr__vignette__purrr_s3       str               A6_local_pad    s0 verified                       canary=False adopted=True 0.7951->1.0
+[115/735] purrr__vignette__purrr_s3       str               A5_local        s0 verified                       canary=False adopted=True 0.7951->1.0
+[116/735] purrr__vignette__purrr_s3       str               A3_trim_whole   s0 verified                       canary=True adopted=True 0.7951->1.0
+[117/735] purrr__vignette__purrr_s3       str               A7_full_x2      s0 verified                       canary=False adopted=True 0.7951->1.0
+[118/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s0 verified                       canary=False adopted=False 0.0->0.0
+[119/735] tidyr__vignette__tidy-data_s3   tribble           A5_local        s0 verified                       canary=True adopted=True 0.8496->1.0
+[120/735] tidyr__vignette__tidy-data_s3   tribble           A4_trim_entity  s0 verified                       canary=False adopted=False 0.8496->1.0
+[121/735] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s0 verified                       canary=True adopted=True 0.8496->1.0
+[122/735] tidyr__vignette__tidy-data_s3   tribble           A3_trim_whole   s0 verified                       canary=False adopted=False 0.8496->1.0
+[123/735] tidyr__vignette__tidy-data_s3   tribble           A1_full_whole   s0 verified                       canary=False adopted=False 0.8496->1.0
+[124/735] tidyr__vignette__tidy-data_s3   tribble           A6_local_pad    s0 verified                       canary=True adopted=True 0.8496->1.0
+[125/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A4_trim_entity  s0 verified                       canary=True adopted=False 0.7344->0.5
+[126/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s0 verified                       canary=True adopted=False 0.7344->0.0
+[127/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A6_local_pad    s0 verified                       canary=True adopted=False 0.7344->0.0
+[128/735] tidyr__vignette__tidy-data_s3   tribble           A7_full_x2      s0 verified                       canary=False adopted=False 0.8496->1.0
+[129/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A3_trim_whole   s0 verified                       canary=True adopted=True 0.7344->1.0
+[130/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A1_full_whole   s0 verified                       canary=False adopted=False 0.7344->0.0
+[131/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s0 verified                       canary=True adopted=True 0.0->0.0
+[132/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A7_full_x2      s0 verified                       canary=False adopted=True 0.7344->1.0
+[133/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A3_trim_whole   s0 verified                       canary=False adopted=True 0.802->1.0
+[134/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A4_trim_entity  s0 verified                       canary=True adopted=False 0.802->0.1667
+[135/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A6_local_pad    s0 verified                       canary=True adopted=False 0.802->0.8023
+[136/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s0 verified                       canary=True adopted=False 0.802->0.8023
+[137/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A1_full_whole   s0 verified                       canary=False adopted=True 0.802->1.0
+[138/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s0 verified                       canary=False adopted=False 0.802->0.1667
+[139/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A7_full_x2      s0 verified                       canary=False adopted=False 0.802->1.0
+[140/735] timeDate__rd_example__earlyClo  c                 A1_full_whole   s0 verified                       canary=False adopted=False 0.5161->0.0
+[141/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s0 verified                       canary=True adopted=False 0.7344->0.5
+[142/735] timeDate__rd_example__earlyClo  c                 A5_local        s0 verified                       canary=True adopted=False 0.5161->0.5161
+[143/735] timeDate__rd_example__earlyClo  c                 A6_local_pad    s0 verified                       canary=False adopted=False 0.5161->0.1667
+[144/735] broom__rd_example__glance_fact  tidy              A2_full_entity  s1 verified                       canary=False adopted=False 0.5129->0.0
+[145/735] broom__rd_example__glance_fact  tidy              A1_full_whole   s1 verified                       canary=False adopted=False 0.5129->0.5954
+[146/735] broom__rd_example__glance_fact  tidy              A3_trim_whole   s1 verified                       canary=False adopted=False 0.5129->0.5951
+[147/735] broom__rd_example__glance_fact  tidy              A4_trim_entity  s1 verified                       canary=True adopted=False 0.5129->0.0
+[148/735] timeDate__rd_example__earlyClo  c                 A2_full_entity  s0 verified                       canary=False adopted=False 0.5161->0.5647
+[149/735] broom__rd_example__glance_fact  tidy              A6_local_pad    s1 verified                       canary=True adopted=False 0.5129->0.0
+[150/735] broom__rd_example__glance_fact  tidy              A5_local        s1 verified                       canary=True adopted=True 0.5129->1.0
+[151/735] timeDate__rd_example__earlyClo  c                 A4_trim_entity  s0 verified                       canary=False adopted=False 0.5161->0.0
+[152/735] broom__rd_example__glance_fact  tidy_1            A1_full_whole   s1 verified                       canary=True adopted=False 0.5129->0.5954
+[153/735] broom__rd_example__glance_fact  tidy_1            A3_trim_whole   s1 no code                        canary=None adopted=None 0.5129->None
+[154/735] broom__rd_example__glance_fact  tidy_1            A4_trim_entity  s1 verified                       canary=True adopted=False 0.5129->0.0
+[155/735] broom__rd_example__glance_fact  tidy              A7_full_x2      s1 verified                       canary=False adopted=False 0.5129->0.5951
+[156/735] broom__rd_example__glance_fact  tidy_1            A6_local_pad    s1 verified                       canary=True adopted=False 0.5129->0.0
+[157/735] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s1 verified                       canary=True adopted=False 0.5129->0.7099
+[158/735] broom__rd_example__glance_fact  tidy_1            A5_local        s1 verified                       canary=True adopted=False 0.5129->0.7099
+[159/735] timeDate__rd_example__earlyClo  c                 A7_full_x2      s0 verified                       canary=True adopted=False 0.5161->0.7938
+[160/735] broom__rd_example__glance_fact  augment           A1_full_whole   s1 verified                       canary=False adopted=False 0.5055->0.5212
+[161/735] broom__rd_example__glance_fact  tidy_1            A7_full_x2      s1 verified                       canary=True adopted=False 0.5129->0.5954
+[162/735] broom__rd_example__glance_fact  augment           A4_trim_entity  s1 verified                       canary=True adopted=False 0.5055->0.0
+[163/735] broom__rd_example__glance_fact  augment           A5_local        s1 verified                       canary=False adopted=False 0.5055->0.1667
+[164/735] broom__rd_example__glance_fact  augment           A3_trim_whole   s1 verified                       canary=False adopted=False 0.5055->0.5256
+[165/735] broom__rd_example__glance_fact  augment           A6_local_pad    s1 verified                       canary=False adopted=False 0.5055->0.1667
+[166/735] clock__rd_example__zoned_time_  x_2               A3_trim_whole   s1 verified                       canary=False adopted=False 0.5->0.0
+[167/735] clock__rd_example__zoned_time_  x_2               A4_trim_entity  s1 verified                       canary=True adopted=True 0.5->0.0
+[168/735] broom__rd_example__glance_fact  augment           A2_full_entity  s1 verified                       canary=False adopted=False 0.5055->0.1667
+[169/735] clock__rd_example__zoned_time_  x_2               A5_local        s1 verified                       canary=True adopted=True 0.5->0.0
+[170/735] clock__rd_example__zoned_time_  x_2               A1_full_whole   s1 verified                       canary=False adopted=False 0.5->1.0
+[171/735] clock__rd_example__zoned_time_  x_2               A6_local_pad    s1 verified                       canary=True adopted=True 0.5->0.0
+[172/735] broom__rd_example__glance_fact  augment           A7_full_x2      s1 verified                       canary=False adopted=False 0.5055->0.0
+[173/735] clock__rd_example__zoned_time_  x_2               A7_full_x2      s1 verified                       canary=True adopted=True 0.5->1.0
+[174/735] clock__rd_example__zoned_time_  x_3               A1_full_whole   s1 verified                       canary=False adopted=False 0.5618->0.7549
+[175/735] clock__rd_example__zoned_time_  x_3               A2_full_entity  s1 verified                       canary=True adopted=True 0.5618->0.5
+[176/735] clock__rd_example__zoned_time_  x_3               A3_trim_whole   s1 verified                       canary=True adopted=True 0.5618->1.0
+[177/735] clock__rd_example__zoned_time_  x_3               A4_trim_entity  s1 verified                       canary=True adopted=True 0.5618->0.5
+[178/735] clock__rd_example__zoned_time_  x_3               A5_local        s1 verified                       canary=True adopted=True 0.5618->0.5
+[179/735] clock__rd_example__zoned_time_  x_3               A6_local_pad    s1 verified                       canary=True adopted=True 0.5618->0.5
+[180/735] clock__rd_example__zoned_time_  x_2               A2_full_entity  s1 verified                       canary=False adopted=False 0.5->0.0
+[181/735] googledrive__rd_example__drive  drive_browse      A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[182/735] googledrive__rd_example__drive  drive_browse      A4_trim_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[183/735] googledrive__rd_example__drive  drive_browse      A3_trim_whole   s1 verified                       canary=False adopted=False 0.0->0.0
+[184/735] googledrive__rd_example__drive  drive_browse      A5_local        s1 verified                       canary=False adopted=False 0.0->0.0
+[185/735] googledrive__rd_example__drive  drive_browse      A6_local_pad    s1 verified                       canary=False adopted=False 0.0->0.0
+[186/735] googledrive__rd_example__drive  drive_ls          A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[187/735] clock__rd_example__zoned_time_  x_3               A7_full_x2      s1 verified                       canary=True adopted=True 0.5618->1.0
+[188/735] googledrive__rd_example__drive  drive_ls          A4_trim_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[189/735] googledrive__rd_example__drive  drive_browse      A1_full_whole   s1 verified                       canary=False adopted=False 0.0->1.0
+[190/735] googledrive__rd_example__drive  drive_ls          A5_local        s1 verified                       canary=False adopted=False 0.0->0.0
+[191/735] googledrive__rd_example__drive  drive_ls          A6_local_pad    s1 verified                       canary=False adopted=False 0.0->0.0
+[192/735] googledrive__rd_example__drive  drive_browse      A7_full_x2      s1 verified                       canary=False adopted=False 0.0->1.0
+[193/735] timeDate__rd_example__earlyClo  c                 A3_trim_whole   s0 verified                       canary=True adopted=False 0.5161->0.9596
+[194/735] highr__rd_example__hilight_Rd   cat               A1_full_whole   s1 verified                       canary=True adopted=False 0.7376->0.849
+[195/735] googledrive__rd_example__drive  drive_ls          A1_full_whole   s1 verified                       canary=False adopted=False 0.0->0.0
+[196/735] highr__rd_example__hilight_Rd   cat               A5_local        s1 verified                       canary=False adopted=False 0.7376->0.5188
+[197/735] highr__rd_example__hilight_Rd   cat               A2_full_entity  s1 verified                       canary=False adopted=False 0.7376->0.0
+[198/735] highr__rd_example__hilight_Rd   cat               A6_local_pad    s1 verified                       canary=False adopted=False 0.7376->0.5188
+[199/735] googledrive__rd_example__drive  drive_ls          A7_full_x2      s1 verified                       canary=False adopted=False 0.0->1.0
+[200/735] googledrive__rd_example__drive  drive_ls          A3_trim_whole   s1 verified                       canary=False adopted=False 0.0->1.0
+[201/735] highr__rd_example__hilight_Rd   cat               A3_trim_whole   s1 verified                       canary=False adopted=False 0.7376->0.8329
+[202/735] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s1 verified                       canary=False adopted=False 0.5299->0.0
+[203/735] highr__rd_example__hilight_Rd   cat_1             A5_local        s1 verified                       canary=True adopted=False 0.5299->0.5289
+<unknown>:53: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:53: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:53: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:53: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:54: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:54: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:54: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:54: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:54: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:54: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:53: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:53: SyntaxWarning: invalid escape sequence '\h'
+[204/735] highr__rd_example__hilight_Rd   cat               A4_trim_entity  s1 verified                       canary=True adopted=False 0.7376->0.0
+[205/735] highr__rd_example__hilight_Rd   cat               A7_full_x2      s1 verified                       canary=False adopted=False 0.7376->0.9449
+[206/735] highr__rd_example__hilight_Rd   cat_1             A6_local_pad    s1 verified                       canary=True adopted=False 0.5299->0.5289
+[207/735] hms__rd_example__hms_Rd         hms               A2_full_entity  s1 verified                       canary=True adopted=True 0.4653->0.0
+[208/735] highr__rd_example__hilight_Rd   cat_1             A1_full_whole   s1 verified                       canary=True adopted=False 0.5299->0.8153
+[209/735] hms__rd_example__hms_Rd         hms               A4_trim_entity  s1 verified                       canary=True adopted=True 0.4653->0.0
+[210/735] highr__rd_example__hilight_Rd   cat_1             A7_full_x2      s1 verified                       canary=True adopted=False 0.5299->0.0
+[211/735] highr__rd_example__hilight_Rd   cat_1             A4_trim_entity  s1 verified                       canary=False adopted=False 0.5299->0.1667
+[212/735] hms__rd_example__hms_Rd         hms               A5_local        s1 verified                       canary=True adopted=True 0.4653->0.0
+[213/735] hms__rd_example__hms_Rd         hms               A6_local_pad    s1 verified                       canary=True adopted=True 0.4653->0.0
+[214/735] highr__rd_example__hilight_Rd   cat_1             A3_trim_whole   s1 verified                       canary=True adopted=False 0.5299->0.7677
+[215/735] hms__rd_example__hms_Rd         hms               A3_trim_whole   s1 verified                       canary=False adopted=False 0.4653->0.7353
+[216/735] hms__rd_example__hms_Rd         hms               A1_full_whole   s1 verified                       canary=False adopted=False 0.4653->0.0
+[217/735] hms__rd_example__hms_Rd         hms               A7_full_x2      s1 verified                       canary=False adopted=False 0.4653->0.0
+[218/735] hms__rd_example__hms_Rd         new_hms           A1_full_whole   s1 verified                       canary=False adopted=False 0.0->1.0
+[219/735] hms__rd_example__hms_Rd         new_hms           A5_local        s1 verified                       canary=True adopted=True 0.0->0.1667
+[220/735] hms__rd_example__hms_Rd         new_hms           A6_local_pad    s1 verified                       canary=True adopted=True 0.0->0.1667
+[221/735] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[222/735] hms__rd_example__hms_Rd         new_hms           A4_trim_entity  s1 verified                       canary=True adopted=True 0.0->1.0
+[223/735] hms__rd_example__hms_Rd         new_hms           A7_full_x2      s1 verified                       canary=True adopted=True 0.0->0.0
+[224/735] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[225/735] hms__rd_example__hms_Rd         as_hms_1          A5_local        s1 verified                       canary=False adopted=False 0.0->0.0
+[226/735] hms__rd_example__hms_Rd         new_hms           A3_trim_whole   s1 verified                       canary=True adopted=True 0.0->1.0
+[227/735] hms__rd_example__hms_Rd         as_hms_1          A6_local_pad    s1 verified                       canary=False adopted=False 0.0->0.0
+[228/735] lava__vignette__influencefunct  e_1               A2_full_entity  s1 verified                       canary=True adopted=False 0.7518->0.75
+[229/735] hms__rd_example__hms_Rd         as_hms_1          A1_full_whole   s1 verified                       canary=False adopted=False 0.0->0.0
+[230/735] hms__rd_example__hms_Rd         as_hms_1          A3_trim_whole   s1 verified                       canary=False adopted=False 0.0->0.5
+[231/735] hms__rd_example__hms_Rd         as_hms_1          A4_trim_entity  s1 verified                       canary=True adopted=True 0.0->1.0
+[232/735] hms__rd_example__hms_Rd         as_hms_1          A7_full_x2      s1 verified                       canary=False adopted=True 0.0->0.0
+[233/735] lava__vignette__influencefunct  e_1               A1_full_whole   s1 verified                       canary=False adopted=False 0.7518->0.7769
+[234/735] lava__vignette__influencefunct  e_1               A5_local        s1 verified                       canary=False adopted=True 0.7518->1.0
+[235/735] lava__vignette__influencefunct  e_1               A4_trim_entity  s1 verified                       canary=True adopted=False 0.7518->0.75
+[236/735] lubridate__vignette__lubridate  months_2          A2_full_entity  s1 verified                       canary=True adopted=True 0.522->1.0
+[237/735] lava__vignette__influencefunct  e_1               A6_local_pad    s1 verified                       canary=True adopted=False 0.7518->0.9843
+[238/735] lubridate__vignette__lubridate  months_2          A3_trim_whole   s1 verified                       canary=False adopted=True 0.522->1.0
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] WARNING: 'e' is a data entity but Python could not serialize it — excluded from comparison
+[239/735] lubridate__vignette__lubridate  months_2          A4_trim_entity  s1 verified                       canary=True adopted=False 0.522->0.1333
+[240/735] lava__vignette__influencefunct  e_1               A3_trim_whole   s1 verified                       canary=False adopted=False 0.7518->0.9665
+[241/735] lubridate__vignette__lubridate  months_2          A6_local_pad    s1 verified                       canary=True adopted=True 0.522->1.0
+[242/735] lubridate__vignette__lubridate  months_2          A7_full_x2      s1 verified                       canary=False adopted=True 0.522->1.0
+[243/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[244/735] lubridate__vignette__lubridate  months_2          A5_local        s1 verified                       canary=True adopted=True 0.522->1.0
+[245/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s1 verified                       canary=True adopted=False 0.0->0.0
+[246/735] lubridate__vignette__lubridate  months_2          A1_full_whole   s1 verified                       canary=False adopted=True 0.522->1.0
+[247/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[248/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s1 verified                       canary=True adopted=False 0.0->0.0
+[249/735] lava__vignette__influencefunct  e_1               A7_full_x2      s1 verified                       canary=False adopted=True 0.7518->1.0
+[250/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s1 verified                       canary=False adopted=False 0.0->0.0
+[251/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[252/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s1 verified                       canary=False adopted=False 0.0->0.0
+[253/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s1 verified                       canary=False adopted=False 0.0->0.0
+[254/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[255/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s1 verified                       canary=True adopted=False 0.0->0.0
+[256/735] purrr__vignette__purrr_s3       str               A2_full_entity  s1 verified                       canary=True adopted=False 0.7951->0.0
+[257/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s1 verified                       canary=False adopted=True 0.0->0.0
+[258/735] purrr__vignette__purrr_s3       str               A3_trim_whole   s1 verified                       canary=True adopted=True 0.7951->1.0
+[259/735] purrr__vignette__purrr_s3       str               A1_full_whole   s1 verified                       canary=True adopted=True 0.7951->1.0
+[260/735] purrr__vignette__purrr_s3       str               A5_local        s1 verified                       canary=False adopted=True 0.7951->1.0
+[261/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s1 verified                       canary=False adopted=False 0.0->0.0
+[262/735] purrr__vignette__purrr_s3       str               A7_full_x2      s1 verified                       canary=True adopted=True 0.7951->1.0
+<unknown>:20: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:21: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:22: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:23: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:24: SyntaxWarning: invalid escape sequence '\ '
+[263/735] purrr__vignette__purrr_s3       str               A6_local_pad    s1 verified                       canary=False adopted=True 0.7951->1.0
+[264/735] purrr__vignette__purrr_s3       str               A4_trim_entity  s1 verified                       canary=False adopted=True 0.7951->0.9783
+[265/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s1 verified                       canary=False adopted=False 0.0->0.0
+[266/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s1 verified                       canary=True adopted=True 0.0->0.0
+[267/735] tidyr__vignette__tidy-data_s3   tribble           A6_local_pad    s1 verified                       canary=True adopted=True 0.8496->1.0
+[268/735] tidyr__vignette__tidy-data_s3   tribble           A5_local        s1 verified                       canary=True adopted=True 0.8496->1.0
+[269/735] tidyr__vignette__tidy-data_s3   tribble           A3_trim_whole   s1 verified                       canary=False adopted=False 0.8496->1.0
+[270/735] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s1 verified                       canary=True adopted=True 0.8496->1.0
+[271/735] tidyr__vignette__tidy-data_s3   tribble           A7_full_x2      s1 verified                       canary=False adopted=False 0.8496->1.0
+[272/735] tidyr__vignette__tidy-data_s3   tribble           A4_trim_entity  s1 verified                       canary=False adopted=False 0.8496->1.0
+[273/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s1 verified                       canary=True adopted=True 0.7344->1.0
+[274/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s1 verified                       canary=False adopted=False 0.7344->0.5
+[275/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A4_trim_entity  s1 verified                       canary=True adopted=False 0.7344->0.5
+[276/735] tidyr__vignette__tidy-data_s3   tribble           A1_full_whole   s1 verified                       canary=False adopted=False 0.8496->1.0
+[277/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A6_local_pad    s1 verified                       canary=True adopted=True 0.7344->0.0
+[278/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A1_full_whole   s1 verified                       canary=True adopted=True 0.7344->1.0
+[279/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s1 verified                       canary=False adopted=False 0.802->0.1667
+[280/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A3_trim_whole   s1 verified                       canary=False adopted=False 0.802->0.0
+[281/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s1 verified                       canary=True adopted=False 0.802->0.8023
+[282/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A4_trim_entity  s1 verified                       canary=True adopted=False 0.802->0.5
+[283/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A6_local_pad    s1 verified                       canary=True adopted=False 0.802->0.8023
+[284/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A3_trim_whole   s1 verified                       canary=False adopted=True 0.7344->1.0
+[285/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A1_full_whole   s1 verified                       canary=False adopted=False 0.802->0.8288
+[286/735] timeDate__rd_example__earlyClo  c                 A2_full_entity  s1 verified                       canary=True adopted=False 0.5161->0.0
+[287/735] timeDate__rd_example__earlyClo  c                 A5_local        s1 verified                       canary=True adopted=False 0.5161->0.5161
+[288/735] timeDate__rd_example__earlyClo  c                 A4_trim_entity  s1 verified                       canary=True adopted=False 0.5161->0.0833
+[289/735] timeDate__rd_example__earlyClo  c                 A6_local_pad    s1 verified                       canary=False adopted=False 0.5161->0.1667
+[290/735] timeDate__rd_example__earlyClo  c                 A3_trim_whole   s1 verified                       canary=True adopted=False 0.5161->0.5062
+[291/735] broom__rd_example__glance_fact  tidy              A2_full_entity  s2 verified                       canary=True adopted=False 0.5129->0.0
+[292/735] broom__rd_example__glance_fact  tidy              A1_full_whole   s2 verified                       canary=False adopted=False 0.5129->0.5954
+[293/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A7_full_x2      s1 verified                       canary=False adopted=False 0.7344->0.1667
+[294/735] timeDate__rd_example__earlyClo  c                 A1_full_whole   s1 verified                       canary=False adopted=False 0.5161->0.0
+[295/735] broom__rd_example__glance_fact  tidy              A6_local_pad    s2 verified                       canary=True adopted=False 0.5129->0.0
+[296/735] broom__rd_example__glance_fact  tidy              A5_local        s2 verified                       canary=True adopted=False 0.5129->0.0
+[297/735] broom__rd_example__glance_fact  tidy              A4_trim_entity  s2 verified                       canary=True adopted=False 0.5129->0.0
+[298/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A7_full_x2      s1 verified                       canary=False adopted=False 0.802->1.0
+[299/735] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s2 verified                       canary=True adopted=False 0.5129->0.5951
+[300/735] broom__rd_example__glance_fact  tidy_1            A3_trim_whole   s2 verified                       canary=True adopted=False 0.5129->0.5933
+[301/735] broom__rd_example__glance_fact  tidy              A7_full_x2      s2 verified                       canary=True adopted=False 0.5129->0.7133
+[302/735] broom__rd_example__glance_fact  tidy_1            A4_trim_entity  s2 verified                       canary=True adopted=False 0.5129->0.0
+[303/735] broom__rd_example__glance_fact  tidy              A3_trim_whole   s2 verified                       canary=False adopted=False 0.5129->0.5951
+[304/735] broom__rd_example__glance_fact  tidy_1            A5_local        s2 verified                       canary=True adopted=False 0.5129->0.5951
+[305/735] broom__rd_example__glance_fact  tidy_1            A6_local_pad    s2 verified                       canary=False adopted=False 0.5129->0.5929
+[306/735] broom__rd_example__glance_fact  augment           A1_full_whole   s2 verified                       canary=False adopted=False 0.5055->0.5257
+[307/735] broom__rd_example__glance_fact  augment           A3_trim_whole   s2 verified                       canary=False adopted=False 0.5055->0.5257
+[308/735] broom__rd_example__glance_fact  augment           A4_trim_entity  s2 verified                       canary=True adopted=False 0.5055->0.5256
+[309/735] timeDate__rd_example__earlyClo  c                 A7_full_x2      s1 verified                       canary=False adopted=True 0.5161->0.9922
+[310/735] broom__rd_example__glance_fact  augment           A6_local_pad    s2 verified                       canary=False adopted=False 0.5055->0.5256
+[311/735] broom__rd_example__glance_fact  augment           A5_local        s2 verified                       canary=False adopted=False 0.5055->0.5256
+[312/735] clock__rd_example__zoned_time_  x_2               A2_full_entity  s2 verified                       canary=True adopted=True 0.5->0.0
+[313/735] clock__rd_example__zoned_time_  x_2               A1_full_whole   s2 verified                       canary=False adopted=False 0.5->0.0
+[314/735] clock__rd_example__zoned_time_  x_2               A4_trim_entity  s2 verified                       canary=True adopted=True 0.5->0.0
+[315/735] broom__rd_example__glance_fact  tidy_1            A7_full_x2      s2 verified                       canary=True adopted=False 0.5129->0.0
+[316/735] clock__rd_example__zoned_time_  x_2               A5_local        s2 verified                       canary=True adopted=True 0.5->0.0
+[317/735] clock__rd_example__zoned_time_  x_2               A6_local_pad    s2 verified                       canary=True adopted=True 0.5->0.0
+[318/735] clock__rd_example__zoned_time_  x_3               A1_full_whole   s2 verified                       canary=False adopted=False 0.5618->1.0
+[319/735] broom__rd_example__glance_fact  augment           A7_full_x2      s2 verified                       canary=False adopted=False 0.5055->0.0
+[320/735] clock__rd_example__zoned_time_  x_2               A3_trim_whole   s2 verified                       canary=False adopted=False 0.5->1.0
+[321/735] clock__rd_example__zoned_time_  x_3               A3_trim_whole   s2 verified                       canary=True adopted=True 0.5618->1.0
+[322/735] clock__rd_example__zoned_time_  x_3               A2_full_entity  s2 verified                       canary=True adopted=True 0.5618->0.5
+[323/735] clock__rd_example__zoned_time_  x_3               A5_local        s2 verified                       canary=True adopted=True 0.5618->0.5
+[324/735] clock__rd_example__zoned_time_  x_3               A6_local_pad    s2 verified                       canary=True adopted=True 0.5618->0.5
+[325/735] clock__rd_example__zoned_time_  x_3               A4_trim_entity  s2 verified                       canary=False adopted=False 0.5618->0.7549
+[326/735] googledrive__rd_example__drive  drive_browse      A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[327/735] broom__rd_example__glance_fact  tidy_1            A1_full_whole   s2 verified                       canary=True adopted=False 0.5129->0.5954
+[328/735] googledrive__rd_example__drive  drive_browse      A4_trim_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[329/735] googledrive__rd_example__drive  drive_browse      A5_local        s2 verified                       canary=False adopted=False 0.0->0.0
+[330/735] googledrive__rd_example__drive  drive_browse      A6_local_pad    s2 verified                       canary=False adopted=False 0.0->0.0
+[331/735] broom__rd_example__glance_fact  augment           A2_full_entity  s2 verified                       canary=False adopted=False 0.5055->0.5257
+[332/735] clock__rd_example__zoned_time_  x_2               A7_full_x2      s2 verified                       canary=True adopted=True 0.5->0.0
+[333/735] googledrive__rd_example__drive  drive_browse      A7_full_x2      s2 verified                       canary=False adopted=False 0.0->0.0
+[334/735] googledrive__rd_example__drive  drive_ls          A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[335/735] googledrive__rd_example__drive  drive_ls          A4_trim_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[336/735] clock__rd_example__zoned_time_  x_3               A7_full_x2      s2 verified                       canary=True adopted=True 0.5618->0.0
+[337/735] googledrive__rd_example__drive  drive_ls          A5_local        s2 verified                       canary=False adopted=False 0.0->0.0
+[338/735] googledrive__rd_example__drive  drive_ls          A6_local_pad    s2 verified                       canary=False adopted=False 0.0->0.0
+[339/735] googledrive__rd_example__drive  drive_browse      A3_trim_whole   s2 verified                       canary=False adopted=False 0.0->1.0
+[340/735] highr__rd_example__hilight_Rd   cat               A1_full_whole   s2 verified                       canary=False adopted=False 0.7376->0.0
+[341/735] highr__rd_example__hilight_Rd   cat               A2_full_entity  s2 no code                        canary=None adopted=None 0.7376->None
+[342/735] googledrive__rd_example__drive  drive_ls          A1_full_whole   s2 verified                       canary=False adopted=False 0.0->0.0
+[343/735] highr__rd_example__hilight_Rd   cat               A5_local        s2 verified                       canary=True adopted=False 0.7376->0.7376
+[344/735] googledrive__rd_example__drive  drive_ls          A3_trim_whole   s2 verified                       canary=False adopted=False 0.0->1.0
+[345/735] highr__rd_example__hilight_Rd   cat               A6_local_pad    s2 verified                       canary=False adopted=False 0.7376->0.5188
+[346/735] highr__rd_example__hilight_Rd   cat_1             A1_full_whole   s2 verified                       canary=True adopted=False 0.5299->0.8275
+[347/735] googledrive__rd_example__drive  drive_browse      A1_full_whole   s2 verified                       canary=False adopted=False 0.0->1.0
+[348/735] googledrive__rd_example__drive  drive_ls          A7_full_x2      s2 verified                       canary=False adopted=False 0.0->0.1667
+[349/735] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s2 no code                        canary=None adopted=None 0.5299->None
+[350/735] highr__rd_example__hilight_Rd   cat               A4_trim_entity  s2 verified                       canary=True adopted=False 0.7376->0.1667
+[351/735] highr__rd_example__hilight_Rd   cat_1             A5_local        s2 verified                       canary=False adopted=False 0.5299->0.5055
+[352/735] highr__rd_example__hilight_Rd   cat_1             A6_local_pad    s2 verified                       canary=True adopted=False 0.5299->0.5289
+[353/735] highr__rd_example__hilight_Rd   cat               A7_full_x2      s2 verified                       canary=True adopted=False 0.7376->0.1667
+[354/735] hms__rd_example__hms_Rd         hms               A2_full_entity  s2 verified                       canary=True adopted=True 0.4653->0.0
+[355/735] hms__rd_example__hms_Rd         hms               A1_full_whole   s2 verified                       canary=False adopted=False 0.4653->0.0
+[356/735] hms__rd_example__hms_Rd         hms               A4_trim_entity  s2 verified                       canary=True adopted=True 0.4653->0.0
+[357/735] hms__rd_example__hms_Rd         hms               A5_local        s2 verified                       canary=True adopted=True 0.4653->0.0
+[358/735] hms__rd_example__hms_Rd         hms               A6_local_pad    s2 verified                       canary=True adopted=True 0.4653->0.0
+[359/735] highr__rd_example__hilight_Rd   cat_1             A7_full_x2      s2 verified                       canary=True adopted=False 0.5299->0.8385
+[360/735] highr__rd_example__hilight_Rd   cat               A3_trim_whole   s2 verified                       canary=True adopted=False 0.7376->0.0
+[361/735] hms__rd_example__hms_Rd         hms               A7_full_x2      s2 verified                       canary=False adopted=False 0.4653->0.0
+[362/735] highr__rd_example__hilight_Rd   cat_1             A3_trim_whole   s2 verified                       canary=False adopted=False 0.5299->0.0
+[363/735] hms__rd_example__hms_Rd         hms               A3_trim_whole   s2 verified                       canary=False adopted=False 0.4653->0.7353
+[364/735] highr__rd_example__hilight_Rd   cat_1             A4_trim_entity  s2 verified                       canary=False adopted=False 0.5299->0.1667
+[365/735] hms__rd_example__hms_Rd         new_hms           A4_trim_entity  s2 verified                       canary=True adopted=False 0.0->0.1667
+[366/735] hms__rd_example__hms_Rd         new_hms           A3_trim_whole   s2 verified                       canary=True adopted=True 0.0->1.0
+[367/735] hms__rd_example__hms_Rd         new_hms           A6_local_pad    s2 verified                       canary=True adopted=True 0.0->0.1667
+[368/735] hms__rd_example__hms_Rd         new_hms           A5_local        s2 verified                       canary=True adopted=True 0.0->0.1667
+[369/735] hms__rd_example__hms_Rd         new_hms           A7_full_x2      s2 verified                       canary=True adopted=True 0.0->1.0
+[370/735] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[371/735] hms__rd_example__hms_Rd         as_hms_1          A4_trim_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[372/735] hms__rd_example__hms_Rd         as_hms_1          A5_local        s2 verified                       canary=False adopted=False 0.0->0.0
+[373/735] hms__rd_example__hms_Rd         as_hms_1          A6_local_pad    s2 verified                       canary=False adopted=False 0.0->0.0
+[374/735] hms__rd_example__hms_Rd         as_hms_1          A3_trim_whole   s2 verified                       canary=False adopted=False 0.0->1.0
+[375/735] hms__rd_example__hms_Rd         as_hms_1          A7_full_x2      s2 verified                       canary=False adopted=True 0.0->0.0
+[376/735] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[377/735] hms__rd_example__hms_Rd         new_hms           A1_full_whole   s2 verified                       canary=False adopted=False 0.0->0.0
+[378/735] lava__vignette__influencefunct  e_1               A2_full_entity  s2 verified                       canary=True adopted=True 0.7518->1.0
+[379/735] lava__vignette__influencefunct  e_1               A5_local        s2 verified                       canary=False adopted=True 0.7518->1.0
+[380/735] hms__rd_example__hms_Rd         as_hms_1          A1_full_whole   s2 verified                       canary=False adopted=False 0.0->1.0
+[381/735] lava__vignette__influencefunct  e_1               A6_local_pad    s2 verified                       canary=False adopted=True 0.7518->1.0
+[382/735] lubridate__vignette__lubridate  months_2          A2_full_entity  s2 verified                       canary=False adopted=True 0.522->1.0
+[383/735] lubridate__vignette__lubridate  months_2          A1_full_whole   s2 verified                       canary=False adopted=True 0.522->1.0
+[384/735] lava__vignette__influencefunct  e_1               A4_trim_entity  s2 verified                       canary=True adopted=False 0.7518->0.0
+[385/735] lava__vignette__influencefunct  e_1               A3_trim_whole   s2 verified                       canary=False adopted=False 0.7518->0.9695
+[386/735] lubridate__vignette__lubridate  months_2          A4_trim_entity  s2 verified                       canary=True adopted=False 0.522->0.0833
+[387/735] lubridate__vignette__lubridate  months_2          A5_local        s2 verified                       canary=True adopted=True 0.522->1.0
+[388/735] lava__vignette__influencefunct  e_1               A1_full_whole   s2 verified                       canary=False adopted=False 0.7518->0.75
+[389/735] lubridate__vignette__lubridate  months_2          A6_local_pad    s2 verified                       canary=True adopted=True 0.522->1.0
+[390/735] lava__vignette__influencefunct  e_1               A7_full_x2      s2 verified                       canary=False adopted=True 0.7518->1.0
+[391/735] lubridate__vignette__lubridate  months_2          A3_trim_whole   s2 verified                       canary=False adopted=True 0.522->1.0
+[392/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[393/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[394/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s2 verified                       canary=True adopted=False 0.0->0.0
+[395/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s2 verified                       canary=True adopted=False 0.0->0.0
+[396/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[397/735] lubridate__vignette__lubridate  months_2          A7_full_x2      s2 verified                       canary=False adopted=True 0.522->1.0
+[398/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s2 verified                       canary=False adopted=False 0.0->0.0
+[399/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s2 verified                       canary=True adopted=False 0.0->0.0
+[400/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s2 verified                       canary=True adopted=False 0.0->0.0
+[401/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[402/735] purrr__vignette__purrr_s3       str               A1_full_whole   s2 verified                       canary=True adopted=True 0.7951->1.0
+[403/735] purrr__vignette__purrr_s3       str               A2_full_entity  s2 verified                       canary=False adopted=True 0.7951->1.0
+[404/735] purrr__vignette__purrr_s3       str               A3_trim_whole   s2 verified                       canary=True adopted=True 0.7951->1.0
+[405/735] purrr__vignette__purrr_s3       str               A4_trim_entity  s2 verified                       canary=True adopted=False 0.7951->0.0
+[406/735] purrr__vignette__purrr_s3       str               A5_local        s2 verified                       canary=False adopted=True 0.7951->1.0
+[407/735] purrr__vignette__purrr_s3       str               A6_local_pad    s2 verified                       canary=False adopted=True 0.7951->1.0
+[408/735] purrr__vignette__purrr_s3       str               A7_full_x2      s2 verified                       canary=False adopted=True 0.7951->1.0
+[409/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s2 verified                       canary=False adopted=False 0.0->0.0
+[410/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s2 verified                       canary=False adopted=False 0.0->0.0
+[411/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s2 verified                       canary=False adopted=False 0.0->0.0
+[412/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s2 verified                       canary=True adopted=True 0.0->0.0
+[413/735] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s2 verified                       canary=True adopted=True 0.8496->1.0
+[414/735] tidyr__vignette__tidy-data_s3   tribble           A6_local_pad    s2 verified                       canary=True adopted=True 0.8496->1.0
+[415/735] tidyr__vignette__tidy-data_s3   tribble           A1_full_whole   s2 verified                       canary=False adopted=False 0.8496->1.0
+[416/735] tidyr__vignette__tidy-data_s3   tribble           A5_local        s2 verified                       canary=True adopted=True 0.8496->1.0
+[417/735] tidyr__vignette__tidy-data_s3   tribble           A4_trim_entity  s2 verified                       canary=False adopted=False 0.8496->1.0
+[418/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s2 verified                       canary=False adopted=True 0.0->0.0
+[419/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A3_trim_whole   s2 verified                       canary=True adopted=False 0.7344->0.5
+[420/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A4_trim_entity  s2 verified                       canary=True adopted=False 0.7344->0.5
+[421/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s2 verified                       canary=True adopted=True 0.7344->1.0
+[422/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s2 verified                       canary=True adopted=False 0.7344->0.1667
+[423/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A6_local_pad    s2 verified                       canary=True adopted=True 0.7344->0.0
+[424/735] tidyr__vignette__tidy-data_s3   tribble           A3_trim_whole   s2 verified                       canary=False adopted=False 0.8496->1.0
+[425/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A3_trim_whole   s2 verified                       canary=False adopted=True 0.802->1.0
+[426/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s2 verified                       canary=False adopted=False 0.802->0.1667
+[427/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A1_full_whole   s2 verified                       canary=False adopted=False 0.802->0.0
+[428/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A6_local_pad    s2 verified                       canary=True adopted=False 0.802->0.8742
+[429/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s2 verified                       canary=True adopted=False 0.802->0.8023
+[430/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A1_full_whole   s2 verified                       canary=False adopted=True 0.7344->0.9933
+[431/735] tidyr__vignette__tidy-data_s3   tribble           A7_full_x2      s2 verified                       canary=False adopted=False 0.8496->1.0
+[432/735] timeDate__rd_example__earlyClo  c                 A2_full_entity  s2 verified                       canary=False adopted=False 0.5161->0.0
+[433/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A7_full_x2      s2 verified                       canary=False adopted=False 0.802->0.7022
+[434/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A4_trim_entity  s2 verified                       canary=True adopted=False 0.802->0.5
+[435/735] timeDate__rd_example__earlyClo  c                 A4_trim_entity  s2 verified                       canary=False adopted=False 0.5161->0.5228
+[436/735] timeDate__rd_example__earlyClo  c                 A5_local        s2 verified                       canary=False adopted=False 0.5161->0.1667
+[437/735] timeDate__rd_example__earlyClo  c                 A1_full_whole   s2 verified                       canary=False adopted=False 0.5161->0.0
+[438/735] timeDate__rd_example__earlyClo  c                 A6_local_pad    s2 verified                       canary=False adopted=False 0.5161->0.1667
+[439/735] timeDate__rd_example__earlyClo  c                 A7_full_x2      s2 verified                       canary=False adopted=False 0.5161->0.9403
+[440/735] broom__rd_example__glance_fact  tidy              A4_trim_entity  s3 verified                       canary=True adopted=False 0.5129->0.0
+[441/735] broom__rd_example__glance_fact  tidy              A5_local        s3 verified                       canary=False adopted=False 0.5129->0.1667
+[442/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A7_full_x2      s2 verified                       canary=False adopted=True 0.7344->1.0
+[443/735] broom__rd_example__glance_fact  tidy              A2_full_entity  s3 verified                       canary=False adopted=False 0.5129->0.5954
+[444/735] timeDate__rd_example__earlyClo  c                 A3_trim_whole   s2 verified                       canary=False adopted=True 0.5161->0.993
+[445/735] broom__rd_example__glance_fact  tidy              A1_full_whole   s3 verified                       canary=False adopted=False 0.5129->0.5954
+[446/735] broom__rd_example__glance_fact  tidy              A6_local_pad    s3 verified                       canary=True adopted=False 0.5129->0.7144
+[447/735] broom__rd_example__glance_fact  tidy              A7_full_x2      s3 verified                       canary=False adopted=False 0.5129->0.5954
+[448/735] broom__rd_example__glance_fact  tidy_1            A4_trim_entity  s3 verified                       canary=True adopted=False 0.5129->0.0
+[449/735] broom__rd_example__glance_fact  tidy_1            A3_trim_whole   s3 verified                       canary=True adopted=False 0.5129->0.5933
+[450/735] broom__rd_example__glance_fact  tidy_1            A6_local_pad    s3 verified                       canary=True adopted=False 0.5129->0.5951
+[451/735] broom__rd_example__glance_fact  tidy_1            A5_local        s3 verified                       canary=True adopted=False 0.5129->0.7099
+[452/735] broom__rd_example__glance_fact  tidy_1            A1_full_whole   s3 verified                       canary=True adopted=False 0.5129->0.5954
+[453/735] broom__rd_example__glance_fact  tidy              A3_trim_whole   s3 verified                       canary=True adopted=False 0.5129->0.2579
+[454/735] broom__rd_example__glance_fact  augment           A2_full_entity  s3 verified                       canary=False adopted=False 0.5055->0.9061
+[455/735] broom__rd_example__glance_fact  augment           A4_trim_entity  s3 verified                       canary=True adopted=False 0.5055->0.0
+[456/735] broom__rd_example__glance_fact  tidy_1            A7_full_x2      s3 verified                       canary=True adopted=False 0.5129->0.5954
+[457/735] broom__rd_example__glance_fact  augment           A5_local        s3 verified                       canary=False adopted=False 0.5055->0.5256
+[458/735] broom__rd_example__glance_fact  augment           A6_local_pad    s3 verified                       canary=False adopted=False 0.5055->0.5256
+[459/735] broom__rd_example__glance_fact  augment           A3_trim_whole   s3 verified                       canary=True adopted=False 0.5055->0.5237
+[460/735] clock__rd_example__zoned_time_  x_2               A3_trim_whole   s3 verified                       canary=False adopted=False 0.5->0.0
+[461/735] clock__rd_example__zoned_time_  x_2               A1_full_whole   s3 verified                       canary=False adopted=False 0.5->0.0
+[462/735] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s3 verified                       canary=True adopted=False 0.5129->0.5954
+[463/735] clock__rd_example__zoned_time_  x_2               A5_local        s3 verified                       canary=True adopted=True 0.5->0.0
+[464/735] clock__rd_example__zoned_time_  x_2               A4_trim_entity  s3 verified                       canary=True adopted=True 0.5->1.0
+[465/735] clock__rd_example__zoned_time_  x_2               A6_local_pad    s3 verified                       canary=True adopted=True 0.5->0.0
+[466/735] broom__rd_example__glance_fact  augment           A1_full_whole   s3 verified                       canary=False adopted=False 0.5055->0.5257
+[467/735] clock__rd_example__zoned_time_  x_3               A2_full_entity  s3 verified                       canary=True adopted=True 0.5618->0.5
+[468/735] broom__rd_example__glance_fact  augment           A7_full_x2      s3 verified                       canary=True adopted=False 0.5055->0.5257
+[469/735] clock__rd_example__zoned_time_  x_2               A2_full_entity  s3 verified                       canary=False adopted=False 0.5->1.0
+[470/735] clock__rd_example__zoned_time_  x_3               A3_trim_whole   s3 verified                       canary=True adopted=True 0.5618->1.0
+[471/735] clock__rd_example__zoned_time_  x_3               A5_local        s3 verified                       canary=True adopted=True 0.5618->0.5
+[472/735] clock__rd_example__zoned_time_  x_3               A4_trim_entity  s3 verified                       canary=False adopted=False 0.5618->0.7549
+[473/735] clock__rd_example__zoned_time_  x_3               A6_local_pad    s3 verified                       canary=True adopted=True 0.5618->0.5
+[474/735] clock__rd_example__zoned_time_  x_2               A7_full_x2      s3 verified                       canary=True adopted=True 0.5->0.0
+[475/735] googledrive__rd_example__drive  drive_browse      A2_full_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[476/735] googledrive__rd_example__drive  drive_browse      A4_trim_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[477/735] googledrive__rd_example__drive  drive_browse      A6_local_pad    s3 verified                       canary=False adopted=False 0.0->0.0
+[478/735] googledrive__rd_example__drive  drive_browse      A5_local        s3 verified                       canary=False adopted=False 0.0->0.0
+[479/735] clock__rd_example__zoned_time_  x_3               A7_full_x2      s3 verified                       canary=True adopted=True 0.5618->0.994
+[480/735] clock__rd_example__zoned_time_  x_3               A1_full_whole   s3 verified                       canary=True adopted=True 0.5618->0.5
+[481/735] googledrive__rd_example__drive  drive_ls          A2_full_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[482/735] googledrive__rd_example__drive  drive_ls          A4_trim_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[483/735] googledrive__rd_example__drive  drive_browse      A7_full_x2      s3 verified                       canary=False adopted=False 0.0->1.0
+[484/735] googledrive__rd_example__drive  drive_ls          A5_local        s3 verified                       canary=False adopted=False 0.0->0.0
+[485/735] googledrive__rd_example__drive  drive_browse      A1_full_whole   s3 verified                       canary=False adopted=False 0.0->1.0
+[486/735] googledrive__rd_example__drive  drive_ls          A6_local_pad    s3 verified                       canary=False adopted=False 0.0->0.0
+[487/735] googledrive__rd_example__drive  drive_browse      A3_trim_whole   s3 verified                       canary=False adopted=False 0.0->0.0
+[488/735] highr__rd_example__hilight_Rd   cat               A1_full_whole   s3 verified                       canary=False adopted=False 0.7376->1.0
+[489/735] googledrive__rd_example__drive  drive_ls          A7_full_x2      s3 verified                       canary=False adopted=False 0.0->1.0
+[490/735] highr__rd_example__hilight_Rd   cat               A2_full_entity  s3 verified                       canary=False adopted=False 0.7376->0.0
+[491/735] highr__rd_example__hilight_Rd   cat               A5_local        s3 verified                       canary=False adopted=False 0.7376->0.5188
+[492/735] highr__rd_example__hilight_Rd   cat               A6_local_pad    s3 verified                       canary=False adopted=False 0.7376->0.5188
+[493/735] highr__rd_example__hilight_Rd   cat               A3_trim_whole   s3 verified                       canary=True adopted=False 0.7376->0.8508
+[494/735] googledrive__rd_example__drive  drive_ls          A3_trim_whole   s3 verified                       canary=False adopted=False 0.0->1.0
+[495/735] googledrive__rd_example__drive  drive_ls          A1_full_whole   s3 verified                       canary=False adopted=False 0.0->0.1667
+[496/735] highr__rd_example__hilight_Rd   cat               A4_trim_entity  s3 verified                       canary=False adopted=False 0.7376->0.0
+[497/735] highr__rd_example__hilight_Rd   cat_1             A5_local        s3 verified                       canary=True adopted=False 0.5299->0.5289
+[498/735] highr__rd_example__hilight_Rd   cat_1             A3_trim_whole   s3 verified                       canary=True adopted=False 0.5299->0.7814
+[499/735] highr__rd_example__hilight_Rd   cat_1             A6_local_pad    s3 verified                       canary=True adopted=False 0.5299->0.5289
+[500/735] highr__rd_example__hilight_Rd   cat_1             A1_full_whole   s3 verified                       canary=True adopted=False 0.5299->0.8762
+[501/735] highr__rd_example__hilight_Rd   cat_1             A4_trim_entity  s3 verified                       canary=False adopted=False 0.5299->0.1667
+[502/735] hms__rd_example__hms_Rd         hms               A2_full_entity  s3 verified                       canary=True adopted=True 0.4653->0.0
+[503/735] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s3 verified                       canary=False adopted=False 0.5299->0.5
+[504/735] hms__rd_example__hms_Rd         hms               A4_trim_entity  s3 verified                       canary=False adopted=False 0.4653->0.0
+[505/735] hms__rd_example__hms_Rd         hms               A5_local        s3 verified                       canary=True adopted=True 0.4653->0.0
+[506/735] hms__rd_example__hms_Rd         hms               A6_local_pad    s3 verified                       canary=True adopted=True 0.4653->0.0
+[507/735] hms__rd_example__hms_Rd         new_hms           A1_full_whole   s3 no code                        canary=None adopted=None 0.0->None
+[508/735] highr__rd_example__hilight_Rd   cat               A7_full_x2      s3 verified                       canary=True adopted=False 0.7376->0.1667
+[509/735] hms__rd_example__hms_Rd         hms               A1_full_whole   s3 verified                       canary=False adopted=False 0.4653->0.0
+[510/735] hms__rd_example__hms_Rd         hms               A3_trim_whole   s3 verified                       canary=False adopted=False 0.4653->0.7353
+[511/735] hms__rd_example__hms_Rd         new_hms           A4_trim_entity  s3 verified                       canary=True adopted=False 0.0->0.1667
+[512/735] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[513/735] hms__rd_example__hms_Rd         new_hms           A5_local        s3 verified                       canary=True adopted=True 0.0->0.1667
+[514/735] hms__rd_example__hms_Rd         new_hms           A6_local_pad    s3 verified                       canary=True adopted=True 0.0->0.1667
+[515/735] hms__rd_example__hms_Rd         as_hms_1          A1_full_whole   s3 verified                       canary=False adopted=False 0.0->0.0
+[516/735] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[517/735] hms__rd_example__hms_Rd         hms               A7_full_x2      s3 verified                       canary=False adopted=False 0.4653->0.0
+[518/735] hms__rd_example__hms_Rd         as_hms_1          A4_trim_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[519/735] hms__rd_example__hms_Rd         new_hms           A3_trim_whole   s3 verified                       canary=True adopted=True 0.0->1.0
+[520/735] hms__rd_example__hms_Rd         as_hms_1          A6_local_pad    s3 verified                       canary=False adopted=False 0.0->0.0
+[521/735] hms__rd_example__hms_Rd         as_hms_1          A5_local        s3 verified                       canary=False adopted=False 0.0->0.0
+[522/735] highr__rd_example__hilight_Rd   cat_1             A7_full_x2      s3 verified                       canary=True adopted=False 0.5299->0.0
+[523/735] hms__rd_example__hms_Rd         new_hms           A7_full_x2      s3 verified                       canary=True adopted=True 0.0->0.0
+[524/735] lava__vignette__influencefunct  e_1               A1_full_whole   s3 verified                       canary=False adopted=False 0.7518->0.0
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_676fc113b9.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_69b6c220b1.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_716dca53e9.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'clock' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_1f600b1bce.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_1acb946423.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_aad58dea31.py
+[r2py] Installing Python package 'clock' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] WARNING: 'e' is a data entity but Python could not serialize it — excluded from comparison
+[525/735] hms__rd_example__hms_Rd         as_hms_1          A7_full_x2      s3 verified                       canary=False adopted=True 0.0->1.0
+[526/735] hms__rd_example__hms_Rd         as_hms_1          A3_trim_whole   s3 verified                       canary=False adopted=False 0.0->0.5
+[527/735] lava__vignette__influencefunct  e_1               A3_trim_whole   s3 verified                       canary=False adopted=False 0.7518->0.9695
+[528/735] lava__vignette__influencefunct  e_1               A2_full_entity  s3 verified                       canary=True adopted=False 0.7518->0.0
+[529/735] lava__vignette__influencefunct  e_1               A4_trim_entity  s3 verified                       canary=True adopted=False 0.7518->0.75
+[530/735] lava__vignette__influencefunct  e_1               A6_local_pad    s3 verified                       canary=False adopted=True 0.7518->1.0
+[531/735] lava__vignette__influencefunct  e_1               A5_local        s3 verified                       canary=True adopted=True 0.7518->1.0
+[532/735] lava__vignette__influencefunct  e_1               A7_full_x2      s3 verified                       canary=False adopted=True 0.7518->1.0
+[533/735] lubridate__vignette__lubridate  months_2          A5_local        s3 verified                       canary=False adopted=True 0.522->1.0
+[534/735] lubridate__vignette__lubridate  months_2          A6_local_pad    s3 verified                       canary=True adopted=True 0.522->1.0
+[535/735] lubridate__vignette__lubridate  months_2          A2_full_entity  s3 no code                        canary=None adopted=None 0.522->None
+[536/735] lubridate__vignette__lubridate  months_2          A1_full_whole   s3 verified                       canary=False adopted=True 0.522->1.0
+[537/735] lubridate__vignette__lubridate  months_2          A4_trim_entity  s3 verified                       canary=False adopted=True 0.522->1.0
+[538/735] lubridate__vignette__lubridate  months_2          A3_trim_whole   s3 verified                       canary=False adopted=True 0.522->1.0
+[539/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[540/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s3 verified                       canary=True adopted=False 0.0->0.0
+[541/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[542/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s3 verified                       canary=True adopted=False 0.0->0.0
+[543/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s3 verified                       canary=False adopted=True 0.0->0.0
+[544/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s3 verified                       canary=False adopted=False 0.0->0.0
+[545/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s3 verified                       canary=False adopted=False 0.0->0.0
+[546/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[547/735] lubridate__vignette__lubridate  months_2          A7_full_x2      s3 verified                       canary=True adopted=True 0.522->1.0
+[548/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s3 verified                       canary=False adopted=False 0.0->0.0
+[549/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s3 verified                       canary=True adopted=False 0.0->0.0
+[550/735] purrr__vignette__purrr_s3       str               A1_full_whole   s3 verified                       canary=True adopted=True 0.7951->1.0
+<unknown>:23: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:24: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:25: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:26: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:27: SyntaxWarning: invalid escape sequence '\ '
+[551/735] purrr__vignette__purrr_s3       str               A2_full_entity  s3 verified                       canary=False adopted=True 0.7951->0.9783
+[552/735] purrr__vignette__purrr_s3       str               A3_trim_whole   s3 verified                       canary=False adopted=True 0.7951->1.0
+[553/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s3 verified                       canary=False adopted=False 0.0->0.0
+[554/735] purrr__vignette__purrr_s3       str               A4_trim_entity  s3 verified                       canary=True adopted=False 0.7951->0.0
+[555/735] purrr__vignette__purrr_s3       str               A6_local_pad    s3 verified                       canary=False adopted=True 0.7951->1.0
+[556/735] purrr__vignette__purrr_s3       str               A5_local        s3 verified                       canary=False adopted=True 0.7951->1.0
+[557/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s3 verified                       canary=False adopted=False 0.0->0.0
+[558/735] purrr__vignette__purrr_s3       str               A7_full_x2      s3 verified                       canary=True adopted=True 0.7951->1.0
+[559/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s3 verified                       canary=False adopted=False 0.0->0.0
+[560/735] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s3 verified                       canary=True adopted=True 0.8496->1.0
+[561/735] tidyr__vignette__tidy-data_s3   tribble           A5_local        s3 verified                       canary=True adopted=True 0.8496->1.0
+[562/735] tidyr__vignette__tidy-data_s3   tribble           A1_full_whole   s3 verified                       canary=False adopted=False 0.8496->1.0
+[563/735] tidyr__vignette__tidy-data_s3   tribble           A6_local_pad    s3 verified                       canary=True adopted=True 0.8496->1.0
+[564/735] tidyr__vignette__tidy-data_s3   tribble           A4_trim_entity  s3 verified                       canary=False adopted=False 0.8496->0.9858
+[565/735] tidyr__vignette__tidy-data_s3   tribble           A3_trim_whole   s3 verified                       canary=False adopted=False 0.8496->1.0
+[566/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s3 verified                       canary=True adopted=True 0.0->0.0
+[567/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A3_trim_whole   s3 verified                       canary=True adopted=True 0.7344->1.0
+[568/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s3 verified                       canary=True adopted=True 0.7344->1.0
+[569/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A4_trim_entity  s3 verified                       canary=False adopted=False 0.7344->0.5
+[570/735] tidyr__vignette__tidy-data_s3   tribble           A7_full_x2      s3 verified                       canary=False adopted=False 0.8496->1.0
+[571/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A6_local_pad    s3 verified                       canary=True adopted=False 0.7344->0.0
+[572/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s3 verified                       canary=False adopted=True 0.7344->1.0
+[573/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A1_full_whole   s3 verified                       canary=False adopted=False 0.7344->0.8766
+[574/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s3 verified                       canary=True adopted=False 0.802->0.8023
+[575/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A4_trim_entity  s3 verified                       canary=True adopted=False 0.802->0.5
+[576/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A7_full_x2      s3 verified                       canary=False adopted=True 0.7344->0.9933
+[577/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A6_local_pad    s3 verified                       canary=True adopted=False 0.802->0.8023
+[578/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A1_full_whole   s3 verified                       canary=False adopted=False 0.802->0.0
+[579/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A3_trim_whole   s3 verified                       canary=False adopted=True 0.802->1.0
+[580/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s3 verified                       canary=False adopted=False 0.802->1.0
+[581/735] timeDate__rd_example__earlyClo  c                 A5_local        s3 verified                       canary=True adopted=False 0.5161->0.5161
+[582/735] timeDate__rd_example__earlyClo  c                 A2_full_entity  s3 verified                       canary=True adopted=False 0.5161->0.7468
+[583/735] timeDate__rd_example__earlyClo  c                 A6_local_pad    s3 verified                       canary=False adopted=False 0.5161->0.1667
+[584/735] timeDate__rd_example__earlyClo  c                 A3_trim_whole   s3 verified                       canary=False adopted=False 0.5161->0.8745
+[585/735] timeDate__rd_example__earlyClo  c                 A1_full_whole   s3 verified                       canary=False adopted=False 0.5161->0.8777
+[586/735] timeDate__rd_example__earlyClo  c                 A4_trim_entity  s3 verified                       canary=True adopted=False 0.5161->0.5
+[587/735] broom__rd_example__glance_fact  tidy              A2_full_entity  s4 verified                       canary=False adopted=False 0.5129->0.0
+[588/735] broom__rd_example__glance_fact  tidy              A4_trim_entity  s4 verified                       canary=True adopted=False 0.5129->0.0
+[589/735] broom__rd_example__glance_fact  tidy              A1_full_whole   s4 verified                       canary=True adopted=False 0.5129->0.5954
+[590/735] broom__rd_example__glance_fact  tidy              A5_local        s4 verified                       canary=True adopted=False 0.5129->0.0
+[591/735] broom__rd_example__glance_fact  tidy              A3_trim_whole   s4 verified                       canary=False adopted=False 0.5129->0.5954
+[592/735] broom__rd_example__glance_fact  tidy              A6_local_pad    s4 verified                       canary=True adopted=False 0.5129->0.0
+[593/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A7_full_x2      s3 verified                       canary=False adopted=False 0.802->0.0
+[594/735] broom__rd_example__glance_fact  tidy_1            A1_full_whole   s4 verified                       canary=True adopted=False 0.5129->0.5954
+[595/735] broom__rd_example__glance_fact  tidy_1            A4_trim_entity  s4 verified                       canary=True adopted=False 0.5129->0.0
+[596/735] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s4 verified                       canary=False adopted=False 0.5129->0.5951
+[597/735] broom__rd_example__glance_fact  tidy_1            A3_trim_whole   s4 verified                       canary=True adopted=False 0.5129->0.5954
+[598/735] broom__rd_example__glance_fact  tidy_1            A5_local        s4 verified                       canary=True adopted=False 0.5129->0.7099
+[599/735] broom__rd_example__glance_fact  tidy_1            A6_local_pad    s4 verified                       canary=True adopted=False 0.5129->0.7099
+[600/735] broom__rd_example__glance_fact  tidy              A7_full_x2      s4 verified                       canary=False adopted=False 0.5129->0.9292
+[601/735] broom__rd_example__glance_fact  augment           A2_full_entity  s4 verified                       canary=False adopted=False 0.5055->0.0
+[602/735] broom__rd_example__glance_fact  augment           A4_trim_entity  s4 verified                       canary=True adopted=False 0.5055->0.0
+[603/735] broom__rd_example__glance_fact  augment           A5_local        s4 verified                       canary=False adopted=False 0.5055->0.5256
+[604/735] timeDate__rd_example__earlyClo  c                 A7_full_x2      s3 verified                       canary=False adopted=False 0.5161->0.0
+[605/735] broom__rd_example__glance_fact  augment           A3_trim_whole   s4 verified                       canary=False adopted=False 0.5055->0.5256
+[606/735] broom__rd_example__glance_fact  tidy_1            A7_full_x2      s4 verified                       canary=True adopted=False 0.5129->0.0
+[607/735] broom__rd_example__glance_fact  augment           A6_local_pad    s4 verified                       canary=False adopted=False 0.5055->0.5256
+[608/735] broom__rd_example__glance_fact  augment           A1_full_whole   s4 verified                       canary=False adopted=False 0.5055->0.0
+[609/735] clock__rd_example__zoned_time_  x_2               A2_full_entity  s4 verified                       canary=True adopted=True 0.5->0.0
+[610/735] clock__rd_example__zoned_time_  x_2               A6_local_pad    s4 verified                       canary=True adopted=True 0.5->0.0
+[611/735] clock__rd_example__zoned_time_  x_2               A5_local        s4 verified                       canary=True adopted=True 0.5->0.0
+[612/735] clock__rd_example__zoned_time_  x_2               A4_trim_entity  s4 verified                       canary=False adopted=False 0.5->1.0
+[613/735] clock__rd_example__zoned_time_  x_2               A3_trim_whole   s4 verified                       canary=True adopted=True 0.5->1.0
+[614/735] clock__rd_example__zoned_time_  x_3               A2_full_entity  s4 verified                       canary=True adopted=True 0.5618->0.641
+[615/735] clock__rd_example__zoned_time_  x_3               A3_trim_whole   s4 verified                       canary=True adopted=True 0.5618->1.0
+[616/735] clock__rd_example__zoned_time_  x_2               A7_full_x2      s4 verified                       canary=True adopted=True 0.5->1.0
+[617/735] broom__rd_example__glance_fact  augment           A7_full_x2      s4 verified                       canary=True adopted=False 0.5055->0.0
+[618/735] clock__rd_example__zoned_time_  x_3               A6_local_pad    s4 verified                       canary=True adopted=True 0.5618->0.5
+[619/735] clock__rd_example__zoned_time_  x_3               A5_local        s4 verified                       canary=True adopted=True 0.5618->0.5
+[620/735] googledrive__rd_example__drive  drive_browse      A2_full_entity  s4 verified                       canary=True adopted=False 0.0->0.0
+[621/735] clock__rd_example__zoned_time_  x_3               A4_trim_entity  s4 verified                       canary=True adopted=True 0.5618->1.0
+[622/735] googledrive__rd_example__drive  drive_browse      A4_trim_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[623/735] googledrive__rd_example__drive  drive_browse      A5_local        s4 verified                       canary=False adopted=False 0.0->0.0
+[624/735] clock__rd_example__zoned_time_  x_3               A7_full_x2      s4 verified                       canary=True adopted=True 0.5618->0.994
+[625/735] clock__rd_example__zoned_time_  x_2               A1_full_whole   s4 verified                       canary=False adopted=False 0.5->0.0
+[626/735] googledrive__rd_example__drive  drive_browse      A6_local_pad    s4 verified                       canary=False adopted=False 0.0->0.0
+[627/735] googledrive__rd_example__drive  drive_browse      A1_full_whole   s4 verified                       canary=False adopted=False 0.0->0.0
+[628/735] googledrive__rd_example__drive  drive_browse      A7_full_x2      s4 verified                       canary=False adopted=False 0.0->0.0
+[629/735] googledrive__rd_example__drive  drive_ls          A2_full_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[630/735] googledrive__rd_example__drive  drive_ls          A4_trim_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[631/735] googledrive__rd_example__drive  drive_ls          A5_local        s4 verified                       canary=False adopted=False 0.0->0.0
+[632/735] googledrive__rd_example__drive  drive_ls          A6_local_pad    s4 verified                       canary=False adopted=False 0.0->0.0
+[633/735] clock__rd_example__zoned_time_  x_3               A1_full_whole   s4 verified                       canary=True adopted=True 0.5618->0.9073
+[634/735] googledrive__rd_example__drive  drive_ls          A7_full_x2      s4 verified                       canary=False adopted=False 0.0->1.0
+[635/735] googledrive__rd_example__drive  drive_ls          A1_full_whole   s4 verified                       canary=False adopted=False 0.0->1.0
+[636/735] highr__rd_example__hilight_Rd   cat               A1_full_whole   s4 verified                       canary=True adopted=False 0.7376->0.85
+<unknown>:26: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:26: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:26: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:26: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:27: SyntaxWarning: invalid escape sequence '\h'
+<unknown>:27: SyntaxWarning: invalid escape sequence '\h'
+[637/735] highr__rd_example__hilight_Rd   cat               A5_local        s4 verified                       canary=True adopted=False 0.7376->0.7376
+[638/735] highr__rd_example__hilight_Rd   cat               A2_full_entity  s4 verified                       canary=False adopted=False 0.7376->0.0
+[639/735] highr__rd_example__hilight_Rd   cat               A3_trim_whole   s4 verified                       canary=True adopted=False 0.7376->0.7634
+[640/735] highr__rd_example__hilight_Rd   cat               A4_trim_entity  s4 verified                       canary=False adopted=False 0.7376->0.1667
+[641/735] highr__rd_example__hilight_Rd   cat               A6_local_pad    s4 verified                       canary=True adopted=False 0.7376->0.7376
+[642/735] googledrive__rd_example__drive  drive_ls          A3_trim_whole   s4 verified                       canary=False adopted=False 0.0->1.0
+[643/735] googledrive__rd_example__drive  drive_browse      A3_trim_whole   s4 verified                       canary=False adopted=False 0.0->1.0
+[644/735] highr__rd_example__hilight_Rd   cat_1             A1_full_whole   s4 verified                       canary=True adopted=False 0.5299->0.8549
+[645/735] highr__rd_example__hilight_Rd   cat_1             A5_local        s4 verified                       canary=True adopted=False 0.5299->0.5289
+[646/735] highr__rd_example__hilight_Rd   cat_1             A6_local_pad    s4 verified                       canary=True adopted=False 0.5299->0.5289
+[647/735] highr__rd_example__hilight_Rd   cat_1             A3_trim_whole   s4 verified                       canary=True adopted=False 0.5299->0.0
+[648/735] hms__rd_example__hms_Rd         hms               A2_full_entity  s4 verified                       canary=True adopted=True 0.4653->0.0
+[649/735] highr__rd_example__hilight_Rd   cat_1             A4_trim_entity  s4 no code                        canary=None adopted=None 0.5299->None
+[650/735] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s4 no code                        canary=None adopted=None 0.5299->None
+[651/735] hms__rd_example__hms_Rd         hms               A4_trim_entity  s4 verified                       canary=True adopted=True 0.4653->0.0
+[652/735] highr__rd_example__hilight_Rd   cat               A7_full_x2      s4 verified                       canary=False adopted=False 0.7376->0.8026
+[653/735] hms__rd_example__hms_Rd         hms               A5_local        s4 verified                       canary=True adopted=True 0.4653->0.0
+[654/735] hms__rd_example__hms_Rd         hms               A6_local_pad    s4 verified                       canary=True adopted=True 0.4653->0.0
+[655/735] hms__rd_example__hms_Rd         hms               A1_full_whole   s4 verified                       canary=False adopted=False 0.4653->0.0
+[656/735] hms__rd_example__hms_Rd         new_hms           A1_full_whole   s4 verified                       canary=False adopted=False 0.0->1.0
+[657/735] highr__rd_example__hilight_Rd   cat_1             A7_full_x2      s4 verified                       canary=True adopted=False 0.5299->0.8171
+[658/735] hms__rd_example__hms_Rd         new_hms           A3_trim_whole   s4 verified                       canary=False adopted=False 0.0->1.0
+[659/735] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[660/735] hms__rd_example__hms_Rd         new_hms           A6_local_pad    s4 verified                       canary=True adopted=True 0.0->0.1667
+[661/735] hms__rd_example__hms_Rd         new_hms           A5_local        s4 verified                       canary=True adopted=True 0.0->0.1667
+[662/735] hms__rd_example__hms_Rd         new_hms           A4_trim_entity  s4 verified                       canary=True adopted=True 0.0->1.0
+[663/735] hms__rd_example__hms_Rd         hms               A3_trim_whole   s4 verified                       canary=False adopted=False 0.4653->0.7353
+[664/735] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[665/735] hms__rd_example__hms_Rd         as_hms_1          A5_local        s4 verified                       canary=False adopted=False 0.0->0.0
+[666/735] hms__rd_example__hms_Rd         hms               A7_full_x2      s4 verified                       canary=False adopted=False 0.4653->0.0
+[667/735] hms__rd_example__hms_Rd         as_hms_1          A1_full_whole   s4 verified                       canary=False adopted=False 0.0->1.0
+[668/735] hms__rd_example__hms_Rd         as_hms_1          A6_local_pad    s4 verified                       canary=False adopted=False 0.0->0.0
+[669/735] hms__rd_example__hms_Rd         as_hms_1          A3_trim_whole   s4 verified                       canary=True adopted=False 0.0->1.0
+[670/735] hms__rd_example__hms_Rd         new_hms           A7_full_x2      s4 verified                       canary=True adopted=True 0.0->0.0
+[671/735] hms__rd_example__hms_Rd         as_hms_1          A4_trim_entity  s4 verified                       canary=True adopted=False 0.0->1.0
+[672/735] lava__vignette__influencefunct  e_1               A2_full_entity  s4 verified                       canary=True adopted=True 0.7518->1.0
+[673/735] lava__vignette__influencefunct  e_1               A6_local_pad    s4 verified                       canary=False adopted=True 0.7518->1.0
+[674/735] lava__vignette__influencefunct  e_1               A4_trim_entity  s4 verified                       canary=True adopted=False 0.7518->0.75
+[675/735] lava__vignette__influencefunct  e_1               A5_local        s4 verified                       canary=False adopted=True 0.7518->1.0
+[676/735] hms__rd_example__hms_Rd         as_hms_1          A7_full_x2      s4 verified                       canary=False adopted=True 0.0->1.0
+[677/735] lubridate__vignette__lubridate  months_2          A2_full_entity  s4 verified                       canary=True adopted=True 0.522->1.0
+[678/735] lava__vignette__influencefunct  e_1               A1_full_whole   s4 verified                       canary=False adopted=False 0.7518->0.75
+[679/735] lava__vignette__influencefunct  e_1               A3_trim_whole   s4 verified                       canary=True adopted=False 0.7518->0.9665
+[680/735] lubridate__vignette__lubridate  months_2          A4_trim_entity  s4 verified                       canary=False adopted=False 0.522->0.5
+[681/735] lubridate__vignette__lubridate  months_2          A5_local        s4 verified                       canary=True adopted=True 0.522->1.0
+[682/735] lava__vignette__influencefunct  e_1               A7_full_x2      s4 verified                       canary=True adopted=True 0.7518->1.0
+[683/735] lubridate__vignette__lubridate  months_2          A1_full_whole   s4 verified                       canary=False adopted=True 0.522->1.0
+[684/735] lubridate__vignette__lubridate  months_2          A3_trim_whole   s4 verified                       canary=False adopted=True 0.522->1.0
+[685/735] lubridate__vignette__lubridate  months_2          A6_local_pad    s4 verified                       canary=True adopted=False 0.522->0.7747
+[686/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[687/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[688/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s4 verified                       canary=True adopted=False 0.0->0.0
+[689/735] lubridate__vignette__lubridate  months_2          A7_full_x2      s4 verified                       canary=False adopted=True 0.522->1.0
+[690/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s4 verified                       canary=True adopted=False 0.0->0.0
+[691/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s4 verified                       canary=False adopted=False 0.0->0.0
+[692/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s4 verified                       canary=False adopted=True 0.0->0.0
+[693/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A4_trim_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[694/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A6_local_pad    s4 verified                       canary=False adopted=True 0.0->0.0
+[695/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s4 verified                       canary=True adopted=False 0.0->0.0
+[696/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s4 verified                       canary=False adopted=False 0.0->0.0
+[697/735] purrr__vignette__purrr_s3       str               A2_full_entity  s4 verified                       canary=False adopted=True 0.7951->1.0
+[698/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s4 verified                       canary=True adopted=False 0.0->0.0
+[699/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A3_trim_whole   s4 verified                       canary=True adopted=True 0.0->0.0
+[700/735] purrr__vignette__purrr_s3       str               A1_full_whole   s4 verified                       canary=False adopted=True 0.7951->1.0
+[701/735] purrr__vignette__purrr_s3       str               A5_local        s4 verified                       canary=False adopted=True 0.7951->1.0
+[702/735] purrr__vignette__purrr_s3       str               A6_local_pad    s4 verified                       canary=False adopted=True 0.7951->1.0
+[703/735] purrr__vignette__purrr_s3       str               A3_trim_whole   s4 verified                       canary=False adopted=True 0.7951->1.0
+[704/735] purrr__vignette__purrr_s3       str               A4_trim_entity  s4 verified                       canary=False adopted=True 0.7951->1.0
+[705/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A1_full_whole   s4 verified                       canary=False adopted=False 0.0->0.0
+<unknown>:23: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:24: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:25: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:26: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:27: SyntaxWarning: invalid escape sequence '\ '
+[706/735] purrr__vignette__purrr_s3       str               A7_full_x2      s4 verified                       canary=False adopted=True 0.7951->0.9783
+[707/735] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s4 verified                       canary=True adopted=True 0.8496->1.0
+[708/735] pROC__rd_example__geom_polygon  geom_polygon_auc  A7_full_x2      s4 verified                       canary=False adopted=False 0.0->0.0
+[709/735] tidyr__vignette__tidy-data_s3   tribble           A4_trim_entity  s4 verified                       canary=True adopted=True 0.8496->1.0
+[710/735] tidyr__vignette__tidy-data_s3   tribble           A5_local        s4 verified                       canary=True adopted=True 0.8496->1.0
+[711/735] tidyr__vignette__tidy-data_s3   tribble           A3_trim_whole   s4 verified                       canary=True adopted=True 0.8496->1.0
+[712/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s4 verified                       canary=True adopted=False 0.7344->0.5
+[713/735] tidyr__vignette__tidy-data_s3   tribble           A7_full_x2      s4 verified                       canary=True adopted=True 0.8496->1.0
+[714/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A4_trim_entity  s4 verified                       canary=True adopted=False 0.7344->0.0
+[715/735] tidyr__vignette__tidy-data_s3   tribble           A6_local_pad    s4 verified                       canary=True adopted=True 0.8496->1.0
+[716/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A3_trim_whole   s4 verified                       canary=False adopted=False 0.7344->0.0
+[717/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s4 verified                       canary=True adopted=False 0.7344->0.0
+[718/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A6_local_pad    s4 verified                       canary=True adopted=True 0.7344->0.0
+[719/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A1_full_whole   s4 verified                       canary=False adopted=False 0.802->1.0
+[720/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A3_trim_whole   s4 verified                       canary=False adopted=True 0.802->1.0
+[721/735] tidyr__vignette__tidy-data_s3   tribble           A1_full_whole   s4 verified                       canary=False adopted=False 0.8496->1.0
+[722/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A1_full_whole   s4 verified                       canary=False adopted=True 0.7344->1.0
+[723/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s4 verified                       canary=True adopted=False 0.802->0.1667
+[724/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A6_local_pad    s4 verified                       canary=True adopted=False 0.802->0.8023
+[725/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A4_trim_entity  s4 verified                       canary=True adopted=False 0.802->0.1667
+[726/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s4 verified                       canary=False adopted=False 0.802->0.7401
+[727/735] timeDate__rd_example__earlyClo  c                 A2_full_entity  s4 verified                       canary=True adopted=False 0.5161->0.0
+[728/735] timeDate__rd_example__earlyClo  c                 A1_full_whole   s4 verified                       canary=False adopted=False 0.5161->0.743
+[729/735] timeDate__rd_example__earlyClo  c                 A5_local        s4 verified                       canary=True adopted=False 0.5161->0.5161
+[730/735] timeDate__rd_example__earlyClo  c                 A4_trim_entity  s4 verified                       canary=True adopted=False 0.5161->0.5
+[731/735] timeDate__rd_example__earlyClo  c                 A6_local_pad    s4 verified                       canary=False adopted=False 0.5161->0.1667
+[732/735] timeDate__rd_example__earlyClo  c                 A3_trim_whole   s4 verified                       canary=True adopted=True 0.5161->0.9922
+[733/735] timeDate__rd_example__earlyClo  earlyCloseNYSE    A7_full_x2      s4 verified                       canary=True adopted=False 0.7344->0.5
+[734/735] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A7_full_x2      s4 verified                       canary=False adopted=False 0.802->0.0
+[735/735] timeDate__rd_example__earlyClo  c                 A7_full_x2      s4 verified                       canary=False adopted=True 0.5161->0.9976
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_321a2bc7ff.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_4f1d75d9ad.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+r2py: sentinel mapping failed (attempt 1/3): Invalid line range for hilight: 7-93 (file has 1 lines)
+r2py: sentinel mapping failed (attempt 2/3): Invalid line range for hilight: 5-92 (file has 1 lines)
+r2py: sentinel mapping failed (attempt 3/3): Invalid line range for hilight: 6-100 (file has 1 lines)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a69f522774.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a7f834b650.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_8a4bd2c1c4.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_6b667f589a.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_4e6696d556.py
+[r2py] Installing Python package 'clock' ...
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_98945cf6a0.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_332cd79187.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_1ec2aa108d.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_eee1563f53.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_97b8bf8d76.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_7f60eff128.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_e271a8e37a.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'clock' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_747021a57b.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_335ea801d7.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_16e5007cf5.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_7e94b821e7.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_e2bf95d1a2.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_31ed1ac1c0.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_2a49d0ac68.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_f51a28ba3e.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_34475171eb.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64774fec7f.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_2d85360399.py
+[r2py] Installing Python package 'clock' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_bd9e59365e.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_9f3b93e1a4.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_e5a4acd090.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_da8ce79794.py
+[r2py] Installing Python package 'hms' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_b8470566e0.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googledrive' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+
+735 calls (provider outages excluded)
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+A1_full_whole    105   13974       1%     19%    16%         4%        27%   +0.119
+A2_full_entity   105   14034       5%     32%    27%        36%        18%   -0.100
+A3_trim_whole    105    9906       1%     38%    32%        30%        35%   +0.241
+A4_trim_entity   105    9969       2%     53%    16%        26%         7%   -0.143
+A5_local         105    2894       0%     67%    42%        50%        35%   -0.019
+A6_local_pad     105   14112       0%     61%    41%        54%        29%   -0.071
+A7_full_x2       105   28026       0%     39%    41%        48%        35%   +0.100
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 18)

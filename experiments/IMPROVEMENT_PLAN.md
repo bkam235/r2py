@@ -2204,3 +2204,51 @@ Provider outages are discarded and the case repeated, as in the prompt-arms rig.
      characters.
 3. **Local answers are always spliced.** In a local arm, an answer is spliced into the entity whatever action it
    names, since the model saw only that entity.
+
+**Prompt-load result (2026-10-11): 735 calls, no provider failures. The decision rule is NOT applied (user's
+decision).** The smoke-test change gave the local arms (A5, A6) a different system prompt, so "short prompt" and
+"short system prompt" are confounded. Descriptive only:
+
+| arm | chars | canary | adopted | snippet | print | entity score change |
+|---|---|---|---|---|---|---|
+| A1 full/whole | 13,974 | 19% | 16% | 4% | 27% | +0.119 |
+| A2 full/entity | 14,034 | 32% | 27% | 36% | 18% | -0.100 |
+| A3 trim/whole | 9,906 | 38% | 32% | 30% | 35% | **+0.241** |
+| A4 trim/entity | 9,969 | 53% | 16% | 26% | 7% | -0.143 |
+| A5 local (short system) | 2,894 | **67%** | **42%** | 50% | 35% | -0.019 |
+| A6 local+pad (short system) | 14,112 | 61% | 41% | 54% | 29% | -0.071 |
+| A7 full x2 | 28,026 | 39% | 41% | 48% | 35% | +0.100 |
+
+- **Length alone is not it.** A6 is as long as A2 and behaves like A5.
+- What separates A6 from A2 is the system prompt (1,200 vs 5,000 characters) and relevant clutter (the whole
+  script and every entity's results) against unrelated padding. This run cannot tell which.
+- **A7 is unexplained.** Padding the full prompt raises adoption (16% to 41%) and the canary (19% to 39%).
+- Even in the best arm, a third of canaries are ignored.
+- **One-entity answers adopt more often but score worse.** All four one-entity arms lose score; all three
+  whole-file arms gain. A one-entity answer cannot fix what the entity depends on elsewhere.
+- 18 print-case answers pasted R's output as a literal.
+
+**Entity markers - why they get lost, and what the agent then sees (2026-10-11).**
+
+*Correction first.* The trajectory logs a rewrite's raw candidate at `accepted`, before the loop restores the
+markers (`best_source = harness.last_annotated_source`). `rescore_finals.py` took those raw candidates as the final
+states. The "29.5% of remaining loss in unmarked entities" figure therefore overstates the problem. The step 1b
+breakdown by dimension is unaffected in aggregate: re-scored aggregates matched the logged ones.
+
+What happens, traced over the 374 accepted rewrites of the 100 baseline runs:
+- **The model kept every marker in 249.**
+- **It dropped some in 125.**
+  - In 87 of these, the deterministic alignment (`restore_sentinels`) puts all of them back.
+  - In 38, alignment cannot place them all, and `HarnessTools.verify` asks a model to re-map the entities. Its
+    instructions let it omit entities, and it then sets `_mapped_eids` to the subset it returned. **Omitted
+    entities are dropped from the tracked set for good**, and are never restored by later steps.
+- **67 entities in the start states never had a marker.** The seed-stage mapping left them out. In isoband, for
+  example, `df_bands`, `isobands`, `g` and `grid.*` have no Python code at all ("missing in Python output").
+
+What the agent gets for an unmarked entity:
+- Its score in the per-entity list, and "missing in Python output" data feedback where applicable. Most
+  comparisons are absent.
+- `replace_entity` refuses it ("unknown entity ... no `# r2py:entity:` line"), and so does harness entity repair.
+  Only a whole-file rewrite can reach it, and nothing tells the agent where the code for it should go.
+
+The size of the model re-mapping loss needs those 38 mappings re-run, about 38 model calls, not done yet.
