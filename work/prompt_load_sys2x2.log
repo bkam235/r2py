@@ -1,0 +1,606 @@
+21 cases (10 snippet, 11 print), 4 arms, 5 samples: 420 calls to do, 6 workers
+[1/420] broom__rd_example__glance_fact  tidy              A5_local        s0 verified                       canary=True adopted=False 0.5129->0.0
+[2/420] broom__rd_example__glance_fact  tidy              B2_local_agentsyss0 verified                       canary=True adopted=False 0.5129->0.5951
+[3/420] broom__rd_example__glance_fact  tidy_1            A5_local        s0 verified                       canary=True adopted=False 0.5129->0.5951
+[4/420] broom__rd_example__glance_fact  tidy              B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.5129->0.0
+[5/420] broom__rd_example__glance_fact  augment           A2_full_entity  s0 verified                       canary=False adopted=False 0.5055->0.0
+[6/420] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s0 verified                       canary=True adopted=False 0.5129->0.5951
+[7/420] broom__rd_example__glance_fact  tidy_1            B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.5129->0.7099
+[8/420] broom__rd_example__glance_fact  augment           B2_local_agentsyss0 verified                       canary=False adopted=False 0.5055->0.5256
+[9/420] broom__rd_example__glance_fact  augment           A5_local        s0 verified                       canary=False adopted=False 0.5055->0.5256
+[10/420] broom__rd_example__glance_fact  augment           B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.5055->0.5256
+[11/420] broom__rd_example__glance_fact  tidy_1            B2_local_agentsyss0 verified                       canary=True adopted=False 0.5129->0.5951
+[12/420] broom__rd_example__glance_fact  tidy              A2_full_entity  s0 verified                       canary=True adopted=False 0.5129->0.7128
+[13/420] clock__rd_example__zoned_time_  x_2               A2_full_entity  s0 verified                       canary=True adopted=True 0.5->0.0
+[14/420] clock__rd_example__zoned_time_  x_2               A5_local        s0 verified                       canary=True adopted=True 0.5->0.0
+[15/420] clock__rd_example__zoned_time_  x_2               B1_full_entity_shortsyss0 verified                       canary=True adopted=True 0.5->0.0
+[16/420] clock__rd_example__zoned_time_  x_3               A2_full_entity  s0 verified                       canary=True adopted=True 0.5618->0.5
+[17/420] clock__rd_example__zoned_time_  x_2               B2_local_agentsyss0 verified                       canary=True adopted=True 0.5->0.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[18/420] clock__rd_example__zoned_time_  x_3               A5_local        s0 verified                       canary=True adopted=True 0.5618->0.5
+[19/420] clock__rd_example__zoned_time_  x_3               B1_full_entity_shortsyss0 verified                       canary=True adopted=True 0.5618->0.5
+[20/420] clock__rd_example__zoned_time_  x_3               B2_local_agentsyss0 verified                       canary=True adopted=True 0.5618->0.5
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[21/420] googledrive__rd_example__drive  drive_browse      B1_full_entity_shortsyss0 verified                       canary=False adopted=False 0.0->0.0
+[22/420] googledrive__rd_example__drive  drive_browse      A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[23/420] googledrive__rd_example__drive  drive_browse      A5_local        s0 verified                       canary=False adopted=False 0.0->0.0
+[24/420] googledrive__rd_example__drive  drive_browse      B2_local_agentsyss0 verified                       canary=False adopted=False 0.0->0.0
+[25/420] googledrive__rd_example__drive  drive_ls          B1_full_entity_shortsyss0 verified                       canary=False adopted=False 0.0->0.0
+[26/420] googledrive__rd_example__drive  drive_ls          B2_local_agentsyss0 verified                       canary=False adopted=False 0.0->0.0
+[27/420] googledrive__rd_example__drive  drive_ls          A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[28/420] highr__rd_example__hilight_Rd   cat               A5_local        s0 verified                       canary=True adopted=False 0.7376->0.7376
+[29/420] googledrive__rd_example__drive  drive_ls          A5_local        s0 verified                       canary=False adopted=False 0.0->0.0
+[30/420] highr__rd_example__hilight_Rd   cat               B2_local_agentsyss0 verified                       canary=False adopted=False 0.7376->0.5188
+[31/420] highr__rd_example__hilight_Rd   cat               B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.7376->0.0
+[32/420] highr__rd_example__hilight_Rd   cat_1             B2_local_agentsyss0 verified                       canary=False adopted=False 0.5299->0.5289
+[33/420] highr__rd_example__hilight_Rd   cat_1             A5_local        s0 verified                       canary=True adopted=False 0.5299->0.5289
+<unknown>:132: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:133: SyntaxWarning: invalid escape sequence '\C'
+<unknown>:132: SyntaxWarning: invalid escape sequence '\C'
+[34/420] highr__rd_example__hilight_Rd   cat_1             B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.5299->0.0
+[35/420] hms__rd_example__hms_Rd         hms               A5_local        s0 verified                       canary=True adopted=True 0.4653->0.0
+[36/420] hms__rd_example__hms_Rd         hms               B1_full_entity_shortsyss0 verified                       canary=True adopted=True 0.4653->0.0
+[37/420] hms__rd_example__hms_Rd         hms               B2_local_agentsyss0 verified                       canary=True adopted=True 0.4653->0.0
+[38/420] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s0 no code                        canary=None adopted=None 0.5299->None
+[39/420] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[40/420] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[41/420] hms__rd_example__hms_Rd         new_hms           A5_local        s0 verified                       canary=True adopted=False 0.0->0.1667
+[42/420] highr__rd_example__hilight_Rd   cat               A2_full_entity  s0 verified                       canary=False adopted=False 0.7376->0.1667
+[43/420] hms__rd_example__hms_Rd         new_hms           B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.0->0.1667
+[44/420] hms__rd_example__hms_Rd         as_hms_1          A5_local        s0 verified                       canary=False adopted=False 0.0->0.0
+[45/420] hms__rd_example__hms_Rd         hms               A2_full_entity  s0 verified                       canary=False adopted=False 0.4653->0.1667
+[46/420] hms__rd_example__hms_Rd         new_hms           B2_local_agentsyss0 verified                       canary=True adopted=True 0.0->1.0
+[47/420] hms__rd_example__hms_Rd         as_hms_1          B1_full_entity_shortsyss0 verified                       canary=False adopted=False 0.0->0.0
+[48/420] hms__rd_example__hms_Rd         as_hms_1          B2_local_agentsyss0 verified                       canary=False adopted=True 0.0->0.0
+[49/420] lava__vignette__influencefunct  e_1               B2_local_agentsyss0 verified                       canary=True adopted=True 0.7518->1.0
+[50/420] lava__vignette__influencefunct  e_1               A5_local        s0 verified                       canary=False adopted=True 0.7518->1.0
+[51/420] lava__vignette__influencefunct  e_1               B1_full_entity_shortsyss0 verified                       canary=False adopted=True 0.7518->1.0
+[52/420] lubridate__vignette__lubridate  months_2          B1_full_entity_shortsyss0 verified                       canary=False adopted=True 0.522->1.0
+[53/420] lubridate__vignette__lubridate  months_2          B2_local_agentsyss0 verified                       canary=True adopted=True 0.522->1.0
+[54/420] lubridate__vignette__lubridate  months_2          A5_local        s0 verified                       canary=True adopted=False 0.522->0.7538
+[55/420] lubridate__vignette__lubridate  months_2          A2_full_entity  s0 verified                       canary=False adopted=True 0.522->1.0
+[56/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.0->0.0
+[57/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[58/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s0 verified                       canary=True adopted=False 0.0->0.0
+[59/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss0 verified                       canary=False adopted=False 0.0->0.0
+[60/420] lava__vignette__influencefunct  e_1               A2_full_entity  s0 verified                       canary=True adopted=True 0.7518->1.0
+[61/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss0 verified                       canary=False adopted=False 0.0->0.0
+[62/420] purrr__vignette__purrr_s3       str               A5_local        s0 verified                       canary=False adopted=True 0.7951->1.0
+[63/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s0 verified                       canary=True adopted=False 0.0->0.0
+[64/420] purrr__vignette__purrr_s3       str               B1_full_entity_shortsyss0 verified                       canary=False adopted=True 0.7951->1.0
+<unknown>:22: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:23: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:24: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:25: SyntaxWarning: invalid escape sequence '\ '
+<unknown>:26: SyntaxWarning: invalid escape sequence '\ '
+[65/420] purrr__vignette__purrr_s3       str               B2_local_agentsyss0 verified                       canary=False adopted=True 0.7951->1.0
+[66/420] purrr__vignette__purrr_s3       str               A2_full_entity  s0 verified                       canary=False adopted=True 0.7951->0.9783
+[67/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.0->0.0
+[68/420] tidyr__vignette__tidy-data_s3   tribble           B2_local_agentsyss0 verified                       canary=True adopted=False 0.8496->0.5
+[69/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s0 verified                       canary=False adopted=False 0.0->0.0
+[70/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s0 verified                       canary=True adopted=True 0.7344->0.0
+[71/420] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s0 verified                       canary=True adopted=True 0.8496->1.0
+[72/420] tidyr__vignette__tidy-data_s3   tribble           B1_full_entity_shortsyss0 verified                       canary=True adopted=True 0.8496->1.0
+[73/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s0 verified                       canary=True adopted=False 0.7344->0.5
+[74/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    B2_local_agentsyss0 verified                       canary=True adopted=True 0.7344->0.0
+[75/420] tidyr__vignette__tidy-data_s3   tribble           A5_local        s0 verified                       canary=True adopted=True 0.8496->1.0
+[76/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s0 verified                       canary=True adopted=False 0.802->0.8023
+[77/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.802->0.9314
+[78/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.7344->0.0
+[79/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B2_local_agentsyss0 verified                       canary=True adopted=False 0.802->0.8922
+[80/420] timeDate__rd_example__earlyClo  c                 A5_local        s0 verified                       canary=False adopted=False 0.5161->0.1667
+[81/420] timeDate__rd_example__earlyClo  c                 B1_full_entity_shortsyss0 verified                       canary=True adopted=False 0.5161->0.5377
+[82/420] broom__rd_example__glance_fact  tidy              A2_full_entity  s1 verified                       canary=False adopted=False 0.5129->0.5954
+[83/420] timeDate__rd_example__earlyClo  c                 B2_local_agentsyss0 verified                       canary=False adopted=False 0.5161->0.5161
+[84/420] broom__rd_example__glance_fact  tidy              B2_local_agentsyss1 verified                       canary=True adopted=False 0.5129->0.5951
+[85/420] timeDate__rd_example__earlyClo  c                 A2_full_entity  s0 verified                       canary=False adopted=False 0.5161->0.0
+[86/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s0 verified                       canary=False adopted=False 0.802->0.1667
+[87/420] broom__rd_example__glance_fact  tidy              A5_local        s1 verified                       canary=True adopted=False 0.5129->0.0
+[88/420] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s1 verified                       canary=False adopted=False 0.5129->0.5929
+[89/420] broom__rd_example__glance_fact  tidy_1            A5_local        s1 verified                       canary=True adopted=False 0.5129->0.7099
+[90/420] broom__rd_example__glance_fact  tidy_1            B1_full_entity_shortsyss1 verified                       canary=True adopted=False 0.5129->0.0
+[91/420] broom__rd_example__glance_fact  augment           A2_full_entity  s1 verified                       canary=False adopted=False 0.5055->0.0
+[92/420] broom__rd_example__glance_fact  tidy_1            B2_local_agentsyss1 verified                       canary=False adopted=False 0.5129->0.6847
+[93/420] broom__rd_example__glance_fact  augment           A5_local        s1 verified                       canary=False adopted=False 0.5055->0.5256
+[94/420] clock__rd_example__zoned_time_  x_2               A5_local        s1 verified                       canary=True adopted=True 0.5->0.0
+[95/420] broom__rd_example__glance_fact  augment           B2_local_agentsyss1 verified                       canary=True adopted=False 0.5055->0.5256
+[96/420] clock__rd_example__zoned_time_  x_2               B2_local_agentsyss1 verified                       canary=True adopted=True 0.5->0.0
+[97/420] clock__rd_example__zoned_time_  x_2               B1_full_entity_shortsyss1 verified                       canary=True adopted=True 0.5->0.0
+[98/420] clock__rd_example__zoned_time_  x_3               A2_full_entity  s1 verified                       canary=True adopted=True 0.5618->0.5
+[99/420] broom__rd_example__glance_fact  tidy              B1_full_entity_shortsyss1 verified                       canary=True adopted=False 0.5129->0.0
+[100/420] clock__rd_example__zoned_time_  x_3               A5_local        s1 verified                       canary=True adopted=True 0.5618->0.5
+[101/420] googledrive__rd_example__drive  drive_browse      A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[102/420] clock__rd_example__zoned_time_  x_3               B1_full_entity_shortsyss1 verified                       canary=True adopted=True 0.5618->0.5
+[103/420] clock__rd_example__zoned_time_  x_3               B2_local_agentsyss1 verified                       canary=False adopted=True 0.5618->0.0
+[104/420] broom__rd_example__glance_fact  augment           B1_full_entity_shortsyss1 verified                       canary=True adopted=False 0.5055->0.9061
+[105/420] googledrive__rd_example__drive  drive_browse      B1_full_entity_shortsyss1 verified                       canary=False adopted=False 0.0->0.0
+[106/420] googledrive__rd_example__drive  drive_browse      A5_local        s1 verified                       canary=False adopted=False 0.0->0.0
+[107/420] googledrive__rd_example__drive  drive_browse      B2_local_agentsyss1 verified                       canary=False adopted=False 0.0->0.0
+[108/420] googledrive__rd_example__drive  drive_ls          A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[109/420] googledrive__rd_example__drive  drive_ls          B1_full_entity_shortsyss1 verified                       canary=False adopted=False 0.0->0.0
+[110/420] googledrive__rd_example__drive  drive_ls          B2_local_agentsyss1 verified                       canary=False adopted=False 0.0->0.0
+[111/420] highr__rd_example__hilight_Rd   cat               A5_local        s1 verified                       canary=True adopted=False 0.7376->0.7376
+[112/420] clock__rd_example__zoned_time_  x_2               A2_full_entity  s1 verified                       canary=False adopted=False 0.5->0.0
+[113/420] googledrive__rd_example__drive  drive_ls          A5_local        s1 verified                       canary=False adopted=False 0.0->0.0
+[114/420] highr__rd_example__hilight_Rd   cat               B2_local_agentsyss1 verified                       canary=False adopted=False 0.7376->0.5188
+[115/420] highr__rd_example__hilight_Rd   cat               B1_full_entity_shortsyss1 verified                       canary=True adopted=False 0.7376->0.9437
+[116/420] highr__rd_example__hilight_Rd   cat_1             A5_local        s1 verified                       canary=True adopted=False 0.5299->0.5289
+[117/420] hms__rd_example__hms_Rd         hms               A2_full_entity  s1 verified                       canary=True adopted=True 0.4653->0.0
+[118/420] highr__rd_example__hilight_Rd   cat               A2_full_entity  s1 verified                       canary=False adopted=False 0.7376->0.1667
+[119/420] highr__rd_example__hilight_Rd   cat_1             B1_full_entity_shortsyss1 verified                       canary=True adopted=True 0.5299->1.0
+[120/420] hms__rd_example__hms_Rd         hms               A5_local        s1 verified                       canary=True adopted=True 0.4653->0.0
+[121/420] highr__rd_example__hilight_Rd   cat_1             B2_local_agentsyss1 verified                       canary=True adopted=False 0.5299->0.5289
+[122/420] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s1 no code                        canary=None adopted=None 0.5299->None
+[123/420] hms__rd_example__hms_Rd         hms               B1_full_entity_shortsyss1 verified                       canary=True adopted=True 0.4653->0.0
+[124/420] hms__rd_example__hms_Rd         hms               B2_local_agentsyss1 verified                       canary=True adopted=True 0.4653->0.0
+[125/420] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[126/420] hms__rd_example__hms_Rd         new_hms           A5_local        s1 verified                       canary=True adopted=True 0.0->0.1667
+[127/420] hms__rd_example__hms_Rd         new_hms           B1_full_entity_shortsyss1 verified                       canary=True adopted=False 0.0->0.1667
+[128/420] hms__rd_example__hms_Rd         new_hms           B2_local_agentsyss1 verified                       canary=True adopted=True 0.0->0.9267
+[129/420] hms__rd_example__hms_Rd         as_hms_1          A5_local        s1 verified                       canary=False adopted=False 0.0->0.0
+[130/420] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s1 verified                       canary=False adopted=False 0.0->1.0
+[131/420] hms__rd_example__hms_Rd         as_hms_1          B1_full_entity_shortsyss1 verified                       canary=False adopted=False 0.0->0.0
+[132/420] hms__rd_example__hms_Rd         as_hms_1          B2_local_agentsyss1 verified                       canary=False adopted=False 0.0->0.0
+[133/420] lava__vignette__influencefunct  e_1               B1_full_entity_shortsyss1 verified                       canary=True adopted=True 0.7518->1.0
+[134/420] lava__vignette__influencefunct  e_1               A2_full_entity  s1 verified                       canary=True adopted=True 0.7518->1.0
+[135/420] lava__vignette__influencefunct  e_1               B2_local_agentsyss1 verified                       canary=True adopted=False 0.7518->0.916
+[136/420] lubridate__vignette__lubridate  months_2          A5_local        s1 verified                       canary=True adopted=True 0.522->1.0
+[137/420] lubridate__vignette__lubridate  months_2          B2_local_agentsyss1 verified                       canary=True adopted=True 0.522->1.0
+[138/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[139/420] lava__vignette__influencefunct  e_1               A5_local        s1 verified                       canary=True adopted=False 0.7518->0.9712
+[140/420] lubridate__vignette__lubridate  months_2          B1_full_entity_shortsyss1 verified                       canary=True adopted=True 0.522->1.0
+[141/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s1 verified                       canary=False adopted=False 0.0->0.0
+[142/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s1 verified                       canary=True adopted=False 0.0->0.0
+[143/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s1 verified                       canary=False adopted=True 0.0->0.0
+[144/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss1 verified                       canary=False adopted=False 0.0->0.0
+[145/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss1 verified                       canary=False adopted=False 0.0->0.0
+[146/420] lubridate__vignette__lubridate  months_2          A2_full_entity  s1 verified                       canary=False adopted=True 0.522->1.0
+[147/420] purrr__vignette__purrr_s3       str               B2_local_agentsyss1 verified                       canary=False adopted=True 0.7951->1.0
+[148/420] purrr__vignette__purrr_s3       str               B1_full_entity_shortsyss1 verified                       canary=False adopted=True 0.7951->1.0
+[149/420] purrr__vignette__purrr_s3       str               A5_local        s1 verified                       canary=False adopted=True 0.7951->1.0
+[150/420] purrr__vignette__purrr_s3       str               A2_full_entity  s1 verified                       canary=False adopted=True 0.7951->1.0
+[151/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss1 verified                       canary=True adopted=False 0.0->0.0
+[152/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss1 verified                       canary=False adopted=False 0.0->0.0
+[153/420] tidyr__vignette__tidy-data_s3   tribble           B2_local_agentsyss1 verified                       canary=True adopted=True 0.8496->1.0
+[154/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s1 verified                       canary=True adopted=True 0.7344->1.0
+[155/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    B2_local_agentsyss1 verified                       canary=True adopted=True 0.7344->1.0
+[156/420] tidyr__vignette__tidy-data_s3   tribble           A5_local        s1 verified                       canary=True adopted=True 0.8496->1.0
+[157/420] tidyr__vignette__tidy-data_s3   tribble           B1_full_entity_shortsyss1 verified                       canary=True adopted=True 0.8496->1.0
+[158/420] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s1 verified                       canary=True adopted=True 0.8496->1.0
+[159/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    B1_full_entity_shortsyss1 verified                       canary=True adopted=False 0.7344->0.0
+[160/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s1 verified                       canary=True adopted=False 0.802->0.8023
+[161/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B2_local_agentsyss1 verified                       canary=True adopted=True 0.802->1.0
+[162/420] timeDate__rd_example__earlyClo  c                 A2_full_entity  s1 verified                       canary=True adopted=False 0.5161->0.0
+[163/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B1_full_entity_shortsyss1 verified                       canary=True adopted=True 0.802->0.9774
+[164/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s1 verified                       canary=False adopted=False 0.802->0.8
+[165/420] timeDate__rd_example__earlyClo  c                 A5_local        s1 verified                       canary=True adopted=False 0.5161->0.5377
+[166/420] timeDate__rd_example__earlyClo  c                 B2_local_agentsyss1 verified                       canary=False adopted=False 0.5161->0.5161
+[167/420] broom__rd_example__glance_fact  tidy              A2_full_entity  s2 verified                       canary=False adopted=False 0.5129->0.0
+[168/420] broom__rd_example__glance_fact  tidy              B2_local_agentsyss2 verified                       canary=True adopted=False 0.5129->0.0
+[169/420] broom__rd_example__glance_fact  tidy              A5_local        s2 verified                       canary=True adopted=False 0.5129->0.7099
+[170/420] timeDate__rd_example__earlyClo  c                 B1_full_entity_shortsyss1 verified                       canary=True adopted=False 0.5161->0.5377
+[171/420] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s2 verified                       canary=False adopted=False 0.5129->0.5951
+[172/420] broom__rd_example__glance_fact  tidy              B1_full_entity_shortsyss2 verified                       canary=True adopted=False 0.5129->0.7099
+[173/420] broom__rd_example__glance_fact  augment           A2_full_entity  s2 verified                       canary=False adopted=False 0.5055->0.0
+[174/420] broom__rd_example__glance_fact  tidy_1            B2_local_agentsyss2 verified                       canary=True adopted=False 0.5129->0.5951
+[175/420] broom__rd_example__glance_fact  tidy_1            B1_full_entity_shortsyss2 verified                       canary=True adopted=False 0.5129->0.7099
+[176/420] broom__rd_example__glance_fact  tidy_1            A5_local        s2 verified                       canary=True adopted=False 0.5129->0.7099
+[177/420] clock__rd_example__zoned_time_  x_2               A5_local        s2 verified                       canary=True adopted=True 0.5->0.0
+[178/420] broom__rd_example__glance_fact  augment           A5_local        s2 verified                       canary=False adopted=False 0.5055->0.5256
+[179/420] broom__rd_example__glance_fact  augment           B1_full_entity_shortsyss2 verified                       canary=False adopted=False 0.5055->0.5256
+[180/420] clock__rd_example__zoned_time_  x_2               B2_local_agentsyss2 verified                       canary=True adopted=True 0.5->0.0
+[181/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s1 verified                       canary=True adopted=True 0.7344->1.0
+[182/420] clock__rd_example__zoned_time_  x_2               B1_full_entity_shortsyss2 verified                       canary=True adopted=True 0.5->0.0
+[183/420] broom__rd_example__glance_fact  augment           B2_local_agentsyss2 verified                       canary=True adopted=False 0.5055->0.5256
+[184/420] clock__rd_example__zoned_time_  x_3               B1_full_entity_shortsyss2 verified                       canary=True adopted=True 0.5618->0.5
+[185/420] clock__rd_example__zoned_time_  x_2               A2_full_entity  s2 verified                       canary=True adopted=True 0.5->0.0
+[186/420] clock__rd_example__zoned_time_  x_3               A2_full_entity  s2 verified                       canary=True adopted=True 0.5618->0.5
+[187/420] googledrive__rd_example__drive  drive_browse      A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[188/420] googledrive__rd_example__drive  drive_browse      B2_local_agentsyss2 verified                       canary=False adopted=False 0.0->0.0
+[189/420] clock__rd_example__zoned_time_  x_3               A5_local        s2 verified                       canary=True adopted=True 0.5618->0.5
+[190/420] clock__rd_example__zoned_time_  x_3               B2_local_agentsyss2 verified                       canary=True adopted=True 0.5618->0.5
+[191/420] googledrive__rd_example__drive  drive_browse      B1_full_entity_shortsyss2 verified                       canary=False adopted=False 0.0->0.0
+[192/420] googledrive__rd_example__drive  drive_browse      A5_local        s2 verified                       canary=False adopted=False 0.0->0.0
+[193/420] googledrive__rd_example__drive  drive_ls          A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[194/420] highr__rd_example__hilight_Rd   cat               A5_local        s2 verified                       canary=False adopted=False 0.7376->0.5188
+[195/420] googledrive__rd_example__drive  drive_ls          B1_full_entity_shortsyss2 verified                       canary=False adopted=False 0.0->0.0
+[196/420] highr__rd_example__hilight_Rd   cat               B1_full_entity_shortsyss2 verified                       canary=True adopted=True 0.7376->0.997
+[197/420] googledrive__rd_example__drive  drive_ls          A5_local        s2 verified                       canary=False adopted=False 0.0->0.0
+[198/420] googledrive__rd_example__drive  drive_ls          B2_local_agentsyss2 verified                       canary=False adopted=False 0.0->0.0
+[199/420] highr__rd_example__hilight_Rd   cat               B2_local_agentsyss2 verified                       canary=False adopted=False 0.7376->0.5188
+[200/420] highr__rd_example__hilight_Rd   cat_1             B2_local_agentsyss2 verified                       canary=False adopted=False 0.5299->0.5289
+[201/420] hms__rd_example__hms_Rd         hms               A5_local        s2 verified                       canary=True adopted=True 0.4653->0.0
+[202/420] highr__rd_example__hilight_Rd   cat_1             A5_local        s2 verified                       canary=True adopted=False 0.5299->0.5289
+[203/420] highr__rd_example__hilight_Rd   cat               A2_full_entity  s2 verified                       canary=True adopted=False 0.7376->0.0
+[204/420] highr__rd_example__hilight_Rd   cat_1             B1_full_entity_shortsyss2 verified                       canary=True adopted=True 0.5299->1.0
+[205/420] hms__rd_example__hms_Rd         hms               B2_local_agentsyss2 verified                       canary=True adopted=True 0.4653->0.0
+[206/420] hms__rd_example__hms_Rd         hms               B1_full_entity_shortsyss2 verified                       canary=True adopted=True 0.4653->0.0
+[207/420] hms__rd_example__hms_Rd         new_hms           A5_local        s2 verified                       canary=True adopted=False 0.0->0.1667
+[208/420] hms__rd_example__hms_Rd         new_hms           B1_full_entity_shortsyss2 verified                       canary=True adopted=False 0.0->0.1667
+[209/420] hms__rd_example__hms_Rd         new_hms           B2_local_agentsyss2 verified                       canary=True adopted=True 0.0->1.0
+[210/420] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s2 verified                       canary=False adopted=False 0.5299->0.5
+[211/420] hms__rd_example__hms_Rd         as_hms_1          A5_local        s2 verified                       canary=False adopted=False 0.0->0.0
+[212/420] hms__rd_example__hms_Rd         as_hms_1          B1_full_entity_shortsyss2 verified                       canary=False adopted=False 0.0->0.0
+[213/420] hms__rd_example__hms_Rd         as_hms_1          B2_local_agentsyss2 verified                       canary=False adopted=True 0.0->0.0
+[214/420] lava__vignette__influencefunct  e_1               A5_local        s2 verified                       canary=False adopted=True 0.7518->1.0
+[215/420] lava__vignette__influencefunct  e_1               B1_full_entity_shortsyss2 verified                       canary=True adopted=True 0.7518->1.0
+[216/420] lava__vignette__influencefunct  e_1               A2_full_entity  s2 verified                       canary=True adopted=True 0.7518->1.0
+[217/420] hms__rd_example__hms_Rd         hms               A2_full_entity  s2 verified                       canary=False adopted=False 0.4653->0.5147
+[218/420] lava__vignette__influencefunct  e_1               B2_local_agentsyss2 verified                       canary=False adopted=False 0.7518->0.9843
+[219/420] lubridate__vignette__lubridate  months_2          B2_local_agentsyss2 verified                       canary=False adopted=True 0.522->1.0
+[220/420] lubridate__vignette__lubridate  months_2          A5_local        s2 verified                       canary=True adopted=True 0.522->1.0
+[221/420] lubridate__vignette__lubridate  months_2          B1_full_entity_shortsyss2 verified                       canary=False adopted=True 0.522->1.0
+[222/420] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[223/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[224/420] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[225/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s2 verified                       canary=False adopted=False 0.0->0.0
+[226/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s2 verified                       canary=True adopted=False 0.0->0.0
+[227/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss2 verified                       canary=False adopted=False 0.0->0.0
+[228/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss2 verified                       canary=True adopted=False 0.0->0.0
+[229/420] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s2 verified                       canary=True adopted=False 0.0->0.0
+[230/420] purrr__vignette__purrr_s3       str               A2_full_entity  s2 verified                       canary=False adopted=True 0.7951->1.0
+[231/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss2 verified                       canary=False adopted=False 0.0->0.0
+[232/420] purrr__vignette__purrr_s3       str               B1_full_entity_shortsyss2 verified                       canary=False adopted=True 0.7951->1.0
+[233/420] purrr__vignette__purrr_s3       str               A5_local        s2 verified                       canary=False adopted=True 0.7951->1.0
+[234/420] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss2 verified                       canary=True adopted=False 0.0->0.0
+[235/420] purrr__vignette__purrr_s3       str               B2_local_agentsyss2 verified                       canary=False adopted=True 0.7951->1.0
+[236/420] lubridate__vignette__lubridate  months_2          A2_full_entity  s2 verified                       canary=False adopted=True 0.522->1.0
+[237/420] tidyr__vignette__tidy-data_s3   tribble           B2_local_agentsyss2 verified                       canary=True adopted=True 0.8496->1.0
+[238/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s2 verified                       canary=True adopted=False 0.7344->0.0
+[239/420] tidyr__vignette__tidy-data_s3   tribble           B1_full_entity_shortsyss2 verified                       canary=True adopted=True 0.8496->1.0
+[240/420] tidyr__vignette__tidy-data_s3   tribble           A5_local        s2 verified                       canary=True adopted=True 0.8496->1.0
+[241/420] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s2 verified                       canary=True adopted=True 0.8496->1.0
+[242/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    B2_local_agentsyss2 verified                       canary=True adopted=False 0.7344->0.0
+[243/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s2 verified                       canary=True adopted=False 0.7344->0.8261
+[244/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s2 verified                       canary=True adopted=False 0.802->0.8023
+[245/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B2_local_agentsyss2 verified                       canary=True adopted=False 0.802->0.8023
+[246/420] timeDate__rd_example__earlyClo  c                 A5_local        s2 verified                       canary=True adopted=False 0.5161->0.5161
+[247/420] timeDate__rd_example__earlyClo  earlyCloseNYSE    B1_full_entity_shortsyss2 verified                       canary=True adopted=True 0.7344->1.0
+[248/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B1_full_entity_shortsyss2 verified                       canary=True adopted=True 0.802->1.0
+[249/420] timeDate__rd_example__earlyClo  c                 A2_full_entity  s2 verified                       canary=False adopted=False 0.5161->0.0
+[250/420] timeDate__rd_example__earlyClo  c                 B2_local_agentsyss2 verified                       canary=False adopted=False 0.5161->0.5161
+[251/420] broom__rd_example__glance_fact  tidy              B2_local_agentsyss3 verified                       canary=False adopted=False 0.5129->0.0
+[252/420] timeDate__rd_example__earlyClo  c                 B1_full_entity_shortsyss2 verified                       canary=True adopted=False 0.5161->0.5377
+[253/420] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s2 verified                       canary=True adopted=False 0.802->0.9314
+[254/420] broom__rd_example__glance_fact  tidy              A5_local        s3 verified                       canary=True adopted=False 0.5129->0.1667
+[255/420] broom__rd_example__glance_fact  tidy              B1_full_entity_shortsyss3 verified                       canary=True adopted=False 0.5129->0.7099
+[256/420] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s3 verified                       canary=False adopted=False 0.5129->0.0
+[257/420] broom__rd_example__glance_fact  augment           A2_full_entity  s3 verified                       canary=False adopted=False 0.5055->0.0
+[258/420] broom__rd_example__glance_fact  tidy              A2_full_entity  s3 verified                       canary=True adopted=False 0.5129->0.5951
+[259/420] broom__rd_example__glance_fact  tidy_1            A5_local        s3 verified                       canary=True adopted=False 0.5129->0.7099
+[260/420] broom__rd_example__glance_fact  tidy_1            B1_full_entity_shortsyss3 verified                       canary=True adopted=False 0.5129->0.7099
+[261/420] broom__rd_example__glance_fact  augment           A5_local        s3 verified                       canary=False adopted=False 0.5055->0.5256
+[262/420] broom__rd_example__glance_fact  tidy_1            B2_local_agentsyss3 verified                       canary=True adopted=False 0.5129->0.616
+[263/420] clock__rd_example__zoned_time_  x_2               B1_full_entity_shortsyss3 verified                       canary=True adopted=True 0.5->0.0
+[264/420] clock__rd_example__zoned_time_  x_2               A2_full_entity  s3 verified                       canary=True adopted=True 0.5->0.0
+[265/420] clock__rd_example__zoned_time_  x_2               A5_local        s3 verified                       canary=True adopted=True 0.5->0.0
+[266/420] clock__rd_example__zoned_time_  x_3               B1_full_entity_shortsyss3 verified                       canary=True adopted=True 0.5618->0.5
+[267/420] clock__rd_example__zoned_time_  x_3               A2_full_entity  s3 verified                       canary=True adopted=True 0.5618->0.5
+[268/420] broom__rd_example__glance_fact  augment           B2_local_agentsyss3 verified                       canary=True adopted=False 0.5055->0.5381
+[269/420] clock__rd_example__zoned_time_  x_3               A5_local        s3 verified                       canary=True adopted=True 0.5618->0.5
+[270/420] clock__rd_example__zoned_time_  x_2               B2_local_agentsyss3 verified                       canary=True adopted=True 0.5->1.0
+[271/420] broom__rd_example__glance_fact  augment           B1_full_entity_shortsyss3 verified                       canary=True adopted=False 0.5055->0.9061
+[272/420] googledrive__rd_example__drive  drive_browse      B1_full_entity_shortsyss3 verified                       canary=False adopted=False 0.0->0.0
+[273/420] googledrive__rd_example__drive  drive_browse      B2_local_agentsyss3 verified                       canary=False adopted=False 0.0->0.0
+[274/420] googledrive__rd_example__drive  drive_browse      A5_local        s3 verified                       canary=False adopted=False 0.0->0.0
+[275/420] clock__rd_example__zoned_time_  x_3               B2_local_agentsyss3 verified                       canary=False adopted=True 0.5618->0.0
+[276/420] googledrive__rd_example__drive  drive_ls          A2_full_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[277/420] googledrive__rd_example__drive  drive_ls          B1_full_entity_shortsyss3 verified                       canary=False adopted=False 0.0->0.0
+[278/420] googledrive__rd_example__drive  drive_ls          A5_local        s3 verified                       canary=False adopted=False 0.0->0.0
+[279/420] googledrive__rd_example__drive  drive_ls          B2_local_agentsyss3 verified                       canary=False adopted=False 0.0->0.0
+[280/420] highr__rd_example__hilight_Rd   cat               A5_local        s3 provider_unavailable           canary=None adopted=None 0.7376->None
+[281/420] highr__rd_example__hilight_Rd   cat               B1_full_entity_shortsyss3 verified                       canary=True adopted=False 0.7376->0.9568
+[282/420] highr__rd_example__hilight_Rd   cat               B2_local_agentsyss3 provider_unavailable           canary=None adopted=None 0.7376->None
+[283/420] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s3 provider_unavailable           canary=None adopted=None 0.5299->None
+3 provider outages: stopping; the same command resumes
+
+280 calls (provider outages excluded)
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+A2_full_entity    69   14034       3%     33%    30%        33%        28%   -0.075
+A5_local          70    2894       0%     67%    36%        47%        25%   -0.034
+B1_full_entity_shortsys  71    9960       0%     73%    41%        41%        41%   +0.002
+B2_local_agentsys  70    6968       0%     50%    40%        53%        28%   +0.000
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 19)
+21 cases (10 snippet, 11 print), 4 arms, 5 samples: 140 calls to do, 6 workers
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[1/140] highr__rd_example__hilight_Rd   cat               B2_local_agentsyss3 verified                       canary=False adopted=False 0.7376->0.5188
+[2/140] highr__rd_example__hilight_Rd   cat               A5_local        s3 verified                       canary=False adopted=False 0.7376->0.5188
+[3/140] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s3 verified                       canary=False adopted=False 0.5299->0.0
+[4/140] highr__rd_example__hilight_Rd   cat_1             A5_local        s3 verified                       canary=True adopted=False 0.5299->0.5289
+[5/140] hms__rd_example__hms_Rd         hms               A2_full_entity  s3 verified                       canary=True adopted=True 0.4653->0.0
+[6/140] hms__rd_example__hms_Rd         hms               A5_local        s3 verified                       canary=True adopted=True 0.4653->0.0
+[7/140] hms__rd_example__hms_Rd         hms               B1_full_entity_shortsyss3 verified                       canary=True adopted=True 0.4653->0.0
+[8/140] highr__rd_example__hilight_Rd   cat_1             B1_full_entity_shortsyss3 verified                       canary=True adopted=True 0.5299->1.0
+[9/140] highr__rd_example__hilight_Rd   cat_1             B2_local_agentsyss3 verified                       canary=True adopted=False 0.5299->0.5289
+[10/140] hms__rd_example__hms_Rd         new_hms           A5_local        s3 verified                       canary=True adopted=True 0.0->0.1667
+[11/140] hms__rd_example__hms_Rd         new_hms           B1_full_entity_shortsyss3 verified                       canary=True adopted=False 0.0->0.1667
+[12/140] hms__rd_example__hms_Rd         new_hms           B2_local_agentsyss3 verified                       canary=True adopted=True 0.0->0.9267
+[13/140] hms__rd_example__hms_Rd         as_hms_1          A5_local        s3 verified                       canary=False adopted=False 0.0->0.0
+[14/140] googledrive__rd_example__drive  drive_browse      A2_full_entity  s3 verified                       canary=False adopted=False 0.0->1.0
+[15/140] hms__rd_example__hms_Rd         hms               B2_local_agentsyss3 verified                       canary=True adopted=True 0.4653->0.5147
+[16/140] hms__rd_example__hms_Rd         as_hms_1          B1_full_entity_shortsyss3 verified                       canary=False adopted=False 0.0->0.0
+[17/140] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s3 verified                       canary=True adopted=True 0.0->0.0
+[18/140] hms__rd_example__hms_Rd         as_hms_1          B2_local_agentsyss3 verified                       canary=False adopted=False 0.0->0.0
+[19/140] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[20/140] lava__vignette__influencefunct  e_1               A5_local        s3 verified                       canary=False adopted=False 0.7518->0.5
+[21/140] lava__vignette__influencefunct  e_1               A2_full_entity  s3 verified                       canary=True adopted=False 0.7518->0.75
+[22/140] highr__rd_example__hilight_Rd   cat               A2_full_entity  s3 verified                       canary=False adopted=False 0.7376->0.0
+[23/140] lava__vignette__influencefunct  e_1               B2_local_agentsyss3 verified                       canary=True adopted=False 0.7518->0.955
+[24/140] lubridate__vignette__lubridate  months_2          A5_local        s3 verified                       canary=True adopted=True 0.522->1.0
+[25/140] lubridate__vignette__lubridate  months_2          B2_local_agentsyss3 verified                       canary=True adopted=True 0.522->1.0
+[26/140] lava__vignette__influencefunct  e_1               B1_full_entity_shortsyss3 verified                       canary=True adopted=True 0.7518->1.0
+[27/140] lubridate__vignette__lubridate  months_2          B1_full_entity_shortsyss3 verified                       canary=False adopted=True 0.522->1.0
+[28/140] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s3 verified                       canary=True adopted=False 0.0->0.0
+[29/140] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s3 verified                       canary=False adopted=True 0.0->0.0
+[30/140] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss3 verified                       canary=False adopted=False 0.0->0.0
+[31/140] lubridate__vignette__lubridate  months_2          A2_full_entity  s3 verified                       canary=False adopted=True 0.522->1.0
+[32/140] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss3 verified                       canary=True adopted=True 0.0->0.0
+[33/140] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s3 verified                       canary=True adopted=False 0.0->0.0
+[34/140] purrr__vignette__purrr_s3       str               A5_local        s3 verified                       canary=False adopted=True 0.7951->1.0
+[35/140] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s3 verified                       canary=False adopted=False 0.0->0.0
+[36/140] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss3 verified                       canary=True adopted=False 0.0->0.0
+[37/140] purrr__vignette__purrr_s3       str               A2_full_entity  s3 verified                       canary=False adopted=True 0.7951->1.0
+[38/140] purrr__vignette__purrr_s3       str               B2_local_agentsyss3 verified                       canary=False adopted=True 0.7951->1.0
+[39/140] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss3 verified                       canary=False adopted=True 0.0->0.0
+[40/140] purrr__vignette__purrr_s3       str               B1_full_entity_shortsyss3 verified                       canary=False adopted=True 0.7951->1.0
+[41/140] tidyr__vignette__tidy-data_s3   tribble           B2_local_agentsyss3 verified                       canary=True adopted=False 0.8496->0.5
+[42/140] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s3 verified                       canary=True adopted=True 0.7344->1.0
+[43/140] tidyr__vignette__tidy-data_s3   tribble           B1_full_entity_shortsyss3 verified                       canary=True adopted=True 0.8496->1.0
+[44/140] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s3 verified                       canary=False adopted=False 0.8496->1.0
+[45/140] timeDate__rd_example__earlyClo  earlyCloseNYSE    B2_local_agentsyss3 verified                       canary=True adopted=False 0.7344->0.0
+[46/140] tidyr__vignette__tidy-data_s3   tribble           A5_local        s3 verified                       canary=True adopted=True 0.8496->1.0
+[47/140] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s3 verified                       canary=True adopted=False 0.802->0.8023
+[48/140] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B2_local_agentsyss3 verified                       canary=True adopted=False 0.802->0.6371
+[49/140] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s3 verified                       canary=True adopted=False 0.7344->0.5
+[50/140] timeDate__rd_example__earlyClo  c                 A5_local        s3 verified                       canary=True adopted=False 0.5161->0.5161
+[51/140] timeDate__rd_example__earlyClo  earlyCloseNYSE    B1_full_entity_shortsyss3 verified                       canary=True adopted=False 0.7344->0.0833
+[52/140] timeDate__rd_example__earlyClo  c                 B2_local_agentsyss3 verified                       canary=False adopted=False 0.5161->0.5
+[53/140] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B1_full_entity_shortsyss3 verified                       canary=True adopted=True 0.802->1.0
+[54/140] timeDate__rd_example__earlyClo  c                 B1_full_entity_shortsyss3 verified                       canary=True adopted=False 0.5161->0.5377
+[55/140] broom__rd_example__glance_fact  tidy              A5_local        s4 verified                       canary=True adopted=False 0.5129->0.0
+[56/140] timeDate__rd_example__earlyClo  c                 A2_full_entity  s3 verified                       canary=True adopted=False 0.5161->0.1667
+[57/140] broom__rd_example__glance_fact  tidy              A2_full_entity  s4 verified                       canary=False adopted=False 0.5129->0.5951
+[58/140] broom__rd_example__glance_fact  tidy              B2_local_agentsyss4 verified                       canary=True adopted=False 0.5129->0.0
+[59/140] broom__rd_example__glance_fact  tidy_1            A2_full_entity  s4 verified                       canary=False adopted=False 0.5129->0.0
+[60/140] broom__rd_example__glance_fact  tidy              B1_full_entity_shortsyss4 verified                       canary=True adopted=False 0.5129->0.7128
+[61/140] broom__rd_example__glance_fact  tidy_1            B1_full_entity_shortsyss4 verified                       canary=True adopted=False 0.5129->0.5951
+[62/140] broom__rd_example__glance_fact  tidy_1            B2_local_agentsyss4 verified                       canary=True adopted=False 0.5129->0.5951
+[63/140] broom__rd_example__glance_fact  tidy_1            A5_local        s4 verified                       canary=True adopted=False 0.5129->0.5951
+[64/140] broom__rd_example__glance_fact  augment           A2_full_entity  s4 verified                       canary=False adopted=False 0.5055->0.0
+[65/140] broom__rd_example__glance_fact  augment           B2_local_agentsyss4 verified                       canary=True adopted=False 0.5055->0.1667
+[66/140] broom__rd_example__glance_fact  augment           B1_full_entity_shortsyss4 verified                       canary=False adopted=False 0.5055->0.5256
+[67/140] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s3 verified                       canary=False adopted=False 0.802->0.0
+[68/140] clock__rd_example__zoned_time_  x_2               B1_full_entity_shortsyss4 verified                       canary=True adopted=True 0.5->0.0
+[69/140] broom__rd_example__glance_fact  augment           A5_local        s4 verified                       canary=False adopted=False 0.5055->0.1667
+[70/140] clock__rd_example__zoned_time_  x_2               A5_local        s4 verified                       canary=True adopted=True 0.5->0.0
+[71/140] clock__rd_example__zoned_time_  x_2               B2_local_agentsyss4 verified                       canary=True adopted=True 0.5->0.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[72/140] clock__rd_example__zoned_time_  x_3               B1_full_entity_shortsyss4 verified                       canary=True adopted=True 0.5618->0.5
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[73/140] googledrive__rd_example__drive  drive_browse      A2_full_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[74/140] clock__rd_example__zoned_time_  x_3               A5_local        s4 verified                       canary=True adopted=True 0.5618->0.5
+[75/140] clock__rd_example__zoned_time_  x_3               A2_full_entity  s4 verified                       canary=True adopted=True 0.5618->0.5
+[76/140] clock__rd_example__zoned_time_  x_3               B2_local_agentsyss4 verified                       canary=True adopted=True 0.5618->0.5
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[77/140] googledrive__rd_example__drive  drive_browse      B1_full_entity_shortsyss4 verified                       canary=False adopted=False 0.0->0.0
+[78/140] googledrive__rd_example__drive  drive_browse      B2_local_agentsyss4 verified                       canary=False adopted=False 0.0->0.0
+[79/140] googledrive__rd_example__drive  drive_browse      A5_local        s4 verified                       canary=False adopted=False 0.0->0.0
+[80/140] googledrive__rd_example__drive  drive_ls          A2_full_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[81/140] googledrive__rd_example__drive  drive_ls          A5_local        s4 verified                       canary=False adopted=False 0.0->0.0
+[82/140] googledrive__rd_example__drive  drive_ls          B1_full_entity_shortsyss4 verified                       canary=False adopted=False 0.0->0.0
+[83/140] highr__rd_example__hilight_Rd   cat               A5_local        s4 verified                       canary=True adopted=False 0.7376->0.7376
+[84/140] googledrive__rd_example__drive  drive_ls          B2_local_agentsyss4 verified                       canary=False adopted=False 0.0->0.0
+[85/140] highr__rd_example__hilight_Rd   cat               B1_full_entity_shortsyss4 verified                       canary=True adopted=True 0.7376->0.997
+[86/140] highr__rd_example__hilight_Rd   cat               B2_local_agentsyss4 verified                       canary=True adopted=False 0.7376->0.7376
+[87/140] highr__rd_example__hilight_Rd   cat_1             B2_local_agentsyss4 verified                       canary=False adopted=False 0.5299->0.5289
+[88/140] highr__rd_example__hilight_Rd   cat_1             A5_local        s4 verified                       canary=False adopted=False 0.5299->0.5289
+[89/140] hms__rd_example__hms_Rd         hms               A2_full_entity  s4 verified                       canary=True adopted=True 0.4653->0.0
+[90/140] highr__rd_example__hilight_Rd   cat_1             B1_full_entity_shortsyss4 verified                       canary=True adopted=False 0.5299->0.0
+[91/140] hms__rd_example__hms_Rd         hms               A5_local        s4 verified                       canary=True adopted=True 0.4653->0.0
+[92/140] hms__rd_example__hms_Rd         hms               B1_full_entity_shortsyss4 verified                       canary=True adopted=True 0.4653->0.0
+[93/140] hms__rd_example__hms_Rd         hms               B2_local_agentsyss4 verified                       canary=True adopted=True 0.4653->0.0
+[94/140] hms__rd_example__hms_Rd         new_hms           A5_local        s4 verified                       canary=True adopted=True 0.0->0.1667
+[95/140] hms__rd_example__hms_Rd         new_hms           B1_full_entity_shortsyss4 verified                       canary=True adopted=False 0.0->0.1667
+[96/140] hms__rd_example__hms_Rd         new_hms           B2_local_agentsyss4 verified                       canary=True adopted=True 0.0->0.9267
+[97/140] hms__rd_example__hms_Rd         as_hms_1          A5_local        s4 verified                       canary=False adopted=False 0.0->0.0
+[98/140] hms__rd_example__hms_Rd         as_hms_1          B1_full_entity_shortsyss4 verified                       canary=False adopted=False 0.0->0.0
+[99/140] hms__rd_example__hms_Rd         as_hms_1          A2_full_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[100/140] highr__rd_example__hilight_Rd   cat_1             A2_full_entity  s4 verified                       canary=False adopted=False 0.5299->0.1667
+[101/140] hms__rd_example__hms_Rd         as_hms_1          B2_local_agentsyss4 verified                       canary=False adopted=True 0.0->0.0
+[102/140] hms__rd_example__hms_Rd         new_hms           A2_full_entity  s4 verified                       canary=False adopted=False 0.0->1.0
+[103/140] lava__vignette__influencefunct  e_1               A5_local        s4 verified                       canary=False adopted=False 0.7518->0.5
+[104/140] clock__rd_example__zoned_time_  x_2               A2_full_entity  s4 verified                       canary=False adopted=False 0.5->0.0
+[105/140] lava__vignette__influencefunct  e_1               B1_full_entity_shortsyss4 verified                       canary=False adopted=True 0.7518->1.0
+[106/140] lava__vignette__influencefunct  e_1               B2_local_agentsyss4 verified                       canary=True adopted=True 0.7518->1.0
+[107/140] lava__vignette__influencefunct  e_1               A2_full_entity  s4 verified                       canary=True adopted=False 0.7518->0.75
+[108/140] lubridate__vignette__lubridate  months_2          A5_local        s4 verified                       canary=False adopted=True 0.522->1.0
+[109/140] highr__rd_example__hilight_Rd   cat               A2_full_entity  s4 verified                       canary=False adopted=False 0.7376->0.1667
+[110/140] lubridate__vignette__lubridate  months_2          B1_full_entity_shortsyss4 verified                       canary=False adopted=True 0.522->1.0
+[111/140] lubridate__vignette__lubridate  months_2          B2_local_agentsyss4 verified                       canary=True adopted=True 0.522->1.0
+[112/140] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s4 verified                       canary=True adopted=False 0.0->0.0
+[113/140] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[114/140] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss4 verified                       canary=True adopted=False 0.0->0.0
+[115/140] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss4 verified                       canary=False adopted=False 0.0->0.0
+[116/140] pROC__rd_example__geom_polygon  geom_polygon_auc  A5_local        s4 verified                       canary=True adopted=False 0.0->0.0
+[117/140] pROC__rd_example__geom_polygon  geom_polygon_auc  A2_full_entity  s4 verified                       canary=False adopted=False 0.0->0.0
+[118/140] purrr__vignette__purrr_s3       str               A2_full_entity  s4 verified                       canary=False adopted=True 0.7951->1.0
+[119/140] lubridate__vignette__lubridate  months_2          A2_full_entity  s4 verified                       canary=False adopted=False 0.522->0.0
+[120/140] pROC__rd_example__geom_polygon  geom_polygon_auc  B1_full_entity_shortsyss4 verified                       canary=True adopted=False 0.0->0.0
+[121/140] purrr__vignette__purrr_s3       str               B1_full_entity_shortsyss4 verified                       canary=False adopted=True 0.7951->1.0
+[122/140] purrr__vignette__purrr_s3       str               B2_local_agentsyss4 verified                       canary=False adopted=True 0.7951->1.0
+[123/140] purrr__vignette__purrr_s3       str               A5_local        s4 verified                       canary=False adopted=True 0.7951->1.0
+[124/140] pROC__rd_example__geom_polygon  geom_polygon_auc  B2_local_agentsyss4 verified                       canary=False adopted=True 0.0->0.0
+[125/140] tidyr__vignette__tidy-data_s3   tribble           B2_local_agentsyss4 verified                       canary=True adopted=False 0.8496->0.5
+[126/140] timeDate__rd_example__earlyClo  earlyCloseNYSE    A5_local        s4 verified                       canary=True adopted=False 0.7344->0.9511
+[127/140] tidyr__vignette__tidy-data_s3   tribble           A5_local        s4 verified                       canary=True adopted=True 0.8496->1.0
+[128/140] tidyr__vignette__tidy-data_s3   tribble           B1_full_entity_shortsyss4 verified                       canary=True adopted=True 0.8496->1.0
+[129/140] timeDate__rd_example__earlyClo  earlyCloseNYSE    B2_local_agentsyss4 verified                       canary=True adopted=False 0.7344->0.0
+[130/140] tidyr__vignette__tidy-data_s3   tribble           A2_full_entity  s4 verified                       canary=False adopted=False 0.8496->1.0
+[131/140] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A5_local        s4 verified                       canary=True adopted=False 0.802->0.8023
+[132/140] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B1_full_entity_shortsyss4 verified                       canary=True adopted=True 0.802->1.0
+[133/140] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  B2_local_agentsyss4 verified                       canary=True adopted=False 0.802->0.8023
+[134/140] timeDate__rd_example__earlyClo  c                 A5_local        s4 verified                       canary=False adopted=False 0.5161->0.1667
+[135/140] timeDate__rd_example__earlyClo  earlyCloseNYSE_1  A2_full_entity  s4 verified                       canary=True adopted=False 0.802->0.0
+[136/140] timeDate__rd_example__earlyClo  c                 B2_local_agentsyss4 verified                       canary=False adopted=False 0.5161->0.5161
+[137/140] timeDate__rd_example__earlyClo  c                 B1_full_entity_shortsyss4 verified                       canary=True adopted=False 0.5161->0.8373
+[138/140] timeDate__rd_example__earlyClo  c                 A2_full_entity  s4 verified                       canary=True adopted=True 0.5161->1.0
+[139/140] timeDate__rd_example__earlyClo  earlyCloseNYSE    B1_full_entity_shortsyss4 verified                       canary=True adopted=False 0.7344->0.5
+[140/140] timeDate__rd_example__earlyClo  earlyCloseNYSE    A2_full_entity  s4 verified                       canary=True adopted=True 0.7344->1.0
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_b7fa19f28f.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_1100901963.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_620fa44ebf.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_413bab089b.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_881bbb40f3.py
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_e4441e8319.py
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+[r2py] Installing Python package 'pyroc' ...
+
+420 calls (provider outages excluded)
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+A2_full_entity   105   14034       2%     32%    30%        32%        27%   -0.082
+A5_local         105    2894       0%     66%    36%        48%        25%   -0.030
+B1_full_entity_shortsys 105    9960       0%     71%    43%        40%        45%   +0.014
+B2_local_agentsys 105    6968       0%     54%    41%        56%        27%   -0.006
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 29)

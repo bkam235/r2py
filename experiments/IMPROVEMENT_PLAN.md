@@ -2276,3 +2276,32 @@ way.
 - Content matters, system does not: give the loop entity-local context.
 - Both: both.
 - Neither: the A2/A5 gap of the main run was not one of these two factors.
+
+**2x2 result (2026-10-11).** 420 calls. A credit outage after 280 was caught by the guard (3 calls discarded) and
+the run resumed after the top-up.
+
+| | agent system (5,003) | short system (929) |
+|---|---|---|
+| full content: canary / adopted | 32% / 30% | 71% / 43% |
+| local content: canary / adopted | 54% / 41% | 66% / 36% |
+
+- **Adoption, the registered outcome:** neither factor meets the rule.
+  - system +4.3 points [-3.8, +12.4];
+  - content +2.4 [-7.6, +13.3].
+
+  So: **"neither"**. The A2-to-A5 gap of the main run (27% to 42%) shrank to 30% to 36% here.
+- **Canary:** **the system prompt matters**, +25.2 points [+11.4, +39.0]; content +8.1 [-3.8, +20.0]. The
+  5,000-character agent system prompt makes Gemma ignore a trivial, explicit instruction about half the time it
+  would otherwise follow it.
+- Entity score change is about zero in every cell (-0.08 to +0.01). 29 print-case answers pasted R's output as a
+  literal.
+
+**Reading.** The large system prompt does crowd out instructions; the canary shows it clearly. But whether Gemma
+adopts a *substantive* fix does not depend on the system prompt or the amount of context: it stays at 30-43%, and
+adopting it does not raise the entity's score. Gemma reads the guidance and mostly declines it, or uses it without
+effect.
+
+So the overload hypothesis explains instruction neglect, not the failure to use guidance. Next candidates:
+- **trust:** Gemma prefers its own version; test framing with verification evidence;
+- **usability:** the guidance cannot work in that position (literal pastes; adoption without gain); look at the
+  adopted-but-unchanged cases.
