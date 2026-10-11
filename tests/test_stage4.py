@@ -821,6 +821,32 @@ class TestBuildFeedback:
         items = _build_feedback(results, {})
         assert items == []
 
+    def test_script_stdout_not_broadcast_when_per_entity_output_exists(self):
+        # Stage 1 sinks R's output into per-entity checkpoints, so the whole-script R stdout is empty
+        # and the script-level comparison says "R printed ''" - false, and it was copied onto every
+        # entity (42 of 59 replay scripts, 2026-10-11). Per-entity bundles carry the real comparison.
+        from r2py.stage4.verifier import _build_feedback
+        results = {EffectClass.STDOUT: self._make_fail(
+            EffectClass.STDOUT, "[STDOUT] score=0.000: R printed '' but Python printed 'x'")}
+        r_eb = {"e1": EffectBundle(stdout="[1] 1"), "e2": EffectBundle()}
+        py_eb = {"e1": EffectBundle(stdout="[1] 1"), "e2": EffectBundle()}
+        items = _build_feedback(results, {"e1": None, "e2": None}, r_eb, py_eb)
+        assert [i for i in items if i.effect_class == EffectClass.STDOUT] == []
+
+
+class TestBuildComparisonsStdout:
+    def test_per_entity_comparison_carries_its_own_score(self):
+        from r2py.stage4.verifier import _build_comparisons
+        from r2py.types import ComparatorResult
+        results = {EffectClass.STDOUT: ComparatorResult(EffectClass.STDOUT, 0.0, "fail", explanation="x")}
+        r_eb = {"e1": EffectBundle(stdout="# A tibble: 2 x 1\n  a\n1 1\n2 2")}
+        py_eb = {"e1": EffectBundle(stdout="   a\n0  1\n1  2")}
+        details = _build_comparisons(results, EffectBundle(), EffectBundle(stdout="   a\n0  1\n1  2"),
+                                     {"e1": None}, r_entity_bundles=r_eb, py_entity_bundles=py_eb)
+        mine = [d for d in details if d.effect_class == EffectClass.STDOUT and d.entity_id == "e1"]
+        expected = StdoutComparator().compare(r_eb["e1"].stdout.strip(), py_eb["e1"].stdout.strip()).score
+        assert mine and mine[0].score == pytest.approx(expected) and mine[0].score > 0
+
 
 # ---------------------------------------------------------------------------
 # DataComparator bool/int cross-type compatibility (new regression tests)

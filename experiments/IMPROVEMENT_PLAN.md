@@ -2081,3 +2081,30 @@ nothing". This is the same class of defect as the sidecar bug: the score is righ
    per-entity bundles exist, and give per-entity comparisons their own score. Scoring is unchanged, so replays stay
    comparable.
 2. Replay the fix against the baseline on the same frozen states.
+
+**C1 step 2a - stdout feedback fix and its replay; design fixed before the run (2026-10-11).**
+
+Fix (`r2py/stage4/verifier.py`, 2 tests in `tests/test_stage4.py`):
+- The script-level STDOUT result is no longer broadcast as feedback to every entity when R's per-entity bundles
+  hold output.
+- Per-entity stdout comparisons carry their own score.
+
+Scoring is unchanged. Checked on 12 final states: aggregate |diff| 0.0, the false items gone. In googledrive R
+really prints nothing, and its stray-output items rightly stay.
+
+Replay:
+- Policy `rewrite_w3`, the same 20 frozen dev states as C1 (the arms `20261001_112951 140509 165951` reproduce
+  all 20 start hashes), 3 samples, 6 workers.
+- Output in `work/replay_feedback/`.
+- Baseline: C1's `rewrite_w3` runs (`work/replay_ondemand/`, 2 samples, run 2026-10-09 after the sidecar fix;
+  harness changes since then touch only the runtime store and the Anthropic path). This is a historical baseline,
+  not a concurrent arm.
+
+Primary: per-state mean final score, fixed minus baseline, paired over 20 states (mean, SE, Wilcoxon).
+
+Secondary:
+- P(final ≥ 0.9);
+- share of branches that stop by stalling;
+- the side-effects-only share of remaining loss (`rescore_finals.py` on the new finals).
+
+Runs with provider failures in the log are reported and excluded.

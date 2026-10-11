@@ -231,6 +231,12 @@ def _build_feedback(
         elif ec == EffectClass.GRAPHICS and graphics_attributed:
             # Per-entity GRAPHICS feedback already emitted; skip global broadcast.
             continue
+        elif ec == EffectClass.STDOUT and r_entity_bundles and py_entity_bundles and any(
+                (eb.stdout or "").strip() for eb in r_entity_bundles.values()):
+            # Stage 1 sinks R's output into the per-entity checkpoints, so the whole-script R stdout
+            # is empty and this comparison claims "R printed ''" - copied onto every entity it was
+            # false in 42 of 59 replay scripts (2026-10-11). The per-entity comparisons are the truth.
+            continue
         else:
             if not result.explanation:
                 continue
@@ -335,7 +341,8 @@ def _build_comparisons(
                         effect_class=ec, entity_id=eid,
                         r_value=_serialize_value(r_out) or "(empty)",
                         py_value=_serialize_value(py_out) or "(empty)",
-                        score=result.score,
+                        # this entity's own score, not the script-level one (0.000 against an empty R stdout)
+                        score=COMPARATORS[EffectClass.STDOUT].compare(r_out, py_out).score,
                         diff_summary=_stdout_diff_summary(r_out, py_out),
                     ))
             else:
