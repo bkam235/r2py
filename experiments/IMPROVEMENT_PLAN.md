@@ -2016,3 +2016,26 @@ Along the recurrence curve (25.1% of held-out loss at 247 scripts with perfect a
 
 The inter-script curve exists but is shallow. A thorough C2 experiment would measure a slope too small to detect at a
 feasible held-out size, so it is not run. The store stays on as part of the harness. Next: C1.
+
+**C1 step 1 - where loss sits in the agent loop (2026-10-11), from existing logs.** Data: the `rewrite_w3`
+trajectories of the C1 replay and the oracle replay. That is 100 runs from frozen states (99 complete), 296 branches
+and 1,111 steps; no new model calls.
+- **The loop works, then gives up early.** Mean score goes from 0.414 to 0.766; 40 of 99 runs reach 0.9.
+- **How branches stop** (logged reasons): 62% stall (3 non-improving rewrites in a row), 37% reach the threshold, 1%
+  run out of budget. The median run takes 374 s of its 1,200 s budget, and a branch takes 3.8 steps on average. Time
+  is not the limit; ideas are.
+- **Steps:**
+  - 27% improve the score; 7% more make shaped progress (the per-step improved count can be lower than the outcome
+    count: one step can log several outcomes).
+  - 26% leave it unchanged.
+  - 17% make it worse, and 13% are catastrophic.
+  - 10% are rejected by a gate (review, import or syntax).
+- **Lookups:** 12 `probe_r` actions in 1,125. The agent almost never looks things up.
+- **What remains at the end** (149 loss units over the final states):
+  - 66% is partial entities: score between 0.1 and 0.9, most often 0.8.
+  - 18% is entities that never score above 0.1 in any candidate.
+  - 8% is entities that some candidate got right (≥ 0.9) but the accepted one lost. That is the ceiling for
+    recombining candidates per entity.
+- **Reading:** the remaining loss is mostly *nearly right* entities that 3 independent rewrites fail to finish, not
+  missing knowledge or missing time. The trajectories do not say which score dimension the partial entities lose
+  (value, type, shape, printing). That needs the final sources re-verified, the next measurement.
