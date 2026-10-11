@@ -2126,3 +2126,66 @@ Telling the agent the truth about print format does not make it fix print format
 every prompt-side measurement before: information in the prompt barely changes what the model writes; code the
 harness owns and verifies does. The intra-script lever for the side-effect loss is therefore not feedback but a
 harness-owned, R-verified way to print, analogous to the runtime store.
+
+**Correction (2026-10-11).** Two earlier conclusions counted the false "R printed ''" broadcast as real:
+- the corpus sizing "stray output Python produced and R did not: 8% of loss" (2026-10-08);
+- the blob/months rows of the prompt-arms failure diagnosis.
+
+Both rest on feedback that, in about 70% of scripts, was the broadcast fixed above, not a real per-entity
+mismatch. Treat both as unreliable.
+
+**Prompt-load experiment - why Gemma does not follow guidance; registered before it is built (2026-10-11).**
+Hypothesis (user): the agent prompt overloads the model, and guidance is lost in it.
+
+Measured first, on the 20 frozen states: the agent prompt is median 12,950 characters, about 3,500 tokens, range
+7,300-23,700, including a 5,000-character system prompt. That is not long for the model's context. Dilution is
+still possible: 30% of the turn is output comparisons for every entity and 11% verifier feedback. So the
+experiment scales the prompt both down and up. **Gemma only** (user's decision).
+
+*Cases:* about 40 entities from the 20 frozen states, at most 3 per script, each wrong in the frozen state.
+- **Snippet cases:** the 21 usable donor cases of the prompt-arms rerun. Guidance is the correct code for that
+  entity.
+- **Print cases:** up to about 20 entities that run with all value dimensions >= 0.9, side effects < 0.9, R
+  printing something for the entity, and Python printing something else. Guidance is R's exact printed output for
+  that entity. They are selected by verifying the frozen states, with no model calls.
+
+*Guidance:* every prompt ends with the same guidance block naming the entity.
+1. **Canary:** "include the comment `# ack-<random token>` in this entity's code". This is neutral and harmless,
+   and measures whether an instruction is read and followed at all.
+2. **Substantive:** the fix itself, as an instruction.
+
+*Arms:* 3 samples each. The system prompt is the agent's, as in the prompt-arms rig: whole-file arms get the
+variant without `replace_entity`. Every prompt says not to probe or look anything up.
+
+| arm | the model reads | it writes |
+|---|---|---|
+| A1 full/whole | today's agent turn | the whole file |
+| A2 full/entity | today's agent turn | one entity (`replace_entity`) |
+| A3 trim/whole | R source, full Python, only this entity's scores, comparisons and feedback | the whole file |
+| A4 trim/entity | as A3 | one entity |
+| A5 local | this entity's R lines, Python lines, scores, comparisons and feedback | one entity |
+| A6 local+pad | A5 plus another script's R and Python as labelled unrelated material, to A1's length | one entity |
+| A7 full x2 | A1 plus the same padding, to twice A1's length | the whole file |
+
+Padding goes before the case material, so the guidance stays last in every arm.
+
+*Outcomes, per call:*
+- canary present in the entity's code (and anywhere in the answer);
+- **adoption:**
+  - snippet cases: share of the donor's distinctive tokens, adopted if >= 0.5;
+  - print cases: the entity's stdout similarity to R after verification, adopted if >= 0.95;
+- entity score change;
+- "no code" answers;
+- prompt characters.
+
+Provider outages are discarded and the case repeated, as in the prompt-arms rig.
+
+*Decision rule (Gemma), on the adoption rate:*
+- **Overload:** A5 >= 2 x A2 **and** padding takes back at least half of that gain (A5 - A6 >= (A5 - A2) / 2).
+  The fix is then a lean, entity-local agent prompt.
+- **Clutter, not length:** A5 >= 2 x A2 but A6 stays near A5. Remove irrelevant sections; do not just shorten.
+- **Answer scope:** entity arms clearly beat whole-file arms at equal length (A2 vs A1, A4 vs A3) and length has
+  no effect. Build the loop around entity edits.
+- **Neither:** adoption flat across arms while the canary is followed. The model reads the guidance and declines
+  it, so the problem is trust, not attention. Next: framing with verification evidence.
+- The canary on its own failing in long arms and passing in short ones is direct evidence of an attention deficit.
