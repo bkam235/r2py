@@ -2440,3 +2440,34 @@ None reaches >= +10 with the interval above 0.
   into the guidance.
 - S2's low canary (9%) is unexplained.
 - **Part C reduces to Part B:** with S0 staying, "winner + crash-first" is Part B's arm.
+
+**Part B result (2026-10-12): crash-first did not repair crashes better; by the registered rule it does not stay.**
+60 runs, 0 errors, 0 provider failures.
+
+*Crashing starts (8 states, 24 runs per arm):*
+
+| | crash-first | baseline |
+|---|---|---|
+| runs ending with a program that runs | 20 | 20 |
+| mean final score | 0.698 | 0.717 |
+| median step of the first candidate that runs | 3 (reached in 21 runs) | 1 (reached in 22) |
+| branch stops: stalled / threshold | 43 / 29 | 33 / 38 |
+
+- Paired per state: -0.019, better/worse/tied 4/1/3, Wilcoxon p = 0.63.
+- Better: clock 0.23 to 0.38, hms 0.60 to 0.89, pROC 0.37 to 0.44.
+- **Worse: googledrive 1.00 to 0.33.** 2 of 3 runs stalled while still crashing; all 3 baseline runs reached 1.0.
+- A full rewrite fixes a crash at step 1. Targeted repair of the culprit takes a median of 3 steps and stalls more.
+
+*Running starts (12 states, where crash-first never acts):* -0.013, better/worse/tied **0/5/7, p = 0.031**.
+- The treatment is inactive there, so this negative control shows that **the day-apart baseline differs on its
+  own** by about -0.01 to -0.02.
+- It is not the time budget: no run stopped on budget, and crash-first runs were faster (4.5 vs 7.2 minutes).
+- Likely causes are provider-side variation between days, and Part A running alongside.
+- So the crashing-state difference (-0.019) is within that drift. The comparison cannot resolve an effect this
+  size, and **a historical baseline is not good enough at this precision: future A/Bs need concurrent arms.**
+
+*Decision as registered:* crash-first lowered the crashing states' mean final score, so it does not stay as the
+default.
+
+What the data do say: on crashing starts, a full rewrite usually fixes the crash in one step. Culprit-targeted
+repair is slower and failed outright on googledrive, but it unstuck hms and clock, which the baseline left stuck.
