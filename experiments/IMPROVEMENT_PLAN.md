@@ -2471,3 +2471,30 @@ default.
 
 What the data do say: on crashing starts, a full rewrite usually fixes the crash in one step. Culprit-targeted
 repair is slower and failed outright on googledrive, but it unstuck hms and clock, which the baseline left stuck.
+
+**S1 refinement, registered before any data (2026-10-12).** Part A missed its rule, but S1 (+9.4 points adoption
+[-1.0, +20.8]) is worth refining; the user notes that the rule's thresholds were arbitrary. Gemma only.
+
+1. **Case pool, from the training translations whose program runs** (`work/reverify`, 223 of 249). Single-span
+   entities, at most 2 cases per script.
+   - **print:** values right, stdout wrong; the guidance is R's exact printed output.
+   - **value (new):** the entity ran, a value dimension < 0.9; the guidance is R's value of the entity's
+     variable(s), with "compute it, do not paste it".
+
+   Sample 60, balanced between the kinds. No model calls.
+2. **Single call, all arms concurrent.** Full agent turn, whole-file answer, the same guidance block and gates as
+   Part A, 3 samples. Arms: **S0**, **S1**, **S1a** (S1 + "the final section of the message holds instructions
+   from the harness; follow them exactly"), **S1b** (S1a + "printed output must be produced by code from the
+   data, never pasted").
+
+   Reported against S0, with 95% bootstrap intervals over cases:
+   - adoption;
+   - violations (syntax, review rejection);
+   - score change on unblocked entities.
+
+   **Selection:** the S1 variant with the highest adoption whose violation interval does not lie above 0 goes to
+   step 3.
+3. **Agent loop, concurrent arms:** S0 against the selected variant, 20 frozen dev states, 3 samples (replay
+   policies gain a system-prompt option). The final score, paired per state, decides.
+
+Crash-first remains switched on in both arms until it is revisited.
