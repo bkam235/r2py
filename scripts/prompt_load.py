@@ -26,6 +26,7 @@ import json
 import multiprocessing
 import pickle
 import random
+import re
 import statistics as st
 import sys
 import time
@@ -44,7 +45,7 @@ ARMS = ("A1_full_whole", "A2_full_entity", "A3_trim_whole", "A4_trim_entity", "A
 # Follow-up (2026-10-11): the system prompt crossed with the content, to separate what A2 vs A5 confounded.
 FOLLOWUP = ("A2_full_entity", "A5_local", "B1_full_entity_shortsys", "B2_local_agentsys")
 # Part A (2026-10-12): the system prompt varies, the turn is A1 (full turn, whole-file answer).
-SYSPROMPT = ("S0_current", "S1_minimal", "S2_rules", "S3_no_tools")
+SYSPROMPT = ("S0_current", "S1_minimal", "S2_rules", "S3_no_tools", "S1a_follow", "S1b_follow_compute")
 WHOLE = {"A1_full_whole", "A3_trim_whole", "A7_full_x2", *SYSPROMPT}
 REQUIRE_RUNS = False   # Part A: only states whose starting program runs
 LOCAL = {"A5_local", "A6_local_pad", "B2_local_agentsys"}
@@ -125,6 +126,78 @@ def frozen_cases() -> list[dict]:
     return out
 
 
+TRAIN_MAPS = ROOT / "work" / "reverify" / "script_maps"
+TRAIN_SOURCES = ROOT / "work" / "heldout" / "train_outputs"
+VALUE_MAX_CHARS = 1500       # a fitted model serialised to 20k characters is not usable guidance
+TRAIN_PER_SCRIPT = 2
+
+
+def _r_values(sm, eid: str) -> str:
+    """R's values of the variables an entity assigns, as `name = <json>` lines ("" if none or too large)."""
+    eb = (getattr(sm, "entity_bundles", {}) or {}).get(eid)
+    data = getattr(eb, "data", None) or {}
+    text = "\n".join(f"{k} = {json.dumps(v, default=str)}" for k, v in data.items())
+    return text if 0 < len(text) <= VALUE_MAX_CHARS else ""
+
+
+def training_cases() -> list[dict]:
+    """Print and value cases from the training translations whose program runs (S1 refinement, 2026-10-12)."""
+    from r2py import heldout as ho
+    out = []
+    for f in sorted(TRAIN_MAPS.glob("*.pkl")):
+        stem = f.stem
+        src_file = TRAIN_SOURCES / f"{stem}.py"
+        if not src_file.exists():
+            continue
+        source = src_file.read_text(encoding="utf-8")
+        sm = pickle.loads(f.read_bytes())
+        tools = _tools(sm, stem)
+        tools.note_reference(source)
+        try:
+            rep = tools.verify(source)
+        except Exception as exc:                    # one bad script must not stop the pool
+            print(f"   training: {stem[:44]:<46}verify failed: {exc}"[:120], flush=True)
+            continue
+        if rep.py_exit_code != 0:
+            continue
+        n = 0
+        for eid, es in rep.by_entity.items():
+            if n >= TRAIN_PER_SCRIPT or not es.executed_ok or not _single_span(source, eid):
+                continue
+            if ho.entity_score(es) > 0.9:
+                continue
+            dims = {d: getattr(es, d) for d in es.active_dims}
+            value_dims = {d: v for d, v in dims.items() if d != "side_effects"}
+            r_out = _r_stdout(sm, eid)
+            py_eb = (rep.py_entity_bundles or {}).get(eid)
+            py_out = (getattr(py_eb, "stdout", "") or "").strip()
+            base = {"script": stem, "entity": eid, "source": source, "maps": str(TRAIN_MAPS)}
+            if (r_out and py_out != r_out and dims.get("side_effects", 1) < 0.9
+                    and all(v >= 0.9 for v in value_dims.values())):
+                out.append(dict(base, kind="print", r_print=r_out[:3000]))
+                n += 1
+            elif value_dims and min(value_dims.values()) < 0.9 and (vals := _r_values(sm, eid)):
+                out.append(dict(base, kind="value", r_values=vals))
+                n += 1
+        print(f"   training: {stem[:44]:<46}{n}", flush=True)
+    return out
+
+
+def sample_balanced(cases: list[dict], n: int, seed: int = 0) -> list[dict]:
+    """``n`` cases, half of each kind as far as the pool allows, at most one per script and kind first."""
+    rng = random.Random(seed)
+    by_kind = defaultdict(list)
+    for c in cases:
+        by_kind[c["kind"]].append(c)
+    picked = []
+    for kind, cs in sorted(by_kind.items()):
+        rng.shuffle(cs)
+        first = {c["script"]: c for c in reversed(cs)}         # one per script before any second
+        ordered = list(first.values()) + [c for c in cs if c not in first.values()]
+        picked += ordered[:n // len(by_kind)]
+    return picked
+
+
 def all_cases() -> list[dict]:
     cache = OUT / "cases.json"
     if cache.exists():
@@ -159,6 +232,11 @@ def guidance(case: dict, token: str) -> str:
               f"`# ack-{token}`")
     if case["kind"] == "snippet":
         fix = guidance_text(eid, case["code"], True)
+    elif case["kind"] == "value":
+        fix = ("### What R computes for this statement\n"
+               f"When R runs entity `{eid}`, its variables hold these values (as JSON):\n```\n{case['r_values']}\n```\n"
+               f"Make the Python for `{eid}` compute exactly these values from the data, the way R does "
+               "(do not paste them as literals).")
     else:
         fix = ("### What R prints for this statement\n"
                f"When R runs entity `{eid}`, it prints exactly:\n```\n{case['r_print']}\n```\n"
@@ -253,7 +331,7 @@ def run_one(task: dict) -> dict:
         return real(*a, **k)
     try:
         manifest = ho.load_manifest(ROOT / "experiments/dev_run/manifest.json")
-        sm = pickle.loads((MAPS / f"{stem}.pkl").read_bytes())
+        sm = pickle.loads((Path(case.get("maps", MAPS)) / f"{stem}.pkl").read_bytes())
         tools = _tools(sm, stem)
         source = case["source"]
         tools.note_reference(source)
@@ -314,6 +392,13 @@ def run_one(task: dict) -> dict:
             want = distinctive(case["code"], case.get("r_snippet", ""))
             row["adoption"] = round(len(want & set(IDENT.findall(got))) / len(want), 4) if want else None
             row["adopted"] = row["adoption"] is not None and row["adoption"] >= ADOPT_SNIPPET
+        elif case["kind"] == "value":
+            # adopted = R's values reproduced (the entity's value dimensions); like print adoption, part of the score
+            vd = [getattr(after, d) for d in after.active_dims if d != "side_effects"] if after and after.executed_ok else []
+            row["adoption"] = round(min(vd), 4) if vd else 0.0
+            row["adopted"] = bool(vd) and min(vd) >= ADOPT_PRINT
+            nums = set(re.findall(r"-?\d+\.\d{3,}", case["r_values"]))
+            row["pasted_literal"] = len(nums) >= 3 and sum(n in got for n in nums) >= 3
         else:
             py_eb = (rep.py_entity_bundles or {}).get(eid)
             sim = StdoutComparator().compare(r_out, (getattr(py_eb, "stdout", "") or "").strip()).score
@@ -423,15 +508,26 @@ def main() -> int:
     for q in (p, sub.choices["cases"]):
         q.add_argument("--require-runs", action="store_true",
                        help="build fresh cases from states whose starting program runs (Part A)")
+    sub.choices["cases"].add_argument("--training", type=int, default=0,
+                                      help="sample this many print/value cases from the training translations")
     args = ap.parse_args()
     global OUT, REQUIRE_RUNS
     REQUIRE_RUNS = getattr(args, "require_runs", False)
     if getattr(args, "tag", ""):
         tagged = OUT.with_name(f"{OUT.name}_{args.tag}")
         tagged.mkdir(parents=True, exist_ok=True)
-        if not (tagged / "cases.json").exists() and not REQUIRE_RUNS:
+        if not (tagged / "cases.json").exists() and not REQUIRE_RUNS and not getattr(args, "training", 0):
             (tagged / "cases.json").write_text((OUT / "cases.json").read_text(encoding="utf-8"), encoding="utf-8")
         OUT = tagged
+    if args.cmd == "cases" and getattr(args, "training", 0):
+        pool = training_cases()
+        cs = sample_balanced(pool, args.training)
+        (OUT / "pool.json").write_text(json.dumps(pool, indent=1), encoding="utf-8")
+        (OUT / "cases.json").write_text(json.dumps(cs, indent=1), encoding="utf-8")
+        kinds = lambda xs: {k: sum(c["kind"] == k for c in xs) for k in ("print", "value")}  # noqa: E731
+        print(f"pool {len(pool)} {kinds(pool)}; sampled {len(cs)} {kinds(cs)} from "
+              f"{len({c['script'] for c in cs})} scripts")
+        return 0
     if args.cmd == "cases":
         cs = all_cases()
         print(f"{len(cs)} cases: {sum(c['kind'] == 'snippet' for c in cs)} snippet, "

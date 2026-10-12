@@ -107,5 +107,59 @@ def part_b() -> None:
                 print(f"    {k[:44]:<46} baseline {per['baseline'][k]:.2f}  crash-first {per['crash-first'][k]:.2f}")
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and sys.argv[1] in ("a", "b"):
     {"a": part_a, "b": part_b}[sys.argv[1]]()
+
+
+S1REF = ("S0_current", "S1_minimal", "S1a_follow", "S1b_follow_compute")
+
+
+def s1ref() -> None:
+    """S1 refinement, step 2 (registered 2026-10-12): effects against S0 with 95% bootstrap intervals over cases;
+    selection = the S1 variant with the highest adoption whose violation interval does not lie above 0."""
+    rows = [json.loads(l) for l in (ROOT / "work/prompt_load_s1ref/results.jsonl").open(encoding="utf-8")]
+    rows = [r for r in rows if r.get("outcome") != "provider_unavailable"]
+    print(f"{len(rows)} calls")
+    cell = defaultdict(list)
+    for r in rows:
+        cell[((r["script"], r["entity"]), r["arm"])].append(r)
+    cases = sorted({k[0] for k in cell})
+    adopted = lambda r: float(bool(r.get("adopted")))                                   # noqa: E731
+    violation = lambda r: float(bool(r.get("syntax_error") or r.get("review_rejected")))  # noqa: E731
+    gain = lambda r: ((r["after"] or 0) - r["before"]) if (r.get("outcome") == "verified"   # noqa: E731
+                                                           and r.get("status_after") != "blocked") else 0.0
+
+    def rate(case, arm, f):
+        rs = cell.get((case, arm), [])
+        return sum(f(r) for r in rs) / len(rs) if rs else 0.0
+    for kind in ("all", "print", "value"):
+        rs_k = [r for r in rows if kind == "all" or r["kind"] == kind]
+        print(f"\n{kind}: {'arm':<20}{'canary':>8}{'adopted':>9}{'violations':>12}{'review rej':>11}"
+              f"{'pasted':>8}{'d score':>9}")
+        for arm in S1REF:
+            rs = [r for r in rs_k if r["arm"] == arm]
+            if rs:
+                print(f"      {arm:<20}{st.mean(bool(r.get('canary_in_entity')) for r in rs):>8.0%}"
+                      f"{st.mean(map(adopted, rs)):>9.0%}{st.mean(map(violation, rs)):>12.0%}"
+                      f"{st.mean(bool(r.get('review_rejected')) for r in rs):>11.0%}"
+                      f"{st.mean(bool(r.get('pasted_literal')) for r in rs):>8.0%}{st.mean(map(gain, rs)):>+9.3f}")
+    rng = random.Random(0)
+    print()
+    best = None
+    for arm in S1REF[1:]:
+        effects = []
+        for f in (adopted, violation, gain):
+            def d(cs):
+                return st.mean(rate(c, arm, f) - rate(c, "S0_current", f) for c in cs)
+            boots = sorted(d([rng.choice(cases) for _ in cases]) for _ in range(5000))
+            effects.append((d(cases), boots[125], boots[4874]))
+        (a, alo, ahi), (v, vlo, vhi), (g, glo, ghi) = effects
+        print(f"{arm} vs S0: adoption {a:+.1%} [{alo:+.1%}, {ahi:+.1%}]  violations {v:+.1%} [{vlo:+.1%}, {vhi:+.1%}]"
+              f"  score {g:+.3f} [{glo:+.3f}, {ghi:+.3f}]")
+        if vlo <= 0 and (best is None or a > best[1]):
+            best = (arm, a)
+    print(f"\nSelected for step 3: {best[0] if best else 'none (every variant raises violations)'}")
+
+
+if __name__ == "__main__" and sys.argv[1] == "s1ref":
+    s1ref()

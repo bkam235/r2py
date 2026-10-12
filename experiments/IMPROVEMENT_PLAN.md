@@ -2498,3 +2498,12 @@ repair is slower and failed outright on googledrive, but it unstuck hms and cloc
    policies gain a system-prompt option). The final score, paired per state, decides.
 
 Crash-first remains switched on in both arms until it is revisited.
+
+*S1 refinement, step 1 done (2026-10-12), before any step-2 data.*
+- **Pool:** 159 crash-free cases from the training translations (86 print, 73 value), with R values limited to
+  1,500 characters of JSON. 5 training scripts could not be verified (syntax errors) and are skipped.
+- **Sample:** 60 cases (30 print, 30 value) from 56 scripts, in `work/prompt_load_s1ref/cases.json`.
+- **Value adoption** = the entity's value dimensions all >= 0.95 after the answer, which, like print adoption, is
+  part of the score. `pasted_literal` flags answers containing >= 3 of R's decimal numbers.
+- **Arms:** S1a = S1 + 1 line, 623 characters; S1b = S1a + 1 line, 708 characters.
+- **Analysis:** `scripts/parts_ab_analysis.py s1ref`, written before the data.

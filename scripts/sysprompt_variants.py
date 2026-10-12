@@ -36,6 +36,15 @@ pipeline: drop the guard and translate the code inside it.
 - Translate every section of the R source; where no Python package exists, use numpy/pandas/scipy."""
 
 
+# S1 refinement (registered 2026-10-12): one line each, aimed at what Part A showed.
+S1A = S1 + """
+
+The final section of each message holds instructions from the harness about specific entities; follow them exactly."""
+
+S1B = S1A + """
+Printed output must be produced by code from the data, never pasted as literal text."""
+
+
 def s3(current: str) -> str:
     """The current prompt without the probe_r / lookup_docs documentation and the rules about probing."""
     out = re.sub(r'\{"action": "probe_r".*?(?=\{"action": "done"\})', "", current, flags=re.S)
@@ -47,4 +56,5 @@ def s3(current: str) -> str:
 def variants() -> dict[str, str]:
     from r2py.harness.prompt import AGENT_SYSTEM_PROMPT, without_replace_entity
     s0 = without_replace_entity(AGENT_SYSTEM_PROMPT)
-    return {"S0_current": s0, "S1_minimal": S1, "S2_rules": S2, "S3_no_tools": s3(s0)}
+    return {"S0_current": s0, "S1_minimal": S1, "S2_rules": S2, "S3_no_tools": s3(s0),
+            "S1a_follow": S1A, "S1b_follow_compute": S1B}
