@@ -2412,3 +2412,31 @@ loop).** Gemma only. Part C follows A: A's winner with crash-first, on the 20 fr
 - Adoption here is mostly print adoption.
 - With 12 cases, the bootstrap interval is wide; only a large effect will qualify.
 - Part B runs with 4 workers (the baseline used 6) while Part A runs alongside.
+
+**Part A result (2026-10-12): no shorter system prompt qualifies; S0 stays.** 384 calls, 0 provider failures, 12
+crash-free cases, whole-file answers.
+
+| prompt | chars | canary | adopted | violations | syntax | review rejected | score change (unblocked) |
+|---|---|---|---|---|---|---|---|
+| S0 current | 5,003 | 26% | 22% | 40% | 9% | 38% | +0.114 |
+| S1 minimal | 506 | 25% | 31% | 42% | 5% | 41% | +0.157 |
+| S2 rules | 1,346 | 9% | 23% | 36% | 0% | 36% | +0.109 |
+| S3 no tools | 3,506 | 25% | 23% | 35% | 2% | 35% | +0.102 |
+
+Adoption against S0, with violation change:
+- S1 +9.4 points [-1.0, +20.8], violations +2.1;
+- S2 +1.0 [-3.1, +5.2], violations -3.1;
+- S3 +1.0 [-5.2, +9.4], violations -4.2.
+
+None reaches >= +10 with the interval above 0.
+
+- **With whole-file answers the system prompt does not limit instruction-following.** The canary sits at 25% under
+  S0, S1 and S3. In the one-entity 2x2 the long prompt cost 25 points of canary; whole-file answering, not the
+  system prompt, is the binding factor in production.
+- **Trimming does not bring back the mistakes the rules were written against.** Violations are 35-42% in every arm,
+  and syntax errors are lowest in the short prompts.
+- **The anti-hardcoding review rejects about 38% of answers in every arm, S0 included.** The print-case guidance
+  ("make it print exactly this") invites literal output, which the review exists to reject. This conflict is built
+  into the guidance.
+- S2's low canary (9%) is unexplained.
+- **Part C reduces to Part B:** with S0 staying, "winner + crash-first" is Part B's arm.
