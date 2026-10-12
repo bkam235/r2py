@@ -43,7 +43,10 @@ ARMS = ("A1_full_whole", "A2_full_entity", "A3_trim_whole", "A4_trim_entity", "A
         "A7_full_x2")
 # Follow-up (2026-10-11): the system prompt crossed with the content, to separate what A2 vs A5 confounded.
 FOLLOWUP = ("A2_full_entity", "A5_local", "B1_full_entity_shortsys", "B2_local_agentsys")
-WHOLE = {"A1_full_whole", "A3_trim_whole", "A7_full_x2"}
+# Part A (2026-10-12): the system prompt varies, the turn is A1 (full turn, whole-file answer).
+SYSPROMPT = ("S0_current", "S1_minimal", "S2_rules", "S3_no_tools")
+WHOLE = {"A1_full_whole", "A3_trim_whole", "A7_full_x2", *SYSPROMPT}
+REQUIRE_RUNS = False   # Part A: only states whose starting program runs
 LOCAL = {"A5_local", "A6_local_pad", "B2_local_agentsys"}
 CASES_PER_SCRIPT = 3        # per kind
 ADOPT_SNIPPET, ADOPT_PRINT = 0.5, 0.95
@@ -90,6 +93,9 @@ def frozen_cases() -> list[dict]:
         tools = _tools(sm, stem)
         tools.note_reference(state["source"])
         rep = tools.verify(state["source"])
+        if REQUIRE_RUNS and rep.py_exit_code != 0:
+            print(f"   cases: {stem[:44]:<46}start crashes, skipped", flush=True)
+            continue
         code = donors(stem)
         src = (sm.source or "").splitlines()
         n = {"snippet": 0, "print": 0}
@@ -191,7 +197,7 @@ def build_prompt(arm: str, case: dict, sm, source: str, rep, states: dict, token
     # prompt kept "local" at 6.7k against 9.4k for "full", so the local arms get the harness's own
     # one-entity system prompt, and the padded arms are padded to A1's total and twice it.
     a1_total = len(without_replace_entity(AGENT_SYSTEM_PROMPT)) + len(full) + len(tail)
-    if arm in ("A1_full_whole", "A2_full_entity", "B1_full_entity_shortsys"):
+    if arm in ("A1_full_whole", "A2_full_entity", "B1_full_entity_shortsys", *SYSPROMPT):
         body = full
     elif arm == "A7_full_x2":
         body = padding(stem, a1_total, states) + full
@@ -211,7 +217,10 @@ def build_prompt(arm: str, case: dict, sm, source: str, rep, states: dict, token
                           "### Verification result (this entity)", format_score_report(mine)])
         if arm == "A6_local_pad":
             body = padding(stem, a1_total - len(ENTITY_REPAIR_SYSTEM) - len(body) - len(tail), states) + body
-    if arm == "B2_local_agentsys":
+    if arm in SYSPROMPT:
+        from sysprompt_variants import variants
+        system = variants()[arm]
+    elif arm == "B2_local_agentsys":
         system = AGENT_SYSTEM_PROMPT
     elif arm in LOCAL or arm == "B1_full_entity_shortsys":
         system = ENTITY_REPAIR_SYSTEM
@@ -282,6 +291,19 @@ def run_one(task: dict) -> dict:
         lines = new_source.splitlines()
         got = "\n".join(l for a, b in ranges_from_sentinels(new_source).get(eid, []) for l in lines[a:b + 1])
         row["canary_in_entity"] = f"ack-{token}" in got
+        if arm in SYSPROMPT:
+            # Part A gates: does a shorter system prompt bring back what its rules were written against?
+            from r2py.harness.agent import _check_syntax
+            from r2py.harness.review import review_translation
+            from r2py.stage2.stitch import sanitize_keyword_args
+            row["syntax_error"] = _check_syntax(new_source) is not None
+            row["arg_order_fixes"] = len(sanitize_keyword_args(new_source)[1])
+            with ho.pinned_llm(GEMMA, ho.llm_settings(manifest)):
+                llm.call = counted
+                passed, reason = review_translation(sm.source or "", new_source, sm, model=GEMMA)
+                llm.call = real
+            row["review_rejected"] = not passed
+            row["review_reason"] = (reason or "")[:200]
         rep = tools.verify(new_source)
         after = rep.by_entity.get(eid)
         row["after"] = round(ho.entity_score(after), 4) if after else None
@@ -363,7 +385,7 @@ def _table(rows: list[dict], title: str) -> str:
         by[r["arm"]].append(r)
     hdr = f"{'arm':<16}{'n':>4}{'chars':>8}{'no code':>9}{'canary':>8}{'adopt':>7}{'adopt snip':>11}{'adopt prnt':>11}{'d score':>9}"
     lines.append(hdr)
-    for arm in ARMS + FOLLOWUP[2:]:
+    for arm in ARMS + FOLLOWUP[2:] + SYSPROMPT:
         rs = by.get(arm, [])
         if not rs:
             continue
@@ -393,17 +415,21 @@ def main() -> int:
     p = sub.add_parser("run")
     p.add_argument("--samples", type=int, default=3)
     p.add_argument("--workers", type=int, default=6)
-    p.add_argument("--arms", nargs="+", choices=ARMS + FOLLOWUP[2:])
+    p.add_argument("--arms", nargs="+", choices=ARMS + FOLLOWUP[2:] + SYSPROMPT)
     sub.add_parser("cases")
     sub.add_parser("summary")
-    for q in (p, sub.choices["summary"]):
+    for q in (p, sub.choices["summary"], sub.choices["cases"]):
         q.add_argument("--tag", default="", help="separate results directory (cases are copied from the main run)")
+    for q in (p, sub.choices["cases"]):
+        q.add_argument("--require-runs", action="store_true",
+                       help="build fresh cases from states whose starting program runs (Part A)")
     args = ap.parse_args()
-    global OUT
+    global OUT, REQUIRE_RUNS
+    REQUIRE_RUNS = getattr(args, "require_runs", False)
     if getattr(args, "tag", ""):
         tagged = OUT.with_name(f"{OUT.name}_{args.tag}")
         tagged.mkdir(parents=True, exist_ok=True)
-        if not (tagged / "cases.json").exists():
+        if not (tagged / "cases.json").exists() and not REQUIRE_RUNS:
             (tagged / "cases.json").write_text((OUT / "cases.json").read_text(encoding="utf-8"), encoding="utf-8")
         OUT = tagged
     if args.cmd == "cases":

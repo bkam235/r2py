@@ -2404,3 +2404,11 @@ loop).** Gemma only. Part C follows A: A's winner with crash-first, on the 20 fr
   - blocked entities at the end.
 - **Decision:** crash-first stays unless it lowers the crashing states' mean final score. It is called an
   improvement only if the paired test gives p < 0.05. Eight states can show only a large effect.
+
+*Part A, before any data (2026-10-12).*
+- Only **12 crash-free cases** exist under the case rules: 2 snippet, 10 print, from 7 scripts. 7 of the 24 dev
+  states start with a crash. Lifting the per-script cap gives 15, 6 of them from broom, so the cap stays.
+- To keep about 400 calls: **8 samples instead of 5** (384 calls).
+- Adoption here is mostly print adoption.
+- With 12 cases, the bootstrap interval is wide; only a large effect will qualify.
+- Part B runs with 4 workers (the baseline used 6) while Part A runs alongside.
