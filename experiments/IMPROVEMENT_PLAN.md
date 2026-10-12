@@ -2366,3 +2366,41 @@ except the known `test_stage2` locale failure.
      `status_before`, `status_after`).
    - `prompt_load` summaries add a table restricted to cases whose starting program runs. A blocked entity's
      score is not evidence about what was done to it.
+
+**Registered before the runs (2026-10-12): Part A (system prompt trimming) and Part B (crash-first in the
+loop).** Gemma only. Part C follows A: A's winner with crash-first, on the 20 frozen states, against B's runs.
+
+*Part A - which system prompt lets Gemma use guidance* (`prompt_load.py`, tag `sysprompt`).
+- **Cases:** the prompt-load case rules (single-span entities, at most 3 per kind per script, all dev states),
+  **restricted to states whose starting program runs**, so no crash can mask an effect.
+- **Base:** the production setting, i.e. today's full agent turn with a whole-file answer and the same guidance
+  block (canary + fix) at the end. Only the system prompt varies:
+  - **S0** current (`without_replace_entity(AGENT_SYSTEM_PROMPT)`, 4.6k);
+  - **S1** role and output format only;
+  - **S2** S1 plus the current rules the harness enforces, paraphrased concisely (names, module level, argument
+    order, reserved words, data-shim line, no hardcoding, guard removal). This is a subset, with no new rules;
+  - **S3** current minus the `probe_r` / `lookup_docs` documentation and the probing rules.
+- 5 samples.
+- **Outcomes:**
+  - canary;
+  - adopted;
+  - entity score change (unblocked entities only);
+  - **gate violations:** the answer does not parse (`_check_syntax`), or the anti-hardcoding review rejects it
+    (`review_translation`, run on every answer, one extra model call each);
+  - argument-order repairs, reported.
+- **Decision:** take the shortest prompt that raises adoption by >= 10 points over S0 (95% bootstrap interval over
+  cases excludes 0) **and** does not raise gate violations by more than 5 points. If none qualifies, S0 stays.
+
+*Part B - does crash-first repair crashes better* (`replay.py`, `rewrite_w3`, current harness, 20 frozen states,
+3 samples, `work/replay_crashfirst/`).
+- **Baseline:** `work/replay_feedback/`. It is the same harness minus crash-first (self-contained guidance has no
+  effect with the empty replay library), run 2026-10-11, not concurrently.
+- **Primary, on the 8 states whose start crashes (24 runs per arm):**
+  - share of runs ending with a program that runs (baseline 20/24);
+  - steps until the first candidate that runs (from trajectories);
+  - mean final score (baseline 0.717), paired per state, Wilcoxon.
+- **Secondary:**
+  - the 12 states that start running (crash-first should not act there: a check, not an effect);
+  - blocked entities at the end.
+- **Decision:** crash-first stays unless it lowers the crashing states' mean final score. It is called an
+  improvement only if the paired test gives p < 0.05. Eight states can show only a large effect.
