@@ -2541,3 +2541,25 @@ Against S0, with 95% intervals over 60 cases:
   S0's rules may help.
 - **S1a raises pasting** on print cases to 12% (S0 2%). S1b's compute sentence brings it back to 8%.
 - Violations stay at 24-29% in every arm, almost all of them review rejections.
+
+**Step 3 - three arms, S0, S1 and S1b (user's decision, 2026-10-15), and a correction found while building it.**
+- The agent loop gives OpenRouter models `AGENT_SYSTEM_PROMPT_OPENROUTER` (3,860 characters as used, with a
+  fenced-block answer format: `ACTION: rewrite` + a fenced block). Parts A and step 2 used
+  `without_replace_entity(AGENT_SYSTEM_PROMPT)` (5,003 characters, JSON actions) as "S0". **Their S0 was not the
+  production prompt.**
+- In both the turn ended with "Answer with ACTION: rewrite and the complete Python file", so all arms answered in
+  the same form. The comparisons stand as comparisons of those texts, not of the production prompt.
+- **In the loop:**
+  - **S0 = the production prompt**, unchanged.
+  - **S1 and S1b keep their content but use the production answer format** (fenced block after
+    `ACTION: rewrite`, and `ACTION: done`). The answer format is not what is tested, and a whole file escaped
+    inside a JSON string is a known failure mode.
+- Policies `rewrite_w3_S1` and `rewrite_w3_S1b` against `rewrite_w3`, all concurrent: 20 frozen states, 3 samples,
+  180 runs.
+- **Primary:** final score per state, each variant against S0, paired, Wilcoxon, with a bootstrap interval over
+  states.
+- **Secondary:**
+  - P(final >= 0.9);
+  - stalled share;
+  - runs ending with a program that runs.
+- Crash-first stays on in all arms.
