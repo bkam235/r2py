@@ -163,3 +163,41 @@ def s1ref() -> None:
 
 if __name__ == "__main__" and sys.argv[1] == "s1ref":
     s1ref()
+
+
+def step3() -> None:
+    """S1 refinement step 3 (registered 2026-10-15): S1 and S1b against S0 in the agent loop, concurrent arms."""
+    from scipy.stats import wilcoxon
+    rows = [json.loads(l) for l in (ROOT / "work/replay_sysprompt/results.jsonl").open(encoding="utf-8")]
+    rows = [r for r in rows if "final_score" in r]
+    print(f"{len(rows)} runs, errors excluded: {sum(1 for l in (ROOT / 'work/replay_sysprompt/results.jsonl').open() if 'error' in json.loads(l))}")
+    per = defaultdict(lambda: defaultdict(list))
+    for r in rows:
+        per[r["policy"]][r["script"]].append(r)
+    for pol in ("rewrite_w3", "rewrite_w3_S1", "rewrite_w3_S1b"):
+        rs = [r for v in per[pol].values() for r in v]
+        stop = defaultdict(int)
+        for r in rs:
+            for k, v in r["agent"]["stop"].items():
+                stop[k] += v
+        tot = sum(stop.values()) or 1
+        print(f"{pol:<16} runs {len(rs):>3}  mean final {st.mean(r['final_score'] for r in rs):.3f}  "
+              f"P(>=0.9) {st.mean(r['final_score'] >= 0.9 for r in rs):.2f}  stalled {stop['stalled'] / tot:.2f}  "
+              f"ends running {sum(r.get('final_exit') == 0 for r in rs)}/{len(rs)}  "
+              f"steps {st.mean(r['llm_steps'] for r in rs):.1f}")
+    rng = random.Random(0)
+    base = {k: st.mean(r["final_score"] for r in v) for k, v in per["rewrite_w3"].items()}
+    for pol in ("rewrite_w3_S1", "rewrite_w3_S1b"):
+        arm = {k: st.mean(r["final_score"] for r in v) for k, v in per[pol].items()}
+        ks = sorted(set(arm) & set(base))
+        diff = [arm[k] - base[k] for k in ks]
+        boots = sorted(st.mean(rng.choice(diff) for _ in diff) for _ in range(5000))
+        nz = [x for x in diff if abs(x) > 1e-9]
+        p = wilcoxon(nz).pvalue if len(nz) >= 5 else float("nan")
+        print(f"{pol} vs S0: {st.mean(diff):+.3f} [{boots[125]:+.3f}, {boots[4874]:+.3f}]  better/worse/tied "
+              f"{sum(x > 0.005 for x in diff)}/{sum(x < -0.005 for x in diff)}/{sum(abs(x) <= 0.005 for x in diff)}  "
+              f"Wilcoxon p {p:.3f}  (states {len(ks)})")
+
+
+if __name__ == "__main__" and sys.argv[1] == "step3":
+    step3()

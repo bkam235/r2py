@@ -40,6 +40,9 @@ POLICIES = {
     "rewrite_rt": dict(entity_repair=False, escalate_after=None, runtime=str(ROOT / "work/runtime/pilot")),   # verified R functions offered
     "rewrite_loc": dict(entity_repair=False, escalate_after=None, locate=True),     # the harness locates the first diverging call
     "rewrite_w3": dict(entity_repair=False, escalate_after=None, width=3),   # three independent loops, best wins
+    # Step 3 of the S1 refinement (2026-10-15): the same agent with a short system prompt (scripts/sysprompt_variants.py).
+    "rewrite_w3_S1": dict(entity_repair=False, escalate_after=None, width=3, system="S1"),
+    "rewrite_w3_S1b": dict(entity_repair=False, escalate_after=None, width=3, system="S1b"),
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
     # script calls, built by scripts/oracle_library.py (perfect coverage, perfect retrieval).
     "rewrite_w3_oracle": dict(entity_repair=False, escalate_after=None, width=3, oracle=True),
@@ -157,6 +160,11 @@ def run_one(task: dict) -> dict:
                     row["store_after_ondemand"] = len(store)
                     trajectory.log("ondemand", records=recs)
                 drain_agent_stats()
+                system = policy.pop("system", None)
+                if system:
+                    sys.path.insert(0, str(ROOT / "scripts"))
+                    from sysprompt_variants import loop_variants
+                    policy["system_override"] = loop_variants()[system]
                 width = policy.pop("width", 1)
                 beam_cfg = policy.pop("beam", None)
                 harnesses = [harness] + [new_harness() for _ in range(width - 1)]

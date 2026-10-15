@@ -105,6 +105,7 @@ def reason(
     branch: "int | None" = None,
     entity_width: int = 1,
     locate: bool = False,
+    system_override: "str | None" = None,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -145,6 +146,8 @@ def reason(
     )
     if not replace_entity:
         system_prompt = _prompt.without_replace_entity(system_prompt)
+    if system_override is not None:   # prompt experiments (2026-10-15): replaces the agent's system prompt
+        system_prompt = system_override
     if runtime_section:
         system_prompt += ("\n\nVerified R functions: when the turn lists Python implementations of R functions, call them "
                           "(`r_<name>(...)`) instead of reimplementing the R function. The harness keeps their code in a block "

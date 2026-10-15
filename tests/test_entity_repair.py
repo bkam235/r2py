@@ -169,3 +169,29 @@ class TestCrashFirst(unittest.TestCase):
         system, user = self.first_turn(rep, self.SRC)
         self.assertNotEqual(system, prompt.ENTITY_REPAIR_SYSTEM)
         self.assertNotIn("Fix the crash first", user)
+
+
+class TestSystemOverride(unittest.TestCase):
+    def test_a_given_system_prompt_replaces_the_built_one(self):
+        from unittest.mock import patch
+        sent = []
+
+        def call(messages, system, **kw):
+            sent.append(system)
+            return "ACTION: rewrite\n```python\nb = 1\n```"
+        rep = NS(by_entity={"e1": TestCrashFirst.full("e1", True, 0.5)}, crash_entities=[], py_exit_code=0,
+                 aggregate=0.5, feedback=[], comparisons=[], uncomparable=[])
+        harness = NS(verify=lambda src: rep, _probe_count=0, last_annotated_source="", _sidecar_filename="")
+        ent = NS(source_span=NS(start_line=0, end_line=0), name="b")
+        sm = NS(source="b <- 1\n", entities={"e1": ent}, entity_bundles={})
+        with patch.object(agent._llm, "call", side_effect=call), \
+             patch.object(agent, "_prefetch_patterns", return_value={}), \
+             patch.object(agent, "_prefetch_r_sources", return_value=([], "")), \
+             patch.object(agent, "_get_unavailable_packages", return_value=[]), \
+             patch.object(agent, "unavailable_imports", return_value=[]), \
+             patch.object(agent, "_check_syntax", return_value=None), \
+             patch.object(agent, "review_translation", return_value=(True, "")):
+            agent.reason("# r2py:entity:e1\nb = 2\n", rep, harness, sm, model="openrouter:m", max_steps=1,
+                         system_override="MINIMAL PROMPT")
+        agent.drain_agent_stats()
+        self.assertEqual(sent[0], "MINIMAL PROMPT")

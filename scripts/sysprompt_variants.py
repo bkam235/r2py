@@ -45,6 +45,33 @@ S1B = S1A + """
 Printed output must be produced by code from the data, never pasted as literal text."""
 
 
+# Step 3 (2026-10-15): S1 and S1b in the agent loop, with the production answer format (a fenced block after
+# ACTION: rewrite, as in AGENT_SYSTEM_PROMPT_OPENROUTER) instead of JSON actions; content otherwise unchanged.
+S1_LOOP = """You translate an R script into Python so that running the Python produces the same results as running R: \
+the same variables and values, the same printed output, plots and files.
+
+Each turn you see the R source, the current Python translation and how its output compares with R's.
+
+Reply with 2-5 sentences of analysis, then your action.
+
+To rewrite, give the complete new Python file:
+
+ACTION: rewrite
+```python
+# the complete Python file
+```
+
+To stop, when you cannot improve further:
+
+ACTION: done"""
+
+S1B_LOOP = S1_LOOP + S1B[len(S1):]
+
+
+def loop_variants() -> dict[str, str]:
+    return {"S1": S1_LOOP, "S1b": S1B_LOOP}
+
+
 def s3(current: str) -> str:
     """The current prompt without the probe_r / lookup_docs documentation and the rules about probing."""
     out = re.sub(r'\{"action": "probe_r".*?(?=\{"action": "done"\})', "", current, flags=re.S)
