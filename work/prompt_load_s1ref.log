@@ -1,0 +1,1038 @@
+60 cases (0 snippet, 30 print), 4 arms, 3 samples: 720 calls to do, 6 workers
+[1/720] purrr__rd_example__attr_getter  get_rownames_1    S1b_follow_computes0 verified                       canary=True adopted=False 0.5563->0.5563
+[2/720] purrr__rd_example__attr_getter  get_rownames_1    S0_current      s0 verified                       canary=False adopted=False 0.5563->0.5563
+[3/720] purrr__rd_example__attr_getter  get_rownames_1    S1a_follow      s0 verified                       canary=True adopted=False 0.5563->0.5563
+[4/720] ragg__rd_example__agg_webp_ani  dev.off           S0_current      s0 verified                       canary=True adopted=False 0.5->0.0
+[5/720] ragg__rd_example__agg_webp_ani  dev.off           S1_minimal      s0 verified                       canary=True adopted=True 0.5->1.0
+[6/720] purrr__rd_example__attr_getter  get_rownames_1    S1_minimal      s0 verified                       canary=True adopted=True 0.5563->1.0
+[7/720] ragg__rd_example__agg_webp_ani  dev.off           S1a_follow      s0 verified                       canary=True adopted=False 0.5->0.0
+[8/720] broom__vignette__broom_chunk6   augment           S0_current      s0 verified                       canary=False adopted=False 0.5->0.0
+[9/720] ragg__rd_example__agg_webp_ani  dev.off           S1b_follow_computes0 verified                       canary=True adopted=False 0.5->0.0
+[10/720] broom__vignette__broom_chunk6   augment           S1_minimal      s0 verified                       canary=True adopted=False 0.5->0.0
+[11/720] ModelMetrics__rd_example__mse_  mse               S0_current      s0 verified                       canary=False adopted=False 0.5->0.8684
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[12/720] ModelMetrics__rd_example__mse_  mse               S1_minimal      s0 verified                       canary=False adopted=False 0.5->0.9333
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[13/720] ModelMetrics__rd_example__mse_  mse               S1a_follow      s0 verified                       canary=False adopted=False 0.5->0.9333
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[14/720] broom__vignette__broom_chunk6   augment           S1a_follow      s0 verified                       canary=True adopted=False 0.5->0.0
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[15/720] ModelMetrics__rd_example__mse_  mse               S1b_follow_computes0 verified                       canary=False adopted=False 0.5->0.9333
+[16/720] sass__rd_example__sass_import_  sass_import       S1_minimal      s0 verified                       canary=False adopted=False 0.5->0.9615
+[17/720] sass__rd_example__sass_import_  sass_import       S0_current      s0 verified                       canary=False adopted=False 0.5->0.9295
+[18/720] sass__rd_example__sass_import_  sass_import       S1a_follow      s0 verified                       canary=True adopted=True 0.5->1.0
+[19/720] sass__rd_example__sass_import_  sass_import       S1b_follow_computes0 verified                       canary=False adopted=True 0.5->0.9815
+[20/720] broom__vignette__broom_chunk6   augment           S1b_follow_computes0 verified                       canary=True adopted=False 0.5->0.0
+[21/720] rmarkdown__rd_example__include  pdf_document      S1_minimal      s0 verified                       canary=False adopted=False 0.5->0.9202
+[22/720] ragg__rd_example__agg_ppm_Rd    dev.off           S0_current      s0 verified                       canary=True adopted=False 0.5->0.0
+[23/720] ragg__rd_example__agg_ppm_Rd    dev.off           S1_minimal      s0 verified                       canary=True adopted=True 0.5->1.0
+[24/720] rmarkdown__rd_example__include  pdf_document      S1a_follow      s0 verified                       canary=True adopted=False 0.5->0.8762
+[25/720] ragg__rd_example__agg_ppm_Rd    dev.off           S1a_follow      s0 verified                       canary=True adopted=True 0.5->1.0
+[26/720] rmarkdown__rd_example__include  pdf_document      S0_current      s0 verified                       canary=False adopted=True 0.5->0.9897
+[27/720] rmarkdown__rd_example__include  pdf_document      S1b_follow_computes0 verified                       canary=True adopted=True 0.5->0.9913
+[28/720] ragg__rd_example__agg_ppm_Rd    dev.off           S1b_follow_computes0 verified                       canary=True adopted=False 0.5->0.0
+[29/720] prettyunits__rd_example__vague  vague_dt_22       S0_current      s0 verified                       canary=False adopted=True 0.75->1.0
+[30/720] prettyunits__rd_example__vague  vague_dt_22       S1_minimal      s0 verified                       canary=False adopted=True 0.75->1.0
+[31/720] prettyunits__rd_example__vague  vague_dt_22       S1b_follow_computes0 verified                       canary=False adopted=True 0.75->1.0
+[32/720] reshape2__rd_example__melt_lis  melt_1            S0_current      s0 verified                       canary=False adopted=False 0.8656->0.9194
+[33/720] reshape2__rd_example__melt_lis  melt_1            S1_minimal      s0 verified                       canary=False adopted=False 0.8656->0.9189
+[34/720] reshape2__rd_example__melt_lis  melt_1            S1a_follow      s0 verified                       canary=True adopted=False 0.8656->0.9565
+[35/720] prettyunits__rd_example__vague  vague_dt_22       S1a_follow      s0 verified                       canary=False adopted=True 0.75->1.0
+[36/720] prodlim__rd_example__summary_p  summary           S0_current      s0 verified                       canary=False adopted=False 0.5038->0.0
+[37/720] textshaping__rd_example__shape  shape_text_1      S0_current      s0 verified                       canary=False adopted=False 0.5191->0.5077
+[38/720] reshape2__rd_example__melt_lis  melt_1            S1b_follow_computes0 verified                       canary=False adopted=False 0.8656->0.9409
+[39/720] textshaping__rd_example__shape  shape_text_1      S1_minimal      s0 verified                       canary=True adopted=False 0.5191->0.0
+[40/720] textshaping__rd_example__shape  shape_text_1      S1b_follow_computes0 verified                       canary=False adopted=False 0.5191->0.5075
+[41/720] prodlim__rd_example__summary_p  summary           S1_minimal      s0 verified                       canary=False adopted=False 0.5038->0.0
+[42/720] htmltools__rd_example__htmlPre  output_2          S0_current      s0 verified                       canary=False adopted=True 0.75->0.9938
+[43/720] textshaping__rd_example__shape  shape_text_1      S1a_follow      s0 verified                       canary=False adopted=False 0.5191->0.0
+[44/720] prodlim__rd_example__summary_p  summary           S1a_follow      s0 verified                       canary=False adopted=False 0.5038->0.0
+[45/720] htmltools__rd_example__htmlPre  output_2          S1a_follow      s0 verified                       canary=False adopted=True 0.75->0.9938
+[46/720] htmltools__rd_example__htmlPre  output_2          S1_minimal      s0 verified                       canary=False adopted=True 0.75->0.9938
+[47/720] htmltools__rd_example__htmlPre  output_2          S1b_follow_computes0 verified                       canary=False adopted=True 0.75->0.9938
+[48/720] prodlim__rd_example__summary_p  summary           S1b_follow_computes0 verified                       canary=False adopted=False 0.5038->0.0
+[49/720] prettyunits__rd_example__time_  time_ago_26       S1_minimal      s0 verified                       canary=False adopted=True 0.7->1.0
+[50/720] prettyunits__rd_example__time_  time_ago_26       S0_current      s0 verified                       canary=False adopted=True 0.7->1.0
+[51/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S0_current      s0 verified                       canary=False adopted=False 0.8585->0.8585
+[52/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S1a_follow      s0 verified                       canary=False adopted=False 0.8585->0.0
+[53/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S1_minimal      s0 verified                       canary=False adopted=False 0.8585->0.0
+[54/720] systemfonts__rd_example__shape  shape_string_1    S0_current      s0 verified                       canary=False adopted=False 0.5692->0.6746
+[55/720] systemfonts__rd_example__shape  shape_string_1    S1a_follow      s0 no code                        canary=None adopted=None 0.5692->None
+[56/720] prettyunits__rd_example__time_  time_ago_26       S1a_follow      s0 verified                       canary=False adopted=True 0.7->1.0
+[57/720] dplyr__vignette__dplyr_s21      summarise         S0_current      s0 verified                       canary=False adopted=False 0.5->0.6066
+[58/720] dplyr__vignette__dplyr_s21      summarise         S1_minimal      s0 verified                       canary=True adopted=False 0.5->0.6066
+[59/720] systemfonts__rd_example__shape  shape_string_1    S1b_follow_computes0 no code                        canary=None adopted=None 0.5692->None
+[60/720] systemfonts__rd_example__shape  shape_string_1    S1_minimal      s0 verified                       canary=False adopted=False 0.5692->0.9017
+[61/720] prettyunits__rd_example__time_  time_ago_26       S1b_follow_computes0 verified                       canary=False adopted=True 0.7->1.0
+[62/720] ModelMetrics__rd_example__logL  logLoss_1         S1_minimal      s0 verified                       canary=False adopted=True 0.6875->1.0
+[63/720] dplyr__vignette__dplyr_s21      summarise         S1a_follow      s0 verified                       canary=True adopted=False 0.5->0.0
+[64/720] ModelMetrics__rd_example__logL  logLoss_1         S1a_follow      s0 verified                       canary=False adopted=True 0.6875->1.0
+[65/720] dplyr__vignette__dplyr_s21      summarise         S1b_follow_computes0 verified                       canary=True adopted=False 0.5->0.6169
+[66/720] ModelMetrics__rd_example__logL  logLoss_1         S1b_follow_computes0 verified                       canary=False adopted=True 0.6875->1.0
+[67/720] farver__rd_example__as_white_r  as_white_ref_1    S1b_follow_computes0 verified                       canary=False adopted=False 0.8->0.9167
+[68/720] farver__rd_example__as_white_r  as_white_ref_1    S1a_follow      s0 verified                       canary=False adopted=False 0.8->0.8151
+[69/720] ModelMetrics__rd_example__logL  logLoss_1         S0_current      s0 verified                       canary=False adopted=True 0.6875->1.0
+[70/720] farver__rd_example__as_white_r  as_white_ref_1    S1_minimal      s0 verified                       canary=False adopted=True 0.8->1.0
+[71/720] farver__rd_example__as_white_r  as_white_ref_1    S0_current      s0 verified                       canary=False adopted=True 0.8->1.0
+[72/720] shiny__rd_example__observe_Rd   flushReact        S0_current      s0 verified                       canary=True adopted=False 0.5->0.0
+[73/720] shiny__rd_example__observe_Rd   flushReact        S1_minimal      s0 verified                       canary=True adopted=False 0.5->0.1667
+[74/720] pROC__rd_example__coords_Rd     coords_1          S0_current      s0 verified                       canary=False adopted=False 0.5->0.0
+[75/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S1b_follow_computes0 verified                       canary=False adopted=False 0.8585->0.8585
+[76/720] shiny__rd_example__observe_Rd   flushReact        S1a_follow      s0 verified                       canary=True adopted=False 0.5->0.1667
+[77/720] pROC__rd_example__coords_Rd     coords_1          S1a_follow      s0 verified                       canary=True adopted=False 0.5->0.0
+[78/720] pROC__rd_example__coords_Rd     coords_1          S1_minimal      s0 verified                       canary=False adopted=False 0.5->0.0
+[79/720] caret__rd_example__lift_Rd      lift1_1           S0_current      s0 verified                       canary=False adopted=True 0.75->1.0
+[80/720] shiny__rd_example__observe_Rd   flushReact        S1b_follow_computes0 verified                       canary=True adopted=False 0.5->0.0
+[81/720] caret__rd_example__lift_Rd      lift1_1           S1_minimal      s0 verified                       canary=True adopted=True 0.75->1.0
+[82/720] caret__rd_example__lift_Rd      lift1_1           S1a_follow      s0 verified                       canary=False adopted=False 0.75->0.0
+[83/720] caret__rd_example__lift_Rd      lift1_1           S1b_follow_computes0 verified                       canary=False adopted=True 0.75->1.0
+[84/720] pROC__rd_example__multiclass_R  multiclass.roc    S1a_follow      s0 verified                       canary=True adopted=False 0.63->0.0
+[85/720] pROC__rd_example__multiclass_R  multiclass.roc    S1b_follow_computes0 verified                       canary=True adopted=True 0.63->0.9629
+[86/720] ModelMetrics__rd_example__gini  gini_1            S0_current      s0 verified                       canary=True adopted=False 0.5->0.8611
+[87/720] pROC__rd_example__coords_Rd     coords_1          S1b_follow_computes0 verified                       canary=False adopted=False 0.5->0.0
+[88/720] ModelMetrics__rd_example__gini  gini_1            S1_minimal      s0 verified                       canary=False adopted=False 0.5->0.8611
+[89/720] pROC__rd_example__multiclass_R  multiclass.roc    S1_minimal      s0 verified                       canary=True adopted=True 0.63->0.9629
+[90/720] ModelMetrics__rd_example__gini  gini_1            S1a_follow      s0 verified                       canary=False adopted=False 0.5->0.8611
+[91/720] openssl__rd_example__keygen_Rd  read_key          S1_minimal      s0 verified                       canary=True adopted=False 0.5->0.6818
+[92/720] pROC__rd_example__multiclass_R  multiclass.roc    S0_current      s0 verified                       canary=False adopted=False 0.63->0.9146
+[93/720] openssl__rd_example__keygen_Rd  read_key          S0_current      s0 verified                       canary=True adopted=False 0.5->0.7364
+[94/720] ModelMetrics__rd_example__gini  gini_1            S1b_follow_computes0 verified                       canary=False adopted=True 0.5->1.0
+[95/720] openssl__rd_example__keygen_Rd  read_key          S1b_follow_computes0 verified                       canary=True adopted=False 0.5->0.5
+[96/720] openssl__rd_example__keygen_Rd  read_key          S1a_follow      s0 verified                       canary=True adopted=False 0.5->0.7255
+[97/720] farver__rd_example__convert_co  convert_colour    S1_minimal      s0 verified                       canary=False adopted=False 0.5->0.5
+[98/720] farver__rd_example__convert_co  convert_colour    S1a_follow      s0 verified                       canary=False adopted=False 0.5->0.5
+[99/720] farver__rd_example__convert_co  convert_colour    S1b_follow_computes0 verified                       canary=False adopted=False 0.5->0.5
+[100/720] tidyr__rd_example__chop_Rd      unchop_2          S0_current      s0 verified                       canary=False adopted=False 0.7632->0.7632
+[101/720] tidyr__rd_example__chop_Rd      unchop_2          S1_minimal      s0 verified                       canary=False adopted=False 0.7632->0.7632
+[102/720] farver__rd_example__compare_co  compare_colour_2  S1_minimal      s0 verified                       canary=False adopted=False 0.5083->0.5083
+[103/720] tidyr__rd_example__chop_Rd      unchop_2          S1b_follow_computes0 verified                       canary=False adopted=False 0.7632->0.9714
+[104/720] tidyr__rd_example__chop_Rd      unchop_2          S1a_follow      s0 verified                       canary=True adopted=False 0.7632->0.1667
+[105/720] sessioninfo__rd_example__exter  external_info     S0_current      s0 verified                       canary=False adopted=True 0.5751->0.9753
+[106/720] farver__rd_example__compare_co  compare_colour_2  S0_current      s0 verified                       canary=False adopted=False 0.5083->0.0
+[107/720] sessioninfo__rd_example__exter  external_info     S1_minimal      s0 verified                       canary=False adopted=True 0.5751->1.0
+[108/720] sessioninfo__rd_example__exter  external_info     S1a_follow      s0 verified                       canary=False adopted=True 0.5751->0.9991
+[109/720] sessioninfo__rd_example__exter  external_info     S1b_follow_computes0 verified                       canary=True adopted=True 0.5751->1.0
+[110/720] farver__rd_example__convert_co  convert_colour    S0_current      s0 verified                       canary=False adopted=False 0.5->0.5
+[111/720] fansi__rd_example__normalize_s  normalize_state_  S0_current      s0 verified                       canary=False adopted=False 0.6746->0.7941
+[112/720] farver__rd_example__compare_co  compare_colour_2  S1b_follow_computes0 verified                       canary=False adopted=False 0.5083->0.5083
+[113/720] farver__rd_example__compare_co  compare_colour_2  S1a_follow      s0 verified                       canary=False adopted=False 0.5083->0.5061
+[114/720] tidyr__rd_example__separate_ro  separate_longer_  S0_current      s0 verified                       canary=True adopted=False 0.8688->0.5
+[115/720] fansi__rd_example__normalize_s  normalize_state_  S1_minimal      s0 verified                       canary=False adopted=True 0.6746->1.0
+[116/720] tidyr__rd_example__separate_ro  separate_longer_  S1b_follow_computes0 verified                       canary=True adopted=False 0.8688->0.9634
+[117/720] fansi__rd_example__normalize_s  normalize_state_  S1a_follow      s0 verified                       canary=False adopted=False 0.6746->0.8604
+[118/720] tidyr__rd_example__separate_ro  separate_longer_  S1_minimal      s0 verified                       canary=True adopted=True 0.8688->1.0
+[119/720] fansi__rd_example__normalize_s  normalize_state_  S1b_follow_computes0 verified                       canary=False adopted=False 0.6746->0.7991
+[120/720] clock__rd_example__iso-year-we  iso               S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[121/720] tidyr__rd_example__separate_ro  separate_longer_  S1a_follow      s0 verified                       canary=True adopted=False 0.8688->0.0
+[122/720] gtable__rd_example__gtable_add  rect              S1_minimal      s0 verified                       canary=False adopted=True 0.25->1.0
+[123/720] gtable__rd_example__gtable_add  rect              S1b_follow_computes0 verified                       canary=False adopted=True 0.25->1.0
+[124/720] clock__rd_example__iso-year-we  iso               S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[125/720] gtable__rd_example__gtable_add  rect              S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[126/720] gtable__rd_example__gtable_add  rect              S1a_follow      s0 verified                       canary=False adopted=True 0.25->1.0
+[127/720] lubridate__rd_example__date_Rd  x                 S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[128/720] clock__rd_example__iso-year-we  iso               S1a_follow      s0 verified                       canary=False adopted=False 0.25->0.25
+[129/720] clock__rd_example__iso-year-we  iso               S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.0
+[130/720] shiny__rd_example__isolate_Rd   fun               S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[131/720] lubridate__rd_example__date_Rd  x                 S1_minimal      s0 verified                       canary=True adopted=False 0.25->0.25
+[132/720] shiny__rd_example__isolate_Rd   fun               S0_current      s0 verified                       canary=False adopted=False 0.25->0.0
+[133/720] lubridate__rd_example__date_Rd  x                 S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[134/720] lubridate__rd_example__date_Rd  x                 S1b_follow_computes0 verified                       canary=True adopted=False 0.25->0.25
+[135/720] shiny__rd_example__isolate_Rd   fun               S1a_follow      s0 verified                       canary=False adopted=False 0.25->0.5
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+[136/720] clock__vignette__recipes_s68    x                 S0_current      s0 verified                       canary=False adopted=False 0.3957->0.5971
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+[137/720] clock__vignette__recipes_s68    x                 S1_minimal      s0 verified                       canary=False adopted=False 0.3957->0.5971
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+[138/720] clock__vignette__recipes_s68    x                 S1a_follow      s0 verified                       canary=False adopted=False 0.3957->0.5971
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+[139/720] clock__vignette__recipes_s68    x                 S1b_follow_computes0 verified                       canary=True adopted=False 0.3957->0.5971
+[140/720] shiny__rd_example__isolate_Rd   fun               S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.25
+[141/720] e1071__rd_example__write_svm_R  scale_file        S0_current      s0 verified                       canary=True adopted=False 0.25->0.25
+<unknown>:59: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:59: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:59: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:62: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+[142/720] e1071__rd_example__write_svm_R  scale_file        S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:62: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+[143/720] e1071__rd_example__write_svm_R  scale_file        S1a_follow      s0 verified                       canary=False adopted=False 0.25->0.25
+<unknown>:57: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:57: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:57: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:58: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:59: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:62: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+[144/720] farver__rd_example__encode_col  spectrum_hcl      S1a_follow      s0 verified                       canary=True adopted=True 0.25->1.0
+[145/720] e1071__rd_example__write_svm_R  scale_file        S1b_follow_computes0 verified                       canary=True adopted=False 0.25->0.25
+[146/720] farver__rd_example__encode_col  spectrum_hcl      S1_minimal      s0 verified                       canary=True adopted=True 0.25->1.0
+[147/720] farver__rd_example__encode_col  spectrum_hcl      S0_current      s0 verified                       canary=False adopted=True 0.25->1.0
+[148/720] xml2__rd_example__xml_type_Rd   x                 S0_current      s0 verified                       canary=True adopted=False 0.5467->0.0
+[149/720] farver__rd_example__native_enc  native_col        S1_minimal      s0 verified                       canary=True adopted=False 0.25->0.25
+[150/720] farver__rd_example__encode_col  spectrum_hcl      S1b_follow_computes0 verified                       canary=True adopted=True 0.25->1.0
+[151/720] xml2__rd_example__xml_type_Rd   x                 S1b_follow_computes0 verified                       canary=False adopted=True 0.5467->1.0
+[152/720] farver__rd_example__native_enc  native_col        S0_current      s0 verified                       canary=False adopted=False 0.25->0.0
+[153/720] xml2__rd_example__xml_type_Rd   x                 S1_minimal      s0 verified                       canary=True adopted=True 0.5467->1.0
+[154/720] farver__rd_example__native_enc  native_col        S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[155/720] xml2__rd_example__xml_type_Rd   x                 S1a_follow      s0 verified                       canary=False adopted=True 0.5467->1.0
+[156/720] farver__rd_example__native_enc  native_col        S1b_follow_computes0 verified                       canary=True adopted=False 0.25->0.25
+[157/720] rvest__vignette__rvest_s17      html              S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[158/720] rvest__vignette__rvest_s17      html              S1_minimal      s0 verified                       canary=True adopted=False 0.25->0.25
+[159/720] e1071__rd_example__matchClasse  tab               S1a_follow      s0 verified                       canary=False adopted=False 0.5875->0.25
+[160/720] rvest__vignette__rvest_s17      html              S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[161/720] rvest__vignette__rvest_s17      html              S1b_follow_computes0 verified                       canary=True adopted=False 0.25->0.849
+[162/720] proxy__rd_example__rowSums_dis  d                 S0_current      s0 verified                       canary=True adopted=True 0.25->1.0
+[163/720] proxy__rd_example__rowSums_dis  d                 S1a_follow      s0 verified                       canary=True adopted=True 0.25->1.0
+[164/720] proxy__rd_example__rowSums_dis  d                 S1b_follow_computes0 verified                       canary=True adopted=True 0.25->1.0
+[165/720] shiny__rd_example__actionButto  ui                S0_current      s0 verified                       canary=True adopted=False 0.25->0.5
+[166/720] shiny__rd_example__actionButto  ui                S1_minimal      s0 verified                       canary=True adopted=False 0.25->0.5
+[167/720] e1071__rd_example__matchClasse  tab               S0_current      s0 verified                       canary=False adopted=False 0.5875->0.5875
+[168/720] e1071__rd_example__matchClasse  tab               S1b_follow_computes0 verified                       canary=False adopted=False 0.5875->0.5875
+[169/720] e1071__rd_example__matchClasse  tab               S1_minimal      s0 verified                       canary=False adopted=False 0.5875->0.5875
+[170/720] proxy__rd_example__rowSums_dis  d                 S1_minimal      s0 verified                       canary=False adopted=True 0.25->1.0
+[171/720] shiny__rd_example__actionButto  ui                S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.4667
+[172/720] ranger__rd_example__deforest_R  dfo               S1b_follow_computes0 verified                       canary=True adopted=False 0.25->0.25
+[173/720] shiny__rd_example__actionButto  ui                S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.4667
+[174/720] ranger__rd_example__deforest_R  dfo               S1_minimal      s0 verified                       canary=True adopted=False 0.25->0.25
+[175/720] ranger__rd_example__deforest_R  dfo               S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_8bf7d3772c.py
+[r2py] WARNING: 'blackout_vector' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'int' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'int2' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'lst' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'int' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'int2' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'blackout_vector' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'lst' is a data entity but Python could not serialize it — excluded from comparison
+[176/720] lubridate__rd_example__within-  int2              S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[177/720] lubridate__rd_example__within-  int2              S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.0
+[178/720] lubridate__rd_example__within-  int2              S1a_follow      s0 verified                       canary=False adopted=False 0.25->0.4667
+[179/720] ranger__rd_example__deforest_R  dfo               S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[180/720] gtable__rd_example__gtable_tri  center            S0_current      s0 verified                       canary=False adopted=True 0.25->1.0
+[181/720] prodlim__rd_example__summary_p  m                 S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[182/720] lubridate__rd_example__within-  int2              S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.0
+[183/720] prodlim__rd_example__summary_p  m                 S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[184/720] prodlim__rd_example__summary_p  m                 S0_current      s0 verified                       canary=False adopted=False 0.25->0.5
+[185/720] gtable__rd_example__gtable_tri  center            S1a_follow      s0 verified                       canary=False adopted=True 0.25->1.0
+[186/720] prodlim__rd_example__summary_p  m                 S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.25
+[187/720] gtable__rd_example__gtable_tri  center            S1b_follow_computes0 verified                       canary=True adopted=True 0.25->1.0
+[188/720] xml2__rd_example__xml_dtd_Rd    r                 S0_current      s0 verified                       canary=True adopted=False 0.2825->0.0
+[189/720] xml2__rd_example__xml_dtd_Rd    r                 S1_minimal      s0 verified                       canary=True adopted=False 0.2825->0.0
+[190/720] xml2__rd_example__xml_dtd_Rd    r                 S1b_follow_computes0 verified                       canary=True adopted=False 0.2825->0.0
+[191/720] xml2__rd_example__xml_name_Rd   z                 S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[192/720] xml2__rd_example__xml_name_Rd   z                 S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.25
+[193/720] xml2__rd_example__xml_name_Rd   z                 S1a_follow      s0 verified                       canary=False adopted=False 0.25->0.5
+[194/720] xml2__rd_example__xml_name_Rd   z                 S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_fecfecb1c6.py
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'r' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'r' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[195/720] xml2__rd_example__xml_dtd_Rd    r                 S1a_follow      s0 verified                       canary=True adopted=False 0.2825->0.25
+[196/720] gtable__rd_example__gtable_tri  center            S1_minimal      s0 verified                       canary=False adopted=True 0.25->1.0
+[197/720] recipes__rd_example__discretiz  carbon_binned     S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[198/720] recipes__rd_example__discretiz  carbon_binned     S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[199/720] recipes__rd_example__discretiz  carbon_binned     S1a_follow      s0 verified                       canary=False adopted=False 0.25->0.25
+[200/720] fansi__rd_example__substr_ctl_  x                 S0_current      s0 verified                       canary=False adopted=False 0.25->0.0
+[201/720] fansi__rd_example__substr_ctl_  x                 S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[202/720] fansi__rd_example__substr_ctl_  x                 S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.25
+[203/720] fansi__rd_example__substr_ctl_  x                 S1a_follow      s0 verified                       canary=False adopted=False 0.25->0.25
+[204/720] sparsevctrs__rd_example__spars  vec_int           S0_current      s0 verified                       canary=False adopted=True 0.25->1.0
+[205/720] sparsevctrs__rd_example__spars  vec_int           S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[206/720] recipes__rd_example__discretiz  carbon_binned     S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.25
+[207/720] sparsevctrs__rd_example__spars  vec_int           S1a_follow      s0 verified                       canary=False adopted=False 0.25->0.25
+[208/720] sparsevctrs__rd_example__spars  vec_int           S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.25
+[209/720] openssl__rd_example__encrypt_e  pubkey            S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[210/720] openssl__rd_example__encrypt_e  pubkey            S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[211/720] openssl__rd_example__encrypt_e  pubkey            S0_current      s0 verified                       canary=True adopted=False 0.25->0.25
+[212/720] purrr__rd_example__slowly_Rd    rate              S0_current      s0 verified                       canary=False adopted=True 0.3478->1.0
+[213/720] purrr__rd_example__slowly_Rd    rate              S1_minimal      s0 verified                       canary=True adopted=True 0.3478->1.0
+[214/720] openssl__rd_example__encrypt_e  pubkey            S1b_follow_computes0 verified                       canary=True adopted=False 0.25->0.25
+[215/720] purrr__rd_example__slowly_Rd    rate              S1b_follow_computes0 verified                       canary=True adopted=True 0.3478->1.0
+[216/720] purrr__rd_example__slowly_Rd    rate              S1a_follow      s0 verified                       canary=True adopted=True 0.3478->1.0
+[217/720] ragg__rd_example__agg_webp_Rd   file              S0_current      s0 verified                       canary=True adopted=False 0.25->0.25
+[218/720] ragg__rd_example__agg_webp_Rd   file              S1_minimal      s0 verified                       canary=True adopted=False 0.25->0.25
+[219/720] ragg__rd_example__agg_webp_Rd   file              S1b_follow_computes0 verified                       canary=True adopted=False 0.25->0.25
+[220/720] ragg__rd_example__agg_webp_Rd   file              S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[221/720] htmltools__rd_example__htmlPre  output            S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[222/720] htmltools__rd_example__htmlPre  output            S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[223/720] htmltools__rd_example__htmlPre  output            S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.25
+[224/720] htmltools__rd_example__htmlPre  output            S1a_follow      s0 verified                       canary=False adopted=False 0.25->0.25
+[225/720] lava__demo__inference           example_3         S1_minimal      s0 verified                       canary=False adopted=False 0.0527->0.0
+[226/720] lava__demo__inference           example_3         S0_current      s0 verified                       canary=False adopted=False 0.0527->0.0
+[227/720] lava__demo__inference           example_3         S1b_follow_computes0 verified                       canary=True adopted=False 0.0527->0.2955
+[228/720] lava__demo__inference           example_3         S1a_follow      s0 verified                       canary=True adopted=False 0.0527->0.3075
+[229/720] prettyunits__rd_example__time_  now               S1_minimal      s0 verified                       canary=True adopted=False 0.25->0.25
+[230/720] prettyunits__rd_example__time_  now               S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[231/720] prettyunits__rd_example__time_  now               S0_current      s0 verified                       canary=True adopted=False 0.25->0.25
+[232/720] prettyunits__rd_example__time_  now               S1b_follow_computes0 verified                       canary=True adopted=False 0.25->0.25
+[233/720] clock__rd_example__posixt-grou  x                 S0_current      s0 verified                       canary=False adopted=True 0.25->1.0
+[234/720] clock__rd_example__posixt-grou  x                 S1_minimal      s0 verified                       canary=True adopted=False 0.25->0.0
+[235/720] clock__rd_example__posixt-grou  x                 S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[236/720] clock__rd_example__posixt-grou  x                 S1b_follow_computes0 verified                       canary=True adopted=False 0.25->0.0
+[237/720] purrr__rd_example__attr_getter  get_rownames_1    S0_current      s1 verified                       canary=False adopted=False 0.5563->0.5
+[238/720] purrr__rd_example__attr_getter  get_rownames_1    S1_minimal      s1 verified                       canary=True adopted=False 0.5563->0.5563
+[239/720] purrr__rd_example__attr_getter  get_rownames_1    S1a_follow      s1 verified                       canary=True adopted=False 0.5563->0.5571
+[240/720] purrr__rd_example__attr_getter  get_rownames_1    S1b_follow_computes1 verified                       canary=True adopted=False 0.5563->0.5563
+[241/720] ragg__rd_example__agg_webp_ani  dev.off           S0_current      s1 verified                       canary=False adopted=False 0.5->0.0
+[242/720] ragg__rd_example__agg_webp_ani  dev.off           S1_minimal      s1 verified                       canary=True adopted=True 0.5->1.0
+[243/720] ragg__rd_example__agg_webp_ani  dev.off           S1a_follow      s1 verified                       canary=True adopted=False 0.5->0.0
+[244/720] broom__vignette__broom_chunk6   augment           S0_current      s1 verified                       canary=False adopted=False 0.5->0.0
+[245/720] broom__vignette__broom_chunk6   augment           S1_minimal      s1 verified                       canary=False adopted=False 0.5->0.0
+[246/720] ragg__rd_example__agg_webp_ani  dev.off           S1b_follow_computes1 verified                       canary=True adopted=True 0.5->1.0
+[247/720] broom__vignette__broom_chunk6   augment           S1a_follow      s1 verified                       canary=True adopted=False 0.5->0.0
+[248/720] ModelMetrics__rd_example__mse_  mse               S0_current      s1 verified                       canary=True adopted=False 0.5->0.9333
+[249/720] ModelMetrics__rd_example__mse_  mse               S1_minimal      s1 verified                       canary=False adopted=False 0.5->0.9333
+[250/720] broom__vignette__broom_chunk6   augment           S1b_follow_computes1 verified                       canary=True adopted=False 0.5->0.0
+[251/720] ModelMetrics__rd_example__mse_  mse               S1a_follow      s1 verified                       canary=False adopted=False 0.5->0.9333
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_bbcf206555.py
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[252/720] sass__rd_example__sass_import_  sass_import       S0_current      s1 verified                       canary=False adopted=False 0.5->0.9615
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[253/720] ModelMetrics__rd_example__mse_  mse               S1b_follow_computes1 verified                       canary=False adopted=False 0.5->0.9333
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_5577dd8a07.py
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[254/720] sass__rd_example__sass_import_  sass_import       S1_minimal      s1 verified                       canary=True adopted=False 0.5->0.9615
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[255/720] sass__rd_example__sass_import_  sass_import       S1a_follow      s1 verified                       canary=True adopted=False 0.5->0.9615
+[256/720] sass__rd_example__sass_import_  sass_import       S1b_follow_computes1 verified                       canary=True adopted=False 0.5->0.9615
+[257/720] rmarkdown__rd_example__include  pdf_document      S0_current      s1 verified                       canary=False adopted=False 0.5->0.8509
+[258/720] rmarkdown__rd_example__include  pdf_document      S1_minimal      s1 verified                       canary=False adopted=True 0.5->0.9899
+ERROR: Could not find a version that satisfies the requirement rmarkdown (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for rmarkdown
+[259/720] rmarkdown__rd_example__include  pdf_document      S1a_follow      s1 verified                       canary=True adopted=False 0.5->0.0
+[260/720] rmarkdown__rd_example__include  pdf_document      S1b_follow_computes1 verified                       canary=True adopted=False 0.5->0.946
+[261/720] ragg__rd_example__agg_ppm_Rd    dev.off           S0_current      s1 verified                       canary=True adopted=False 0.5->0.0
+[262/720] ragg__rd_example__agg_ppm_Rd    dev.off           S1_minimal      s1 verified                       canary=True adopted=True 0.5->1.0
+[263/720] ragg__rd_example__agg_ppm_Rd    dev.off           S1b_follow_computes1 verified                       canary=False adopted=False 0.5->0.0
+[264/720] ragg__rd_example__agg_ppm_Rd    dev.off           S1a_follow      s1 verified                       canary=True adopted=True 0.5->1.0
+[265/720] prettyunits__rd_example__vague  vague_dt_22       S1_minimal      s1 verified                       canary=False adopted=True 0.75->1.0
+[266/720] prettyunits__rd_example__vague  vague_dt_22       S1a_follow      s1 verified                       canary=False adopted=True 0.75->1.0
+[267/720] prettyunits__rd_example__vague  vague_dt_22       S0_current      s1 verified                       canary=False adopted=False 0.75->0.9211
+[268/720] prettyunits__rd_example__vague  vague_dt_22       S1b_follow_computes1 verified                       canary=False adopted=True 0.75->1.0
+[269/720] reshape2__rd_example__melt_lis  melt_1            S0_current      s1 verified                       canary=False adopted=False 0.8656->0.0
+[270/720] reshape2__rd_example__melt_lis  melt_1            S1_minimal      s1 verified                       canary=False adopted=False 0.8656->0.9565
+[271/720] reshape2__rd_example__melt_lis  melt_1            S1a_follow      s1 verified                       canary=False adopted=True 0.8656->1.0
+[272/720] reshape2__rd_example__melt_lis  melt_1            S1b_follow_computes1 verified                       canary=False adopted=False 0.8656->0.9565
+[273/720] prodlim__rd_example__summary_p  summary           S0_current      s1 verified                       canary=False adopted=False 0.5038->0.5
+[274/720] prodlim__rd_example__summary_p  summary           S1_minimal      s1 verified                       canary=False adopted=False 0.5038->0.5336
+[275/720] prodlim__rd_example__summary_p  summary           S1a_follow      s1 verified                       canary=False adopted=False 0.5038->0.0
+[276/720] prodlim__rd_example__summary_p  summary           S1b_follow_computes1 verified                       canary=False adopted=False 0.5038->0.5123
+[277/720] textshaping__rd_example__shape  shape_text_1      S0_current      s1 verified                       canary=False adopted=False 0.5191->0.5084
+[278/720] textshaping__rd_example__shape  shape_text_1      S1_minimal      s1 verified                       canary=False adopted=False 0.5191->0.0
+[279/720] textshaping__rd_example__shape  shape_text_1      S1a_follow      s1 verified                       canary=False adopted=False 0.5191->0.5086
+[280/720] htmltools__rd_example__htmlPre  output_2          S0_current      s1 verified                       canary=False adopted=True 0.75->0.9938
+[281/720] textshaping__rd_example__shape  shape_text_1      S1b_follow_computes1 verified                       canary=False adopted=False 0.5191->0.5921
+[282/720] htmltools__rd_example__htmlPre  output_2          S1_minimal      s1 verified                       canary=False adopted=True 0.75->0.9938
+[283/720] htmltools__rd_example__htmlPre  output_2          S1a_follow      s1 verified                       canary=False adopted=True 0.75->0.9938
+[284/720] htmltools__rd_example__htmlPre  output_2          S1b_follow_computes1 verified                       canary=False adopted=True 0.75->0.9938
+[285/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S1_minimal      s1 verified                       canary=True adopted=False 0.8585->0.8585
+[286/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S0_current      s1 verified                       canary=False adopted=False 0.8585->0.8585
+[287/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S1a_follow      s1 verified                       canary=False adopted=False 0.8585->0.8585
+[288/720] prettyunits__rd_example__time_  time_ago_26       S0_current      s1 verified                       canary=False adopted=True 0.7->1.0
+[289/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S1b_follow_computes1 verified                       canary=False adopted=False 0.8585->0.8878
+[290/720] prettyunits__rd_example__time_  time_ago_26       S1_minimal      s1 verified                       canary=False adopted=True 0.7->1.0
+[291/720] prettyunits__rd_example__time_  time_ago_26       S1a_follow      s1 verified                       canary=False adopted=True 0.7->1.0
+[292/720] prettyunits__rd_example__time_  time_ago_26       S1b_follow_computes1 verified                       canary=False adopted=True 0.7->1.0
+[293/720] systemfonts__rd_example__shape  shape_string_1    S0_current      s1 verified                       canary=False adopted=False 0.5692->0.6425
+[294/720] systemfonts__rd_example__shape  shape_string_1    S1_minimal      s1 verified                       canary=False adopted=False 0.5692->0.6179
+[295/720] systemfonts__rd_example__shape  shape_string_1    S1b_follow_computes1 verified                       canary=True adopted=False 0.5692->0.6663
+[296/720] systemfonts__rd_example__shape  shape_string_1    S1a_follow      s1 verified                       canary=True adopted=False 0.5692->0.0
+[297/720] dplyr__vignette__dplyr_s21      summarise         S0_current      s1 verified                       canary=False adopted=False 0.5->0.6066
+[298/720] dplyr__vignette__dplyr_s21      summarise         S1_minimal      s1 verified                       canary=True adopted=False 0.5->0.6066
+[299/720] dplyr__vignette__dplyr_s21      summarise         S1a_follow      s1 verified                       canary=True adopted=False 0.5->0.6066
+[300/720] dplyr__vignette__dplyr_s21      summarise         S1b_follow_computes1 verified                       canary=True adopted=False 0.5->0.0
+[301/720] ModelMetrics__rd_example__logL  logLoss_1         S0_current      s1 verified                       canary=False adopted=True 0.6875->1.0
+[302/720] ModelMetrics__rd_example__logL  logLoss_1         S1_minimal      s1 verified                       canary=False adopted=True 0.6875->1.0
+[303/720] ModelMetrics__rd_example__logL  logLoss_1         S1a_follow      s1 verified                       canary=False adopted=True 0.6875->1.0
+[304/720] ModelMetrics__rd_example__logL  logLoss_1         S1b_follow_computes1 verified                       canary=False adopted=True 0.6875->1.0
+[305/720] farver__rd_example__as_white_r  as_white_ref_1    S0_current      s1 verified                       canary=False adopted=False 0.8->0.9667
+[306/720] farver__rd_example__as_white_r  as_white_ref_1    S1a_follow      s1 verified                       canary=False adopted=False 0.8->0.8125
+[307/720] farver__rd_example__as_white_r  as_white_ref_1    S1_minimal      s1 verified                       canary=False adopted=True 0.8->1.0
+[308/720] farver__rd_example__as_white_r  as_white_ref_1    S1b_follow_computes1 verified                       canary=False adopted=True 0.8->1.0
+[309/720] pROC__rd_example__coords_Rd     coords_1          S0_current      s1 verified                       canary=False adopted=False 0.5->0.0
+[310/720] pROC__rd_example__coords_Rd     coords_1          S1_minimal      s1 verified                       canary=False adopted=False 0.5->0.0
+[311/720] pROC__rd_example__coords_Rd     coords_1          S1a_follow      s1 verified                       canary=True adopted=False 0.5->0.0
+[312/720] shiny__rd_example__observe_Rd   flushReact        S0_current      s1 verified                       canary=True adopted=False 0.5->0.1667
+[313/720] shiny__rd_example__observe_Rd   flushReact        S1_minimal      s1 verified                       canary=True adopted=False 0.5->0.1667
+[314/720] shiny__rd_example__observe_Rd   flushReact        S1a_follow      s1 no code                        canary=None adopted=None 0.5->None
+[315/720] pROC__rd_example__coords_Rd     coords_1          S1b_follow_computes1 verified                       canary=False adopted=False 0.5->0.0
+[316/720] caret__rd_example__lift_Rd      lift1_1           S0_current      s1 verified                       canary=False adopted=True 0.75->1.0
+[317/720] caret__rd_example__lift_Rd      lift1_1           S1_minimal      s1 verified                       canary=False adopted=True 0.75->1.0
+[318/720] caret__rd_example__lift_Rd      lift1_1           S1a_follow      s1 verified                       canary=False adopted=True 0.75->1.0
+[319/720] caret__rd_example__lift_Rd      lift1_1           S1b_follow_computes1 verified                       canary=False adopted=True 0.75->1.0
+[320/720] pROC__rd_example__multiclass_R  multiclass.roc    S0_current      s1 verified                       canary=False adopted=False 0.63->0.0
+[321/720] shiny__rd_example__observe_Rd   flushReact        S1b_follow_computes1 no code                        canary=None adopted=None 0.5->None
+[322/720] pROC__rd_example__multiclass_R  multiclass.roc    S1a_follow      s1 verified                       canary=True adopted=False 0.63->0.0
+[323/720] fansi__rd_example__strwrap_ctl  hello.2           S1_minimal      s0 verified                       canary=False adopted=False 0.25->0.25
+[324/720] ModelMetrics__rd_example__gini  gini_1            S0_current      s1 verified                       canary=True adopted=True 0.5->1.0
+[325/720] ModelMetrics__rd_example__gini  gini_1            S1_minimal      s1 verified                       canary=False adopted=False 0.5->0.8611
+[326/720] ModelMetrics__rd_example__gini  gini_1            S1a_follow      s1 verified                       canary=False adopted=True 0.5->1.0
+[327/720] ModelMetrics__rd_example__gini  gini_1            S1b_follow_computes1 verified                       canary=False adopted=True 0.5->1.0
+[328/720] fansi__rd_example__strwrap_ctl  hello.2           S1a_follow      s0 verified                       canary=True adopted=False 0.25->0.25
+[329/720] openssl__rd_example__keygen_Rd  read_key          S0_current      s1 verified                       canary=True adopted=False 0.5->0.7182
+[330/720] openssl__rd_example__keygen_Rd  read_key          S1a_follow      s1 verified                       canary=True adopted=False 0.5->0.7255
+[331/720] pROC__rd_example__multiclass_R  multiclass.roc    S1_minimal      s1 verified                       canary=False adopted=False 0.63->0.7675
+[332/720] openssl__rd_example__keygen_Rd  read_key          S1b_follow_computes1 verified                       canary=True adopted=False 0.5->0.7036
+[333/720] pROC__rd_example__multiclass_R  multiclass.roc    S1b_follow_computes1 no code                        canary=None adopted=None 0.63->None
+[334/720] farver__rd_example__convert_co  convert_colour    S0_current      s1 verified                       canary=False adopted=False 0.5->0.5
+[335/720] farver__rd_example__convert_co  convert_colour    S1b_follow_computes1 verified                       canary=False adopted=False 0.5->0.5
+[336/720] farver__rd_example__convert_co  convert_colour    S1a_follow      s1 verified                       canary=False adopted=False 0.5->0.5
+[337/720] tidyr__rd_example__chop_Rd      unchop_2          S0_current      s1 verified                       canary=False adopted=False 0.7632->0.7632
+[338/720] tidyr__rd_example__chop_Rd      unchop_2          S1_minimal      s1 verified                       canary=False adopted=False 0.7632->0.0
+[339/720] tidyr__rd_example__chop_Rd      unchop_2          S1a_follow      s1 verified                       canary=False adopted=False 0.7632->0.9714
+[340/720] farver__rd_example__compare_co  compare_colour_2  S0_current      s1 verified                       canary=False adopted=False 0.5083->0.5083
+[341/720] openssl__rd_example__keygen_Rd  read_key          S1_minimal      s1 no code                        canary=None adopted=None 0.5->None
+[342/720] farver__rd_example__compare_co  compare_colour_2  S1_minimal      s1 verified                       canary=False adopted=False 0.5083->0.5061
+[343/720] farver__rd_example__convert_co  convert_colour    S1_minimal      s1 no code                        canary=None adopted=None 0.5->None
+[344/720] sessioninfo__rd_example__exter  external_info     S0_current      s1 verified                       canary=True adopted=True 0.5751->0.9794
+[345/720] sessioninfo__rd_example__exter  external_info     S1_minimal      s1 verified                       canary=False adopted=True 0.5751->0.9991
+[346/720] sessioninfo__rd_example__exter  external_info     S1a_follow      s1 verified                       canary=True adopted=True 0.5751->1.0
+[347/720] sessioninfo__rd_example__exter  external_info     S1b_follow_computes1 verified                       canary=True adopted=True 0.5751->0.9794
+[348/720] farver__rd_example__compare_co  compare_colour_2  S1a_follow      s1 verified                       canary=False adopted=False 0.5083->0.5152
+[349/720] fansi__rd_example__normalize_s  normalize_state_  S0_current      s1 verified                       canary=True adopted=False 0.6746->0.8604
+[350/720] fansi__rd_example__normalize_s  normalize_state_  S1a_follow      s1 verified                       canary=False adopted=False 0.6746->0.8604
+[351/720] fansi__rd_example__normalize_s  normalize_state_  S1_minimal      s1 verified                       canary=False adopted=False 0.6746->0.8604
+[352/720] tidyr__rd_example__chop_Rd      unchop_2          S1b_follow_computes1 no code                        canary=None adopted=None 0.7632->None
+[353/720] tidyr__rd_example__separate_ro  separate_longer_  S0_current      s1 verified                       canary=True adopted=False 0.8688->0.8688
+[354/720] tidyr__rd_example__separate_ro  separate_longer_  S1_minimal      s1 verified                       canary=True adopted=True 0.8688->1.0
+[355/720] tidyr__rd_example__separate_ro  separate_longer_  S1a_follow      s1 verified                       canary=True adopted=True 0.8688->1.0
+[356/720] tidyr__rd_example__separate_ro  separate_longer_  S1b_follow_computes1 verified                       canary=True adopted=True 0.8688->1.0
+[357/720] gtable__rd_example__gtable_add  rect              S0_current      s1 verified                       canary=False adopted=True 0.25->1.0
+[358/720] gtable__rd_example__gtable_add  rect              S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.6613
+[359/720] gtable__rd_example__gtable_add  rect              S1b_follow_computes1 verified                       canary=True adopted=True 0.25->1.0
+[360/720] gtable__rd_example__gtable_add  rect              S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[361/720] fansi__rd_example__strwrap_ctl  hello.2           S0_current      s0 verified                       canary=False adopted=False 0.25->0.25
+[362/720] clock__rd_example__iso-year-we  iso               S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+[363/720] clock__rd_example__iso-year-we  iso               S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.25
+[364/720] clock__rd_example__iso-year-we  iso               S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[365/720] clock__rd_example__iso-year-we  iso               S1b_follow_computes1 verified                       canary=False adopted=False 0.25->0.25
+[366/720] lubridate__rd_example__date_Rd  x                 S1_minimal      s1 verified                       canary=True adopted=False 0.25->0.25
+[367/720] lubridate__rd_example__date_Rd  x                 S1a_follow      s1 verified                       canary=True adopted=False 0.25->0.25
+[368/720] lubridate__rd_example__date_Rd  x                 S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+[369/720] farver__rd_example__compare_co  compare_colour_2  S1b_follow_computes1 no code                        canary=None adopted=None 0.5083->None
+[370/720] lubridate__rd_example__date_Rd  x                 S1b_follow_computes1 verified                       canary=True adopted=False 0.25->0.25
+[371/720] shiny__rd_example__isolate_Rd   fun               S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.0
+[372/720] shiny__rd_example__isolate_Rd   fun               S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.25
+[373/720] clock__vignette__recipes_s68    x                 S0_current      s1 verified                       canary=False adopted=False 0.3957->0.0
+[374/720] clock__vignette__recipes_s68    x                 S1a_follow      s1 verified                       canary=False adopted=False 0.3957->0.5971
+[375/720] shiny__rd_example__isolate_Rd   fun               S1b_follow_computes1 verified                       canary=False adopted=False 0.25->0.0
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+[376/720] clock__vignette__recipes_s68    x                 S1b_follow_computes1 verified                       canary=False adopted=False 0.3957->0.0
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+[377/720] shiny__rd_example__isolate_Rd   fun               S0_current      s1 verified                       canary=False adopted=False 0.25->0.0
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:62: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+[378/720] e1071__rd_example__write_svm_R  scale_file        S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.25
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+[379/720] e1071__rd_example__write_svm_R  scale_file        S1a_follow      s1 verified                       canary=True adopted=True 0.25->1.0
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:62: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+[380/720] e1071__rd_example__write_svm_R  scale_file        S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+<unknown>:57: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:57: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:57: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:58: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:59: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:62: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+[381/720] e1071__rd_example__write_svm_R  scale_file        S1b_follow_computes1 verified                       canary=True adopted=False 0.25->0.25
+[382/720] farver__rd_example__encode_col  spectrum_hcl      S0_current      s1 verified                       canary=False adopted=True 0.25->1.0
+[383/720] farver__rd_example__encode_col  spectrum_hcl      S1a_follow      s1 verified                       canary=False adopted=True 0.25->1.0
+[384/720] farver__rd_example__encode_col  spectrum_hcl      S1_minimal      s1 verified                       canary=True adopted=True 0.25->1.0
+[385/720] farver__rd_example__encode_col  spectrum_hcl      S1b_follow_computes1 verified                       canary=True adopted=True 0.25->1.0
+[386/720] fansi__rd_example__normalize_s  normalize_state_  S1b_follow_computes1 no code                        canary=None adopted=None 0.6746->None
+[387/720] farver__rd_example__native_enc  native_col        S1b_follow_computes1 verified                       canary=True adopted=False 0.25->0.25
+[388/720] farver__rd_example__native_enc  native_col        S1a_follow      s1 verified                       canary=False adopted=True 0.25->1.0
+[389/720] xml2__rd_example__xml_type_Rd   x                 S0_current      s1 verified                       canary=True adopted=False 0.5467->0.0
+[390/720] xml2__rd_example__xml_type_Rd   x                 S1_minimal      s1 verified                       canary=True adopted=False 0.5467->0.0
+[391/720] xml2__rd_example__xml_type_Rd   x                 S1b_follow_computes1 verified                       canary=False adopted=False 0.5467->0.0
+[392/720] xml2__rd_example__xml_type_Rd   x                 S1a_follow      s1 verified                       canary=True adopted=True 0.5467->1.0
+[393/720] e1071__rd_example__matchClasse  tab               S0_current      s1 verified                       canary=False adopted=False 0.5875->0.5875
+[394/720] farver__rd_example__native_enc  native_col        S0_current      s1 verified                       canary=False adopted=True 0.25->1.0
+[395/720] e1071__rd_example__matchClasse  tab               S1a_follow      s1 verified                       canary=False adopted=False 0.5875->0.5875
+[396/720] rvest__vignette__rvest_s17      html              S0_current      s1 verified                       canary=True adopted=False 0.25->0.25
+[397/720] rvest__vignette__rvest_s17      html              S1_minimal      s1 verified                       canary=True adopted=False 0.25->0.25
+[398/720] e1071__rd_example__matchClasse  tab               S1b_follow_computes1 verified                       canary=False adopted=False 0.5875->0.5875
+[399/720] rvest__vignette__rvest_s17      html              S1a_follow      s1 verified                       canary=True adopted=False 0.25->0.0
+[400/720] clock__vignette__recipes_s68    x                 S1_minimal      s1 no code                        canary=None adopted=None 0.3957->None
+[401/720] rvest__vignette__rvest_s17      html              S1b_follow_computes1 verified                       canary=True adopted=False 0.25->0.25
+[402/720] proxy__rd_example__rowSums_dis  d                 S0_current      s1 verified                       canary=True adopted=True 0.25->1.0
+[403/720] proxy__rd_example__rowSums_dis  d                 S1a_follow      s1 verified                       canary=True adopted=True 0.25->1.0
+[404/720] proxy__rd_example__rowSums_dis  d                 S1_minimal      s1 verified                       canary=False adopted=True 0.25->1.0
+[405/720] e1071__rd_example__matchClasse  tab               S1_minimal      s1 verified                       canary=False adopted=False 0.5875->0.5875
+[406/720] shiny__rd_example__actionButto  ui                S0_current      s1 verified                       canary=False adopted=False 0.25->0.4667
+[407/720] proxy__rd_example__rowSums_dis  d                 S1b_follow_computes1 verified                       canary=True adopted=True 0.25->1.0
+[408/720] shiny__rd_example__actionButto  ui                S1_minimal      s1 verified                       canary=True adopted=False 0.25->0.5
+[409/720] shiny__rd_example__actionButto  ui                S1a_follow      s1 verified                       canary=True adopted=False 0.25->0.4667
+[410/720] ranger__rd_example__deforest_R  dfo               S0_current      s1 verified                       canary=True adopted=False 0.25->0.0
+[411/720] ranger__rd_example__deforest_R  dfo               S1_minimal      s1 verified                       canary=True adopted=False 0.25->0.25
+[412/720] ranger__rd_example__deforest_R  dfo               S1b_follow_computes1 verified                       canary=True adopted=False 0.25->0.25
+[413/720] lubridate__rd_example__within-  int2              S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+[414/720] farver__rd_example__native_enc  native_col        S1_minimal      s1 no code                        canary=None adopted=None 0.25->None
+[415/720] ranger__rd_example__deforest_R  dfo               S1a_follow      s1 verified                       canary=True adopted=False 0.25->0.25
+[416/720] lubridate__rd_example__within-  int2              S1b_follow_computes1 verified                       canary=False adopted=False 0.25->0.4667
+[417/720] lubridate__rd_example__within-  int2              S1_minimal      s1 verified                       canary=True adopted=False 0.25->0.0
+[418/720] lubridate__rd_example__within-  int2              S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[419/720] prodlim__rd_example__summary_p  m                 S0_current      s1 verified                       canary=True adopted=False 0.25->0.5
+[420/720] prodlim__rd_example__summary_p  m                 S1b_follow_computes1 verified                       canary=True adopted=False 0.25->0.25
+[421/720] prodlim__rd_example__summary_p  m                 S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.5
+[422/720] prodlim__rd_example__summary_p  m                 S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.5
+[423/720] gtable__rd_example__gtable_tri  center            S0_current      s1 verified                       canary=False adopted=True 0.25->1.0
+[424/720] gtable__rd_example__gtable_tri  center            S1b_follow_computes1 verified                       canary=False adopted=True 0.25->1.0
+[425/720] gtable__rd_example__gtable_tri  center            S1_minimal      s1 verified                       canary=False adopted=True 0.25->1.0
+[426/720] gtable__rd_example__gtable_tri  center            S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[427/720] xml2__rd_example__xml_dtd_Rd    r                 S0_current      s1 verified                       canary=True adopted=False 0.2825->0.2825
+[428/720] xml2__rd_example__xml_dtd_Rd    r                 S1_minimal      s1 verified                       canary=True adopted=False 0.2825->0.0
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_8e9b65d1dc.py
+[LLM]     Warning: OpenRouter response truncated at 16384 tokens (max_tokens=16384)
+[LLM]     Warning: OpenRouter response truncated at 16384 tokens (max_tokens=16384)
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'r' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'r' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'd' is a data entity but Python could not serialize it — excluded from comparison
+[429/720] xml2__rd_example__xml_dtd_Rd    r                 S1a_follow      s1 verified                       canary=True adopted=False 0.2825->0.25
+[430/720] xml2__rd_example__xml_dtd_Rd    r                 S1b_follow_computes1 verified                       canary=True adopted=False 0.2825->0.5
+[431/720] xml2__rd_example__xml_name_Rd   z                 S1b_follow_computes1 verified                       canary=False adopted=False 0.25->0.25
+[432/720] xml2__rd_example__xml_name_Rd   z                 S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[433/720] xml2__rd_example__xml_name_Rd   z                 S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.5
+[434/720] xml2__rd_example__xml_name_Rd   z                 S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+[435/720] shiny__rd_example__actionButto  ui                S1b_follow_computes1 no code                        canary=None adopted=None 0.25->None
+[436/720] recipes__rd_example__discretiz  carbon_binned     S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[437/720] recipes__rd_example__discretiz  carbon_binned     S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+[438/720] recipes__rd_example__discretiz  carbon_binned     S1b_follow_computes1 verified                       canary=False adopted=False 0.25->0.25
+[439/720] fansi__rd_example__substr_ctl_  x                 S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.25
+[440/720] recipes__rd_example__discretiz  carbon_binned     S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.25
+[441/720] fansi__rd_example__substr_ctl_  x                 S1b_follow_computes1 verified                       canary=False adopted=False 0.25->0.25
+[442/720] fansi__rd_example__substr_ctl_  x                 S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+[443/720] fansi__rd_example__substr_ctl_  x                 S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[444/720] sparsevctrs__rd_example__spars  vec_int           S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+[445/720] sparsevctrs__rd_example__spars  vec_int           S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.25
+[446/720] sparsevctrs__rd_example__spars  vec_int           S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[447/720] sparsevctrs__rd_example__spars  vec_int           S1b_follow_computes1 verified                       canary=False adopted=False 0.25->0.25
+[448/720] openssl__rd_example__encrypt_e  pubkey            S0_current      s1 verified                       canary=True adopted=False 0.25->0.25
+[449/720] openssl__rd_example__encrypt_e  pubkey            S1_minimal      s1 verified                       canary=True adopted=False 0.25->0.25
+[450/720] openssl__rd_example__encrypt_e  pubkey            S1a_follow      s1 verified                       canary=True adopted=False 0.25->0.25
+[451/720] openssl__rd_example__encrypt_e  pubkey            S1b_follow_computes1 verified                       canary=True adopted=False 0.25->0.25
+[452/720] purrr__rd_example__slowly_Rd    rate              S0_current      s1 verified                       canary=False adopted=False 0.3478->0.25
+[453/720] purrr__rd_example__slowly_Rd    rate              S1_minimal      s1 no code                        canary=None adopted=None 0.3478->None
+[454/720] purrr__rd_example__slowly_Rd    rate              S1a_follow      s1 verified                       canary=True adopted=True 0.3478->1.0
+[455/720] purrr__rd_example__slowly_Rd    rate              S1b_follow_computes1 verified                       canary=False adopted=True 0.3478->1.0
+[456/720] ragg__rd_example__agg_webp_Rd   file              S0_current      s1 verified                       canary=True adopted=False 0.25->0.25
+[457/720] ragg__rd_example__agg_webp_Rd   file              S1_minimal      s1 verified                       canary=True adopted=False 0.25->0.25
+[458/720] ragg__rd_example__agg_webp_Rd   file              S1a_follow      s1 verified                       canary=True adopted=False 0.25->0.25
+[459/720] ragg__rd_example__agg_webp_Rd   file              S1b_follow_computes1 verified                       canary=True adopted=False 0.25->0.25
+[460/720] htmltools__rd_example__htmlPre  output            S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+[461/720] htmltools__rd_example__htmlPre  output            S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.25
+[462/720] htmltools__rd_example__htmlPre  output            S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[463/720] htmltools__rd_example__htmlPre  output            S1b_follow_computes1 verified                       canary=False adopted=False 0.25->0.25
+[464/720] lava__demo__inference           example_3         S0_current      s1 verified                       canary=True adopted=False 0.0527->0.0
+[465/720] lava__demo__inference           example_3         S1_minimal      s1 verified                       canary=True adopted=False 0.0527->0.0
+[466/720] lava__demo__inference           example_3         S1a_follow      s1 verified                       canary=True adopted=False 0.0527->0.3066
+<unknown>:25: SyntaxWarning: invalid escape sequence '\`'
+<unknown>:25: SyntaxWarning: invalid escape sequence '\`'
+<unknown>:25: SyntaxWarning: invalid escape sequence '\`'
+<unknown>:25: SyntaxWarning: invalid escape sequence '\`'
+<unknown>:25: SyntaxWarning: invalid escape sequence '\`'
+<unknown>:26: SyntaxWarning: invalid escape sequence '\`'
+[467/720] lava__demo__inference           example_3         S1b_follow_computes1 verified                       canary=True adopted=False 0.0527->0.3075
+[468/720] prettyunits__rd_example__time_  now               S0_current      s1 verified                       canary=True adopted=False 0.25->0.25
+[469/720] prettyunits__rd_example__time_  now               S1_minimal      s1 verified                       canary=True adopted=False 0.25->0.25
+[470/720] prettyunits__rd_example__time_  now               S1a_follow      s1 verified                       canary=True adopted=False 0.25->0.25
+[471/720] prettyunits__rd_example__time_  now               S1b_follow_computes1 verified                       canary=True adopted=False 0.25->0.25
+[472/720] clock__rd_example__posixt-grou  x                 S0_current      s1 verified                       canary=False adopted=False 0.25->0.0
+[473/720] clock__rd_example__posixt-grou  x                 S1_minimal      s1 verified                       canary=True adopted=False 0.25->0.25
+[474/720] clock__rd_example__posixt-grou  x                 S1a_follow      s1 verified                       canary=True adopted=False 0.25->0.25
+[475/720] clock__rd_example__posixt-grou  x                 S1b_follow_computes1 verified                       canary=True adopted=True 0.25->1.0
+[476/720] purrr__rd_example__attr_getter  get_rownames_1    S0_current      s2 verified                       canary=False adopted=False 0.5563->0.5563
+[477/720] purrr__rd_example__attr_getter  get_rownames_1    S1_minimal      s2 verified                       canary=True adopted=False 0.5563->0.5563
+[478/720] purrr__rd_example__attr_getter  get_rownames_1    S1a_follow      s2 verified                       canary=True adopted=True 0.5563->0.9994
+[479/720] purrr__rd_example__attr_getter  get_rownames_1    S1b_follow_computes2 verified                       canary=True adopted=False 0.5563->0.5563
+[480/720] ragg__rd_example__agg_webp_ani  dev.off           S0_current      s2 verified                       canary=False adopted=False 0.0->0.0
+[481/720] ragg__rd_example__agg_webp_ani  dev.off           S1_minimal      s2 verified                       canary=True adopted=True 0.0->1.0
+[482/720] ragg__rd_example__agg_webp_ani  dev.off           S1a_follow      s2 verified                       canary=True adopted=False 0.0->0.0
+[483/720] ragg__rd_example__agg_webp_ani  dev.off           S1b_follow_computes2 verified                       canary=True adopted=False 0.0->0.0
+[484/720] broom__vignette__broom_chunk6   augment           S0_current      s2 verified                       canary=False adopted=False 0.5->0.0
+[485/720] broom__vignette__broom_chunk6   augment           S1_minimal      s2 verified                       canary=True adopted=False 0.5->0.0
+[486/720] broom__vignette__broom_chunk6   augment           S1a_follow      s2 verified                       canary=True adopted=False 0.5->0.0
+[487/720] broom__vignette__broom_chunk6   augment           S1b_follow_computes2 verified                       canary=True adopted=False 0.5->0.0
+[488/720] ModelMetrics__rd_example__mse_  mse               S0_current      s2 verified                       canary=False adopted=False 0.5->0.8684
+[489/720] ModelMetrics__rd_example__mse_  mse               S1_minimal      s2 verified                       canary=False adopted=True 0.5->1.0
+[490/720] ModelMetrics__rd_example__mse_  mse               S1a_follow      s2 verified                       canary=False adopted=False 0.5->0.8684
+[491/720] ModelMetrics__rd_example__mse_  mse               S1b_follow_computes2 verified                       canary=False adopted=False 0.5->0.8684
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_2679b55f0f.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_b79d0b06e6.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_77c75050a2.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_4f1f884097.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_5715f4f50d.py
+[LLM]     Warning: OpenRouter response truncated at 16384 tokens (max_tokens=16384)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_affae8ba37.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a811e6cf87.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_6ae40083ac.py
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[492/720] sass__rd_example__sass_import_  sass_import       S0_current      s2 verified                       canary=False adopted=False 0.5->0.9615
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[493/720] sass__rd_example__sass_import_  sass_import       S1_minimal      s2 verified                       canary=True adopted=True 0.5->0.9651
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[494/720] sass__rd_example__sass_import_  sass_import       S1a_follow      s2 verified                       canary=False adopted=False 0.5->0.9615
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[495/720] sass__rd_example__sass_import_  sass_import       S1b_follow_computes2 verified                       canary=True adopted=False 0.5->0.9615
+[496/720] rmarkdown__rd_example__include  pdf_document      S0_current      s2 verified                       canary=False adopted=False 0.5->0.9717
+[497/720] rmarkdown__rd_example__include  pdf_document      S1_minimal      s2 verified                       canary=False adopted=True 0.5->0.9901
+[498/720] rmarkdown__rd_example__include  pdf_document      S1a_follow      s2 verified                       canary=True adopted=True 0.5->0.9862
+[499/720] rmarkdown__rd_example__include  pdf_document      S1b_follow_computes2 verified                       canary=True adopted=False 0.5->0.0
+[500/720] ragg__rd_example__agg_ppm_Rd    dev.off           S0_current      s2 verified                       canary=False adopted=False 0.5->0.0
+[501/720] ragg__rd_example__agg_ppm_Rd    dev.off           S1_minimal      s2 verified                       canary=False adopted=True 0.5->1.0
+[502/720] ragg__rd_example__agg_ppm_Rd    dev.off           S1a_follow      s2 verified                       canary=True adopted=False 0.5->0.0
+[503/720] ragg__rd_example__agg_ppm_Rd    dev.off           S1b_follow_computes2 verified                       canary=True adopted=False 0.5->0.0
+[504/720] prettyunits__rd_example__vague  vague_dt_22       S0_current      s2 verified                       canary=False adopted=False 0.75->0.5
+[505/720] prettyunits__rd_example__vague  vague_dt_22       S1_minimal      s2 verified                       canary=False adopted=True 0.75->1.0
+[506/720] prettyunits__rd_example__vague  vague_dt_22       S1a_follow      s2 verified                       canary=False adopted=True 0.75->1.0
+[507/720] prettyunits__rd_example__vague  vague_dt_22       S1b_follow_computes2 verified                       canary=False adopted=True 0.75->1.0
+[508/720] reshape2__rd_example__melt_lis  melt_1            S0_current      s2 verified                       canary=False adopted=False 0.8656->0.8656
+[509/720] reshape2__rd_example__melt_lis  melt_1            S1_minimal      s2 verified                       canary=True adopted=False 0.8656->0.9565
+[510/720] reshape2__rd_example__melt_lis  melt_1            S1a_follow      s2 verified                       canary=True adopted=False 0.8656->0.9468
+[511/720] reshape2__rd_example__melt_lis  melt_1            S1b_follow_computes2 verified                       canary=False adopted=False 0.8656->0.9565
+[512/720] prodlim__rd_example__summary_p  summary           S0_current      s2 verified                       canary=False adopted=False 0.5038->0.5375
+[513/720] prodlim__rd_example__summary_p  summary           S1_minimal      s2 verified                       canary=False adopted=False 0.5038->0.0833
+[514/720] prodlim__rd_example__summary_p  summary           S1a_follow      s2 verified                       canary=False adopted=False 0.5038->0.0
+[515/720] prodlim__rd_example__summary_p  summary           S1b_follow_computes2 verified                       canary=False adopted=False 0.5038->0.1497
+[516/720] textshaping__rd_example__shape  shape_text_1      S0_current      s2 verified                       canary=False adopted=False 0.5191->0.5086
+[517/720] textshaping__rd_example__shape  shape_text_1      S1_minimal      s2 verified                       canary=False adopted=False 0.5191->0.5085
+[518/720] textshaping__rd_example__shape  shape_text_1      S1a_follow      s2 verified                       canary=False adopted=False 0.5191->0.5088
+[519/720] textshaping__rd_example__shape  shape_text_1      S1b_follow_computes2 verified                       canary=False adopted=False 0.5191->0.0
+[520/720] htmltools__rd_example__htmlPre  output_2          S0_current      s2 verified                       canary=False adopted=True 0.75->0.9938
+[521/720] htmltools__rd_example__htmlPre  output_2          S1_minimal      s2 verified                       canary=False adopted=True 0.75->0.9938
+[522/720] htmltools__rd_example__htmlPre  output_2          S1a_follow      s2 verified                       canary=False adopted=True 0.75->0.9938
+[523/720] htmltools__rd_example__htmlPre  output_2          S1b_follow_computes2 verified                       canary=False adopted=True 0.75->0.9938
+[524/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S0_current      s2 verified                       canary=False adopted=False 0.8585->0.8585
+[525/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S1_minimal      s2 verified                       canary=True adopted=False 0.8585->0.8585
+[526/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S1a_follow      s2 verified                       canary=False adopted=False 0.8585->0.8585
+[527/720] fansi__rd_example__strwrap_ctl  hello.2           S1b_follow_computes0 verified                       canary=False adopted=False 0.25->0.25
+[528/720] fansi__rd_example__substr_ctl_  substr_ctl_1      S1b_follow_computes2 verified                       canary=False adopted=False 0.8585->0.8585
+[529/720] prettyunits__rd_example__time_  time_ago_26       S1_minimal      s2 verified                       canary=False adopted=True 0.7->1.0
+[530/720] prettyunits__rd_example__time_  time_ago_26       S0_current      s2 verified                       canary=False adopted=True 0.7->1.0
+[531/720] prettyunits__rd_example__time_  time_ago_26       S1a_follow      s2 verified                       canary=False adopted=True 0.7->1.0
+[532/720] prettyunits__rd_example__time_  time_ago_26       S1b_follow_computes2 verified                       canary=False adopted=True 0.7->1.0
+[533/720] systemfonts__rd_example__shape  shape_string_1    S0_current      s2 verified                       canary=False adopted=False 0.5692->0.805
+[534/720] systemfonts__rd_example__shape  shape_string_1    S1_minimal      s2 verified                       canary=False adopted=False 0.5692->0.5529
+[535/720] systemfonts__rd_example__shape  shape_string_1    S1b_follow_computes2 verified                       canary=False adopted=False 0.5692->0.6703
+[536/720] systemfonts__rd_example__shape  shape_string_1    S1a_follow      s2 verified                       canary=True adopted=False 0.5692->0.0
+[537/720] dplyr__vignette__dplyr_s21      summarise         S0_current      s2 verified                       canary=False adopted=False 0.5->0.6066
+[538/720] dplyr__vignette__dplyr_s21      summarise         S1_minimal      s2 verified                       canary=True adopted=False 0.5->0.6066
+[539/720] dplyr__vignette__dplyr_s21      summarise         S1a_follow      s2 verified                       canary=True adopted=False 0.5->0.6169
+[540/720] dplyr__vignette__dplyr_s21      summarise         S1b_follow_computes2 verified                       canary=True adopted=False 0.5->0.6066
+[541/720] ModelMetrics__rd_example__logL  logLoss_1         S0_current      s2 verified                       canary=False adopted=False 0.6875->0.0
+[542/720] ModelMetrics__rd_example__logL  logLoss_1         S1_minimal      s2 verified                       canary=False adopted=True 0.6875->1.0
+[543/720] ModelMetrics__rd_example__logL  logLoss_1         S1a_follow      s2 verified                       canary=False adopted=True 0.6875->1.0
+[544/720] farver__rd_example__as_white_r  as_white_ref_1    S0_current      s2 verified                       canary=False adopted=False 0.8->0.8667
+[545/720] ModelMetrics__rd_example__logL  logLoss_1         S1b_follow_computes2 verified                       canary=False adopted=True 0.6875->1.0
+[546/720] farver__rd_example__as_white_r  as_white_ref_1    S1a_follow      s2 verified                       canary=False adopted=True 0.8->1.0
+[547/720] farver__rd_example__as_white_r  as_white_ref_1    S1_minimal      s2 verified                       canary=False adopted=True 0.8->1.0
+[548/720] farver__rd_example__as_white_r  as_white_ref_1    S1b_follow_computes2 verified                       canary=False adopted=True 0.8->1.0
+[549/720] pROC__rd_example__coords_Rd     coords_1          S0_current      s2 verified                       canary=False adopted=False 0.5->0.0
+[550/720] pROC__rd_example__coords_Rd     coords_1          S1_minimal      s2 verified                       canary=False adopted=False 0.5->0.0
+[551/720] pROC__rd_example__coords_Rd     coords_1          S1a_follow      s2 verified                       canary=True adopted=False 0.5->0.0
+[552/720] shiny__rd_example__observe_Rd   flushReact        S0_current      s2 verified                       canary=True adopted=False 0.5->0.0
+[553/720] pROC__rd_example__coords_Rd     coords_1          S1b_follow_computes2 verified                       canary=True adopted=False 0.5->0.0
+[554/720] shiny__rd_example__observe_Rd   flushReact        S1_minimal      s2 verified                       canary=True adopted=False 0.5->0.1667
+[555/720] shiny__rd_example__observe_Rd   flushReact        S1a_follow      s2 verified                       canary=True adopted=False 0.5->0.1667
+[556/720] caret__rd_example__lift_Rd      lift1_1           S0_current      s2 verified                       canary=False adopted=True 0.75->1.0
+[557/720] caret__rd_example__lift_Rd      lift1_1           S1_minimal      s2 verified                       canary=False adopted=True 0.75->1.0
+[558/720] shiny__rd_example__observe_Rd   flushReact        S1b_follow_computes2 verified                       canary=True adopted=False 0.5->0.1667
+[559/720] caret__rd_example__lift_Rd      lift1_1           S1a_follow      s2 verified                       canary=False adopted=True 0.75->1.0
+[560/720] caret__rd_example__lift_Rd      lift1_1           S1b_follow_computes2 verified                       canary=False adopted=True 0.75->1.0
+[561/720] pROC__rd_example__multiclass_R  multiclass.roc    S0_current      s2 verified                       canary=False adopted=True 0.63->0.0
+[562/720] pROC__rd_example__multiclass_R  multiclass.roc    S1_minimal      s2 verified                       canary=False adopted=False 0.63->0.8722
+[563/720] pROC__rd_example__multiclass_R  multiclass.roc    S1a_follow      s2 verified                       canary=False adopted=False 0.63->0.0
+[564/720] pROC__rd_example__multiclass_R  multiclass.roc    S1b_follow_computes2 verified                       canary=False adopted=True 0.63->0.9858
+[565/720] ModelMetrics__rd_example__gini  gini_1            S1_minimal      s2 verified                       canary=False adopted=False 0.5->0.8611
+[566/720] ModelMetrics__rd_example__gini  gini_1            S0_current      s2 verified                       canary=False adopted=True 0.5->1.0
+[567/720] ModelMetrics__rd_example__gini  gini_1            S1a_follow      s2 verified                       canary=False adopted=True 0.5->1.0
+[568/720] ModelMetrics__rd_example__gini  gini_1            S1b_follow_computes2 verified                       canary=False adopted=True 0.5->1.0
+[569/720] openssl__rd_example__keygen_Rd  read_key          S0_current      s2 verified                       canary=True adopted=False 0.5->0.7109
+[570/720] openssl__rd_example__keygen_Rd  read_key          S1_minimal      s2 verified                       canary=True adopted=False 0.5->0.7364
+[571/720] openssl__rd_example__keygen_Rd  read_key          S1a_follow      s2 verified                       canary=True adopted=False 0.5->0.7255
+[572/720] openssl__rd_example__keygen_Rd  read_key          S1b_follow_computes2 verified                       canary=True adopted=False 0.5->0.703
+[573/720] farver__rd_example__convert_co  convert_colour    S0_current      s2 verified                       canary=False adopted=False 0.5->0.5
+[574/720] farver__rd_example__convert_co  convert_colour    S1a_follow      s2 verified                       canary=False adopted=False 0.5->0.5
+[575/720] farver__rd_example__convert_co  convert_colour    S1b_follow_computes2 verified                       canary=False adopted=False 0.5->0.5
+[576/720] farver__rd_example__convert_co  convert_colour    S1_minimal      s2 verified                       canary=False adopted=False 0.5->0.5
+[577/720] tidyr__rd_example__chop_Rd      unchop_2          S0_current      s2 verified                       canary=False adopted=False 0.7632->0.7165
+[578/720] tidyr__rd_example__chop_Rd      unchop_2          S1_minimal      s2 verified                       canary=False adopted=False 0.7632->0.0
+[579/720] tidyr__rd_example__chop_Rd      unchop_2          S1a_follow      s2 verified                       canary=False adopted=True 0.7632->1.0
+[580/720] tidyr__rd_example__chop_Rd      unchop_2          S1b_follow_computes2 verified                       canary=False adopted=True 0.7632->1.0
+[581/720] farver__rd_example__compare_co  compare_colour_2  S0_current      s2 verified                       canary=False adopted=False 0.5083->0.5083
+[582/720] farver__rd_example__compare_co  compare_colour_2  S1_minimal      s2 verified                       canary=True adopted=False 0.5083->0.5272
+[583/720] farver__rd_example__compare_co  compare_colour_2  S1a_follow      s2 verified                       canary=False adopted=False 0.5083->0.5061
+[584/720] sessioninfo__rd_example__exter  external_info     S0_current      s2 verified                       canary=False adopted=True 0.5751->1.0
+[585/720] sessioninfo__rd_example__exter  external_info     S1_minimal      s2 verified                       canary=False adopted=True 0.5751->1.0
+[586/720] sessioninfo__rd_example__exter  external_info     S1a_follow      s2 verified                       canary=True adopted=True 0.5751->1.0
+[587/720] farver__rd_example__compare_co  compare_colour_2  S1b_follow_computes2 verified                       canary=False adopted=False 0.5083->0.5152
+[588/720] sessioninfo__rd_example__exter  external_info     S1b_follow_computes2 verified                       canary=False adopted=True 0.5751->0.9991
+[589/720] fansi__rd_example__normalize_s  normalize_state_  S0_current      s2 verified                       canary=True adopted=False 0.6746->0.7917
+[590/720] fansi__rd_example__normalize_s  normalize_state_  S1_minimal      s2 verified                       canary=False adopted=True 0.6746->0.9771
+[591/720] fansi__rd_example__normalize_s  normalize_state_  S1a_follow      s2 verified                       canary=False adopted=False 0.6746->0.9144
+[592/720] tidyr__rd_example__separate_ro  separate_longer_  S0_current      s2 verified                       canary=True adopted=False 0.8688->0.8688
+[593/720] fansi__rd_example__normalize_s  normalize_state_  S1b_follow_computes2 verified                       canary=False adopted=False 0.6746->0.8604
+[594/720] tidyr__rd_example__separate_ro  separate_longer_  S1a_follow      s2 verified                       canary=True adopted=True 0.8688->0.9913
+[595/720] tidyr__rd_example__separate_ro  separate_longer_  S1_minimal      s2 verified                       canary=True adopted=False 0.8688->0.0
+[596/720] gtable__rd_example__gtable_add  rect              S0_current      s2 verified                       canary=False adopted=True 0.25->1.0
+[597/720] tidyr__rd_example__separate_ro  separate_longer_  S1b_follow_computes2 verified                       canary=True adopted=True 0.8688->1.0
+[598/720] gtable__rd_example__gtable_add  rect              S1a_follow      s2 verified                       canary=False adopted=True 0.25->1.0
+[599/720] gtable__rd_example__gtable_add  rect              S1_minimal      s2 verified                       canary=False adopted=True 0.25->1.0
+[600/720] clock__rd_example__iso-year-we  iso               S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[601/720] gtable__rd_example__gtable_add  rect              S1b_follow_computes2 verified                       canary=True adopted=True 0.25->1.0
+[602/720] clock__rd_example__iso-year-we  iso               S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.0
+[603/720] clock__rd_example__iso-year-we  iso               S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.25
+[604/720] clock__rd_example__iso-year-we  iso               S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[605/720] lubridate__rd_example__date_Rd  x                 S1_minimal      s2 verified                       canary=True adopted=False 0.25->0.25
+[606/720] lubridate__rd_example__date_Rd  x                 S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[607/720] lubridate__rd_example__date_Rd  x                 S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.25
+[608/720] lubridate__rd_example__date_Rd  x                 S1b_follow_computes2 verified                       canary=True adopted=False 0.25->0.25
+[609/720] shiny__rd_example__isolate_Rd   fun               S0_current      s2 verified                       canary=False adopted=False 0.25->0.0
+[610/720] shiny__rd_example__isolate_Rd   fun               S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[611/720] shiny__rd_example__isolate_Rd   fun               S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.0
+[612/720] clock__vignette__recipes_s68    x                 S0_current      s2 verified                       canary=False adopted=False 0.3957->0.5971
+[613/720] shiny__rd_example__isolate_Rd   fun               S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[614/720] clock__vignette__recipes_s68    x                 S1_minimal      s2 verified                       canary=False adopted=False 0.3957->0.5971
+[615/720] clock__vignette__recipes_s68    x                 S1a_follow      s2 verified                       canary=True adopted=False 0.3957->0.0
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+[616/720] clock__vignette__recipes_s68    x                 S1b_follow_computes2 verified                       canary=False adopted=False 0.3957->0.5971
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:62: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+[617/720] e1071__rd_example__write_svm_R  scale_file        S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+[618/720] e1071__rd_example__write_svm_R  scale_file        S0_current      s2 verified                       canary=True adopted=False 0.25->0.25
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:62: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:59: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:59: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:59: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:60: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:61: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:62: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:63: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+[619/720] e1071__rd_example__write_svm_R  scale_file        S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[620/720] e1071__rd_example__write_svm_R  scale_file        S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.25
+[621/720] farver__rd_example__encode_col  spectrum_hcl      S0_current      s2 verified                       canary=False adopted=True 0.25->1.0
+[622/720] farver__rd_example__encode_col  spectrum_hcl      S1_minimal      s2 verified                       canary=False adopted=True 0.25->1.0
+[623/720] farver__rd_example__encode_col  spectrum_hcl      S1a_follow      s2 verified                       canary=True adopted=True 0.25->1.0
+[624/720] farver__rd_example__encode_col  spectrum_hcl      S1b_follow_computes2 verified                       canary=True adopted=True 0.25->1.0
+[625/720] farver__rd_example__native_enc  native_col        S1_minimal      s2 verified                       canary=True adopted=False 0.25->0.25
+[626/720] fansi__rd_example__strwrap_ctl  hello.2           S1_minimal      s1 verified                       canary=False adopted=False 0.25->0.25
+[627/720] farver__rd_example__native_enc  native_col        S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.25
+[628/720] fansi__rd_example__strwrap_ctl  hello.2           S1b_follow_computes1 verified                       canary=False adopted=False 0.25->0.25
+[629/720] fansi__rd_example__strwrap_ctl  hello.2           S0_current      s1 verified                       canary=False adopted=False 0.25->0.25
+[630/720] fansi__rd_example__strwrap_ctl  hello.2           S1a_follow      s1 verified                       canary=False adopted=False 0.25->0.25
+[631/720] xml2__rd_example__xml_type_Rd   x                 S1b_follow_computes2 verified                       canary=True adopted=True 0.5467->1.0
+[632/720] xml2__rd_example__xml_type_Rd   x                 S0_current      s2 verified                       canary=False adopted=False 0.5467->0.0
+[633/720] xml2__rd_example__xml_type_Rd   x                 S1a_follow      s2 verified                       canary=True adopted=False 0.0->0.0
+[634/720] farver__rd_example__native_enc  native_col        S0_current      s2 verified                       canary=False adopted=True 0.25->1.0
+[635/720] farver__rd_example__native_enc  native_col        S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[636/720] xml2__rd_example__xml_type_Rd   x                 S1_minimal      s2 verified                       canary=False adopted=False 0.5467->0.0
+[637/720] rvest__vignette__rvest_s17      html              S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[638/720] rvest__vignette__rvest_s17      html              S1_minimal      s2 verified                       canary=True adopted=False 0.25->0.25
+[639/720] rvest__vignette__rvest_s17      html              S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.25
+[640/720] e1071__rd_example__matchClasse  tab               S1_minimal      s2 verified                       canary=False adopted=False 0.5875->0.5875
+[641/720] rvest__vignette__rvest_s17      html              S1b_follow_computes2 verified                       canary=True adopted=False 0.25->0.0
+[642/720] proxy__rd_example__rowSums_dis  d                 S0_current      s2 verified                       canary=False adopted=True 0.25->1.0
+[643/720] proxy__rd_example__rowSums_dis  d                 S1_minimal      s2 verified                       canary=False adopted=True 0.25->1.0
+[644/720] proxy__rd_example__rowSums_dis  d                 S1a_follow      s2 verified                       canary=True adopted=True 0.25->1.0
+[645/720] e1071__rd_example__matchClasse  tab               S1b_follow_computes2 verified                       canary=False adopted=False 0.5875->0.5875
+[646/720] e1071__rd_example__matchClasse  tab               S1a_follow      s2 verified                       canary=False adopted=False 0.5875->0.5875
+[647/720] proxy__rd_example__rowSums_dis  d                 S1b_follow_computes2 verified                       canary=True adopted=True 0.25->1.0
+[648/720] shiny__rd_example__actionButto  ui                S0_current      s2 verified                       canary=True adopted=False 0.25->0.5
+[649/720] e1071__rd_example__matchClasse  tab               S0_current      s2 verified                       canary=False adopted=False 0.5875->0.0
+[650/720] shiny__rd_example__actionButto  ui                S1_minimal      s2 verified                       canary=True adopted=False 0.25->0.4667
+[651/720] shiny__rd_example__actionButto  ui                S1b_follow_computes2 verified                       canary=True adopted=False 0.25->0.4667
+[652/720] shiny__rd_example__actionButto  ui                S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.4667
+[653/720] ranger__rd_example__deforest_R  dfo               S1_minimal      s2 verified                       canary=True adopted=False 0.25->0.25
+[654/720] ranger__rd_example__deforest_R  dfo               S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.25
+[655/720] lubridate__rd_example__within-  int2              S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[656/720] ranger__rd_example__deforest_R  dfo               S1b_follow_computes2 verified                       canary=True adopted=False 0.25->0.25
+[657/720] ranger__rd_example__deforest_R  dfo               S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[658/720] lubridate__rd_example__within-  int2              S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[659/720] lubridate__rd_example__within-  int2              S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.25
+[LLM]     Warning: OpenRouter response truncated at 16384 tokens (max_tokens=16384)
+[LLM]     Warning: OpenRouter response truncated at 16384 tokens (max_tokens=16384)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_051ef33697.py
+[r2py] WARNING: 'blackout_vector' is a data entity but Python could not serialize it — excluded from comparison
+[660/720] lubridate__rd_example__within-  int2              S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[661/720] gtable__rd_example__gtable_tri  center            S0_current      s2 verified                       canary=False adopted=True 0.25->1.0
+[662/720] prodlim__rd_example__summary_p  m                 S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.5
+[663/720] prodlim__rd_example__summary_p  m                 S0_current      s2 verified                       canary=False adopted=False 0.25->0.5
+[664/720] gtable__rd_example__gtable_tri  center            S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[665/720] prodlim__rd_example__summary_p  m                 S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.5
+[666/720] prodlim__rd_example__summary_p  m                 S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[667/720] gtable__rd_example__gtable_tri  center            S1a_follow      s2 verified                       canary=True adopted=True 0.25->1.0
+[668/720] xml2__rd_example__xml_dtd_Rd    r                 S1_minimal      s2 verified                       canary=True adopted=False 0.2825->0.0
+[669/720] xml2__rd_example__xml_dtd_Rd    r                 S1b_follow_computes2 verified                       canary=True adopted=False 0.2825->0.5
+[670/720] xml2__rd_example__xml_dtd_Rd    r                 S0_current      s2 verified                       canary=True adopted=False 0.2825->0.5
+[671/720] gtable__rd_example__gtable_tri  center            S1b_follow_computes2 verified                       canary=False adopted=True 0.25->1.0
+[672/720] xml2__rd_example__xml_dtd_Rd    r                 S1a_follow      s2 verified                       canary=True adopted=False 0.2825->0.6038
+[673/720] xml2__rd_example__xml_name_Rd   z                 S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[674/720] xml2__rd_example__xml_name_Rd   z                 S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[675/720] xml2__rd_example__xml_name_Rd   z                 S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[676/720] xml2__rd_example__xml_name_Rd   z                 S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.25
+[677/720] recipes__rd_example__discretiz  carbon_binned     S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[678/720] recipes__rd_example__discretiz  carbon_binned     S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[679/720] fansi__rd_example__substr_ctl_  x                 S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[680/720] recipes__rd_example__discretiz  carbon_binned     S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.25
+[681/720] fansi__rd_example__substr_ctl_  x                 S0_current      s2 verified                       canary=False adopted=False 0.25->0.5
+[682/720] recipes__rd_example__discretiz  carbon_binned     S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[683/720] fansi__rd_example__substr_ctl_  x                 S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.25
+[684/720] fansi__rd_example__substr_ctl_  x                 S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[685/720] sparsevctrs__rd_example__spars  vec_int           S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[686/720] sparsevctrs__rd_example__spars  vec_int           S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[687/720] sparsevctrs__rd_example__spars  vec_int           S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[688/720] sparsevctrs__rd_example__spars  vec_int           S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.25
+[689/720] openssl__rd_example__encrypt_e  pubkey            S0_current      s2 verified                       canary=True adopted=False 0.25->0.5
+[690/720] openssl__rd_example__encrypt_e  pubkey            S1_minimal      s2 verified                       canary=True adopted=False 0.25->0.25
+[691/720] openssl__rd_example__encrypt_e  pubkey            S1b_follow_computes2 verified                       canary=True adopted=False 0.25->0.25
+[692/720] openssl__rd_example__encrypt_e  pubkey            S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.25
+[693/720] purrr__rd_example__slowly_Rd    rate              S1_minimal      s2 verified                       canary=True adopted=True 0.3478->1.0
+[694/720] purrr__rd_example__slowly_Rd    rate              S0_current      s2 verified                       canary=False adopted=True 0.3478->1.0
+[695/720] purrr__rd_example__slowly_Rd    rate              S1a_follow      s2 verified                       canary=False adopted=True 0.3478->1.0
+[696/720] purrr__rd_example__slowly_Rd    rate              S1b_follow_computes2 verified                       canary=True adopted=True 0.3478->1.0
+[697/720] ragg__rd_example__agg_webp_Rd   file              S0_current      s2 verified                       canary=True adopted=False 0.25->0.25
+[698/720] ragg__rd_example__agg_webp_Rd   file              S1_minimal      s2 verified                       canary=True adopted=False 0.25->0.25
+[699/720] ragg__rd_example__agg_webp_Rd   file              S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.25
+[700/720] ragg__rd_example__agg_webp_Rd   file              S1b_follow_computes2 verified                       canary=True adopted=False 0.25->0.25
+[701/720] htmltools__rd_example__htmlPre  output            S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[702/720] htmltools__rd_example__htmlPre  output            S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[703/720] htmltools__rd_example__htmlPre  output            S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[704/720] htmltools__rd_example__htmlPre  output            S1a_follow      s2 verified                       canary=False adopted=False 0.25->0.25
+[705/720] lava__demo__inference           example_3         S1_minimal      s2 verified                       canary=True adopted=False 0.0527->0.0425
+[706/720] lava__demo__inference           example_3         S1a_follow      s2 verified                       canary=True adopted=False 0.0527->0.2955
+[707/720] lava__demo__inference           example_3         S0_current      s2 verified                       canary=True adopted=False 0.0527->0.0
+[708/720] lava__demo__inference           example_3         S1b_follow_computes2 verified                       canary=True adopted=False 0.0527->0.2109
+[709/720] prettyunits__rd_example__time_  now               S1_minimal      s2 verified                       canary=True adopted=False 0.25->0.25
+[710/720] prettyunits__rd_example__time_  now               S0_current      s2 verified                       canary=True adopted=False 0.25->0.25
+[711/720] prettyunits__rd_example__time_  now               S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.25
+[712/720] prettyunits__rd_example__time_  now               S1b_follow_computes2 verified                       canary=True adopted=False 0.25->0.25
+[713/720] clock__rd_example__posixt-grou  x                 S0_current      s2 verified                       canary=False adopted=True 0.25->1.0
+[714/720] clock__rd_example__posixt-grou  x                 S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.25
+[715/720] clock__rd_example__posixt-grou  x                 S1_minimal      s2 verified                       canary=True adopted=False 0.25->0.0
+[716/720] clock__rd_example__posixt-grou  x                 S1b_follow_computes2 verified                       canary=True adopted=False 0.25->0.25
+60 cases (0 snippet, 30 print), 4 arms, 3 samples: 4 calls to do, 4 workers
+[1/4] fansi__rd_example__strwrap_ctl  hello.2           S1b_follow_computes2 verified                       canary=False adopted=False 0.25->0.25
+[2/4] fansi__rd_example__strwrap_ctl  hello.2           S0_current      s2 verified                       canary=False adopted=False 0.25->0.25
+[3/4] fansi__rd_example__strwrap_ctl  hello.2           S1_minimal      s2 verified                       canary=False adopted=False 0.25->0.25
+[4/4] fansi__rd_example__strwrap_ctl  hello.2           S1a_follow      s2 verified                       canary=True adopted=False 0.25->0.25
+
+720 calls (provider outages excluded)
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+S0_current       180   13414       0%     24%    21%          -        22%   +0.067
+S1_minimal       180    8917       3%     37%    28%          -        41%   +0.097
+S1a_follow       180    9034       1%     48%    26%          -        32%   +0.076
+S1b_follow_compute 180    9119       4%     43%    27%          -        34%   +0.112
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 33)
+
+cases whose starting program runs: 715 calls; outcomes blocked by an earlier crash afterwards: 73
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+S0_current       179   13420       0%     24%    21%          -        22%   +0.067
+S1_minimal       179    8923       3%     37%    27%          -        40%   +0.092
+S1a_follow       178    9040       1%     48%    26%          -        33%   +0.077
+S1b_follow_compute 179    9125       4%     43%    27%          -        35%   +0.112
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 33)

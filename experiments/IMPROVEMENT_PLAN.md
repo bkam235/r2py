@@ -2507,3 +2507,37 @@ Crash-first remains switched on in both arms until it is revisited.
   part of the score. `pasted_literal` flags answers containing >= 3 of R's decimal numbers.
 - **Arms:** S1a = S1 + 1 line, 623 characters; S1b = S1a + 1 line, 708 characters.
 - **Analysis:** `scripts/parts_ab_analysis.py s1ref`, written before the data.
+
+**S1 refinement, step 2 result (2026-10-15).** 720 answers, 0 provider failures.
+- **Interruptions:** two standbys froze the run (Oct 12 17:41 to Oct 14 22:07, and Oct 15 07:35 to 08:23). The 4
+  calls hung by the second were killed and redone; single-call outcomes do not depend on wall time.
+
+| arm | canary | adopted | violations | pasted | score change |
+|---|---|---|---|---|---|
+| S0 current (5,003) | 24% | 21% | 24% | 2% | +0.124 |
+| S1 minimal (506) | 37% | **28%** | 25% | 3% | +0.137 |
+| S1a follow (623) | **48%** | 26% | 29% | 8% | +0.123 |
+| S1b follow+compute (708) | 43% | 27% | 27% | 6% | +0.144 |
+
+Against S0, with 95% intervals over 60 cases:
+
+| arm | adoption | violations | score |
+|---|---|---|---|
+| S1 | +6.7 [-1.1, +14.4] | +0.6 [-6.7, +8.3] | +0.014 [-0.034, +0.067] |
+| S1a | +4.4 [-1.7, +10.6] | +4.4 [-2.8, +11.7] | 0.000 [-0.043, +0.042] |
+| S1b | **+6.1 [+1.1, +11.7]** | +2.2 [-5.6, +10.0] | +0.020 [-0.013, +0.054] |
+
+- **Selected for step 3 by the registered rule: S1 (minimal).** It has the highest adoption, and its violation
+  interval does not lie above 0.
+- **The shorter prompts raise adoption by about 4-7 points.** Only S1b's interval excludes 0. None changes the
+  single-call score measurably.
+- **One sentence doubles the canary:** "follow the instructions in the final section" (S1a) takes it from 24% to
+  48%. Yet it raises fix adoption no more than the plain S1 does.
+- **By kind:**
+  - print adoption: S0 22%, S1 41%, S1a 32%, S1b 34%;
+  - value adoption: S0 20%, S1 14%, S1a 19%, S1b 20%.
+
+  The short prompt helps where the fix is to print R's text, and not where values must be computed. On value cases
+  S0's rules may help.
+- **S1a raises pasting** on print cases to 12% (S0 2%). S1b's compute sentence brings it back to 8%.
+- Violations stay at 24-29% in every arm, almost all of them review rejections.
