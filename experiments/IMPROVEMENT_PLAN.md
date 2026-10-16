@@ -2699,3 +2699,23 @@ Realized gain against U, paired over 40 states:
 The rig did not keep the code or the review's reasons, so whether those rejections are literal pasting (correctly
 rejected) or false positives of a model-based review is not known. That is the next, cheap question. If they are
 false positives, the review gate costs every arm about a quarter of its improvements.
+
+**Is the hardcoding review right? Registered before the run (2026-10-16).** User's condition: pasting R's printed
+output or values must never come back in. It was a major flaw in earlier versions, so more than one sample is
+checked by hand.
+
+- **Re-run** of the step-level A/B (`step_ab.py run --tag review`), the same frozen guidance, U/GV/GS, 3 samples
+  (360 steps).
+- **Kept for every improving candidate:** its code, the review's verdict and its reason.
+- **On every verified candidate,** a deterministic paste check (`scripts/paste_check.py`, 6 tests). It counts
+  literals that match what R *computed* (printed lines of >= 12 characters; numbers with >= 4 significant
+  decimals, or ints >= 10,000; strings of >= 8 characters from R's values) and appear neither in the R script nor
+  in the Python the candidate came from. Pasted = >= 3 numbers, or >= 1 printed line, or >= 2 strings.
+- **Manual check:** I read at least 15 review-rejected and 10 review-accepted improving candidates across the arms,
+  each classified as "pasted / computed / other rule"; excerpts go to the user.
+- **What follows:**
+  - If the review mostly rejects real pasting, the review stays, and guidance is reformulated so it does not
+    invite pasting.
+  - If it mostly rejects computed code, the review is recalibrated **only** in a way that keeps rejecting what
+    the deterministic check and the manual check identify as pasting.
+  - No change may let pasting through.

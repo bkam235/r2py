@@ -140,6 +140,8 @@ def run_one(task: dict) -> dict:
                 row.update(outcome="gate rejected", gain=0.0, improved=False)
                 return row
             new = tools.verify(src)
+            from paste_check import check as paste_check
+            row["paste"] = paste_check(src, annotated, sm.source or "", getattr(sm, "entity_bundles", {}) or {})
             row["after"] = round(new.aggregate, 4)
             row["exit_after"] = new.py_exit_code
             if common and common in new.by_entity:
@@ -148,6 +150,13 @@ def run_one(task: dict) -> dict:
             if better:
                 passed, reason = review_translation(sm.source or "", src, sm, model=GEMMA)
                 row["review_rejected"] = not passed
+                row["review_reason"] = (reason or "")[:600]
+                # keep every improving candidate for the manual check of the review (2026-10-16)
+                code_dir = Path(task["out"]) / "code"
+                code_dir.mkdir(parents=True, exist_ok=True)
+                (code_dir / f"{stem}.{arm}.{task['sample']}.py").write_text(src, encoding="utf-8")
+                if not (code_dir / f"{stem}.before.py").exists():
+                    (code_dir / f"{stem}.before.py").write_text(annotated, encoding="utf-8")
                 better = passed
         row["improved"] = bool(better)
         row["gain"] = round(max(0.0, new.aggregate - base.aggregate), 4) if better else 0.0
@@ -162,12 +171,12 @@ def run_one(task: dict) -> dict:
 
 
 def run(samples: int, workers: int) -> None:
-    targets = json.loads((OUT / "targets.json").read_text(encoding="utf-8"))
+    targets = json.loads((ROOT / "work/step_ab/targets.json").read_text(encoding="utf-8"))
     states = running_states()
     path = OUT / "results.jsonl"
     done = [json.loads(l) for l in path.open(encoding="utf-8")] if path.exists() else []
     finished = {(r["script"], r["arm"], r["sample"]) for r in done if r.get("outcome") != "provider_unavailable"}
-    tasks = [{"name": n, "arm": a, "sample": s, "state": states[n], "targets": targets[n]}
+    tasks = [{"name": n, "arm": a, "sample": s, "state": states[n], "targets": targets[n], "out": str(OUT)}
              for s in range(samples) for n in sorted(targets) for a in ARMS if (n, a, s) not in finished]
     print(f"{len(targets)} states x {len(ARMS)} arms x {samples} samples: {len(tasks)} steps to do", flush=True)
     outages = 0
@@ -229,8 +238,14 @@ def main() -> int:
     p = sub.add_parser("run")
     p.add_argument("--samples", type=int, default=4)
     p.add_argument("--workers", type=int, default=6)
-    sub.add_parser("summary")
+    sp = sub.add_parser("summary")
+    for q in (p, sp):
+        q.add_argument("--tag", default="", help="separate output directory; guidance stays work/step_ab/targets.json")
     args = ap.parse_args()
+    global OUT
+    if getattr(args, "tag", ""):
+        OUT = OUT.with_name(f"step_ab_{args.tag}")
+        OUT.mkdir(parents=True, exist_ok=True)
     if args.cmd == "guidable":
         guidable()
         return 0
