@@ -475,10 +475,12 @@ def _build_sidecar_payload(script_map) -> str:
 # Preamble injected before the candidate Python script so _r2py_checkpoint is available.
 _PY_CHECKPOINT_PREAMBLE = """\
 import json as _r2py_json
+import builtins as _r2py_builtins   # scripts shadow id/type/callable (lava assigns `id`)
 import io as _r2py_io
 import sys as _r2py_sys
 
 _r2py_prev_ns: set = set()
+_r2py_base_ids: dict = {}
 _r2py_stdout_buf = _r2py_io.StringIO()
 _r2py_real_stdout = _r2py_sys.stdout
 _r2py_sys.stdout = type('_Tee', (), {
@@ -530,8 +532,15 @@ def _r2py_checkpoint(eid):
     uncapturable_vars = []
     uncapturable_types = {}
     for k, v in g.items():
-        if k.startswith('_r2py') or k in _r2py_prev_ns:
+        if k.startswith('_r2py'):
             continue
+        if k in _r2py_prev_ns:
+            # A data value bound before the first entity (the data shim) that the code has replaced is recorded
+            # once, here, as R records it where the script assigns it (2026-10-16: before, it was never recorded).
+            if k in _r2py_base_ids and _r2py_builtins.id(v) != _r2py_base_ids[k]:
+                del _r2py_base_ids[k]
+            else:
+                continue
         try:
             if callable(v) and not isinstance(v, type):
                 _r2py_vtype = type(v)
@@ -639,7 +648,10 @@ def _inject_py_checkpoints(
     # the first entity's checkpoint delta.
     first_start = sorted_pairs[0][1][0] if sorted_pairs else None
     if first_start is not None:
-        baseline_line = "_r2py_prev_ns = set(k for k in globals() if not k.startswith('_r2py'))\n"
+        baseline_line = ("_r2py_prev_ns = set(k for k in globals() if not k.startswith('_r2py')); "
+                         "_r2py_base_ids = {k: _r2py_builtins.id(v) for k, v in globals().items() "
+                         "if not k.startswith('_r2py') and not _r2py_builtins.callable(v) "
+                         "and _r2py_builtins.type(v).__name__ != 'module'}\n")
         baseline_idx = min(first_start - 1, len(lines))  # 1-based → 0-based insert
         # The naive index can land inside an open expression (e.g. a chained
         # `result = (\n df\n .assign(...)\n)` pipeline, where the first entity

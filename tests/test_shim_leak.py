@@ -94,3 +94,42 @@ class TestLoopGuard(unittest.TestCase):
         self.assertNotIn("iris = {", seen[-1])
         self.assertIn("m = sum(iris['x'])", seen[-1])
         self.assertEqual(stats["outcome"].get("rewrite:shim_override_removed"), 1)
+
+
+class TestPreloadedNameRecorded(unittest.TestCase):
+    """A name bound before the first entity (by the data shim) and replaced by the code is recorded at the entity
+    that replaces it, as R records it at the entity that assigns it; one the code leaves alone is not recorded."""
+
+    def run_instrumented(self, body):
+        import tempfile
+        from pathlib import Path
+        from r2py.stage0.sandbox.py_sandbox import PySandbox
+        from r2py.stage4.verifier import (_ALL_CAPTURE, _PY_CHECKPOINT_PREAMBLE, _collect_py_checkpoints,
+                                          _inject_py_checkpoints)
+        src = "x = [9, 9]\nkeep = [7]\n# r2py:entity:e1\n" + body + "\n# r2py:entity:e2\ny = 1\n"
+        n = body.count("\n") + 1                       # body lines: e1 spans 4..3+n, e2 the line after its marker
+        instrumented, eids = _inject_py_checkpoints(src, {"e1": (4, 3 + n), "e2": (5 + n, 5 + n)})
+        with tempfile.TemporaryDirectory() as d:
+            bundle = PySandbox().run(instrumented, workdir=Path(d), capture=_ALL_CAPTURE,
+                                     preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=60)
+            self.assertEqual(bundle.exit_code, 0, (bundle.stderr or "")[-800:])
+            return {e: b.data for e, b in _collect_py_checkpoints(Path(d), eids).items()}
+
+    def test_a_preloaded_name_the_code_replaces_is_recorded_once_where_it_is_replaced(self):
+        cps = self.run_instrumented("x = [1, 2, 3]")
+        self.assertEqual(cps["e1"].get("x"), [1, 2, 3])
+        self.assertNotIn("x", cps["e2"])
+        self.assertNotIn("keep", cps["e1"])          # untouched preloaded values stay unrecorded, as before
+
+    def test_a_preloaded_name_left_alone_is_not_recorded(self):
+        cps = self.run_instrumented("z = len(x)")
+        self.assertNotIn("x", cps["e1"])
+        self.assertEqual(cps["e1"].get("z"), 2)
+
+
+class TestShadowedBuiltins(unittest.TestCase):
+    def test_a_script_variable_named_id_does_not_break_the_checkpoints(self):
+        # lava assigns `id` (R's id <- foldr(...)); the identity check must not call the script's value
+        cps = TestPreloadedNameRecorded().run_instrumented("id = [1, 2]\nx = [5]")
+        self.assertEqual(cps["e1"].get("x"), [5])
+        self.assertEqual(cps["e1"].get("id"), [1, 2])

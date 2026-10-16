@@ -2858,3 +2858,42 @@ within one experiment stay valid: both arms had the same shim.
 *Not fixed, noted:* the verifier's name-based skip (`_r2py_prev_ns`) still hides recomputed values of the 19
 RNG/read pre-loads and the 3 reassigned inputs. RNG draws are now replayed, so the RNG pre-loads could be dropped
 and computed; a separate, tested change.
+
+**RNG pre-loads and pre-loaded names in the checkpoints (2026-10-16).**
+
+*Dropping the RNG pre-loads: not done; the evidence argues against it.* Counterfactual on the 6 translations with
+RNG pre-loads (same code, pre-load removed): 4 crash, 2 unchanged, 0 rise. The translations do not draw the
+numbers themselves. For `x <- rgamma(...)` the pre-loaded value *is* R's draws, which the replay treats as inputs
+anyway, so these pre-loads are not a back door like the 36 computed values. Removing them would break working
+translations without making anything more honest.
+
+*Recording a pre-loaded name the code replaces (`r2py/stage4/verifier.py`).*
+- **Change:** the checkpoint now records a data value bound before the first entity once, at the entity where the
+  code replaces the object (identity changed). R records it where the script assigns it. Untouched pre-loaded
+  values stay unrecorded, as before. Built-ins are reached via `_r2py_builtins`, because scripts shadow them (lava
+  assigns `id`; a first version broke on exactly that and was caught by the comparison below).
+- **Tests:** `tests/test_shim_leak.py`, 3 checkpoint tests.
+- **Before/after on 87 translations** (60 pool, 4 targets, 24 dev; previous checkpoint code patched in for
+  "before"):
+  - **caret_s3 0.409 to 0.742 and pROC print 0.818 to 0.961.** The entity `data` goes 0 to 1: R's `data(X)` loads
+    `X`, and the Python code replaces the shim's copy.
+  - recipes kpca +0.002.
+  - Noise: openssl `ec_dh` (random keys; the same old code gives 0.677 and 0.675) and caret createDataPartition
+    (-0.004). ragg's crash in the first "before" run did not reproduce (0.450 three times), so it was a flaky run.
+  - The 4 translations I expected to change (they reassign a pre-loaded name) did not.
+- Full suite: 970 passed, only the known locale failure.
+- *Latent weakness, not changed:* the checkpoint and serializer code look up 24 built-ins by name. A script
+  defining one at top level would break recording, but 0 of 259 training translations does.
+
+**Offline ceilings of per-entity acceptance (option 1) and freezing verified entities (option 2)**
+(`work/offline_merge_freeze/`, no model calls). Data: the 120 `rewrite_w3` baseline runs of the S1 and feedback
+replays, 1,274 candidates, each step replayed against the loop's best state at the time; start states re-verified.
+- **Damage:** 200 candidates (16%) damage an entity that was verified (>= 0.95) in the best state. 144 (11%)
+  improve some entity but were rejected as a whole.
+- **Freeze, 55 spliceable cases:** better than the loop's step in 6, **all 6 in one script** (xml2 `xml_cdata`:
+  best state and candidate both crash; restoring one entity makes it run, 0.75). The variant crashes in 35, and
+  in 7 freezing turns a running candidate into a crashing one.
+- **Merge, 71 spliceable cases:** better in 1. **The merged version crashes in 65 (92%)**: improved entities
+  depend on changes elsewhere in the same candidate.
+- **Conclusion: neither option has a general ceiling worth building.** A rewrite's improvements and damages are
+  not separable per entity. That is also why one-entity answers lost score in the prompt-load runs.
