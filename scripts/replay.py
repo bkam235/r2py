@@ -43,6 +43,9 @@ POLICIES = {
     # Step 3 of the S1 refinement (2026-10-15): the same agent with a short system prompt (scripts/sysprompt_variants.py).
     "rewrite_w3_S1": dict(entity_repair=False, escalate_after=None, width=3, system="S1"),
     "rewrite_w3_S1b": dict(entity_repair=False, escalate_after=None, width=3, system="S1b"),
+    # Guided step and crash fallback (registered 2026-10-16), against rewrite_w3 (crash_first "off" by default).
+    "rewrite_w3_crashfb": dict(entity_repair=False, escalate_after=None, width=3, crash_first="fallback"),
+    "guided_w1k3": dict(entity_repair=False, escalate_after=None, width=1, guided_k=3),   # ~ the calls of width 3
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
     # script calls, built by scripts/oracle_library.py (perfect coverage, perfect retrieval).
     "rewrite_w3_oracle": dict(entity_repair=False, escalate_after=None, width=3, oracle=True),

@@ -33,7 +33,8 @@ from ..stage2.stitch import (
 # What the agent did, per process, drained into each run's row (see heldout._drain_diagnostics):
 # {"action": {rewrite: n, ...}, "outcome": {"rewrite:worse": n, ...}, "stop": {"budget": n, ...}}
 agent_stats: dict[str, Counter] = {"action": Counter(), "outcome": Counter(), "stop": Counter(),
-                                   "entity_width": Counter(), "locate": Counter()}
+                                   "entity_width": Counter(), "locate": Counter(),
+                                   "guided": Counter(), "guided_width": Counter()}
 
 
 class _StepContext(MutableMapping):
@@ -106,6 +107,8 @@ def reason(
     entity_width: int = 1,
     locate: bool = False,
     system_override: "str | None" = None,
+    crash_first: str = "off",
+    guided_k: int = 0,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -162,6 +165,9 @@ def reason(
         max_stalls = max(max_stalls, ENTITY_REPAIR_MAX_STALLS)
 
     stall_count = 0
+    crash_rewrite_failed = False   # crash_first="fallback": a full rewrite already failed to make the program run
+    last_was_crash_rewrite = False
+    guided_tries: dict[str, int] = {}          # guided steps aimed at each entity (guided_k)
     entity_tries: dict[str, int] = {}          # entity repairs attempted, per entity
     entity_notes: dict[str, list[str]] = {}    # what each failed attempt looked like
     repair_misses = 0                          # consecutive non-improving attempts in entity-repair mode
@@ -204,10 +210,15 @@ def reason(
             _stat("outcome", "escalated_to_rewrite")
             repair_misses = 0
         crash_note = ""
-        if report.py_exit_code != 0:
-            # Crash first, whatever the policy: an upstream crash nullifies every fix after it (all 137
-            # adopted-but-no-gain fixes in the prompt-load runs, 2026-10-11). Repair the culprit; a
-            # culprit that cannot be replaced as one block gets a full rewrite told to fix the crash.
+        if report.py_exit_code == 0:
+            crash_rewrite_failed = False
+        elif last_was_crash_rewrite:
+            crash_rewrite_failed = True
+        if report.py_exit_code != 0 and (crash_first == "on" or (crash_first == "fallback" and crash_rewrite_failed)):
+            # Crash first: an upstream crash nullifies every fix after it (all 137 adopted-but-no-gain fixes
+            # in the prompt-load runs, 2026-10-11). Repair the culprit; a culprit that cannot be replaced as
+            # one block gets a full rewrite told to fix the crash. "on" lost to plain rewrites in Part B
+            # (2026-10-12: rewrites fix most crashes at step 1), so "fallback" waits for one to fail.
             if not escalate:
                 repair_eid = _pick_crash_entity(report, best_source, entity_tries)
             if repair_eid is None:
@@ -234,6 +245,16 @@ def reason(
         )
         if crash_note:
             messages[-1]["content"] += "\n\n" + crash_note
+        if guided_k > 1 and repair_eid is None and report.py_exit_code == 0:
+            # Guided step (2026-10-16): R's exact output for the worst entity that ran, last in the turn. Gemma
+            # adopts such a fix in 25-40% of single calls, and an adopted fix gains in 98% of running programs,
+            # so k samples chosen by the verifier stand in for persuasion.
+            guided = _guided_target(report, script_map, guided_tries)
+            if guided is not None:
+                guided_tries[guided[0]] = guided_tries.get(guided[0], 0) + 1
+                messages[-1]["content"] += "\n\n" + guided[1]
+                _stat("guided", "targeted")
+        last_was_crash_rewrite = report.py_exit_code != 0 and repair_eid is None
 
         if repair_eid is not None:
             entity_tries[repair_eid] = entity_tries.get(repair_eid, 0) + 1
@@ -274,6 +295,8 @@ def reason(
             action = {"action": "entity_repair", "entity": repair_eid, "new_source": frag}
             if entity_width > 1:
                 action = _widen_entity_repair(action, messages, turn_system, model, entity_width, best_source, harness)
+        elif guided_k > 1 and action and action.get("action") == "rewrite":
+            action = _widen_rewrite(action, messages, turn_system, model, guided_k, best_source, harness)
         if action is None:
             snippet = raw[:300].replace('\n', '\\n')
             print(f"[Agent]   Could not parse action from response: {snippet!r}")
@@ -671,6 +694,80 @@ def _widen_entity_repair(action: dict, messages: list, system: str, model: str, 
             best_frag, best_rep = frag, rep
     _stat("entity_width", f"{len(fragments)}_sampled_{len(seen)}_distinct")
     return {**action, "new_source": best_frag}
+
+
+def _widen_rewrite(action: dict, messages: list, system: str, model: str, k: int,
+                   best_source: str, harness: "HarnessTools") -> dict:
+    """Guided step (2026-10-16): ``k`` whole-file rewrites of the same turn, the best by the search objective
+    kept. As ``_widen_entity_repair``, for full rewrites; the chosen one then goes through the normal gates."""
+    from ..stage0.sandbox.py_sandbox import _SKIP_PACKAGES
+
+    def sample(_i):
+        try:
+            a = _parse_action(_llm.call(messages, system, model=model, max_tokens=16384))
+        except Exception:
+            return None
+        return a.get("new_source") if a and a.get("action") == "rewrite" else None
+
+    with ThreadPoolExecutor(k - 1) as pool:
+        drafts = [action["new_source"]] + [d for d in pool.map(sample, range(k - 1)) if d]
+    best, best_rep, seen = action["new_source"], None, set()
+    for draft in drafts:
+        source, _ = restore_data_shim(best_source, show_data_shim(best_source, draft))
+        source, _ = repair_argument_order(source)
+        if source in seen or _check_syntax(source) or unavailable_imports(source, _SKIP_PACKAGES):
+            continue
+        seen.add(source)
+        try:
+            rep = harness.verify(source)
+        except Exception:
+            continue
+        if best_rep is None or _obj.better(rep, best_rep):
+            best, best_rep = draft, rep
+    _stat("guided_width", f"{len(drafts)}_sampled_{len(seen)}_distinct")
+    return {**action, "new_source": best}
+
+
+def _guided_target(report, script_map, tries: dict[str, int], max_tries: int = 2) -> tuple[str, str] | None:
+    """(entity, guidance) for the worst-scoring entity that ran and has R output to show, or None.
+
+    Guidance is R's own result for the entity, as in the prompt-load cases (2026-10-11): its exact printed output
+    when the values are right and the print is not, else its values when they fit (``GUIDED_VALUE_MAX`` characters
+    of JSON)."""
+    import json as _json
+    from ..stage1.runner import strip_echoed_source
+
+    pool = []
+    for eid, es in report.by_entity.items():
+        if not es.executed_ok or tries.get(eid, 0) >= max_tries or not es.active_dims:
+            continue
+        sc = _entity_score(es)
+        if sc < 0.9:
+            pool.append((sc, eid, es))
+    bundles = getattr(script_map, "entity_bundles", {}) or {}
+    for _sc, eid, es in sorted(pool, key=lambda t: t[0]):
+        eb = bundles.get(eid)
+        if eb is None:
+            continue
+        values = {d: getattr(es, d) for d in es.active_dims if d != "side_effects"}
+        r_out = strip_echoed_source(getattr(eb, "stdout", "") or "").strip()
+        if r_out and all(v >= 0.9 for v in values.values()):
+            return eid, ("### What R prints for this statement\n"
+                         f"When R runs entity `{eid}`, it prints exactly:\n```\n{r_out[:3000]}\n```\n"
+                         f"Make the Python for `{eid}` print exactly this text, with the same layout and formatting, "
+                         "computed from the data (not pasted as a literal).")
+        data = getattr(eb, "data", None) or {}
+        text = "\n".join(f"{k} = {_json.dumps(v, default=str)}" for k, v in data.items())
+        if values and min(values.values()) < 0.9 and 0 < len(text) <= GUIDED_VALUE_MAX:
+            return eid, ("### What R computes for this statement\n"
+                         f"What R computes for entity `{eid}`: its variables hold these values (as JSON):\n"
+                         f"```\n{text}\n```\n"
+                         f"Make the Python for `{eid}` compute exactly these values from the data, the way R does "
+                         "(do not paste them as literals).")
+    return None
+
+
+GUIDED_VALUE_MAX = 1500
 
 
 def reason_wide(harnesses: list, *, current_source: str, score_report: "ScoreReport", script_map: "ScriptMap",

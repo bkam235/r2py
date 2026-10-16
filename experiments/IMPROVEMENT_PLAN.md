@@ -2634,3 +2634,31 @@ training pool (60 states, 3 samples), Gemma.
   Both paired per state, with a bootstrap interval and Wilcoxon (`replay_compare.py`).
 - **Secondary:** all states, P(final >= 0.9), ends running, model steps.
 - Expected sensitivity: about 0.05 at 40-60 states.
+
+**Faster instrument: step-level A/B; structured guidance (registered 2026-10-16, before building).**
+
+The full-loop replays take hours per answer and their outcomes are dominated by crash-or-not. A mechanism that
+helps must raise what *one step* does from a given state, so steps are measured directly.
+
+- **Step 1 (offline, no model calls).** For the 40 running pool states, count states and remaining loss in
+  entities a guided step can target:
+  - (a) whole-value guidance (`_guided_target`: R's print, or R's values <= 1,500 characters);
+  - (b) **structured guidance**: the worst entity that ran below 0.9, with the verifier's per-path differences
+    for it (data feedback such as `info.abbreviation[0]: 'EST' != 'UTC'`), the first differing stdout lines, and
+    the locator's first diverging call, so any size of entity reduces to a few concrete differences.
+- **Step 2 (step-level A/B, `scripts/step_ab.py`).** The 40 running states, one step from the frozen start, a
+  single call per sample (best-of-k follows as 1 - (1 - p)^k), 4 samples, production system prompt and turn.
+  - Arms: **U** (unguided), **GV** (whole-value guidance), **GS** (structured guidance).
+  - Each answer goes through the loop's gates (shim, argument order, syntax, imports) and is verified.
+  - Per call:
+    - realized gain = max(0, objective gain), since the loop rejects a worse candidate;
+    - P(the step improves);
+    - the change of the targeted entity.
+  - **Decision:** a guided arm wins if its mean realized gain against U, paired per state, has a 95% bootstrap
+    interval above 0. If both win, the larger effect wins.
+- **Step 3 (loop confirmation, only if step 2 has a winner).** The winner as `guided_w1k3` (one chain, best of 3
+  per step) against `rewrite_w3` on the 40 running states, 2 samples (160 runs), compared with
+  `replay_compare.py`.
+
+The crash fallback's trigger was checked on broom: each branch made one full rewrite, then two culprit repairs
+(of `tidy`). The step-level test of the fallback follows the same pattern on the 20 crashing states.

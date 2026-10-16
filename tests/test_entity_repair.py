@@ -129,7 +129,10 @@ class TestCrashFirst(unittest.TestCase):
         self.assertIn("`e2`", note)
         self.assertIn("NameError", note)
 
-    def first_turn(self, report, source):
+    def first_turn(self, report, source, **kw):
+        return self.turns(report, source, max_steps=1, **{"crash_first": "on", **kw})[0]
+
+    def turns(self, report, source, max_steps=1, **kw):
         from unittest.mock import patch
         sent = []
 
@@ -147,9 +150,10 @@ class TestCrashFirst(unittest.TestCase):
              patch.object(agent, "unavailable_imports", return_value=[]), \
              patch.object(agent, "_check_syntax", return_value=None), \
              patch.object(agent, "review_translation", return_value=(True, "")):
-            agent.reason(source, report, harness, sm, model="openrouter:m", max_steps=1, entity_repair=False)
+            agent.reason(source, report, harness, sm, model="openrouter:m", max_steps=max_steps, entity_repair=False,
+                         **kw)
         agent.drain_agent_stats()
-        return sent[0]
+        return sent
 
     def test_a_crashing_program_gets_an_entity_repair_of_the_culprit_even_with_entity_repair_off(self):
         system, user = self.first_turn(self.crashing(), self.SRC)
@@ -195,3 +199,63 @@ class TestSystemOverride(unittest.TestCase):
                          system_override="MINIMAL PROMPT")
         agent.drain_agent_stats()
         self.assertEqual(sent[0], "MINIMAL PROMPT")
+
+
+class TestCrashModes(unittest.TestCase):
+    """crash_first: "off" (default again after Part B, 2026-10-16), "on", "fallback"."""
+    T = TestCrashFirst()
+
+    def test_off_is_a_plain_full_rewrite(self):
+        sent = self.T.turns(self.T.crashing(), self.T.SRC, max_steps=1)
+        self.assertNotEqual(sent[0][0], prompt.ENTITY_REPAIR_SYSTEM)
+        self.assertNotIn("Fix the crash first", sent[0][1])
+
+    def test_fallback_rewrites_first_and_targets_the_culprit_after_a_rewrite_failed(self):
+        sent = self.T.turns(self.T.crashing(), self.T.SRC, max_steps=2, crash_first="fallback")
+        self.assertNotEqual(sent[0][0], prompt.ENTITY_REPAIR_SYSTEM)
+        self.assertNotIn("Fix the crash first", sent[0][1])
+        self.assertEqual(sent[1][0], prompt.ENTITY_REPAIR_SYSTEM)
+        self.assertIn("Repair entity `e2`", sent[1][1])
+
+
+class TestGuidedStep(unittest.TestCase):
+    def running(self):
+        T = TestCrashFirst
+        return NS(by_entity={"e1": T.full("e1"), "e2": T.full("e2", True, 0.5), "e3": T.full("e3")},
+                  crash_entities=[], py_exit_code=0, aggregate=0.8, feedback=[], comparisons=[], uncomparable=[])
+
+    def sm(self):
+        ent = NS(source_span=NS(start_line=1, end_line=1), name="b")
+        bundles = {"e2": NS(stdout="[1] 2", data={"b": [2]})}
+        return NS(source="a <- 1\nb <- a + 1\nc <- b\n", entities={"e1": ent, "e2": ent, "e3": ent},
+                  entity_bundles=bundles)
+
+    def test_the_target_is_the_worst_entity_that_ran_with_its_r_values(self):
+        eid, text = agent._guided_target(self.running(), self.sm(), {})
+        self.assertEqual(eid, "e2")
+        self.assertIn('b = [2]', text)
+
+    def test_no_target_once_an_entity_has_had_its_tries(self):
+        self.assertIsNone(agent._guided_target(self.running(), self.sm(), {"e2": 2}))
+
+    def test_a_guided_step_samples_k_answers_with_the_guidance_last(self):
+        from unittest.mock import patch
+        sent = []
+
+        def call(messages, system, **kw):
+            sent.append(messages[-1]["content"])
+            return "ACTION: rewrite\n```python\n# r2py:entity:e1\na = 1\n# r2py:entity:e2\nb = 2\n```"
+        rep = self.running()
+        harness = NS(verify=lambda src: rep, _probe_count=0, last_annotated_source="", _sidecar_filename="")
+        with patch.object(agent._llm, "call", side_effect=call), \
+             patch.object(agent, "_prefetch_patterns", return_value={}), \
+             patch.object(agent, "_prefetch_r_sources", return_value=([], "")), \
+             patch.object(agent, "_get_unavailable_packages", return_value=[]), \
+             patch.object(agent, "unavailable_imports", return_value=[]), \
+             patch.object(agent, "_check_syntax", return_value=None), \
+             patch.object(agent, "review_translation", return_value=(True, "")):
+            agent.reason(TestCrashFirst.SRC, rep, harness, self.sm(), model="openrouter:m", max_steps=1,
+                         entity_repair=False, guided_k=3)
+        agent.drain_agent_stats()
+        self.assertEqual(len(sent), 3)
+        self.assertTrue(all("What R computes for entity `e2`" in t for t in sent))
