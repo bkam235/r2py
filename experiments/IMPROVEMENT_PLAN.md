@@ -2797,3 +2797,37 @@ them.
 
 **Overwrites of true inputs:** 381 of 2,838 agent candidates (13%) in the dev replays assign a true shim input
 (e.g. a literal dataset stub). The guard that would strip them is not applied in the loop.
+
+**Re-analysis of the shim finding (2026-10-16), at the user's request, before any fix.**
+
+1. **The lava test was flawed.** The span replaced by `pass` held `def estimate(...)`, not an assignment. A clean
+   counterfactual: this translation **never assigns `e`**. Removing `e` from the shim's name list (same code) turns
+   exit 0 / aggregate 0.694 into a crash / 0.000.
+2. **The classification was too coarse.** It counted an entity named like a variable as a definition, but a bare
+   `storms` prints a package dataset. Redone by assignment and order over 125 scripts with a shim:
+   - **116** never assigned by the script (true inputs);
+   - **3** used before the script reassigns them (true inputs);
+   - **19** assigned from RNG or file reads (rule 2);
+   - **36 names in 27 scripts computed by the script before any use (the leak).**
+
+   Earlier I reported 41 names in 39 scripts.
+3. **Counterfactual on the 21 affected training translations** (same code, leaked names removed from the shim
+   list):
+   - **3 drop to 0** (tagQuery 1.000, sparsevctrs 0.715, tidyr complete 1.000): the code never computes the value;
+   - **13 unchanged**;
+   - **5 rise**: lubridate 0.850 to 1.000, reshape2 0.812 to 1.000, xml2 0.714 to 0.821, fansi 0.917 to 0.947,
+     clock 0.719 to 0.737.
+
+   In every rise, the leaked variable's own entity goes from 0.25 to about 1.0.
+4. **Mechanism of the rises (verifier code):** `_r2py_prev_ns` is set to every name bound before the first entity
+   (imports and shim), and checkpoints skip names in that set. A shim-loaded name is never captured, even when
+   Python recomputes it correctly.
+
+**So the leak both inflates** (code that computes nothing still runs) **and deflates** (correct code gets no credit
+for the variable). The same name-based skip also affects the 3 true inputs that the script reassigns; that is a
+separate verifier issue, noted, not fixed here.
+
+Fixes 1-3 go ahead on this evidence:
+1. shim rule (1) admits only names not assigned before their first use;
+2. the overwrite guard runs in the agent loop for names R never assigns;
+3. the turn lists only those inputs, with a plain instruction.
