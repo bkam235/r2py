@@ -2662,3 +2662,16 @@ helps must raise what *one step* does from a given state, so steps are measured 
 
 The crash fallback's trigger was checked on broom: each branch made one full rewrite, then two culprit repairs
 (of `tidy`). The step-level test of the fallback follows the same pattern on the 20 crashing states.
+
+**Step 1 result (2026-10-16, no model calls).** The 40 running pool states, verified at their start:
+- **Whole-value guidance (GV):** a target in **27** states; the targeted entities hold **15%** of those states'
+  remaining loss.
+- **Structured guidance (GS):** a target in **all 40**, holding **25%** of the loss. The locator found a first
+  diverging call in 27.
+- **Example (farver `spectrum`):** "spectrum[0][0]: 255 != 1.0 (outside tolerance)" plus "the first call where
+  your Python departs from R is `decode_colour(rainbow(10))`. R computes [255, 0, 0, 255, 153, 0, ...]".
+- **Weaker case (ggplot2 `geom_bin_2d_2`):** only "the difference is in what the entity finally assigns or
+  prints".
+
+The guidance is frozen in `work/step_ab/targets.json`. Breaking entities down extends guidance from 27 to 40 states
+and from 15% to 25% of the loss in reach of one step.

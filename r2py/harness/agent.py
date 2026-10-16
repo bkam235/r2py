@@ -109,6 +109,7 @@ def reason(
     system_override: "str | None" = None,
     crash_first: str = "off",
     guided_k: int = 0,
+    guided_mode: str = "value",
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -249,7 +250,8 @@ def reason(
             # Guided step (2026-10-16): R's exact output for the worst entity that ran, last in the turn. Gemma
             # adopts such a fix in 25-40% of single calls, and an adopted fix gains in 98% of running programs,
             # so k samples chosen by the verifier stand in for persuasion.
-            guided = _guided_target(report, script_map, guided_tries)
+            guided = (_guided_target_structured(report, script_map, guided_tries, harness, best_source)
+                      if guided_mode == "struct" else _guided_target(report, script_map, guided_tries))
             if guided is not None:
                 guided_tries[guided[0]] = guided_tries.get(guided[0], 0) + 1
                 messages[-1]["content"] += "\n\n" + guided[1]
@@ -768,6 +770,55 @@ def _guided_target(report, script_map, tries: dict[str, int], max_tries: int = 2
 
 
 GUIDED_VALUE_MAX = 1500
+GUIDED_PATHS = 5           # verifier differences shown per entity
+
+
+def _stdout_diff_lines(r_out: str, py_out: str, n: int = 3) -> list[str]:
+    """The first ``n`` lines where Python's printed output differs from R's, as 'R: ... | Python: ...'."""
+    import itertools
+    out = []
+    for r_line, p_line in itertools.zip_longest(r_out.splitlines(), py_out.splitlines(), fillvalue="(nothing)"):
+        if r_line.rstrip() != p_line.rstrip():
+            out.append(f"R prints: {r_line[:160]!r} | yours: {p_line[:160]!r}")
+            if len(out) >= n:
+                break
+    return out
+
+
+def _guided_target_structured(report, script_map, tries: dict[str, int], harness=None, source: str = "",
+                              max_tries: int = 2) -> tuple[str, str] | None:
+    """(entity, guidance) like ``_guided_target``, but reduced to where the entity differs from R, so an entity
+    of any size gets a few concrete differences (2026-10-16; whole values above 1,500 characters got none):
+    the verifier's per-path value differences, the first differing printed lines, and the locator's first
+    diverging call when a harness is given."""
+    from ..stage1.runner import strip_echoed_source
+
+    pool = sorted((_entity_score(es), eid) for eid, es in report.by_entity.items()
+                  if es.executed_ok and es.active_dims and tries.get(eid, 0) < max_tries and _entity_score(es) < 0.9)
+    bundles = getattr(script_map, "entity_bundles", {}) or {}
+    for _sc, eid in pool:
+        lines = [f.message[:240] for f in (report.feedback or [])
+                 if f.entity_id == eid and f.effect_class.value == "data"][:GUIDED_PATHS]
+        eb = bundles.get(eid)
+        r_out = strip_echoed_source(getattr(eb, "stdout", "") or "").strip() if eb is not None else ""
+        py_eb = (getattr(report, "py_entity_bundles", None) or {}).get(eid)
+        py_out = (getattr(py_eb, "stdout", "") or "").strip()
+        if r_out and r_out != py_out:
+            lines += _stdout_diff_lines(r_out, py_out)
+        if harness is not None and source and hasattr(harness, "locate"):
+            try:
+                note = harness.locate(source, eid)
+            except Exception:
+                note = None
+            if note:
+                lines.append(note[:500])
+        if lines:
+            return eid, (f"### Where entity `{eid}` differs from R\n"
+                         "The harness compared your entity with R's run:\n"
+                         + "\n".join(f"- {l}" for l in lines)
+                         + f"\nFix exactly these differences in `{eid}`, computing the values from the data "
+                           "the way R does (do not paste them as literals).")
+    return None
 
 
 def reason_wide(harnesses: list, *, current_source: str, score_report: "ScoreReport", script_map: "ScriptMap",

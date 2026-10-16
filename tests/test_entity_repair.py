@@ -259,3 +259,19 @@ class TestGuidedStep(unittest.TestCase):
         agent.drain_agent_stats()
         self.assertEqual(len(sent), 3)
         self.assertTrue(all("What R computes for entity `e2`" in t for t in sent))
+
+
+class TestStructuredGuidance(unittest.TestCase):
+    def test_value_differences_and_print_lines_are_shown_not_the_whole_value(self):
+        T = TestCrashFirst
+        fb = [NS(entity_id="e2", effect_class=NS(value="data"), message="info.abbreviation[0]: 'EST' != 'UTC'"),
+              NS(entity_id="e1", effect_class=NS(value="data"), message="other entity")]
+        rep = NS(by_entity={"e1": T.full("e1"), "e2": T.full("e2", True, 0.5)}, feedback=fb,
+                 py_entity_bundles={"e2": NS(stdout="a\nB\n")})
+        sm = NS(entity_bundles={"e2": NS(stdout="a\nb\n", data={"info": list(range(5000))})})
+        eid, text = agent._guided_target_structured(rep, sm, {})
+        self.assertEqual(eid, "e2")
+        self.assertIn("'EST' != 'UTC'", text)
+        self.assertIn("R prints: 'b' | yours: 'B'", text)
+        self.assertNotIn("other entity", text)
+        self.assertLess(len(text), 1000)                     # a 5000-element value reduces to its differences

@@ -46,6 +46,7 @@ POLICIES = {
     # Guided step and crash fallback (registered 2026-10-16), against rewrite_w3 (crash_first "off" by default).
     "rewrite_w3_crashfb": dict(entity_repair=False, escalate_after=None, width=3, crash_first="fallback"),
     "guided_w1k3": dict(entity_repair=False, escalate_after=None, width=1, guided_k=3),   # ~ the calls of width 3
+    "guided_w1k3s": dict(entity_repair=False, escalate_after=None, width=1, guided_k=3, guided_mode="struct"),
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
     # script calls, built by scripts/oracle_library.py (perfect coverage, perfect retrieval).
     "rewrite_w3_oracle": dict(entity_repair=False, escalate_after=None, width=3, oracle=True),

@@ -1,0 +1,523 @@
+{
+ "bslib__rd_example__layout_column_wrap_Rd.R": {
+  "aggregate": 0.548712888549871,
+  "loss": 2.256,
+  "GV": [
+   "layout_column_wrap",
+   "### What R prints for this statement\nWhen R runs entity `layout_column_wrap`, it prints exactly:\n```\n<div class=\"container-fluid\">\n  <div class=\"bslib-grid bslib-mb-spacing html-fill-item\" data-require-bs-caller=\"layout_column_wrap()\" data-require-bs-version=\"5\" style=\"grid-template-columns:repeat(2, minmax(0, 1fr));grid-auto-rows:1fr;--bslib-grid-height:auto;--bslib-grid-height-mobile:auto;\">\n    <div class=\"bslib-grid-item bslib-gap-spacing html-fill-container\">\n      <div class=\"card bslib-card bslib-mb-spacing html-fill-item html-fill-container\" data-bslib-card-init data-require-bs-caller=\"card()\" data-require-bs-version=\"5\">\n        <div class=\"card-body bslib-gap-spacing html-fill-item html-fill-container\" style=\"margin-top:auto;margin-bottom:auto;flex:1 1 auto;\">A simple card</div>\n        <script data-bslib-card-init>bslib.Card.initializeAllCards();</script>\n      </div>\n    </div>\n    <div class=\"bslib-grid-item bslib-gap-spacing html-fill-container\">\n      <div class=\"card bslib-card bslib-mb-spacing html-fill-item html-fill-container\" data-bslib-card-init data-require-bs-caller=\"card()\" data-require-bs-version=\"5\">\n        <div class=\"card-body bslib-gap-spacing html-fill-item html-fill-container\" style=\"margin-top:auto;margin-bottom:auto;flex:1 1 auto;\">A simple card</div>\n        <script data-bslib-card-init>bslib.Card.initializeAllCards();</script>\n      </div>\n    </div>\n    <div class=\"bslib-grid-item bslib-gap-spacing html-fill-container\">\n      <div class=\"card bslib-card bslib-mb-spacing html-fill-item html-fill-container\" data-bslib-card-init data-require-bs-caller=\"card()\" data-require-bs-version=\"5\">\n        <div class=\"card-body bslib-gap-spacing html-fill-item html-fill-container\" style=\"margin-top:auto;margin-bottom:auto;flex:1 1 auto;\">A simple card</div>\n        <script data-bslib-card-init>bslib.Card.initializeAllCards();</script>\n      </div>\n    </div>\n  </div>\n</div>\n```\nMake the Python for `layout_column_wrap` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "layout_column_wrap",
+   "### Where entity `layout_column_wrap` differs from R\nThe harness compared your entity with R's run:\n- R prints: '<div class=\"container-fluid\">' | yours: '(nothing)'\n- R prints: '  <div class=\"bslib-grid bslib-mb-spacing html-fill-item\" data-require-bs-caller=\"layout_column_wrap()\" data-require-bs-version=\"5\" style=\"grid-template-columns' | yours: '(nothing)'\n- R prints: '    <div class=\"bslib-grid-item bslib-gap-spacing html-fill-container\">' | yours: '(nothing)'\n- Entity layout_column_wrap: the first call where your Python departs from R is `layout_column_wrap(width = 1/2, x, x, x)`. R computes '<div class=\"bslib-grid bslib-mb-spacing html-fill-item\" data-require-bs-caller=\"layout_column_wrap()', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `layout_column_wrap`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.5,
+  "GS_loss": 0.5
+ },
+ "bslib__rd_example__page_fillable_Rd.R": {
+  "aggregate": 0.25,
+  "loss": 0.75,
+  "GV": null,
+  "GS": [
+   "ui",
+   "### Where entity `ui` differs from R\nThe harness compared your entity with R's run:\n- mtcars: infra failure rescued by fallback (score 0.737): mtcars.am[0]: type mismatch \u2014 R=int 1 Python=str '1'\n- Entity ui: the first call where your Python departs from R is `h1(\"Example\", code(\"mtcars\"), \"dashboard\")`. R computes '<h1>\\n  Example\\n  <code>mtcars</code>\\n  dashboard\\n</h1>', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `ui`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.75
+ },
+ "bslib__rd_example__value_box_Rd.R": {
+  "aggregate": 0.5,
+  "loss": 0.5,
+  "GV": [
+   "value_box",
+   "### What R prints for this statement\nWhen R runs entity `value_box`, it prints exactly:\n```\n<div class=\"container-fluid\">\n  <div class=\"card bslib-card bslib-mb-spacing html-fill-item html-fill-container bslib-value-box bg-success showcase-left-center\" data-bslib-card-init data-require-bs-caller=\"card() value_box()\" data-require-bs-version=\"5 5\">\n    <div class=\"card-body bslib-gap-spacing html-fill-item html-fill-container\" style=\"margin-top:auto;margin-bottom:auto;flex:1 1 auto; padding:0;\">\n      <div class=\"value-box-grid html-fill-item\" style=\"--bslib-grid-height:auto;--bslib-grid-height-mobile:auto;---bslib-value-box-showcase-w:30%;---bslib-value-box-showcase-w-fs:1fr;---bslib-value-box-showcase-max-h:100px;---bslib-value-box-showcase-max-h-fs:67%;\">\n        <div class=\"value-box-showcase html-fill-item html-fill-container\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" class=\"bi bi-piggy-bank \" style=\"height:1em;width:1em;fill:currentColor;vertical-align:-0.125em;\" aria-hidden=\"true\" role=\"img\" ><path d=\"M5 6.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0zm1.138-1.496A6.613 6.613 0 0 1 7.964 4.5c.666 0 1.303.097 1.893.273a.5.5 0 0 0 .286-.958A7.602 7.602 0 0 0 7.964 3.5c-.734 0-1.441.103-2.102.292a.5.5 0 1 0 .276.962z\"></path>\n<path fill-rule=\"evenodd\" d=\"M7.964 1.527c-2.977 0-5.571 1.704-6.32 4.125h-.55A1 1 0 0 0 .11 6.824l.254 1.46a1.5 1.5 0 0 0 1.478 1.243h.263c.3.513.688.978 1.145 1.382l-.729 2.477a.5.5 0 0 0 .48.641h2a.5.5 0 0 0 .471-.332l.482-1.351c.635.173 1.31.267 2.011.267.707 0 1.388-.095 2.028-.272l.543 1.372a.5.5 0 0 0 .465.316h2a.5.5 0 0 0 .478-.645l-.761-2.506C13.81 9.895 14.5 8.559 14.5 7.069c0-.145-.007-.29-.02-.431.261-.11.508-.266.705-.444.315.306.815.306.815-.417 0 .223-.5.223-.461-.026a.95.95 0 0 0 .09-.255.7.7 0 0 0-.202-.645.58.58 0 0 0-.707-.098.735.735 0 0 0-.375.562c-.024.243.082.48.32.654a2.112 2.112 0 0 1-.259.153c-.534-2.664-3.284-4.595-6.442-4.595zM2.516 6.26c.455-2.066 2.667-3.733 5.448-3.733 3.146 0 5.536 2.114 5.536 4.542 0 1.254-.624 2.41-1.67 3.248a.5.5 0 0 0-.165.535l.66 2.175h-.985l-.59-1.487a.5.5 0 0 0-.629-.288c-.661.23-1.39.359-2.157.359a6.558 6.558 0 0 1-2.157-.359.5.5 0 0 0-.635.304l-.525 1.471h-.979l.633-2.15a.5.5 0 0 0-.17-.534 4.649 4.649 0 0 1-1.284-1.541.5.5 0 0 0-.446-.275h-.56a.5.5 0 0 1-.492-.414l-.254-1.46h.933a.5.5 0 0 0 .488-.393zm12.621-.857a.565.565 0 0 1-.098.21.704.704 0 0 1-.044-.025c-.146-.09-.157-.175-.152-.223a.236.236 0 0 1 .117-.173c.049-.027.08-.021.113.012a.202.202 0 0 1 .064.199z\"></path></svg></div>\n        <div class=\"value-box-area html-fill-item html-fill-container\">\n          <p class=\"value-box-title\">KPI Title</p>\n          <h1 class=\"value-box-value\">$1 <i>Billion</i> Dollars</h1>\n          <span>\n            <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" class=\"bi bi-arrow-up \" style=\"height:1em;width:1em;fill:currentColor;vertical-align:-0.125em;\" aria-hidden=\"true\" role=\"img\" ><path fill-rule=\"evenodd\" d=\"M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 \n```\nMake the Python for `value_box` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "value_box",
+   "### Where entity `value_box` differs from R\nThe harness compared your entity with R's run:\n- R prints: '<div class=\"container-fluid\">' | yours: '(nothing)'\n- R prints: '  <div class=\"card bslib-card bslib-mb-spacing html-fill-item html-fill-container bslib-value-box bg-success showcase-left-center\" data-bslib-card-init data-req' | yours: '(nothing)'\n- R prints: '    <div class=\"card-body bslib-gap-spacing html-fill-item html-fill-container\" style=\"margin-top:auto;margin-bottom:auto;flex:1 1 auto; padding:0;\">' | yours: '(nothing)'\n- Entity value_box: the first call where your Python departs from R is `bsicons::bs_icon(\"arrow-up\")`. R computes '<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" class=\"bi bi-arrow-up \" style=\"height:1e', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `value_box`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.5,
+  "GS_loss": 0.5
+ },
+ "caret__rd_example__update_train_Rd.R": {
+  "aggregate": 0.55,
+  "loss": 2.25,
+  "GV": [
+   "update",
+   "### What R prints for this statement\nWhen R runs entity `update`, it prints exactly:\n```\nk-Nearest Neighbors \n\n150 samples\n  4 predictor\n  3 classes: 'setosa', 'versicolor', 'virginica' \n\nPre-processing: centered (4), scaled (4) \nResampling: Cross-Validated (10 fold) \nSummary of sample sizes: 135, 135, 135, 135, 135, 135, ... \nResampling results across tuning parameters:\n\n  k   Accuracy   Kappa\n   5  0.9666667  0.95 \n   7  0.9533333  0.93 \n   9  0.9533333  0.93 \n  11  0.9533333  0.93 \n  13  0.9666667  0.95 \n  15  0.9666667  0.95 \n  17  0.9600000  0.94 \n  19  0.9600000  0.94 \n  21  0.9533333  0.93 \n  23  0.9533333  0.93 \n\nThe tuning parameter was set manually.\nThe final value used for the model was k = 3.\n```\nMake the Python for `update` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "data",
+   "### Where entity `data` differs from R\nThe harness compared your entity with R's run:\n- Entity data: the first call where your Python departs from R is `data(iris)`. R computes 'iris', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `data`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.5,
+  "GS_loss": 1.0
+ },
+ "caret__vignette__caret_s3.R": {
+  "aggregate": 0.40855855855855855,
+  "loss": 1.774,
+  "GV": [
+   "inTrain",
+   "### What R computes for this statement\nWhat R computes for entity `inTrain`: its variables hold these values (as JSON):\n```\ninTrain = [[1], [2], [3], [4], [5], [7], [10], [11], [12], [13], [14], [16], [17], [18], [19], [20], [21], [22], [23], [24], [25], [28], [29], [33], [34], [35], [36], [38], [40], [41], [42], [43], [44], [46], [47], [48], [49], [50], [51], [52], [53], [55], [57], [58], [59], [60], [63], [64], [67], [68], [69], [71], [72], [73], [74], [76], [78], [79], [80], [81], [82], [83], [86], [88], [89], [90], [91], [92], [93], [94], [95], [96], [97], [98], [99], [100], [101], [103], [104], [105], [106], [109], [110], [111], [112], [113], [114], [116], [117], [118], [119], [122], [124], [125], [126], [128], [129], [130], [131], [133], [134], [137], [139], [140], [141], [142], [143], [144], [145], [147], [148], [149], [150], [151], [153], [155], [156], [157], [159], [160], [161], [162], [163], [164], [166], [167], [169], [170], [171], [172], [173], [174], [175], [176], [177], [179], [180], [181], [182], [184], [186], [187], [188], [189], [191], [194], [195], [196], [197], [198], [199], [200], [201], [202], [203], [204], [208]]\n```\nMake the Python for `inTrain` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "data",
+   "### Where entity `data` differs from R\nThe harness compared your entity with R's run:\n- Entity data: the first call where your Python departs from R is `data(Sonar)`. R computes 'Sonar', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `data`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 1.0
+ },
+ "e1071__rd_example__boxplot_bclust_Rd.R": {
+  "aggregate": 0.375,
+  "loss": 1.875,
+  "GV": null,
+  "GS": [
+   "data",
+   "### Where entity `data` differs from R\nThe harness compared your entity with R's run:\n- Entity data: the first call where your Python departs from R is `data(iris)`. R computes 'iris', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `data`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 1.0
+ },
+ "fansi__rd_example__normalize_state_Rd.R": {
+  "aggregate": 0.7710716836970524,
+  "loss": 2.06,
+  "GV": [
+   "identical",
+   "### What R prints for this statement\nWhen R runs entity `identical`, it prints exactly:\n```\n[1] FALSE\n```\nMake the Python for `identical` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "identical",
+   "### Where entity `identical` differs from R\nThe harness compared your entity with R's run:\n- R prints: '[1] FALSE' | yours: 'True'\n- Entity identical: the first call where your Python departs from R is `normalize_state(\"\\033[31;32mhello\\033[m\")`. R computes '\\x1b[32mhello\\x1b[39m', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `identical`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.389,
+  "GS_loss": 0.389
+ },
+ "farver__rd_example__as_white_ref_Rd.R": {
+  "aggregate": 0.8210526315789474,
+  "loss": 0.358,
+  "GV": [
+   "as_white_ref_1",
+   "### What R prints for this statement\nWhen R runs entity `as_white_ref_1`, it prints exactly:\n```\nX   Y   Z \n 75 100  75\n```\nMake the Python for `as_white_ref_1` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "as_white_ref_1",
+   "### Where entity `as_white_ref_1` differs from R\nThe harness compared your entity with R's run:\n- R prints: 'X   Y   Z ' | yours: 'X     75.0'\n- R prints: ' 75 100  75' | yours: 'Y    100.0'\n- R prints: '(nothing)' | yours: 'Z     75.0'\n- Entity as_white_ref: every value R computes inside it (2 calls) also appears among the 3 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `as_white_ref_1`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.2,
+  "GS_loss": 0.2
+ },
+ "farver__rd_example__convert_colour_Rd.R": {
+  "aggregate": 0.4428729456384324,
+  "loss": 2.229,
+  "GV": [
+   "spectrum",
+   "### What R computes for this statement\nWhat R computes for entity `spectrum`: its variables hold these values (as JSON):\n```\nspectrum = [[255, 0, 0], [255, 153, 0], [204, 255, 0], [51, 255, 0], [0, 255, 102], [0, 255, 255], [0, 102, 255], [51, 0, 255], [204, 0, 255], [255, 0, 153]]\n```\nMake the Python for `spectrum` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "spectrum",
+   "### Where entity `spectrum` differs from R\nThe harness compared your entity with R's run:\n- spectrum: spectrum[1][1]: 153 != 170 (outside tolerance)\n- Entity spectrum: the first call where your Python departs from R is `decode_colour(rainbow(10))`. R computes [255, 0, 0, 255, 153, 0, ...] (length 30), and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `spectrum`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 0.75
+ },
+ "farver__rd_example__encode_colour_Rd.R": {
+  "aggregate": 0.6946808510638298,
+  "loss": 1.527,
+  "GV": [
+   "spectrum",
+   "### What R computes for this statement\nWhat R computes for entity `spectrum`: its variables hold these values (as JSON):\n```\nspectrum = [[255, 0, 0], [255, 153, 0], [204, 255, 0], [51, 255, 0], [0, 255, 102], [0, 255, 255], [0, 102, 255], [51, 0, 255], [204, 0, 255], [255, 0, 153]]\n```\nMake the Python for `spectrum` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "spectrum",
+   "### Where entity `spectrum` differs from R\nThe harness compared your entity with R's run:\n- spectrum: spectrum[0][0]: 255 != 1.0 (outside tolerance)\n- Entity spectrum: the first call where your Python departs from R is `decode_colour(rainbow(10))`. R computes [255, 0, 0, 255, 153, 0, ...] (length 30), and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `spectrum`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 0.75
+ },
+ "ggplot2__rd_example__geom_bin_2d_Rd.R": {
+  "aggregate": 0.5,
+  "loss": 2.0,
+  "GV": null,
+  "GS": [
+   "geom_bin_2d_2",
+   "### Where entity `geom_bin_2d_2` differs from R\nThe harness compared your entity with R's run:\n- Entity geom_bin_2d: every value R computes inside it (1 calls) also appears among the 2 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `geom_bin_2d_2`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.5
+ },
+ "gtable__rd_example__gtable_add_cols_Rd.R": {
+  "aggregate": 0.7,
+  "loss": 3.0,
+  "GV": [
+   "rect",
+   "### What R computes for this statement\nWhat R computes for entity `rect`: its variables hold these values (as JSON):\n```\nrect = {\"x\": 0.5, \"y\": 0.5, \"width\": 1, \"height\": 1, \"just\": \"centre\", \"hjust\": {}, \"vjust\": {}, \"name\": \"GRID.rect.1\", \"gp\": {\"fill\": \"#00000080\"}, \"vp\": {}}\n```\nMake the Python for `rect` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "rect",
+   "### Where entity `rect` differs from R\nThe harness compared your entity with R's run:\n- rect: missing in Python output (R={'x': 0.5, 'y': 0.5, 'width': 1, 'height': 1, 'just': 'centre', 'hjust': {}, 'vjust': {}, 'name': 'GRID.rect.1', 'gp': {\u2026)\n- Entity rect: the first call where your Python departs from R is `rectGrob(gp = gpar(fill = \"#00000080\"))`. R computes [0.5, 0.5, 1, 1] (length 4), and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `rect`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 0.75
+ },
+ "htmltools__rd_example__builder_Rd.R": {
+  "aggregate": 0.5,
+  "loss": 1.5,
+  "GV": [
+   "tags$html",
+   "### What R prints for this statement\nWhen R runs entity `tags$html`, it prints exactly:\n```\n<html>\n  <body>\n    <h1>My first heading</h1>\n    <p>\n      My first paragraph, with some \n      <strong>bold</strong>\n       text.\n    </p>\n    <div id=\"myDiv\" class=\"simpleDiv\">Here is a div with some attributes.</div>\n  </body>\n</html>\n```\nMake the Python for `tags$html` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "tags$audio",
+   "### Where entity `tags$audio` differs from R\nThe harness compared your entity with R's run:\n- R prints: '<audio controls>' | yours: '(nothing)'\n- R prints: '  <source src=\"myfile.wav\" type=\"audio/wav\"/>' | yours: '(nothing)'\n- R prints: '</audio>' | yours: '(nothing)'\n- Entity tags$audio: the first call where your Python departs from R is `tags$audio(controls = NA, tags$source(src = \"myfile.wav\", type = \"audio/wav\"))`. R computes '<audio controls>\\n  <source src=\"myfile.wav\" type=\"audio/wav\"/>\\n</audio>', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `tags$audio`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.5,
+  "GS_loss": 0.5
+ },
+ "openssl__rd_example__aes_cbc_Rd.R": {
+  "aggregate": 0.5500161047884904,
+  "loss": 2.25,
+  "GV": null,
+  "GS": [
+   "x",
+   "### Where entity `x` differs from R\nThe harness compared your entity with R's run:\n- x: x: 'WAoAAAADAAQGAAADBQAAAAAFVVRGLTgAAAMTAAAABQAAAA4AAACWQBRmZmZmZmZAE5mZmZmZ\\nmkASzMzMzMzNQBJmZmZmZmZAFAAAAAAAAEAVmZmZmZmaQBJmZmZmZmZAFAAAAAAAAEARmZmZ\\nmZmaQBOZmZmZmZpAFZmZmZmZmkATMzMzMzMzQBMzMzMzMzNAETMzMzMzM0AXMzMzMzMzQBbM\\nzMzMzM1AFZm\n- iris: infra failure rescued by fallback (score 0.960): iris: column sets differ \u2014 only_r=[] only_py=['species'] \u2014 R={'Sepal.Length': [5.1, 4.9, 4.7, 4.6, 5, 5.4, 4.6, 5, 4.4, 4.9, 5.4, 4.8, 4.8, 4.3, 5.8, 5.7, 5.4, 5.1, 5.7, 5.1, 5.4, 5\u2026 Py\nFix exactly these differences in `x`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.75
+ },
+ "openssl__rd_example__ec_dh_Rd.R": {
+  "aggregate": 0.6755499153976311,
+  "loss": 1.947,
+  "GV": [
+   "alice_key",
+   "### What R computes for this statement\nWhat R computes for entity `alice_key`: its variables hold these values (as JSON):\n```\nalice_key = \"MIHcAgEBBEIBupdznYS4WkyL0q4ByUEwJ5e2wOE+YO1HVm1iUHehjprNHvqsqdfwFXe0QUXN\\nQLKe6I+/TuTmUUOfbFr78J+o2bagBwYFK4EEACOhgYkDgYYABAEeaL6y7CmJ3bVM2Mgg+yRo\\npKWGo8Eb/lyZHMAbej2Ohr3VgmIwv41coH66j3B9eGwqDqs3D7te1qpxFkFGE14ifAFd8JOM\\n8ejjuHEr99zdCqZhYPY3oiyKtY4xhrRGFAQOMeaVbEvuG+4zLBcfaBsOsDy+smmWK/Ngk0Ov\\nB7vBPl7vvQ==\"\n```\nMake the Python for `alice_key` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "alice_key",
+   "### Where entity `alice_key` differs from R\nThe harness compared your entity with R's run:\n- alice_key: alice_key: Python has no text form to compare with the R object's\n- Entity alice_key: the first call where your Python departs from R is `ec_keygen(\"P-521\")`. R computes 'MIHcAgEBBEIAihv2tsNHXb5KazFKyH+1qcG39R0aQCGVJqM+gG/9/e3v8FJl2zCi+X+pwxwN\\nRPJPisIRUlLiMGsI3wfR4Ddp2n2', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `alice_key`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 0.75
+ },
+ "openssl__vignette__bignum_s2.R": {
+  "aggregate": 0.362081522264078,
+  "loss": 3.19,
+  "GV": [
+   "y",
+   "### What R computes for this statement\nWhat R computes for entity `y`: its variables hold these values (as JSON):\n```\ny = \"AbabS6zQXxU=\"\n```\nMake the Python for `y` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "y",
+   "### Where entity `y` differs from R\nThe harness compared your entity with R's run:\n- y: infra failure rescued by fallback (score 0.067): y: type mismatch \u2014 R=str 'AbabS6zQXxU=' Python=int 123456789123456789\n- Entity y: the first call where your Python departs from R is `bignum(\"123456789123456789\")`. R computes 'AbabS6zQXxU=', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `y`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.7,
+  "GS_loss": 0.7
+ },
+ "pROC__rd_example__coords_Rd.R": {
+  "aggregate": 0.41060765196021054,
+  "loss": 11.788,
+  "GV": [
+   "cc",
+   "### What R computes for this statement\nWhat R computes for entity `cc`: its variables hold these values (as JSON):\n```\ncc = {\"sensitivity\": [100, 97.5609756097561, 97.5609756097561, 97.5609756097561, 97.5609756097561, 90.2439024390244, 87.8048780487805, 82.9268292682927, 78.0487804878049, 75.609756097561, 73.1707317073171, 68.2926829268293, 65.8536585365854, 65.8536585365854, 63.4146341463415, 63.4146341463415, 63.4146341463415, 63.4146341463415, 60.9756097560976, 58.5365853658537, 58.5365853658537, 56.0975609756098, 53.6585365853659, 51.219512195122, 51.219512195122, 48.780487804878, 46.3414634146341, 43.9024390243902, 43.9024390243902, 41.4634146341463, 41.4634146341463, 39.0243902439024, 39.0243902439024, 34.1463414634146, 34.1463414634146, 34.1463414634146, 34.1463414634146, 31.7073170731707, 29.2682926829268, 29.2682926829268, 26.8292682926829, 24.390243902439, 21.9512195121951, 19.5121951219512, 14.6341463414634, 12.1951219512195, 9.75609756097561, 7.31707317073171, 4.8780487804878, 2.4390243902439, 0]}\n```\nMake the Python for `cc` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "data",
+   "### Where entity `data` differs from R\nThe harness compared your entity with R's run:\n- aSAH: infra failure rescued by fallback (score 0.009): aSAH: column sets differ \u2014 only_r=['age', 'gender', 'gos6', 'wfns'] only_py=[] \u2014 R={'gos6': ['5', '5', '5', '5', '1', '1', '4', '1', '5', '4', '1', '5', '3', '1', '5', '5', '1', '5', '3\n- Entity data: the first call where your Python departs from R is `data(aSAH)`. R computes 'aSAH', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `data`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.734,
+  "GS_loss": 1.0
+ },
+ "pROC__rd_example__print_Rd.R": {
+  "aggregate": 0.8182773109243697,
+  "loss": 1.272,
+  "GV": null,
+  "GS": [
+   "data",
+   "### Where entity `data` differs from R\nThe harness compared your entity with R's run:\n- Entity data: the first call where your Python departs from R is `data(aSAH)`. R computes 'aSAH', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `data`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 1.0
+ },
+ "prodlim__rd_example__backGround_Rd.R": {
+  "aggregate": 0.6380952380952382,
+  "loss": 2.533,
+  "GV": null,
+  "GS": [
+   "backGround_1",
+   "### Where entity `backGround_1` differs from R\nThe harness compared your entity with R's run:\n- Entity backGround: every value R computes inside it (4 calls) also appears among the 4 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `backGround_1`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.4
+ },
+ "proxy__rd_example__registry_Rd.R": {
+  "aggregate": 0.8114134142805786,
+  "loss": 1.509,
+  "GV": [
+   "length",
+   "### What R prints for this statement\nWhen R runs entity `length`, it prints exactly:\n```\nnames test, mydist\n        FUN function (x, y) x * y\n   distance TRUE\n     PREFUN NA\n    POSTFUN NA\n    convert NA\n       type other\n       loop TRUE\n      C_FUN FALSE\n    PACKAGE proxy\n       abcd FALSE\n    formula NA\n  reference NA\ndescription foo function\n        New NA\n[1] 51\n```\nMake the Python for `length` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "length",
+   "### Where entity `length` differs from R\nThe harness compared your entity with R's run:\n- R prints: 'names test, mydist' | yours: '[1] 51'\n- R prints: '        FUN function (x, y) x * y' | yours: '(nothing)'\n- R prints: '   distance TRUE' | yours: '(nothing)'\n- Entity length: every value R computes inside it (1 calls) also appears among the 0 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `length`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.48,
+  "GS_loss": 0.48
+ },
+ "purrr__rd_example__attr_getter_Rd.R": {
+  "aggregate": 0.630157900528169,
+  "loss": 2.219,
+  "GV": [
+   "x",
+   "### What R computes for this statement\nWhat R computes for entity `x`: its variables hold these values (as JSON):\n```\nx = [\"obj\", \"obj\"]\n```\nMake the Python for `x` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "x",
+   "### Where entity `x` differs from R\nThe harness compared your entity with R's run:\n- Entity x: every value R computes inside it (1 calls) also appears among the 0 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `x`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 0.75
+ },
+ "ragg__rd_example__agg_capture_Rd.R": {
+  "aggregate": 0.4037604364769921,
+  "loss": 4.77,
+  "GV": null,
+  "GS": [
+   "dev.off",
+   "### Where entity `dev.off` differs from R\nThe harness compared your entity with R's run:\n- Entity dev.off: every value R computes inside it (1 calls) also appears among the 5 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `dev.off`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.697
+ },
+ "recipes__rd_example__discretize_Rd.R": {
+  "aggregate": 0.7416189530059539,
+  "loss": 3.101,
+  "GV": [
+   "carbon_binned",
+   "### What R computes for this statement\nWhat R computes for entity `carbon_binned`: its variables hold these values (as JSON):\n```\ncarbon_binned = {\"breaks\": [null, 44.715, 47.1, 49.725, null], \"bins\": 4, \"prefix\": \"bin\", \"labels\": [\"_missing\", \"1\", \"2\", \"3\", \"4\"], \"keep_na\": true}\n```\nMake the Python for `carbon_binned` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "data",
+   "### Where entity `data` differs from R\nThe harness compared your entity with R's run:\n- Entity data: the first call where your Python departs from R is `data(biomass, package = \"modeldata\")`. R computes 'biomass', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `data`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 1.0
+ },
+ "recipes__rd_example__step_kpca_Rd.R": {
+  "aggregate": 0.3690228316704472,
+  "loss": 11.989,
+  "GV": null,
+  "GS": [
+   "data",
+   "### Where entity `data` differs from R\nThe harness compared your entity with R's run:\n- R prints: '> library(ggplot2)' | yours: '(nothing)'\n- R prints: '> data(biomass, package = \"modeldata\")' | yours: '(nothing)'\n- R prints: '> biomass_tr <- biomass[biomass$dataset == \"Training\", ]' | yours: '(nothing)'\n- Entity data: the first call where your Python departs from R is `data(biomass, package = \"modeldata\")`. R computes 'biomass', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `data`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 1.0
+ },
+ "reshape2__rd_example__melt_data_frame_Rd.R": {
+  "aggregate": 0.375,
+  "loss": 2.5,
+  "GV": [
+   "melt",
+   "### What R prints for this statement\nWhen R runs entity `melt`, it prints exactly:\n```\nmonth day variable value\n1       5   1    ozone  41.0\n2       5   2    ozone  36.0\n3       5   3    ozone  12.0\n4       5   4    ozone  18.0\n5       5   5    ozone    NA\n6       5   6    ozone  28.0\n7       5   7    ozone  23.0\n8       5   8    ozone  19.0\n9       5   9    ozone   8.0\n10      5  10    ozone    NA\n11      5  11    ozone   7.0\n12      5  12    ozone  16.0\n13      5  13    ozone  11.0\n14      5  14    ozone  14.0\n15      5  15    ozone  18.0\n16      5  16    ozone  14.0\n17      5  17    ozone  34.0\n18      5  18    ozone   6.0\n19      5  19    ozone  30.0\n20      5  20    ozone  11.0\n21      5  21    ozone   1.0\n22      5  22    ozone  11.0\n23      5  23    ozone   4.0\n24      5  24    ozone  32.0\n25      5  25    ozone    NA\n26      5  26    ozone    NA\n27      5  27    ozone    NA\n28      5  28    ozone  23.0\n29      5  29    ozone  45.0\n30      5  30    ozone 115.0\n31      5  31    ozone  37.0\n32      6   1    ozone    NA\n33      6   2    ozone    NA\n34      6   3    ozone    NA\n35      6   4    ozone    NA\n36      6   5    ozone    NA\n37      6   6    ozone    NA\n38      6   7    ozone  29.0\n39      6   8    ozone    NA\n40      6   9    ozone  71.0\n41      6  10    ozone  39.0\n42      6  11    ozone    NA\n43      6  12    ozone    NA\n44      6  13    ozone  23.0\n45      6  14    ozone    NA\n46      6  15    ozone    NA\n47      6  16    ozone  21.0\n48      6  17    ozone  37.0\n49      6  18    ozone  20.0\n50      6  19    ozone  12.0\n51      6  20    ozone  13.0\n52      6  21    ozone    NA\n53      6  22    ozone    NA\n54      6  23    ozone    NA\n55      6  24    ozone    NA\n56      6  25    ozone    NA\n57      6  26    ozone    NA\n58      6  27    ozone    NA\n59      6  28    ozone    NA\n60      6  29    ozone    NA\n61      6  30    ozone    NA\n62      7   1    ozone 135.0\n63      7   2    ozone  49.0\n64      7   3    ozone  32.0\n65      7   4    ozone    NA\n66      7   5    ozone  64.0\n67      7   6    ozone  40.0\n68      7   7    ozone  77.0\n69      7   8    ozone  97.0\n70      7   9    ozone  97.0\n71      7  10    ozone  85.0\n72      7  11    ozone    NA\n73      7  12    ozone  10.0\n74      7  13    ozone  27.0\n75      7  14    ozone    NA\n76      7  15    ozone   7.0\n77      7  16    ozone  48.0\n78      7  17    ozone  35.0\n79      7  18    ozone  61.0\n80      7  19    ozone  79.0\n81      7  20    ozone  63.0\n82      7  21    ozone  16.0\n83      7  22    ozone    NA\n84      7  23    ozone    NA\n85      7  24    ozone  80.0\n86      7  25    ozone 108.0\n87      7  26    ozone  20.0\n88      7  27    ozone  52.0\n89      7  28    ozone  82.0\n90      7  29    ozone  50.0\n91      7  30    ozone  64.0\n92      7  31    ozone  59.0\n93      8   1    ozone  39.0\n94      8   2    ozone   9.0\n95      8   3    ozone  16.0\n96      8   4    ozone  78.0\n97      8   5    ozone  35.0\n98      8   6    ozone  66.0\n99      8   7    ozone 122.0\n100     8   8    ozone  89.0\n101     8   9    ozone 110.0\n102     8  10    ozone    NA\n103     8  11    \n```\nMake the Python for `melt` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "names(ChickWeight)",
+   "### Where entity `names(ChickWeight)` differs from R\nThe harness compared your entity with R's run:\n- Entity names(ChickWeight): every value R computes inside it (2 calls) also appears among the 3 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `names(ChickWeight)`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.5,
+  "GS_loss": 0.75
+ },
+ "rvest__rd_example__html_table_Rd.R": {
+  "aggregate": 0.2696969696969697,
+  "loss": 8.033,
+  "GV": null,
+  "GS": [
+   "sample1",
+   "### Where entity `sample1` differs from R\nThe harness compared your entity with R's run:\n- sample1: sample1: Python has no text form to compare with the R object's\n- Entity sample1: the first call where your Python departs from R is `minimal_html(\"<table>\\n  <tr><th>Col A</th><th>Col B</th></tr>\\n  <tr><td>1</td><td>x</td></tr>\\n  <tr><td>4</td><td>y</`. R computes '<!DOCTYPE html>\\n<html>\\n<head>\\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\\n<m', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `sample1`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.6
+ },
+ "sass__rd_example__as_sass_Rd.R": {
+  "aggregate": 0.7419108669108669,
+  "loss": 1.549,
+  "GV": [
+   "someFile",
+   "### What R computes for this statement\nWhat R computes for entity `someFile`: its variables hold these values (as JSON):\n```\nsomeFile = \"C:\\\\Users\\\\bened\\\\AppData\\\\Local\\\\Temp\\\\r2py_sandbox_3a9okr20\\\\RtmpCgcbhs\\\\variables5e00e5c1d6a\"\n```\nMake the Python for `someFile` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "input",
+   "### Where entity `input` differs from R\nThe harness compared your entity with R's run:\n- Entity input: the first call where your Python departs from R is `sass_file(someFile)`. R computes '@import \"C:\\\\\\\\Users\\\\\\\\bened\\\\\\\\AppData\\\\\\\\Local\\\\\\\\Temp\\\\\\\\tmpjajgvq7b\\\\\\\\RtmpkvVHFw\\\\\\\\variables8d0425f2462\";', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `input`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 0.75
+ },
+ "sass__rd_example__sass_import_Rd.R": {
+  "aggregate": 0.45,
+  "loss": 2.75,
+  "GV": [
+   "tmp_scss_file",
+   "### What R computes for this statement\nWhat R computes for entity `tmp_scss_file`: its variables hold these values (as JSON):\n```\ntmp_scss_file = \"C:\\\\Users\\\\bened\\\\AppData\\\\Local\\\\Temp\\\\r2py_sandbox_bmb2ho1r\\\\Rtmp0GmfDx\\\\file522c7cde307a.scss\"\n```\nMake the Python for `tmp_scss_file` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "tmp_scss_file",
+   "### Where entity `tmp_scss_file` differs from R\nThe harness compared your entity with R's run:\n- all variables uncomparable: ['tmp_scss_file']\n- Entity tmp_scss_file: the first call where your Python departs from R is `tempfile(fileext = \".scss\")`. R computes 'C:\\\\Users\\\\bened\\\\AppData\\\\Local\\\\Temp\\\\tmpfyq7ngt6\\\\Rtmp4iqlPB\\\\file928022323da8.scss', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `tmp_scss_file`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 0.75
+ },
+ "sessioninfo__rd_example__platform_info_Rd.R": {
+  "aggregate": 0.7523364485981308,
+  "loss": 0.248,
+  "GV": [
+   "platform_info",
+   "### What R prints for this statement\nWhen R runs entity `platform_info`, it prints exactly:\n```\nsetting  value\n version  R version 4.6.0 (2026-04-24 ucrt)\n os       Windows 11 x64 (build 26300)\n system   x86_64, mingw32\n ui       RTerm\n language (EN)\n collate  German_Germany.utf8\n ctype    German_Germany.utf8\n tz       Europe/Berlin\n date     2026-10-07\n pandoc   3.8 @ C:\\\\Users\\\\bened\\\\ANACON~1\\\\Library\\\\bin\\\\pandoc.exe\n quarto   NA\n```\nMake the Python for `platform_info` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "platform_info",
+   "### Where entity `platform_info` differs from R\nThe harness compared your entity with R's run:\n- R prints: 'setting  value' | yours: 'setting                                                 value'\n- R prints: ' version  R version 4.6.0 (2026-04-24 ucrt)' | yours: ' version                                      R version 3.13.9'\n- R prints: ' os       Windows 11 x64 (build 26300)' | yours: '      os                             Windows-11-10.0.26300-SP0'\n- Entity platform_info: every value R computes inside it (1 calls) also appears among the 0 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `platform_info`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.248,
+  "GS_loss": 0.248
+ },
+ "sessioninfo__rd_example__python_info_Rd.R": {
+  "aggregate": 0.8052784704904405,
+  "loss": 0.389,
+  "GV": [
+   "session_info",
+   "### What R prints for this statement\nWhen R runs entity `session_info`, it prints exactly:\n```\n\u2500 Session info \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n setting  value\n version  R version 4.6.0 (2026-04-24 ucrt)\n os       Windows 11 x64 (build 26300)\n system   x86_64, mingw32\n ui       RTerm\n language (EN)\n collate  German_Germany.utf8\n ctype    German_Germany.utf8\n tz       Europe/Berlin\n date     2026-10-07\n pandoc   3.8 @ C:\\\\Users\\\\bened\\\\ANACON~1\\\\Library\\\\bin\\\\pandoc.exe\n quarto   NA\n\n\u2500 Packages \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n package     * version date (UTC) lib source\n cli           3.6.6   2026-04-09 [1] CRAN (R 4.6.0)\n jsonlite    * 2.0.0   2025-03-27 [1] CRAN (R 4.6.0)\n sessioninfo * 1.2.4   2026-06-04 [1] CRAN (R 4.6.1)\n\n [1] C:/Users/bened/Desktop/r2py_v0.3/r2py/stage0/r_env/library\n [2] C:/Users/bened/Desktop/r2py_v0.3/r2py/stage0/r_env/runtime/library\n * \u2500\u2500 Packages attached to the search path.\n\n\u2500 External software \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n setting        value\n cairo          1.18.4\n cairoFT\n pango\n png            1.6.54\n jpeg           9.6\n tiff           LIBTIFF, Version 4.7.1\n tcl            8.6\n curl           8.18.0\n zlib           1.3.1\n bzlib          1.0.8, 13-Jul-2019\n xz             5.8.2\n deflate        1.25\n zstd           1.5.7\n PCRE           10.47 2025-10-21\n ICU            77.1\n TRE            TRE 0.8.0 R_fixes (BSD)\n iconv          win_iconv\n readline\n BLAS\n lapack\n lapack_version 3.12.1\n\n\u2500 Python configuration \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n Python is not available\n\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n```\nMake the Python for `session_info` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "session_info",
+   "### Where entity `session_info` differs from R\nThe harness compared your entity with R's run:\n- R prints: ' version  R version 4.6.0 (2026-04-24 ucrt)' | yours: ' version  R version 3.13.9'\n- R prints: ' os       Windows 11 x64 (build 26300)' | yours: ' os       Windows 11 AMD64'\n- R prints: ' system   x86_64, mingw32' | yours: ' system   AMD64'\n- Entity session_info: every value R computes inside it (1 calls) also appears among the 0 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `session_info`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.389,
+  "GS_loss": 0.389
+ },
+ "shape__rd_example__filledmultigonal_Rd.R": {
+  "aggregate": 0.6197110423116614,
+  "loss": 7.225,
+  "GV": null,
+  "GS": [
+   "emptyplot",
+   "### Where entity `emptyplot` differs from R\nThe harness compared your entity with R's run:\n- Entity emptyplot: every value R computes inside it (2 calls) also appears among the 7 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `emptyplot`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.394
+ },
+ "shiny__rd_example__actionButton_Rd.R": {
+  "aggregate": 0.5515873015873015,
+  "loss": 1.345,
+  "GV": [
+   "ui",
+   "### What R computes for this statement\nWhat R computes for entity `ui`: its variables hold these values (as JSON):\n```\nui = {\"1\": {\"name\": \"jquery\", \"version\": \"3.7.1\", \"src\": {\"file\": \"www/shared\"}, \"meta\": {}, \"script\": \"jquery.min.js\", \"stylesheet\": {}, \"head\": {}, \"attachment\": {}, \"package\": \"shiny\", \"all_files\": false}, \"2\": {}, \"3\": {}, \"4\": [\"<div class=\\\"container-fluid\\\">\\n  <div class=\\\"form-group shiny-input-container\\\">\\n    <label class=\\\"control-label\\\" id=\\\"obs-label\\\" for=\\\"obs\\\">Number of observations</label>\\n    <input class=\\\"js-range-slider\\\" id=\\\"obs\\\" data-skin=\\\"shiny\\\" data-min=\\\"0\\\" data-max=\\\"1000\\\" data-from=\\\"500\\\" data-step=\\\"1\\\" data-grid=\\\"true\\\" data-grid-num=\\\"10\\\" data-grid-snap=\\\"false\\\" data-prettify-separator=\\\",\\\" data-prettify-enabled=\\\"true\\\" data-keyboard=\\\"true\\\" data-data-type=\\\"number\\\"/>\\n  </div>\\n  <button class=\\\"btn btn-default action-button btn-success\\\" id=\\\"goButton\\\" type=\\\"button\\\"><span class=\\\"action-label\\\">Go!</span></button>\\n  <div class=\\\"shiny-plot-output html-fill-item\\\" id=\\\"distPlot\\\" style=\\\"width:100%;height:400px;\\\"></div>\\n</div>\"]}\n```\nMake the Python for `ui` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "ui",
+   "### Where entity `ui` differs from R\nThe harness compared your entity with R's run:\n- all variables uncomparable: ['ui']\n- Entity ui: the first call where your Python departs from R is `sliderInput(\"obs\", \"Number of observations\", 0, 1000, 500)`. R computes '<div class=\"form-group shiny-input-container\">\\n  <label class=\"control-label\" id=\"obs-label\" for=\"ob', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `ui`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 0.75
+ },
+ "shiny__rd_example__updateRadioButtons_Rd.R": {
+  "aggregate": 0.25,
+  "loss": 0.75,
+  "GV": null,
+  "GS": [
+   "ui",
+   "### Where entity `ui` differs from R\nThe harness compared your entity with R's run:\n- all variables uncomparable: ['ui']\n- Entity ui: every value R computes inside it (6 calls) also appears among the 4 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `ui`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.75
+ },
+ "systemfonts__rd_example__glyph_raster_Rd.R": {
+  "aggregate": 0.663444003216117,
+  "loss": 2.692,
+  "GV": null,
+  "GS": [
+   "R",
+   "### Where entity `R` differs from R\nThe harness compared your entity with R's run:\n- R: infra failure rescued by fallback (score 0.000): R[0]: length 448 vs 150 \u2014 R=[[-603979776, -16777216, -16777216, -16777216, -16777216, -1610612736, 0, 0, -16777216, -16777216, -16777216, -16777216,\u2026 Python=[[0, 0, 0, 0, 0, 0, 0, 0, 0, 0,\n- Entity R: the first call where your Python departs from R is `glyph_raster(glyph$index, font$path, font$index, size = 150)`. R computes [-6.0398e+08, -1.67772e+07, -1.67772e+07, -1.67772e+07, -1.67772e+07, -1.61061e+09, ...] (length 176955), and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `R`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.68
+ },
+ "systemfonts__rd_example__shape_string_Rd.R": {
+  "aggregate": 0.7087910244263869,
+  "loss": 0.874,
+  "GV": [
+   "shape_string",
+   "### What R prints for this statement\nWhen R runs entity `shape_string`, it prints exactly:\n```\n$shape\n   glyph index metric_id string_id x_offset  y_offset x_midpoint\n1      T    55         0         1        0   0.00000        3.5\n2      h    75         0         1        7   0.00000        3.5\n3      i    76         0         1       14   0.00000        1.5\n4      s    86         0         1       17   0.00000        3.0\n5            3         0         1       23   0.00000        1.5\n6      i    76         0         1       26   0.00000        1.5\n7      s    86         0         1       29   0.00000        3.0\n8            3         0         1       35   0.00000        1.5\n9      a    68         0         1       38   0.00000        3.5\n10           3         0         1       45   0.00000        1.5\n11     l    79         0         1       48   0.00000        1.5\n12     o    82         0         1       51   0.00000        3.5\n13     n    81         0         1       58   0.00000        3.5\n14     g    74         0         1       65   0.00000        3.5\n15           3         0         1       72   0.00000        1.5\n16     s    86         0         1       75   0.00000        3.0\n17     t    87         0         1       81   0.00000        1.5\n18     r    85         0         1       84   0.00000        2.0\n19     i    76         0         1       88   0.00000        1.5\n20     n    81         0         1       91   0.00000        3.5\n21     g    74         0         1       98   0.00000        3.5\n22    \\n     0         0         1      105   0.00000        4.5\n23     L    47         0         1        0 -13.40625        3.5\n24     o    82         0         1        7 -13.40625        3.5\n25     o    82         0         1       14 -13.40625        3.5\n26     k    78         0         1       21 -13.40625        3.0\n27     ;    30         0         1       27 -13.40625        1.5\n28           3         0         1       30 -13.40625        1.5\n29     I    44         0         1       33 -13.40625        1.5\n30     t    87         0         1       36 -13.40625        1.5\n31           3         0         1       39 -13.40625        1.5\n32     s    86         0         1       42 -13.40625        3.0\n33     p    83         0         1       48 -13.40625        3.5\n34     a    68         0         1       55 -13.40625        3.5\n35     n    81         0         1       62 -13.40625        3.5\n36     s    86         0         1       69 -13.40625        3.0\n37           3         0         1       75 -13.40625        1.5\n38     m    80         0         1       78 -13.40625        5.0\n39     u    88         0         1       88 -13.40625        3.5\n40     l    79         0         1       95 -13.40625        1.5\n41     t    87         0         1       98 -13.40625        1.5\n42     i    76         0         1      101 -13.40625        1.5\n43     p    83         0         1      104 -13.40625        3.5\n44     l    79         0         1      111 -13.40625        1.5\n45     e    72         0         1      114 -13.40625        3.5\n46 \n```\nMake the Python for `shape_string` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "shape_string",
+   "### Where entity `shape_string` differs from R\nThe harness compared your entity with R's run:\n- R prints: '$shape' | yours: 'id                           text  width  height  size'\n- R prints: '   glyph index metric_id string_id x_offset  y_offset x_midpoint' | yours: '0   1          This is a long string   10.5     9.6    12'\n- R prints: '1      T    55         0         1        0   0.00000        3.5' | yours: '1   1  Look; It spans multiple lines   14.5     9.6    12'\n- Entity shape_string: the first call where your Python departs from R is `shape_string(string)`. R computes [55, 75, 76, 86, 3, 76, ...] (length 364), and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `shape_string`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.443,
+  "GS_loss": 0.443
+ },
+ "textshaping__rd_example__get_font_features_Rd.R": {
+  "aggregate": 0.7390251515899185,
+  "loss": 0.783,
+  "GV": [
+   "get_font_features",
+   "### What R prints for this statement\nWhen R runs entity `get_font_features`, it prints exactly:\n```\n[[1]]\n[1] \"vert\"\n```\nMake the Python for `get_font_features` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "sys_fonts",
+   "### Where entity `sys_fonts` differs from R\nThe harness compared your entity with R's run:\n- sys_fonts: infra failure rescued by fallback (score 0.305): sys_fonts: column sets differ \u2014 only_r=['name', 'variable', 'weight', 'width'] only_py=['bold'] \u2014 R={'path': ['C:\\\\WINDOWS\\\\Fonts\\\\arial.ttf', 'C:\\\\WINDOWS\\\\Fonts\\\\ariblk.ttf', 'C:\n- Entity sys_fonts: the first call where your Python departs from R is `systemfonts::system_fonts()`. R computes [0, 0, 0, 0, 0, 0, ...] (length 405), and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `sys_fonts`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.262,
+  "GS_loss": 0.521
+ },
+ "textshaping__rd_example__lorem_text_Rd.R": {
+  "aggregate": 0.5936984618618748,
+  "loss": 1.219,
+  "GV": [
+   "lorem_text_1",
+   "### What R prints for this statement\nWhen R runs entity `lorem_text_1`, it prints exactly:\n```\n[1] \"\ud0c4\ud575\uc18c\ucd94\uc758 \uc758\uacb0\uc744 \ubc1b\uc740 \uc790\ub294 \ud0c4\ud575\uc2ec\ud310\uc774 \uc788\uc744 \ub54c\uae4c\uc9c0 \uadf8 \uad8c\ud55c\ud589\uc0ac\uac00 \uc815\uc9c0\ub41c\ub2e4. \uad6d\ubb34\ucd1d\ub9ac \ub610\ub294 \uad6d\ubb34\uc704\uc6d0\uc774 \ucd9c\uc11d\uc694\uad6c\ub97c \ubc1b\uc740 \ub54c\uc5d0\ub294 \uad6d\ubb34\uc704\uc6d0 \ub610\ub294 \uc815\ubd80\uc704\uc6d0\uc73c\ub85c \ud558\uc5ec\uae08 \ucd9c\uc11d\u00b7\ub2f5\ubcc0\ud558\uac8c \ud560 \uc218 \uc788\ub2e4, \ub300\ud1b5\ub839\ud6c4\ubcf4\uc790\uac00 1\uc778\uc77c \ub54c\uc5d0\ub294 \uadf8 \ub4dd\ud45c\uc218\uac00 \uc120\uac70\uad8c\uc790 \ucd1d\uc218\uc758 3\ubd84\uc758 1 \uc774\uc0c1\uc774 \uc544\ub2c8\uba74 \ub300\ud1b5\ub839\uc73c\ub85c \ub2f9\uc120\ub420 \uc218 \uc5c6\ub2e4. \uad50\uc721\uc758 \uc790\uc8fc\uc131\u00b7\uc804\ubb38\uc131\u00b7\uc815\uce58\uc801 \uc911\ub9bd\uc131 \ubc0f \ub300\ud559\uc758 \uc790\uc728\uc131\uc740 \ubc95\ub960\uc774 \uc815\ud558\ub294 \ubc14\uc5d0 \uc758\ud558\uc5ec \ubcf4\uc7a5\ub41c\ub2e4.\"\n[2] \"\ub300\ud1b5\ub839\uc774 \uad90\uc704\ub418\uac70\ub098 \uc0ac\uace0\ub85c \uc778\ud558\uc5ec \uc9c1\ubb34\ub97c \uc218\ud589\ud560 \uc218 \uc5c6\uc744 \ub54c\uc5d0\ub294 \uad6d\ubb34\ucd1d\ub9ac, \uc0ac\ud615\uc744 \uc120\uace0\ud55c \uacbd\uc6b0\uc5d0\ub294 \uadf8\ub7ec\ud558\uc9c0 \uc544\ub2c8\ud558\ub2e4. \ubaa8\ub4e0 \uad6d\ubbfc\uc758 \uc7ac\uc0b0\uad8c\uc740 \ubcf4\uc7a5\ub41c\ub2e4. \ubaa8\ub4e0 \uad6d\ubbfc\uc740 \ubc95\ub960\uc774 \uc815\ud558\ub294 \ubc14\uc5d0 \uc758\ud558\uc5ec \uc120\uac70\uad8c\uc744 \uac00\uc9c4\ub2e4.\"\n```\nMake the Python for `lorem_text_1` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "lorem_text_1",
+   "### Where entity `lorem_text_1` differs from R\nThe harness compared your entity with R's run:\n- R prints: '[1] \"\ud0c4\ud575\uc18c\ucd94\uc758 \uc758\uacb0\uc744 \ubc1b\uc740 \uc790\ub294 \ud0c4\ud575\uc2ec\ud310\uc774 \uc788\uc744 \ub54c\uae4c\uc9c0 \uadf8 \uad8c\ud55c\ud589\uc0ac\uac00 \uc815\uc9c0\ub41c\ub2e4. \uad6d\ubb34\ucd1d\ub9ac \ub610\ub294 \uad6d\ubb34\uc704\uc6d0\uc774 \ucd9c\uc11d\uc694\uad6c\ub97c \ubc1b\uc740 \ub54c\uc5d0\ub294 \uad6d\ubb34\uc704\uc6d0 \ub610\ub294 \uc815\ubd80\uc704\uc6d0\uc73c\ub85c \ud558\uc5ec\uae08 \ucd9c\uc11d\u00b7\ub2f5\ubcc0\ud558\uac8c \ud560 \uc218 \uc788\ub2e4, \ub300\ud1b5\ub839\ud6c4\ubcf4\uc790\uac00 1\uc778\uc77c \ub54c\uc5d0\ub294 \uadf8 \ub4dd\ud45c\uc218\uac00 \uc120\uac70\uad8c\uc790 \ucd1d\uc218\uc758 3\ubd84\uc758 1 \uc774\uc0c1\uc774 \uc544\ub2c8\uba74 \ub300\ud1b5\ub839\uc73c' | yours: \"['\uc774\uac83\uc740 \ud14c\uc2a4\ud2b8 \ud14d\uc2a4\ud2b8\uc785\ub2c8\ub2e4', '\uc774\uac83\uc740 \ud14c\uc2a4\ud2b8 \ud14d\uc2a4\ud2b8\uc785\ub2c8\ub2e4']\"\n- R prints: '[2] \"\ub300\ud1b5\ub839\uc774 \uad90\uc704\ub418\uac70\ub098 \uc0ac\uace0\ub85c \uc778\ud558\uc5ec \uc9c1\ubb34\ub97c \uc218\ud589\ud560 \uc218 \uc5c6\uc744 \ub54c\uc5d0\ub294 \uad6d\ubb34\ucd1d\ub9ac, \uc0ac\ud615\uc744 \uc120\uace0\ud55c \uacbd\uc6b0\uc5d0\ub294 \uadf8\ub7ec\ud558\uc9c0 \uc544\ub2c8\ud558\ub2e4. \ubaa8\ub4e0 \uad6d\ubbfc\uc758 \uc7ac\uc0b0\uad8c\uc740 \ubcf4\uc7a5\ub41c\ub2e4. \ubaa8\ub4e0 \uad6d\ubbfc\uc740 \ubc95\ub960\uc774 \uc815\ud558\ub294 \ubc14\uc5d0 \uc758\ud558\uc5ec \uc120\uac70\uad8c\uc744 \uac00\uc9c4\ub2e4.\"' | yours: '(nothing)'\n- Entity lorem_text: every value R computes inside it (1 calls) also appears among the 2 values your Python computes; the difference is in what the entity finally assigns or prints, not in an intermediate step.\nFix exactly these differences in `lorem_text_1`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.467,
+  "GS_loss": 0.467
+ },
+ "textshaping__rd_example__shape_text_Rd.R": {
+  "aggregate": 0.67820306975163,
+  "loss": 0.965,
+  "GV": [
+   "shape_text",
+   "### What R prints for this statement\nWhen R runs entity `shape_text`, it prints exactly:\n```\n$shape\n   glyph index metric_id string_id   x_offset  y_offset\n1      1    55         1         1   0.000000 29.359375\n2      2    75         1         1   7.328125 29.359375\n3      3    76         1         1  14.000000 29.359375\n4      4    86         1         1  16.671875 29.359375\n5      5     3         1         1  22.671875 29.359375\n6      6    76         1         1  26.000000 29.359375\n7      7    86         1         1  28.671875 29.359375\n8      8     3         1         1  34.671875 29.359375\n9      9    68         1         1  38.000000 29.359375\n10    10     3         1         1  44.671875 29.359375\n11    11    79         1         1  48.000000 29.359375\n12    12    82         1         1  50.671875 29.359375\n13    13    81         1         1  57.343750 29.359375\n14    14    74         1         1  64.015625 29.359375\n15    15     3         1         1  70.687500 29.359375\n16    16    86         1         1  74.015625 29.359375\n17    17    87         1         1  80.015625 29.359375\n18    18    85         1         1  83.343750 29.359375\n19    19    76         1         1  87.343750 29.359375\n20    20    81         1         1  90.015625 29.359375\n21    21    74         1         1  96.687500 29.359375\n22    23    47         1         1   0.000000 15.953125\n23    24    82         1         1   6.671875 15.953125\n24    25    82         1         1  13.343750 15.953125\n25    26    78         1         1  20.015625 15.953125\n26    27    30         1         1  26.015625 15.953125\n27    28     3         1         1  29.343750 15.953125\n28    29    44         1         1  32.671875 15.953125\n29    30    87         1         1  36.000000 15.953125\n30    31     3         1         1  39.328125 15.953125\n31    32    86         1         1  42.656250 15.953125\n32    33    83         1         1  48.656250 15.953125\n33    34    68         1         1  55.328125 15.953125\n34    35    81         1         1  62.000000 15.953125\n35    36    86         1         1  68.671875 15.953125\n36    37     3         1         1  74.671875 15.953125\n37    38    80         1         1  78.000000 15.953125\n38    39    88         1         1  88.000000 15.953125\n39    40    79         1         1  94.671875 15.953125\n40    41    87         1         1  97.343750 15.953125\n41    42    76         1         1 100.671875 15.953125\n42    43    83         1         1 103.343750 15.953125\n43    44    79         1         1 110.015625 15.953125\n44    45    72         1         1 112.687500 15.953125\n45    46     3         1         1 119.359375 15.953125\n46    47    79         1         1 122.687500 15.953125\n47    48    76         1         1 125.359375 15.953125\n48    49    81         1         1 128.031250 15.953125\n49    50    72         1         1 134.703125 15.953125\n50    51    86         1         1 141.375000 15.953125\n51    53    68         1         1   0.000000  2.546875\n52    54    81         1         1   6.671875  2.546875\n53    55    71         1 \n```\nMake the Python for `shape_text` print exactly this text, with the same layout and formatting, computed from the data (not pasted as a literal)."
+  ],
+  "GS": [
+   "shape_text",
+   "### Where entity `shape_text` differs from R\nThe harness compared your entity with R's run:\n- R prints: '$shape' | yours: 'id                           text  size  length'\n- R prints: '   glyph index metric_id string_id   x_offset  y_offset' | yours: '0   1          This is a long string    12      21'\n- R prints: '1      1    55         1         1   0.000000 29.359375' | yours: '1   1  Look; It spans multiple lines    12      29'\n- Entity shape_text: the first call where your Python departs from R is `shape_text(string)`. R computes [1, 2, 3, 4, 5, 6, ...] (length 637), and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `shape_text`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.485,
+  "GS_loss": 0.485
+ },
+ "timeDate__rd_example__calendar-isBizday_Rd.R": {
+  "aggregate": 0.8684134070294784,
+  "loss": 0.79,
+  "GV": [
+   "tS",
+   "### What R computes for this statement\nWhat R computes for entity `tS`: its variables hold these values (as JSON):\n```\ntS = {\"Data\": [\"2026-03-01T00:00:00\", \"2026-03-02T00:00:00\", \"2026-03-03T00:00:00\", \"2026-03-04T00:00:00\", \"2026-03-05T00:00:00\", \"2026-03-06T00:00:00\", \"2026-03-07T00:00:00\", \"2026-03-08T00:00:00\", \"2026-03-09T00:00:00\", \"2026-03-10T00:00:00\", \"2026-03-11T00:00:00\", \"2026-03-12T00:00:00\", \"2026-03-13T00:00:00\", \"2026-03-14T00:00:00\", \"2026-03-15T00:00:00\", \"2026-03-16T00:00:00\", \"2026-03-17T00:00:00\", \"2026-03-18T00:00:00\", \"2026-03-19T00:00:00\", \"2026-03-20T00:00:00\", \"2026-03-21T00:00:00\", \"2026-03-22T00:00:00\", \"2026-03-23T00:00:00\", \"2026-03-24T00:00:00\", \"2026-03-25T00:00:00\", \"2026-03-26T00:00:00\", \"2026-03-27T00:00:00\", \"2026-03-28T00:00:00\", \"2026-03-29T00:00:00\", \"2026-03-30T00:00:00\", \"2026-03-31T00:00:00\", \"2026-04-01T00:00:00\", \"2026-04-02T00:00:00\", \"2026-04-03T00:00:00\", \"2026-04-04T00:00:00\", \"2026-04-05T00:00:00\", \"2026-04-06T00:00:00\", \"2026-04-07T00:00:00\", \"2026-04-08T00:00:00\", \"2026-04-09T00:00:00\", \"2026-04-10T00:00:00\", \"2026-04-11T00:00:00\", \"2026-04-12T00:00:00\", \"2026-04-13T00:00:00\", \"2026-04-14T00:00:00\", \"2026-04-15T00:00:00\", \"2026-04-16T00:00:00\", \"2026-04-17T00:00:00\", \"2026-04-18T00:00:00\", \"2026-04-19T00:00:00\", \"2026-04-20T00:00:00\", \"2026-04-21T00:00:00\", \"2026-04-22T00:00:00\", \"2026-04-23T00:00:00\", \"2026-04-24T00:00:00\", \"2026-04-25T00:00:00\", \"2026-04-26T00:00:00\", \"2026-04-27T00:00:00\", \"2026-04-28T00:00:00\", \"2026-04-29T00:00:00\", \"2026-04-30T00:00:00\"], \"format\": \"%Y-%m-%d\", \"FinCenter\": \"GMT\"}\n```\nMake the Python for `tS` compute exactly these values from the data, the way R does (do not paste them as literals)."
+  ],
+  "GS": [
+   "tS",
+   "### Where entity `tS` differs from R\nThe harness compared your entity with R's run:\n- Entity tS: the first call where your Python departs from R is `paste(currentYear, \"-03-01\", sep = \"\")`. R computes '2026-03-01', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `tS`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.75,
+  "GS_loss": 0.75
+ },
+ "xml2__rd_example__xml_attr_Rd.R": {
+  "aggregate": 0.7925782477499073,
+  "loss": 5.393,
+  "GV": null,
+  "GS": [
+   "doc",
+   "### Where entity `doc` differs from R\nThe harness compared your entity with R's run:\n- doc: doc: text forms differ (similarity 0.61) - R '<doc b:id=\"one\" f:id=\"two\" id=\"three\"/>' Python '<doc xmlns:b=\"http://bar.com\" xmlns:f=\"http://foo.com\" b:id=\"one\" f:id=\"two\" id='\n- Entity doc: the first call where your Python departs from R is `xml_children(x)[[1]]`. R computes '<doc b:id=\"b\" f:id=\"f\" id=\"\"/>', and no value of that kind occurs anywhere in your Python for this entity (the calls before it were reproduced).\nFix exactly these differences in `doc`, computing the values from the data the way R does (do not paste them as literals)."
+  ],
+  "GV_loss": 0.0,
+  "GS_loss": 0.517
+ }
+}
