@@ -2937,3 +2937,25 @@ Two structural consequences:
 - **(b) Python-native edit units.** An analysis tool that maps each R entity to the Python statements and helpers
   that actually implement it (def-use, not marker ranges). Edits, merges and guidance then address these connected
   units instead of marker ranges.
+
+**Translation manual, stage 1: one-step test of a frozen design. Registered before building (2026-10-16).** Plan:
+`experiments/TRANSLATION_MANUAL_PLAN.md`.
+
+- **Treatment (`F`):** the best program's helper interfaces (top-level `def` / `class` name and parameters) are
+  frozen for the step.
+  - The turn lists them ("fixed: call them, do not rename them or change their parameters"). The harness enforces
+    it (`r2py/harness/manual.py`): a frozen helper the candidate dropped, renamed away from, or re-parameterised
+    is put back with the best program's definition.
+  - Bodies with an unchanged interface and new helpers are allowed.
+- **Control (`U`):** today's step.
+- **Setting:** `scripts/step_ab.py`, the 40 running training-pool states, production turn and system prompt, the
+  loop's gates and the hardcoding review, 4 samples per arm (320 steps), concurrent.
+- **Measured per step:**
+  - P(improve) (better by the search objective and passing the review);
+  - realized gain;
+  - **damage**: entities verified (>= 0.95) in the best state that fall below 0.95;
+  - attempted interface changes (before enforcement) and restorations;
+  - the candidate's code (kept for an optional cross-sample merge check).
+- **Stop rule (from the plan):** stop if `F` improves less often than `U` (paired over states, 95% interval
+  entirely below 0) **and** does not reduce damage (interval not entirely below 0). Otherwise, go to stage 2
+  (two-step retention).
