@@ -2976,3 +2976,23 @@ The harness restored helpers 8 times in F.
   is unchanged at 28% of steps. Within one step, damage does not come from helper interfaces.
 - Before stage 2 is built on that premise, the saved candidates are checked for what actually damages verified
   entities: their own code rewritten, an upstream change, or a crash.
+
+**What damages verified entities, and does the loop lose progress? (2026-10-16, no model calls.)**
+- **The 272 cases of a verified entity damaged in stage-1 candidates:**
+  - **63% the candidate crashes** (blocked 140, crashed in it 30);
+  - 29% the entity's own code was rewritten;
+  - 9% its code is unchanged but something upstream changed.
+
+  15% of candidates crash although the start runs, the same in U and F. F has more crash-blocked cases (86 vs 54):
+  restored helpers sometimes clash with the candidate's new calls.
+- **Retention across accepted steps of today's loop** (`rewrite_w3` S1, feedback and crash-first replays): 285
+  accepted transitions carried 994 verified entities and **lost 10 (1.0%)**; 8 transitions lose any.
+  Acceptance already filters damage out. **Progress accumulates in the sequential loop.**
+
+**Consequence for the manual plan: its premise is refuted.** The claim "progress cannot accumulate because every
+rewrite redesigns the program" was wrong. Redesign (52% of rewrites) only explains why candidates cannot be
+combined with each other (merging), which the plan already made optional. Stage 2 (retention) has no room: the
+loop retains 99%. The manual is not built further. `r2py/harness/manual.py` stays as a tested utility.
+
+**What does limit the loop:** steps that find no improvement (P = 0.26) and stall. Damage is a wasted step, not lost
+progress, and 63% of it is new crashes.

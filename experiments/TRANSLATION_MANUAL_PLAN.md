@@ -1,5 +1,11 @@
 # Translation manual: plan for real in-loop gains
 
+> **Status 2026-10-16: stopped after stage 1.** Freezing helper interfaces cut interface changes from 15% to 5% of
+> steps, but damage to verified entities stayed at 28%; 63% of that damage is new crashes. Today's loop already
+> keeps 99% of verified entities across accepted steps (994 carried, 10 lost), so progress accumulates and the
+> premise below ("progress cannot accumulate") is refuted. Redesign only blocks *combining* candidates, which is
+> optional. Details: `IMPROVEMENT_PLAN.md`, entries of 2026-10-16.
+
 *Written 2026-10-16, after the agreement in conversation. Evidence for every claim below is logged in
 `experiments/IMPROVEMENT_PLAN.md` (entries of 2026-10-11 to 2026-10-16); the offline material is in
 `work/offline_merge_freeze/`.*
