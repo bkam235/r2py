@@ -2765,3 +2765,35 @@ Where both rejected, the check's flags are partly label lines, but the review's 
 5. **Part of the remaining loss cannot be reached honestly by a Python translation:** R's session details
    (sessioninfo), font metrics from R's font stack (systemfonts), package data (textshaping lorem, farver white
    points). Pasting is the only way to "fix" those, which is exactly what must not be rewarded.
+
+**Environment sizing and the data shim (2026-10-16, no model calls).**
+
+*Correction (user):* R-session facts, font data and package-internal data are reachable honestly, through the
+data shim, as inputs from R's environment. They are not unreachable.
+
+*Sizing.* Entities whose R code reads R's session or system, the clock, or fonts hold **0.8%** of the remaining
+training loss (4.9 of 635 points, 14 scripts). Package-data lookups (lorem text, white points) cannot be found by
+call name, and only a handful were seen. As a score lever an environment shim is small; its value is removing an
+incentive to paste.
+
+*How the shim reaches Gemma.* The turn lists "Data variables (loaded by the data shim)": names, types, columns
+and a usage hint. The code holds a managed placeholder line. `remove_shim_overrides` (which strips assignments to
+shim names) runs only on seeds, never on the agent's rewrites.
+
+**Finding: the shim pre-loads R's results for variables the script computes itself.**
+`collect_shim_needed_names` rule (1), "free variables the script references but does not define", is applied per
+entity. A variable defined in one entity and used in another therefore counts as free.
+
+Over the 125 scripts with a shim:
+- **114 names are true inputs** (datasets);
+- **19 are rule (2)** (RNG or file reads; intended, but RNG is now replayed and could be computed);
+- **41 are script-computed values** in 39 scripts, e.g. clock `info <- zoned_time_info(x)`, hms
+  `d <- data.frame(hours = 1:3)`, lava `e <- estimate(...)`, timeDate `dts`, `tms`.
+
+**Test:** lava's entity `e` replaced by `pass`. The program still runs, `e` counts as executed, and aggregate
+(0.694) and entity score (0.25) are unchanged. Missing code goes unnoticed, and later entities compute from R's
+value rather than Python's. The turn also tells Gemma these names are pre-loaded, an incentive not to compute
+them.
+
+**Overwrites of true inputs:** 381 of 2,838 agent candidates (13%) in the dev replays assign a true shim input
+(e.g. a literal dataset stub). The guard that would strip them is not applied in the loop.
