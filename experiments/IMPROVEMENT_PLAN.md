@@ -2563,3 +2563,38 @@ Against S0, with 95% intervals over 60 cases:
   - stalled share;
   - runs ending with a program that runs.
 - Crash-first stays on in all arms.
+
+**Step 3 result (2026-10-16): no short prompt measurably beats the production prompt in the loop.** 180 runs, 0
+errors, all arms concurrent. A standby overnight (Oct 15 23:35 to Oct 16 13:13) caught no run: the longest took
+29 minutes.
+
+| arm | mean final | P(>= 0.9) | stalled | ends running | steps |
+|---|---|---|---|---|---|
+| S0 production (3,860) | 0.768 | 0.43 | 0.62 | 56/60 | 12.3 |
+| S1 (loop format) | 0.785 | **0.55** | 0.57 | 55/60 | 12.1 |
+| S1b | 0.724 | 0.43 | 0.60 | 52/60 | 11.6 |
+
+Paired per state (registered primary):
+- S1 vs S0: +0.017 [-0.054, +0.085], 6/4/10, p = 0.47.
+- S1b vs S0: -0.045 [-0.104, +0.004], 5/5/10, p = 0.58.
+
+*Split by start state (post hoc, not registered):*
+- **Running starts (12 states):**
+  - S1 +0.038 [-0.002, +0.097], 3/2/7, p = 0.31; rmarkdown 0.64 to 0.96, timeDate 0.85 to 0.98;
+  - S1b +0.003.
+- **Crashing starts (8 states):**
+  - S1 -0.015 [-0.17, +0.13];
+  - S1b -0.116 [-0.24, -0.02].
+
+  These differences come from runs ending at 0.0 (still crashing) in clock, ggplot2, hms, pROC and xml2, which
+  flip between arms.
+
+**Reading.**
+- S1 is the only variant pointing the same way in single calls (+6.7 points adoption) and in the loop (+0.017;
+  +0.038 and P(>= 0.9) 0.43 to 0.55 on running starts). No test reaches significance at 20 states x 3 samples.
+- S1b's extra sentences gain nothing in the loop and do worst on crashing starts.
+- On crashing starts the outcome is dominated by whether the crash gets fixed, which is the crash-first question
+  and the bimodal noise seen in every replay.
+
+Production prompt unchanged for now. The next lever is the crash-first revisit (fallback version), with concurrent
+arms.
