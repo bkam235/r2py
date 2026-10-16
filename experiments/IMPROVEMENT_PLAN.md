@@ -2831,3 +2831,30 @@ Fixes 1-3 go ahead on this evidence:
 1. shim rule (1) admits only names not assigned before their first use;
 2. the overwrite guard runs in the agent loop for names R never assigns;
 3. the turn lists only those inputs, with a plain instruction.
+
+**Shim fixes 1-3 done (2026-10-16).** Tests: `tests/test_shim_leak.py` (4); full suite 967 passed, only the known
+`test_stage2` locale failure.
+1. **`collect_shim_needed_names` rule (1)** admits a name only if no entity assigns it before its first use
+   (`_first_assign_and_use`: an assignment entity defines; a bare reference, e.g. `storms`, uses).
+   - Over the dev and training maps: 174 names in 125 scripts become 138 in 103. **Exactly the 36 leaked names
+     go**; 116 never-assigned inputs, 3 inputs reassigned after use and 19 RNG/read names stay.
+   - Existing translations are corrected as well: their shim blocks keep the old list, but the sidecar no longer
+     carries the leaked names.
+2. **Overwrite guard:** `remove_shim_overrides` now strips only names R never assigns (`shim_input_names`), on the
+   seed path and **in every agent rewrite**, with an outcome stat and a history note. Before, the seed stripped
+   all shim names, including legitimate reassignments such as `storms <- head(storms)`, and the loop stripped
+   nothing.
+3. **The turn** names these inputs: "already loaded when your code runs ... Use them as they are; never assign
+   them or write their values as literals."
+
+**Re-verified with the fix** (no model calls), matching the counterfactual:
+- lubridate 0.850 to **1.000**, reshape2 0.812 to **1.000** (correct code now credited);
+- tidyr complete 1.000 to **0.000**, tagQuery 1.000 to **0.000** (they relied on R's result);
+- caret 0.778 unchanged.
+
+**Scores from before this fix are not comparable with scores after it** for the 27 affected scripts. Comparisons
+within one experiment stay valid: both arms had the same shim.
+
+*Not fixed, noted:* the verifier's name-based skip (`_r2py_prev_ns`) still hides recomputed values of the 19
+RNG/read pre-loads and the 3 reassigned inputs. RNG draws are now replayed, so the RNG pre-loads could be dropped
+and computed; a separate, tested change.

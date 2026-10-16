@@ -210,10 +210,15 @@ def collect_shim_needed_names(script_map: "ScriptMap") -> list[str]:
 
     needed: set[str] = set()
 
-    # (1) Free variable refs the script references but does not define.
+    # (1) Free variable refs the script references but does not define. Judged per entity this let in names
+    # the script computes before using them (lava `e <- estimate(...)`, then `e`): R's result was pre-loaded,
+    # so code that never computed it still ran, and code that did got no credit (the verifier skips names bound
+    # before the first entity). 36 names in 27 scripts, 2026-10-16. Only names used before any assignment count.
+    first_assign, first_use = _first_assign_and_use(script_map)
     for e in entities.values():
         for ref in getattr(e, "free_variable_refs", []) or []:
-            if ref in captured:
+            if ref in captured and (ref not in first_assign
+                                    or (ref in first_use and first_use[ref] < first_assign[ref])):
                 needed.add(ref)
 
     # (2) Names defined by RNG/read entities — overridden by R-captured
@@ -240,6 +245,37 @@ def collect_shim_needed_names(script_map: "ScriptMap") -> list[str]:
                 needed.add(name)
 
     return sorted(needed)
+
+
+def _first_assign_and_use(script_map: "ScriptMap") -> tuple[dict[str, int], dict[str, int]]:
+    """Per name, the first R source line that assigns it and the first that uses it (entity granularity).
+
+    An entity assigns its name when its R code is an assignment to that name; a bare `storms` printing a
+    package dataset is a use, not a definition (it is named after the variable all the same)."""
+    entities = getattr(script_map, "entities", {}) or {}
+    lines = (getattr(script_map, "source", "") or "").splitlines()
+    first_assign: dict[str, int] = {}
+    first_use: dict[str, int] = {}
+    for e in sorted(entities.values(), key=lambda x: getattr(getattr(x, "source_span", None), "start_line", 0)):
+        span = getattr(e, "source_span", None)
+        if span is None:
+            continue
+        seg = _R_COMMENT_RE.sub("", "\n".join(lines[max(0, span.start_line):span.end_line + 1]))
+        name = getattr(e, "name", None) or ""
+        assigns = bool(name) and re.search(rf"(^|\n)\s*`?{re.escape(name)}`?\s*(<<-|<-|=)", seg) is not None
+        if assigns:
+            first_assign.setdefault(name, span.start_line)
+        elif name:
+            first_use.setdefault(name, span.start_line)
+        for ref in getattr(e, "free_variable_refs", []) or []:
+            first_use.setdefault(ref, span.start_line)
+    return first_assign, first_use
+
+
+def shim_input_names(script_map: "ScriptMap") -> list[str]:
+    """Shim names the R script never assigns: the ones a translation must use as they are and never overwrite."""
+    first_assign, _ = _first_assign_and_use(script_map)
+    return [n for n in collect_shim_needed_names(script_map) if n not in first_assign]
 
 
 def remove_shim_overrides(text: str, shim_names: set[str]) -> str:

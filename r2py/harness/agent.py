@@ -25,7 +25,9 @@ from ..stage2.stitch import (
     DATA_SHIM_RE as _SHIM_RE,
     hide_data_shim,
     rebuild_entity_line_map,
+    remove_shim_overrides,
     shadow_autofix,
+    shim_input_names,
     show_data_shim,
     splice_entity,
 )
@@ -142,6 +144,10 @@ def reason(
         script_map, skip_eids=expanded_eids,
     )
     unavailable_packages = _get_unavailable_packages(script_map)
+    try:
+        shim_inputs = set(shim_input_names(script_map)) if getattr(script_map, "entities", None) else set()
+    except Exception:          # a script map without spans or bundles has no shim
+        shim_inputs = set()
 
     is_openrouter = model.startswith("openrouter:")
     system_prompt = _prompt.with_runtime_note(
@@ -413,6 +419,15 @@ def reason(
             if shim_restored:
                 print("[Agent]   Data shim block was altered; restored the original")
                 _stat("outcome", f"{action_type}:shim_restored")
+            # Inputs the shim loads from R are the authoritative values: an assignment to one (a literal
+            # stub of a dataset, 13% of the dev candidates, 2026-10-16) is stripped, as on the seed path.
+            if shim_inputs:
+                guarded = remove_shim_overrides(new_source, shim_inputs)
+                if guarded != new_source:
+                    _stat("outcome", f"{action_type}:shim_override_removed")
+                    history.append(f"Step {step}: NOTE - you assigned a name the data shim loads from R "
+                                   f"({', '.join(sorted(shim_inputs))}); the harness removed it. Use these as they are.")
+                    new_source = guarded
             if runtime is not None:   # the managed block of verified functions follows what the code references
                 synced = runtime.sync(new_source)
                 if synced != new_source:

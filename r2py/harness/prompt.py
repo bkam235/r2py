@@ -315,6 +315,14 @@ def _format_data_vars(script_map: "ScriptMap", sidecar_filename: str = "") -> st
             parts.append(f"  {name}: {type(val).__name__}")
     if not parts:
         return ""
+    from ..stage2.stitch import shim_input_names
+    inputs = shim_input_names(script_map)
+    if inputs:
+        # 2026-10-16: the turn listed names without saying what to do; 13% of agent candidates assigned one
+        # (a literal stub of the data), which the harness now strips.
+        parts.append("")
+        parts.append(f"  These are R's own input data, already loaded when your code runs: {', '.join(inputs)}. "
+                     "Use them as they are; never assign them or write their values as literals.")
     if sidecar_filename:
         shim_text = build_data_shim(shim_needed, sidecar_filename)
         if shim_text:

@@ -642,8 +642,10 @@ def _assemble(
         shim_text = build_data_shim(
             shim_needed, sidecar_filename, script_relpath=script_relpath
         )
-        # Strip assignments to shim-loaded names.
-        python_code = remove_shim_overrides(python_code, set(shim_needed))
+        # Strip assignments to shim-loaded names R never assigns (an input the script reassigns, like
+        # `storms <- head(storms)`, must keep its assignment).
+        from .stage2.stitch import shim_input_names
+        python_code = remove_shim_overrides(python_code, set(shim_input_names(script_map)))
 
     parts = [header]
     if shim_text:
