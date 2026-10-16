@@ -2719,3 +2719,49 @@ checked by hand.
   - If it mostly rejects computed code, the review is recalibrated **only** in a way that keeps rejecting what
     the deterministic check and the manual check identify as pasting.
   - No change may let pasting through.
+
+**Review check result (2026-10-16): the hardcoding review is mostly right. Guidance with R's values invites
+pasting, and the gain it seemed to bring was largely pasting.** 360 steps (353 verified), 149 improving
+candidates kept.
+
+Review verdict against the deterministic check:
+
+| | check: pasted | check: clean |
+|---|---|---|
+| review rejected | 16 | 31 |
+| review accepted | 3 | 99 |
+
+Review rejections per arm: U 10/41 (24%), GV 22/57 (39%), GS 15/51 (29%).
+
+**Manual reading (by me), 20 of the 31 "rejected but clean":**
+- **18 real hardcoding:**
+  - farver: `if n == 10: return [[255, 0, 0], [255, 153, 0], ...]`, R's `rainbow(10)` for the script's input (5);
+  - farver encode: a table of R's HCL values to 6 decimals, commented "we use the known R values" (1);
+  - sessioninfo: `"R version 4.6.0 (2026-04-24 ucrt)"` and other R-session facts (7);
+  - systemfonts: a glyph-metric table (2);
+  - fansi: input-to-output lookup tables, `if x == "hello\033[42;33m world": return "..."` (3).
+- **1 false positive:** farver, the review objected to the harness's own data shim.
+- **1 borderline:** textshaping's lorem text, constant data from the R package.
+
+**12 accepted candidates (one per script):**
+- 10 compute their results;
+- 1 borderline (farver's white-point table, package data);
+- 0 clear pasting.
+
+**3 "accepted but flagged":**
+- 2 are print-layout labels, not pasting;
+- 1 is partial hardcoding the review let through: caret's `"Pre-processing: centered (4), scaled (4)"`.
+
+Where both rejected, the check's flags are partly label lines, but the review's reasons are real hardcoding.
+
+**Conclusions.**
+1. **The review stays; it is not the bottleneck.** Its rejections are overwhelmingly correct.
+2. **Showing R's values (GV) raises hardcoding** (39% of its improving candidates rejected vs 24% unguided). The
+   pre-review "+0.024" of GV was largely pasting, so step-level guidance gains about 0 once pasting is excluded.
+3. **The deterministic check misses common forms of pasting:** small-integer tables, values rounded from R's
+   precision, and input-to-output lookup tables keyed on the script's literals. It also flags print-layout
+   labels. It must not be relied on alone.
+4. **The review also leaks** (caret's literal "(4)"). Neither gate alone is sufficient.
+5. **Part of the remaining loss cannot be reached honestly by a Python translation:** R's session details
+   (sessioninfo), font metrics from R's font stack (systemfonts), package data (textshaping lorem, farver white
+   points). Pasting is the only way to "fix" those, which is exactly what must not be rewarded.
