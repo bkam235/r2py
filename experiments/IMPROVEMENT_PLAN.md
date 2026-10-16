@@ -2675,3 +2675,27 @@ The crash fallback's trigger was checked on broom: each branch made one full rew
 
 The guidance is frozen in `work/step_ab/targets.json`. Breaking entities down extends guidance from 27 to 40 states
 and from 15% to 25% of the loss in reach of one step.
+
+**Step 2 result (2026-10-16): no guided arm beats unguided; step 3 is not triggered.** 480 steps, 0 errors,
+about 70 minutes.
+
+| arm | P(improve) | best of 3 | realized gain/step | followed entity | review rejections |
+|---|---|---|---|---|---|
+| U | 0.26 | 0.59 | +0.0485 | +0.096 | 16 |
+| GV whole value | 0.27 | 0.61 | +0.0581 | +0.123 | **30** |
+| GS structured | 0.27 | 0.61 | +0.0515 | +0.085 | 20 |
+
+Realized gain against U, paired over 40 states:
+- GV +0.0096 [-0.0070, +0.0306];
+- GS +0.0030 [-0.0146, +0.0226].
+
+*Post hoc: before the hardcoding review.*
+- Improving candidates: U 57, GV 73, GS 63 of 160.
+- Without the review, **GV +0.0239 [+0.0057, +0.0450]** against U; GS +0.0067 [-0.0097, +0.0268].
+- Whole-value guidance produces more improving rewrites, but the review rejects twice as many (30 vs 16), which
+  cancels the gain.
+- **Even unguided, the review discards 16 of 57 improving candidates (28%).**
+
+The rig did not keep the code or the review's reasons, so whether those rejections are literal pasting (correctly
+rejected) or false positives of a model-based review is not known. That is the next, cheap question. If they are
+false positives, the review gate costs every arm about a quarter of its improvements.

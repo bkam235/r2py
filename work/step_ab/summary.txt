@@ -1,0 +1,10 @@
+480 steps; errors 0
+U   steps  160  P(improve) 0.26  (best of 3: 0.59)  mean realized gain +0.0485  followed entity +0.096  no rewrite 3  gate 4  review rej 16
+GV  steps  160  P(improve) 0.27  (best of 3: 0.61)  mean realized gain +0.0581  followed entity +0.123  no rewrite 0  gate 1  review rej 30
+GS  steps  160  P(improve) 0.27  (best of 3: 0.61)  mean realized gain +0.0515  followed entity +0.085  no rewrite 0  gate 2  review rej 20
+GV vs U, realized gain: +0.0096 [-0.0070, +0.0306]  (40 states)
+GV vs U, P(improve): +0.0125 [-0.0563, +0.0938]  (40 states)
+GS vs U, realized gain: +0.0030 [-0.0146, +0.0226]  (40 states)
+GS vs U, P(improve): +0.0125 [-0.0625, +0.0938]  (40 states)
+
+Decision: no guided arm beats U
