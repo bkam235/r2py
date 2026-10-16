@@ -2959,3 +2959,20 @@ Two structural consequences:
 - **Stop rule (from the plan):** stop if `F` improves less often than `U` (paired over states, 95% interval
   entirely below 0) **and** does not reduce damage (interval not entirely below 0). Otherwise, go to stage 2
   (two-step retention).
+
+**Manual stage 1 result (2026-10-16).** 320 steps, 0 errors; 31 of the 40 states have helpers (median 2).
+
+| | U | F (frozen, enforced) | F - U, paired over states |
+|---|---|---|---|
+| attempted helper-interface change | 14.6% | **5.1%** | |
+| P(improve) | 0.263 | 0.287 | +0.025 [-0.044, +0.094] |
+| **P(damage a verified entity)** | **0.280** | **0.276** | +0.010 [-0.048, +0.081] |
+| realized gain per step | +0.0455 | +0.0322 | -0.013 [-0.032, +0.002] |
+
+The harness restored helpers 8 times in F.
+
+- **Registered decision: go on to stage 2.** F does not improve less often.
+- **But the premise is weakened.** Freezing cuts interface changes by two thirds, yet damage to verified entities
+  is unchanged at 28% of steps. Within one step, damage does not come from helper interfaces.
+- Before stage 2 is built on that premise, the saved candidates are checked for what actually damages verified
+  entities: their own code rewritten, an upstream change, or a crash.
