@@ -116,7 +116,7 @@ def run_one(task: dict) -> dict:
         cfg = manifest["protocol"]["translate"]
         stem, sm, tools, base, annotated = _setup(name, task["state"])
         row["before"] = round(base.aggregate, 4)
-        guide = t.get(arm) if arm != "U" else None
+        guide = t.get(arm) if arm in ("GV", "GS") else None
         row["guided_entity"] = guide[0] if guide else None
         common = (t.get("GS") or t.get("GV") or [None])[0]       # the same entity is followed in every arm
         row["common_entity"] = common
@@ -126,7 +126,13 @@ def run_one(task: dict) -> dict:
                                   history=[], sidecar_filename=f"{stem}.r2py_data.json")
         if guide:
             msgs[-1]["content"] += "\n\n" + guide[1]
-        system = P.without_replace_entity(P.with_runtime_note(P.AGENT_SYSTEM_PROMPT_OPENROUTER))
+        from r2py.harness.manual import enforce_interfaces, interface_note
+        if arm == "F":      # manual stage 1: the best program's helper interfaces are frozen for this step
+            note = interface_note(annotated)
+            if note:
+                msgs[-1]["content"] += "\n\n" + note
+            row["frozen_helpers"] = bool(note)
+        system =P.without_replace_entity(P.with_runtime_note(P.AGENT_SYSTEM_PROMPT_OPENROUTER))
         with ho.pinned_llm(GEMMA, ho.llm_settings(manifest)):
             raw = llm.call(msgs, system, model=GEMMA, max_tokens=16384)
             action = _parse_action(raw)
@@ -135,7 +141,15 @@ def run_one(task: dict) -> dict:
                 return row
             src = show_data_shim(annotated, action["new_source"])
             src, _ = restore_data_shim(annotated, src)
+            enforced, info = enforce_interfaces(annotated, src)
+            row["interface_changed"] = info["changed"]            # attempted, measured in every arm
+            if arm == "F":
+                src = enforced
+                row["interface_restored"] = info["restored"]
             src, _ = repair_argument_order(src)
+            code_dir = Path(task["out"]) / "code"
+            code_dir.mkdir(parents=True, exist_ok=True)
+            (code_dir / f"{stem}.{arm}.{task['sample']}.all.py").write_text(src, encoding="utf-8")
             if _check_syntax(src) or unavailable_imports(src, _SKIP_PACKAGES):
                 row.update(outcome="gate rejected", gain=0.0, improved=False)
                 return row
@@ -146,6 +160,10 @@ def run_one(task: dict) -> dict:
             row["exit_after"] = new.py_exit_code
             if common and common in new.by_entity:
                 row["common_after"] = round(obj.entity_score(new.by_entity[common]), 4)
+            # damage: entities verified in the best state (>= 0.95) that this candidate pushes below 0.95
+            row["verified_before"] = sum(obj.entity_score(es) >= 0.95 for es in base.by_entity.values())
+            row["damaged"] = sum(1 for k, es in base.by_entity.items() if obj.entity_score(es) >= 0.95
+                                 and (k not in new.by_entity or obj.entity_score(new.by_entity[k]) < 0.95))
             better = obj.better(new, base)
             if better:
                 passed, reason = review_translation(sm.source or "", src, sm, model=GEMMA)
@@ -170,15 +188,15 @@ def run_one(task: dict) -> dict:
     return row
 
 
-def run(samples: int, workers: int) -> None:
+def run(samples: int, workers: int, arms=ARMS) -> None:
     targets = json.loads((ROOT / "work/step_ab/targets.json").read_text(encoding="utf-8"))
     states = running_states()
     path = OUT / "results.jsonl"
     done = [json.loads(l) for l in path.open(encoding="utf-8")] if path.exists() else []
     finished = {(r["script"], r["arm"], r["sample"]) for r in done if r.get("outcome") != "provider_unavailable"}
     tasks = [{"name": n, "arm": a, "sample": s, "state": states[n], "targets": targets[n], "out": str(OUT)}
-             for s in range(samples) for n in sorted(targets) for a in ARMS if (n, a, s) not in finished]
-    print(f"{len(targets)} states x {len(ARMS)} arms x {samples} samples: {len(tasks)} steps to do", flush=True)
+             for s in range(samples) for n in sorted(targets) for a in arms if (n, a, s) not in finished]
+    print(f"{len(targets)} states x {len(arms)} arms x {samples} samples: {len(tasks)} steps to do", flush=True)
     outages = 0
     with multiprocessing.get_context("spawn").Pool(workers) as pool, path.open("a", encoding="utf-8") as fh:
         for i, row in enumerate(pool.imap_unordered(run_one, tasks), 1):
@@ -238,6 +256,7 @@ def main() -> int:
     p = sub.add_parser("run")
     p.add_argument("--samples", type=int, default=4)
     p.add_argument("--workers", type=int, default=6)
+    p.add_argument("--arms", nargs="+", default=list(ARMS), choices=["U", "GV", "GS", "F"])
     sp = sub.add_parser("summary")
     for q in (p, sp):
         q.add_argument("--tag", default="", help="separate output directory; guidance stays work/step_ab/targets.json")
@@ -250,7 +269,7 @@ def main() -> int:
         guidable()
         return 0
     if args.cmd == "run":
-        run(args.samples, args.workers)
+        run(args.samples, args.workers, args.arms)
     text = summary()
     print("\n" + text)
     (OUT / "summary.txt").write_text(text + "\n", encoding="utf-8")
