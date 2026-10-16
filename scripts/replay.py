@@ -56,6 +56,38 @@ POLICIES = {
 }
 
 
+POOL_RUNNING, POOL_CRASHING = 40, 20     # training pool (2026-10-16): states below 0.9, both strata
+TRAIN_SOURCES = ROOT / "work/heldout/train_outputs"
+TRAIN_MAPS = ROOT / "work/reverify/script_maps"
+
+
+def training_states(max_start: float = 0.9, seed: int = 0) -> dict[str, dict]:
+    """A fixed pool of training translations to replay: 40 that run and 20 that crash, all below ``max_start``.
+
+    The 20 dev states give intervals of about +-0.06 per arm comparison, wider than the effects now being tested
+    (S1 +0.017, locator +0.029, crash-first -0.019). The training translations add 223 states that run and 26 that
+    crash, re-verified offline (work/reverify/rows_v3.jsonl); half of the dev states' noise is crash-or-not, so the
+    pool keeps a crashing stratum to be reported apart.
+    """
+    import random
+    from r2py.harness import trajectory
+    rows = [json.loads(l) for l in (ROOT / "work/reverify/rows_v3.jsonl").open(encoding="utf-8")]
+    rows = [r for r in rows if "error" not in r and r["aggregate"] < max_start
+            and (TRAIN_SOURCES / f"{Path(r['script']).stem}.py").exists()
+            and (TRAIN_MAPS / f"{Path(r['script']).stem}.pkl").exists()]
+    rng = random.Random(seed)
+    running = sorted(r["script"] for r in rows if r.get("py_exit") == 0)
+    crashing = sorted(r["script"] for r in rows if r.get("py_exit") != 0)
+    picked = rng.sample(running, min(POOL_RUNNING, len(running))) + rng.sample(crashing, min(POOL_CRASHING, len(crashing)))
+    by = {r["script"]: r for r in rows}
+    out = {}
+    for name in sorted(picked):
+        src = (TRAIN_SOURCES / f"{Path(name).stem}.py").read_text(encoding="utf-8")
+        out[name] = {"source": src, "label": "training", "aggregate": by[name]["aggregate"],
+                     "hash": trajectory.source_hash(src)}
+    return out
+
+
 def best_states(arms: list[str], max_start: float) -> dict[str, dict]:
     """script -> {source, label, aggregate, hash} of the highest-scoring logged seed."""
     from r2py.harness import trajectory
@@ -232,7 +264,9 @@ def main() -> int:
     from r2py.keepawake import keep_awake
     keep_awake()   # an idle laptop freezes background jobs (Modern Standby)
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--arms", nargs="+", required=True)
+    ap.add_argument("--arms", nargs="+", default=[], help="dev arms whose best seeds are the frozen states")
+    ap.add_argument("--pool", choices=["dev", "training"], default="dev",
+                    help="training: a fixed pool of 40 running + 20 crashing training translations")
     ap.add_argument("--policies", nargs="+", default=["rewrite", "entity_esc"], choices=sorted(POLICIES))
     ap.add_argument("--samples", type=int, default=3)
     ap.add_argument("--workers", type=int, default=6)
@@ -256,7 +290,12 @@ def main() -> int:
         print(summarise(done))
         return 0
 
-    states = best_states(args.arms, args.max_start)
+    if args.pool == "training":
+        states = training_states(args.max_start)
+        cache = str(TRAIN_MAPS)   # analysed maps are cached; the loop keeps the dev manifest's settings (max_stalls 3)
+    else:
+        states = best_states(args.arms, args.max_start)
+        cache = str(ROOT / "work/replay/script_maps")
     if args.only:
         states = {n: s for n, s in states.items() if any(o in n for o in args.only)}
     finished = {(r["script"], r["policy"], r["sample"]) for r in done if "final_score" in r}
@@ -270,7 +309,7 @@ def main() -> int:
                     continue
                 tasks.append(dict(script=name, policy=policy, sample=sample, source=s["source"], label=s["label"],
                                   start_hash=s["hash"], manifest=args.manifest, library=args.library, runtime_dir=args.runtime_dir,
-                                  cache=str(ROOT / "work/replay/script_maps"), out_dir=str(out.parent),
+                                  cache=cache, out_dir=str(out.parent),
                                   budget_s=args.budget_s))
     listing = ", ".join("%s(%.2f)" % (n[:18], s["aggregate"]) for n, s in sorted(states.items()))
     print(f"{len(states)} frozen states: {listing}")

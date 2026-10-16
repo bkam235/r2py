@@ -2598,3 +2598,14 @@ Paired per state (registered primary):
 
 Production prompt unchanged for now. The next lever is the crash-first revisit (fallback version), with concurrent
 arms.
+
+**Measurement upgrade (2026-10-16).**
+- `replay.py --pool training`: a fixed pool (seed 0) of 60 training translations below 0.9, **40 whose program
+  runs and 20 that crash**, from 33 packages. Script maps come from `work/reverify/script_maps`. The loop keeps the
+  dev manifest's settings (the held-out manifest's `max_stalls` is 10, not 3).
+- `scripts/replay_compare.py`: concurrent arms against a baseline, the state as the unit, a bootstrap interval,
+  Wilcoxon, all / running starts / crashing starts.
+- **Power, from the spread of per-state differences in step 3** (SD 0.13-0.16): at 60 states x 3 samples the SE
+  is about 0.016-0.021, so the smallest effect detected with 80% power is about **0.05**, not 0.03. 0.03 would
+  need about 150 states or more samples.
+- Smoke-tested on one crashing training state.
