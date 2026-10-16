@@ -2897,3 +2897,43 @@ replays, 1,274 candidates, each step replayed against the loop's best state at t
   depend on changes elsewhere in the same candidate.
 - **Conclusion: neither option has a general ceiling worth building.** A rewrite's improvements and damages are
   not separable per entity. That is also why one-entity answers lost score in the prompt-load runs.
+
+**Why improvements cannot be lifted out of a rewrite (2026-10-16, offline, no model calls).** The user's question:
+understand the dependency, then turn it into a structural change.
+
+1. **Crash causes of the 66 crashing entity merges:** NameError 51, Indentation/SyntaxError 14, AttributeError 1.
+   Concentrated in 6 scripts (caret 21, clock 18, hms 14, broom 11).
+2. **Connected change sets do not help.** A def-use closure (the improved entities plus the changed definitions
+   they use, in other entities or outside every entity, transitively) still crashes in 64 of 67. The closure grew
+   beyond the improved entities in only 11.
+3. **Restored entity markers are not the cause.** On candidates that kept every marker themselves: merge 32/37
+   crash, closure 33/36. The candidate itself crashes in 23 of those 37: many "improvements" sit in programs that
+   crash as a whole.
+4. **Reading the cases shows the mechanism: every rewrite redesigns the program's internal structure.**
+   - broom: the best state's helper is `r_tidy_factanal(fa, data)`, the candidate's `r_tidy(fit)`. The improved
+     line `fit.loadings[:, i]` works only inside the candidate's design. Both entities are fragments inside a
+     helper's body.
+   - hms: the improved code calls a helper (`format_hms`) the best state lacks or defines differently.
+5. **Measured over all 1,270 parseable candidates:**
+   - 1,055 have helper functions (median 5 per program);
+   - **52% (545) change the helper interface** (rename, drop, add, or change parameters);
+   - when they do, only 43% of the best state's helpers survive unchanged.
+6. **Same interface, still failing:** with an unchanged helper interface, 4 of 16 merges run (best state runs in
+   15, candidate in 13). All 12 failures are 2 scripts:
+   - hms 11: `d = ...` sits inside another R entity's Python range (`d$hours`) or is nested;
+   - lava 1: a dict cut in half.
+
+   **The R-entity-to-Python-range mapping does not match the program's real units.**
+
+**Conclusion.** The loop's unit of change is the whole file, and Gemma uses each rewrite to re-architect: 52% change
+the helper interface. An improvement is valid only inside the design it was written in. That is why per-entity
+acceptance, freezing, one-entity answers and closure merges all failed. The units R gives us (entities) are not the
+units of the Python program (helpers and the statements that define each variable).
+
+Two structural consequences:
+- **(a) A stable design.** The harness keeps the program's helper layer fixed between steps once its callers
+  verify: verified helpers move into a harness-managed block, like the runtime block, and edits change them only
+  explicitly. Verified callable functions were used 8 of 8 times.
+- **(b) Python-native edit units.** An analysis tool that maps each R entity to the Python statements and helpers
+  that actually implement it (def-use, not marker ranges). Edits, merges and guidance then address these connected
+  units instead of marker ranges.
