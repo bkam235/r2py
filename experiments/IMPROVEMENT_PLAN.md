@@ -2609,3 +2609,28 @@ arms.
   is about 0.016-0.021, so the smallest effect detected with 80% power is about **0.05**, not 0.03. 0.03 would
   need about 150 states or more samples.
 - Smoke-tested on one crashing training state.
+
+**Guided step and crash fallback, registered before building (2026-10-16).** One concurrent replay on the
+training pool (60 states, 3 samples), Gemma.
+- **`rewrite_w3`, baseline:** the loop as before crash-first (`crash_first="off"`). This applies Part B's
+  registered decision, and **becomes the default again**.
+- **`rewrite_w3_crashfb`, crash fallback:**
+  - While the best program crashes, the first attempt is a plain full rewrite, exactly as in the baseline.
+  - Only after a full rewrite has failed to make the program run does the next step repair the crash culprit,
+    or, if the culprit cannot be replaced as one block, rewrite with the "Fix the crash first" note.
+  - Part B data: full rewrites fix most crashes at step 1, and targeting rescued what rewrites left stuck (hms,
+    clock).
+- **`guided_w1k3`, guided step, compute-matched (user's question about the control arm):**
+  - One chain, **3 sampled whole-file rewrites per step, the best kept by the verifier**. That is about the
+    model calls of 3 independent chains (width 3), so a gain over the baseline cannot come from more calls.
+  - When the program runs, the step's turn ends with targeted guidance for the worst-scoring entity that ran and
+    has guidance: R's exact printed output (values right, print wrong) or R's values (<= 1,500 characters of
+    JSON), as in the prompt-load cases; at most 2 tries per entity.
+  - Without a target, the 3 samples are unguided.
+- **Primary:**
+  - guided vs baseline on running starts (40 states);
+  - crash fallback vs baseline on crashing starts (20 states).
+
+  Both paired per state, with a bootstrap interval and Wilcoxon (`replay_compare.py`).
+- **Secondary:** all states, P(final >= 0.9), ends running, model steps.
+- Expected sensitivity: about 0.05 at 40-60 states.
