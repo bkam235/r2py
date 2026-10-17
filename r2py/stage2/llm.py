@@ -96,8 +96,11 @@ def call(
     *,
     model: str = _DEFAULT_MODEL,
     max_tokens: int = 16384,
+    temperature: "float | None" = None,
 ) -> str:
     """Call the Anthropic Messages API with exponential-backoff retry.
+
+    *temperature* None keeps the default (on OpenRouter: the pinned setting); a value overrides it for this call.
 
     The system prompt is sent with cache_control so it is cached after the first
     call in a run (all entity calls share the same static system prompt).
@@ -106,7 +109,8 @@ def call(
     truncated (stop_reason == "max_tokens").
     """
     if model.startswith("openrouter:"):
-        return _call_openrouter(messages, system, model=model[len("openrouter:"):], max_tokens=max_tokens)
+        return _call_openrouter(messages, system, model=model[len("openrouter:"):], max_tokens=max_tokens,
+                                temperature=temperature)
 
     client = _get_client()
 
@@ -127,6 +131,7 @@ def call(
                 max_tokens=max_tokens,
                 system=system_block,
                 messages=messages,
+                **({} if temperature is None else {"temperature": temperature}),
             )
             if response.stop_reason == "max_tokens":
                 raise TruncatedResponseError(
@@ -157,6 +162,7 @@ def _call_openrouter(
     *,
     model: str,
     max_tokens: int,
+    temperature: "float | None" = None,
 ) -> str:
     """Call a model via the OpenRouter API (OpenAI-compatible)."""
     try:
@@ -189,6 +195,7 @@ def _call_openrouter(
                 model=model,
                 messages=all_messages,
                 max_tokens=max_tokens,
+                **({} if temperature is None else {"temperature": temperature}),
             )
             finish_reason = response.choices[0].finish_reason
             if finish_reason == "length":

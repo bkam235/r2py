@@ -510,7 +510,7 @@ class _PinnedClient:
         extra = dict(kw.pop("extra_body", None) or {})
         if self._settings.get("provider"):
             extra["provider"] = self._settings["provider"]
-        kw["temperature"] = self._settings["temperature"]
+        kw.setdefault("temperature", self._settings["temperature"])   # a call may fix its own (entity mapping: 0)
         kw.setdefault("timeout", self._settings["request_timeout_s"])
         for attempt in range(RATE_LIMIT_TRIES):
             try:

@@ -20,7 +20,7 @@ class TestParse(unittest.TestCase):
 
     def test_token_budget_is_not_the_old_2048(self):
         import inspect
-        src = inspect.getsource(sm.map_entities_to_lines)
+        src = inspect.getsource(sm.map_entities_to_lines) + inspect.getsource(sm._map_uncached)
         self.assertNotIn("max_tokens=2048", src)
         self.assertIn("max_tokens=8192", src)
 

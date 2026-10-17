@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 
 from . import llm as _llm
@@ -360,7 +361,38 @@ def map_entities_to_lines(
 
     messages = [{"role": "user", "content": user_msg}]
 
-    raw = _llm.call(messages, system=_SYSTEM_PROMPT, model=model, max_tokens=8192)
+    # 2026-10-17: the mapping was sampled at the pinned temperature (1.0), so a candidate that lost its sentinels
+    # (9% of agent candidates) got a different score on every verification, and the loop's accept decision was a
+    # draw. Now: temperature 0, and the result is cached on disk per (model, entities, source), so the same source
+    # always gets the same mapping, across harnesses, arms and runs.
+    import hashlib
+    import json as _json
+    key = hashlib.sha1("|".join((model, entity_listing, clean)).encode("utf-8")).hexdigest()
+    cache = _mapping_cache_dir() / f"{key}.json"
+    if cache.exists():
+        try:
+            return {e: [tuple(r) for r in rs] for e, rs in _json.loads(cache.read_text(encoding="utf-8")).items()}
+        except (ValueError, OSError):
+            pass
+    ranges = _map_uncached(messages, entity_ids, total_lines, model)
+    try:
+        cache.parent.mkdir(parents=True, exist_ok=True)
+        tmp = cache.with_suffix(f".{os.getpid()}.tmp")
+        tmp.write_text(_json.dumps(ranges), encoding="utf-8")
+        tmp.replace(cache)
+    except OSError:
+        pass
+    return ranges
+
+
+def _mapping_cache_dir() -> "Path":
+    from pathlib import Path
+    env = os.environ.get("R2PY_MAPPING_CACHE")
+    return Path(env) if env else Path(__file__).resolve().parents[2] / "work" / "mapping_cache"
+
+
+def _map_uncached(messages, entity_ids, total_lines, model):
+    raw = _llm.call(messages, system=_SYSTEM_PROMPT, model=model, max_tokens=8192, temperature=0.0)
 
     try:
         return _parse_response(raw, entity_ids, total_lines)
@@ -375,6 +407,6 @@ def map_entities_to_lines(
             )},
         ]
         raw2 = _llm.call(
-            retry_messages, system=_SYSTEM_PROMPT, model=model, max_tokens=8192,
+            retry_messages, system=_SYSTEM_PROMPT, model=model, max_tokens=8192, temperature=0.0,
         )
         return _parse_response(raw2, entity_ids, total_lines)

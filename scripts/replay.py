@@ -198,6 +198,8 @@ def run_one(task: dict) -> dict:
                     row["store_after_ondemand"] = len(store)
                     trajectory.log("ondemand", records=recs)
                 drain_agent_stats()
+                from r2py.harness.tools import drain_cache_stats
+                drain_cache_stats()
                 system = policy.pop("system", None)
                 if system:
                     sys.path.insert(0, str(ROOT / "scripts"))
@@ -218,6 +220,9 @@ def run_one(task: dict) -> dict:
                            final_exit=(result[1].py_exit_code if result else start_report.py_exit_code))
                 row["agent"] = drain_agent_stats()
                 row["llm_steps"] = sum(row["agent"]["action"].values())   # the cost measure: model calls per run
+                # how each verification attributed entities: sentinels, deterministic restoration, or a model mapping
+                # (the one remaining source of scoring noise, 2026-10-17)
+                row["verify_paths"] = drain_cache_stats()
                 trajectory.end(final_score=row["final_score"])
     except Exception as exc:
         row["error"] = f"{type(exc).__name__}: {exc}"[:300]

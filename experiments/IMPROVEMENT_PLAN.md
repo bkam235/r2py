@@ -3105,3 +3105,24 @@ scored on script-wide fallbacks; systemfonts, shape, ragg, recipes up). Some dif
 **Open, found on the way: verification is not deterministic.** The same source verified 6 times: purrr
 `attr_getter` 0.591 four times, 0.63 and 0.454 once (`pluck` 1.0 -> 0.5, `obj1` 0.25 <-> 0.487); timeDate 0.769
 and 0.869. Present with the old shim too. Paired designs absorb part of it, but it adds noise to every arm.
+
+**Verification noise, traced (2026-10-17).**
+- **The noise reported above came from my offline scripts, not from the loop.** They verified without
+  `note_reference`, so every verification asked a model to map entities to lines (sampled at the pinned temperature
+  1.0). With the reference noted, as the loop does, the same source scores identically: purrr 8/8, timeDate, xml2
+  and recipes 6/6 each. The corrected pool re-verification (sentinels read for all 59 states): mean start 0.385
+  -> 0.402, no run/crash flips, 9 states change by more than 0.01, all of them refreshed maps or the 2026-10-16
+  fixes (xml2 0.79 -> 0.55, prodlim 0.64 -> 0.50; ragg, caret `caret_s3`, recipes `step_kpca`, pROC, rvest, shape,
+  systemfonts up). The earlier claim "verification is not deterministic" was wrong for the loop; the "8 down, 3 up"
+  of the first shim refresh was partly this noise on top of the line shift.
+- **What the loop does hit:** when a candidate loses its markers so badly that alignment cannot restore them, the
+  model mapping runs. Measured offline on the 315 saved stage-1 candidates: sentinels read 228, restored 59, **model
+  mapping 28 (9%)**, concentrated in gtable (8/8), pROC `coords` (7/8), recipes `discretize` (5/8), xml2, farver,
+  caret, openssl.
+- **Change (user's choice):** the mapping is called at temperature 0 and cached on disk per (model, entities,
+  source) (`work/mapping_cache/`). **Check: temperature 0 is not repeatable on OpenRouter** — at least 20 of the 28
+  candidates got different mappings over 3 calls (farver: `convert_colour` <-> `spec_lab`). The cache makes every
+  later verification of a source identical, but the first mapping of a new candidate stays a draw.
+- Replay rows now record `verify_paths` (sentinel reuse / restored / model mapping) so that share is measured in
+  every run.
+- A rare `JSONDecodeError` under parallel verification (bslib, 1 of 60) did not reproduce in 8 parallel runs.
