@@ -3126,3 +3126,29 @@ and 0.869. Present with the old shim too. Paired designs absorb part of it, but 
 - Replay rows now record `verify_paths` (sentinel reuse / restored / model mapping) so that share is measured in
   every run.
 - A rare `JSONDecodeError` under parallel verification (bslib, 1 of 60) did not reproduce in 8 parallel runs.
+
+**3 per step against width 3: result (2026-10-17).** 240 runs (the first 173 before credits ran out, 67 after
+resuming; 3 runs that ended within 2 minutes of the first refusal were set aside and redone), 0 failed calls in the
+kept runs. Harness as fixed on 2026-10-17. Strata by the re-verified start: 41 running, 19 crashing.
+
+| | width 3 (`rewrite_w3`) | 3 per step (`rewrite_w1k3`) |
+|---|---|---|
+| mean final | 0.690 | 0.665 |
+| P(final >= 0.9) | 0.25 | 0.23 |
+| ends running | 112/120 | 109/120 |
+| agent model calls per run | 12.4 | 12.6 |
+| minutes per run | 7.3 | 9.2 |
+
+- **Primary (41 running starts): -0.012 [-0.031, +0.003]**, better/worse/tied 7/11/23, Wilcoxon p 0.23. By the
+  registered rule: **no difference at this size.**
+- Crashing starts: -0.053 [-0.132, -0.002], 1/6/12, p 0.04. All states: -0.025 [-0.053, -0.004], p 0.03.
+- The compute match held (12.4 vs 12.6 calls). 90% of steps had 3 distinct drafts. The review went down the drafts
+  in 20 of 183 reviewed steps (`passed_later`); in 22 all improving drafts were rejected.
+- The 14 never-improve states stay near-stuck in both arms (mean gain +0.026 vs +0.034; improved 5/28 vs 6/28); on
+  the other running states width gains more (+0.169 vs +0.147).
+- Model mapping in the loop: 146 of 1382 verifications (11%) under width, 121 of 1420 (9%) under 3 per step, as
+  measured offline.
+- **Reading:** sharing every improvement in one chain does not beat three independent chains at the same calls;
+  on crashing starts width is better, consistent with independent chains trying different crash fixes. Width 3
+  stays the default.
+- **Cost:** the last 67 runs cost $4.26 ($0.064 per run), so the whole test about $15.
