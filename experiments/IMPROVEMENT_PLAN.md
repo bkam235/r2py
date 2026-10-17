@@ -3152,3 +3152,17 @@ kept runs. Harness as fixed on 2026-10-17. Strata by the re-verified start: 41 r
   on crashing starts width is better, consistent with independent chains trying different crash fixes. Width 3
   stays the default.
 - **Cost:** the last 67 runs cost $4.26 ($0.064 per run), so the whole test about $15.
+
+**Check of the 3-per-step result (2026-10-17, user's question; from the saved trajectories, no model calls).**
+- Setup verified: the drafts are compared against the current best (`report` is updated on acceptance); the chosen
+  draft is re-verified from the cache (same score as at selection); 90% of steps had 3 distinct drafts; the
+  compute match held (12.4 vs 12.6 calls); budget stops 11 in each arm.
+- **The mechanism works:** a step improves the best 40.0% of the time under 3 per step, 33.7% for a single call
+  under width 3; improving steps per chain 1.68 vs 1.37. (Best of 3 independent calls would give 71%; the
+  per-state heterogeneity measured earlier predicted about 42%.)
+- **Per-chain finals** reconstructed from the trajectories (exact for 96% of runs): one width chain 0.637, the
+  3-per-step chain 0.665, width 3 (best of its three chains) 0.690. 3 per step beats one chain by **+0.029
+  [+0.009, +0.050]**; width's selection among three finished chains is worth more (+0.053 over one chain).
+- **Why the expectation was wrong:** it compared per-step success with a single chain. Width 3 is not one chain:
+  it keeps the best of three finished programs, and the chains differ most where it matters (crashing starts:
+  different crash fixes). Sharing improvements inside one chain gains less than selecting among three.
