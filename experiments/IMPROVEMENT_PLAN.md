@@ -3011,3 +3011,24 @@ step-level runs (11 calls per state, 40 running states):
   11 calls** (36% of the remaining loss); 10 improved in 1-2 calls (26%); 16 in 3 or more (38%).
 - Best of 3 is about 0.42, not 0.59. More samples per step help only the middle group; the 14 stuck states stay
   stuck however often they are sampled, under width or per-step sampling alike.
+
+**3 per step against width 3 (registered 2026-10-17, before the run).**
+- **Question:** with about the same model calls, does one chain that samples 3 rewrites per step and builds on the
+  best beat three independent chains? Width keeps three designs alive; the chain shares every improvement and
+  stalls less (measured per state: 3 calls fail together in 0.58 of steps, against 0.74 for one call).
+- **Arms, concurrent:** `rewrite_w3` (today) and `rewrite_w1k3` (one chain, `guided_k=3`, `guided_mode="off"`: 3
+  unguided whole-file rewrites of the same turn; the best by the search objective among those that pass the gates).
+- **Built for it:** the hardcoding review goes down the improving drafts best first and keeps the first that
+  passes; before, only the best draft was reviewed, and the highest-scoring draft is the likeliest to paste. Drafts
+  get the shim-input guard before they are scored, as the loop applies after choosing. Tests in
+  `tests/test_entity_repair.py`. `rewrite_w3` is unchanged.
+- **States and samples:** the training pool (`--pool training`, 40 running + 20 crashing), 2 samples each, 240
+  runs. Estimated 4-6 hours.
+- **Primary:** mean final score per state, `rewrite_w1k3` - `rewrite_w3`, paired, bootstrap interval and Wilcoxon
+  (`scripts/replay_compare.py`), on the 40 running states. **Decision:** 3 per step wins if the interval lies above
+  0; loses if below 0; otherwise no difference at this size.
+- **Secondary:**
+  - the 20 crashing states, reported apart;
+  - P(final >= 0.9), stalled share, ends running;
+  - model calls per run (agent actions + extra drafts + reviews), so the compute match is checked, not assumed;
+  - the 14 never-improve states against the rest (expected: no difference there for either arm).

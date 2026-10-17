@@ -36,7 +36,7 @@ from ..stage2.stitch import (
 # {"action": {rewrite: n, ...}, "outcome": {"rewrite:worse": n, ...}, "stop": {"budget": n, ...}}
 agent_stats: dict[str, Counter] = {"action": Counter(), "outcome": Counter(), "stop": Counter(),
                                    "entity_width": Counter(), "locate": Counter(),
-                                   "guided": Counter(), "guided_width": Counter()}
+                                   "guided": Counter(), "guided_width": Counter(), "guided_review": Counter()}
 
 
 class _StepContext(MutableMapping):
@@ -252,7 +252,7 @@ def reason(
         )
         if crash_note:
             messages[-1]["content"] += "\n\n" + crash_note
-        if guided_k > 1 and repair_eid is None and report.py_exit_code == 0:
+        if guided_k > 1 and guided_mode != "off" and repair_eid is None and report.py_exit_code == 0:
             # Guided step (2026-10-16): R's exact output for the worst entity that ran, last in the turn. Gemma
             # adopts such a fix in 25-40% of single calls, and an adopted fix gains in 98% of running programs,
             # so k samples chosen by the verifier stand in for persuasion.
@@ -304,7 +304,11 @@ def reason(
             if entity_width > 1:
                 action = _widen_entity_repair(action, messages, turn_system, model, entity_width, best_source, harness)
         elif guided_k > 1 and action and action.get("action") == "rewrite":
-            action = _widen_rewrite(action, messages, turn_system, model, guided_k, best_source, harness)
+            action = _widen_rewrite(action, messages, turn_system, model, guided_k, best_source, harness,
+                                    report=report, review=lambda src: review_translation(
+                                        r_source, src, script_map, model=model,
+                                        unavailable_packages=unavailable_packages),
+                                    shim_inputs=shim_inputs)
         if action is None:
             snippet = raw[:300].replace('\n', '\\n')
             print(f"[Agent]   Could not parse action from response: {snippet!r}")
@@ -566,7 +570,9 @@ def reason(
             if _obj.better(new_report, report):
                 # Code review gate: check for rule violations before adopting. A candidate that
                 # still crashes is only a stepping stone (Stage 7); the review judges what runs.
-                if new_report.py_exit_code == 0:
+                if new_report.py_exit_code == 0 and action.get("reviewed") is not None:
+                    passed, reason = action["reviewed"]   # reviewed while choosing among k drafts
+                elif new_report.py_exit_code == 0:
                     passed, reason = review_translation(
                         r_source, new_source, script_map, model=model,
                         unavailable_packages=unavailable_packages,
@@ -714,9 +720,15 @@ def _widen_entity_repair(action: dict, messages: list, system: str, model: str, 
 
 
 def _widen_rewrite(action: dict, messages: list, system: str, model: str, k: int,
-                   best_source: str, harness: "HarnessTools") -> dict:
+                   best_source: str, harness: "HarnessTools", report=None, review=None,
+                   shim_inputs: "set[str] | None" = None) -> dict:
     """Guided step (2026-10-16): ``k`` whole-file rewrites of the same turn, the best by the search objective
-    kept. As ``_widen_entity_repair``, for full rewrites; the chosen one then goes through the normal gates."""
+    kept. As ``_widen_entity_repair``, for full rewrites; the chosen one then goes through the normal gates.
+
+    With ``report`` (the current best) and ``review``, the running drafts that improve on it are reviewed for
+    hardcoding best first, and the first that passes is kept (2026-10-17): the highest-scoring draft is the
+    likeliest to paste, so reviewing only it would lose honest improvements among the others.  The verdict
+    travels with the action as ``reviewed`` so the loop does not review again."""
     from ..stage0.sandbox.py_sandbox import _SKIP_PACKAGES
 
     def sample(_i):
@@ -729,8 +741,11 @@ def _widen_rewrite(action: dict, messages: list, system: str, model: str, k: int
     with ThreadPoolExecutor(k - 1) as pool:
         drafts = [action["new_source"]] + [d for d in pool.map(sample, range(k - 1)) if d]
     best, best_rep, seen = action["new_source"], None, set()
+    scored = []   # (draft, source as gated, report)
     for draft in drafts:
         source, _ = restore_data_shim(best_source, show_data_shim(best_source, draft))
+        if shim_inputs:   # as the loop does after choosing, so a draft that overrides R's data cannot win
+            source = remove_shim_overrides(source, shim_inputs)
         source, _ = repair_argument_order(source)
         if source in seen or _check_syntax(source) or unavailable_imports(source, _SKIP_PACKAGES):
             continue
@@ -739,9 +754,24 @@ def _widen_rewrite(action: dict, messages: list, system: str, model: str, k: int
             rep = harness.verify(source)
         except Exception:
             continue
+        scored.append((draft, source, rep))
         if best_rep is None or _obj.better(rep, best_rep):
             best, best_rep = draft, rep
     _stat("guided_width", f"{len(drafts)}_sampled_{len(seen)}_distinct")
+    if review is None or report is None:
+        return {**action, "new_source": best}
+    improving = sorted((s for s in scored if s[2].py_exit_code == 0 and _obj.better(s[2], report)),
+                       key=lambda s: _obj.search_key(s[2]), reverse=True)
+    first_verdict = None
+    for draft, source, _rep in improving:
+        verdict = review(source)
+        if verdict[0]:
+            _stat("guided_review", "passed_first" if first_verdict is None else "passed_later")
+            return {**action, "new_source": draft, "reviewed": verdict}
+        first_verdict = first_verdict or verdict
+    if first_verdict is not None:
+        _stat("guided_review", "all_rejected")
+        return {**action, "new_source": improving[0][0], "reviewed": first_verdict}
     return {**action, "new_source": best}
 
 

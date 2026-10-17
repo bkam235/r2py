@@ -47,6 +47,8 @@ POLICIES = {
     "rewrite_w3_crashfb": dict(entity_repair=False, escalate_after=None, width=3, crash_first="fallback"),
     "guided_w1k3": dict(entity_repair=False, escalate_after=None, width=1, guided_k=3),   # ~ the calls of width 3
     "guided_w1k3s": dict(entity_repair=False, escalate_after=None, width=1, guided_k=3, guided_mode="struct"),
+    # 3 per step (registered 2026-10-17): one chain, 3 unguided rewrites per step, the best that passes review kept.
+    "rewrite_w1k3": dict(entity_repair=False, escalate_after=None, width=1, guided_k=3, guided_mode="off"),
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
     # script calls, built by scripts/oracle_library.py (perfect coverage, perfect retrieval).
     "rewrite_w3_oracle": dict(entity_repair=False, escalate_after=None, width=3, oracle=True),

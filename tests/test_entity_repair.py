@@ -275,3 +275,67 @@ class TestStructuredGuidance(unittest.TestCase):
         self.assertIn("R prints: 'b' | yours: 'B'", text)
         self.assertNotIn("other entity", text)
         self.assertLess(len(text), 1000)                     # a 5000-element value reduces to its differences
+
+
+class TestSampledStep(unittest.TestCase):
+    """3 per step (2026-10-17): k unguided rewrites of one turn; the review goes down the improving drafts."""
+
+    @staticmethod
+    def rep(agg, code=0):
+        return NS(aggregate=agg, py_exit_code=code, by_entity={})
+
+    def widen(self, rejected, first="x = 1"):
+        from unittest.mock import patch
+        from itertools import count
+        drafts, n = iter(["x = 2", "x = 3"]), count()
+        reviewed = []
+
+        def call(messages, system, **kw):
+            next(n)
+            return f"ACTION: rewrite\n```python\n{next(drafts)}\n```"
+
+        def review(src):
+            reviewed.append(src.strip())
+            return (src.strip() not in rejected, "pasted" if src.strip() in rejected else "")
+        harness = NS(verify=lambda src: self.rep(0.3 * int(src.strip()[-1])))
+        with patch.object(agent._llm, "call", side_effect=call), \
+             patch.object(agent, "_check_syntax", return_value=None), \
+             patch.object(agent, "unavailable_imports", return_value=[]):
+            out = agent._widen_rewrite({"action": "rewrite", "new_source": first}, [], "", "m", 3, "", harness,
+                                       report=self.rep(0.5), review=review)
+        agent.drain_agent_stats()
+        return out, reviewed
+
+    def test_a_rejected_best_draft_falls_back_to_the_next_improving_one(self):
+        out, reviewed = self.widen(rejected={"x = 3"})
+        self.assertEqual(out["new_source"].strip(), "x = 2")
+        self.assertEqual(out["reviewed"], (True, ""))
+        self.assertEqual(reviewed, ["x = 3", "x = 2"])         # best first; x = 1 does not improve, never reviewed
+
+    def test_all_improving_drafts_rejected_keeps_the_best_with_its_verdict(self):
+        out, reviewed = self.widen(rejected={"x = 3", "x = 2"})
+        self.assertEqual(out["new_source"].strip(), "x = 3")
+        self.assertEqual(out["reviewed"], (False, "pasted"))
+
+    def test_off_samples_k_unguided_answers(self):
+        from unittest.mock import patch
+        sent = []
+        G = TestGuidedStep()
+
+        def call(messages, system, **kw):
+            sent.append(messages[-1]["content"])
+            return "ACTION: rewrite\n```python\n# r2py:entity:e1\na = 1\n# r2py:entity:e2\nb = 2\n```"
+        rep = G.running()
+        harness = NS(verify=lambda src: rep, _probe_count=0, last_annotated_source="", _sidecar_filename="")
+        with patch.object(agent._llm, "call", side_effect=call), \
+             patch.object(agent, "_prefetch_patterns", return_value={}), \
+             patch.object(agent, "_prefetch_r_sources", return_value=([], "")), \
+             patch.object(agent, "_get_unavailable_packages", return_value=[]), \
+             patch.object(agent, "unavailable_imports", return_value=[]), \
+             patch.object(agent, "_check_syntax", return_value=None), \
+             patch.object(agent, "review_translation", return_value=(True, "")):
+            agent.reason(TestCrashFirst.SRC, rep, harness, G.sm(), model="openrouter:m", max_steps=1,
+                         entity_repair=False, guided_k=3, guided_mode="off")
+        agent.drain_agent_stats()
+        self.assertEqual(len(sent), 3)
+        self.assertFalse(any("What R computes" in t for t in sent))
