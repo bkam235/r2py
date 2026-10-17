@@ -2996,3 +2996,18 @@ loop retains 99%. The manual is not built further. `r2py/harness/manual.py` stay
 
 **What does limit the loop:** steps that find no improvement (P = 0.26) and stall. Damage is a wasted step, not lost
 progress, and 63% of it is new crashes.
+
+**Correction: best-of-k is not 1 - (1 - p)^k (2026-10-17, no model calls).** The step-level tables above give
+"best of 3" from the formula, which assumes every call has the same chance. Pooling the U arms of the three
+step-level runs (11 calls per state, 40 running states):
+
+| P(no improvement in k calls from one state) | assuming independence | measured per state |
+|---|---|---|
+| k = 1 | 0.741 | 0.741 |
+| k = 3 | 0.407 | **0.576** |
+| k = 9 (a stall of 3 steps at 3 calls) | 0.067 | **0.391** |
+
+- Calls from the same state are independent draws, but states differ hugely. **14 of 40 states never improved in
+  11 calls** (36% of the remaining loss); 10 improved in 1-2 calls (26%); 16 in 3 or more (38%).
+- Best of 3 is about 0.42, not 0.59. More samples per step help only the middle group; the 14 stuck states stay
+  stuck however often they are sampled, under width or per-step sampling alike.
