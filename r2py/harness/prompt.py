@@ -304,11 +304,14 @@ def _format_data_vars(script_map: "ScriptMap", sidecar_filename: str = "") -> st
             continue
         if isinstance(val, dict):
             keys = list(val.keys())
-            first_key = keys[0] if keys else None
-            length = len(val[first_key]) if first_key and isinstance(val.get(first_key), list) else "?"
-            parts.append(f"  {name}: dict with {len(keys)} columns, {length} rows")
-            parts.append(f"    columns: {keys}")
-            parts.append(f"    Usage: pd.DataFrame({name})  # column-oriented dict")
+            cols = list(val.values())
+            if cols and all(isinstance(c, list) for c in cols) and len({len(c) for c in cols}) == 1:
+                # the shim hands these over as a pandas DataFrame (build_data_shim; older blocks are refreshed
+                # by the verifier, 2026-10-17)
+                parts.append(f"  {name}: pandas DataFrame, {len(keys)} columns, {len(cols[0])} rows")
+                parts.append(f"    columns: {keys}")
+            else:
+                parts.append(f"  {name}: dict with keys {keys}")
         elif isinstance(val, list):
             parts.append(f"  {name}: list, length {len(val)}")
         else:

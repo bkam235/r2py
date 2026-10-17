@@ -155,6 +155,32 @@ def build_data_shim(
     )
 
 
+_OLD_SHIM_ASSIGN = "#         globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]"
+_NEW_SHIM_ASSIGN = (
+    "#         _r2py_shim_v = _r2py_shim_data[_r2py_shim_n]; import pandas as _r2py_shim_pd; "
+    "globals()[_r2py_shim_n] = _r2py_shim_pd.DataFrame(_r2py_shim_v) if (isinstance(_r2py_shim_v, dict) and "
+    "_r2py_shim_v and all(isinstance(_c, list) for _c in _r2py_shim_v.values()) and "
+    "len({len(_c) for _c in _r2py_shim_v.values()}) == 1) else _r2py_shim_v")
+
+
+def refresh_data_shim(source: str) -> str:
+    """*source* with a data-shim block written by an older ``build_data_shim`` loading data frames as the current one.
+
+    The loop keeps a translation's own shim block, so translations seeded before 2026-10-01 still load R
+    data frames as dicts: all 28 shim-carrying states of the training pool (2026-10-17). The prompt calls
+    them data frames, the shim guard strips ``df = pd.DataFrame(df)``, and the code crashes (8/8 saved
+    ggplot2 candidates). Only the binding line is rewritten, in place and as one line: entity line maps are
+    computed before the shim is activated, so the block must keep its line count.
+    """
+    def _sub(m: "re.Match[str]") -> str:
+        block = m.group(0)
+        if "_r2py_shim_pd" in block or block.count(_OLD_SHIM_ASSIGN) != 1:
+            return block
+        return block.replace(_OLD_SHIM_ASSIGN, _NEW_SHIM_ASSIGN)
+
+    return DATA_SHIM_RE.sub(_sub, source)
+
+
 def validate_data_shim(source: str, expected_names: list[str] | None = None) -> str | None:
     """Check data shim integrity in *source*. Return error message or None if OK.
 

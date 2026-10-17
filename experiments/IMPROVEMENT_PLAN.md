@@ -3070,3 +3070,38 @@ Reproduced from R's own errors:
 `GIT_ASKPASS`) are repeated in every losing entity's feedback, although the per-entity score does not use them.
 
 Not fixed yet: no harness edits while a run is pending, and every fix changes scores (re-verify the pool after).
+
+**Harness fixes from the never-improve analysis (2026-10-17).**
+- **R checkpoint injection** (`r2py/stage1/runner.py`):
+  - checkpoints only at statement boundaries (`_statement_boundary_rows`, tree-sitter: the innermost node spanning
+    the boundary is the program or a braced block). Entities that end inside a pipeline, an argument list or an
+    `if (cond)` line get no checkpoint (no own R bundle) instead of breaking the run;
+  - graphics: the device is no longer closed at the checkpoint of a drawing entity; its pages are flushed just
+    before the next new page (`before.plot.new` / `before.grid.newpage`, prepended to the fingerprint hooks) or at
+    the end of the run, so low-level calls of later entities still draw on the open plot;
+  - entity ids: backslash escaped before the quote; checkpoint file names drop characters Windows forbids
+    (`_cp_file_id`, same rule on the Python side).
+- **Python checkpoint injection** (`r2py/stage4/verifier.py`): never inside a multi-line string (it parses, so the
+  parse check missed it; xml2's `etree.fromstring('''...''')` lost its root tag and crashed once R had bundles).
+- **Old data shims** (`refresh_data_shim`, applied when the verifier activates the shim): the binding line is
+  rewritten in place so R data frames load as pandas DataFrames. A first version rebuilt the block, made it 4
+  lines longer and shifted every Python checkpoint below it (entity line maps are computed before activation):
+  8 states fell by up to 0.40 and 3 rose by up to 0.55, all artifacts. The line-preserving version changes the
+  12 shim states it was checked on by at most 0.04 (and verification noise, below).
+- **Prompt:** shim data frames are described as pandas DataFrames, not "dict ... Usage: pd.DataFrame(name)".
+- **Stored R bundles refreshed** for the 38 script maps the injection fix changes (`scripts/refresh_entity_bundles.py`):
+  the 34 without bundles, and 4 whose checkpointed entities or figure attribution changed (broom, recipes x2,
+  rmarkdown; their old bundles credited a figure to every entity). The other 215 were re-run and compared: 169
+  identical, the rest differ only where R itself varies (temp names, keys, times, unseeded fits); kept as stored.
+- **Tests:** `tests/test_checkpoint_injection.py` (9, three of them run R). Suite: 990 passed, the known locale
+  failure.
+
+**Pool re-verified** (60 states, the pool definition unchanged): mean start 0.388 -> 0.410; one state that crashed
+now runs (ragg `agg_webp_anim`); 15 change by more than 0.01, mostly the refreshed ones (xml2 0.79 -> 0.55: it was
+scored on script-wide fallbacks; systemfonts, shape, ragg, recipes up). Some differences predate today
+(caret `caret_s3` 0.41 -> 0.75 is the 2026-10-16 RNG/shim fixes; `rows_v3` is older). Start scores across
+2026-10-17 are not comparable.
+
+**Open, found on the way: verification is not deterministic.** The same source verified 6 times: purrr
+`attr_getter` 0.591 four times, 0.63 and 0.454 once (`pluck` 1.0 -> 0.5, `obj1` 0.25 <-> 0.487); timeDate 0.769
+and 0.869. Present with the old shim too. Paired designs absorb part of it, but it adds noise to every arm.

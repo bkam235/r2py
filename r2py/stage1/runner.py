@@ -133,6 +133,45 @@ def run_script(
         )
 
 
+
+def _statement_boundary_rows(source: str) -> "set[int] | None":
+    """0-based rows after which a new R statement may start (2026-10-17).
+
+    The boundary after row L is a statement boundary when the innermost node spanning it is the program or
+    a braced block. A checkpoint inserted anywhere else joins the open expression: after a line ending in
+    ``|>``/``%>%``/``+`` it becomes the next pipeline stage (``unused argument ("group_by")``), inside an
+    argument list it is a syntax error, after ``if (cond)`` it becomes the branch body. Any of these failed
+    the whole checkpointed run, and the script then had no per-entity bundles (12 of 249 script maps).
+    None when the source does not parse cleanly (no filtering then).
+    """
+    try:
+        import tree_sitter_language_pack as lp
+        root = lp.get_parser("r").parse_bytes(source.encode("utf-8")).root_node()
+    except Exception:
+        return None
+    if root.has_error():
+        return None
+    n_rows = source.count("\n") + 1
+    owner = ["program"] * n_rows
+
+    def visit(node) -> None:
+        start, end = node.start_position(), node.end_position()
+        last = end.row - 1 if end.column == 0 else end.row      # the node spans boundaries start.row..last-1
+        if node.is_named() and last > start.row:
+            for row in range(start.row, min(last, n_rows)):
+                owner[row] = node.kind()
+            for i in range(node.child_count()):
+                visit(node.child(i))
+
+    visit(root)
+    return {row for row, kind in enumerate(owner) if kind in ("program", "braced_expression")}
+
+
+def _cp_file_id(eid: str) -> str:
+    """Checkpoint file name part of an entity id: characters Windows forbids in file names become ``_``."""
+    return _re.sub(r'[/:"*?<>|\\]', "_", eid)
+
+
 def run_script_checkpointed(
     r_source: str,
     entities: dict,
@@ -159,9 +198,10 @@ def run_script_checkpointed(
 
     # Build sorted list of (end_line_0based, entity_id) pairs.
     entity_boundaries: list[tuple[int, str]] = []
+    boundaries = _statement_boundary_rows(r_source)
     for eid, entity in entities.items():
         sp = getattr(entity, "source_span", None)
-        if sp is not None:
+        if sp is not None and (boundaries is None or sp.end_line in boundaries):
             entity_boundaries.append((sp.end_line, eid))
     # Sort ascending so we can inject bottom-up (preserves earlier line numbers).
     entity_boundaries.sort(key=lambda x: x[0])
@@ -175,7 +215,7 @@ def run_script_checkpointed(
     # Bottom-up: process in reverse end_line order.
     for end_line_0, eid in reversed(entity_boundaries):
         insert_after = min(end_line_0, len(lines) - 1)
-        safe_eid = eid.replace('"', '\\"').replace("\\", "\\\\")
+        safe_eid = eid.replace("\\", "\\\\").replace('"', '\\"')   # backslash first, then the quote
         checkpoint_line = f'\n.r2py_cp("{safe_eid}")\n'
         lines.insert(insert_after + 1, checkpoint_line)
 
@@ -214,7 +254,7 @@ def run_script_checkpointed(
         entity_bundles: dict[str, EffectBundle] = {}
         entity_types: dict[str, dict] = {}
         for _, eid in entity_boundaries:
-            safe_eid = eid.replace("/", "_").replace(":", "_")
+            safe_eid = _cp_file_id(eid)
             cp_path = workdir / f"_r2py_cp_{safe_eid}.json"
             if not cp_path.exists():
                 continue
@@ -287,6 +327,44 @@ local({
 .r2py_stdout_con <- textConnection(".r2py_stdout_buf", open = "w", local = FALSE)
 sink(.r2py_stdout_con, type = "output", append = FALSE)
 
+# Close the device (flushing every page of this segment to disk), copy the pages to the
+# pending entity's snapshots, write its fingerprints, and reopen the device as a fresh segment.
+# Closing rather than dev.copy()/recordPlot() replay: many plot functions (image, contour,
+# filled.contour) clear the display list, so a replay is near-blank. The fingerprint is
+# taken BEFORE dev.off(), while the display list is still there.
+.r2py_gfx_pending <- NULL
+.r2py_gfx_flush <- function() {
+  if (is.null(.r2py_gfx_pending)) return(invisible(NULL))
+  eid <- .r2py_gfx_pending
+  .r2py_gfx_pending <<- NULL
+  tryCatch({
+    gfx_json <- .r2py_fp_drain()
+    grDevices::dev.off()
+    writeLines(as.character(gfx_json), paste0("_r2py_cp_gfx_", eid, ".json"))
+    k <- 0L
+    for (f in sort(Sys.glob(sprintf("_r2py_plot_s%03d_*.png", .r2py_seg)))) {
+      if (file.size(f) >= 2000L) {
+        k <- k + 1L
+        file.copy(f, sprintf("_r2py_cp_plot_%s__%03d.png", eid, k), overwrite = TRUE)
+      }
+    }
+    .r2py_open_device()
+  }, error = function(e) {
+    tryCatch(.r2py_open_device(), error = function(e2) NULL)
+  })
+  invisible(NULL)
+}
+# Before a new page: prepended, so the page fingerprint hooks then start the new page on the
+# reopened device. A base plot.new that only moves to the next panel of a layout is no new page.
+tryCatch({
+  setHook("before.plot.new", function() {
+    mfg <- tryCatch(par("mfg"), error = function(e) c(1L, 1L, 1L, 1L))
+    if (!isTRUE(tryCatch(par("new"), error = function(e) FALSE)) && mfg[1] == mfg[3] && mfg[2] == mfg[4])
+      .r2py_gfx_flush()
+  }, action = "prepend")
+  setHook("before.grid.newpage", function() .r2py_gfx_flush(), action = "prepend")
+}, error = function(e) NULL)
+
 .r2py_cp <- function(eid) {
   tryCatch({
     cur_vars <- setdiff(
@@ -349,32 +427,18 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
       ',"uncapturable":', uncapturable_json,
       "}"
     )
-    safe_eid <- gsub("[/:]", "_", eid)
+    safe_eid <- gsub('[/:"*?<>|\\]', "_", eid)
     writeLines(cp_json, paste0("_r2py_cp_", safe_eid, ".json"))
 
-    # If plots were drawn during this entity, close the device (flushing every page of
-    # this segment to disk), copy the pages to per-entity snapshots, write the entity's
-    # fingerprints, and reopen the device as a fresh segment for the next entity.
-    #
-    # Closing rather than dev.copy()/recordPlot() replay: many plot functions (image,
-    # contour, filled.contour) clear the display list, so a replay is near-blank.
-    # The fingerprint is taken BEFORE dev.off(), while the display list is still there.
+    # If plots were drawn during this entity, its pages are flushed to per-entity snapshots
+    # (.r2py_gfx_flush), but not here: closing the device now would leave the next entity's
+    # low-level calls (text, lines, polygon, rasterImage) without a plot ("plot.new has not
+    # been called yet": 18 of 249 checkpointed runs failed so, 2026-10-17). The flush runs
+    # just before the next page starts, or at the end of the run, so additions to the same
+    # page by later entities land on it as in an unbroken R session.
     if (graphics_delta == 1L) {
-      tryCatch({
-        gfx_json <- .r2py_fp_drain()
-        grDevices::dev.off()
-        writeLines(as.character(gfx_json), paste0("_r2py_cp_gfx_", safe_eid, ".json"))
-        k <- 0L
-        for (f in sort(Sys.glob(sprintf("_r2py_plot_s%03d_*.png", .r2py_seg)))) {
-          if (file.size(f) >= 2000L) {
-            k <- k + 1L
-            file.copy(f, sprintf("_r2py_cp_plot_%s__%03d.png", safe_eid, k), overwrite = TRUE)
-          }
-        }
-        .r2py_open_device()
-      }, error = function(e) {
-        tryCatch(.r2py_open_device(), error = function(e2) NULL)
-      })
+      tryCatch(.r2py_gfx_flush(), error = function(e) NULL)   # an earlier entity's page still pending
+      .r2py_gfx_pending <<- safe_eid
     }
 
     .r2py_prev_vars <<- cur_vars
@@ -387,11 +451,12 @@ sink(.r2py_stdout_con, type = "output", append = FALSE)
 
 # Epilogue appended after the checkpointed user source (runs before R_EPILOGUE).
 #
-# When .r2py_cp() closes and reopens the PNG device, the reopened device is a fresh, blank
-# segment.  Every earlier page already lives in its own segment's files, so the global
-# capture (which reads all segments) needs nothing restored here: just close the blank device
-# so it is not left open (the graphics epilogue's own dev.off() then fails silently).
+# The last drawing entity's pages are still pending: flush them. The flush reopens the PNG
+# device as a fresh, blank segment.  Every earlier page already lives in its own segment's files,
+# so the global capture (which reads all segments) needs nothing restored here: just close the
+# blank device so it is not left open (the graphics epilogue's own dev.off() then fails silently).
 _R_CHECKPOINT_EPILOGUE = r"""
+tryCatch(.r2py_gfx_flush(), error = function(e) NULL)
 tryCatch(grDevices::dev.off(), error = function(e) NULL)
 """
 

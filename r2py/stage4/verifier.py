@@ -428,6 +428,8 @@ def _activate_data_shim(source: str) -> tuple[str, bool]:
     when the shim was emitted and should be threaded through ``verify()``
     rather than reverse-engineered from the rewritten text.
     """
+    from ..stage2.stitch import refresh_data_shim
+    source = refresh_data_shim(source)   # an older block loads R data frames as dicts (2026-10-17)
     has_shim = False
 
     def _sub(m: "_re.Match[str]") -> str:
@@ -503,7 +505,7 @@ def _r2py_checkpoint(eid):
     # plotters that fire plot.new multiple times per semantic figure.
     graphics_delta = 1 if cur_fig_count > _r2py_prev_fig_count else 0
 
-    safe_eid = eid.replace('/', '_').replace(':', '_')
+    safe_eid = ''.join('_' if c in '/:"*?<>|' or c == chr(92) else c for c in eid)   # as stage1.runner._cp_file_id
 
     # Save every new figure (PNG + content fingerprint) as this entity's snapshot and into
     # the run-wide record; the epilogue only sees figures still open at the end.
@@ -607,6 +609,20 @@ def _r2py_checkpoint(eid):
 """
 
 
+def _multiline_string_rows(source: str) -> set[int]:
+    """1-based rows L such that the boundary after row L lies inside a string token."""
+    import io
+    import tokenize
+    rows: set[int] = set()
+    try:
+        for tok in tokenize.generate_tokens(io.StringIO(source).readline):
+            if tok.type == tokenize.STRING or tok.type == getattr(tokenize, "FSTRING_MIDDLE", -1):
+                rows.update(range(tok.start[0], tok.end[0]))
+    except (tokenize.TokenError, IndentationError, SyntaxError):
+        pass
+    return rows
+
+
 def _inject_py_checkpoints(
     py_source: str,
     entity_line_map: dict[str, tuple[int, int]],
@@ -627,11 +643,16 @@ def _inject_py_checkpoints(
     # Sort by end_line ascending; process in reverse for bottom-up insertion.
     sorted_pairs = sorted(entity_line_map.items(), key=lambda kv: kv[1][1])
     ordered_eids = [eid for eid, _ in sorted_pairs]
+    # A line inside a multi-line string still parses, so the parse check below cannot see it: a checkpoint
+    # there becomes part of the string (xml2: `etree.fromstring('''...''')` lost its root tag, 2026-10-17).
+    in_string = _multiline_string_rows("".join(lines))
 
     for eid, (_start, end_line) in reversed(sorted_pairs):
         # entity_line_map uses 1-based line numbers; convert to 0-based index.
         insert_idx = min(end_line, len(lines))  # insert after end_line (1-based → index)
-        safe_eid = eid.replace("'", "\\'")
+        if insert_idx in in_string:
+            continue
+        safe_eid = eid.replace("\\", "\\\\").replace("'", "\\'")   # backslash first, then the quote
         checkpoint_line = f"_r2py_checkpoint('{safe_eid}')\n"
         candidate = lines[:insert_idx] + [checkpoint_line] + lines[insert_idx:]
         try:
@@ -681,7 +702,8 @@ def _collect_py_checkpoints(
 
     result: dict[str, EffectBundle] = {}
     for eid in eids:
-        safe_eid = eid.replace("/", "_").replace(":", "_")
+        from ..stage1.runner import _cp_file_id
+        safe_eid = _cp_file_id(eid)
         cp_path = workdir / f"_r2py_cp_{safe_eid}.json"
         if not cp_path.exists():
             continue
