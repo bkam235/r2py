@@ -3032,3 +3032,41 @@ step-level runs (11 calls per state, 40 running states):
   - P(final >= 0.9), stalled share, ends running;
   - model calls per run (agent actions + extra drafts + reviews), so the compute match is checked, not assumed;
   - the 14 never-improve states against the rest (expected: no difference there for either arm).
+
+**3 per step, first attempt aborted (2026-10-17).** OpenRouter refused calls with `in_flight_budget_exhausted`
+from early in the run (92 agent calls, 5 audit, 4 review). A failed call ends the agent loop, so the 75 finished
+runs are not valid; they are kept as `work/replay_k3/results_invalid_credits.jsonl`. Rerun after credits are
+topped up, unchanged protocol.
+
+**What the 14 never-improve states have in common (2026-10-17, no model calls).** 14 of 40 running pool states
+improved in none of 11 unguided calls; they hold 36% of the running states' remaining loss. Each start was
+re-verified and its losing entities traced to the item that costs the score:
+
+| cause | states | share of all running-state loss |
+|---|---|---|
+| R checkpoint run failed, no per-entity R bundles (xml2, systemfonts) | 2 | 3.4% |
+| verifier compares a value R itself does not reproduce (openssl: `aes_cbc_encrypt` defaults to `iv = rand_bytes(16)`; R's `serialize` bytes) | 1 | 2.8% |
+| verifier compares shiny/bslib tag objects by R's internal list (html dependencies), Python's are "uncomparable" and score 0 | 3 | 12.0% |
+| environment: R session info, system fonts, font metrics (sessioninfo, textshaping x2) | 3 | 4.8% |
+| harness trap: the shim loads R's data frame as a dict; the turn says "use as they are"; the guard strips `diamonds = pd.DataFrame(diamonds)`; 8/8 saved ggplot2 candidates pass the dict to plotnine and crash | 1 | 3.1% |
+| R object model without a Python counterpart (gtable grid grobs) | 1 | 1.9% |
+| within reach of a model (farver `rainbow`: Gemma pastes the RGB table, rightly rejected; bslib: never prints the HTML; caret RNG resampling) | 3 | 7.8% |
+
+**28% of the running states' loss (11 of 14 stuck states) is out of reach of any model** because of the harness,
+the verifier or the environment; 8% is model-limited.
+
+**The checkpoint failures are corpus-wide.** `run_script_checkpointed` (`r2py/stage1/runner.py`) swallows the
+failure and returns no per-entity bundles. **34 of 249 script maps (14%) have none, 9 of the 60 pool states.**
+Then every entity is scored on script-wide fallbacks and the feedback cannot say which entity is wrong.
+Reproduced from R's own errors:
+- **12** the checkpoint call is inserted after an entity that ends inside a multi-line pipe or `+` chain and becomes
+  part of it (`unused argument ("group_by")`; ggplot2: "Can't add `.r2py_cp(...)` to a <ggplot>");
+- **18** a checkpoint between base-graphics calls breaks the device (`plot.new has not been called yet`; ragg:
+  device no longer open);
+- **2** an entity id with quotes is escaped in the wrong order (quote before backslash): R syntax error;
+- **2** unclear (e1071 `read_matrix_csr`, pROC).
+
+**Feedback noise.** Script-level files, env and warnings items (bslib's woff2 font cache, `TCLLIBPATH`, `TZDIR`,
+`GIT_ASKPASS`) are repeated in every losing entity's feedback, although the per-entity score does not use them.
+
+Not fixed yet: no harness edits while a run is pending, and every fix changes scores (re-verify the pool after).
