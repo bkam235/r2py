@@ -3166,3 +3166,24 @@ kept runs. Harness as fixed on 2026-10-17. Strata by the re-verified start: 41 r
 - **Why the expectation was wrong:** it compared per-step success with a single chain. Width 3 is not one chain:
   it keeps the best of three finished programs, and the chains differ most where it matters (crashing starts:
   different crash fixes). Sharing improvements inside one chain gains less than selecting among three.
+
+**Combination width 3 x 3 per step, estimated offline (2026-10-17, no model calls).** Best of k independent chains
+is what width computes, so it is estimated from the existing runs: 6 single chains per state (two width-3 runs) and
+2 three-per-step chains, averaging the best over all k-subsets.
+
+| mean final | model calls | running (41) | crashing (19) | all (60) |
+|---|---|---|---|---|
+| 1 chain | ~4 | 0.701 | 0.499 | 0.637 |
+| 3 per step | ~13 | 0.709 | 0.571 | 0.665 |
+| width 3 | ~12 | 0.728 | 0.620 | 0.694 |
+| best of 2 three-per-step chains | ~25 | 0.720 | 0.643 | 0.696 |
+| best of 6 single chains (width 6) | ~25 | 0.744 | 0.687 | 0.726 |
+
+- At equal calls, 2 three-per-step chains lose to 6 single chains: -0.030 [-0.063, -0.004] (running -0.023
+  [-0.050, -0.002]); they only match width 3, at twice its calls.
+- Extrapolated, the combination (3 three-per-step chains, ~37 calls) lands near 0.71: above width 3, below width 6
+  at less cost. Extra calls are better spent on more independent chains.
+- Caveats: best of 6 rests on the 6 chains per state (unbiased, noisy); chain finals are reconstructed from
+  trajectories (exact for 96% of runs). The $4 check (one more three-per-step run per state) was not run, by the
+  user's decision. Width stays 3 by default; width 6 is a cost decision (+0.032 estimated, twice the calls, same
+  wall time).
