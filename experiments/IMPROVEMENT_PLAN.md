@@ -3284,3 +3284,19 @@ Fonts need no harness change. Scores across 2026-10-18 are not comparable for th
   adopted as a plateau step if its interval lies above 0. Secondary: accept equal - restart, paired per state;
   number of equal moves taken.
 - ~124 continuations, about $1.60.
+
+**Lever 3 result (2026-10-18): the plateaus of running starts are real.** 124 continuations, 0 errors, $1.13.
+
+| arm | runs improved | equal moves | gain over the plateau (32 states) |
+|---|---|---|---|
+| restart (fresh history) | 11/62 | 0 | +0.0037 [+0.0003, +0.0098] |
+| accept equal | 10/62 | 47 | +0.0060 [+0.0004, +0.0133] |
+
+- Accept equal - restart, paired: +0.0023 [-0.0008, +0.0067]: no difference.
+- **Formally both pass the registered rule** (intervals above 0), **but the effect is about half a point** on a
+  plateau of 0.66, for 3 more calls per run (about +25% cost). Not made a default; `accept_equal` stays an option.
+- Equal moves were taken often (47 in 62 runs) and did not lead anywhere: moving sideways on the plateau finds no
+  better program either.
+- **Conclusion of the three levers:** for running starts the search mechanics (patience, restarts, acceptance)
+  are not what limits the score; the remaining loss is in what the model can produce and in the harness ceiling.
+  Width (independent chains with final selection) remains the only search lever that pays.
