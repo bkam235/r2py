@@ -85,6 +85,15 @@ class TestAgentEscalation(unittest.TestCase):
         harnesses = {id(c.kwargs["harness"]) for c in mock_agent.call_args_list}
         self.assertEqual(len(harnesses), DEFAULT_AGENT_WIDTH)   # each branch has its own harness
 
+    def test_a_crashing_start_gets_the_crash_width_and_patience(self):
+        from r2py.loop import DEFAULT_CRASH_STALLS, DEFAULT_CRASH_WIDTH
+        lib = _mock_lib()
+        crashing = ScoreReport(aggregate=0.0, py_exit_code=1)
+        with patch(_S2, return_value=("seed", {})), patch(_S4, return_value=crashing),              patch(_AGENT, return_value=None) as mock_agent, patch(_EP, return_value=[]):
+            run_loop(SM, lib, score_threshold=0.85)
+        self.assertEqual(mock_agent.call_count, DEFAULT_CRASH_WIDTH)
+        self.assertEqual(mock_agent.call_args.kwargs["crash_stalls"], DEFAULT_CRASH_STALLS)
+
     def test_agent_improvement_accepted(self):
         lib = _mock_lib()
 

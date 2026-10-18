@@ -378,3 +378,20 @@ class TestAcceptEqual(unittest.TestCase):
         outcome, sent = self.run_loop(False)
         self.assertNotIn("rewrite:equal_move", outcome)
         self.assertNotIn("b = 2", sent[1])
+
+
+class TestCrashStalls(unittest.TestCase):
+    """crash_stalls (2026-10-18): 5 failed steps in a row before stopping while the best program crashes."""
+
+    def steps(self, report, **kw):
+        sent = TestCrashFirst().turns(report, TestCrashFirst.SRC, max_steps=10, **kw)
+        return len(sent)
+
+    def test_a_crashing_program_gets_more_patience_and_a_running_one_does_not(self):
+        T = TestCrashFirst()
+        crashing = T.crashing()
+        running = NS(by_entity={"e1": T.full("e1"), "e2": T.full("e2", True, 0.5), "e3": T.full("e3")},
+                     crash_entities=[], py_exit_code=0, aggregate=0.8, feedback=[], comparisons=[], uncomparable=[])
+        self.assertEqual(self.steps(crashing, max_stalls=3), 3)
+        self.assertEqual(self.steps(crashing, max_stalls=3, crash_stalls=5), 5)
+        self.assertEqual(self.steps(running, max_stalls=3, crash_stalls=5), 3)

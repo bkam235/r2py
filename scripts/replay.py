@@ -52,6 +52,8 @@ POLICIES = {
     # Patience continuation (registered 2026-10-18): two more steps from a chain that stalled while crashing.
     "continue2": dict(entity_repair=False, escalate_after=None, width=1, max_steps=2),
     # Plateau continuations (registered 2026-10-18): three more steps from a running run's final program.
+    # New default for crashing starts (2026-10-18): width 6 and patience 5 while the program crashes.
+    "rewrite_w3_crash6p5": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5),
     "continue3": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3),
     "continue3_eq": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3, accept_equal=True),
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
@@ -211,6 +213,9 @@ def run_one(task: dict) -> dict:
                     from sysprompt_variants import loop_variants
                     policy["system_override"] = loop_variants()[system]
                 width = policy.pop("width", 1)
+                crash_width = policy.pop("crash_width", None)
+                if crash_width and start_report.py_exit_code != 0:
+                    width = crash_width
                 max_steps = policy.pop("max_steps", cfg["max_iters"])   # continuation tests stop early (2026-10-18)
                 beam_cfg = policy.pop("beam", None)
                 harnesses = [harness] + [new_harness() for _ in range(width - 1)]

@@ -113,6 +113,7 @@ def reason(
     guided_k: int = 0,
     guided_mode: str = "value",
     accept_equal: bool = False,
+    crash_stalls: "int | None" = None,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -195,14 +196,16 @@ def reason(
             _stat("stop", "threshold")
             break
 
-        if stall_count >= max_stalls:
-            print(f"[Agent]   {max_stalls} consecutive non-improving rewrites, stopping")
+        # crash_stalls (2026-10-18): more patience while the best program still crashes.
+        stall_limit = crash_stalls if crash_stalls and report.py_exit_code != 0 else max_stalls
+        if stall_count >= stall_limit:
+            print(f"[Agent]   {stall_limit} consecutive non-improving rewrites, stopping")
             _stat("stop", "stalled")
             break
 
-        if stall_count > 0 and stall_count >= max_stalls - 1:
+        if stall_count > 0 and stall_count >= stall_limit - 1:
             history.append(
-                "SYSTEM: You have rewritten twice without improving the score. "
+                f"SYSTEM: You have rewritten {'twice' if stall_count == 2 else f'{stall_count} times'} without improving the score. "
                 "Try probe_r to investigate what R actually produces for the "
                 "failing entities, or action:done if you cannot improve further."
             )

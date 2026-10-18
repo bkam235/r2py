@@ -19,6 +19,11 @@ from .stage2.llm import _DEFAULT_MODEL as _LLM_DEFAULT_MODEL
 # Independent agent loops per script, the best result wins.  Replays: 3 loops beat 1 by +0.144 (p=0.001)
 # at three times the model calls (Stage 11d).
 DEFAULT_AGENT_WIDTH = 3
+# When the program the agent starts from crashes (2026-10-18, user's decision): 6 loops instead of 3 (best of 6
+# chains estimated +0.06 over 3 on crashing starts) and 5 failed steps in a row before a loop stops while its best
+# program still crashes (continuations: +0.027 [0.000, +0.067]).
+DEFAULT_CRASH_WIDTH = 6
+DEFAULT_CRASH_STALLS = 5
 
 if TYPE_CHECKING:
     from .types import ScriptMap
@@ -99,6 +104,8 @@ def run_loop(
     agent_replace_entity: bool = True,
     agent_entity_repair: bool = False,
     agent_width: int = DEFAULT_AGENT_WIDTH,
+    agent_crash_width: int = DEFAULT_CRASH_WIDTH,
+    agent_crash_stalls: "int | None" = DEFAULT_CRASH_STALLS,
     agent_entity_width: int = 1,
     agent_locate: bool = False,
     runtime_dir: "str | Path | None" = None,
@@ -305,8 +312,9 @@ def run_loop(
         _ondemand_records = _verify_needed(script_map, best_decomp, runtime, model=escalation_model, **ondemand)
         _trajectory.log("ondemand", records=_ondemand_records)
 
+    width = agent_crash_width if best_decomp.py_exit_code != 0 else agent_width
     agent_result = _reason_wide(
-        [harness] + [_new_harness() for _ in range(max(1, agent_width) - 1)],
+        [harness] + [_new_harness() for _ in range(max(1, width) - 1)],
         current_source=best_source,
         score_report=best_decomp,
         script_map=script_map,
@@ -314,6 +322,7 @@ def run_loop(
         max_steps=max_iters,
         score_threshold=score_threshold,
         max_stalls=max_stalls,
+        crash_stalls=agent_crash_stalls,
         budget_s=agent_budget_s,
         replace_entity=agent_replace_entity,
         entity_repair=agent_entity_repair,
