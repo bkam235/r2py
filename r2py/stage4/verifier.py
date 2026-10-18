@@ -46,6 +46,26 @@ _ALL_CAPTURE: CaptureSpec = frozenset({
 })
 
 
+# R calls that report the R session itself (version, platform, attached packages, external libraries).
+_ENV_REPORT_RE = _re.compile(
+    r"\b(?:sessioninfo::)?(?:session_info|sessionInfo|platform_info|package_info|python_info|external_info|"
+    r"session_diff)\s*\(|\bSys\.info\s*\(|\bR\.version(?:\.string)?\b")
+
+
+def _environment_report_entities(script_map) -> set[str]:
+    """Entities whose R code reports the R session (``session_info()``, ``Sys.info()``, ``R.version``)."""
+    lines = (getattr(script_map, "source", "") or "").splitlines()
+    out = set()
+    for eid, ent in (getattr(script_map, "entities", None) or {}).items():
+        sp = getattr(ent, "source_span", None)
+        if sp is None:
+            continue
+        code = "\n".join(lines[sp.start_line: sp.end_line + 1])
+        if _ENV_REPORT_RE.search(code):
+            out.add(eid)
+    return out
+
+
 def _get_r_bundle(script_map) -> EffectBundle:
     """Aggregate entity actual_bundles from the ScriptMap into one R ground-truth bundle.
 
@@ -1060,16 +1080,21 @@ def verify(
         return sum(vals) / len(vals)
 
     entity_scores = list(score_table.values())
+    env_report = _environment_report_entities(script_map)
     for es in entity_scores:
-        es.active_dims = _active_dims(es)
+        # An R session report has no Python counterpart a translation could reproduce (a faithful translation
+        # reports Python's environment): nothing to verify (user's decision, 2026-10-18).
+        es.active_dims = frozenset() if es.entity_id in env_report else _active_dims(es)
+    if env_report:
+        feedback = [f for f in feedback if f.entity_id not in env_report]
     if entity_scores:
         contributing = [
             _weighted_entity_avg(es)
             for es in entity_scores
-            if _r_entity_has_output(es.entity_id)
+            if _r_entity_has_output(es.entity_id) and es.entity_id not in env_report
         ]
         if not contributing:
-            contributing = [_weighted_entity_avg(es) for es in entity_scores]
+            contributing = [_weighted_entity_avg(es) for es in entity_scores if es.entity_id not in env_report] or [1.0]
         aggregate = sum(contributing) / len(contributing)
     else:
         scored_results = [

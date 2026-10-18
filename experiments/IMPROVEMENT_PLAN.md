@@ -3240,3 +3240,12 @@ within reach of a translation and need no harness change).
   `as_sass` (pool) +0.125, utf8 `output_utf8` +0.075; ragg `webp_anim` (crashes) and sass `sass_import` unchanged.
 - Session reports are left for a decision: R's `session_info()` lists R's version and packages; a faithful
   Python translation reports Python's environment, so the comparison measures nothing a translation can do.
+- **Session reports (user's decision): excluded from scoring.** Entities whose R code calls `session_info`,
+  `sessionInfo`, `platform_info`, `package_info`, `python_info`, `external_info`, `session_diff`, `Sys.info()` or
+  `R.version` have no active dimensions, leave the aggregate and get no feedback (`r2py/stage4/verifier.py`,
+  `tests/test_env_report.py`). Corpus-wide the rule matches only the 5 sessioninfo scripts; besides the report they
+  hold only `library()` calls, so all 5 now score 1.0 (0.56-0.81 before) and in effect leave the evaluation.
+
+**Lever 1 summary:** tag lists ~0 on stored translations (the ceiling is raised but the translations do not use it
+yet); temp paths +0.25-0.30 on 5 scripts, +0.125 and +0.075 on two more; session reports removed (5 scripts).
+Fonts need no harness change. Scores across 2026-10-18 are not comparable for these 18 scripts.
