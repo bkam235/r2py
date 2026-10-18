@@ -216,6 +216,8 @@ def run_one(task: dict) -> dict:
                 crash_width = policy.pop("crash_width", None)
                 if crash_width and start_report.py_exit_code != 0:
                     width = crash_width
+                    from r2py.loop import DEFAULT_CRASH_BUDGET_FACTOR
+                    task = {**task, "budget_s": task["budget_s"] * DEFAULT_CRASH_BUDGET_FACTOR}   # as run_loop does
                 max_steps = policy.pop("max_steps", cfg["max_iters"])   # continuation tests stop early (2026-10-18)
                 beam_cfg = policy.pop("beam", None)
                 harnesses = [harness] + [new_harness() for _ in range(width - 1)]

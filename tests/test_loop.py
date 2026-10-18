@@ -90,9 +90,16 @@ class TestAgentEscalation(unittest.TestCase):
         lib = _mock_lib()
         crashing = ScoreReport(aggregate=0.0, py_exit_code=1)
         with patch(_S2, return_value=("seed", {})), patch(_S4, return_value=crashing),              patch(_AGENT, return_value=None) as mock_agent, patch(_EP, return_value=[]):
-            run_loop(SM, lib, score_threshold=0.85)
+            run_loop(SM, lib, score_threshold=0.85, agent_budget_s=600)
         self.assertEqual(mock_agent.call_count, DEFAULT_CRASH_WIDTH)
         self.assertEqual(mock_agent.call_args.kwargs["crash_stalls"], DEFAULT_CRASH_STALLS)
+        self.assertEqual(mock_agent.call_args.kwargs["budget_s"], 1200)    # twice the budget for twice the chains
+
+    def test_a_running_start_keeps_its_budget(self):
+        lib = _mock_lib()
+        with patch(_S2, return_value=("seed", {})), patch(_S4, return_value=_sr(0.4)),              patch(_AGENT, return_value=None) as mock_agent, patch(_EP, return_value=[]):
+            run_loop(SM, lib, score_threshold=0.85, agent_budget_s=600)
+        self.assertEqual(mock_agent.call_args.kwargs["budget_s"], 600)
 
     def test_agent_improvement_accepted(self):
         lib = _mock_lib()

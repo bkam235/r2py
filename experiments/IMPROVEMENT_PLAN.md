@@ -3319,3 +3319,7 @@ concurrent: a day apart; reported as such).
   **+0.022 [-0.039, +0.085]**, better/worse/tied 8/2/9 (a day apart, one sample). The gain is not established at
   this size; the default stays as decided. Chart updated: the measured line replaces the estimate in the
   "Start crashes" view, the estimate is kept dotted.
+- **Time limit for 6-chain runs doubled (user's request, 2026-10-18):** the agent's wall-clock budget is shared by
+  chains running in parallel; when the crash width applies, the budget is multiplied by
+  `DEFAULT_CRASH_BUDGET_FACTOR = 2.0` (manifest key `agent_crash_budget_factor`; replay applies the same factor).
+  Production: 45 min -> 90 min per crashing script (heldout manifest), replay 20 -> 40 min. Not re-measured.

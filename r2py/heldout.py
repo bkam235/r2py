@@ -391,7 +391,8 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
     experiment.
     """
     from r2py import seed_from_translation
-    from r2py.loop import DEFAULT_AGENT_WIDTH, DEFAULT_CRASH_STALLS, DEFAULT_CRASH_WIDTH, run_loop
+    from r2py.loop import (DEFAULT_AGENT_WIDTH, DEFAULT_CRASH_BUDGET_FACTOR, DEFAULT_CRASH_STALLS,
+                           DEFAULT_CRASH_WIDTH, run_loop)
     from r2py.stage1 import analyze
 
     from r2py.harness import trajectory
@@ -421,6 +422,7 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         agent_width=cfg.get("agent_width", DEFAULT_AGENT_WIDTH),
         agent_crash_width=cfg.get("agent_crash_width", DEFAULT_CRASH_WIDTH),
         agent_crash_stalls=cfg.get("agent_crash_stalls", DEFAULT_CRASH_STALLS),
+        agent_crash_budget_factor=cfg.get("agent_crash_budget_factor", DEFAULT_CRASH_BUDGET_FACTOR),
         agent_entity_width=cfg.get("entity_width", 1),
         agent_locate=cfg.get("locate", False),
         runtime_dir=cfg.get("runtime_dir"),

@@ -24,6 +24,9 @@ DEFAULT_AGENT_WIDTH = 3
 # program still crashes (continuations: +0.027 [0.000, +0.067]).
 DEFAULT_CRASH_WIDTH = 6
 DEFAULT_CRASH_STALLS = 5
+# The wall-clock budget is shared by chains running in parallel; with twice the chains, 15 of 120 stopped on the
+# budget in the first measured run (2026-10-18). The crash width gets this multiple of the budget.
+DEFAULT_CRASH_BUDGET_FACTOR = 2.0
 
 if TYPE_CHECKING:
     from .types import ScriptMap
@@ -106,6 +109,7 @@ def run_loop(
     agent_width: int = DEFAULT_AGENT_WIDTH,
     agent_crash_width: int = DEFAULT_CRASH_WIDTH,
     agent_crash_stalls: "int | None" = DEFAULT_CRASH_STALLS,
+    agent_crash_budget_factor: float = DEFAULT_CRASH_BUDGET_FACTOR,
     agent_entity_width: int = 1,
     agent_locate: bool = False,
     runtime_dir: "str | Path | None" = None,
@@ -312,7 +316,9 @@ def run_loop(
         _ondemand_records = _verify_needed(script_map, best_decomp, runtime, model=escalation_model, **ondemand)
         _trajectory.log("ondemand", records=_ondemand_records)
 
-    width = agent_crash_width if best_decomp.py_exit_code != 0 else agent_width
+    crashing = best_decomp.py_exit_code != 0
+    width = agent_crash_width if crashing else agent_width
+    budget_s = agent_budget_s * agent_crash_budget_factor if (crashing and agent_budget_s and width > agent_width) else agent_budget_s
     agent_result = _reason_wide(
         [harness] + [_new_harness() for _ in range(max(1, width) - 1)],
         current_source=best_source,
@@ -323,7 +329,7 @@ def run_loop(
         score_threshold=score_threshold,
         max_stalls=max_stalls,
         crash_stalls=agent_crash_stalls,
-        budget_s=agent_budget_s,
+        budget_s=budget_s,
         replace_entity=agent_replace_entity,
         entity_repair=agent_entity_repair,
         entity_width=agent_entity_width,
