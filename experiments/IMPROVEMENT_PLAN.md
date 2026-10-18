@@ -3313,3 +3313,9 @@ starts of the training pool, 1 sample each (2 samples would cost ~$6.60, more th
 Its step curve replaces the estimated width-6 line for crashing starts in the chart (`In-Loop Score Curves`), and
 the run's final is compared with the two width-3 runs of 2026-10-17 re-scored with the current harness (not
 concurrent: a day apart; reported as such).
+- **Result (2026-10-18):** 20 runs, 0 errors, $1.89; all 20 started crashing and ran 6 chains; 15 of 120 chains
+  stopped on the 20-minute wall-clock budget (4 workers x 6 chains share the machine). On the chart's 19 crashing
+  states: mean final **0.646**, against the width-6 estimate 0.671 and the recorded width-3 finals 0.624:
+  **+0.022 [-0.039, +0.085]**, better/worse/tied 8/2/9 (a day apart, one sample). The gain is not established at
+  this size; the default stays as decided. Chart updated: the measured line replaces the estimate in the
+  "Start crashes" view, the estimate is kept dotted.
