@@ -3323,3 +3323,7 @@ concurrent: a day apart; reported as such).
   chains running in parallel; when the crash width applies, the budget is multiplied by
   `DEFAULT_CRASH_BUDGET_FACTOR = 2.0` (manifest key `agent_crash_budget_factor`; replay applies the same factor).
   Production: 45 min -> 90 min per crashing script (heldout manifest), replay 20 -> 40 min. Not re-measured.
+
+**Crashing-start default, re-run with the doubled time limit (registered 2026-10-18, before the run):** the same
+20 crashing states, 1 sample, policy `rewrite_w3_crash6p5`, 40-minute budget (`work/replay_crash6p5_b2`). Its curve
+replaces the first measured run in the chart; the estimated width-6 line is removed (user's request).
