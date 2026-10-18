@@ -3229,3 +3229,14 @@ that improve the best, by the number of failed steps just before:
 - **Open question:** py-shiny renders different markup from R's shiny/bslib (similarity 0.4-0.6 for the same UI).
   Full credit needs R's exact HTML; whether an idiomatic py-shiny translation should get it is a scoring decision,
   not a bug.
+
+**Ceiling lever 1b, part one: temp paths (2026-10-18).** 23 of 249 scripts read the environment, in three groups:
+temp files (9), session reports (sessioninfo, 5), fonts (6; Python can read the same font files, so these are
+within reach of a translation and need no harness change).
+- **Temp paths:** `file <- tempfile(fileext = ".jpeg")` was compared as data, R's random path against Python's,
+  so the entity always scored 0. Now two absolute paths inside a temp directory with the same extension compare
+  equal (`r2py/stage4/comparators/data.py`, `tests/test_temp_paths.py`).
+- Re-scored stored translations: ragg `agg_jpeg`/`ppm`/`tiff`/`webp` +0.25 each, e1071 `write_svm` +0.30, sass
+  `as_sass` (pool) +0.125, utf8 `output_utf8` +0.075; ragg `webp_anim` (crashes) and sass `sass_import` unchanged.
+- Session reports are left for a decision: R's `session_info()` lists R's version and packages; a faithful
+  Python translation reports Python's environment, so the comparison measures nothing a translation can do.

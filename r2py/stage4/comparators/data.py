@@ -13,6 +13,7 @@ data_compare modes:
 from __future__ import annotations
 
 import math
+import re
 from typing import Any
 
 from ...types import ComparatorResult, EffectClass
@@ -108,6 +109,18 @@ def _compare_callable_meta(
     return score, "fail", "value", explanation
 
 
+_TEMP_DIR_RE = re.compile(r"/(rtmp\w*|temp|tmp)(/|$)")
+
+
+def _temp_path_ext(s: str) -> "str | None":
+    """The lower-cased extension of *s* if it is an absolute path inside a temp directory, else None."""
+    p = s.strip().replace("\\", "/").lower()
+    if not (p.startswith("/") or re.match(r"^[a-z]:/", p)) or "\n" in p or not _TEMP_DIR_RE.search(p):
+        return None
+    base = p.rsplit("/", 1)[-1]
+    return base.rsplit(".", 1)[1] if "." in base else ""
+
+
 def _compare_pair(
     name: str,
     r_val: Any,
@@ -162,6 +175,11 @@ def _compare_pair(
     # Both string
     if isinstance(r_val, str) and isinstance(py_val, str):
         if r_val == py_val:
+            return 1.0, "pass", None, ""
+        # A temp path (`tempfile(fileext = ".jpeg")`) is random in R itself, so no translation can reproduce it:
+        # two temp paths with the same extension are the same value (2026-10-18: 9 of 249 scripts lost the entity).
+        r_tmp, py_tmp = _temp_path_ext(r_val), _temp_path_ext(py_val)
+        if r_tmp is not None and r_tmp == py_tmp:
             return 1.0, "pass", None, ""
         return 0.0, "fail", "value", f"{name}: {r_val!r} != {py_val!r}"
 
