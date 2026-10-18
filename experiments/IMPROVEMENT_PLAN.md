@@ -3187,3 +3187,30 @@ is what width computes, so it is estimated from the existing runs: 6 single chai
   trajectories (exact for 96% of runs). The $4 check (one more three-per-step run per state) was not run, by the
   user's decision. Width stays 3 by default; width 6 is a cost decision (+0.032 estimated, twice the calls, same
   wall time).
+
+**Is the plateau a local optimum? (2026-10-18, from the 3-per-step trajectories, no model calls.)** Share of steps
+that improve the best, by the number of failed steps just before:
+
+| | after 0 fails | after 1 | after 2 |
+|---|---|---|---|
+| running starts, width 3 | 0.38 | 0.25 | 0.09 |
+| running starts, 3 per step | 0.49 | 0.19 | 0.05 |
+| crashing starts, width 3 | 0.43 | 0.32 | 0.31 |
+| crashing starts, 3 per step | 0.52 | 0.45 | 0.24 |
+
+- Running starts are stuck: after two failures a step almost never improves; more patience would not help. Part
+  of that plateau is the harness ceiling (28% of the never-improve states' loss unreachable).
+- Crashing starts are cut off by the stopping rule (stop after 3 failures in a row): after two failures the chance
+  is still ~0.3. Caveat: chains that fail twice are disproportionately the hard states.
+- The loop is greedy search with large random jumps (whole-file rewrites), strict acceptance and early stopping;
+  its levers are step size, acceptance, patience and restarts (width).
+
+**Agreed plan, in this order (user, 2026-10-18):**
+1. **Raise the harness ceiling** (free to measure: change, then re-score saved translations offline): compare
+   shiny/htmltools tag objects by their rendered HTML instead of R's internal list (12% of the running states'
+   loss in the never-improve analysis); the environment shim for R session facts and fonts (4.8%).
+2. **Patience on crashing programs:** `max_stalls` 5 while the best program crashes, 3 otherwise (a global 5 is a
+   config change but wastes steps on running programs, where a third try succeeds 5-9% of the time). One modest
+   run.
+3. **Running starts:** keep equal-scoring programs (drift across plateaus) or restart after the plateau (from the
+   current best with a fresh history, or from a new seed). Needs design and a run.
