@@ -90,3 +90,14 @@ class TestPythonInjection(unittest.TestCase):
         out, _ = _inject_py_checkpoints(src, {"a": (1, 1), "x": (1, 3), "y": (4, 4)})
         self.assertIn("x = parse('''\n<root/>\n''')\n_r2py_checkpoint('x')\n", out)
         self.assertNotIn("_r2py_checkpoint('a')", out)        # row 1 ends inside the string
+
+
+class TestTagListSerialisation(unittest.TestCase):
+    def test_a_tag_list_is_captured_as_its_rendered_html(self):
+        src = 'x <- htmltools::tagList(htmltools::p("a"), htmltools::span("b"))\n'
+        try:
+            b = run_script_checkpointed(src, ents(x=(0, 0)), timeout_s=120)[1]
+        except Exception as exc:
+            self.skipTest(f"R not available: {exc}")
+        self.assertIsInstance(b["x"].data["x"], str)          # not htmltools' internal list
+        self.assertIn("<p>a</p>", b["x"].data["x"])

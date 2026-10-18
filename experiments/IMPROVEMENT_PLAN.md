@@ -3214,3 +3214,18 @@ that improve the best, by the number of failed steps just before:
    run.
 3. **Running starts:** keep equal-scoring programs (drift across plateaus) or restart after the plateau (from the
    current best with a fresh history, or from a new seed). Needs design and a run.
+
+**Ceiling lever 1a: tag objects (2026-10-18).**
+- **Correction:** the "12% of the running states' loss" for tag objects was the whole loss of the three states
+  where tag comparison failed, not the part it causes. Only 8 of 249 scripts hold tag objects (4 pool states).
+- **Cause:** an R adapter already rendered `shiny.tag` to HTML, but tag lists (`fluidPage`, `page_fillable`,
+  `tagList`: class `shiny.tag.list`) fell through to the generic list and were serialised as htmltools' internal
+  list (dependency records). Now they render to HTML too (`r2py/stage0/effects/data.py`); stored R values refreshed
+  for the 8 scripts (`scripts/refresh_entity_bundles.py --main`); test added.
+- **Effect on the stored translations: none to speak of** (shiny `actionButton` 0.552 -> 0.559, the rest
+  unchanged). The comparison is now real ("text forms differ (similarity 0.42)" instead of "uncomparable"), but
+  the text tier scores similarity^4, and in several translations Python has no variable of R's name (`ui` passed
+  inline to `App(...)`, or renamed `app_ui`), which the model can fix.
+- **Open question:** py-shiny renders different markup from R's shiny/bslib (similarity 0.4-0.6 for the same UI).
+  Full credit needs R's exact HTML; whether an idiomatic py-shiny translation should get it is a scoring decision,
+  not a bug.

@@ -125,9 +125,11 @@ register_r_adapter(
     "is.data.frame({var})",
     "lapply({var}, .r2py_serialize_var)",
 )
-# htmltools / shiny tags → rendered HTML string.
+# htmltools / shiny tags and tag lists → rendered HTML string. Tag lists (fluidPage, page_fillable, tagList) were
+# serialised as htmltools' internal list (dependency records, attributes), which no Python value can match
+# (2026-10-18: shiny and bslib `ui` scored data 0 as "uncomparable").
 register_r_adapter(
-    "inherits({var}, 'htmltools_tag') || inherits({var}, 'shiny.tag')",
+    "inherits({var}, 'htmltools_tag') || inherits({var}, 'shiny.tag') || inherits({var}, 'shiny.tag.list')",
     "as.character(htmltools::renderTags({var})$html)",
 )
 # lm / glm → structured summary, each component recursed.
