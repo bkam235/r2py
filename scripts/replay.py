@@ -51,6 +51,9 @@ POLICIES = {
     "rewrite_w1k3": dict(entity_repair=False, escalate_after=None, width=1, guided_k=3, guided_mode="off"),
     # Patience continuation (registered 2026-10-18): two more steps from a chain that stalled while crashing.
     "continue2": dict(entity_repair=False, escalate_after=None, width=1, max_steps=2),
+    # Plateau continuations (registered 2026-10-18): three more steps from a running run's final program.
+    "continue3": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3),
+    "continue3_eq": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3, accept_equal=True),
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
     # script calls, built by scripts/oracle_library.py (perfect coverage, perfect retrieval).
     "rewrite_w3_oracle": dict(entity_repair=False, escalate_after=None, width=3, oracle=True),

@@ -112,6 +112,7 @@ def reason(
     crash_first: str = "off",
     guided_k: int = 0,
     guided_mode: str = "value",
+    accept_equal: bool = False,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -567,7 +568,15 @@ def reason(
                 "catastrophic" if (best_score - new_report.aggregate) >= CATASTROPHIC_DROP
                 or (new_report.aggregate == 0.0 and best_score > 0.0) else
                 "worse" if new_report.aggregate < best_score - 1e-9 else "unchanged"))
-            if _obj.better(new_report, report):
+            # accept_equal (2026-10-18): a running candidate that scores the same as the running best and differs
+            # from it is also taken, so the chain can move across a plateau instead of retrying from one program.
+            # It does not reset the stall count: only a real improvement does.
+            equal_move = False
+            if accept_equal and not _obj.better(new_report, report) and new_report.py_exit_code == 0 \
+                    and report.py_exit_code == 0 and abs(new_report.aggregate - report.aggregate) <= _obj.EPS:
+                from ..stage2.sentinel_mapper import strip_sentinels as _strip
+                equal_move = _strip(new_source).strip() != _strip(best_source).strip()
+            if _obj.better(new_report, report) or equal_move:
                 # Code review gate: check for rule violations before adopting. A candidate that
                 # still crashes is only a stepping stone (Stage 7); the review judges what runs.
                 if new_report.py_exit_code == 0 and action.get("reviewed") is not None:
@@ -618,6 +627,13 @@ def reason(
                     progress_only = new_report.aggregate <= best_score + 1e-9
                     best_score = new_report.aggregate
                     report = new_report
+                    if equal_move:
+                        stall_count += 1
+                        _stat("outcome", f"{action_type}:equal_move")
+                        history.append(
+                            f"Step {step}: rewrite -> {new_report.aggregate:.3f} (ACCEPTED at the same score: the "
+                            "next step starts from this version).")
+                        continue
                     stall_count = 0
                     if progress_only:
                         _stat("outcome", f"{action_type}:shaped_progress")

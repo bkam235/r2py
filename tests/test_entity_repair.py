@@ -339,3 +339,42 @@ class TestSampledStep(unittest.TestCase):
         agent.drain_agent_stats()
         self.assertEqual(len(sent), 3)
         self.assertFalse(any("What R computes" in t for t in sent))
+
+
+class TestAcceptEqual(unittest.TestCase):
+    """accept_equal (2026-10-18): an equal-scoring, different running candidate becomes the current program."""
+
+    def run_loop(self, accept_equal):
+        from unittest.mock import patch
+        T = TestCrashFirst
+        rep = NS(by_entity={"e1": T.full("e1", True, 0.5)}, crash_entities=[], py_exit_code=0,
+                 aggregate=0.5, feedback=[], comparisons=[], uncomparable=[])
+        sent = []
+
+        def call(messages, system, **kw):
+            sent.append(messages[-1]["content"])
+            return f"ACTION: rewrite\n```python\n# r2py:entity:e1\nb = {len(sent) + 1}\n```"
+        harness = NS(verify=lambda src: rep, _probe_count=0, last_annotated_source="", _sidecar_filename="")
+        sm = NS(source="b <- 1\n", entities={"e1": NS(source_span=NS(start_line=0, end_line=0), name="b")},
+                entity_bundles={})
+        with patch.object(agent._llm, "call", side_effect=call), \
+             patch.object(agent, "_prefetch_patterns", return_value={}), \
+             patch.object(agent, "_prefetch_r_sources", return_value=([], "")), \
+             patch.object(agent, "_get_unavailable_packages", return_value=[]), \
+             patch.object(agent, "unavailable_imports", return_value=[]), \
+             patch.object(agent, "_check_syntax", return_value=None), \
+             patch.object(agent, "review_translation", return_value=(True, "")):
+            agent.reason("# r2py:entity:e1\nb = 1\n", rep, harness, sm, model="openrouter:m", max_steps=5,
+                         max_stalls=3, entity_repair=False, accept_equal=accept_equal)
+        return agent.drain_agent_stats()["outcome"], sent
+
+    def test_equal_moves_are_taken_but_still_count_as_stalls(self):
+        outcome, sent = self.run_loop(True)
+        self.assertEqual(outcome.get("rewrite:equal_move"), 3)
+        self.assertEqual(len(sent), 3)                       # three stalls stop the loop, as without the option
+        self.assertIn("b = 2", sent[1])                     # step 2 starts from step 1's program
+
+    def test_off_by_default(self):
+        outcome, sent = self.run_loop(False)
+        self.assertNotIn("rewrite:equal_move", outcome)
+        self.assertNotIn("b = 2", sent[1])

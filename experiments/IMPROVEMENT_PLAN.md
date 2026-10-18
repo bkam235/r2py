@@ -3271,3 +3271,16 @@ Fonts need no harness change. Scores across 2026-10-18 are not comparable for th
   5th try give.
 - The change would be cheap (only crashing chains spend the extra steps), so it stays a candidate if a larger
   sample is ever run alongside another test.
+
+**Lever 3, running starts on a plateau: continuation test (registered 2026-10-18, before the run).**
+- **States:** every width-3 run of the 3-per-step replay whose start runs and whose final is below the 0.9
+  threshold: 62 runs, 32 states, mean plateau score 0.660. The program each run returned continues for 3 more
+  steps (width 1), once per arm, concurrently:
+  - `continue3` (**restart**: fresh history, strict acceptance);
+  - `continue3_eq` (**accept equal**: the same, and a running candidate that scores the same as the current one
+    and differs from it becomes the current program; it still counts as a stall). New loop option
+    `accept_equal` (off by default), tests in `tests/test_entity_repair.py`.
+- **Primary:** gain over the plateau per state (mean over its runs), bootstrap interval over states. An arm is
+  adopted as a plateau step if its interval lies above 0. Secondary: accept equal - restart, paired per state;
+  number of equal moves taken.
+- ~124 continuations, about $1.60.
