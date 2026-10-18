@@ -3261,3 +3261,13 @@ Fonts need no harness change. Scores across 2026-10-18 are not comparable for th
   final, on the crashing starts.
 - **Decision:** adopt crash patience 5 if the mean run-level gain on crashing starts has a 95% bootstrap interval
   (over states) above 0; otherwise keep 3.
+
+**Lever 2 result (2026-10-18): patience stays 3.** 44 chains continued, 0 errors, $0.27.
+- 6 of 44 improved in the 2 extra steps (14%), and all 6 now run; mean gain per continued chain +0.079.
+- Run-level gain on crashing starts (20 states): **+0.027 [+0.000, +0.067]**; running starts 0, as expected.
+- By the registered rule (interval above 0) not adopted: the lower bound is exactly 0.
+- The per-try success (~7%) is far below the 0.31 seen after two failures: these chains had already failed three
+  times, and they continued with a fresh history. The earlier "~0.3 after two failures" overstated what a 4th and
+  5th try give.
+- The change would be cheap (only crashing chains spend the extra steps), so it stays a candidate if a larger
+  sample is ever run alongside another test.
