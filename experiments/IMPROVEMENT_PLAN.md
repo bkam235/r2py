@@ -3300,3 +3300,16 @@ Fonts need no harness change. Scores across 2026-10-18 are not comparable for th
 - **Conclusion of the three levers:** for running starts the search mechanics (patience, restarts, acceptance)
   are not what limits the score; the remaining loss is in what the model can produce and in the harness ceiling.
   Width (independent chains with final selection) remains the only search lever that pays.
+
+**New default for crashing starts (user's decision, 2026-10-18; commit 7468ccf).** When the program the agent starts
+from crashes: 6 independent chains instead of 3 (`DEFAULT_CRASH_WIDTH`), and a chain stops after 5 failed steps in
+a row while its best program still crashes, 3 otherwise (`DEFAULT_CRASH_STALLS`, `reason(crash_stalls=...)`).
+Running starts are unchanged (a running program is never replaced by a crashing one, so the patience never applies
+to them). Manifest keys `agent_crash_width`, `agent_crash_stalls`. Tests in `tests/test_loop.py`,
+`tests/test_entity_repair.py`.
+
+**Measured run (registered 2026-10-18, before the run):** replay policy `rewrite_w3_crash6p5` on the 20 crashing
+starts of the training pool, 1 sample each (2 samples would cost ~$6.60, more than the $4.83 left), current harness.
+Its step curve replaces the estimated width-6 line for crashing starts in the chart (`In-Loop Score Curves`), and
+the run's final is compared with the two width-3 runs of 2026-10-17 re-scored with the current harness (not
+concurrent: a day apart; reported as such).
