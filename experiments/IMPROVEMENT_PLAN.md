@@ -3249,3 +3249,15 @@ within reach of a translation and need no harness change).
 **Lever 1 summary:** tag lists ~0 on stored translations (the ceiling is raised but the translations do not use it
 yet); temp paths +0.25-0.30 on 5 scripts, +0.125 and +0.075 on two more; session reports removed (5 scripts).
 Fonts need no harness change. Scores across 2026-10-18 are not comparable for these 18 scripts.
+
+**Lever 2, patience on crashing programs: continuation test (registered 2026-10-18, before the run).**
+- **Reach:** of the 360 width-3 chains of the 3-per-step run, 44 (12%, 11 states) stopped by stalling while their
+  best program still crashed. Only these can gain: on a running program the rule changes nothing.
+- **Test:** each of the 44 chains continues from its stalled best program for 2 more steps (patience 5 instead
+  of 3), production turn, width 1, fresh history (an approximation: the original chain's step notes are not
+  replayed). ~90 model calls, under $1.
+- **Measures:** per chain, P(the 2 extra steps improve the best) and P(the program then runs); per width-3 run,
+  the final with the continued chains substituted (best of 3 by the search objective), against the recorded
+  final, on the crashing starts.
+- **Decision:** adopt crash patience 5 if the mean run-level gain on crashing starts has a 95% bootstrap interval
+  (over states) above 0; otherwise keep 3.

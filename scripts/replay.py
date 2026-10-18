@@ -49,6 +49,8 @@ POLICIES = {
     "guided_w1k3s": dict(entity_repair=False, escalate_after=None, width=1, guided_k=3, guided_mode="struct"),
     # 3 per step (registered 2026-10-17): one chain, 3 unguided rewrites per step, the best that passes review kept.
     "rewrite_w1k3": dict(entity_repair=False, escalate_after=None, width=1, guided_k=3, guided_mode="off"),
+    # Patience continuation (registered 2026-10-18): two more steps from a chain that stalled while crashing.
+    "continue2": dict(entity_repair=False, escalate_after=None, width=1, max_steps=2),
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
     # script calls, built by scripts/oracle_library.py (perfect coverage, perfect retrieval).
     "rewrite_w3_oracle": dict(entity_repair=False, escalate_after=None, width=3, oracle=True),
@@ -206,6 +208,7 @@ def run_one(task: dict) -> dict:
                     from sysprompt_variants import loop_variants
                     policy["system_override"] = loop_variants()[system]
                 width = policy.pop("width", 1)
+                max_steps = policy.pop("max_steps", cfg["max_iters"])   # continuation tests stop early (2026-10-18)
                 beam_cfg = policy.pop("beam", None)
                 harnesses = [harness] + [new_harness() for _ in range(width - 1)]
                 common = dict(current_source=task["source"], score_report=start_report, script_map=sm, model=cfg["model"],
@@ -214,7 +217,7 @@ def run_one(task: dict) -> dict:
                 if beam_cfg:
                     result = reason_beam(harnesses, max_steps=beam_cfg["steps"], max_rounds=beam_cfg["rounds"], **common)
                 else:
-                    result = reason_wide(harnesses, max_steps=cfg["max_iters"], **common)
+                    result = reason_wide(harnesses, max_steps=max_steps, **common)
                 final = result[1].aggregate if result else start_report.aggregate
                 row.update(final_score=round(final, 4), improved=bool(result and final > start_report.aggregate + 1e-9),
                            final_exit=(result[1].py_exit_code if result else start_report.py_exit_code))
