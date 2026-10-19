@@ -3327,3 +3327,10 @@ concurrent: a day apart; reported as such).
 **Crashing-start default, re-run with the doubled time limit (registered 2026-10-18, before the run):** the same
 20 crashing states, 1 sample, policy `rewrite_w3_crash6p5`, 40-minute budget (`work/replay_crash6p5_b2`). Its curve
 replaces the first measured run in the chart; the estimated width-6 line is removed (user's request).
+- **Re-run result (2026-10-19), 40-minute limit:** 20 runs, 0 errors; only 1 of 120 chains stopped on the budget
+  (15 with 20 minutes). 4 runs caught by an overnight laptop sleep (22:04-08:02; their wall-clock budget ran through
+  the gap) were discarded and redone (`work/replay_crash6p5_b2/discarded_sleep`). Cost $3.45 including the
+  discarded runs. On the chart's 19 crashing states: mean final **0.676** (first run 0.646; the width-6 estimate was
+  0.671), against the recorded width-3 finals 0.624: **+0.052 [-0.021, +0.126]**, better/worse/tied 9/3/7 (two days
+  apart, one sample). Chart: the re-run's line replaces the first; the estimated width-6 line is removed (user's
+  request).
