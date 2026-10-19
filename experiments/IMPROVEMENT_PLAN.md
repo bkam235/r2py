@@ -3356,3 +3356,25 @@ none (the section removed; feedback is 35-40% of the turn). 360 steps, ~$2-3. An
 - Reading fixed in advance: U - N interval above 0 means the step uses feedback (and U - S says whether the
   differences, not just the scores, carry it); U - N not above 0 on running starts means that feedback as given
   today is not used there, and ideas 2, 4 and 6 must be measured against N as well as U.
+
+**Feedback ablation result (2026-10-19): the step uses its feedback, and the differences carry it.** 360 steps,
+0 errors, $0.54. (The rig's own summary, written for the guidance arms, crashed after all rows were written.)
+
+| P(step improves) | full (U) | scores only (S) | none (N) | U - N | U - S |
+|---|---|---|---|---|---|
+| running starts (41) | 0.268 | 0.098 | 0.098 | **+0.171 [+0.061, +0.281]** | **+0.171 [+0.061, +0.293]** |
+| crashing starts (19) | 0.500 | 0.395 | 0.316 | +0.184 [-0.026, +0.395] | +0.105 [-0.105, +0.316] |
+| all (60) | 0.342 | 0.192 | 0.167 | **+0.175 [+0.075, +0.283]** | **+0.150 [+0.050, +0.258]** |
+
+Realized gain, all: U - N +0.038 [-0.011, +0.090], U - S +0.032 [+0.002, +0.065]; running: U - S +0.023
+[+0.005, +0.046].
+- **By the rule fixed in advance: the step uses its feedback.** Without it, a step on a running program improves
+  10% of the time; with it, 27%. The scores alone are worth nothing (S = N on running starts); the comparisons and
+  verifier messages are what Gemma acts on.
+- **Correction of the chart reading (2026-10-19):** "6 independent first steps do as well as a chain of 6 on
+  running starts" does not mean the progress is search without learning. Every first step also reads the start's
+  full feedback. What the comparison shows is narrower: on running starts, steps 2 to 6 gain nothing from building
+  on the previous step's result and its feedback. **The missing piece is between steps, not within a step.**
+- Consequence for the ideas: the target is the second step's use of the first step's outcome. (2) revise within one
+  conversation and (5) per-edit score credit aim exactly there; (4) diagnose-then-fix and (6) sorted feedback aim at
+  using one step's feedback better.
