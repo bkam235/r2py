@@ -25,7 +25,8 @@ def main() -> None:
     crashing = {}
     for r in rows:
         per[r["arm"]][r["script"]].append(r)
-        crashing[r["script"]] = r["exit_before"] != 0
+        if "exit_before" in r:
+            crashing[r["script"]] = r["exit_before"] != 0
     rng = random.Random(0)
     for label, sel in (("all", lambda s: True), ("running starts", lambda s: not crashing[s]), ("crashing starts", lambda s: crashing[s])):
         print(f"\n{label}:")
