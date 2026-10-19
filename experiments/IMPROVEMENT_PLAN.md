@@ -3334,3 +3334,25 @@ replaces the first measured run in the chart; the estimated width-6 line is remo
   0.671), against the recorded width-3 finals 0.624: **+0.052 [-0.021, +0.126]**, better/worse/tied 9/3/7 (two days
   apart, one sample). Chart: the re-run's line replaces the first; the estimated width-6 line is removed (user's
   request).
+
+**Does a step use its feedback? Review and plan (2026-10-19).** The chart's free test: on running starts one chain
+of 6 steps (0.704) does no better than 6 independent first steps (0.704); on crashing starts it does (0.473 vs
+0.242). Review of everything aimed at feedback: knowledge injection (library, lessons, oracle) null, the model does
+not read examples; locator +0.029 n.s.; correct feedback +0.020 n.s.; short system prompt raises instruction
+compliance, not adoption; guided steps null (pasting, review); one-entity answers adopt more but score worse;
+crash-first null; tools barely used; function-level counterexample rounds do improve. When Gemma adopts guidance in a
+running program it gains 98% of the time, but it adopts only 30-43%. Ideas agreed (user): (1) feedback ablation,
+(2) revise within one conversation, (4) diagnose then fix, (6) shorter sorted feedback; (3) failing-test feedback
+and (5) per-edit score credit kept for later.
+
+**Feedback ablation, registered 2026-10-19 before the run.** `step_ab.py run --tag ablation --with-crashing --arms U
+S N --samples 2`: the 60 training-pool states (40 running, 20 crashing), one production step each, the loop's gates,
+the hardcoding review on improving candidates that run (now as in the loop). Arms differ only in the turn's
+"Verification result": **U** full (production), **S** scores only (aggregate, crash flag, per-entity scores), **N**
+none (the section removed; feedback is 35-40% of the turn). 360 steps, ~$2-3. Analysis written before the data:
+`scripts/feedback_ablation.py`.
+- Primary: P(improve) and realized gain, U - N and U - S, paired per state, bootstrap over states, running and
+  crashing starts apart.
+- Reading fixed in advance: U - N interval above 0 means the step uses feedback (and U - S says whether the
+  differences, not just the scores, carry it); U - N not above 0 on running starts means that feedback as given
+  today is not used there, and ideas 2, 4 and 6 must be measured against N as well as U.

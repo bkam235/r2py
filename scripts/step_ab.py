@@ -116,6 +116,7 @@ def run_one(task: dict) -> dict:
         cfg = manifest["protocol"]["translate"]
         stem, sm, tools, base, annotated = _setup(name, task["state"])
         row["before"] = round(base.aggregate, 4)
+        row["exit_before"] = base.py_exit_code
         guide = t.get(arm) if arm in ("GV", "GS") else None
         row["guided_entity"] = guide[0] if guide else None
         common = (t.get("GS") or t.get("GV") or [None])[0]       # the same entity is followed in every arm
@@ -126,6 +127,8 @@ def run_one(task: dict) -> dict:
                                   history=[], sidecar_filename=f"{stem}.r2py_data.json")
         if guide:
             msgs[-1]["content"] += "\n\n" + guide[1]
+        if arm in ("S", "N"):   # feedback ablation (2026-10-19)
+            msgs[-1]["content"] = _ablate_feedback(msgs[-1]["content"], arm)
         from r2py.harness.manual import enforce_interfaces, interface_note
         if arm == "F":      # manual stage 1: the best program's helper interfaces are frozen for this step
             note = interface_note(annotated)
@@ -165,7 +168,7 @@ def run_one(task: dict) -> dict:
             row["damaged"] = sum(1 for k, es in base.by_entity.items() if obj.entity_score(es) >= 0.95
                                  and (k not in new.by_entity or obj.entity_score(new.by_entity[k]) < 0.95))
             better = obj.better(new, base)
-            if better:
+            if better and new.py_exit_code == 0:   # as in the loop: the review judges what runs
                 passed, reason = review_translation(sm.source or "", src, sm, model=GEMMA)
                 row["review_rejected"] = not passed
                 row["review_reason"] = (reason or "")[:600]
@@ -188,9 +191,23 @@ def run_one(task: dict) -> dict:
     return row
 
 
-def run(samples: int, workers: int, arms=ARMS) -> None:
+def _ablate_feedback(content: str, arm: str) -> str:
+    """The turn with its verification section cut to the scores (S) or removed (N); everything else unchanged."""
+    head = "### Verification result\n"
+    i = content.index(head)
+    j = content.index("\n### ", i + len(head))
+    if arm == "N":
+        return content[:i] + content[j + 1:]
+    section = content[i + len(head):j]
+    cuts = [k for k in (section.find("\n\nOutput comparisons"), section.find("\n\nVerifier feedback")) if k >= 0]
+    return content[:i + len(head)] + section[:min(cuts) if cuts else len(section)] + "\n" + content[j:]
+
+
+def run(samples: int, workers: int, arms=ARMS, with_crashing: bool = False) -> None:
     targets = json.loads((ROOT / "work/step_ab/targets.json").read_text(encoding="utf-8"))
-    states = running_states()
+    import replay
+    states = replay.training_states() if with_crashing else running_states()
+    targets = {n: targets.get(n, {}) for n in states}
     path = OUT / "results.jsonl"
     done = [json.loads(l) for l in path.open(encoding="utf-8")] if path.exists() else []
     finished = {(r["script"], r["arm"], r["sample"]) for r in done if r.get("outcome") != "provider_unavailable"}
@@ -256,7 +273,8 @@ def main() -> int:
     p = sub.add_parser("run")
     p.add_argument("--samples", type=int, default=4)
     p.add_argument("--workers", type=int, default=6)
-    p.add_argument("--arms", nargs="+", default=list(ARMS), choices=["U", "GV", "GS", "F"])
+    p.add_argument("--arms", nargs="+", default=list(ARMS), choices=["U", "GV", "GS", "F", "S", "N"])
+    p.add_argument("--with-crashing", action="store_true", help="the whole training pool, crashing starts included")
     sp = sub.add_parser("summary")
     for q in (p, sp):
         q.add_argument("--tag", default="", help="separate output directory; guidance stays work/step_ab/targets.json")
@@ -269,7 +287,7 @@ def main() -> int:
         guidable()
         return 0
     if args.cmd == "run":
-        run(args.samples, args.workers, args.arms)
+        run(args.samples, args.workers, args.arms, args.with_crashing)
     text = summary()
     print("\n" + text)
     (OUT / "summary.txt").write_text(text + "\n", encoding="utf-8")
