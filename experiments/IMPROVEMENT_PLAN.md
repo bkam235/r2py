@@ -3470,3 +3470,17 @@ conversation mode from step 2 on. The 60 training-pool states, 1 sample, 6 worke
 Purpose: a measured step curve for the new default in the chart (replacing the step-2 marker), per stratum.
 Compared descriptively with the width-3 runs of 2026-10-17 and the crash-default re-run of 2026-10-19 (not
 concurrent; days apart).
+- **Result (2026-10-20):** 60 runs, 0 errors, $4.35; conversation turns used 881 times; 44 chains stopped by the
+  model's own `done` (rare before); no run longer than 55 minutes. Mean final: **all 0.782** (default without
+  conversation 0.719), **running 0.765** (width 3: 0.739), **crashing 0.819** (crash default re-run 0.676).
+  - Running starts, against the two width-3 runs of 2026-10-17: **+0.045 [+0.008, +0.092]**, better/worse/tied
+    16/9/16.
+  - Crashing starts, against the crash-default re-run of 2026-10-19 (same settings without conversation): +0.143
+    [+0.011, +0.298], 8/6/5; but three states account for nearly all of it, each crashing there and running here
+    (rvest `rvest_s7` 0 -> 1.00, rvest `html_element` 0 -> 0.93, reshape2 `cast` 0 -> 0.68). With one run per arm
+    such crash-or-not swings are largely chance; without them the rest are even (+0.005).
+  - Pasting: the deterministic check flags 4 of 45 changed final programs (9%), against 14% and 12% in the two
+    earlier runs, all print labels or class names (its known false positives). No sign that conversation mode
+    invites pasting.
+  - Not concurrent (one to three days apart, drift of 0.01-0.02 seen before); one sample.
+- Chart updated: the measured default is drawn in all three views; the step-2 marker is removed.
