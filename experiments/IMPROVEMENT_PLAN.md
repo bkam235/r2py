@@ -5,8 +5,8 @@
 ![In-loop score curves: mean best score after each agent step, same 60 training states](figures/inloop_curves.png)
 
 Mean score of the best program after each agent step, on the same 60 training-pool states for every line (step 0 =
-the frozen starting translation). Regenerate with `python scripts/learning_curves.py` (data from the saved runs in
-`work/`; the re-scoring of the 10 states touched by the harness fixes of 2026-10-18 is cached in
+the frozen starting translation). Regenerate with `python scripts/learning_curves.py` (inputs: the compact extract of the run logs in
+`work/curves/inputs.json.gz`, committed; `--extract` refreshes it from the full logs in `work/`; the re-scoring of the 10 states touched by the harness fixes of 2026-10-18 is cached in
 `work/curves/rescored.json`, `--rescore` redoes it). Outputs: `figures/inloop_curves.png`, `figures/inloop_curves.json`
 and the interactive page `figures/inloop_curves.html` (also published as the artifact "In-Loop Score Curves",
 https://claude.ai/artifact/GiaQX4F35dr6npk1zWTyjN). How each line is built is in the script's docstring and on the
