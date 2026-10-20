@@ -137,6 +137,11 @@ def run_one(task: dict) -> dict:
             row["frozen_helpers"] = bool(note)
         system =P.without_replace_entity(P.with_runtime_note(P.AGENT_SYSTEM_PROMPT_OPENROUTER))
         with ho.pinned_llm(GEMMA, ho.llm_settings(manifest)):
+            if arm == "D":   # idea 4 (2026-10-20): diagnose first, then fix, in one conversation
+                ask = [dict(msgs[-1], content=msgs[-1]["content"] + "\n\n" + DIAGNOSE)]
+                diagnosis = llm.call(msgs[:-1] + ask, system, model=GEMMA, max_tokens=4096)
+                row["diagnosis"] = diagnosis[:1500]
+                msgs = msgs[:-1] + ask + [{"role": "assistant", "content": diagnosis}, {"role": "user", "content": FIX}]
             raw = llm.call(msgs, system, model=GEMMA, max_tokens=16384)
             action = _parse_action(raw)
             if not action or action.get("action") != "rewrite" or not action.get("new_source"):
@@ -189,6 +194,14 @@ def run_one(task: dict) -> dict:
             else f"error: {type(exc).__name__}: {exc}"[:200]
     row["seconds"] = round(time.monotonic() - started, 1)
     return row
+
+
+DIAGNOSE = ("Before you write any code, diagnose. Look at the verification result above. For the entities that lose "
+            "the most points (at most three), state in one or two sentences each what the Python output does "
+            "differently from R and why, citing the comparisons or verifier messages. Do not write code and do not "
+            "give an action yet.")
+FIX = ("Now fix the problems you diagnosed. Answer as before: brief analysis, then the action with the complete "
+       "Python file.")
 
 
 def _ablate_feedback(content: str, arm: str) -> str:
@@ -273,7 +286,7 @@ def main() -> int:
     p = sub.add_parser("run")
     p.add_argument("--samples", type=int, default=4)
     p.add_argument("--workers", type=int, default=6)
-    p.add_argument("--arms", nargs="+", default=list(ARMS), choices=["U", "GV", "GS", "F", "S", "N"])
+    p.add_argument("--arms", nargs="+", default=list(ARMS), choices=["U", "GV", "GS", "F", "S", "N", "D"])
     p.add_argument("--with-crashing", action="store_true", help="the whole training pool, crashing starts included")
     sp = sub.add_parser("summary")
     for q in (p, sp):

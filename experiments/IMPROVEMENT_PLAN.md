@@ -3421,3 +3421,12 @@ Realized gain, all: U - N +0.038 [-0.011, +0.090], U - S +0.032 [+0.002, +0.065]
   **By the registered rule conversation mode stays off** (the interval still includes 0). The estimate shrank from
   +0.065 to +0.049 with twice the data and stays positive in every stratum: a small effect, about +5 points (+16%
   relative) on step-2 success, that this design cannot confirm without several times the trials.
+
+**Idea 4, diagnose then fix: one-step test, registered 2026-10-20 before the run.** `step_ab.py run --tag diag
+--with-crashing --arms U D --samples 2` (60 states, 240 steps, ~360 calls, ~$0.70). **U**: production step (1 call).
+**D**: the production turn plus "Before you write any code, diagnose... at most three entities, one or two sentences
+each, no code, no action"; then, in the same conversation, "Now fix the problems you diagnosed" (2 calls; the
+diagnosis is recorded). Smoke test (caret): the diagnosis named the matrix-vs-DataFrame return and the sampling
+difference correctly. Analysis written before the data: `scripts/diagnose_test.py`.
+- Primary: P(step improves), D - U, paired per state. **D goes on to a loop test (with conversation mode) if the
+  interval lies above 0.** Secondary: D against U's best of 2 samples (equal calls); realized gain; strata.
