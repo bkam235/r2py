@@ -15,6 +15,11 @@ The programs of the 2026-10-17 runs are re-scored with the harness of 2026-10-18
 
     python scripts/learning_curves.py             # data, PNG and HTML (re-scoring only if the cache is missing)
     python scripts/learning_curves.py --rescore   # redo the re-scoring first
+    python scripts/learning_curves.py --extract   # refresh work/curves/inputs.json.gz from the full run logs
+
+The full trajectories (~48 MB) are not in the repository. What the curves need from them (per step: kind, chain,
+step, exit code, score, and a hash of each accepted program) is extracted into work/curves/inputs.json.gz, which is;
+without the full logs the script reads that file.
 
 Writes experiments/figures/inloop_curves.json, inloop_curves.png and inloop_curves.html (from
 inloop_curves_template.html).
@@ -37,18 +42,55 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 FIG = ROOT / "experiments/figures"
 CACHE = ROOT / "work/curves/rescored.json"
+INPUTS = ROOT / "work/curves/inputs.json.gz"
+RUNS = ("work/replay_k3", "work/continue_plateau", "work/continue_stalled", "work/replay_crash6p5_b2", "work/replay_default")
+_inputs: dict | None = None
 N_SHOWN = 14          # steps drawn; every curve is flat well before
 N_LONG = 20           # steps followed for the runs with patience 5
 
 H = lambda s: hashlib.sha1(s.encode("utf-8")).hexdigest()   # noqa: E731
 
 
+def _minimal(r: dict) -> dict:
+    out = {k: r[k] for k in ("kind", "branch", "step", "exit_code", "aggregate") if k in r}
+    if r.get("source"):
+        out["source_hash"] = H(r["source"])
+    return out
+
+
+def _stored(rel: str):
+    global _inputs
+    if _inputs is None:
+        import gzip
+        _inputs = json.loads(gzip.decompress(INPUTS.read_bytes()).decode("utf-8")) if INPUTS.exists() else {}
+    return _inputs.get(rel)
+
+
 def _jsonl(path: Path) -> list[dict]:
+    if not path.exists():   # results files of runs whose logs are not in the repository
+        return _stored(path.relative_to(ROOT).as_posix())
     return [json.loads(line) for line in path.open(encoding="utf-8")]
 
 
 def _traj(run: str, script: str, policy: str, sample) -> list[dict]:
-    return _jsonl(ROOT / run / "trajectories" / f"{Path(script).stem}.{policy}.{sample}.jsonl")
+    path = ROOT / run / "trajectories" / f"{Path(script).stem}.{policy}.{sample}.jsonl"
+    if not path.exists():
+        return _stored(path.relative_to(ROOT).as_posix())
+    return [_minimal(json.loads(line)) for line in path.open(encoding="utf-8")]
+
+
+def extract() -> None:
+    """Write work/curves/inputs.json.gz: every results file and trajectory the curves read, reduced to what they use."""
+    import gzip
+    out = {}
+    for run in RUNS:
+        res = ROOT / run / "results.jsonl"
+        out[res.relative_to(ROOT).as_posix()] = [json.loads(line) for line in res.open(encoding="utf-8")]
+        for f in sorted((ROOT / run / "trajectories").glob("*.jsonl")):
+            out[f.relative_to(ROOT).as_posix()] = [_minimal(json.loads(line)) for line in f.open(encoding="utf-8")]
+    INPUTS.parent.mkdir(parents=True, exist_ok=True)
+    INPUTS.write_bytes(gzip.compress(json.dumps(out, separators=(",", ":")).encode("utf-8")))
+    print(f"{len(out)} files -> {INPUTS} ({INPUTS.stat().st_size / 1e6:.1f} MB)")
 
 
 def series(recs: list[dict], start: tuple, branches, n: int, value=None) -> dict:
@@ -61,7 +103,7 @@ def series(recs: list[dict], start: tuple, branches, n: int, value=None) -> dict
         cur, s = start, []
         for k in range(n + 1):
             if k and (b, k) in acc and (b, k) in ver:
-                cur = value(acc[(b, k)].get("source"), ver[(b, k)]) if value else ver[(b, k)]
+                cur = value(acc[(b, k)].get("source_hash"), ver[(b, k)]) if value else ver[(b, k)]
             s.append(cur)
         out[b] = s
     return out
@@ -122,9 +164,9 @@ def compute(res: dict) -> dict:
     import replay
     starts = replay.training_states()
 
-    def val(script, src, fallback):
-        if script in res and src is not None:
-            v = res[script].get(H(src))
+    def val(script, src_hash, fallback):
+        if script in res and src_hash is not None:
+            v = res[script].get(src_hash)
             if v:
                 return (v[0], v[1])
         return fallback
@@ -133,7 +175,7 @@ def compute(res: dict) -> dict:
     single, k3, crash, w3runs = defaultdict(list), defaultdict(list), {}, {}
     for (s, pol, smp), row in rows.items():
         crash[s] = row["start_exit"] != 0
-        start = val(s, starts[s]["source"], (row["start_exit"] == 0, row["start_score"]))
+        start = val(s, H(starts[s]["source"]), (row["start_exit"] == 0, row["start_score"]))
         recs = _traj("work/replay_k3", s, pol, smp)
         v = lambda src, fb, s=s: val(s, src, fb)   # noqa: E731
         if pol == "rewrite_w3":
@@ -255,7 +297,10 @@ def plot(data: dict, path: Path) -> None:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--rescore", action="store_true", help="redo the re-scoring of the affected states")
+    ap.add_argument("--extract", action="store_true", help="refresh work/curves/inputs.json.gz from the full run logs")
     a = ap.parse_args()
+    if a.extract:
+        extract()
     res = rescore() if (a.rescore or not CACHE.exists()) else json.loads(CACHE.read_text(encoding="utf-8"))
     data = compute(res)
     FIG.mkdir(parents=True, exist_ok=True)
