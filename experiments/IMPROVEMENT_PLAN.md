@@ -3406,3 +3406,6 @@ Realized gain, all: U - N +0.038 [-0.011, +0.090], U - S +0.032 [+0.002, +0.065]
   **By the registered rule conversation mode stays off** (interval includes 0). The direction is positive in every
   stratum (+29% relative on all), and the test is underpowered for an effect of this size: the interval is
   +-0.10. Caveat: scripts with random output (openssl) can replay step 1 differently without an error.
+- **Extension, registered 2026-10-20 before the run (user's decision):** 2 more samples per state (samples 2 and 3,
+  ~120 trials, ~$0.80), same script and design; the same rule (conversation - fresh, P(step 2 improves), interval
+  over states above 0) is applied once to the combined 4 samples. No other look at the data in between.
