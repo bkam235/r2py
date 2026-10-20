@@ -3463,3 +3463,10 @@ Applied 2026-10-20:
   replay policies are unchanged unless they ask for it. Test in `tests/test_loop.py`.
 - **Diagnose then fix: not adopted** (costs a second call and loses to best of 2 samples, P = 0.03; hurts crashing
   starts, P(> 0) = 0.05).
+
+**Measured curves of the production default (registered 2026-10-20, before the run).** Replay policy
+`default_2026_10_20`: width 3 on running starts; width 6, patience 5 and twice the time limit on crashing starts;
+conversation mode from step 2 on. The 60 training-pool states, 1 sample, 6 workers (`work/replay_default`).
+Purpose: a measured step curve for the new default in the chart (replacing the step-2 marker), per stratum.
+Compared descriptively with the width-3 runs of 2026-10-17 and the crash-default re-run of 2026-10-19 (not
+concurrent; days apart).

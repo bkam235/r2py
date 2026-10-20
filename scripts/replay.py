@@ -54,6 +54,9 @@ POLICIES = {
     # Plateau continuations (registered 2026-10-18): three more steps from a running run's final program.
     # New default for crashing starts (2026-10-18): width 6 and patience 5 while the program crashes.
     "rewrite_w3_crash6p5": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5),
+    # The production default as of 2026-10-20: the above plus conversation mode from step 2 on.
+    "default_2026_10_20": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
+                               converse=True),
     "continue3": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3),
     "continue3_eq": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3, accept_equal=True),
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
