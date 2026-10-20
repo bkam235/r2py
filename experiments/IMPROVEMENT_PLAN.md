@@ -3409,3 +3409,15 @@ Realized gain, all: U - N +0.038 [-0.011, +0.090], U - S +0.032 [+0.002, +0.065]
 - **Extension, registered 2026-10-20 before the run (user's decision):** 2 more samples per state (samples 2 and 3,
   ~120 trials, ~$0.80), same script and design; the same rule (conversation - fresh, P(step 2 improves), interval
   over states above 0) is applied once to the combined 4 samples. No other look at the data in between.
+- **Combined result, 4 samples (2026-10-20):** 241 trials, 1 error, step 2 ran in 212; extension $0.75.
+
+| P(step 2 improves) | fresh | conversation | conversation - fresh |
+|---|---|---|---|
+| all (212 trials, 56 states) | 0.302 | 0.358 | +0.049 [-0.013, +0.116] |
+| running starts | 0.264 | 0.321 | +0.066 [-0.020, +0.158] |
+| crashing starts | 0.375 | 0.431 | +0.061 [-0.044, +0.175] |
+
+  Step-2 gain: all +0.016 [-0.006, +0.039], running +0.018 [-0.006, +0.044].
+  **By the registered rule conversation mode stays off** (the interval still includes 0). The estimate shrank from
+  +0.065 to +0.049 with twice the data and stays positive in every stratum: a small effect, about +5 points (+16%
+  relative) on step-2 success, that this design cannot confirm without several times the trials.
