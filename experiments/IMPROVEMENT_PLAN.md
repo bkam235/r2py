@@ -3393,3 +3393,16 @@ Realized gain, all: U - N +0.038 [-0.011, +0.090], U - S +0.032 [+0.002, +0.065]
   reached at step 1) excluded.
 - **Decision:** conversation mode goes on to a loop test if the primary interval over all states lies above 0;
   otherwise it stays off. ~120 trials, ~360 model calls, ~$1.
+- **Result (2026-10-20):** 120 trials, 1 error (openssl `ec_dh`: its random keys make verification
+  nondeterministic, so the replayed step 1 diverged), step 2 ran in 104; $0.81.
+
+| P(step 2 improves) | fresh | conversation | conversation - fresh |
+|---|---|---|---|
+| all (104 trials, 54 states) | 0.269 | 0.346 | +0.065 [-0.037, +0.167] |
+| running starts | 0.224 | 0.313 | +0.071 [-0.057, +0.186] |
+| crashing starts | 0.351 | 0.405 | +0.053 [-0.132, +0.237] |
+
+  Step-2 gain: +0.009 [-0.017, +0.036] (running +0.017 [-0.008, +0.045]).
+  **By the registered rule conversation mode stays off** (interval includes 0). The direction is positive in every
+  stratum (+29% relative on all), and the test is underpowered for an effect of this size: the interval is
+  +-0.10. Caveat: scripts with random output (openssl) can replay step 1 differently without an error.
