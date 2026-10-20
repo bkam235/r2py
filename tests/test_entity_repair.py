@@ -395,3 +395,47 @@ class TestCrashStalls(unittest.TestCase):
         self.assertEqual(self.steps(crashing, max_stalls=3), 3)
         self.assertEqual(self.steps(crashing, max_stalls=3, crash_stalls=5), 5)
         self.assertEqual(self.steps(running, max_stalls=3, crash_stalls=5), 3)
+
+
+class TestConverse(unittest.TestCase):
+    """converse (2026-10-19): step 2 continues step 1's conversation with what the answer did."""
+
+    def run_loop(self, converse):
+        from unittest.mock import patch
+        T = TestCrashFirst
+        start = NS(by_entity={"e1": T.full("e1", True, 0.5)}, crash_entities=[], py_exit_code=0,
+                   aggregate=0.5, feedback=[], comparisons=[], uncomparable=[])
+        better = NS(by_entity={"e1": T.full("e1", True, 0.8)}, crash_entities=[], py_exit_code=0,
+                    aggregate=0.8, feedback=[], comparisons=[], uncomparable=[])
+        calls = []
+
+        def call(messages, system, **kw):
+            calls.append(messages)
+            return f"ACTION: rewrite\n```python\n# r2py:entity:e1\nb = {len(calls) + 1}\n```"
+        harness = NS(verify=lambda src: better if "b = 2" in src else start, _probe_count=0,
+                     last_annotated_source="", _sidecar_filename="")
+        sm = NS(source="b <- 1\n", entities={"e1": NS(source_span=NS(start_line=0, end_line=0), name="b")},
+                entity_bundles={})
+        with patch.object(agent._llm, "call", side_effect=call), \
+             patch.object(agent, "_prefetch_patterns", return_value={}), \
+             patch.object(agent, "_prefetch_r_sources", return_value=([], "")), \
+             patch.object(agent, "_get_unavailable_packages", return_value=[]), \
+             patch.object(agent, "unavailable_imports", return_value=[]), \
+             patch.object(agent, "_check_syntax", return_value=None), \
+             patch.object(agent, "review_translation", return_value=(True, "")):
+            agent.reason("# r2py:entity:e1\nb = 1\n", start, harness, sm, model="openrouter:m", max_steps=2,
+                         entity_repair=False, converse=converse)
+        agent.drain_agent_stats()
+        return calls
+
+    def test_step_two_carries_the_first_answer_and_what_it_did(self):
+        calls = self.run_loop(True)
+        second = calls[1]
+        self.assertEqual([m["role"] for m in second], ["user", "assistant", "user"])
+        self.assertIn("b = 2", second[1]["content"])
+        self.assertIn("It was ACCEPTED", second[2]["content"])
+        self.assertIn("e1: 0.50 -> 0.80 (better)", second[2]["content"])
+
+    def test_off_by_default(self):
+        calls = self.run_loop(False)
+        self.assertEqual(len(calls[1]), 1)

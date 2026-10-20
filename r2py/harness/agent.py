@@ -114,6 +114,7 @@ def reason(
     guided_mode: str = "value",
     accept_equal: bool = False,
     crash_stalls: "int | None" = None,
+    converse: bool = False,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -183,6 +184,9 @@ def reason(
     # Wall-clock, not step count: the worst script of the first training run burned
     # 10.7h in only 6 rewrites, so a step limit never reached it.
     deadline = time.monotonic() + budget_s if budget_s else None
+    # converse: the previous turn, the model's answer to it, where its notes start in `history`, the verified
+    # report of its candidate (None if none was verified) and the best report it was compared with
+    conv_messages, conv_raw, conv_mark, conv_report, conv_before = None, "", 0, None, None
 
     for step in range(1, max_steps + 1):
         if deadline is not None and time.monotonic() >= deadline:
@@ -238,22 +242,31 @@ def reason(
             repair_eid = _pick_repair_entity(report, best_source, entity_tries)
         turn_system = system_prompt
 
-        messages = _prompt.build_agent_turn(
-            r_source=r_source,
-            python_source=hide_data_shim(best_source),
-            report=report,
-            script_map=script_map,
-            step=step,
-            max_steps=max_steps,
-            probe_budget_remaining=max(0, 10 - harness._probe_count),
-            history=history,
-            patterns_by_entity=patterns_by_entity,
-            r_function_sources=r_function_sources,
-            entity_metadata=entity_metadata,
-            sidecar_filename=getattr(harness, "_sidecar_filename", ""),
-            audit_feedback=audit_feedback,
-            runtime_section=runtime_section,
-        )
+        if converse and conv_messages is not None and repair_eid is None:
+            # Conversation mode (2026-10-19): keep the previous turn and the model's own answer, and reply with
+            # what that answer did, instead of rebuilding the whole turn around the current best version.
+            messages = conv_messages + [
+                {"role": "assistant", "content": conv_raw},
+                {"role": "user", "content": _conversation_delta(history[conv_mark:], conv_report, conv_before, report)},
+            ]
+            _stat("outcome", "conversation_turn")
+        else:
+            messages = _prompt.build_agent_turn(
+                r_source=r_source,
+                python_source=hide_data_shim(best_source),
+                report=report,
+                script_map=script_map,
+                step=step,
+                max_steps=max_steps,
+                probe_budget_remaining=max(0, 10 - harness._probe_count),
+                history=history,
+                patterns_by_entity=patterns_by_entity,
+                r_function_sources=r_function_sources,
+                entity_metadata=entity_metadata,
+                sidecar_filename=getattr(harness, "_sidecar_filename", ""),
+                audit_feedback=audit_feedback,
+                runtime_section=runtime_section,
+            )
         if crash_note:
             messages[-1]["content"] += "\n\n" + crash_note
         if guided_k > 1 and guided_mode != "off" and repair_eid is None and report.py_exit_code == 0:
@@ -295,6 +308,8 @@ def reason(
             print(f"[Agent]   LLM call failed: {exc}")
             break
 
+        if converse:
+            conv_messages, conv_raw, conv_mark, conv_report, conv_before = messages, raw, len(history), None, report
         action = _parse_action(raw)
         if repair_eid is not None:
             # Whatever shape the answer took, it is a fragment for this entity.
@@ -549,6 +564,7 @@ def reason(
 
             try:
                 new_report = harness.verify(new_source)
+                conv_report = new_report
             except Exception as exc:
                 print(f"[Agent]   Verification failed: {exc}")
                 _stat("outcome", f"{action_type}:verify_error")
@@ -736,6 +752,38 @@ def _widen_entity_repair(action: dict, messages: list, system: str, model: str, 
             best_frag, best_rep = frag, rep
     _stat("entity_width", f"{len(fragments)}_sampled_{len(seen)}_distinct")
     return {**action, "new_source": best_frag}
+
+
+def _conversation_delta(notes: list[str], cand, before, best) -> str:
+    """Conversation mode: what the model's previous answer did, as the next user message (2026-10-19)."""
+    from .objective import entity_score
+    parts = ["Result of your previous answer:"]
+    parts += [f"- {n}" for n in notes] or ["- (no notes)"]
+    if cand is not None:
+        accepted = cand is best
+        parts.append("")
+        parts.append(f"Your rewrite scored {cand.aggregate:.3f}; the version you started from scored "
+                     f"{before.aggregate:.3f}. " + ("It was ACCEPTED: your rewrite is now the current version."
+                                                   if accepted else "It was NOT accepted: the current version is "
+                                                   "still the one in my first message."))
+        changes = []
+        for eid, es in cand.by_entity.items():
+            old = before.by_entity.get(eid)
+            if old is None or not es.active_dims:
+                continue
+            a, b = entity_score(old), entity_score(es)
+            if abs(b - a) > 0.01:
+                changes.append((b - a, f"  {eid}: {a:.2f} -> {b:.2f} ({'better' if b > a else 'WORSE'})"))
+        if changes:
+            parts.append("Entities your rewrite changed:")
+            parts += [t for _, t in sorted(changes)]
+        parts.append("")
+        parts.append("Verification of your rewrite:")
+        parts.append(_prompt.format_score_report(cand))
+    parts.append("")
+    parts.append("Revise your rewrite: keep what improved, fix what got worse or still differs from R. Answer as "
+                 "before: brief analysis, then the action with the complete Python file.")
+    return "\n".join(parts)
 
 
 def _widen_rewrite(action: dict, messages: list, system: str, model: str, k: int,

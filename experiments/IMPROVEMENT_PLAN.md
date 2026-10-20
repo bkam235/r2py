@@ -3378,3 +3378,18 @@ Realized gain, all: U - N +0.038 [-0.011, +0.090], U - S +0.032 [+0.002, +0.065]
 - Consequence for the ideas: the target is the second step's use of the first step's outcome. (2) revise within one
   conversation and (5) per-edit score credit aim exactly there; (4) diagnose-then-fix and (6) sorted feedback aim at
   using one step's feedback better.
+
+**Idea 2, revise within one conversation: two-step test, registered 2026-10-20 before the run.**
+- **Built:** `reason(converse=True)` (off by default): from step 2 on, the turn is the previous turn, the model's own
+  answer, and a reply with what that answer did: the step's notes, its score against the version it started from,
+  accepted or not, the entities it changed (better / WORSE), and the verification of its own candidate; then "Revise
+  your rewrite". Tests in `tests/test_entity_repair.py`.
+- **Design** (`scripts/two_step.py`): per training-pool state (60) and sample (2), the production loop (width 1,
+  strict acceptance, no audit) runs 2 steps in fresh mode (A, recording step 1's model answers and review verdicts),
+  step 1 alone replayed (B: the best after step 1), and 2 steps in conversation mode with step 1 replayed (C). Step 1
+  is identical in both arms; step 2 is the only difference.
+- **Primary:** P(step 2 improves on the best after step 1), conversation - fresh, paired per state, bootstrap over
+  states; secondary: step-2 gain; running and crashing starts apart; trials where step 2 did not run (threshold
+  reached at step 1) excluded.
+- **Decision:** conversation mode goes on to a loop test if the primary interval over all states lies above 0;
+  otherwise it stays off. ~120 trials, ~360 model calls, ~$1.
