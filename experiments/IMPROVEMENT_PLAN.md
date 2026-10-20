@@ -1,5 +1,54 @@
 # Improvement plan — harness and agent loop
 
+## In-loop learning curves (current: 2026-10-20)
+
+![In-loop score curves: mean best score after each agent step, same 60 training states](figures/inloop_curves.png)
+
+Mean score of the best program after each agent step, on the same 60 training-pool states for every line (step 0 =
+the frozen starting translation). Regenerate with `python scripts/learning_curves.py` (data from the saved runs in
+`work/`; the re-scoring of the 10 states touched by the harness fixes of 2026-10-18 is cached in
+`work/curves/rescored.json`, `--rescore` redoes it). Outputs: `figures/inloop_curves.png`, `figures/inloop_curves.json`
+and the interactive page `figures/inloop_curves.html` (also published as the artifact "In-Loop Score Curves",
+https://claude.ai/artifact/GiaQX4F35dr6npk1zWTyjN). How each line is built is in the script's docstring and on the
+page.
+
+**What moved the plateau** (all starts; each step is logged in detail below):
+
+| | plateau | what changed |
+|---|---|---|
+| one chain (width 1) | 0.637 | the agent loop alone: +0.21 over the starting translation |
+| width 3 | 0.698 | three independent chains, the verifier keeps the best (the default since Stage 11d) |
+| + crashing starts: width 6, patience 5, twice the time limit | 0.719 | 2026-10-18/19 |
+| + conversation mode | **0.782** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
+
+The harness ceiling fixes of 2026-10-17/18 (R checkpoint injection, tag lists, temp paths, session reports) lifted
+the whole picture: starting mean 0.405 -> 0.427, width-3 plateau 0.686 -> 0.698. The comparisons between the lines are
+one to three days apart (drift of 0.01-0.02 seen between days); the gain of conversation mode is solid on running
+starts (+0.045 [+0.008, +0.092]) and on crashing starts largely three crash-or-not swings.
+
+**What these iterations taught** (2026-10-11 to 2026-10-20):
+1. **Pushing knowledge at the model does not change what it writes.** Library, lessons and a perfect oracle were
+   null; the identifiers of a shown example reached the code no more often than chance (6.3% vs 6.6%).
+2. **Facts about its own code do.** One step with the verifier's comparisons improves the program 27% of the time,
+   without them 10%; the scores alone are worth nothing (feedback ablation, 2026-10-19).
+3. **Selecting among independent attempts beats refining one attempt at the same cost.** Width 3 beats one chain
+   sampling 3 rewrites per step (0.690 vs 0.665); 6 single chains beat 2 three-per-step chains.
+4. **Many "model limits" were measurement limits.** 11 of 14 never-improving states were out of reach of any model:
+   a checkpoint bug left 14% of scripts without per-entity results, random values (temp paths, encryption IVs) were
+   compared verbatim, UI objects were compared by R's internals. Even the noise we chased once came from our own
+   offline scripts.
+5. **The plateaus are real.** More patience, restarts and accepting equal scores add almost nothing on running
+   starts; after two failed steps a third succeeds 5-9% of the time.
+6. **The gap was between steps, not within a step.** A step uses its feedback, but a chain gained nothing from
+   building on its own previous attempt until the attempt and its outcome stayed in the conversation.
+7. **Independence assumptions mislead.** "Best of 3 succeeds 59% of the time" assumed every call has the same chance;
+   states differ so much that it is 42%, and a third of the states never improve at all.
+8. **Cheap tests first.** Single-step tests and continuations from saved trajectories answered most questions for
+   $0.3-1 each; a full replay costs about $15.
+9. **Decision rules should match the stakes.** A free, reversible setting is adopted at P(gain > 0) >= 0.9; a change
+   that costs calls must beat spending them on more samples; claims keep the 95% interval.
+
+
 > **Revised 2026-10-01** after reading `r2py_harness_insights.md` (a comparison with agentic coding
 > harnesses) and checking its claims against the code and the smoke-test logs. The stage list below the
 > next section is unchanged history; **new work is Stages 7-11**, ranked in the table that follows.

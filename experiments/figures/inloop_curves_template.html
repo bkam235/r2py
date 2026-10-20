@@ -1,0 +1,144 @@
+<title>In-Loop Score Curves</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column; chart first, method notes underneath. */
+:root {
+  --bg: #f6f7f9; --panel: #ffffff; --fg: #1b2230; --muted: #5d6676; --grid: #e2e6ec; --axis: #9aa3b2; --band: #eef1f5;
+  --w1: #8a93a3; --w3: #2f6fd1; --w6: #0f766e; --k3: #d9731a;
+  --cv: #be123c; --nd: #111827; --e1: #7c3aed; --e2: #c026d3; --e3: #b91c1c;
+  --sans: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #12161d; --panel: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --grid: #2a323e; --axis: #5d6676; --band: #20262f;
+  --w1: #9aa3b2; --w3: #6ea0ff; --w6: #2fc2b2; --k3: #f39a4a;
+  --cv: #fb7185; --nd: #f9fafb; --e1: #a78bfa; --e2: #e879f9; --e3: #f87171; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #12161d; --panel: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --grid: #2a323e; --axis: #5d6676; --band: #20262f;
+  --w1: #9aa3b2; --w3: #6ea0ff; --w6: #2fc2b2; --k3: #f39a4a;
+  --cv: #fb7185; --nd: #f9fafb; --e1: #a78bfa; --e2: #e879f9; --e3: #f87171; color-scheme: dark }
+body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 48px; }
+.wrap { max-width: 960px; margin: 0 auto; display: grid; gap: 20px; }
+h1 { font-size: 1.6rem; margin: 0; text-wrap: balance; }
+.lede { color: var(--muted); margin: 4px 0 0; max-width: 70ch; }
+.panel { background: var(--panel); border: 1px solid var(--grid); border-radius: 10px; padding: 16px; display: grid; gap: 12px; min-width: 0; }
+.bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+.seg { display: inline-flex; border: 1px solid var(--grid); border-radius: 8px; overflow: hidden; }
+.seg button { font: 600 13px var(--sans); color: var(--muted); background: transparent; border: 0; padding: 7px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--panel); }
+.seg button:focus-visible { outline: 2px solid var(--w3); outline-offset: -2px; }
+.n { font: 13px var(--mono); color: var(--muted); }
+.chart { width: 100%; overflow-x: auto; }
+svg { display: block; width: 100%; height: auto; min-width: 360px; }
+svg text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
+.legend { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px 16px; }
+.lg { display: flex; gap: 10px; align-items: baseline; }
+.sw { width: 18px; height: 0; border-top: 3px solid; flex: none; transform: translateY(-4px); }
+.lg b { font-weight: 600; }
+.lg .v { font: 13px var(--mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.group { font: 600 11px var(--sans); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); grid-column: 1 / -1; margin-top: 4px; }
+.notes { color: var(--muted); font-size: 13.5px; display: grid; gap: 6px; max-width: 78ch; }
+.notes p { margin: 0; }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>How the score climbs, step by step</h1>
+    <p class="lede">Mean score of the best program so far after each agent step, on the same 60 training states for every line, scored with the harness as of 2026-10-18. Step 0 is the frozen starting translation. Width k keeps the best of k independent chains; 3 per step is one chain that samples 3 rewrites per step. For crashing starts the default is now width 6 with patience 5, shown measured in the "Start crashes" view; in the "All starts" view the line "default without conversation" combines it with width 3 on running starts. The black line is the current default, conversation mode included, measured on all 60 states. The shaded region shows what the three plateau strategies add after width 3 has stopped.</p>
+  </header>
+
+  <section class="panel">
+    <div class="bar">
+      <div class="seg" role="group" aria-label="Which starting states">
+        <button id="s-all" data-s="all" aria-pressed="true">All starts</button>
+        <button id="s-running" data-s="running" aria-pressed="false">Start runs</button>
+        <button id="s-crashing" data-s="crashing" aria-pressed="false">Start crashes</button>
+      </div>
+      <span class="n" id="n"></span>
+    </div>
+    <div class="chart"><svg id="svg" viewBox="0 0 900 440" role="img" aria-label="Mean best score by agent step, with plateau strategies"></svg></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section class="notes">
+    <p><b>Model calls per step:</b> width 1 makes 1 call, width 3 makes 3 (one per chain, in parallel), width 6 makes 6, and 3 per step makes 3. The plateau strategies make 1 call per extra step and chain they continue.</p>
+    <p><b>Re-scored:</b> the programs the chains accepted were re-verified with the current harness (tag lists as rendered HTML, temp paths by extension, R session reports not scored). This changed 10 of the 60 states; the starting mean rose from 0.405 to 0.427. The chains' choices were made under the old scoring, so their paths are not what a fresh run would take.</p>
+    <p><b>Where the lines come from:</b> the 240 replay runs of 2026-10-17. Each width-3 run holds three independent chains, giving 6 single chains per state; width 1 and 3 average the best over every 1- and 3-chain subset of those 6. In the "All starts" and "Start runs" views, the dotted width-6 line is the best of all 6 single chains per state: an estimate, not a run.</p>
+    <p><b>New default for crashing starts</b> (since 2026-10-18): 6 chains, 5 failed steps in a row before a chain stops while its program still crashes, and twice the time limit. Its line in the "Start crashes" view is measured, one run per state on 2026-10-19 with the 40-minute limit (only 1 of 120 chains reached it): it ends at 0.676, against width 3 at 0.611. Against the two width-3 runs of 2026-10-17 it gains +0.052 (95% interval -0.021 to +0.126; better on 9 states, worse on 3, tied on 7), so the gain is likely but not established at this size, and the runs were two days apart. The first measured run with the 20-minute limit ended at 0.646. The "default without conversation" line in the "All starts" view is the step-by-step mean of width 3 on the 41 running starts and this measured line on the 19 crashing starts.</p>
+    <p><b>Default with conversation (measured)</b>: the production default as of 2026-10-20, run on all 60 states on 2026-10-20 (one run per state): width 3 on running starts; width 6, patience 5 and twice the time limit on crashing starts; from step 2 on, each step continues the previous step's conversation and is told what its answer did. It ends at 0.782 on all starts (0.765 running, 0.819 crashing). Against width 3 on running starts it gains +0.045 (95% interval +0.008 to +0.092; better on 16 states, worse on 9). On crashing starts the +0.143 over the crash default without conversation comes mostly from three states that crashed in that run and run in this one; with one run per state such swings are largely chance. The comparisons are with runs one to three days earlier.</p>
+    <p><b>Plateau strategies</b> (run on 2026-10-18 with the current harness, each continuing from where the width-3 runs stopped): <i>restart</i> continues the program a run returned for 3 steps with a fresh history; <i>accept equal</i> does the same and also takes a different program with the same score; <i>patience 5</i> gives the 44 chains that stalled while their program still crashed 2 more steps. Each extension is drawn as the gain measured on the two width-3 runs per state, added to the end of the width-3 line. Restart and accept equal only apply to running starts; patience only to crashing programs.</p>
+  </section>
+</div>
+
+<script>
+const DATA = __DATA__;
+const SERIES_BY = {
+  base: [["default with conversation (measured)","--nd","width 3; crashing starts: width 6 + patience 5; conversation from step 2"],["width 1","--w1","1 call per step"],["width 3","--w3","3 calls per step"],["width 6 (estimated)","--w6","best of the 6 single chains per state; not run"],["3 per step","--k3","3 calls per step"]],
+  all: [["default with conversation (measured)","--nd","width 3; crashing starts: width 6 + patience 5; conversation from step 2"],["width 1","--w1","1 call per step"],["width 3","--w3","3 calls per step"],["default without conversation","--w6","width 3, and width 6 + patience 5 on crashing starts"],["width 6 (estimated)","--w6","best of the 6 single chains per state; not run"],["3 per step","--k3","3 calls per step"]],
+  crashing: [["default with conversation (measured)","--nd","width 3; crashing starts: width 6 + patience 5; conversation from step 2"],["width 1","--w1","1 call per step"],["width 3","--w3","3 calls per step"],["width 6 + patience 5","--w6","new default, measured: 1 run per state, 6 calls per step"],["3 per step","--k3","3 calls per step"]]};
+const EXT = [["restart","--e1","width 3, then 3 restart steps","6 3"],["accept equal","--e2","width 3, then 3 accept-equal steps","2 3"],["patience 5","--e3","width 3, then 2 steps more patience","8 3 2 3"]];
+const W = 900, H = 440, M = {l: 52, r: 20, t: 16, b: 48};
+const LAST = 14, EXTRA = 3, XMAX = LAST + EXTRA + 0.6;
+const svg = document.getElementById("svg");
+const NS = "http://www.w3.org/2000/svg";
+const el = (t, a) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let current = "all";
+try { const s = localStorage.getItem("inloop-stratum"); if (s && DATA.strata[s]) current = s; } catch (e) {}
+
+function draw() {
+  const st = DATA.strata[current];
+  const SERIES = SERIES_BY[current] || SERIES_BY.base;
+  const vals = [...Object.values(st.lines).flat(), ...Object.values(st.ext).flat()];
+  const lo = Math.max(0, Math.floor(Math.min(...vals) * 10) / 10), hi = Math.min(1, Math.ceil(Math.max(...vals) * 10) / 10);
+  const x = i => M.l + (i / XMAX) * (W - M.l - M.r);
+  const y = v => M.t + (1 - (v - lo) / (hi - lo)) * (H - M.t - M.b);
+  svg.replaceChildren();
+  svg.append(el("rect", {x: x(LAST + 0.3), y: M.t, width: x(XMAX) - x(LAST + 0.3), height: H - M.t - M.b, fill: css("--band")}));
+  const bl = el("text", {x: (x(LAST + 0.3) + x(XMAX)) / 2, y: M.t + 14, "text-anchor": "middle"}); bl.textContent = "after the plateau"; svg.append(bl);
+  for (let v = lo; v <= hi + 1e-9; v += 0.1) {
+    svg.append(el("line", {x1: M.l, x2: W - M.r, y1: y(v), y2: y(v), stroke: css("--grid"), "stroke-width": 1}));
+    const t = el("text", {x: M.l - 8, y: y(v) + 4, "text-anchor": "end"}); t.textContent = v.toFixed(1); svg.append(t);
+  }
+  for (let i = 0; i <= LAST; i++) { const t = el("text", {x: x(i), y: H - M.b + 18, "text-anchor": "middle"}); t.textContent = i; svg.append(t); }
+  for (let j = 1; j <= EXTRA; j++) { const t = el("text", {x: x(LAST + j), y: H - M.b + 18, "text-anchor": "middle"}); t.textContent = "+" + j; svg.append(t); }
+  svg.append(el("line", {x1: M.l, x2: W - M.r, y1: H - M.b, y2: H - M.b, stroke: css("--axis"), "stroke-width": 1}));
+  const xl = el("text", {x: (M.l + x(LAST)) / 2, y: H - 8, "text-anchor": "middle"}); xl.textContent = "agent step (0 = starting translation)"; svg.append(xl);
+  const yl = el("text", {x: 14, y: (M.t + H - M.b) / 2, "text-anchor": "middle", transform: `rotate(-90 14 ${(M.t + H - M.b) / 2})`}); yl.textContent = "mean score of best program"; svg.append(yl);
+  const path = pts => pts.map(([i, v], k) => `${k ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+  for (const [name, tok] of SERIES) {
+    const ys = st.lines[name], c = css(tok);
+    const est = name === "width 6 (estimated)";
+    svg.append(el("path", {d: path(ys.map((v, i) => [i, v])), fill: "none", stroke: c, "stroke-width": est ? 1.6 : name === "width 1" ? 2 : 2.5, "stroke-dasharray": est ? "1.5 3" : name === "width 1" ? "5 4" : "none", "stroke-linejoin": "round"}));
+    if (!est) ys.forEach((v, i) => { if (i <= 12) svg.append(el("circle", {cx: x(i), cy: y(v), r: 2.6, fill: c})); });
+  }
+  for (const [name, tok, , dash] of EXT) {
+    const ys = st.ext[name], c = css(tok);
+    svg.append(el("path", {d: path(ys.map((v, j) => [LAST + j, v])), fill: "none", stroke: c, "stroke-width": 2.2, "stroke-dasharray": dash, "stroke-linejoin": "round"}));
+    ys.forEach((v, j) => { if (j) svg.append(el("circle", {cx: x(LAST + j), cy: y(v), r: 2.6, fill: c})); });
+  }
+  document.getElementById("n").textContent = `${st.n} states, same for all lines`;
+  const lg = document.getElementById("legend"); lg.replaceChildren();
+  const add = (html) => { const d = document.createElement("div"); d.className = "lg"; d.innerHTML = html; lg.append(d); };
+  const head = (t) => { const d = document.createElement("div"); d.className = "group"; d.textContent = t; lg.append(d); };
+  head("Search strategies");
+  for (const [name, tok, calls] of SERIES) {
+    const ys = st.lines[name];
+    add(`<span class="sw" style="border-color:var(${tok});${name === "width 1" ? "border-top-style:dashed" : name === "width 6 (estimated)" ? "border-top-style:dotted" : ""}"></span><span><b>${name}</b><br><span class="v">${ys[0].toFixed(3)} → ${ys[ys.length - 1].toFixed(3)} · ${calls}</span></span>`);
+  }
+  head("After the width-3 plateau");
+  for (const [name, tok, desc] of EXT) {
+    const ys = st.ext[name], g = ys[ys.length - 1] - ys[0];
+    add(`<span class="sw" style="border-color:var(${tok});border-top-style:dashed"></span><span><b>${name}</b><br><span class="v">${g >= 0 ? "+" : ""}${g.toFixed(3)} · ${desc}</span></span>`);
+  }
+  document.querySelectorAll(".seg button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.s === current)));
+}
+document.querySelectorAll(".seg button").forEach(b => b.addEventListener("click", () => {
+  current = b.dataset.s; try { localStorage.setItem("inloop-stratum", current); } catch (e) {} draw();
+}));
+matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+new MutationObserver(draw).observe(document.documentElement, {attributes: true, attributeFilter: ["data-theme"]});
+draw();
+</script>
