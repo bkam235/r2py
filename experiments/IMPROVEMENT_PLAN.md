@@ -3430,3 +3430,19 @@ diagnosis is recorded). Smoke test (caret): the diagnosis named the matrix-vs-Da
 difference correctly. Analysis written before the data: `scripts/diagnose_test.py`.
 - Primary: P(step improves), D - U, paired per state. **D goes on to a loop test (with conversation mode) if the
   interval lies above 0.** Secondary: D against U's best of 2 samples (equal calls); realized gain; strata.
+- **Result (2026-10-20):** 240 steps, 0 errors, $0.45.
+
+| P(step improves) | U (1 call) | D (diagnose, fix: 2 calls) | D - U | U best of 2 |
+|---|---|---|---|---|
+| all (60 states) | 0.333 | 0.358 | +0.025 [-0.058, +0.117] | 0.450 |
+| running starts (40) | 0.263 | 0.350 | +0.088 [-0.013, +0.188] | 0.375 |
+| crashing starts (20) | 0.475 | 0.375 | -0.100 [-0.225, +0.025] | 0.600 |
+
+  Realized gain D - U: all +0.023 [-0.007, +0.056], running +0.029 [-0.007, +0.071], crashing +0.009.
+  **By the registered rule D does not go on** (interval includes 0). It helps running starts (+9 points, interval
+  just touching 0) and hurts crashing starts (-10 points). At equal calls, two plain samples beat it: -0.092
+  [-0.192, +0.008] overall, -0.025 on running starts.
+- **Where ideas 2 and 4 leave the question (2026-10-20).** Both make a step use its feedback a little better on
+  running starts (conversation +6.6 points on step 2, diagnosis +8.8 on step 1), neither significant, and neither
+  beats spending the same calls on more samples. Feedback is used (ablation: 0.27 vs 0.10), but these ways of
+  making the model engage with it more add only a few points.
