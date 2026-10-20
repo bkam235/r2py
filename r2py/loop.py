@@ -27,6 +27,9 @@ DEFAULT_CRASH_STALLS = 5
 # The wall-clock budget is shared by chains running in parallel; with twice the chains, 15 of 120 stopped on the
 # budget in the first measured run (2026-10-18). The crash width gets this multiple of the budget.
 DEFAULT_CRASH_BUDGET_FACTOR = 2.0
+# From step 2 on, a step continues the previous step's conversation with what its answer did (2026-10-20: step 2
+# improves 0.358 vs 0.302 fresh, P(gain > 0) = 0.92, no extra calls; adopted under the tiered decision rule).
+DEFAULT_CONVERSE = True
 
 if TYPE_CHECKING:
     from .types import ScriptMap
@@ -110,6 +113,7 @@ def run_loop(
     agent_crash_width: int = DEFAULT_CRASH_WIDTH,
     agent_crash_stalls: "int | None" = DEFAULT_CRASH_STALLS,
     agent_crash_budget_factor: float = DEFAULT_CRASH_BUDGET_FACTOR,
+    agent_converse: bool = DEFAULT_CONVERSE,
     agent_entity_width: int = 1,
     agent_locate: bool = False,
     runtime_dir: "str | Path | None" = None,
@@ -329,6 +333,7 @@ def run_loop(
         score_threshold=score_threshold,
         max_stalls=max_stalls,
         crash_stalls=agent_crash_stalls,
+        converse=agent_converse,
         budget_s=budget_s,
         replace_entity=agent_replace_entity,
         entity_repair=agent_entity_repair,

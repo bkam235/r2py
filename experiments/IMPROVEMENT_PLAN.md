@@ -3446,3 +3446,20 @@ difference correctly. Analysis written before the data: `scripts/diagnose_test.p
   running starts (conversation +6.6 points on step 2, diagnosis +8.8 on step 1), neither significant, and neither
   beats spending the same calls on more samples. Feedback is used (ablation: 0.27 vs 0.10), but these ways of
   making the model engage with it more add only a few points.
+
+**Decision rule, tiered (user's decision, 2026-10-20).** The 95% two-sided interval was the bar for every change;
+for cheap, reversible harness settings that discards likely gains. From now on:
+- **Free and reversible changes** (no extra model calls, no stratum harmed, switchable): adopt if P(effect > 0) >= 0.9
+  in the bootstrap over states. Adopted changes stay under watch; a later run that contradicts them reverts them.
+- **Changes that cost extra calls:** adopt only if they beat the same calls spent on sampling (best of k) with
+  P >= 0.9.
+- **Claims about effects** in this log keep the 95% interval.
+- Known costs: with ~15 tests, a 0.9 bar admits about one or two null changes; first estimates run high (conversation
+  +0.065 -> +0.049 with more data).
+
+Applied 2026-10-20:
+- **Conversation mode: adopted** (P = 0.92 all, 0.92 running, 0.85 crashing; no extra calls). `run_loop` now passes
+  `converse=True` by default (`DEFAULT_CONVERSE`, manifest key `agent_converse`); `reason()` itself keeps False, so
+  replay policies are unchanged unless they ask for it. Test in `tests/test_loop.py`.
+- **Diagnose then fix: not adopted** (costs a second call and loses to best of 2 samples, P = 0.03; hurts crashing
+  starts, P(> 0) = 0.05).
