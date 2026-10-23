@@ -4,7 +4,6 @@ r2py/stage0/r_env/
 assets/
 .env
 run_translate.lnk
-/experiment
 **/index.json
 work/pypi_names.json
 work/mapping_cache/
@@ -15,4 +14,3 @@ requirements.md
 .claude/
 .venv
 .venv-sandbox
-experiments/IMPROVEMENT_PLAN.md
