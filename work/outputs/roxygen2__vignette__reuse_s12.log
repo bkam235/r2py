@@ -1,0 +1,43 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(roxygen2))
+
+============================================================
+Entity: import_roxygen2
+  Name:  roxygen2
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(roxygen2))
+
+============================================================
+Entity: alphabet
+  Name:  alphabet
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    alphabet <- function(n) {
+      paste0("`", letters[1:n], "`", collapse = ", ")
+    }
+  Python:
+    def alphabet(n):
+        letters = list(string.ascii_lowercase)
+        return ", ".join([f"`{l}`" for l in letters[:n]])

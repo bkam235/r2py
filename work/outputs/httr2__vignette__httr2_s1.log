@@ -1,0 +1,67 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr2))
+
+============================================================
+Entity: import_httr2
+  Name:  httr2
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr2))
+
+============================================================
+Entity: run_code
+  Name:  run_code
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    run_code <- getRversion() >= "4.4.0"
+
+============================================================
+Entity: getRversion
+  Name:  getRversion
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    run_code <- getRversion() >= "4.4.0"
+  Python:
+    run_code = sys.version_info >= (3, 10) # Example: checking for Python 3.10+
+
+============================================================
+Entity: opts_chunk$set
+  Name:  opts_chunk$set
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    knitr::opts_chunk$set(
+      collapse = TRUE,
+      comment = "#>",
+      eval = run_code,
+      purl = run_code
+    )

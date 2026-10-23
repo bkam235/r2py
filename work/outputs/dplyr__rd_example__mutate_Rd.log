@@ -1,0 +1,536 @@
+Translation log
+Final score: 0.931
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: select
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      select(name, mass) |>
+  Python:
+    res1 = starwars[['name', 'mass']].copy()
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      mutate(
+        mass2 = mass * 2,
+        mass2_squared = mass2 * mass2
+      )
+  Python:
+    res1['mass2'] = res1['mass'] * 2
+    res1['mass2_squared'] = res1['mass2'] * res1['mass2']
+    print(res1)
+    
+    # As well as adding new variables, you can use mutate() to remove variables and modify existing variables.
+    # starwars |> select(name, height, mass, homeworld) |> mutate(mass = NULL, height = height * 0.0328084)
+
+============================================================
+Entity: select_1
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      select(name, height, mass, homeworld) |>
+  Python:
+    res2 = starwars[['name', 'height', 'mass', 'homeworld']].copy()
+
+============================================================
+Entity: mutate_1
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      mutate(
+        mass = NULL,
+        height = height * 0.0328084 # convert to feet
+      )
+  Python:
+    res2 = res2.drop(columns=['mass'])
+    res2['height'] = res2['height'] * 0.0328084
+    print(res2)
+    
+    # Use across() with mutate() to apply a transformation to multiple columns in a tibble.
+    # starwars |> select(name, homeworld, species) |> mutate(across(!name, as.factor))
+
+============================================================
+Entity: select_2
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      select(name, homeworld, species) |>
+  Python:
+    res3 = starwars[['name', 'homeworld', 'species']].copy()
+
+============================================================
+Entity: mutate_2
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      mutate(across(!name, as.factor))
+  Python:
+    cols_to_factor = [col for col in res3.columns if col != 'name']
+    res3[cols_to_factor] = res3[cols_to_factor].astype('category')
+    print(res3)
+    
+    # Window functions are useful for grouped mutates:
+    # starwars |> select(name, mass, homeworld) |> group_by(homeworld) |> mutate(rank = min_rank(desc(mass)))
+
+============================================================
+Entity: select_3
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      select(name, mass, homeworld) |>
+  Python:
+    res4 = starwars[['name', 'mass', 'homeworld']].copy()
+
+============================================================
+Entity: group_by
+  Name:  group_by
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      group_by(homeworld) |>
+
+============================================================
+Entity: mutate_3
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      mutate(rank = min_rank(desc(mass)))
+  Python:
+    res4['rank'] = res4.groupby('homeworld')['mass'].rank(method='min', ascending=False).astype('Int64')
+    print(res4)
+    
+    # By default, new columns are placed on the far right.
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df <- tibble(x = 1, y = 2)
+  Python:
+    df = pd.DataFrame({'x': [1], 'y': [2]})
+    # df |> mutate(z = x + y)
+
+============================================================
+Entity: mutate_4
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df |> mutate(z = x + y)
+  Python:
+    res5_1 = df.assign(z = df['x'] + df['y'])
+    print(res5_1)
+    # df |> mutate(z = x + y, .before = 1)
+
+============================================================
+Entity: mutate_5
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df |> mutate(z = x + y, .before = 1)
+  Python:
+    res5_2 = df.assign(z = df['x'] + df['y'])
+    cols5_2 = ['z'] + [c for c in res5_2.columns if c != 'z']
+    res5_2 = res5_2[cols5_2]
+    print(res5_2)
+    # df |> mutate(z = x + y, .after = x)
+
+============================================================
+Entity: mutate_6
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df |> mutate(z = x + y, .after = x)
+  Python:
+    res5_3 = df.assign(z = df['x'] + df['y'])
+    cols5_3 = list(res5_3.columns)
+    z_idx = cols5_3.index('z')
+    val = cols5_3.pop(z_idx)
+    cols5_3.insert(cols5_3.index('x') + 1, val)
+    res5_3 = res5_3[cols5_3]
+    print(res5_3)
+    
+    # By default, mutate() keeps all columns from the input data.
+
+============================================================
+Entity: df_1
+  Name:  df
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df <- tibble(x = 1, y = 2, a = "a", b = "b")
+  Python:
+    df = pd.DataFrame({'x': [1], 'y': [2], 'a': ["a"], 'b': ["b"]})
+    # df |> mutate(z = x + y, .keep = "all")
+
+============================================================
+Entity: mutate_7
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df |> mutate(z = x + y, .keep = "all") # the default
+  Python:
+    res6_1 = df.assign(z = df['x'] + df['y'])
+    print(res6_1)
+    # df |> mutate(z = x + y, .keep = "used")
+
+============================================================
+Entity: mutate_8
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df |> mutate(z = x + y, .keep = "used")
+  Python:
+    res6_2 = df[['x', 'y']].assign(z = df['x'] + df['y'])
+    print(res6_2)
+    # df |> mutate(z = x + y, .keep = "unused")
+
+============================================================
+Entity: mutate_9
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df |> mutate(z = x + y, .keep = "unused")
+  Python:
+    res6_3 = df.drop(columns=['x', 'y']).assign(z = df['x'] + df['y'])
+    print(res6_3)
+    # df |> mutate(z = x + y, .keep = "none")
+
+============================================================
+Entity: mutate_10
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df |> mutate(z = x + y, .keep = "none")
+  Python:
+    res6_4 = df.assign(z = df['x'] + df['y'])[['z']]
+    print(res6_4)
+    
+    # Grouping ----------------------------------------
+    # The following normalises `mass` by the global average:
+
+============================================================
+Entity: select_4
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      select(name, mass, species) |>
+  Python:
+    res7 = starwars[['name', 'mass', 'species']].copy()
+
+============================================================
+Entity: mutate_11
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      mutate(mass_norm = mass / mean(mass, na.rm = TRUE))
+  Python:
+    res7['mass_norm'] = res7['mass'] / res7['mass'].mean()
+    print(res7)
+    
+    # Whereas this normalises `mass` by the averages within species levels:
+
+============================================================
+Entity: select_5
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      select(name, mass, species) |>
+  Python:
+    res8 = starwars[['name', 'mass', 'species']].copy()
+
+============================================================
+Entity: group_by_1
+  Name:  group_by
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      group_by(species) |>
+
+============================================================
+Entity: mutate_12
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      mutate(mass_norm = mass / mean(mass, na.rm = TRUE))
+  Python:
+    res8['mass_norm'] = res8.groupby('species')['mass'].transform(lambda x: x / x.mean())
+    print(res8)
+    
+    # Indirection ----------------------------------------
+
+============================================================
+Entity: vars
+  Name:  vars
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    vars <- c("mass", "height")
+  Python:
+    vars = ["mass", "height"]
+    # mutate(starwars, prod = .data[[vars[[1]]]] * .data[[vars[[2]]]])
+
+============================================================
+Entity: mutate_13
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    mutate(starwars, prod = .data[[vars[[1]]]] * .data[[vars[[2]]]])
+  Python:
+    res9 = starwars.assign(prod = starwars[vars[0]] * starwars[vars[1]])
+    print(res9)

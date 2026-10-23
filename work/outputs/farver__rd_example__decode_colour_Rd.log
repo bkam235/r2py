@@ -1,0 +1,151 @@
+Translation log
+Final score: 0.924
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(farver))
+
+============================================================
+Entity: import_farver
+  Name:  farver
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(farver))
+
+============================================================
+Entity: decode_colour
+  Name:  decode_colour
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    decode_colour(c('#43e1f6', 'steelblue', '#67ce9fe4'))
+  Python:
+    def decode_colour(colour, alpha=False, to="rgb", white="D65", na_value=None):
+        """
+        Decodes colors into a specified color space.
+        R farver's decode_colour returns 0-255 for RGB and specific LCH values.
+        """
+        # Convert colors to RGBA normalized (0-1) using matplotlib
+        # matplotlib.colors.to_rgba handles hex, named colors, and RGBA
+        rgba_list = [mcolors.to_rgba(c) for c in colour]
+        
+        if to.lower() == "rgb":
+            # R farver returns RGB as 0-255 integers
+            results = []
+            for rgba in rgba_list:
+                # Convert 0-1 float to 0-255 int
+                rgb_255 = [int(round(x * 255)) for x in rgba[:3]]
+                if alpha:
+                    results.append(rgb_255 + [rgba[3]])
+                else:
+                    results.append(rgb_255)
+            
+            # Format as a numpy array to mimic R's matrix output
+            res_array = np.array(results)
+            cols = ["r", "g", "b"]
+            if alpha:
+                cols.append("alpha")
+            
+            # We return a structured representation or a dataframe-like object for better match, 
+            # but since we are printing, we'll format it to look like the R output.
+            return res_array, cols
+    
+        elif to.lower() == "lch":
+            # LCH conversion: RGB -> XYZ -> Lab -> LCH
+            # Using D65 white point constants
+            results = []
+            for rgba in rgba_list:
+                # 1. RGB to XYZ (D65)
+                rgb = np.array(rgba[:3])
+                # Gamma correction
+                rgb = np.where(rgb <= 0.04045, rgb / 12.92, ((rgb + 0.055) / 1.055) ** 2.4)
+                
+                # RGB to XYZ matrix for D65
+                matrix = np.array([
+                    [0.4124564, 0.3575761, 0.1804233],
+                    [0.2126729, 0.7151522, 0.0721750],
+                    [0.0193339, 0.1183394, 0.9504899]
+                ])
+                xyz = matrix @ rgb
+                
+                # 2. XYZ to Lab (D65: X=95.047, Y=100.0, Z=108.883)
+                # Note: farver typically works with 0-100 scale for L
+                white_xyz = np.array([0.95047, 1.0, 1.08883])
+                xyz_norm = xyz / white_xyz
+                
+                def f(t):
+                    return np.where(t > 0.008856, np.power(t, 1/3), (7.787 * t) + (16/116))
+                
+                f_xyz = f(xyz_norm)
+                L = (116 * f_xyz[1]) - 16
+                a = 500 * (f_xyz[0] - f_xyz[1])
+                b = 200 * (f_xyz[2] - f_xyz[1])
+                
+                # 3. Lab to LCH
+                C = np.sqrt(a**2 + b**2)
+                H = np.degrees(np.arctan2(b, a))
+                if H < 0: H += 360
+                
+                results.append([L, C, H])
+                
+            res_array = np.array(results)
+            return res_array, ["l", "c", "h"]
+    
+        return None
+    
+    def print_r_style(data, cols):
+        if data is None: return
+        # Print header
+        header = "      " + "   ".join(cols)
+        print(header)
+        # Print rows
+        for i, row in enumerate(data):
+            row_str = " ".join(f"{val:8.6g}" if isinstance(val, float) else f"{val:8g}" for val in row)
+            print(f"[{i+1},] {row_str}")
+    
+    colors_list = ['#43e1f6', 'steelblue', '#67ce9fe4']
+    res, cols = decode_colour(colors_list)
+    print_r_style(res, cols)
+
+============================================================
+Entity: decode_colour_1
+  Name:  decode_colour
+  Kind:  FunctionCall
+  Score: 0.934
+  side_effects:        0.934
+  executed_ok:       True
+
+  R:
+    decode_colour(c('#43e1f6', 'steelblue', '#67ce9fe4'), alpha = TRUE)
+  Python:
+    res, cols = decode_colour(colors_list, alpha=True)
+    print_r_style(res, cols)
+
+============================================================
+Entity: decode_colour_2
+  Name:  decode_colour
+  Kind:  FunctionCall
+  Score: 0.837
+  side_effects:        0.837
+  executed_ok:       True
+
+  R:
+    decode_colour(c('#43e1f6', 'steelblue', '#67ce9fe4'), to = 'lch')
+  Python:
+    res, cols = decode_colour(colors_list, to='lch')
+    print_r_style(res, cols)

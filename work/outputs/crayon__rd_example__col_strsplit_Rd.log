@@ -1,0 +1,201 @@
+Translation log
+Final score: 0.068
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(crayon))
+
+============================================================
+Entity: import_crayon
+  Name:  crayon
+  Kind:  LibraryImport
+  Score: 0.500
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(crayon))
+
+============================================================
+Entity: str
+  Name:  str
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    str <- red("I am red---") %+%
+      green("and I am green-") %+%
+      underline("I underlined")
+  Python:
+    str_val = (
+
+============================================================
+Entity: red
+  Name:  red
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+    str <- red("I am red---") %+%
+  Python:
+        colored("I am red---", "red") + 
+
+============================================================
+Entity: green
+  Name:  green
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+      green("and I am green-") %+%
+  Python:
+        colored("and I am green-", "green") + 
+
+============================================================
+Entity: underline
+  Name:  underline
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+      underline("I underlined")
+  Python:
+        "\033[4mI underlined\033[0m"
+    )
+
+============================================================
+Entity: cat
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+    cat(str, "\n")
+  Python:
+    print(str_val)
+    
+    # col_strsplit equivalent: split while preserving ANSI codes
+    # Using a regex that doesn't break on ANSI escape sequences
+    import re
+
+============================================================
+Entity: cat_1
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+    cat(col_strsplit(str, "[-]+")[[1]], sep = "\n")
+  Python:
+    def col_strsplit(text, pattern):
+        return re.split(pattern, text)
+    
+    print("\n".join(col_strsplit(str_val, r"[-]+")))
+    
+    # strip_style equivalent: remove ANSI escape codes
+
+============================================================
+Entity: strsplit
+  Name:  strsplit
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+    strsplit(strip_style(str), "[-]+")
+  Python:
+    def strip_style(text):
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\].|[0-9-;]*[$-^YZ])')
+        return ansi_escape.sub('', text)
+    
+    print(re.split(r"[-]+", strip_style(str_val)))
+
+============================================================
+Entity: cat_2
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+    cat(col_strsplit(str, "")[[1]], "\n", sep = " ")
+  Python:
+    print(" ".join(col_strsplit(str_val, ""))) # Note: re.split("") returns empty strings
+
+============================================================
+Entity: strsplit_1
+  Name:  strsplit
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+    strsplit(strip_style(str), "")
+  Python:
+    print(list(strip_style(str_val)))

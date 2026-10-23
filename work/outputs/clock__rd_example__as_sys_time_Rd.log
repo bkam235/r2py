@@ -1,0 +1,236 @@
+Translation log
+Final score: 0.812
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- as.Date("2019-01-01")
+  Python:
+    x = pd.to_datetime("2019-01-01").date()
+    
+    # Dates are assumed to be naive, so the printed time is the same whether
+    # we convert it to sys-time or naive-time
+
+============================================================
+Entity: as_sys_time
+  Name:  as_sys_time
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    as_sys_time(x)
+  Python:
+    def as_sys_time(x):
+        """
+        Converts to a system time (UTC timestamp).
+        """
+        if isinstance(x, date) and not isinstance(x, datetime):
+            # R Date is naive, as_sys_time treats as UTC
+            dt = datetime.combine(x, datetime.min.time()).replace(tzinfo=pytz.UTC)
+            return ClockTime(dt, "sys_time<day>")
+        
+        if isinstance(x, datetime):
+            if x.tzinfo is None:
+                dt = x.replace(tzinfo=pytz.UTC)
+            else:
+                dt = x.astimezone(pytz.UTC)
+            
+            # Determine precision for label
+            if dt.hour == 0 and dt.minute == 0 and dt.second == 0:
+                return ClockTime(dt, "sys_time<day>")
+            return ClockTime(dt, "sys_time<second>")
+        
+        if isinstance(x, YearMonthDay):
+            if x.day is None:
+                # In R, as_sys_time(ym) where ym is just year-month fails
+                raise TypeError("Can't perform this operation on a YearMonthDay without day precision.")
+            dt = datetime(x.year, x.month, x.day).replace(tzinfo=pytz.UTC)
+            return ClockTime(dt, "sys_time<day>")
+        
+        raise TypeError(f"Can't perform this operation on a {type(x).__name__}.")
+    clock_print(as_sys_time(x))
+
+============================================================
+Entity: as_naive_time
+  Name:  as_naive_time
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    as_naive_time(x)
+  Python:
+    def as_naive_time(x):
+        """
+        Converts to a naive time.
+        """
+        if isinstance(x, date) and not isinstance(x, datetime):
+            dt = datetime.combine(x, datetime.min.time())
+            return ClockTime(dt, "naive_time<day>")
+        
+        if isinstance(x, datetime):
+            dt = x.replace(tzinfo=None)
+            if dt.hour == 0 and dt.minute == 0 and dt.second == 0:
+                return ClockTime(dt, "naive_time<day>")
+            return ClockTime(dt, "naive_time<second>")
+        
+        if isinstance(x, YearMonthDay):
+            if x.day is None:
+                raise TypeError("Can't perform this operation on a YearMonthDay without day precision.")
+            dt = datetime(x.year, x.month, x.day)
+            return ClockTime(dt, "naive_time<day>")
+        
+        raise TypeError(f"Can't perform this operation on a {type(x).__name__}.")
+    
+    class YearMonthDay:
+        def __init__(self, year, month=None, day=None):
+            self.year = year
+            self.month = month
+            self.day = day
+        
+        def __repr__(self):
+            return f"YearMonthDay(year={self.year}, month={self.month}, day={self.day})"
+    clock_print(as_naive_time(x))
+    
+    # America/New_York 2019-01-01 01:00:00
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    y <- as.POSIXct("2019-01-01 01:00:00", tz = "America/New_York")
+  Python:
+    tz_ny = pytz.timezone("America/New_York")
+    y = tz_ny.localize(datetime(2019, 1, 1, 1, 0, 0))
+    
+    # The sys time displays the equivalent time in UTC (5 hours ahead of
+    # America/New_York at this point in the year)
+
+============================================================
+Entity: as_sys_time_1
+  Name:  as_sys_time
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    as_sys_time(y)
+  Python:
+    clock_print(as_sys_time(y))
+
+============================================================
+Entity: ym
+  Name:  ym
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    ym <- year_month_day(2019, 02)
+  Python:
+    def year_month_day(year, month=None, day=None):
+        return YearMonthDay(year, month, day)
+    ym = year_month_day(2019, 2)
+    
+    # A minimum of day precision is required
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(as_sys_time(ym))
+  Python:
+    try:
+        as_sys_time(ym)
+    except Exception:
+        # R's try() prints the error to stderr or as a warning, 
+        # but in the provided R output, it resulted in (empty) stdout.
+        pass
+
+============================================================
+Entity: ymd
+  Name:  ymd
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    ymd <- set_day(ym, 10)
+  Python:
+    def set_day(ym, day_val):
+        if not isinstance(ym, YearMonthDay):
+            raise TypeError(f"Can't perform this operation on a {type(ym).__name__}.")
+        return YearMonthDay(ym.year, ym.month, day_val)
+    
+    # Execution
+    ymd = set_day(ym, 10)
+
+============================================================
+Entity: as_sys_time_2
+  Name:  as_sys_time
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    as_sys_time(ymd)
+  Python:
+    clock_print(as_sys_time(ymd))

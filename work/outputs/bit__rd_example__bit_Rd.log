@@ -1,0 +1,74 @@
+Translation log
+Final score: 0.585
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(bit))
+
+============================================================
+Entity: import_bit
+  Name:  bit
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(bit))
+
+============================================================
+Entity: bit
+  Name:  bit
+  Kind:  FunctionCall
+  Score: 0.596
+  side_effects:        0.596
+  executed_ok:       True
+
+  R:
+    bit(12)
+  Python:
+    # bit(12) - In R, bit() creates a bit-vector. 
+    # 12 in binary is 1100.
+    d = np.array([int(x) for x in bin(12)[2:].zfill(4)], dtype=bool)
+    print(d)
+
+============================================================
+Entity: bit_1
+  Name:  bit
+  Kind:  FunctionCall
+  Score: 0.590
+  side_effects:        0.590
+  executed_ok:       True
+
+  R:
+    !bit(12)
+  Python:
+    # !bit(12) - Logical NOT
+    m = ~d
+    print(m)
+
+============================================================
+Entity: str
+  Name:  str
+  Kind:  FunctionCall
+  Score: 0.569
+  side_effects:        0.569
+  executed_ok:       True
+
+  R:
+    str(bit(128))
+  Python:
+    # str(bit(128)) - Structure/Summary of the bit vector.
+    # 128 in binary is 10000000.
+    g = np.array([int(x) for x in bin(128)[2:].zfill(8)], dtype=bool)
+    print(f"Type: {type(g)}")
+    print(f"Shape: {g.shape}")
+    print(f"Values: {g}")

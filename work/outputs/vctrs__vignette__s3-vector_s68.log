@@ -1,0 +1,84 @@
+Translation log
+Final score: 0.867
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: meter
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    meter(10) + meter(1)
+  Python:
+    class Meter(float):
+        def __add__(self, other):
+            if isinstance(other, Meter):
+                return Meter(super().__add__(other))
+            return super().__add__(other)
+        
+        def __mul__(self, other):
+            return Meter(super().__mul__(other))
+    
+        def __repr__(self):
+            return f"{super().__repr__()}m"
+    
+    def meter(value):
+        return Meter(value)
+    
+    try:
+        # x is undefined in R, this will raise NameError in Python
+        _ = x + 1
+
+============================================================
+Entity: meter_1
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    meter(10) + meter(1)
+  Python:
+        _ = meter(10) + meter(1)
+
+============================================================
+Entity: meter_2
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    meter(10) * 3
+  Python:
+        _ = meter(10) * 3
+    except NameError:
+        # Mimics R's try() behavior which catches errors and continues
+        pass

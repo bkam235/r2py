@@ -1,0 +1,10 @@
+735 calls (provider outages excluded)
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+A1_full_whole    105   13974       1%     19%    16%         4%        27%   +0.119
+A2_full_entity   105   14034       5%     32%    27%        36%        18%   -0.100
+A3_trim_whole    105    9906       1%     38%    32%        30%        35%   +0.241
+A4_trim_entity   105    9969       2%     53%    16%        26%         7%   -0.143
+A5_local         105    2894       0%     67%    42%        50%        35%   -0.019
+A6_local_pad     105   14112       0%     61%    41%        54%        29%   -0.071
+A7_full_x2       105   28026       0%     39%    41%        48%        35%   +0.100
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 18)

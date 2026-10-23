@@ -1,0 +1,81 @@
+Translation log
+Final score: 0.947
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tibble))
+
+============================================================
+Entity: import_tibble
+  Name:  tibble
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tibble))
+
+============================================================
+Entity: options
+  Name:  options
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    options(digits = 7)
+  Python:
+    pd.options.display.precision = 7
+
+============================================================
+Entity: options_1
+  Name:  options
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    options(pillar.sigfig = 7)
+  Python:
+    np.set_printoptions(precision=7)
+    
+    # c() equivalent in R is typically a list or numpy array in Python
+
+============================================================
+Entity: c
+  Name:  c
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    c(1.2345, 12.3456, 123.4567, 1234.5678, 12345.6789)
+  Python:
+    data_vec = [1.2345, 12.3456, 123.4567, 1234.5678, 12345.6789]
+    print(data_vec)
+    
+    # tibble() is equivalent to a pandas DataFrame
+
+============================================================
+Entity: tibble
+  Name:  tibble
+  Kind:  FunctionCall
+  Score: 0.894
+  side_effects:        0.894
+  executed_ok:       True
+
+  R:
+    tibble(x = c(1.2345, 12.3456, 123.4567, 1234.5678, 12345.6789))
+  Python:
+    df = pd.DataFrame({'x': data_vec})
+    print(df)

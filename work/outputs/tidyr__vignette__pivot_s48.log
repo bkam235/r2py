@@ -1,0 +1,53 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: import_tidyr
+  Name:  tidyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: multi
+  Name:  multi
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    multi <- tribble(
+      ~id, ~choice1, ~choice2, ~choice3,
+      1, "A", "B", "C",
+      2, "C", "B",  NA,
+      3, "D",  NA,  NA,
+      4, "B", "D",  NA
+    )
+  Python:
+    multi = pd.DataFrame([
+        [1, "A", "B", "C"],
+        [2, "C", "B", np.nan],
+        [3, "D", np.nan, np.nan],
+        [4, "B", "D", np.nan]
+    ], columns=["id", "choice1", "choice2", "choice3"])

@@ -1,0 +1,327 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    library(vctrs)
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.500
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    x <- year_month_day(2021, 03, 14, c(01, 03), c(59, 00), c(59, 00))
+  Python:
+    naive_times = [
+        datetime(2021, 3, 14, 1, 59, 59),
+        datetime(2021, 3, 14, 3, 0, 0)
+    ]
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    x <- as_naive_time(x)
+
+============================================================
+Entity: x_2
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    x <- as_zoned_time(x, "America/New_York")
+  Python:
+    # x <- as_zoned_time(x, "America/New_York")
+    tz_ny = pytz.timezone("America/New_York")
+
+============================================================
+Entity: x_3
+  Name:  x
+  Kind:  Variable
+  Score: 0.476
+  type_match:          0.102
+  control_flow_match:  1.000
+  data_output:         0.102
+  variable_output:     0.102
+  callable_output:     1.000
+  side_effects:        0.551
+  executed_ok:       True
+
+  R:
+    x
+  Python:
+    print(x)
+
+============================================================
+Entity: x_sys
+  Name:  x_sys
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    x_sys <- as_sys_time(x)
+  Python:
+    # x_sys <- as_sys_time(x)
+    # System time in Python is typically UTC
+    x_sys = [t.astimezone(pytz.UTC) for t in x]
+
+============================================================
+Entity: info
+  Name:  info
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    info <- sys_time_info(x_sys, zoned_time_zone(x))
+
+============================================================
+Entity: info_1
+  Name:  info
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    info
+  Python:
+    print(info)
+    
+    # data_frame creation
+
+============================================================
+Entity: data_frame
+  Name:  data_frame
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    data_frame(
+      x = x,
+      begin = as_zoned_time(info$begin, zoned_time_zone(x)),
+      end = as_zoned_time(info$end, zoned_time_zone(x))
+    )
+  Python:
+    df = pd.DataFrame({
+        "x": x,
+        "begin": [info["begin"]], 
+        "end": [info["end"]]
+    })
+    print(df)
+    
+    # sys_time_info(info$end, zoned_time_zone(x))
+    info_end = get_sys_time_info(info["end"], "America/New_York")
+    print(info_end)
+
+============================================================
+Entity: sys_time_info
+  Name:  sys_time_info
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    sys_time_info(info$end, zoned_time_zone(x))
+  Python:
+    def get_sys_time_info(sys_time, zone_name):
+        tz = pytz.timezone(zone_name)
+        # Get the timezone transition info for the specific timestamp
+        # In Python, we can get the offset for a specific datetime
+        localized = sys_time.astimezone(tz)
+        offset = localized.utcoffset()
+        
+        # sys_time_info in R provides the boundaries of the current offset period
+        # Python's pytz doesn't have a direct 'begin/end' method for intervals, 
+        # so we simulate the info object
+        return {
+            "offset": offset,
+            "begin": localized, # Simplified substitute
+            "end": localized    # Simplified substitute
+        }
+
+============================================================
+Entity: zones
+  Name:  zones
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    zones <- c("America/New_York", "America/Los_Angeles")
+  Python:
+    zones = ["America/New_York", "America/Los_Angeles"]
+
+============================================================
+Entity: info2
+  Name:  info2
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    info2 <- sys_time_info(x_sys[1], zones)
+  Python:
+    # info2 <- sys_time_info(x_sys[1], zones)
+    info2_list = [get_sys_time_info(x_sys[0], z) for z in zones]
+
+============================================================
+Entity: info2_1
+  Name:  info2
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    info2
+  Python:
+    print(info2_list)
+
+============================================================
+Entity: data_frame_1
+  Name:  data_frame
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    data_frame(
+      zone = zones,
+      naive_time = x_sys[1] + info2$offset
+    )
+  Python:
+    # data_frame(zone = zones, naive_time = x_sys[1] + info2$offset)
+    naive_times_calc = [x_sys[0] + info["offset"] for info in info2_list]
+    df2 = pd.DataFrame({
+        "zone": zones,
+        "naive_time": naive_times_calc
+    })
+    print(df2)

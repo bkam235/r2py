@@ -1,0 +1,179 @@
+Translation log
+Final score: 0.624
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- year_day(2019)
+  Python:
+    class YearDay:
+        """Mimics R clock::year_day object"""
+        def __init__(self, year, day):
+            self.year = year
+            self.day = day
+    
+        def __repr__(self):
+            return f'"{self.year}-{self.day:03d}"'
+    
+        def __str__(self):
+            return self.__repr__()
+    
+    def year_day(year):
+        # In the context of the example, year_day(2019) creates a YearDay object
+        # typically initialized to the first day of the year.
+        return YearDay(year, 1)
+    x = year_day(2019)
+    
+    # set_day(x, 12:14)
+
+============================================================
+Entity: set_day
+  Name:  set_day
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    set_day(x, 12:14)
+  Python:
+    def set_day(x, day_val):
+        if isinstance(day_val, (list, np.ndarray, range)):
+            return [YearDay(x.year, d) for d in day_val]
+        elif day_val == "last":
+            # Leap year check for "last" day
+            is_leap = (x.year % 4 == 0 and x.year % 100 != 0) or (x.year % 400 == 0)
+            return YearDay(x.year, 366 if is_leap else 365)
+        else:
+            return YearDay(x.year, day_val)
+    res_days = set_day(x, range(12, 15))
+    print("<year_day<day>[3]>")
+    print(f"[1] {' '.join(map(str, res_days))}")
+    
+    # set_day(x, "last")
+
+============================================================
+Entity: set_day_1
+  Name:  set_day
+  Kind:  FunctionCall
+  Score: 0.837
+  side_effects:        0.837
+  executed_ok:       True
+
+  R:
+    set_day(x, "last")
+  Python:
+    res_last = set_day(x, "last")
+    print("<year_day<day>[1]>")
+    print(f"[1] {res_last}")
+    
+    # invalid <- set_day(x, 366)
+
+============================================================
+Entity: invalid
+  Name:  invalid
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    invalid <- set_day(x, 366)
+
+============================================================
+Entity: invalid_1
+  Name:  invalid
+  Kind:  Variable
+  Score: 0.990
+  control_flow_match:  1.000
+  side_effects:        0.980
+  executed_ok:       True
+
+  R:
+    invalid
+  Python:
+    invalid = set_day(x, 366)
+    print("<year_day<day>[1]>")
+    print(f"[1] {invalid}")
+    
+    # invalid_resolve(invalid, invalid = "next")
+
+============================================================
+Entity: invalid_resolve
+  Name:  invalid_resolve
+  Kind:  FunctionCall
+  Score: 0.918
+  side_effects:        0.918
+  executed_ok:       True
+
+  R:
+    invalid_resolve(invalid, invalid = "next")
+  Python:
+    def invalid_resolve(x, invalid="next"):
+        # If day is 366 in a non-leap year, "next" moves it to day 1 of next year
+        is_leap = (x.year % 4 == 0 and x.year % 100 != 0) or (x.year % 400 == 0)
+        if x.day > (366 if is_leap else 365):
+            if invalid == "next":
+                return YearDay(x.year + 1, 1)
+        return x
+    resolved = invalid_resolve(invalid, invalid="next")
+    print("<year_day<day>[1]>")
+    print(f"[1] {resolved}")
+    
+    # try(set_hour(x, 5))
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(set_hour(x, 5))
+  Python:
+    def set_hour(x, hour):
+        # R clock throws an error if you try to set a component (hour) 
+        # two levels more precise than current (year_day)
+        # YearDay -> Date -> Time. Hour is 2 levels below YearDay.
+        raise TypeError("Cannot set a component two levels more precise than where you currently are")
+    try:
+        set_hour(x, 5)
+    except Exception:
+        pass # R's try() captures the error and typically prints it, but example shows empty output

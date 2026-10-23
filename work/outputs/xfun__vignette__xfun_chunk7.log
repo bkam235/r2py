@@ -1,0 +1,78 @@
+Translation log
+Final score: 0.625
+Data score:  0.000
+Files score: 0.000
+Iterations:  1
+
+============================================================
+Entity: import_xfun
+  Name:  xfun
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(xfun)
+
+============================================================
+Entity: f
+  Name:  f
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    f = tempfile()
+  Python:
+    f = tempfile.mktemp()
+
+============================================================
+Entity: writeLines
+  Name:  writeLines
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    writeLines(c("hello", "world"), f)
+  Python:
+    with open(f, "w") as file:
+        file.write("hello\nworld")
+
+============================================================
+Entity: gsub_file
+  Name:  gsub_file
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    gsub_file(f, "world", "woRld", fixed = TRUE)
+  Python:
+    with open(f, "r") as file:
+        content = file.read()
+    
+    content = content.replace("world", "woRld")
+    
+    with open(f, "w") as file:
+        file.write(content)
+
+============================================================
+Entity: file_string
+  Name:  file_string
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    file_string(f)
+  Python:
+    with open(f, "r") as file:
+        print(file.read())

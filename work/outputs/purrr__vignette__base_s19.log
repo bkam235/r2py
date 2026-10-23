@@ -1,0 +1,119 @@
+Translation log
+Final score: 0.931
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(purrr))
+
+============================================================
+Entity: import_purrr
+  Name:  purrr
+  Kind:  LibraryImport
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(purrr))
+
+============================================================
+Entity: split
+  Name:  split
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      split(mtcars$cyl) |> 
+  Python:
+    grouped = mtcars_df.groupby('cyl')
+    
+    # map(\(df) lm(mpg ~ wt, data = df))
+
+============================================================
+Entity: map
+  Name:  map
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      map(\(df) lm(mpg ~ wt, data = df))|> 
+  Python:
+    models = {name: smf.ols('mpg ~ wt', data=group).fit() for name, group in grouped}
+    
+    # map(coef)
+
+============================================================
+Entity: map_1
+  Name:  map
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      map(coef) |> 
+  Python:
+    coeffs = {name: model.params for name, model in models.items()}
+    
+    # map_dbl(1) extracts the first element (intercept) of each coefficient vector
+    # In R, this returns a named numeric vector.
+
+============================================================
+Entity: map_dbl
+  Name:  map_dbl
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      map_dbl(1)
+  Python:
+    result_series = pd.Series({name: params.iloc[0] for name, params in coeffs.items()})
+    
+    # To match R's print output format exactly:
+    # R output shows the group names (4, 6, 8) and the intercept values.
+    print(f"      { '        '.join(map(str, result_series.index))}")
+    print(f"{' '.join(f'{val:.5f}' for val in result_series.values)}")

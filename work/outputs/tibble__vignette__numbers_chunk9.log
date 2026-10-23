@@ -1,0 +1,59 @@
+Translation log
+Final score: 0.910
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tibble))
+
+============================================================
+Entity: import_tibble
+  Name:  tibble
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tibble))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- num(c(1, 2, 4), notation = "eng")
+  Python:
+    x = np.array([1, 2, 4])
+    # Note: 'notation = "eng"' in R is for printing/formatting. 
+
+============================================================
+Entity: var
+  Name:  var
+  Kind:  FunctionCall
+  Score: 0.820
+  side_effects:        0.820
+  executed_ok:       True
+
+  R:
+    var(x)
+  Python:
+    # Python's variance calculation is done via numpy.
+    # dd.of 자유도(degrees of freedom) to match R's sample variance (n-1)
+    result = np.var(x, ddof=1)
+    print(result)

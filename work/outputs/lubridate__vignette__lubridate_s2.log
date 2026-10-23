@@ -1,0 +1,63 @@
+Translation log
+Final score: 1.000
+Iterations:  1
+
+============================================================
+Entity: import_lubridate
+  Name:  lubridate
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(lubridate)
+
+============================================================
+Entity: ymd
+  Name:  ymd
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ymd("20110604")
+  Python:
+    def ymd(x, quiet=False, tz=None, locale=None, truncated=0):
+        res = pd.to_datetime(x, format='%Y%m%d')
+        return res.strftime('%Y-%m-%d')
+    print(f'[1] "{ymd("20110604")}"')
+
+============================================================
+Entity: mdy
+  Name:  mdy
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    mdy("06-04-2011")
+  Python:
+    def mdy(x, quiet=False, tz=None, locale=None, truncated=0):
+        res = pd.to_datetime(x, format='%m-%d-%Y')
+        return res.strftime('%Y-%m-%d')
+    print(f'[1] "{mdy("06-04-2011")}"')
+
+============================================================
+Entity: dmy
+  Name:  dmy
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    dmy("04/06/2011")
+  Python:
+    def dmy(x, quiet=False, tz=None, locale=None, truncated=0):
+        res = pd.to_datetime(x, format='%d/%m/%Y')
+        return res.strftime('%Y-%m-%d')
+    print(f'[1] "{dmy("04/06/2011")}"')

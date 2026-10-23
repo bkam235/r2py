@@ -1,0 +1,367 @@
+Translation log
+Final score: 0.942
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  Variable
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      data <- get(isolate(input$dataset))  # No dependency on input$dataset
+  Python:
+        with reactive.isolate():
+            dataset_name = input.dataset
+            # Simulation of get() from R
+            data = globals().get(dataset_name) 
+
+============================================================
+Entity: writeToDatabase
+  Name:  writeToDatabase
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+      writeToDatabase(data)
+  Python:
+    def writeToDatabase(data):
+        print(f"Writing to database: {data}")
+    
+    # Simulation of Shiny's input object for standalone execution
+    class MockInput:
+        def __init__(self):
+            self.saveButton = None
+            self.dataset = "some_dataset"
+            self.valueA = 10
+            self.valueB = 20
+    
+    input = MockInput()
+    
+    # Block 1: Dependency on saveButton, isolated dataset
+    @reactive.effect
+    def effect1():
+        # Trigger on saveButton
+        _ = input.saveButton 
+        
+        # isolate(input$dataset) -> In Python, use the context manager
+        writeToDatabase(data)
+    
+    # Block 2: Dependency on saveButton, isolated block of values
+    @reactive.effect
+    def effect2():
+        # Trigger on saveButton
+        _ = input.saveButton 
+        
+        # isolate a whole block
+
+============================================================
+Entity: data_1
+  Name:  data
+  Kind:  Variable
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      data <- isolate({
+        a <- input$valueA   # No dependency on input$valueA or input$valueB
+        b <- input$valueB
+        c(a=a, b=b)
+      })
+  Python:
+        with reactive.isolate():
+
+============================================================
+Entity: a
+  Name:  a
+  Kind:  Variable
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+        a <- input$valueA   # No dependency on input$valueA or input$valueB
+  Python:
+            a = input.valueA
+
+============================================================
+Entity: b
+  Name:  b
+  Kind:  Variable
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+        b <- input$valueB
+  Python:
+            b = input.valueB
+
+============================================================
+Entity: c
+  Name:  c
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+        c(a=a, b=b)
+  Python:
+            data = {"a": a, "b": b}
+
+============================================================
+Entity: writeToDatabase_1
+  Name:  writeToDatabase
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+      writeToDatabase(data)
+  Python:
+        writeToDatabase(data)
+    
+    # Block 3: Isolation and scoping tests
+    @reactive.effect
+    def effect3():
+        global x, y # Use global to mimic R's environment behavior for the print tests
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Constant
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      x <- 1
+  Python:
+        x = 1
+        # isolate(x <- 2)
+
+============================================================
+Entity: isolate
+  Name:  isolate
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      isolate(x <- 2)
+  Python:
+        with reactive.isolate():
+            x = 2
+
+============================================================
+Entity: print
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      print(x) # 2
+  Python:
+        print(x) # 2
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Constant
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      y <- 1
+  Python:
+        y = 1
+        # Use local() to avoid affecting calling environment
+
+============================================================
+Entity: isolate_1
+  Name:  isolate
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+      isolate(local(y <- 2))
+  Python:
+        with reactive.isolate():
+            def local_scope():
+                y_local = 2
+            local_scope()
+
+============================================================
+Entity: print_1
+  Name:  print
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+      print(y) # 1
+  Python:
+        print(y) # 1
+    
+    # Block 4: reactiveValues and isolated reactive call
+    # R's reactiveValues is like a reactive dictionary.
+
+============================================================
+Entity: values
+  Name:  values
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    values <- reactiveValues(A=1)
+  Python:
+    class ReactiveValues:
+        def __init__(self, **kwargs):
+            self.__dict__.update(kwargs)
+            # In a real Shiny app, these would be wrapped in reactive.Value
+            # For this snippet, we simulate the access.
+    
+    values = ReactiveValues(A=1)
+
+============================================================
+Entity: fun
+  Name:  fun
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    fun <- reactive({ as.character(values$A) })
+  Python:
+    @reactive.calc
+    def fun():
+
+============================================================
+Entity: as.character
+  Name:  as.character
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    fun <- reactive({ as.character(values$A) })
+  Python:
+        return str(values.A)
+    
+    # isolate(fun())
+
+============================================================
+Entity: isolate_2
+  Name:  isolate
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    isolate(fun())
+  Python:
+    with reactive.isolate():
+        isolated_val = fun()

@@ -1,0 +1,149 @@
+Translation log
+Final score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: import_rlang
+  Name:  rlang
+  Kind:  LibraryImport
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: cafe
+  Name:  cafe
+  Kind:  Variable
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    cafe <- string("caf\uE9")
+  Python:
+    cafe = "caf\uE9"
+    # Encoding(cafe) equivalent: Python strings are natively Unicode (UTF-8 internally)
+
+============================================================
+Entity: Encoding
+  Name:  Encoding
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    Encoding(cafe)
+  Python:
+    print(type(cafe)) 
+    # charToRaw(cafe) equivalent: Convert to bytes using UTF-8
+
+============================================================
+Entity: charToRaw
+  Name:  charToRaw
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    charToRaw(cafe)
+  Python:
+    print(list(cafe.encode('utf-8')))
+    
+    # cafe_latin1 <- string(c(0x63, 0x61, 0x66, 0xE9), "latin1")
+
+============================================================
+Entity: cafe_latin1
+  Name:  cafe_latin1
+  Kind:  Variable
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    cafe_latin1 <- string(c(0x63, 0x61, 0x66, 0xE9), "latin1")
+  Python:
+    cafe_latin1 = bytes([0x63, 0x61, 0x66, 0xE9]).decode('latin1')
+    # Encoding(cafe_latin1) equivalent
+
+============================================================
+Entity: Encoding_1
+  Name:  Encoding
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    Encoding(cafe_latin1)
+  Python:
+    print(type(cafe_latin1))
+    # charToRaw(cafe_latin1) equivalent: Re-encoding back to the original bytes
+
+============================================================
+Entity: charToRaw_1
+  Name:  charToRaw
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    charToRaw(cafe_latin1)
+  Python:
+    print(list(cafe_latin1.encode('latin1')))

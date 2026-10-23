@@ -1,0 +1,156 @@
+Translation log
+Final score: 0.875
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- c(1, 1, 2, 2, 2)
+  Python:
+    x = np.array([1, 1, 2, 2, 2])
+
+============================================================
+Entity: n_distinct
+  Name:  n_distinct
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    n_distinct(x)
+  Python:
+    def n_distinct(*args, na_rm=False):
+        # Handle single dataframe input
+        if len(args) == 1 and isinstance(args[0], pd.DataFrame):
+            df = args[0]
+            if na_rm:
+                # Dropping NAs across all columns then finding unique rows
+                return len(df.dropna().drop_duplicates())
+            return len(df.drop_duplicates())
+    
+        # Handle multiple arrays/lists
+        data = [np.array(a) for a in args]
+        
+        # Stack all arrays into one flat array
+        flattened = np.concatenate(data)
+        
+        if na_rm:
+            # Remove NaN values
+            flattened = flattened[~pd.isna(flattened)]
+            
+        return len(pd.unique(flattened))
+    print(n_distinct(x))
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    y <- c(3, 3, NA, 3, 3)
+  Python:
+    y = np.array([3, 3, np.nan, 3, 3])
+
+============================================================
+Entity: n_distinct_1
+  Name:  n_distinct
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    n_distinct(y)
+  Python:
+    print(n_distinct(y))
+
+============================================================
+Entity: n_distinct_2
+  Name:  n_distinct
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    n_distinct(y, na.rm = TRUE)
+  Python:
+    print(n_distinct(y, na_rm=True))
+
+============================================================
+Entity: n_distinct_3
+  Name:  n_distinct
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    n_distinct(x, y)
+  Python:
+    print(n_distinct(x, y))
+
+============================================================
+Entity: n_distinct_4
+  Name:  n_distinct
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    n_distinct(x, y, na.rm = TRUE)
+  Python:
+    print(n_distinct(x, y, na_rm=True))
+
+============================================================
+Entity: n_distinct_5
+  Name:  n_distinct
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    n_distinct(data.frame(x, y))
+  Python:
+    print(n_distinct(pd.DataFrame({'x': x, 'y': y})))

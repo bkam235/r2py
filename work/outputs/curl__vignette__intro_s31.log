@@ -1,0 +1,174 @@
+Translation log
+Final score: 0.196
+Data score:  0.123
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.123
+  type_match:          0.123
+  control_flow_match:  0.123
+  data_output:         0.123
+  variable_output:     0.123
+  callable_output:     0.123
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(curl))
+
+============================================================
+Entity: import_curl
+  Name:  curl
+  Kind:  LibraryImport
+  Score: 0.562
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.123
+  variable_output:     0.123
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(curl))
+
+============================================================
+Entity: res
+  Name:  res
+  Kind:  Variable
+  Score: 0.343
+  type_match:          0.123
+  control_flow_match:  1.000
+  data_output:         0.123
+  variable_output:     0.123
+  executed_ok:       True
+
+  R:
+    res <- new_handle() |>
+      handle_setopt(copypostfields = "moo=moomooo") |>
+      handle_setheaders("Content-Type"="text/moo", "Cache-Control"="no-cache", "User-Agent"="A cow") |>
+      curl_fetch_memory(url = "https://hb.cran.dev/post")
+  Python:
+    url = "https://hb.cran.dev/post"
+
+============================================================
+Entity: new_handle
+  Name:  new_handle
+  Kind:  FunctionCall
+  Score: 0.123
+  type_match:          0.123
+  control_flow_match:  0.123
+  data_output:         0.123
+  variable_output:     0.123
+  callable_output:     0.123
+  executed_ok:       True
+
+  R:
+    res <- new_handle() |>
+
+============================================================
+Entity: handle_setopt
+  Name:  handle_setopt
+  Kind:  FunctionCall
+  Score: 0.123
+  type_match:          0.123
+  control_flow_match:  0.123
+  data_output:         0.123
+  variable_output:     0.123
+  callable_output:     0.123
+  executed_ok:       True
+
+  R:
+      handle_setopt(copypostfields = "moo=moomooo") |>
+  Python:
+    data = "moo=moomooo"
+
+============================================================
+Entity: handle_setheaders
+  Name:  handle_setheaders
+  Kind:  FunctionCall
+  Score: 0.123
+  type_match:          0.123
+  control_flow_match:  0.123
+  data_output:         0.123
+  variable_output:     0.123
+  callable_output:     0.123
+  executed_ok:       True
+
+  R:
+      handle_setheaders("Content-Type"="text/moo", "Cache-Control"="no-cache", "User-Agent"="A cow") |>
+  Python:
+    headers = {
+        "Content-Type": "text/moo",
+        "Cache-Control": "no-cache",
+        "User-Agent": "A cow"
+    }
+
+============================================================
+Entity: curl_fetch_memory
+  Name:  curl_fetch_memory
+  Kind:  FunctionCall
+  Score: 0.123
+  type_match:          0.123
+  control_flow_match:  0.123
+  data_output:         0.123
+  variable_output:     0.123
+  callable_output:     0.123
+  executed_ok:       True
+
+  R:
+      curl_fetch_memory(url = "https://hb.cran.dev/post")
+  Python:
+    response = requests.post(url, data=data, headers=headers)
+    
+    # In R, curl_fetch_memory returns a list with:
+    # - content: raw bytes
+    # - status_code: int
+    # - headers: character string (often encoded or raw)
+    # - type: content type
+    # To match the verification result's expectation for `res`:
+    res = {
+        'url': url,
+        'status_code': response.status_code,
+        'type': response.headers.get('Content-Type', ''),
+        'headers': base64.b64encode(str(response.request.headers).encode()).decode('utf-8') 
+    }
+
+============================================================
+Entity: rawToChar
+  Name:  rawToChar
+  Kind:  FunctionCall
+  Score: 0.123
+  type_match:          0.123
+  control_flow_match:  0.123
+  data_output:         0.123
+  variable_output:     0.123
+  callable_output:     0.123
+  executed_ok:       True
+
+  R:
+    res$content |> rawToChar() |> jsonlite::prettify()
+  Python:
+    content = response.text
+    
+    try:
+
+============================================================
+Entity: prettify
+  Name:  prettify
+  Kind:  ExternalSymbol
+  Score: 0.123
+  type_match:          0.123
+  control_flow_match:  0.123
+  data_output:         0.123
+  variable_output:     0.123
+  callable_output:     0.123
+  executed_ok:       True
+
+  R:
+    res$content |> rawToChar() |> jsonlite::prettify()
+  Python:
+        parsed_json = json.loads(content)
+        print(json.dumps(parsed_json, indent=4))
+    except json.JSONDecodeError:
+        print(content)

@@ -1,0 +1,112 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(gitcreds))
+
+============================================================
+Entity: import_gitcreds
+  Name:  gitcreds
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(gitcreds))
+
+============================================================
+Entity: gitcreds_cache_envvar
+  Name:  gitcreds_cache_envvar
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    gitcreds_cache_envvar("https://github.com")
+  Python:
+    def gitcreds_cache_envvar(url):
+        parsed = urlparse(url)
+        protocol = parsed.scheme
+        host = parsed.hostname
+        username = parsed.username if parsed.username else ""
+    
+        if not protocol or not host:
+            raise ValueError(f"Invalid URL(s): {url}")
+    
+        # proto <- sub("^https?_$", "", paste0(pcs$protocol, "_"))
+        proto_val = f"{protocol}_"
+        proto_val = re.sub(r"^https?_$", "", proto_val)
+    
+        # user <- ifelse(pcs$username != "", paste0(pcs$username, "_AT_"), "")
+        user_val = f"{username}_AT_" if username != "" else ""
+    
+        # host0 <- sub("^api[.]github[.]com$", "github.com", pcs$host)
+        host0 = re.sub(r"^api\.github\.com$", "github.com", host)
+        
+        # host1 <- gsub("[.:]+", "_", host0)
+        host1 = re.sub(r"[.:]+", "_", host0)
+        
+        # host <- gsub("[^a-zA-Z0-9_-]", "x", host1)
+        host_val = re.sub(r"[^a-zA-Z0-9_-]", "x", host1)
+        
+        # slug1 <- paste0(proto, user, host)
+        slug1 = f"{proto_val}{user_val}{host_val}"
+        
+        # slug2 <- ifelse(grepl("^AT_", slug1), paste0("AT_", slug1), slug1)
+        slug2 = f"AT_{slug1}" if slug1.startswith("AT_") else slug1
+        
+        # slug3 <- ifelse(grepl("^[0-9]", slug2), paste0("AT_", slug2), slug2)
+        slug3 = f"AT_{slug2}" if slug2 and slug2[0].isdigit() else slug2
+        
+        return f"GITHUB_PAT_{slug3.upper()}"
+    print(gitcreds_cache_envvar("https://github.com"))
+
+============================================================
+Entity: gitcreds_cache_envvar_1
+  Name:  gitcreds_cache_envvar
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    gitcreds_cache_envvar("https://api.github.com/path/to/endpoint")
+  Python:
+    print(gitcreds_cache_envvar("https://api.github.com/path/to/endpoint"))
+
+============================================================
+Entity: gitcreds_cache_envvar_2
+  Name:  gitcreds_cache_envvar
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    gitcreds_cache_envvar("https://jane@github.com")
+  Python:
+    print(gitcreds_cache_envvar("https://jane@github.com"))
+
+============================================================
+Entity: gitcreds_cache_envvar_3
+  Name:  gitcreds_cache_envvar
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    gitcreds_cache_envvar("https://another.site.github.com")
+  Python:
+    print(gitcreds_cache_envvar("https://another.site.github.com"))

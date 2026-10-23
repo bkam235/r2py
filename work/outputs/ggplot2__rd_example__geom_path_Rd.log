@@ -1,0 +1,710 @@
+Translation log
+Final score: 0.748
+Data score:  0.803
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.841
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.803
+  variable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(economics, aes(date, unemploy)) + geom_line()
+  Python:
+    (ggplot(economics, aes('date', 'unemploy')) 
+
+============================================================
+Entity: geom_line
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(economics, aes(date, unemploy)) + geom_line()
+  Python:
+     + geom_line())
+    
+    # separate by colour and use "timeseries" legend key glyph
+
+============================================================
+Entity: ggplot_1
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(economics_long, aes(date, value01, colour = variable)) +
+  Python:
+    (ggplot(economics_long, aes('date', 'value01', colour='variable')) 
+
+============================================================
+Entity: geom_line_1
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      geom_line(key_glyph = "timeseries")
+  Python:
+     + geom_line())
+    
+    # You can get a timeseries that run vertically by setting the orientation
+
+============================================================
+Entity: ggplot_2
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(economics, aes(unemploy, date)) + geom_line(orientation = "y")
+  Python:
+    (ggplot(economics, aes('unemploy', 'date')) 
+
+============================================================
+Entity: geom_line_2
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(economics, aes(unemploy, date)) + geom_line(orientation = "y")
+  Python:
+     + geom_line())
+    
+    # geom_step() is useful when you want to highlight exactly when the y value changes
+
+============================================================
+Entity: recent
+  Name:  recent
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    recent <- economics[economics$date > as.Date("2013-01-01"), ]
+
+============================================================
+Entity: as.Date
+  Name:  as.Date
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    recent <- economics[economics$date > as.Date("2013-01-01"), ]
+  Python:
+    recent = economics[economics['date'] > pd.to_datetime("2013-01-01")]
+
+============================================================
+Entity: ggplot_3
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(recent, aes(date, unemploy)) + geom_line()
+  Python:
+    (ggplot(recent, aes('date', 'unemploy')) 
+
+============================================================
+Entity: geom_line_3
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(recent, aes(date, unemploy)) + geom_line()
+  Python:
+     + geom_line())
+
+============================================================
+Entity: ggplot_4
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(recent, aes(date, unemploy)) + geom_step()
+  Python:
+    (ggplot(recent, aes('date', 'unemploy')) 
+
+============================================================
+Entity: geom_step
+  Name:  geom_step
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(recent, aes(date, unemploy)) + geom_step()
+  Python:
+     + geom_step())
+    
+    # geom_path lets you explore how two variables are related over time
+
+============================================================
+Entity: m
+  Name:  m
+  Kind:  Variable
+  Score: 0.802
+  type_match:          0.803
+  control_flow_match:  1.000
+  data_output:         0.803
+  variable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    m <- ggplot(economics, aes(unemploy/pop, psavert))
+  Python:
+    m = ggplot(economics, aes('unemploy/pop', 'psavert'))
+
+============================================================
+Entity: geom_path
+  Name:  geom_path
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    m + geom_path()
+  Python:
+    (m + geom_path())
+
+============================================================
+Entity: geom_path_1
+  Name:  geom_path
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    m + geom_path(aes(colour = as.numeric(date)))
+  Python:
+    (m + geom_path(aes(colour='date')))
+    
+    # Changing parameters ----------------------------------------------
+
+============================================================
+Entity: ggplot_5
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(economics, aes(date, unemploy)) +
+  Python:
+    (ggplot(economics, aes('date', 'unemploy')) 
+
+============================================================
+Entity: geom_line_4
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      geom_line(colour = "red")
+  Python:
+     + geom_line(colour="red"))
+    
+    # Use the arrow parameter to add an arrow to the line
+
+============================================================
+Entity: c
+  Name:  c
+  Kind:  Variable
+  Score: 0.802
+  type_match:          0.803
+  control_flow_match:  1.000
+  data_output:         0.803
+  variable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    c <- ggplot(economics, aes(x = date, y = pop))
+  Python:
+    c = ggplot(economics, aes(x='date', y='pop'))
+
+============================================================
+Entity: geom_line_5
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    c + geom_line(arrow = arrow())
+  Python:
+    (c + geom_line())
+
+============================================================
+Entity: geom_line_6
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    c + geom_line(
+      arrow = arrow(angle = 15, ends = "both", type = "closed")
+    )
+  Python:
+    (c + geom_line())
+    
+    # Control line join parameters
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 0.329
+  type_match:          0.015
+  control_flow_match:  1.000
+  data_output:         0.015
+  variable_output:     0.015
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df <- data.frame(x = 1:3, y = c(4, 1, 9))
+  Python:
+    df = pd.DataFrame({'x': [1, 2, 3], 'y': [4, 1, 9]})
+
+============================================================
+Entity: base
+  Name:  base
+  Kind:  Variable
+  Score: 0.802
+  type_match:          0.803
+  control_flow_match:  1.000
+  data_output:         0.803
+  variable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    base <- ggplot(df, aes(x, y))
+  Python:
+    base = ggplot(df, aes('x', 'y'))
+
+============================================================
+Entity: geom_path_2
+  Name:  geom_path
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    base + geom_path(linewidth = 10)
+  Python:
+    (base + geom_path(size=10))
+
+============================================================
+Entity: geom_path_3
+  Name:  geom_path
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    base + geom_path(linewidth = 10, lineend = "round")
+  Python:
+    (base + geom_path(size=10, lineend="round"))
+
+============================================================
+Entity: geom_path_4
+  Name:  geom_path
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    base + geom_path(linewidth = 10, linejoin = "mitre", lineend = "butt")
+  Python:
+    (base + geom_path(size=10, linejoin="mitre", lineend="butt"))
+    
+    # You can use NAs to break the line.
+
+============================================================
+Entity: df_1
+  Name:  df
+  Kind:  Variable
+  Score: 0.329
+  type_match:          0.015
+  control_flow_match:  1.000
+  data_output:         0.015
+  variable_output:     0.015
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df <- data.frame(x = 1:5, y = c(1, 2, NA, 4, 5))
+  Python:
+    df_1 = pd.DataFrame({'x': [1, 2, 3, 4, 5], 'y': [1, 2, np.nan, 4, 5]})
+
+============================================================
+Entity: ggplot_6
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(df, aes(x, y)) + geom_point() + geom_line()
+  Python:
+    (ggplot(df_1, aes('x', 'y')) 
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(df, aes(x, y)) + geom_point() + geom_line()
+  Python:
+     + geom_point() 
+
+============================================================
+Entity: geom_line_7
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(df, aes(x, y)) + geom_point() + geom_line()
+  Python:
+     + geom_line())
+    
+    # Setting line type vs colour/size
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    x <- seq(0.01, .99, length.out = 100)
+  Python:
+    x_vals = np.linspace(0.01, 0.99, 100)
+    def qlogis(p):
+        return np.log(p / (1 - p))
+
+============================================================
+Entity: df_2
+  Name:  df
+  Kind:  Variable
+  Score: 0.329
+  type_match:          0.015
+  control_flow_match:  1.000
+  data_output:         0.015
+  variable_output:     0.015
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df <- data.frame(
+      x = rep(x, 2),
+      y = c(qlogis(x), 2 * qlogis(x)),
+      group = rep(c("a","b"),
+      each = 100)
+    )
+  Python:
+    df_2 = pd.DataFrame({
+        'x': np.tile(x_vals, 2),
+        'y': np.concatenate([qlogis(x_vals), 2 * qlogis(x_vals)]),
+        'group': np.repeat(['a', 'b'], 100)
+    })
+
+============================================================
+Entity: p
+  Name:  p
+  Kind:  Variable
+  Score: 0.802
+  type_match:          0.803
+  control_flow_match:  1.000
+  data_output:         0.803
+  variable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p <- ggplot(df, aes(x=x, y=y, group=group))
+  Python:
+    p = ggplot(df_2, aes(x='x', y='y', group='group'))
+
+============================================================
+Entity: geom_line_8
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p + geom_line(linetype = 2)
+  Python:
+    (p + geom_line(linetype='dashed'))
+
+============================================================
+Entity: geom_line_9
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p + geom_line(aes(colour = group), linetype = 2)
+  Python:
+    (p + geom_line(aes(colour='group'), linetype='dashed'))
+
+============================================================
+Entity: geom_line_10
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p + geom_line(aes(colour = x))
+  Python:
+    (p + geom_line(aes(colour='x')))
+
+============================================================
+Entity: should_stop
+  Name:  should_stop
+  Kind:  FunctionCall
+  Score: 0.769
+  type_match:          0.803
+  control_flow_match:  0.803
+  data_output:         0.803
+  variable_output:     0.803
+  callable_output:     0.803
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    should_stop(p + geom_line(aes(colour = x), linetype=2))
+  Python:
+    def should_stop(expr):
+        try:
+            expr.draw()
+            raise RuntimeError("No error!")
+        except Exception as e:
+            print(f"Caught expected error: {e}")
+    
+    should_stop(p + geom_line(aes(colour='x'), linetype='dashed'))

@@ -1,0 +1,107 @@
+Translation log
+Final score: 0.830
+Data score:  0.278
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    df <- rowwise(tribble(
+       ~rng,     ~params,
+       "runif",  list(min = -1, max = 1),
+       "rnorm",  list(),
+       "rpois",  list(lambda = 5),
+    ))
+  Python:
+    def tribble_mimic(data):
+        """Mimics R's tribble for creating data frames from a list of rows."""
+        return pd.DataFrame(data)
+    
+    # Creating the data frame
+    # In R: ~rng, ~params
+    # Note: 'lambda' in the list is renamed to 'lambda_val' if it were a variable, 
+    # but inside a dictionary key as a string it is fine.
+    data_rows = [
+        ["runif", {"min": -1, "max": 1}],
+        ["rnorm", {}],
+        ["rpois", {"lambda": 5}],
+    ]
+    df = pd.DataFrame(data_rows, columns=["rng", "params"])
+
+============================================================
+Entity: f
+  Name:  f
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    f <- function(rng, params) purrr::exec(rng, n = 10, !!!params)
+  Python:
+    def f(rng, params):
+        """
+        Mimics the logic of purrr::exec(rng, n = 10, !!!params).
+        In R, rng is a string like 'runif' which is then called as a function.
+        """
+        # Map R function names to numpy/random equivalents
+        funcs = {
+            "runif": lambda p: np.random.uniform(p.get("min", 0), p.get("max", 1), 10),
+            "rnorm": lambda p: np.random.standard_normal(10),
+            "rpois": lambda p: np.random.poisson(p.get("lambda", 1), 10),
+        }
+        
+        func = funcs.get(rng)
+        if func:
+            return func(params)
+        return None
+    
+    # df |> mutate(data = list(f(rng, params)))
+    # rowwise() in R ensures the function f is called for each row.
+    # In pandas, we use apply(axis=1).
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.659
+  side_effects:        0.659
+  executed_ok:       True
+
+  R:
+      mutate(data = list(f(rng, params)))
+  Python:
+    df["data"] = df.apply(lambda row: f(row["rng"], row["params"]), axis=1)
+    
+    print(df)

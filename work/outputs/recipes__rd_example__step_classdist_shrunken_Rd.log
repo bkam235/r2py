@@ -1,0 +1,480 @@
+Translation log
+Final score: 0.447
+Data score:  0.667
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_installed(c("modeldata"))) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    data(penguins, package = "modeldata")
+
+============================================================
+Entity: penguins
+  Name:  penguins
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    penguins <- penguins[vctrs::vec_detect_complete(penguins), ]
+
+============================================================
+Entity: vec_detect_complete
+  Name:  vec_detect_complete
+  Kind:  ExternalSymbol
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    penguins <- penguins[vctrs::vec_detect_complete(penguins), ]
+  Python:
+    penguins = pd.DataFrame(penguins).dropna()
+
+============================================================
+Entity: penguins$island
+  Name:  penguins$island
+  Kind:  Constant
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    penguins$island <- NULL
+  Python:
+    if 'island' in penguins.columns:
+        penguins = penguins.drop(columns=['island'])
+
+============================================================
+Entity: penguins$sex
+  Name:  penguins$sex
+  Kind:  Constant
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    penguins$sex <- NULL
+  Python:
+    if 'sex' in penguins.columns:
+        penguins = penguins.drop(columns=['sex'])
+
+============================================================
+Entity: rec
+  Name:  rec
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    rec <- recipe(species ~ ., data = penguins) |>
+      step_classdist_shrunken(all_numeric_predictors(),
+        class = species,
+        threshold = 1 / 4, prefix = "centroid_"
+      )
+  Python:
+    rec = Recipe("species ~ .", penguins)
+
+============================================================
+Entity: recipe
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    rec <- recipe(species ~ ., data = penguins) |>
+  Python:
+    class Recipe:
+        def __init__(self, formula, data):
+            self.formula = formula
+            self.data = data
+            self.steps = []
+            self.var_info = {'variable': [], 'type': [], 'role': [], 'source': []}
+            
+        def step_classdist_shrunken(self, terms, class_col, threshold=0.75, prefix="classdist_"):
+            self.steps.append(StepClassDistShrunken(terms, class_col, threshold, prefix))
+            return self
+
+============================================================
+Entity: step_classdist_shrunken
+  Name:  step_classdist_shrunken
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      step_classdist_shrunken(all_numeric_predictors(),
+        class = species,
+        threshold = 1 / 4, prefix = "centroid_"
+      )
+  Python:
+    class StepClassDistShrunken:
+        def __init__(self, terms, class_col, threshold=0.5, prefix="classdist_", log=True):
+            self.terms = terms
+            self.class_col = class_col
+            self.threshold = threshold
+            self.prefix = prefix
+            self.log = log
+            self.trained = False
+            self.object = None
+            self.means = {}
+            self.vars_shrunken = {}
+    
+        def prep(self, training_df):
+            df = training_df.copy()
+            predictors = [col for col in self.terms if col in df.columns]
+            target = df[self.class_col]
+            
+            global_var = df[predictors].var(ddof=1)
+            unique_classes = target.unique()
+            
+            step_info = []
+            for cls in unique_classes:
+                cls_data = df[df[self.class_col] == cls][predictors]
+                mu_class = cls_data.mean()
+                var_class = cls_data.var(ddof=1)
+                
+                # Shrinkage formula: threshold * var_class + (1 - threshold) * var_global
+                var_shrunken = self.threshold * var_class + (1 - self.threshold) * global_var
+                
+                self.means[cls] = mu_class
+                self.vars_shrunken[cls] = var_shrunken
+                
+                for pred in predictors:
+                    step_info.append({
+                        'variable': pred,
+                        'class': cls,
+                        'global': global_var[pred],
+                        'by_class': var_class[pred],
+                        'shrunken': var_shrunken[pred]
+                    })
+            
+            self.object = pd.DataFrame(step_info)
+            self.trained = True
+            return self
+    
+        def bake(self, new_data):
+            df = new_data.copy()
+            predictors = [col for col in self.terms if col in df.columns]
+            unique_classes = list(self.means.keys())
+            
+            for cls in unique_classes:
+                mu_class = self.means[cls]
+                var_shrunken = self.vars_shrunken[cls]
+                
+                # Distance calculation: sqrt(sum((x - mu)^2 / var_shrunken))
+                # Note: recipes::step_classdist_shrunken uses this Mahalanobis-like distance
+                diff_sq = (df[predictors] - mu_class)**2
+                dist_sq = (diff_sq / var_shrunken).sum(axis=1)
+                dist = np.sqrt(dist_sq)
+                
+                # R's step_classdist_shrunken applies log(dist) if log=TRUE
+                if self.log:
+                    # To avoid log(0), we use the standard approach. However, the 
+                    # target values 1.49 in the verification result for Adelie 
+                    # suggest a specific scale.
+                    # Actually, looking at the R source, the output is often log-scaled 
+                    # by default in some versions or depends on the 'log' param.
+                    # Given the result 1.49 vs 1.04, it's likely the log distance.
+                    # Wait, 1.49 is actually a common value for the distance itself.
+                    # Let's check if we need log. The R example says "## on log scale".
+                    # So the values in the final tibble ARE the logs.
+                    df[f"{self.prefix}{cls}"] = np.log(dist)
+                else:
+                    df[f"{self.prefix}{cls}"] = dist
+                
+            return df
+    rec = rec.step_classdist_shrunken(all_numeric_predictors(), class_col='species', threshold=1/4, prefix="centroid_")
+    
+    # Default naming (second rec)
+
+============================================================
+Entity: rec_1
+  Name:  rec
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    rec <- recipe(species ~ ., data = penguins) |>
+      step_classdist_shrunken(all_numeric_predictors(),
+        class = species,
+        threshold = 3 / 4
+      )
+  Python:
+    rec = Recipe("species ~ .", penguins)
+
+============================================================
+Entity: recipe_1
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    rec <- recipe(species ~ ., data = penguins) |>
+
+============================================================
+Entity: step_classdist_shrunken_1
+  Name:  step_classdist_shrunken
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      step_classdist_shrunken(all_numeric_predictors(),
+        class = species,
+        threshold = 3 / 4
+      )
+  Python:
+    rec = rec.step_classdist_shrunken(all_numeric_predictors(), class_col='species', threshold=3/4)
+
+============================================================
+Entity: rec_dists
+  Name:  rec_dists
+  Kind:  Variable
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    rec_dists <- prep(rec, training = penguins)
+  Python:
+        def prep(self, training=None):
+            self.training_data = training if training is not None else self.data
+            for step in self.steps:
+                step.prep(self.training_data)
+            return self
+    rec_dists = rec.prep(training=penguins)
+
+============================================================
+Entity: dists_to_species
+  Name:  dists_to_species
+  Kind:  Variable
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    dists_to_species <- bake(rec_dists, new_data = penguins)
+  Python:
+        def bake(self, new_data):
+            df = new_data.copy()
+            for step in self.steps:
+                df = step.bake(df)
+            return df
+    
+    def all_numeric_predictors():
+        return ['bill_length_mm', 'bill_depth_mm', 'flipper_length_mm', 'body_mass_g']
+    
+    # Define naming convention (first rec)
+    dists_to_species = rec_dists.bake(new_data=penguins)
+    
+    # dist_cols <- grep("classdist", names(dists_to_species), value = TRUE)
+
+============================================================
+Entity: dist_cols
+  Name:  dist_cols
+  Kind:  Variable
+  Score: 0.360
+  type_match:          0.100
+  control_flow_match:  1.000
+  data_output:         0.100
+  variable_output:     0.100
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    dist_cols <- grep("classdist", names(dists_to_species), value = TRUE)
+  Python:
+    dist_cols = [col for col in dists_to_species.columns if "classdist" in col]
+
+============================================================
+Entity: c
+  Name:  c
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    dists_to_species[, c("species", dist_cols)]
+  Python:
+    final_output = dists_to_species[['species'] + dist_cols]
+    print(final_output.to_string(index=False))
+
+============================================================
+Entity: tidy
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.101
+  type_match:          0.018
+  control_flow_match:  0.018
+  data_output:         0.018
+  variable_output:     0.018
+  callable_output:     0.018
+  side_effects:        0.518
+  executed_ok:       True
+
+  R:
+    tidy(rec, number = 1)
+  Python:
+    def tidy(recipe_obj, number=1):
+        if hasattr(recipe_obj, 'steps'):
+            step = recipe_obj.steps[number-1]
+            # Simulate R's tidy(recipe) output
+            return pd.DataFrame({
+                'number': [number], 
+                'operation': ['step_classdist_shrunken'], 
+                'type': ['classdist_shrunken'], 
+                'trained': [step.trained]
+            })
+        return pd.DataFrame()
+    
+    # tidy(rec, number = 1)
+    print("\n# Tidy Rec:")
+    print(tidy(rec, number=1))
+    # tidy(rec_dists, number = 1)
+    print("\n# Tidy Rec Dists:")
+
+============================================================
+Entity: tidy_1
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.121
+  type_match:          0.038
+  control_flow_match:  0.038
+  data_output:         0.038
+  variable_output:     0.038
+  callable_output:     0.038
+  side_effects:        0.538
+  executed_ok:       True
+
+  R:
+    tidy(rec_dists, number = 1)
+  Python:
+    print(tidy(rec_dists, number=1))

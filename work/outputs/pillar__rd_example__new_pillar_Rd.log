@@ -1,0 +1,134 @@
+Translation log
+Final score: 0.645
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(pillar))
+
+============================================================
+Entity: import_pillar
+  Name:  pillar
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(pillar))
+
+============================================================
+Entity: lines
+  Name:  lines
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    lines <- function(char = "-") {
+      stopifnot(nchar(char) == 1)
+      structure(char, class = "lines")
+    }
+  Python:
+    def lines(char_val="-"):
+        if len(char_val) != 1:
+            raise AssertionError("nchar(char) must be 1")
+        
+        class Lines:
+            pass
+        
+        l = Lines()
+        l.char = char_val
+        return l
+
+============================================================
+Entity: format.lines
+  Name:  format.lines
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    format.lines <- function(x, width, ...) {
+      paste(rep(x, width), collapse = "")
+    }
+  Python:
+    def format_lines(x, width, **kwargs):
+        return x * width
+    
+    # The R script creates a custom S3-like behavior for 'lines'.
+    # To mimic the `format.lines` call that R's printing system would invoke:
+    # we define the behavior for the object returned by lines().
+    
+    def render_lines(x, width):
+        # This simulates the R logic: paste(rep(x, width), collapse = "")
+        # Since 'x' is the result of lines("="), we access its char property
+        char = x.char if hasattr(x, 'char') else x
+        return char * width
+    
+    # Main Execution
+
+============================================================
+Entity: new_pillar
+  Name:  new_pillar
+  Kind:  FunctionCall
+  Score: 0.645
+  side_effects:        0.645
+  executed_ok:       True
+
+  R:
+    new_pillar(list(
+      title = pillar_component(new_ornament(c("abc", "de"), align = "right")),
+      lines = new_pillar_component(list(lines("=")), width = 1)
+    ))
+  Python:
+    def new_ornament(x, width=None, align=None):
+        if width is None:
+            width = get_max_extent(x)
+        
+        class Ornament:
+            pass
+        
+        ret = Ornament()
+        ret.val = x
+        ret.align = align
+        ret.width = width
+        return ret
+    
+    def new_pillar_component(x, width, min_width=None):
+        class Component:
+            pass
+        
+        ret = Component()
+        ret.val = x
+        ret.width = int(width)
+        ret.min_width = int(min_width) if min_width is not None else int(width)
+        return ret
+    
+    def pillar_component(x):
+        return new_pillar_component([x], width=get_width(x), min_width=get_min_width(x))
+    
+    def new_pillar(components, width=None, class_val=None, extra=None):
+        class Pillar:
+            pass
+        
+        ret = Pillar()
+        ret.components = components
+        ret.width = width
+        ret.class_val = class_val
+        return ret
+    res = new_pillar({
+        "title": pillar_component(new_ornament(["abc", "de"], align="right")),
+        "lines": new_pillar_component([lines("=")], width=1)
+    })
+    
+    print(res)

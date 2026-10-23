@@ -1,0 +1,177 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ranger))
+
+============================================================
+Entity: import_ranger
+  Name:  ranger
+  Kind:  LibraryImport
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ranger))
+
+============================================================
+Entity: n
+  Name:  n
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    n <- 50
+  Python:
+    n = 50
+
+============================================================
+Entity: p
+  Name:  p
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    p <- 400
+  Python:
+    p = 400
+
+============================================================
+Entity: dat
+  Name:  dat
+  Kind:  Variable
+  Score: 0.500
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    dat <- data.frame(y = factor(rbinom(n, 1, .5)), replicate(p, runif(n)))
+  Python:
+    y = np.random.binomial(1, 0.5, n)
+    X = np.random.uniform(0, 1, (n, p))
+    dat = pd.DataFrame(X, columns=[f'V{i}' for i in range(p)])
+    dat['y'] = y
+    
+    # Fit Random Forest
+
+============================================================
+Entity: rf.sim
+  Name:  rf.sim
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    rf.sim <- ranger(y ~ ., dat, importance = "impurity_corrected")
+  Python:
+    rf_sim = RandomForestClassifier(importance='impurity')
+    rf_sim.fit(dat.drop('y', axis=1), dat['y'])
+    # Note: Python sklearn does not have a direct equivalent to ranger's importance_pvalues 
+    # (Janitza/Altmann methods). We provide the raw importances.
+
+============================================================
+Entity: importance_pvalues
+  Name:  importance_pvalues
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    importance_pvalues(rf.sim, method = "janitza")
+  Python:
+    sim_importance = rf_sim.feature_importances_
+    
+    # Iris part
+
+============================================================
+Entity: rf.iris
+  Name:  rf.iris
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    rf.iris <- ranger(Species ~ ., data = iris, importance = 'permutation')
+  Python:
+    iris_data = load_iris()
+    X_iris = pd.DataFrame(iris_data.data, columns=iris_data.feature_names)
+    y_iris = iris_data.target
+    
+    rf_iris = RandomForestClassifier()
+    rf_iris.fit(X_iris, y_iris)
+
+============================================================
+Entity: importance_pvalues_1
+  Name:  importance_pvalues
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    importance_pvalues(rf.iris, method = "altmann", formula = Species ~ ., data = iris)
+  Python:
+    iris_importance = rf_iris.feature_importances_

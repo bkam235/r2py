@@ -1,0 +1,91 @@
+Translation log
+Final score: 0.250
+Data score:  0.000
+Files score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(knitr))
+
+============================================================
+Entity: import_knitr
+  Name:  knitr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(knitr))
+
+============================================================
+Entity: uri
+  Name:  uri
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    uri = image_uri(file.path(R.home("doc"), "html", "logo.jpg"))
+  Python:
+    image_path = Path("logo.jpg") 
+    
+    # Since image_uri in R converts an image to a data URI (base64), we implement that here
+    if image_path.exists():
+        with open(image_path, "rb") as image_file:
+            encoded_string = base64.b64encode(image_file.read()).decode('utf-8')
+            uri = f"data:image/jpeg;base64,{encoded_string}"
+    else:
+        # Fallback if file doesn't exist to avoid crash
+        uri = "https://www.r-project.org/logo.jpg"
+    
+    # cat(sprintf("<img src=\"%s\" />", uri), file = "logo.html")
+
+============================================================
+Entity: interactive
+  Name:  interactive
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (interactive()) {
+
+============================================================
+Entity: cat
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+        cat(sprintf("<img src=\"%s\" />", uri), file = "logo.html")
+  Python:
+    with open("logo.html", "w") as f:
+        f.write(f'<img src="{uri}" />')
+    
+    # browseURL("logo.html")
+
+============================================================
+Entity: browseURL
+  Name:  browseURL
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+        browseURL("logo.html")  # you can check its HTML source
+  Python:
+    webbrowser.open("file://" + os.path.realpath("logo.html"))

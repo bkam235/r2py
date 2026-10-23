@@ -1,0 +1,317 @@
+Translation log
+Final score: 0.887
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: obj_is_list
+  Name:  obj_is_list
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    obj_is_list(list())
+  Python:
+    def obj_is_list(obj):
+        return isinstance(obj, list)
+    print(obj_is_list([]))
+
+============================================================
+Entity: obj_is_list_1
+  Name:  obj_is_list
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    obj_is_list(list_of(1))
+  Python:
+    print(obj_is_list([1]))
+
+============================================================
+Entity: obj_is_list_2
+  Name:  obj_is_list
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    obj_is_list(data.frame())
+  Python:
+    print(obj_is_list(pd.DataFrame()))
+
+============================================================
+Entity: list_all_vectors
+  Name:  list_all_vectors
+  Kind:  FunctionCall
+  Score: 0.786
+  side_effects:        0.786
+  executed_ok:       True
+
+  R:
+    list_all_vectors(list(1, mtcars))
+  Python:
+    def list_all_vectors(obj):
+        if not isinstance(obj, list):
+            raise TypeError("Input must be a list")
+        # In Python, we check if elements are basic scalars or numpy arrays/pandas series
+        return [isinstance(i, (int, float, str, np.ndarray, pd.Series)) for i in obj]
+    print(list_all_vectors([1, pd.DataFrame(np.random.randn(5, 2))])) # DataFrame is not a simple vector
+
+============================================================
+Entity: list_all_vectors_1
+  Name:  list_all_vectors
+  Kind:  FunctionCall
+  Score: 0.833
+  side_effects:        0.833
+  executed_ok:       True
+
+  R:
+    list_all_vectors(list(1, environment()))
+  Python:
+    print(list_all_vectors([1, locals()])) # locals() is a dict
+
+============================================================
+Entity: list_all_size
+  Name:  list_all_size
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    list_all_size(list(1:2, 2:3), 2)
+  Python:
+    def list_all_size(obj, size):
+        if not isinstance(obj, list):
+            raise TypeError("Input must be a list")
+        return all(len(i) == size if hasattr(i, '__len__') else size == 1 for i in obj)
+    print(list_all_size([[1, 2], [2, 3]], 2))
+
+============================================================
+Entity: list_all_size_1
+  Name:  list_all_size
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    list_all_size(list(1:2, 2:4), 2)
+  Python:
+    print(list_all_size([[1, 2], [2, 3, 4]], 2))
+
+============================================================
+Entity: list_all_recyclable
+  Name:  list_all_recyclable
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    list_all_recyclable(list(1, 2:3), 2)
+  Python:
+    def list_all_recyclable(obj, size):
+        if not isinstance(obj, list):
+            raise TypeError("Input must be a list")
+        # Simple interpretation of R's recycling: length 1 or exactly divides size
+        def is_recyclable(i):
+            l = len(i) if hasattr(i, '__len__') else 1
+            return l == 1 or size % l == 0
+        return all(is_recyclable(i) for i in obj)
+    print(list_all_recyclable([1, [2, 3]], 2))
+
+============================================================
+Entity: list_all_recyclable_1
+  Name:  list_all_recyclable
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    list_all_recyclable(list(1, 2:4), 2)
+  Python:
+    print(list_all_recyclable([1, [2, 3, 4]], 2))
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(list_all_vectors(environment()))
+  Python:
+    try:
+        list_all_vectors(locals())
+    except Exception as e:
+        print(f"Caught: {e}")
+
+============================================================
+Entity: try_1
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(list_check_all_vectors(list(1, NULL, 2)))
+  Python:
+    try:
+        list_check_all_vectors([1, None, 2])
+    except Exception as e:
+        print(f"Caught: {e}")
+
+============================================================
+Entity: try_2
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(list_check_all_size(list(1, NULL, 2), size = 1))
+  Python:
+    try:
+        list_check_all_size([1, None, 2], size=1)
+    except Exception as e:
+        print(f"Caught: {e}")
+
+============================================================
+Entity: list_check_all_vectors
+  Name:  list_check_all_vectors
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    list_check_all_vectors(list(1, NULL, 2), allow_null = TRUE)
+  Python:
+    def list_check_all_vectors(obj, allow_null=False):
+        if not isinstance(obj, list):
+            raise TypeError("Input must be a list")
+        for i in obj:
+            if i is None:
+                if not allow_null:
+                    raise ValueError("Null value encountered")
+                continue
+            if not isinstance(i, (int, float, str, np.ndarray, pd.Series)):
+                raise TypeError("Non-vector element encountered")
+        return True
+    print(list_check_all_vectors([1, None, 2], allow_null=True))
+
+============================================================
+Entity: list_check_all_size
+  Name:  list_check_all_size
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    list_check_all_size(list(1, NULL, 2), size = 1, allow_null = TRUE)
+  Python:
+    def list_check_all_size(obj, size, allow_null=False):
+        if not isinstance(obj, list):
+            raise TypeError("Input must be a list")
+        for i in obj:
+            if i is None:
+                if not allow_null:
+                    raise ValueError("Null value encountered")
+                continue
+            l = len(i) if hasattr(i, '__len__') else 1
+            if l != size:
+                raise ValueError(f"Element size {l} does not match {size}")
+        return True
+    
+    # Test cases
+    print(list_check_all_size([1, None, 2], size=1, allow_null=True))
+
+============================================================
+Entity: xs
+  Name:  xs
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    xs <- list(1, NULL, 2:3)
+  Python:
+    xs = [1, None, [2, 3]]
+
+============================================================
+Entity: try_3
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(list_check_all_size(xs, size = 1, allow_null = TRUE))
+  Python:
+    try:
+        list_check_all_size(xs, size=1, allow_null=True)
+    except Exception as e:
+        print(f"Caught: {e}")
+    
+    # Equivalent to vec_slice(xs, !vec_detect_missing(xs))
+
+============================================================
+Entity: xs_1
+  Name:  xs
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    xs <- vec_slice(xs, !vec_detect_missing(xs))
+  Python:
+    xs = [i for i in xs if i is not None]
+
+============================================================
+Entity: try_4
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(list_check_all_size(xs, size = 1))
+  Python:
+    try:
+        list_check_all_size(xs, size=1)
+    except Exception as e:
+        print(f"Caught: {e}")

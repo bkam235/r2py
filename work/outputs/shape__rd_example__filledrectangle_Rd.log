@@ -1,0 +1,288 @@
+Translation log
+Final score: 0.196
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shape))
+
+============================================================
+Entity: import_shape
+  Name:  shape
+  Kind:  LibraryImport
+  Score: 0.560
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shape))
+
+============================================================
+Entity: color
+  Name:  color
+  Kind:  Variable
+  Score: 0.360
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    color <- shadepalette(grey(0.3), "lightblue", n = 50)
+  Python:
+    # Helper for shadepalette approximation
+    def get_gradient_color(start_col, end_col):
+        return LinearSegmentedColormap.from_list("custom", [start_col, end_col])
+    
+    # Plot 1
+    fig1, ax1 = plt.subplots()
+
+============================================================
+Entity: emptyplot
+  Name:  emptyplot
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    emptyplot(main = "filledrectangle")
+  Python:
+    def create_gradient_rect(ax, wx, wy, mid, angle, colors, title=""):
+        # Calculate coordinates for the rectangle
+        # Note: shape::filledrectangle handles gradients and rotations
+        # Matplotlib patches don't support internal gradients easily, 
+        # so we simulate the layout.
+        
+        cx, cy = mid
+        # Rotate coordinates for the rectangle center
+        theta = np.radians(angle)
+        
+        # Create a rectangle patch
+        rect = patches.Rectangle(
+            (cx - wx/2, cy - wy/2), wx, wy, 
+            angle=angle, 
+            facecolor=colors[0] if isinstance(colors, list) else colors,
+            edgecolor='none'
+        )
+        ax.add_patch(rect)
+        ax.set_title(title)
+        ax.set_xlim(-1.1, 1.1)
+        ax.set_ylim(-1.1, 1.1)
+        ax.set_aspect('equal')
+        ax.axis('off')
+
+============================================================
+Entity: filledrectangle
+  Name:  filledrectangle
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    filledrectangle(wx = 0.5, wy = 0.5, col = color, 
+                    mid = c(0.5, 0.5), angle = 0)
+  Python:
+    create_gradient_rect(ax1, 0.5, 0.5, (0.5, 0.5), 0, "lightblue", "filledrectangle")
+
+============================================================
+Entity: filledrectangle_1
+  Name:  filledrectangle
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    filledrectangle(wx = 0.25, wy = 0.25, col = "darkblue", 
+                    mid = c(0.5, 0.5), angle = 45)
+  Python:
+    create_gradient_rect(ax1, 0.25, 0.25, (0.5, 0.5), 45, "darkblue", "filledrectangle")
+
+============================================================
+Entity: filledrectangle_2
+  Name:  filledrectangle
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    filledrectangle(wx = 0.125, wy = 0.125, col = c("lightblue","blue"),
+                    mid = c(0.5, 0.5), angle = 90)
+  Python:
+    create_gradient_rect(ax1, 0.125, 0.125, (0.5, 0.5), 90, "blue", "filledrectangle")
+    
+    # Plot 2
+
+============================================================
+Entity: color_1
+  Name:  color
+  Kind:  Variable
+  Score: 0.360
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    color <- shadepalette(grey(0.3), "blue", n = 50)
+  Python:
+    color_blue = "blue"
+
+============================================================
+Entity: emptyplot_1
+  Name:  emptyplot
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    emptyplot(c(-1, 1), main = "filledrectangle")
+  Python:
+    fig2, ax2 = plt.subplots()
+
+============================================================
+Entity: filledrectangle_3
+  Name:  filledrectangle
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    filledrectangle(wx = 0.5, wy = 0.5, col = color, 
+                    mid = c(0, 0), angle = 0)
+  Python:
+    create_gradient_rect(ax2, 0.5, 0.5, (0, 0), 0, color_blue, "filledrectangle")
+
+============================================================
+Entity: filledrectangle_4
+  Name:  filledrectangle
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    filledrectangle(wx = 0.5, wy = 0.5, col = color, 
+                    mid = c(0.5, 0.5), angle = 90)
+  Python:
+    create_gradient_rect(ax2, 0.5, 0.5, (0.5, 0.5), 90, color_blue, "filledrectangle")
+
+============================================================
+Entity: filledrectangle_5
+  Name:  filledrectangle
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    filledrectangle(wx = 0.5, wy = 0.5, col = color, 
+                    mid = c(-0.5, -0.5), angle = -90)
+  Python:
+    create_gradient_rect(ax2, 0.5, 0.5, (-0.5, -0.5), -90, color_blue, "filledrectangle")
+
+============================================================
+Entity: filledrectangle_6
+  Name:  filledrectangle
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    filledrectangle(wx = 0.5, wy = 0.5, col = color, 
+                    mid = c(0.5, -0.5), angle = 180)
+  Python:
+    create_gradient_rect(ax2, 0.5, 0.5, (0.5, -0.5), 180, color_blue, "filledrectangle")
+
+============================================================
+Entity: filledrectangle_7
+  Name:  filledrectangle
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    filledrectangle(wx = 0.5, wy = 0.5, col = color, 
+                    mid = c(-0.5, 0.5), angle = 270)
+  Python:
+    create_gradient_rect(ax2, 0.5, 0.5, (-0.5, 0.5), 270, color_blue, "filledrectangle")
+    
+    plt.show()

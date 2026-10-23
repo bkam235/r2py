@@ -1,0 +1,232 @@
+Translation log
+Final score: 0.825
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(googledrive))
+
+============================================================
+Entity: import_googledrive
+  Name:  googledrive
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(googledrive))
+
+============================================================
+Entity: drive_has_token
+  Name:  drive_has_token
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    if (drive_has_token()) withAutoprint({ # examplesIf
+  Python:
+    def drive_has_token():
+        return True
+    if drive_has_token():
+        # r2py:entity:ghi
+
+============================================================
+Entity: ghi
+  Name:  ghi
+  Kind:  Variable
+  Score: 0.900
+  control_flow_match:  1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    ghi <- drive_mkdir("ghi")
+  Python:
+    def drive_mkdir(name, path=None, starred=False, description=None, overwrite=False):
+        return drive_env.mkdir(name, path=path, starred=starred, description=description, overwrite=overwrite)
+        ghi = drive_mkdir("ghi")
+        
+        # r2py:entity:jkl
+
+============================================================
+Entity: jkl
+  Name:  jkl
+  Kind:  Variable
+  Score: 0.900
+  control_flow_match:  1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    jkl <- drive_mkdir("ghi/jkl", starred = TRUE)
+  Python:
+        # 'ghi/jkl' as a name is handled by our mock as nested
+        jkl = drive_mkdir("ghi/jkl", starred=True)
+    
+        # r2py:entity:pluck
+
+============================================================
+Entity: pluck
+  Name:  pluck
+  Kind:  ExternalSymbol
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    purrr::pluck(jkl, "drive_resource", 1, "starred")
+  Python:
+    def pluck(x, *indices):
+        curr = x
+        try:
+            for idx in indices:
+                if isinstance(curr, list):
+                    curr = curr[idx - 1]
+                elif isinstance(curr, dict):
+                    curr = curr[idx]
+            return curr
+        except (IndexError, KeyError):
+            return None
+    
+    # Main execution logic
+    # suppressPackageStartupMessages is a no-op in Python
+        print(pluck(jkl, "drive_resource", 1, "starred"))
+    
+        # r2py:entity:drive_mkdir (mno)
+
+============================================================
+Entity: drive_mkdir
+  Name:  drive_mkdir
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    drive_mkdir("mno", path = "ghi")
+  Python:
+        drive_mkdir("mno", path="ghi")
+    
+        # r2py:entity:pqr
+
+============================================================
+Entity: pqr
+  Name:  pqr
+  Kind:  Variable
+  Score: 0.900
+  control_flow_match:  1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    pqr <- drive_mkdir("pqr", path = ghi, description = "I am a folder")
+  Python:
+        pqr = drive_mkdir("pqr", path=ghi, description="I am a folder")
+    
+        # r2py:entity:pluck_1
+
+============================================================
+Entity: pluck_1
+  Name:  pluck
+  Kind:  ExternalSymbol
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    purrr::pluck(pqr, "drive_resource", 1, "description")
+  Python:
+        print(pluck(pqr, "drive_resource", 1, "description"))
+    
+        try:
+            # r2py:entity:drive_create
+
+============================================================
+Entity: drive_create
+  Name:  drive_create
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    drive_create("name-squatter-mkdir", path = ghi)
+  Python:
+    def drive_create(name, path=None):
+        return drive_env.create(name, path=path)
+            drive_create("name-squatter-mkdir", path=ghi)
+            # r2py:entity:drive_mkdir_1
+
+============================================================
+Entity: drive_mkdir_1
+  Name:  drive_mkdir
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    drive_mkdir("name-squatter-mkdir", path = ghi, overwrite = FALSE)
+  Python:
+            drive_mkdir("name-squatter-mkdir", path=ghi, overwrite=False)
+        except FileExistsError as e:
+            print(f"Caught expected error: {e}")
+    
+        # r2py:entity:drive_mkdir_2
+
+============================================================
+Entity: drive_mkdir_2
+  Name:  drive_mkdir
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    drive_mkdir("name-squatter-mkdir", path = ghi, overwrite = TRUE)
+  Python:
+        drive_mkdir("name-squatter-mkdir", path=ghi, overwrite=True)
+    
+        # r2py:entity:drive_ls
+
+============================================================
+Entity: drive_ls
+  Name:  drive_ls
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    drive_ls("ghi")
+  Python:
+    def drive_ls(path):
+        return drive_env.ls(path)
+        print(drive_ls("ghi"))
+    
+        # r2py:entity:drive_rm
+
+============================================================
+Entity: drive_rm
+  Name:  drive_rm
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    drive_rm(ghi)
+  Python:
+    def drive_rm(folder_obj):
+        drive_env.rm(folder_obj)
+        drive_rm(ghi)

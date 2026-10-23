@@ -1,9 +1,6 @@
 v0.1/
 r2py/stage0/r_env/
 *__pycache__
-work/inputs/
-work/outputs/
-work/comparison
 assets/
 .env
 run_translate.lnk
@@ -11,3 +8,10 @@ run_translate.lnk
 **/index.json
 work/pypi_names.json
 work/mapping_cache/
+.*
+*.md
+*.bat
+.claude/
+.venv
+.venv-sandbox
+experiments/IMPROVEMENT_PLAN.md

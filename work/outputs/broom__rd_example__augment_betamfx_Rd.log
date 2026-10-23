@@ -1,0 +1,266 @@
+Translation log
+Final score: 0.715
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_broom
+  Name:  broom
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_installed("mfx")) withAutoprint({ # examplesIf
+
+============================================================
+Entity: import_mfx
+  Name:  mfx
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(mfx)
+
+============================================================
+Entity: set.seed
+  Name:  set.seed
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    set.seed(12345)
+  Python:
+    np.random.seed(12345)
+
+============================================================
+Entity: n
+  Name:  n
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    n <- 1000
+  Python:
+    n = 1000
+    
+    # Data is provided by shim
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- rnorm(n)
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    y <- rbeta(n, shape1 = plogis(1 + 0.5 * x), shape2 = (abs(0.2 * x)))
+
+============================================================
+Entity: y_1
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    y <- (y * (n - 1) + 0.5) / n
+
+============================================================
+Entity: d
+  Name:  d
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    d <- data.frame(y, x)
+  Python:
+    d = pd.DataFrame({'y': y, 'x': x})
+
+============================================================
+Entity: mod_betamfx
+  Name:  mod_betamfx
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    mod_betamfx <- betamfx(y ~ x | x, data = d)
+  Python:
+    class BetaMFX:
+        """
+        Mimics the behavior of mfx::betamfx.
+        Beta regression mean: mu = inv_logit(Xb)
+        Marginal effect: dy/dx = mu * (1 - mu) * beta
+        """
+        def __init__(self, formula, data):
+            self.data = data
+            y = data['y'].values
+            # We use a GLM with Binomial family as an approximation for the mean 
+            # parameters of Beta regression (since both use the logit link).
+            X = sm.add_constant(data[['x']])
+            model = sm.GLM(y, X, family=sm.families.Binomial())
+            res = model.fit()
+            
+            self.params = res.params
+            self.cov = res.cov_params()
+            self.mu = res.predict(X)
+            self.nobs = len(y)
+            self.df_resid = res.df_resid
+            
+            # Compute Marginal Effects (Average Marginal Effect - AME)
+            # mfx_i = mu_i * (1 - mu_i) * beta_x
+            beta_x = self.params[1]
+            self.mfx_per_obs = self.mu * (1 - self.mu) * beta_x
+            self.mfx_estimate = np.mean(self.mfx_per_obs)
+            
+            # Delta method for SE of AME: 
+            # SE(AME) approx = sqrt(mean( (mu*(1-mu))^2 * var(beta_x) ))
+            # This is a simplification of the mfx package's approach.
+            var_beta_x = self.cov.iloc[1, 1]
+            self.mfx_se = np.sqrt(np.mean((self.mu * (1 - self.mu))**2) * var_beta_x)
+            
+            # Model diagnostics (approximated to match R's betamfx/broom output)
+            self.loglik = res.llf
+            self.aic = res.aic
+            self.bic = res.bic
+            # Pseudo R2 for Beta regression often varies; using a simple ratio here
+            # LogLik(null) / LogLik(full)
+            null_model = sm.GLM(y, np.ones((self.nobs, 1)), family=sm.families.Binomial()).fit()
+            self.pseudo_r2 = 1 - (null_model.llf / self.loglik)
+
+============================================================
+Entity: tidy
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.841
+  side_effects:        0.841
+  executed_ok:       True
+
+  R:
+    tidy(mod_betamfx, conf.int = TRUE)
+  Python:
+        def tidy(self, conf_int=True):
+            stat = self.mfx_estimate / self.mfx_se
+            p_val = 2 * stats.norm.sf(np.abs(stat))
+            
+            df = pd.DataFrame({
+                'term': ['x'],
+                'atmean': [True],
+                'estimate': [self.mfx_estimate],
+                'std.error': [self.mfx_se],
+                'statistic': [stat],
+                'p.value': [p_val]
+            })
+            if conf_int:
+                df['conf.low'] = df['estimate'] - 1.96 * df['std.error']
+                df['conf.high'] = df['estimate'] + 1.96 * df['std.error']
+            return df
+    print(mod_betamfx.tidy(conf_int=True))
+
+============================================================
+Entity: augment
+  Name:  augment
+  Kind:  FunctionCall
+  Score: 0.562
+  side_effects:        0.562
+  executed_ok:       True
+
+  R:
+    augment(mod_betamfx)
+  Python:
+        def augment(self):
+            res_df = self.data.copy()
+            res_df['.fitted'] = self.mu
+            # .cooksd is a diagnostic for influence. 
+            # For betamfx, it's typically derived from the underlying beta regression.
+            # We approximate with scaled residuals.
+            residuals = self.data['y'].values - self.mu
+            res_df['.cooksd'] = (residuals**2) / (np.var(self.data['y'].values) * self.nobs)
+            return res_df
+    print(mod_betamfx.augment())
+
+============================================================
+Entity: glance
+  Name:  glance
+  Kind:  FunctionCall
+  Score: 0.820
+  side_effects:        0.820
+  executed_ok:       True
+
+  R:
+    glance(mod_betamfx)
+  Python:
+        def glance(self):
+            return pd.DataFrame({
+                'pseudo.r.squared': [self.pseudo_r2],
+                'df.null': [self.nobs - 1],
+                'logLik': [self.loglik],
+                'AIC': [self.aic],
+                'BIC': [self.bic],
+                'df.residual': [self.df_resid],
+                'nobs': [self.nobs]
+            })
+    
+    # Initialize model
+    mod_betamfx = BetaMFX('y ~ x | x', d)
+    print(mod_betamfx.glance())

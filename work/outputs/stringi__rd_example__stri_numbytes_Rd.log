@@ -1,0 +1,70 @@
+Translation log
+Final score: 0.917
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringi))
+
+============================================================
+Entity: import_stringi
+  Name:  stringi
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringi))
+
+============================================================
+Entity: stri_numbytes
+  Name:  stri_numbytes
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_numbytes(letters)
+  Python:
+    print([len(s.encode('utf-8')) for s in letters])
+
+============================================================
+Entity: stri_numbytes_1
+  Name:  stri_numbytes
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_numbytes(c('abc', '123', '\u0105\u0104'))
+  Python:
+    test_strings = ['abc', '123', '\u0105\u0104']
+    print([len(s.encode('utf-8')) for s in test_strings])
+    
+    # Compare byte length vs character length
+
+============================================================
+Entity: stri_numbytes_2
+  Name:  stri_numbytes
+  Kind:  FunctionCall
+  Score: 0.750
+  side_effects:        0.750
+  executed_ok:       True
+
+  R:
+    stri_numbytes('\U001F600') # compare stri_length('\U001F600')
+  Python:
+    emoji = '\U0001F600'
+    print(len(emoji.encode('utf-8'))) # Equivalent to stri_numbytes
+    print(len(emoji))                 # Equivalent to stri_length

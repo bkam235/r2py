@@ -1,0 +1,187 @@
+Translation log
+Final score: 0.858
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: import_tidyr
+  Name:  tidyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    df <- tibble(id = 1:4, x = c("x", "x y", "x y z", NA))
+  Python:
+    df = pd.DataFrame({'id': range(1, 5), 'x': ["x", "x y", "x y z", np.nan]})
+
+============================================================
+Entity: separate_longer_delim
+  Name:  separate_longer_delim
+  Kind:  FunctionCall
+  Score: 0.857
+  side_effects:        0.857
+  executed_ok:       True
+
+  R:
+    df |> separate_longer_delim(x, delim = " ")
+  Python:
+    def separate_longer_delim(data, cols, delim):
+        """
+        Equivalent to tidyr::separate_longer_delim.
+        Splits a column by a delimiter and expands the data frame.
+        """
+        df = data.copy()
+        if isinstance(cols, str):
+            cols = [cols]
+        
+        # Split specified columns into lists
+        for col in cols:
+            df[col] = df[col].str.split(delim)
+        
+        # Use explode to expand the lists into rows
+        # We explode sequentially for each column specified
+        for col in cols:
+            df = df.explode(col)
+        
+        return df.reset_index(drop=True)
+    print(separate_longer_delim(df, 'x', delim=" "))
+    
+    # --- Example 2 ---
+    # You can separate multiple columns at once if they have the same structure
+
+============================================================
+Entity: df_1
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    df <- tibble(id = 1:3, x = c("x", "x y", "x y z"), y = c("a", "a b", "a b c"))
+  Python:
+    df = pd.DataFrame({'id': range(1, 4), 'x': ["x", "x y", "x y z"], 'y': ["a", "a b", "a b c"]})
+
+============================================================
+Entity: separate_longer_delim_1
+  Name:  separate_longer_delim
+  Kind:  FunctionCall
+  Score: 0.803
+  side_effects:        0.803
+  executed_ok:       True
+
+  R:
+    df |> separate_longer_delim(c(x, y), delim = " ")
+  Python:
+    print(separate_longer_delim(df, ['x', 'y'], delim=" "))
+    
+    # --- Example 3 ---
+    # Or instead split by a fixed length
+
+============================================================
+Entity: df_2
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    df <- tibble(id = 1:3, x = c("ab", "def", ""))
+  Python:
+    df = pd.DataFrame({'id': range(1, 4), 'x': ["ab", "def", ""]})
+
+============================================================
+Entity: separate_longer_position
+  Name:  separate_longer_position
+  Kind:  FunctionCall
+  Score: 0.852
+  side_effects:        0.852
+  executed_ok:       True
+
+  R:
+    df |> separate_longer_position(x, 1)
+  Python:
+    def separate_longer_position(data, cols, width, keep_empty=False):
+        """
+        Equivalent to tidyr::separate_longer_position.
+        Splits a column by a fixed length and expands the data frame.
+        """
+        df = data.copy()
+        if isinstance(cols, str):
+            cols = [cols]
+    
+        def split_pos(val):
+            if pd.isna(val):
+                return [np.nan]
+            val = str(val)
+            # R's separate_longer_position splits into chunks of 'width'
+            # Example: "abcde", width 2 -> "ab", "cd", "e"
+            res = [val[i:i+width] for i in range(0, len(val), width)]
+            if not keep_empty and "" in res:
+                res = [x for x in res if x != ""]
+            return res if res else [np.nan]
+    
+        for col in cols:
+            df[col] = df[col].apply(split_pos)
+        
+        for col in cols:
+            df = df.explode(col)
+            
+        return df.reset_index(drop=True)
+    
+    # --- Example 1 ---
+    print(separate_longer_position(df, 'x', 1))
+
+============================================================
+Entity: separate_longer_position_1
+  Name:  separate_longer_position
+  Kind:  FunctionCall
+  Score: 0.829
+  side_effects:        0.829
+  executed_ok:       True
+
+  R:
+    df |> separate_longer_position(x, 2)
+  Python:
+    print(separate_longer_position(df, 'x', 2))
+
+============================================================
+Entity: separate_longer_position_2
+  Name:  separate_longer_position
+  Kind:  FunctionCall
+  Score: 0.809
+  side_effects:        0.809
+  executed_ok:       True
+
+  R:
+    df |> separate_longer_position(x, 2, keep_empty = TRUE)
+  Python:
+    print(separate_longer_position(df, 'x', 2, keep_empty=True))

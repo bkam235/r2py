@@ -1,0 +1,76 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(crayon))
+
+============================================================
+Entity: import_crayon
+  Name:  crayon
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(crayon))
+
+============================================================
+Entity: col_align
+  Name:  col_align
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    col_align(red("foobar"), 20, "left")
+  Python:
+    def col_align(text, width, align="left"):
+        formatted_text = f"{red}{text}{reset}"
+        # Calculate visible length of text without ANSI codes
+        visible_len = len(text)
+        
+        if align == "left":
+            return formatted_text.ljust(width + (len(formatted_text) - visible_len))
+        elif align == "right":
+            return formatted_text.rjust(width + (len(formatted_text) - visible_len))
+        elif align == "center":
+            return formatted_text.center(width + (len(formatted_text) - visible_len))
+        return formatted_text
+    print(col_align("foobar", 20, "left"))
+
+============================================================
+Entity: col_align_1
+  Name:  col_align
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    col_align(red("foobar"), 20, "center")
+  Python:
+    print(col_align("foobar", 20, "center"))
+
+============================================================
+Entity: col_align_2
+  Name:  col_align
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    col_align(red("foobar"), 20, "right")
+  Python:
+    print(col_align("foobar", 20, "right"))

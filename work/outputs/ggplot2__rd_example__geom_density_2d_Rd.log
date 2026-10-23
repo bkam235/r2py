@@ -1,0 +1,458 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+INFRA CRASH: Python failed to run because of r2py's own instrumentation (checkpoint/shim injection), not the candidate translation itself.
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: m
+  Name:  m
+  Kind:  Variable
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    m <- ggplot(faithful, aes(x = eruptions, y = waiting)) +
+     geom_point() +
+     xlim(0.5, 6) +
+     ylim(40, 110)
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    m <- ggplot(faithful, aes(x = eruptions, y = waiting)) +
+  Python:
+    m = (ggplot(faithful, aes(x='eruptions', y='waiting')) 
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+     geom_point() +
+  Python:
+         + geom_point() 
+
+============================================================
+Entity: xlim
+  Name:  xlim
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+     xlim(0.5, 6) +
+  Python:
+         + xlim(0.5, 6) 
+
+============================================================
+Entity: ylim
+  Name:  ylim
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+     ylim(40, 110)
+  Python:
+         + ylim(40, 110))
+
+============================================================
+Entity: geom_density_2d
+  Name:  geom_density_2d
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    m + geom_density_2d()
+  Python:
+    print(m + geom_density_2d())
+
+============================================================
+Entity: geom_density_2d_filled
+  Name:  geom_density_2d_filled
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    m + geom_density_2d_filled(alpha = 0.5)
+  Python:
+    print(m + geom_density_2d_filled(alpha=0.5))
+
+============================================================
+Entity: geom_density_2d_filled_1
+  Name:  geom_density_2d_filled
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    m + geom_density_2d_filled(alpha = 0.5) +
+  Python:
+    print((m + geom_density_2d_filled(alpha=0.5) 
+
+============================================================
+Entity: geom_density_2d_1
+  Name:  geom_density_2d
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+      geom_density_2d(linewidth = 0.25, colour = "black")
+  Python:
+          + geom_density_2d(linewidth=0.25, colour="black")))
+    
+    # Section 2: Diamonds dataset
+
+============================================================
+Entity: set.seed
+  Name:  set.seed
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    set.seed(4393)
+  Python:
+    np.random.seed(4393)
+
+============================================================
+Entity: dsmall
+  Name:  dsmall
+  Kind:  Variable
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    dsmall <- diamonds[sample(nrow(diamonds), 1000), ]
+
+============================================================
+Entity: sample
+  Name:  sample
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    dsmall <- diamonds[sample(nrow(diamonds), 1000), ]
+  Python:
+    # for _r2py_shim_n in ['diamonds', 'dsmall', 'faithful']:
+    #     if _r2py_shim_n in _r2py_shim_data:
+    #         globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]
+    # r2py:data_shim:end
+    
+    import pandas as pd
+    import numpy as np
+    from plotnine import *
+    from plotnine.data import faithful, diamonds
+    
+    # Section 1: Faithful dataset
+
+============================================================
+Entity: d
+  Name:  d
+  Kind:  Variable
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d <- ggplot(dsmall, aes(x, y))
+  Python:
+    d = ggplot(dsmall, aes(x='carat', y='price'))
+
+============================================================
+Entity: geom_density_2d_2
+  Name:  geom_density_2d
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d + geom_density_2d(aes(colour = cut))
+  Python:
+    print(d + geom_density_2d(aes(colour='cut')))
+
+============================================================
+Entity: geom_density_2d_filled_2
+  Name:  geom_density_2d_filled
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d + geom_density_2d_filled() + facet_wrap(vars(cut))
+
+============================================================
+Entity: facet_wrap
+  Name:  facet_wrap
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d + geom_density_2d_filled() + facet_wrap(vars(cut))
+  Python:
+    print(d + geom_density_2d_filled() + facet_wrap('cut'))
+
+============================================================
+Entity: geom_density_2d_filled_3
+  Name:  geom_density_2d_filled
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d + geom_density_2d_filled(contour_var = "ndensity") + facet_wrap(vars(cut))
+
+============================================================
+Entity: facet_wrap_1
+  Name:  facet_wrap
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d + geom_density_2d_filled(contour_var = "ndensity") + facet_wrap(vars(cut))
+  Python:
+    print(d + geom_density_2d_filled(contour_var="ndensity") + facet_wrap('cut'))
+
+============================================================
+Entity: geom_density_2d_filled_4
+  Name:  geom_density_2d_filled
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d + geom_density_2d_filled(contour_var = "count") + facet_wrap(vars(cut))
+
+============================================================
+Entity: facet_wrap_2
+  Name:  facet_wrap
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d + geom_density_2d_filled(contour_var = "count") + facet_wrap(vars(cut))
+  Python:
+    print(d + geom_density_2d_filled(contour_var="count") + facet_wrap('cut'))
+
+============================================================
+Entity: stat_density_2d
+  Name:  stat_density_2d
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d + stat_density_2d(
+      geom = "raster",
+      aes(fill = after_stat(density)),
+      contour = FALSE
+    ) + scale_fill_viridis_c()
+
+============================================================
+Entity: scale_fill_viridis_c
+  Name:  scale_fill_viridis_c
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    ) + scale_fill_viridis_c()
+  Python:
+    print((d + stat_density_2d(aes(fill='density'), geom="raster", contour=False) + scale_fill_viridis_c()))
+
+============================================================
+Entity: stat_density_2d_1
+  Name:  stat_density_2d
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    d + stat_density_2d(geom = "point", aes(size = after_stat(density)), n = 20, contour = FALSE)
+  Python:
+    print(d + stat_density_2d(aes(size='density'), geom="point", n=20, contour=False))

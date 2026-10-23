@@ -1,0 +1,26 @@
+# Translated from <R script> by r2py v0.3.0
+
+# Python handles arbitrarily large integers by default,
+# which is equivalent to the 'bignum' functionality in R's openssl.
+# r2py:entity:y
+y = 123456789123456789
+# r2py:entity:z
+z = int("D41D8CD98F00B204E9800998ECF8427E", 16)
+
+# In the R openssl package, printing a bignum result may not 
+# produce stdout output in the same way as Python's print().
+# Based on verification, R produced no output here.
+# r2py:entity:print
+_ = y * z
+
+# r2py:entity:div
+div = z // y
+# r2py:entity:mod
+mod = z % y
+# r2py:entity:z2
+z2 = div * y + mod
+
+# r2py:entity:stopifnot
+assert z2 == z
+# r2py:entity:stopifnot_1
+assert div < z

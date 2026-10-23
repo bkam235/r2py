@@ -1,0 +1,163 @@
+Translation log
+Final score: 0.688
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(fs))
+
+============================================================
+Entity: import_fs
+  Name:  fs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(fs))
+
+============================================================
+Entity: fs_perms
+  Name:  fs_perms
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    fs_perms(420L)
+  Python:
+    def fs_perms(mode):
+        if isinstance(mode, (list, tuple)):
+            return [fs_perms(m) for m in mode]
+        
+        # Handle numeric octal input (e.g., 420L is decimal, but usually represents octal in perms context)
+        # R's fs_perms treats integers as decimal representations of octal modes
+        if isinstance(mode, int):
+            # Convert decimal to octal string, then to mode
+            octal_str = oct(mode)[2:]
+            # Ensure 3-digit format
+            octal_str = octal_str.zfill(3)
+            mode_val = int(octal_str, 8)
+        elif isinstance(mode, str):
+            # Simple check if it's a numeric string like "777"
+            if mode.isdigit():
+                mode_val = int(mode, 8)
+            else:
+                # Symbolic modes like "a+rwx" are complex to parse manually; 
+                # for a direct translation of the logic, we map common symbolic outputs
+                # since Python's os.chmod handles them but doesn't 'return' the string form.
+                # This is a mock representation of the R fs_perms string output logic.
+                return mode 
+        else:
+            return mode
+    
+        # Convert mode integer to the R-style string representation (e.g., "rwxr-xr-x")
+        # However, fs_perms in R returns the human-readable string version of the bits.
+        # We can simulate the specific outputs seen in the R fs package.
+        # For the purpose of this translation, we use a simple format map.
+        res = ""
+        perms = [
+            (stat.S_IRUSR, 'u+r'), (stat.S_IWUSR, 'u+w'), (stat.S_IXUSR, 'u+x'),
+            (stat.S_IRGRP, 'g+r'), (stat.S_IWGRP, 'g+w'), (stat.S_IXGRP, 'g+x'),
+            (stat.S_IROTH, 'o+r'), (stat.S_IWOTH, 'o+w'), (stat.S_IXOTH, 'o+x'),
+        ]
+        
+        # fs_perms output varies by OS, but generally returns the string representation
+        # To match R's behavior of returning a string like "rwxr-xr-x" or the symbolic mode:
+        return oct(mode_val & 0o777)[2:].zfill(3)
+    
+    # Note: Since fs_perms in R is primarily for getting/setting filesystem permissions 
+    # and the provided snippet tests the string conversion logic, we implement the logic accordingly.
+    print(fs_perms(420))
+
+============================================================
+Entity: fs_perms_1
+  Name:  fs_perms
+  Kind:  FunctionCall
+  Score: 0.577
+  side_effects:        0.577
+  executed_ok:       True
+
+  R:
+    fs_perms(c(511, 420))
+  Python:
+    print(fs_perms([511, 420]))
+
+============================================================
+Entity: fs_perms_2
+  Name:  fs_perms
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    fs_perms("777")
+  Python:
+    print(fs_perms("777"))
+
+============================================================
+Entity: fs_perms_3
+  Name:  fs_perms
+  Kind:  FunctionCall
+  Score: 0.577
+  side_effects:        0.577
+  executed_ok:       True
+
+  R:
+    fs_perms(c("777", "644"))
+  Python:
+    print(fs_perms(["777", "644"]))
+
+============================================================
+Entity: fs_perms_4
+  Name:  fs_perms
+  Kind:  FunctionCall
+  Score: 0.875
+  side_effects:        0.875
+  executed_ok:       True
+
+  R:
+    fs_perms("a+rwx")
+  Python:
+    print(fs_perms("a+rwx"))
+
+============================================================
+Entity: fs_perms_5
+  Name:  fs_perms
+  Kind:  FunctionCall
+  Score: 0.786
+  side_effects:        0.786
+  executed_ok:       True
+
+  R:
+    fs_perms(c("a+rwx", "u+rw,go+r"))
+  Python:
+    print(fs_perms(["a+rwx", "u+rw,go+r"]))
+    
+    # (fs_perms("777") & "u+r") == "u+r"
+    # In R, the & operator on these strings is likely a bitwise operation on the permissions
+    # Here we simulate the logical check: if "777" (rwxrwxrwx) has "u+r" (user read)
+
+============================================================
+Entity: fs_perms_6
+  Name:  fs_perms
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    (fs_perms("777") & "u+r") == "u+r"
+  Python:
+    res = (int("777", 8) & stat.S_IRUSR) == stat.S_IRUSR
+    print(res)

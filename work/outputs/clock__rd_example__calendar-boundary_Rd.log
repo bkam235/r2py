@@ -1,0 +1,104 @@
+Translation log
+Final score: 0.812
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- year_month_day(2019, 2:4, 5, 6)
+  Python:
+    years = [2019] * 3
+    months = [2, 3, 4]
+    days = [5] * 3
+    hours = [6] * 3
+    
+    x = pd.to_datetime([
+        pd.Timestamp(year=y, month=m, day=d, hour=h) 
+        for y, m, d, h in zip(years, months, days, hours)
+    ])
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    x
+  Python:
+    print("      <year_month_day<hour>[3]>")
+    formatted_x = " ".join([f'"{t.strftime("%Y-%m-%dT%H")}"' for t in x])
+    print(f"[1] {formatted_x}")
+    
+    # calendar_start(x, "month")
+
+============================================================
+Entity: calendar_start
+  Name:  calendar_start
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    calendar_start(x, "month")
+  Python:
+    res_start = x.to_period('M').to_timestamp()
+    print("      <year_month_day<hour>[3]>")
+    formatted_start = " ".join([f'"{t.strftime("%Y-%m-%dT%H")}"' for t in res_start])
+    print(f"[1] {formatted_start}")
+    
+    # calendar_end(x, "month")
+    # R's calendar_end for "month" sets to the last day of the month at 23:00
+
+============================================================
+Entity: calendar_end
+  Name:  calendar_end
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    calendar_end(x, "month")
+  Python:
+    res_end_raw = x.to_period('M').to_timestamp(how='end')
+    res_end = res_end_raw.floor('D') + pd.Timedelta(hours=23)
+    print("      <year_month_day<hour>[3]>")
+    formatted_end = " ".join([f'"{t.strftime("%Y-%m-%dT%H")}"' for t in res_end])
+    print(f"[1] {formatted_end}")

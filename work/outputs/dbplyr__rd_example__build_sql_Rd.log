@@ -1,0 +1,160 @@
+Translation log
+Final score: 0.871
+Data score:  0.681
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dbplyr))
+
+============================================================
+Entity: import_dbplyr
+  Name:  dbplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dbplyr))
+
+============================================================
+Entity: con
+  Name:  con
+  Kind:  Variable
+  Score: 0.283
+  type_match:          0.043
+  control_flow_match:  1.000
+  data_output:         0.043
+  variable_output:     0.043
+  executed_ok:       True
+
+  R:
+    con <- simulate_dbi()
+  Python:
+    con = sqlite3.connect(':memory:')
+
+============================================================
+Entity: build_sql
+  Name:  build_sql
+  Kind:  FunctionCall
+  Score: 0.932
+  side_effects:        0.932
+  executed_ok:       True
+
+  R:
+    build_sql("SELECT * FROM TABLE", con = con)
+  Python:
+    def build_sql(*args):
+        # Simplified substitute for build_sql: joins arguments into a string
+        # In real scenarios, one would use parameterized queries to prevent injection
+        return "".join(str(arg) for arg in args)
+    
+    # Example 1
+    print(build_sql("SELECT * FROM TABLE"))
+    
+    # Example 2
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- "TABLE"
+  Python:
+    x = "TABLE"
+
+============================================================
+Entity: build_sql_1
+  Name:  build_sql
+  Kind:  FunctionCall
+  Score: 0.932
+  side_effects:        0.932
+  executed_ok:       True
+
+  R:
+    build_sql("SELECT * FROM ", x, con = con)
+  Python:
+    print(build_sql("SELECT * FROM ", x))
+    
+    # ident() and sql() are internal dbplyr helpers for quoting identifiers.
+    # In Python, we can use a simple helper to simulate identifier quoting.
+
+============================================================
+Entity: build_sql_2
+  Name:  build_sql
+  Kind:  FunctionCall
+  Score: 0.913
+  side_effects:        0.913
+  executed_ok:       True
+
+  R:
+    build_sql("SELECT * FROM ", ident(x), con = con)
+  Python:
+    def ident(val):
+        return f'"{val}"'
+    print(build_sql("SELECT * FROM ", ident(x)))
+    
+    # Example 4
+
+============================================================
+Entity: build_sql_3
+  Name:  build_sql
+  Kind:  FunctionCall
+  Score: 0.932
+  side_effects:        0.932
+  executed_ok:       True
+
+  R:
+    build_sql("SELECT * FROM ", sql(x), con = con)
+  Python:
+    def sql(val):
+        return val
+    
+    # Example 3
+    print(build_sql("SELECT * FROM ", sql(x)))
+    
+    # Example 5: SQL Injection demonstration
+
+============================================================
+Entity: name
+  Name:  name
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    name <- "Robert'); DROP TABLE Students;--"
+  Python:
+    name = "Robert'); DROP TABLE Students;--"
+
+============================================================
+Entity: build_sql_4
+  Name:  build_sql
+  Kind:  FunctionCall
+  Score: 0.977
+  side_effects:        0.977
+  executed_ok:       True
+
+  R:
+    build_sql("INSERT INTO Students (Name) VALUES (", name, ")", con = con)
+  Python:
+    print(build_sql("INSERT INTO Students (Name) VALUES ('", name, "')"))

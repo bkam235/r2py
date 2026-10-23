@@ -1,0 +1,211 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    if (rlang::is_installed("modeldata")) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+  Python:
+    from modeldata import biomass # Assuming a similar package or local csv
+    
+    # Load data
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    data(biomass, package = "modeldata")
+  Python:
+    df = biomass
+
+============================================================
+Entity: biomass_tr
+  Name:  biomass_tr
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    biomass_tr <- biomass[biomass$dataset == "Training", ]
+  Python:
+    biomass_tr = df[df['dataset'] == 'Training'].copy()
+
+============================================================
+Entity: biomass_te
+  Name:  biomass_te
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    biomass_te <- biomass[biomass$dataset == "Testing", ]
+  Python:
+    biomass_te = df[df['dataset'] == 'Testing'].copy()
+    
+    # Define formulas for natural splines (ns)
+    # Patsy is the Python equivalent for R's formula-based preprocessing
+
+============================================================
+Entity: rec
+  Name:  rec
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    rec <- recipe(
+      HHV ~ carbon + hydrogen + oxygen + nitrogen + sulfur,
+      data = biomass_tr
+    )
+
+============================================================
+Entity: with_splines
+  Name:  with_splines
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    with_splines <- rec |>
+      step_ns(carbon, hydrogen)
+  Python:
+    y_tr, X_tr = dmatrices(formula, biomass_tr, return_type='dataframe')
+    
+    # Apply the same transformation (bake) to testing data
+
+============================================================
+Entity: step_ns
+  Name:  step_ns
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+      step_ns(carbon, hydrogen)
+  Python:
+    formula = "HHV ~ ns(carbon, df=3) + ns(hydrogen, df=3) + oxygen + nitrogen + sulfur"
+    
+    # Fit the formula (prep) on training data
+    # In Python/Patsy, we create a design matrix
+
+============================================================
+Entity: with_splines_1
+  Name:  with_splines
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    with_splines <- prep(with_splines, training = biomass_tr)
+  Python:
+    y_te, X_te = dmatrices(formula, biomass_te, return_type='dataframe')
+
+============================================================
+Entity: expanded
+  Name:  expanded
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    expanded <- bake(with_splines, biomass_te)
+  Python:
+    expanded = X_te
+    print(expanded)

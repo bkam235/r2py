@@ -1,0 +1,151 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: import_stringr
+  Name:  stringr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: fruit
+  Name:  fruit
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    fruit <- c("apple", "banana", "pear", "pineapple")
+  Python:
+    fruit = ["apple", "banana", "pear", "pineapple"]
+
+============================================================
+Entity: str_detect
+  Name:  str_detect
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_detect(fruit, "a")
+  Python:
+    def str_detect(string_val, pattern, negate=False):
+        if isinstance(string_val, (list, tuple)):
+            # Vectorized over string
+            results = [bool(re.search(pattern, s)) for s in string_val]
+        elif isinstance(pattern, (list, tuple)):
+            # Vectorized over pattern
+            results = [bool(re.search(p, string_val)) for p in pattern]
+        else:
+            # Single string and single pattern
+            results = [bool(re.search(pattern, string_val))]
+        
+        if negate:
+            return [not r for r in results]
+        return results
+    print(str_detect(fruit, "a"))
+
+============================================================
+Entity: str_detect_1
+  Name:  str_detect
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_detect(fruit, "^a")
+  Python:
+    print(str_detect(fruit, "^a"))
+
+============================================================
+Entity: str_detect_2
+  Name:  str_detect
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_detect(fruit, "a$")
+  Python:
+    print(str_detect(fruit, "a$"))
+
+============================================================
+Entity: str_detect_3
+  Name:  str_detect
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_detect(fruit, "b")
+  Python:
+    print(str_detect(fruit, "b"))
+
+============================================================
+Entity: str_detect_4
+  Name:  str_detect
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_detect(fruit, "[aeiou]")
+  Python:
+    print(str_detect(fruit, "[aeiou]"))
+    
+    # Also vectorised over pattern
+
+============================================================
+Entity: str_detect_5
+  Name:  str_detect
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_detect("aecfg", letters)
+  Python:
+    print(str_detect("aecfg", letters))
+    
+    # Returns TRUE if the pattern do NOT match
+
+============================================================
+Entity: str_detect_6
+  Name:  str_detect
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_detect(fruit, "^p", negate = TRUE)
+  Python:
+    print(str_detect(fruit, "^p", negate=True))

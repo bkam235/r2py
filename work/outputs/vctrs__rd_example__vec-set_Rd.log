@@ -1,0 +1,295 @@
+Translation log
+Final score: 0.958
+Data score:  0.352
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- c(1, 2, 1, 4, 3)
+  Python:
+    x = [1, 2, 1, 4, 3]
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    y <- c(2, 5, 5, 1)
+  Python:
+    y = [2, 5, 5, 1]
+    
+    # Set operations for lists
+
+============================================================
+Entity: vec_set_intersect
+  Name:  vec_set_intersect
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_set_intersect(x, y)
+  Python:
+    set_x = set(x)
+    set_y = set(y)
+    
+    print(list(set_x.intersection(set_y)))
+
+============================================================
+Entity: vec_set_difference
+  Name:  vec_set_difference
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_set_difference(x, y)
+  Python:
+    print(list(set_x.difference(set_y)))
+
+============================================================
+Entity: vec_set_union
+  Name:  vec_set_union
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_set_union(x, y)
+  Python:
+    print(list(set_x.union(set_y)))
+
+============================================================
+Entity: vec_set_symmetric_difference
+  Name:  vec_set_symmetric_difference
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_set_symmetric_difference(x, y)
+  Python:
+    print(list(set_x.symmetric_difference(set_y)))
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x <- data_frame(
+      a = c(2, 3, 2, 2),
+      b = c("j", "k", "j", "l")
+    )
+  Python:
+    x_df = pd.DataFrame({
+        'a': [2, 3, 2, 2],
+        'b': ['j', 'k', 'j', 'l']
+    })
+
+============================================================
+Entity: y_1
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    y <- data_frame(
+      a = c(1, 2, 2, 2, 3),
+      b = c("j", "l", "j", "l", "j")
+    )
+  Python:
+    y_df = pd.DataFrame({
+        'a': [1, 2, 2, 2, 3],
+        'b': ['j', 'l', 'j', 'l', 'j']
+    })
+    
+    # For DataFrames, we drop duplicates to treat them as sets of rows
+
+============================================================
+Entity: vec_set_intersect_1
+  Name:  vec_set_intersect
+  Kind:  FunctionCall
+  Score: 0.933
+  side_effects:        0.933
+  executed_ok:       True
+
+  R:
+    vec_set_intersect(x, y)
+  Python:
+    x_uniq = x_df.drop_duplicates()
+    y_uniq = y_df.drop_duplicates()
+    
+    # Intersection
+    print(pd.merge(x_uniq, y_uniq, how='inner'))
+
+============================================================
+Entity: vec_set_difference_1
+  Name:  vec_set_difference
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_set_difference(x, y)
+  Python:
+    # Difference (x - y)
+    print(x_uniq[~x_uniq.apply(tuple, 1).isin(y_uniq.apply(tuple, 1))])
+
+============================================================
+Entity: vec_set_union_1
+  Name:  vec_set_union
+  Kind:  FunctionCall
+  Score: 0.939
+  side_effects:        0.939
+  executed_ok:       True
+
+  R:
+    vec_set_union(x, y)
+  Python:
+    # Union
+    print(pd.concat([x_uniq, y_uniq]).drop_duplicates())
+
+============================================================
+Entity: vec_set_symmetric_difference_1
+  Name:  vec_set_symmetric_difference
+  Kind:  FunctionCall
+  Score: 0.840
+  side_effects:        0.840
+  executed_ok:       True
+
+  R:
+    vec_set_symmetric_difference(x, y)
+  Python:
+    # Symmetric Difference
+    combined = pd.concat([x_uniq, y_uniq])
+    print(combined[combined.duplicated(keep=False)].drop_duplicates())
+
+============================================================
+Entity: x_2
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x <- c(a = 1, b = 2, c = 2, d = 3)
+  Python:
+    x_named = {'a': 1, 'b': 2, 'c': 2, 'd': 3}
+
+============================================================
+Entity: y_2
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    y <- c(c = 2, b = 1, a = 3, d = 3)
+  Python:
+    y_named = {'c': 2, 'b': 1, 'a': 3, 'd': 3}
+
+============================================================
+Entity: vec_set_intersect_2
+  Name:  vec_set_intersect
+  Kind:  FunctionCall
+  Score: 0.833
+  side_effects:        0.833
+  executed_ok:       True
+
+  R:
+    vec_set_intersect(x, y)
+  Python:
+    # Intersection of named vectors (comparing key-value pairs)
+    intersect_named = {k: v for k, v in x_named.items() if k in y_named and y_named[k] == v}
+    print(intersect_named)
+
+============================================================
+Entity: x_3
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x <- data_frame(name = names(x), value = unname(x))
+  Python:
+    x_df_named = pd.DataFrame({'name': list(x_named.keys()), 'value': list(x_named.values())})
+
+============================================================
+Entity: y_3
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    y <- data_frame(name = names(y), value = unname(y))
+  Python:
+    y_df_named = pd.DataFrame({'name': list(y_named.keys()), 'value': list(y_named.values())})
+
+============================================================
+Entity: vec_set_intersect_3
+  Name:  vec_set_intersect
+  Kind:  FunctionCall
+  Score: 0.955
+  side_effects:        0.955
+  executed_ok:       True
+
+  R:
+    vec_set_intersect(x, y)
+  Python:
+    print(pd.merge(x_df_named, y_df_named, how='inner'))

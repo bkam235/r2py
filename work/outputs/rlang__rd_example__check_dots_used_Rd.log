@@ -1,0 +1,147 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: import_rlang
+  Name:  rlang
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: f
+  Name:  f
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    f <- function(...) {
+      check_dots_used()
+      g(...)
+    }
+  Python:
+    def f(*args, **kwargs):
+        check_dots_used(*args, **kwargs)
+        # Since g takes specific named arguments and a dots object, 
+        # we pass the kwargs and args directly
+        return g(*args, **kwargs)
+    
+    # f(x = 1, y = 2)
+
+============================================================
+Entity: g
+  Name:  g
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    g <- function(x, y, ...) {
+      x + y
+    }
+  Python:
+    def g(x, y, *args, **kwargs):
+        return x + y
+
+============================================================
+Entity: f_1
+  Name:  f
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    f(x = 1, y = 2)
+  Python:
+    print(f(x=1, y=2))
+    
+    # try(f(x = 1, y = 2, z = 3))
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(f(x = 1, y = 2, z = 3))
+  Python:
+    try:
+        print(f(x=1, y=2, z=3))
+    except Exception as e:
+        print(e)
+    
+    # try(f(x = 1, y = 2, 3, 4, 5))
+
+============================================================
+Entity: try_1
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(f(x = 1, y = 2, 3, 4, 5))
+  Python:
+    try:
+        print(f(3, 4, 5, x=1, y=2))
+    except Exception as e:
+        print(e)
+
+============================================================
+Entity: fn
+  Name:  fn
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    fn <- function(...) {
+      check_dots_empty(
+        error = function(cnd) {
+          warning(cnd)
+        }
+      )
+      "out"
+    }
+  Python:
+    def fn(*args, **kwargs):
+        check_dots_empty(*args, **kwargs)
+        return "out"
+    
+    # fn()
+
+============================================================
+Entity: fn_1
+  Name:  fn
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    fn()
+  Python:
+    print(fn())

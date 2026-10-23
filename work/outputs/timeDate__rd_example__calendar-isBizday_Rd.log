@@ -1,0 +1,160 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(timeDate))
+
+============================================================
+Entity: import_timeDate
+  Name:  timeDate
+  Kind:  LibraryImport
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(timeDate))
+
+============================================================
+Entity: currentYear
+  Name:  currentYear
+  Kind:  Variable
+  Score: 0.500
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    currentYear <- getRmetricsOptions("currentYear")
+  Python:
+    current_year = 2024  # Substitute for getRmetricsOptions("currentYear")
+
+============================================================
+Entity: tS
+  Name:  tS
+  Kind:  Variable
+  Score: 0.500
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    tS <- timeSequence(from = paste(currentYear, "-03-01", sep = ""),
+                         to = paste(currentYear, "-04-30", sep = ""))
+  Python:
+    start_date = f"{current_year}-03-01"
+    end_date = f"{current_year}-04-30"
+    
+    # Create time sequence
+
+============================================================
+Entity: tS_1
+  Name:  tS
+  Kind:  Variable
+  Score: 0.590
+  type_match:          0.297
+  control_flow_match:  1.000
+  data_output:         0.297
+  variable_output:     0.297
+  callable_output:     1.000
+  side_effects:        0.648
+  executed_ok:       True
+
+  R:
+    tS
+  Python:
+    print(tS)
+    
+    # Define NYSE business days (using US Federal Holiday Calendar as a substitute)
+
+============================================================
+Entity: holidayNYSE
+  Name:  holidayNYSE
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    holidayNYSE()
+  Python:
+    nyse_calendar = USFederalHolidayCalendar()
+    nyse_bus_day = CustomBusinessDay(calendar=nyse_calendar)
+    
+    # isBizday equivalent: check if date is a business day
+
+============================================================
+Entity: isBizday
+  Name:  isBizday
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    isBizday(tS, holidayNYSE())
+  Python:
+    is_bizday = [bool(pd.to_datetime(d).dayofweek < 5 and 
+                     d not in nyse_calendar.holidays(start=start_date, end=end_date).date) 
+                 for d in tS.date]
+    
+    print(is_bizday)
+    
+    # Filter tS for business days only
+
+============================================================
+Entity: isBizday_1
+  Name:  isBizday
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    tS[isBizday(tS, holidayNYSE())]
+  Python:
+    biz_days_tS = tS[is_bizday]
+    print(biz_days_tS)

@@ -1,0 +1,180 @@
+Translation log
+Final score: 0.905
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringi))
+
+============================================================
+Entity: import_stringi
+  Name:  stringi
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringi))
+
+============================================================
+Entity: stri_duplicated
+  Name:  stri_duplicated
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_duplicated(c('a', 'b', 'a', NA, 'a', NA))
+  Python:
+    def stri_duplicated(str_vec, from_last=False, strength=None):
+        # Handle strings with potential Unicode normalization or case insensitivity
+        # strength=1 in stringi usually means primary level (case/accent insensitive)
+        processed = []
+        for x in str_vec:
+            if x is None or (isinstance(x, float) and np.isnan(x)):
+                processed.append(None)
+            else:
+                val = str(x)
+                if strength == 1:
+                    val = unicodedata.normalize('NFKD', val).casefold()
+                processed.append(val)
+    
+        n = len(processed)
+        duplicated = [False] * n
+        seen = set()
+        
+        if not from_last:
+            for i in range(n):
+                val = processed[i]
+                # In R, NA is treated as a value for duplication checks in stri_duplicated
+                # We use a sentinel for None to track it in the set
+                marker = f"__NA_{i}" if val is None else val
+                # Actually, R's stri_duplicated treats NAs as identical
+                marker = "STR_NA_SENTINEL" if val is None else val
+                if marker in seen:
+                    duplicated[i] = True
+                else:
+                    seen.add(marker)
+        else:
+            for i in range(n - 1, -1, -1):
+                val = processed[i]
+                marker = "STR_NA_SENTINEL" if val is None else val
+                if marker in seen:
+                    duplicated[i] = True
+                else:
+                    seen.add(marker)
+                    
+        return np.array(duplicated)
+    print(stri_duplicated(vec1))
+
+============================================================
+Entity: stri_duplicated_1
+  Name:  stri_duplicated
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_duplicated(c('a', 'b', 'a', NA, 'a', NA), from_last=TRUE)
+  Python:
+    print(stri_duplicated(vec1, from_last=True))
+
+============================================================
+Entity: stri_duplicated_any
+  Name:  stri_duplicated_any
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    stri_duplicated_any(c('a', 'b', 'a', NA, 'a', NA))
+  Python:
+    def stri_duplicated_any(str_vec):
+        # Returns True if any element is duplicated
+        return any(stri_duplicated(str_vec))
+    print(stri_duplicated_any(vec1))
+    
+    # compare the results:
+    vec2 = ['\u0105', stri_trans_nfkd('\u0105')]
+
+============================================================
+Entity: stri_duplicated_2
+  Name:  stri_duplicated
+  Kind:  FunctionCall
+  Score: 0.833
+  side_effects:        0.833
+  executed_ok:       True
+
+  R:
+    stri_duplicated(c('\u0105', stri_trans_nfkd('\u0105')))
+  Python:
+    print(stri_duplicated(vec2))
+
+============================================================
+Entity: duplicated
+  Name:  duplicated
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    duplicated(c('\u0105', stri_trans_nfkd('\u0105')))
+  Python:
+    def duplicated(x):
+        # Standard R duplicated: NA is NOT considered duplicated (returns FALSE for NAs)
+        n = len(x)
+        res = [False] * n
+        seen = set()
+        for i in range(n):
+            val = x[i]
+            if val is None or (isinstance(val, float) and np.isnan(val)):
+                continue
+            if val in seen:
+                res[i] = True
+            else:
+                seen.add(val)
+        return np.array(res)
+    
+    # Examples
+    vec1 = ['a', 'b', 'a', np.nan, 'a', np.nan]
+    print(duplicated(vec2))
+    
+    vec3 = ['gro\u00df', 'GROSS', 'Gro\u00df', 'Gross']
+
+============================================================
+Entity: stri_duplicated_3
+  Name:  stri_duplicated
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    stri_duplicated(c('gro\u00df', 'GROSS', 'Gro\u00df', 'Gross'), strength=1)
+  Python:
+    print(stri_duplicated(vec3, strength=1))
+
+============================================================
+Entity: duplicated_1
+  Name:  duplicated
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    duplicated(c('gro\u00df', 'GROSS', 'Gro\u00df', 'Gross'))
+  Python:
+    print(duplicated(vec3))

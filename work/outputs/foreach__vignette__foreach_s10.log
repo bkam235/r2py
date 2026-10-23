@@ -1,0 +1,93 @@
+Translation log
+Final score: 0.906
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(foreach))
+
+============================================================
+Entity: import_foreach
+  Name:  foreach
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(foreach))
+
+============================================================
+Entity: cfun
+  Name:  cfun
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    cfun <- function(...) NULL
+  Python:
+    def cfun(*args):
+        return None
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- foreach(i=1:4, .combine='cfun', .multicombine=TRUE) %do% rnorm(4)
+  Python:
+    x = [np.random.randn(4) for i in range(1, 5)]
+    # In R, .combine='cfun' with .multicombine=TRUE passes all results as arguments to cfun.
+    # Since cfun returns NULL, the result of the combined operation is None.
+    x = cfun(*x)
+
+============================================================
+Entity: foreach
+  Name:  foreach
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    x <- foreach(i=1:4, .combine='cfun', .multicombine=TRUE) %do% rnorm(4)
+
+============================================================
+Entity: rnorm
+  Name:  rnorm
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    x <- foreach(i=1:4, .combine='cfun', .multicombine=TRUE) %do% rnorm(4)
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 0.812
+  control_flow_match:  1.000
+  side_effects:        0.625
+  executed_ok:       True
+
+  R:
+    x
+  Python:
+    print(x)

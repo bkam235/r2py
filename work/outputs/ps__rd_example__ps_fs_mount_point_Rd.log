@@ -1,0 +1,64 @@
+Translation log
+Final score: 0.900
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: import_ps
+  Name:  ps
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: ps_is_supported
+  Name:  ps_is_supported
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: is_cran_check
+  Name:  is_cran_check
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: ps_fs_mount_point
+  Name:  ps_fs_mount_point
+  Kind:  FunctionCall
+  Score: 0.900
+  side_effects:        0.900
+  executed_ok:       True
+
+  R:
+    ps_fs_mount_point(".")
+  Python:
+    mount_point = None
+    for partition in psutil.disk_partitions():
+        if os.path.abspath(".") .startswith(partition.mountpoint):
+            mount_point = partition.mountpoint
+            break
+    
+    print(mount_point)

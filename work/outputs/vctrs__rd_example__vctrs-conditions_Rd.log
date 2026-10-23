@@ -1,0 +1,150 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: maybe_lossy_cast
+  Name:  maybe_lossy_cast
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    maybe_lossy_cast(
+      c("foo", "bar"),
+      NA,
+      "",
+      lossy = c(FALSE, FALSE),
+      x_arg = "",
+      to_arg = ""
+    )
+  Python:
+    def maybe_lossy_cast(result, x, to, lossy=None, locations=None, loss_type="precision", x_arg="", to_arg="", deprecation=False):
+        if lossy is None or not any(lossy):
+            return result
+        
+        if deprecation:
+            # In the R source, this issues a warning and returns the result
+            print(f"Warning: Coercion with lossy casts from {x_arg} to {to_arg} is deprecated.")
+            return result
+        
+        if locations is None:
+            locations = [i for i, val in enumerate(lossy) if val]
+        
+        raise LossyCastError(
+            x=x, to=to, result=result, locations=locations, 
+            loss_type=loss_type, x_arg=x_arg, to_arg=to_arg
+        )
+    res1 = maybe_lossy_cast(
+        ["foo", "bar"],
+        None,
+        "",
+        lossy=[False, False],
+        x_arg="",
+        to_arg=""
+    )
+    print(res1)
+    
+    # If `lossy` has any `True`, an error is thrown:
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(maybe_lossy_cast(
+      c("foo", "bar"),
+      NA,
+      "",
+      lossy = c(FALSE, TRUE),
+      x_arg = "",
+      to_arg = ""
+    ))
+  Python:
+    try:
+        maybe_lossy_cast(
+            ["foo", "bar"],
+            None,
+            "",
+            lossy=[False, True],
+            x_arg="",
+            to_arg=""
+        )
+    except LossyCastError as e:
+        print(f"Caught expected error: {e}")
+    
+    # Unless lossy casts are allowed:
+    # We wrap the call in a lambda to simulate the R expression passing
+
+============================================================
+Entity: allow_lossy_cast
+  Name:  allow_lossy_cast
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    allow_lossy_cast(
+      maybe_lossy_cast(
+        c("foo", "bar"),
+        NA,
+        "",
+        lossy = c(FALSE, TRUE),
+        x_arg = "",
+        to_arg = ""
+      )
+    )
+  Python:
+    def allow_lossy_cast(expr_func, x_ptype=None, to_ptype=None):
+        try:
+            return expr_func()
+        except LossyCastError as e:
+            # Simplified ptype check: in a real scenario, this would check dtypes
+            if x_ptype is not None:
+                # Dummy check to simulate vec_is
+                pass 
+            if to_ptype is not None:
+                # Dummy check to simulate vec_is
+                pass
+            # Equivalent to invokeRestart: return the result stored in the error
+            return e.result
+    
+    # Most of the time, `maybe_lossy_cast()` returns its input normally:
+    res2 = allow_lossy_cast(
+        lambda: maybe_lossy_cast(
+            ["foo", "bar"],
+            None,
+            "",
+            lossy=[False, True],
+            x_arg="",
+            to_arg=""
+        )
+    )
+    print(res2)

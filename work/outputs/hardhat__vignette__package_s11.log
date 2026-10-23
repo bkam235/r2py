@@ -1,0 +1,87 @@
+Translation log
+Final score: 0.927
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(hardhat))
+
+============================================================
+Entity: import_hardhat
+  Name:  hardhat
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(hardhat))
+
+============================================================
+Entity: multi_outcome
+  Name:  multi_outcome
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    multi_outcome <- mold(bill_length_mm + bill_depth_mm ~ body_mass_g + species, penguins)
+  Python:
+    outcomes_r = ['bill_length_mm', 'bill_depth_mm']
+    predictors_r = ['body_mass_g', 'species']
+    
+    outcomes = [column_mapping.get(c, c) for c in outcomes_r]
+    predictors = [column_mapping.get(c, c) for c in predictors_r]
+    
+    # Prepare data for regression
+    df_encoded = pd.get_dummies(df_penguins, columns=['species'], drop_first=True)
+    # Re-identify X columns based on the mapping and the dummy variables created
+    x_cols = [predictors[0]] + [col for col in df_encoded.columns if 'species_' in col]
+    
+    # In R, simple_lm_bridge(multi_outcome) fits a linear model for each outcome
+
+============================================================
+Entity: simple_lm_bridge
+  Name:  simple_lm_bridge
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    simple_lm_bridge(multi_outcome)
+  Python:
+    results = {}
+    for outcome in outcomes:
+        X = df_encoded[x_cols]
+        X = sm.add_constant(X)
+        y = df_encoded[outcome]
+        
+        # Handle potential NaNs to mimic R's default na.omit in lm()
+        mask = y.notna() & X.notna().all(axis=1)
+        model = sm.OLS(y[mask], X[mask].astype(float)).fit()
+        results[outcome] = model
+    
+    # Output formatting to match the behavior of a "bridge" output in hardhat/lm
+    for outcome, model in results.items():
+        print(f"Outcome: {outcome}")
+        print(model.params)
+        print("-" * 20)

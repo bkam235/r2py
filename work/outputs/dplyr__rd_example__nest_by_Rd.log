@@ -1,0 +1,277 @@
+Translation log
+Final score: 0.895
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: nest_by
+  Name:  nest_by
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    iris |> nest_by(Species)
+  Python:
+    def nest_by(df, column):
+        # R's nest_by creates a row for each group and a 'data' column containing the subset
+        return df.groupby(column).apply(lambda x: pd.Series({'data': x})).reset_index()
+    
+    # iris |> nest_by(Species)
+    print(nest_by(iris, 'Species'))
+    
+    # starwars |> nest_by(species)
+
+============================================================
+Entity: nest_by_1
+  Name:  nest_by
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    starwars |> nest_by(species)
+  Python:
+    print(nest_by(starwars, 'species'))
+    
+    # models <- mtcars |> nest_by(cyl) |> mutate(model = list(lm(mpg ~ wt, data = data)))
+
+============================================================
+Entity: models
+  Name:  models
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    models <- mtcars |>
+      nest_by(cyl) |>
+      mutate(model = list(lm(mpg ~ wt, data = data)))
+  Python:
+    def fit_lm(df):
+        X = df[['wt']]
+        y = df['mpg']
+        return OLS(y, tools.add_constant(X)).fit()
+    
+    models_nested = nest_by(mtcars, 'cyl')
+    models_nested['model'] = models_nested['data'].apply(fit_lm)
+    models = models_nested
+
+============================================================
+Entity: nest_by_2
+  Name:  nest_by
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      nest_by(cyl) |>
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      mutate(model = list(lm(mpg ~ wt, data = data)))
+
+============================================================
+Entity: models_1
+  Name:  models
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    models
+  Python:
+    print(models)
+    
+    # models |> summarise(rsq = summary(model)$r.squared)
+    # In R, summarise on a rowwise df results in one value per group
+
+============================================================
+Entity: summarise
+  Name:  summarise
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    models |> summarise(rsq = summary(model)$r.squared)
+  Python:
+    rsq_res = models[['cyl', 'model']].copy()
+    rsq_res['rsq'] = rsq_res['model'].apply(lambda m: m.rsquared)
+    print(rsq_res[['cyl', 'rsq']])
+    
+    # models |> summarise(broom::glance(model))
+
+============================================================
+Entity: requireNamespace
+  Name:  requireNamespace
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    if (requireNamespace("broom", quietly = TRUE)) withAutoprint({ # examplesIf
+
+============================================================
+Entity: summarise_1
+  Name:  summarise
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    models |> summarise(broom::glance(model))
+  Python:
+    def glance(m):
+        return pd.Series({
+            'r.squared': m.rsquared,
+            'adj.r.squared': m.rsquared_adj,
+            'sigma': np.sqrt(m.scale),
+            'statistic': m.f_pvalue,
+            'p.value': m.f_pvalue
+        })
+    
+    glance_res = models[['cyl', 'model']].copy()
+    glance_df = models['model'].apply(glance).reset_index(drop=True)
+    glance_df.insert(0, 'cyl', models['cyl'].values)
+    print(glance_df)
+    
+    # models |> reframe(broom::tidy(model))
+
+============================================================
+Entity: reframe
+  Name:  reframe
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    models |> reframe(broom::tidy(model))
+  Python:
+    def tidy(m):
+        return pd.DataFrame({
+            'term': m.params.index,
+            'estimate': m.params.values,
+            'std.error': m.bse.values,
+            'p.value': m.pvalues.values
+        })
+    
+    tidy_list = models['model'].apply(tidy).tolist()
+    reframe_tidy = pd.concat(tidy_list).reset_index(drop=True)
+    print(reframe_tidy)
+    
+    # models |> reframe(data)
+
+============================================================
+Entity: reframe_1
+  Name:  reframe
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    models |> reframe(data)
+  Python:
+    reframe_data = pd.concat(models['data'].tolist()).reset_index(drop=True)
+    print(reframe_data)

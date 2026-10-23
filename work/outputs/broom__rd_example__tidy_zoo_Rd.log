@@ -1,0 +1,354 @@
+Translation log
+Final score: 0.279
+Data score:  0.013
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_broom
+  Name:  broom
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_installed(c("zoo", "ggplot2"))) withAutoprint({ # examplesIf
+
+============================================================
+Entity: import_zoo
+  Name:  zoo
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(zoo)
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(ggplot2)
+
+============================================================
+Entity: set.seed
+  Name:  set.seed
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    set.seed(1071)
+  Python:
+    np.random.seed(1071)
+    random.seed(1071)
+    
+    # Z.index <- as.Date(sample(12450:12500, 10))
+    # Note: R's Date origin is 1970-01-01. 12450 is approx 34 years later.
+
+============================================================
+Entity: Z.index
+  Name:  Z.index
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    Z.index <- as.Date(sample(12450:12500, 10))
+  Python:
+    dates_raw = np.random.choice(np.arange(12450, 12501), 10, replace=False)
+    Z_index = pd.to_datetime(dates_raw, unit='D', origin='1970-01-01')
+    
+    # Z.data <- matrix(rnorm(30), ncol = 3)
+    # colnames(Z.data) <- c("Aa", "Bb", "Cc")
+
+============================================================
+Entity: Z.data
+  Name:  Z.data
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    Z.data <- matrix(rnorm(30), ncol = 3)
+  Python:
+    Z_data = np.random.randn(10, 3)
+
+============================================================
+Entity: colnames(Z.data)
+  Name:  colnames(Z.data)
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    colnames(Z.data) <- c("Aa", "Bb", "Cc")
+  Python:
+    columns = ["Aa", "Bb", "Cc"]
+    
+    # Z <- zoo(Z.data, Z.index)
+
+============================================================
+Entity: Z
+  Name:  Z
+  Kind:  Variable
+  Score: 0.201
+  type_match:          0.002
+  control_flow_match:  1.000
+  data_output:         0.002
+  variable_output:     0.002
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    Z <- zoo(Z.data, Z.index)
+  Python:
+    Z = pd.DataFrame(Z_data, index=Z_index, columns=columns)
+    
+    # tidy(Z)
+    # broom::tidy for zoo converts wide data to long format
+
+============================================================
+Entity: tidy
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.018
+  type_match:          0.017
+  control_flow_match:  0.017
+  data_output:         0.017
+  variable_output:     0.017
+  callable_output:     0.017
+  side_effects:        0.025
+  executed_ok:       True
+
+  R:
+    tidy(Z)
+  Python:
+    tidy_Z = Z.reset_index().melt(id_vars='index', var_name='series', value_name='value')
+    print(tidy_Z)
+    
+    # ggplot(tidy(Z), aes(index, value, color = series)) + geom_line()
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.111
+  type_match:          0.013
+  control_flow_match:  0.013
+  data_output:         0.013
+  variable_output:     0.013
+  callable_output:     0.013
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(tidy(Z), aes(index, value, color = series)) +
+  Python:
+    p1 = (ggplot(tidy_Z, aes('index', 'value', color='series')) 
+
+============================================================
+Entity: geom_line
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.012
+  type_match:          0.011
+  control_flow_match:  0.011
+  data_output:         0.011
+  variable_output:     0.011
+  callable_output:     0.011
+  side_effects:        0.017
+  executed_ok:       True
+
+  R:
+      geom_line()
+  Python:
+         + geom_line())
+    print(p1)
+    
+    # ggplot(tidy(Z), aes(index, value)) + geom_line() + facet_wrap(~series, ncol = 1)
+
+============================================================
+Entity: ggplot_1
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.111
+  type_match:          0.013
+  control_flow_match:  0.013
+  data_output:         0.013
+  variable_output:     0.013
+  callable_output:     0.013
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(tidy(Z), aes(index, value)) +
+  Python:
+    p2 = (ggplot(tidy_Z, aes('index', 'value')) 
+
+============================================================
+Entity: geom_line_1
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.111
+  type_match:          0.013
+  control_flow_match:  0.013
+  data_output:         0.013
+  variable_output:     0.013
+  callable_output:     0.013
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      geom_line() +
+  Python:
+         + geom_line() 
+
+============================================================
+Entity: facet_wrap
+  Name:  facet_wrap
+  Kind:  FunctionCall
+  Score: 0.012
+  type_match:          0.011
+  control_flow_match:  0.011
+  data_output:         0.011
+  variable_output:     0.011
+  callable_output:     0.011
+  side_effects:        0.017
+  executed_ok:       True
+
+  R:
+      facet_wrap(~series, ncol = 1)
+  Python:
+         + facet_wrap('series', ncol=1))
+    print(p2)
+    
+    # Zrolled <- rollmean(Z, 5)
+
+============================================================
+Entity: Zrolled
+  Name:  Zrolled
+  Kind:  Variable
+  Score: 0.201
+  type_match:          0.002
+  control_flow_match:  1.000
+  data_output:         0.002
+  variable_output:     0.002
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    Zrolled <- rollmean(Z, 5)
+  Python:
+    Zrolled = Z.rolling(window=5).mean()
+    
+    # ggplot(tidy(Zrolled), aes(index, value, color = series)) + geom_line()
+
+============================================================
+Entity: ggplot_2
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.111
+  type_match:          0.013
+  control_flow_match:  0.013
+  data_output:         0.013
+  variable_output:     0.013
+  callable_output:     0.013
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    ggplot(tidy(Zrolled), aes(index, value, color = series)) +
+  Python:
+    tidy_Zrolled = Zrolled.reset_index().melt(id_vars='index', var_name='series', value_name='value')
+    p3 = (ggplot(tidy_Zrolled, aes('index', 'value', color='series')) 
+
+============================================================
+Entity: geom_line_2
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.012
+  type_match:          0.011
+  control_flow_match:  0.011
+  data_output:         0.011
+  variable_output:     0.011
+  callable_output:     0.011
+  side_effects:        0.017
+  executed_ok:       True
+
+  R:
+      geom_line()
+  Python:
+         + geom_line())
+    print(p3)

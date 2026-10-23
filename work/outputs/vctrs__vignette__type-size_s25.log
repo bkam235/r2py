@@ -1,0 +1,83 @@
+Translation log
+Final score: 0.944
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: vec_size_common
+  Name:  vec_size_common
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_size_common(1:3, 1:3, 1:3)
+  Python:
+    def vec_size_common(*args):
+        # In R's vctrs, vec_size_common returns the common size if all 
+        # are the same, or 1 if they differ (following R's recycling rules)
+        # except if any are length 0, it returns 0.
+        sizes = [len(x) if hasattr(x, '__len__') else 1 for x in args]
+        
+        if any(s == 0 for s in sizes):
+            return 0
+        
+        if all(s == sizes[0] for s in sizes):
+            return sizes[0]
+        
+        return 1
+    
+    # vec_size_common(1:3, 1:3, 1:3)
+    print(vec_size_common(list(range(1, 4)), list(range(1, 4)), list(range(1, 4))))
+    
+    # vec_size_common(1:10, 1)
+
+============================================================
+Entity: vec_size_common_1
+  Name:  vec_size_common
+  Kind:  FunctionCall
+  Score: 0.833
+  side_effects:        0.833
+  executed_ok:       True
+
+  R:
+    vec_size_common(1:10, 1)
+  Python:
+    print(vec_size_common(list(range(1, 11)), [1]))
+    
+    # vec_size_common(integer(), 1)
+
+============================================================
+Entity: vec_size_common_2
+  Name:  vec_size_common
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_size_common(integer(), 1)
+  Python:
+    print(vec_size_common([], [1]))

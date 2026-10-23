@@ -1,0 +1,95 @@
+Translation log
+Final score: 0.812
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- sample(1:10)
+  Python:
+    # x is provided by the data shim as a list/array
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    df <- data.frame(x = x)
+  Python:
+    df = pd.DataFrame({'x': x})
+
+============================================================
+Entity: vec_slice
+  Name:  vec_slice
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_slice(x, 5:6)
+  Python:
+    # vec_slice(x, 5:6) - R indices are 1-based. 5:6 refers to 5th and 6th elements.
+    # In Python (0-indexed), these are indices 4 and 5.
+    res_x = np.array(x)[4:6]
+    print(f"[1] {' '.join(map(str, res_x))}")
+
+============================================================
+Entity: vec_slice_1
+  Name:  vec_slice
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    vec_slice(df, 5:6)
+  Python:
+    # vec_slice(df, 5:6) on a data.frame slices rows.
+    res_df = df.iloc[4:6].reset_index(drop=True)
+    # R's data.frame printing for this case:
+    #    x
+    # 1  9
+    # 2  7
+    print("   x")
+    for i, val in enumerate(res_df['x'], 1):
+        print(f"{i} {val}")

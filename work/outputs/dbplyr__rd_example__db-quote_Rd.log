@@ -1,0 +1,127 @@
+Translation log
+Final score: 0.979
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dbplyr))
+
+============================================================
+Entity: import_dbplyr
+  Name:  dbplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dbplyr))
+
+============================================================
+Entity: con
+  Name:  con
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    con <- simulate_dbi()
+  Python:
+    def simulate_dbi():
+        """Simulates the R simulate_dbi() function."""
+        return {}
+    con = simulate_dbi()
+
+============================================================
+Entity: sql_escape_logical
+  Name:  sql_escape_logical
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sql_escape_logical(con, c(TRUE, FALSE, NA))
+  Python:
+    def sql_escape_logical(con, values):
+        res = [str(val).upper() if pd.notna(val) else "NULL" for val in values]
+        return res
+    logical_vals = [True, False, np.nan]
+    res_logical = sql_escape_logical(con, logical_vals)
+    r_print_vector(res_logical)
+
+============================================================
+Entity: sql_escape_date
+  Name:  sql_escape_date
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sql_escape_date(con, Sys.Date())
+  Python:
+    def sql_escape_date(con, val):
+        if pd.isna(val):
+            return "NULL"
+        # R's sql_escape_date wraps the date in single quotes
+        return f"'{val}'"
+    res_date = sql_escape_date(con, date.today())
+    r_print_vector(res_date)
+
+============================================================
+Entity: sql_escape_date_1
+  Name:  sql_escape_date
+  Kind:  FunctionCall
+  Score: 0.894
+  side_effects:        0.894
+  executed_ok:       True
+
+  R:
+    sql_escape_date(con, Sys.time())
+  Python:
+    # Using a fixed timestamp or datetime.now() to match R's Sys.time()
+    res_time = sql_escape_date(con, datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3])
+    r_print_vector(res_time)
+
+============================================================
+Entity: sql_escape_raw
+  Name:  sql_escape_raw
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sql_escape_raw(con, charToRaw("hi"))
+  Python:
+    def sql_escape_raw(con, val):
+        # R's charToRaw("hi") is 68 69 in hex
+        if isinstance(val, str):
+            hex_val = val.encode('utf-8').hex().upper()
+        else:
+            hex_val = val.hex().upper()
+        return f"X'{hex_val}'"
+    
+    def r_print_vector(vec):
+        """Helper to mimic R's printing of character vectors."""
+        if not isinstance(vec, list):
+            vec = [vec]
+        formatted = '  '.join([f'"{v}"' for v in vec])
+        print(f"[1] {formatted}")
+    
+    # Simulation of the R script
+    res_raw = sql_escape_raw(con, "hi")
+    r_print_vector(res_raw)

@@ -1,0 +1,487 @@
+Translation log
+Final score: 0.346
+Data score:  0.500
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_broom
+  Name:  broom
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_installed("ggplot2")) withAutoprint({ # examplesIf
+  Python:
+    # No-op in Python
+    
+    # Print nottem as R does
+    print_nottem(nottem)
+    
+    nottem_series = pd.Series(nottem)
+
+============================================================
+Entity: d1
+  Name:  d1
+  Kind:  Variable
+  Score: 0.203
+  type_match:          0.003
+  control_flow_match:  1.000
+  data_output:         0.003
+  variable_output:     0.003
+  side_effects:        0.004
+  executed_ok:       True
+
+  R:
+    d1 <- decompose(nottem)
+  Python:
+    # R's decompose(nottem) uses additive model and moving averages.
+    res1 = seasonal_decompose(nottem_series, model='additive', period=12)
+    d1 = res1
+
+============================================================
+Entity: d2
+  Name:  d2
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    d2 <- stl(nottem, s.window = "periodic", robust = TRUE)
+  Python:
+    # stl(nottem, s.window = "periodic", robust = TRUE)
+    # In statsmodels, periodic is simulated by a large seasonal window. 
+    # Must be an odd integer >= 3.
+    res2 = STL(nottem_series, period=12, seasonal=101, robust=True).fit()
+    d2 = res2
+    
+    # Helper for broom::tidy
+
+============================================================
+Entity: cbind
+  Name:  cbind
+  Kind:  FunctionCall
+  Score: 0.002
+  type_match:          0.002
+  control_flow_match:  0.002
+  data_output:         0.002
+  variable_output:     0.002
+  callable_output:     0.002
+  side_effects:        0.002
+  executed_ok:       True
+
+  R:
+    cbind(
+      tidy(nottem), augment(d1),
+      augment(d2)
+    )
+  Python:
+    def tidy(ts_data):
+        return pd.DataFrame({'x': ts_data})
+    
+    # Helper for broom::augment
+    def augment_decompose(res, original):
+        # .seasadj in R's decompose is original - seasonal
+        return pd.DataFrame({
+            'seasonal': res.seasonal.values,
+            'trend': res.trend.values,
+            'random': res.resid.values,
+            '.seasadj': (original - res.seasonal).values
+        })
+    
+    def augment_stl(res, original):
+        return pd.DataFrame({
+            'seasonal': res.seasonal,
+            'trend': res.trend,
+            'random': res.resid,
+            '.seasadj': (original - res.seasonal).values
+        })
+    
+    # cbind(tidy(nottem), augment(d1), augment(d2))
+    combined = pd.concat([
+        tidy(nottem_series),
+        augment_decompose(res1, nottem_series),
+        augment_stl(res2, nottem_series).add_prefix('stl_')
+    ], axis=1)
+    print(combined)
+    
+    # Visually compare seasonal decompositions
+
+============================================================
+Entity: import_tibble
+  Name:  tibble
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(tibble)
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(dplyr)
+
+============================================================
+Entity: import_tidyr
+  Name:  tidyr
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(tidyr)
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(ggplot2)
+
+============================================================
+Entity: decomps
+  Name:  decomps
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    decomps <- tibble(
+      # turn the ts objects into data frames.
+      series = list(as.data.frame(nottem), as.data.frame(nottem)),
+      # add the models in, one for each row.
+      decomp = c("decompose", "stl"),
+      model = list(d1, d2)
+    ) |>
+      rowwise() |>
+      # pull out the fitted data using broom::augment.
+      mutate(augment = list(broom::augment(model))) |>
+      ungroup() |>
+      # unnest the data frames into a tidy arrangement of
+      # the series next to its seasonal decomposition, grouped
+      # by the method (stl or decompose).
+      group_by(decomp) |>
+      unnest(c(series, augment)) |>
+      mutate(index = 1:n()) |>
+      ungroup() |>
+      select(decomp, index, x, adjusted = .seasadj)
+  Python:
+    decomps_list = [
+        {'series': pd.DataFrame({'x': nottem_series}), 'decomp': 'decompose', 'model': res1},
+        {'series': pd.DataFrame({'x': nottem_series}), 'decomp': 'stl', 'model': res2}
+    ]
+    decomps_df = pd.DataFrame(decomps_list)
+
+============================================================
+Entity: tibble
+  Name:  tibble
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    decomps <- tibble(
+      # turn the ts objects into data frames.
+      series = list(as.data.frame(nottem), as.data.frame(nottem)),
+      # add the models in, one for each row.
+      decomp = c("decompose", "stl"),
+      model = list(d1, d2)
+    ) |>
+
+============================================================
+Entity: rowwise
+  Name:  rowwise
+  Kind:  FunctionCall
+  Score: 0.483
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      rowwise() |>
+  Python:
+    for idx, row in decomps_df.iterrows():
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      mutate(augment = list(broom::augment(model))) |>
+  Python:
+    def get_augment(row):
+        if row['decomp'] == 'decompose':
+            return augment_decompose(row['model'], nottem_series)
+        else:
+            return augment_stl(row['model'], nottem_series)
+    
+    decomps_df['augment'] = decomps_df.apply(get_augment, axis=1)
+    
+    final_data = []
+
+============================================================
+Entity: ungroup
+  Name:  ungroup
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      ungroup() |>
+
+============================================================
+Entity: group_by
+  Name:  group_by
+  Kind:  FunctionCall
+  Score: 0.012
+  type_match:          0.014
+  control_flow_match:  0.014
+  data_output:         0.014
+  variable_output:     0.014
+  callable_output:     0.014
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      group_by(decomp) |>
+  Python:
+    
+    decomps = pd.concat(final_data).reset_index(drop=True)
+
+============================================================
+Entity: unnest
+  Name:  unnest
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      unnest(c(series, augment)) |>
+  Python:
+        series_df = row['series']
+        aug_df = row['augment']
+        temp = pd.concat([series_df, aug_df], axis=1)
+        temp['decomp'] = row['decomp']
+        final_data.append(temp)
+
+============================================================
+Entity: mutate_1
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      mutate(index = 1:n()) |>
+
+============================================================
+Entity: ungroup_1
+  Name:  ungroup
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      ungroup() |>
+  Python:
+    decomps['index'] = decomps.groupby('decomp').cumcount() + 1
+
+============================================================
+Entity: select
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+      select(decomp, index, x, adjusted = .seasadj)
+  Python:
+    decomps = decomps[['decomp', 'index', 'x', '.seasadj']].rename(columns={'.seasadj': 'adjusted'})
+    
+    # Plotting
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.483
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(decomps) +
+  Python:
+    plot = (
+        ggplot(decomps, aes(x='index'))
+
+============================================================
+Entity: geom_line
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.483
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_line(aes(x = index, y = x), colour = "black") +
+  Python:
+        + geom_line(aes(y='x'), colour="black")
+
+============================================================
+Entity: geom_line_1
+  Name:  geom_line
+  Kind:  FunctionCall
+  Score: 0.483
+  type_match:          0.500
+  control_flow_match:  0.500
+  data_output:         0.500
+  variable_output:     0.500
+  callable_output:     0.500
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_line(aes(
+        x = index, y = adjusted, colour = decomp,
+        group = decomp
+      ))
+  Python:
+        + geom_line(aes(y='adjusted', colour='decomp', group='decomp'))
+    )
+    
+    print(plot)

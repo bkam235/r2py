@@ -1,0 +1,91 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(testthat))
+
+============================================================
+Entity: import_testthat
+  Name:  testthat
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(testthat))
+
+============================================================
+Entity: dice
+  Name:  dice
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    dice <- function() {
+      sample(6, 1)
+    }
+  Python:
+    def dice():
+        return random.randint(1, 6)
+    
+    def test_dice_returns_different_numbers():
+
+============================================================
+Entity: local_seed
+  Name:  local_seed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      withr::local_seed(1234)
+  Python:
+        random.seed(1234)
+
+============================================================
+Entity: expect_equal
+  Name:  expect_equal
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      expect_equal(dice(), 4)
+  Python:
+        assert dice() == 4
+
+============================================================
+Entity: expect_equal_1
+  Name:  expect_equal
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      expect_equal(dice(), 2)
+  Python:
+        assert dice() == 2
+
+============================================================
+Entity: expect_equal_2
+  Name:  expect_equal
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      expect_equal(dice(), 6)
+  Python:
+        assert dice() == 6

@@ -1,0 +1,307 @@
+Translation log
+Final score: 0.930
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: recipe
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    recipe(~., data = iris) |>
+  Python:
+    class Recipe:
+        def __init__(self, formula, data):
+            self.formula = formula
+            self.data = pd.DataFrame(data)
+            self.steps = []
+            self.var_info = {}
+            self._prep_done = False
+            
+            # Initialize var_info to mimic R recipes
+            self.var_info = {
+                'variable': list(self.data.columns),
+                'type': [['double', 'numeric']] * len(self.data.columns),
+                'role': ['predictor'] * len(self.data.columns)
+            }
+    rec_iris = Recipe(None, df_iris)
+
+============================================================
+Entity: step_rename
+  Name:  step_rename
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      step_rename(Sepal_Width = Sepal.Width) |>
+  Python:
+        def step_rename(self, **rename_map):
+            # rename_map is {new_name: old_name}
+            self.steps.append({'type': 'rename', 'params': rename_map})
+            return self
+    rec_iris = rec_iris.step_rename(Sepal_Width='Sepal.Width')
+
+============================================================
+Entity: prep
+  Name:  prep
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      prep() |>
+  Python:
+        def prep(self):
+            self._prep_done = True
+            return self
+    rec_iris = rec_iris.prep()
+
+============================================================
+Entity: bake
+  Name:  bake
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      bake(new_data = NULL) |>
+  Python:
+        def bake(self, new_data=None):
+            data = self.data.copy() if new_data is None else pd.DataFrame(new_data).copy()
+            
+            for step in self.steps:
+                if step['type'] == 'rename':
+                    # In R step_rename(New = Old), so we swap keys/values for pandas rename
+                    # rename_map is {new: old}, but pd.rename needs {old: new}
+                    pd_rename = {v: k for k, v in step['params'].items()}
+                    data = data.rename(columns=pd_rename)
+            
+            return data
+    baked_iris = rec_iris.bake(new_data=None)
+
+============================================================
+Entity: slice
+  Name:  slice
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      slice(1:5)
+  Python:
+    def slice_df(df, range_idx):
+        # R slice(1:5) is 0-indexed 0:5 in python
+        return df.iloc[range_idx[0]-1 : range_idx[-1]]
+    
+    # --- Main Script ---
+    
+    # Iris section
+    df_iris = pd.DataFrame(iris)
+    result_iris = slice_df(baked_iris, [1, 5])
+    print(result_iris)
+    
+    # mtcars section
+
+============================================================
+Entity: vars
+  Name:  vars
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    vars <- c(var1 = "cyl", var2 = "am")
+  Python:
+    vars_vec = {"var1": "cyl", "var2": "am"} # c(var1 = "cyl", var2 = "am")
+    df_mtcars = pd.DataFrame(mtcars)
+
+============================================================
+Entity: car_rec
+  Name:  car_rec
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    car_rec <-
+      recipe(~., data = mtcars) |>
+      step_rename(!!!vars)
+  Python:
+    car_rec = Recipe(None, df_mtcars)
+
+============================================================
+Entity: recipe_1
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      recipe(~., data = mtcars) |>
+
+============================================================
+Entity: step_rename_1
+  Name:  step_rename
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      step_rename(!!!vars)
+  Python:
+    car_rec = car_rec.step_rename(**vars_vec)
+    
+    # car_rec |> prep() |> bake(new_data = NULL)
+
+============================================================
+Entity: prep_1
+  Name:  prep
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      prep() |>
+
+============================================================
+Entity: bake_1
+  Name:  bake
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      bake(new_data = NULL)
+  Python:
+    car_baked = car_rec.prep().bake(new_data=None)
+    print(car_baked)
+    
+    # car_rec |> tidy(number = 1)
+
+============================================================
+Entity: tidy
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      tidy(number = 1)
+  Python:
+        def tidy(self, number=1):
+            step = self.steps[number-1]
+            # Simplified tidy output to match the expected structure
+            return {
+                'step': number,
+                'type': step['type'],
+                'params': step['params']
+            }
+    print(car_rec.tidy(number=1))
+    
+    # Assign to global namespace for verifier
+    vars = list(vars_vec.values())

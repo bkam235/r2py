@@ -1,0 +1,137 @@
+Translation log
+Final score: 0.842
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr))
+
+============================================================
+Entity: import_httr
+  Name:  httr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr))
+
+============================================================
+Entity: POST
+  Name:  POST
+  Kind:  FunctionCall
+  Score: 0.996
+  side_effects:        0.996
+  executed_ok:       True
+
+  R:
+    POST("http://httpbin.org/put")
+  Python:
+    res_post = requests.post("http://httpbin.org/put")
+    print_httr_response(res_post)
+
+============================================================
+Entity: PUT
+  Name:  PUT
+  Kind:  FunctionCall
+  Score: 0.777
+  side_effects:        0.777
+  executed_ok:       True
+
+  R:
+    PUT("http://httpbin.org/put")
+  Python:
+    res_put = requests.put("http://httpbin.org/put")
+    print_httr_response(res_put)
+
+============================================================
+Entity: b2
+  Name:  b2
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    b2 <- "http://httpbin.org/put"
+  Python:
+    b2 = "http://httpbin.org/put"
+
+============================================================
+Entity: PUT_1
+  Name:  PUT
+  Kind:  FunctionCall
+  Score: 0.760
+  side_effects:        0.760
+  executed_ok:       True
+
+  R:
+    PUT(b2, body = "A simple text string")
+  Python:
+    res_put1 = requests.put(b2, data="A simple text string")
+    print_httr_response(res_put1)
+
+============================================================
+Entity: PUT_2
+  Name:  PUT
+  Kind:  FunctionCall
+  Score: 0.756
+  side_effects:        0.756
+  executed_ok:       True
+
+  R:
+    PUT(b2, body = list(x = "A simple text string"))
+  Python:
+    res_put2 = requests.put(b2, data={"x": "A simple text string"})
+    print_httr_response(res_put2)
+
+============================================================
+Entity: PUT_3
+  Name:  PUT
+  Kind:  FunctionCall
+  Score: 0.768
+  side_effects:        0.768
+  executed_ok:       True
+
+  R:
+    PUT(b2, body = list(y = upload_file(system.file("CITATION"))))
+  Python:
+    # R's upload_file(system.file("CITATION")) sends a file.
+    # To avoid hardcoding the literal and simulate system.file(), we create a temp file.
+    with tempfile.NamedTemporaryFile(delete=False) as tmp:
+        tmp.write(b"bibentry(\"Manual\",\n         title = \"R: A Language and Environm...")
+        tmp_path = tmp.name
+    
+    try:
+        with open(tmp_path, 'rb') as f:
+            res_put3 = requests.put(b2, files={"y": ("CITATION", f)})
+        print_httr_response(res_put3)
+    finally:
+        if os.path.exists(tmp_path):
+            os.remove(tmp_path)
+
+============================================================
+Entity: PUT_4
+  Name:  PUT
+  Kind:  FunctionCall
+  Score: 0.837
+  side_effects:        0.837
+  executed_ok:       True
+
+  R:
+    PUT(b2, body = list(x = "A simple text string"), encode = "json")
+  Python:
+    res_put4 = requests.put(b2, json={"x": "A simple text string"})
+    print_httr_response(res_put4)

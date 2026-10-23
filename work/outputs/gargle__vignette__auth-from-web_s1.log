@@ -1,0 +1,41 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(gargle))
+
+============================================================
+Entity: import_gargle
+  Name:  gargle
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(gargle))
+
+============================================================
+Entity: opts_chunk$set
+  Name:  opts_chunk$set
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    knitr::opts_chunk$set(
+      collapse = TRUE,
+      comment = "#>"
+    )
+  Python:
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.max_rows', None)

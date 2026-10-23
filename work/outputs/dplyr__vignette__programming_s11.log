@@ -1,0 +1,75 @@
+Translation log
+Final score: 0.998
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: vars
+  Name:  vars
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    vars <- c("mpg", "vs")
+  Python:
+    vars = ["mpg", "vs"]
+    
+    # mtcars |> select(all_of(vars))
+    # R's print for mtcars doesn't show the index name 'rownames'
+
+============================================================
+Entity: select
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.997
+  side_effects:        0.997
+  executed_ok:       True
+
+  R:
+    mtcars |> select(all_of(vars))
+  Python:
+    df_select = mtcars[vars]
+    print(df_select.to_string(index=True))
+    
+    # mtcars |> select(!all_of(vars))
+
+============================================================
+Entity: select_1
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.999
+  side_effects:        0.999
+  executed_ok:       True
+
+  R:
+    mtcars |> select(!all_of(vars))
+  Python:
+    df_drop = mtcars.drop(columns=vars)
+    print(df_drop.to_string(index=True))

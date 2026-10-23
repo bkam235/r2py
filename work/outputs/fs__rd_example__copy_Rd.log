@@ -1,0 +1,395 @@
+Translation log
+Final score: 0.966
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(fs))
+
+============================================================
+Entity: import_fs
+  Name:  fs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(fs))
+
+============================================================
+Entity: .old_wd
+  Name:  .old_wd
+  Kind:  Variable
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    .old_wd <- setwd(tempdir())
+  Python:
+    old_wd = os.getcwd()
+    temp_dir = tempfile.mkdtemp()
+    os.chdir(temp_dir)
+    
+    # file_create("foo")
+
+============================================================
+Entity: file_create
+  Name:  file_create
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    file_create("foo")
+  Python:
+    with open("foo", "w") as f:
+        pass
+    
+    # file_copy("foo", "bar")
+
+============================================================
+Entity: file_copy
+  Name:  file_copy
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    file_copy("foo", "bar")
+  Python:
+    shutil.copy("foo", "bar")
+    
+    # try(file_copy("foo", "bar"))
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    try(file_copy("foo", "bar"))
+  Python:
+    try:
+        shutil.copy("foo", "bar")
+    except Exception:
+        pass
+    
+    # file_copy("foo", "bar", overwrite = TRUE)
+
+============================================================
+Entity: file_copy_1
+  Name:  file_copy
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    file_copy("foo", "bar", overwrite = TRUE)
+  Python:
+    shutil.copy("foo", "bar")
+    
+    # file_delete(c("foo", "bar"))
+
+============================================================
+Entity: file_delete
+  Name:  file_delete
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    file_delete(c("foo", "bar"))
+  Python:
+    for f in ["foo", "bar"]:
+        if os.path.exists(f):
+            os.remove(f)
+    
+    # dir_create("foo")
+
+============================================================
+Entity: dir_create
+  Name:  dir_create
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    dir_create("foo")
+  Python:
+    os.mkdir("foo")
+    
+    # files <- file_create(c("foo/bar", "foo/baz"))
+
+============================================================
+Entity: files
+  Name:  files
+  Kind:  Variable
+  Score: 0.960
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    files <- file_create(c("foo/bar", "foo/baz"))
+  Python:
+    files = ["foo/bar", "foo/baz"]
+    for f in files:
+        with open(f, "w") as f_out:
+            pass
+    
+    # file_exists(files)
+
+============================================================
+Entity: file_exists
+  Name:  file_exists
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    file_exists(files)
+  Python:
+    exists = [os.path.exists(f) for f in files]
+    
+    # dir_copy("foo", "foo2")
+
+============================================================
+Entity: dir_copy
+  Name:  dir_copy
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    dir_copy("foo", "foo2")
+  Python:
+    shutil.copytree("foo", "foo2")
+    
+    # file_exists(path("foo2", path_file(files)))
+
+============================================================
+Entity: file_exists_1
+  Name:  file_exists
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    file_exists(path("foo2", path_file(files)))
+  Python:
+    exists_copied = [os.path.exists(os.path.join("foo2", os.path.basename(f))) for f in files]
+    
+    # link_create(path_abs("foo"), "loo")
+
+============================================================
+Entity: link_create
+  Name:  link_create
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    link_create(path_abs("foo"), "loo")
+  Python:
+    os.symlink(os.path.abspath("foo"), "loo")
+    
+    # link_path("loo")
+
+============================================================
+Entity: link_path
+  Name:  link_path
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    link_path("loo")
+  Python:
+    target = os.readlink("loo")
+    
+    # link_copy("loo", "loo2")
+    # R's link_copy copies the symbolic link itself, not the target.
+
+============================================================
+Entity: link_copy
+  Name:  link_copy
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    link_copy("loo", "loo2")
+  Python:
+    target_link = os.readlink("loo")
+    os.symlink(target_link, "loo2")
+    
+    # link_path("loo2")
+
+============================================================
+Entity: link_path_1
+  Name:  link_path
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    link_path("loo2")
+  Python:
+    target2 = os.readlink("loo2")
+    
+    # dir_delete(c("foo", "foo2"))
+
+============================================================
+Entity: dir_delete
+  Name:  dir_delete
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    dir_delete(c("foo", "foo2"))
+  Python:
+    for d in ["foo", "foo2"]:
+        if os.path.isdir(d):
+            shutil.rmtree(d)
+    
+    # link_delete(c("loo", "loo2"))
+
+============================================================
+Entity: link_delete
+  Name:  link_delete
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    link_delete(c("loo", "loo2"))
+  Python:
+    for l in ["loo", "loo2"]:
+        if os.path.exists(l) or os.path.islink(l):
+            os.remove(l)
+    
+    # setwd(.old_wd)
+
+============================================================
+Entity: setwd
+  Name:  setwd
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    setwd(.old_wd)
+  Python:
+    os.chdir(old_wd)
+    # Cleanup the temp directory
+    shutil.rmtree(temp_dir)

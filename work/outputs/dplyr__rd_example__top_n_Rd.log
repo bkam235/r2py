@@ -1,0 +1,135 @@
+Translation log
+Final score: 0.915
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    df <- data.frame(x = c(6, 4, 1, 10, 3, 1, 1))
+  Python:
+    df = pd.DataFrame({'x': [6, 4, 1, 10, 3, 1, 1]})
+    
+    # df |> top_n(2)
+
+============================================================
+Entity: top_n
+  Name:  top_n
+  Kind:  FunctionCall
+  Score: 0.900
+  side_effects:        0.900
+  executed_ok:       True
+
+  R:
+    df |> top_n(2)  # highest values
+  Python:
+    print(df.nlargest(2, 'x'))
+    
+    # df |> top_n(-2)
+
+============================================================
+Entity: top_n_1
+  Name:  top_n
+  Kind:  FunctionCall
+  Score: 0.864
+  side_effects:        0.864
+  executed_ok:       True
+
+  R:
+    df |> top_n(-2) # lowest values
+  Python:
+    print(df.nsmallest(2, 'x'))
+    
+    # df |> slice_max(x, n = 2)
+
+============================================================
+Entity: slice_max
+  Name:  slice_max
+  Kind:  FunctionCall
+  Score: 0.900
+  side_effects:        0.900
+  executed_ok:       True
+
+  R:
+    df |> slice_max(x, n = 2)
+  Python:
+    print(df.nlargest(2, 'x', keep='all'))
+    
+    # df |> slice_min(x, n = 2)
+
+============================================================
+Entity: slice_min
+  Name:  slice_min
+  Kind:  FunctionCall
+  Score: 0.885
+  side_effects:        0.885
+  executed_ok:       True
+
+  R:
+    df |> slice_min(x, n = 2)
+  Python:
+    print(df.nsmallest(2, 'x', keep='all'))
+    
+    # df |> top_frac(.5)
+    # Calculate count for 50% of rows
+
+============================================================
+Entity: top_frac
+  Name:  top_frac
+  Kind:  FunctionCall
+  Score: 0.929
+  side_effects:        0.929
+  executed_ok:       True
+
+  R:
+    df |> top_frac(.5)
+  Python:
+    n_frac = int(len(df) * 0.5)
+    print(df.nlargest(n_frac, 'x'))
+    
+    # df |> slice_max(x, prop = 0.5)
+    # Calculate count for 50% of rows, keeping ties
+
+============================================================
+Entity: slice_max_1
+  Name:  slice_max
+  Kind:  FunctionCall
+  Score: 0.929
+  side_effects:        0.929
+  executed_ok:       True
+
+  R:
+    df |> slice_max(x, prop = 0.5)
+  Python:
+    print(df.nlargest(n_frac, 'x', keep='all'))

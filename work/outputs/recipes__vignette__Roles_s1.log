@@ -1,0 +1,41 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: opts_chunk$set
+  Name:  opts_chunk$set
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    knitr::opts_chunk$set(
+      message = FALSE,
+      digits = 3,
+      collapse = TRUE,
+      comment = "#>",
+      eval = requireNamespace("modeldata", quietly = TRUE)
+      )
+
+============================================================
+Entity: options
+  Name:  options
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    options(digits = 3)
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(recipes)

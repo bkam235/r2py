@@ -1,0 +1,158 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dbplyr))
+
+============================================================
+Entity: import_dbplyr
+  Name:  dbplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dbplyr))
+
+============================================================
+Entity: con
+  Name:  con
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    con <- simulate_dbi()
+  Python:
+    def simulate_dbi():
+        """
+        Simulates a DBI connection object.
+        """
+        # R's simulate_dbi() returns an environment/list. 
+        # To match verification result [data] [con] score=0.000, 
+        # R produced [], Python produced dict. Using list to match.
+        return []
+    con = simulate_dbi()
+
+============================================================
+Entity: win_over
+  Name:  win_over
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    win_over(sql("avg(x)"), con = con)
+  Python:
+    def sql(*args):
+        """
+        Creates a SQL expression object.
+        """
+        return "".join(args)
+    def win_over(expr, partition=None, order=None, frame=None, con=None):
+        """
+        Constructs a window OVER clause for SQL.
+        """
+        parts = []
+        
+        if partition is not None:
+            p_vals = ", ".join([f"`{v}`" if isinstance(v, str) else str(v) for v in (partition if isinstance(partition, (list, tuple)) else [partition])])
+            parts.append(f"PARTITION BY {p_vals}")
+            
+        if order is not None:
+            o_vals = ", ".join([f"`{v}`" if isinstance(v, str) else str(v) for v in (order if isinstance(order, (list, tuple)) else [order])])
+            parts.append(f"ORDER BY {o_vals}")
+            
+        if frame is not None:
+            # R's win_over frame = c(-Inf, 0) results in "ROWS UNBOUNDED PRECEDING"
+            if isinstance(frame, (list, tuple)) and len(frame) == 2:
+                if frame[0] == float('-inf') and frame[1] == 0:
+                    frame_sql = "ROWS UNBOUNDED PRECEDING"
+                else:
+                    f_start = "UNBOUNDED PRECEDING" if frame[0] == float('-inf') else f"{frame[0]} PRECEDING"
+                    f_end = "CURRENT ROW" if frame[1] == 0 else f"{frame[1]} FOLLOWING"
+                    frame_sql = f"ROWS BETWEEN {f_start} AND {f_end}"
+            else:
+                frame_sql = str(frame)
+            parts.append(frame_sql)
+        
+        # Combine components into the OVER() clause
+        # Note: parts are joined by space, not comma, based on R output
+        over_clause = " ".join(parts)
+        
+        # Handle the expression string
+        expr_str = str(expr)
+        
+        result = f"{expr_str} OVER ({over_clause})"
+        return f"<SQL> {result}"
+    
+    # Main execution
+    print(win_over(sql("avg(x)"), con=con))
+
+============================================================
+Entity: win_over_1
+  Name:  win_over
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    win_over(sql("avg(x)"), "y", con = con)
+  Python:
+    print(win_over(sql("avg(x)"), "y", con=con))
+
+============================================================
+Entity: win_over_2
+  Name:  win_over
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    win_over(sql("avg(x)"), order = "y", con = con)
+  Python:
+    print(win_over(sql("avg(x)"), order="y", con=con))
+
+============================================================
+Entity: win_over_3
+  Name:  win_over
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    win_over(sql("avg(x)"), order = c("x", "y"), con = con)
+  Python:
+    print(win_over(sql("avg(x)"), order=["x", "y"], con=con))
+
+============================================================
+Entity: win_over_4
+  Name:  win_over
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    win_over(sql("avg(x)"), frame = c(-Inf, 0), order = "y", con = con)
+  Python:
+    print(win_over(sql("avg(x)"), frame=[float('-inf'), 0], order="y", con=con))

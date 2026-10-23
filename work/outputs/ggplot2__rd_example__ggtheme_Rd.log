@@ -1,0 +1,550 @@
+Translation log
+Final score: 0.894
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: mtcars2
+  Name:  mtcars2
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    mtcars2 <- within(mtcars, {
+      vs <- factor(vs, labels = c("V-shaped", "Straight"))
+      am <- factor(am, labels = c("Automatic", "Manual"))
+      cyl  <- factor(cyl)
+      gear <- factor(gear)
+    })
+  Python:
+    mtcars2 = pd.DataFrame(mtcars).copy()
+
+============================================================
+Entity: vs
+  Name:  vs
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      vs <- factor(vs, labels = c("V-shaped", "Straight"))
+  Python:
+    mtcars2['vs'] = mtcars2['vs'].map({0: "V-shaped", 1: "Straight"})
+
+============================================================
+Entity: am
+  Name:  am
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      am <- factor(am, labels = c("Automatic", "Manual"))
+  Python:
+    mtcars2['am'] = mtcars2['am'].map({0: "Automatic", 1: "Manual"})
+
+============================================================
+Entity: cyl
+  Name:  cyl
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      cyl  <- factor(cyl)
+  Python:
+    mtcars2['cyl'] = mtcars2['cyl'].astype(str)
+
+============================================================
+Entity: gear
+  Name:  gear
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      gear <- factor(gear)
+  Python:
+    mtcars2['gear'] = mtcars2['gear'].astype(str)
+    
+    # Base plot p1
+
+============================================================
+Entity: p1
+  Name:  p1
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 <- ggplot(mtcars2) +
+      geom_point(aes(x = wt, y = mpg, colour = gear)) +
+      labs(
+        title = "Fuel economy declines as weight increases",
+        subtitle = "(1973-74)",
+        caption = "Data from the 1974 Motor Trend US magazine.",
+        tag = "Figure 1",
+        x = "Weight (1000 lbs)",
+        y = "Fuel economy (mpg)",
+        colour = "Gears"
+      )
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 <- ggplot(mtcars2) +
+  Python:
+    p1 = (ggplot(mtcars2) 
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_point(aes(x = wt, y = mpg, colour = gear)) +
+  Python:
+          + geom_point(aes(x='wt', y='mpg', color='gear')) 
+
+============================================================
+Entity: labs
+  Name:  labs
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      labs(
+        title = "Fuel economy declines as weight increases",
+        subtitle = "(1973-74)",
+        caption = "Data from the 1974 Motor Trend US magazine.",
+        tag = "Figure 1",
+        x = "Weight (1000 lbs)",
+        y = "Fuel economy (mpg)",
+        colour = "Gears"
+      )
+  Python:
+          + labs(
+              title="Fuel economy declines as weight increases",
+              subtitle="(1973-74)",
+              caption="Data from the 1974 Motor Trend US magazine.",
+              tag="Figure 1",
+              x="Weight (1000 lbs)",
+              y="Fuel economy (mpg)",
+              color="Gears"
+          )
+        )
+    
+    # Theme variations for p1
+
+============================================================
+Entity: theme_gray
+  Name:  theme_gray
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 + theme_gray() # the default
+  Python:
+    print(p1 + theme_gray())
+
+============================================================
+Entity: theme_bw
+  Name:  theme_bw
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 + theme_bw()
+  Python:
+    print(p1 + theme_bw())
+
+============================================================
+Entity: theme_linedraw
+  Name:  theme_linedraw
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 + theme_linedraw()
+  Python:
+    print(p1 + theme_linedraw())
+
+============================================================
+Entity: theme_light
+  Name:  theme_light
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 + theme_light()
+  Python:
+    print(p1 + theme_light())
+
+============================================================
+Entity: theme_dark
+  Name:  theme_dark
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 + theme_dark()
+  Python:
+    print(p1 + theme_dark())
+
+============================================================
+Entity: theme_minimal
+  Name:  theme_minimal
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 + theme_minimal()
+  Python:
+    print(p1 + theme_minimal())
+
+============================================================
+Entity: theme_classic
+  Name:  theme_classic
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 + theme_classic()
+  Python:
+    print(p1 + theme_classic())
+
+============================================================
+Entity: theme_void
+  Name:  theme_void
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p1 + theme_void()
+  Python:
+    print(p1 + theme_void())
+    
+    # Faceted plot p2
+
+============================================================
+Entity: p2
+  Name:  p2
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 <- p1 + facet_grid(vs ~ am)
+
+============================================================
+Entity: facet_grid
+  Name:  facet_grid
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 <- p1 + facet_grid(vs ~ am)
+  Python:
+    p2 = p1 + facet_grid('vs ~ am')
+    
+    # Theme variations for p2
+
+============================================================
+Entity: theme_gray_1
+  Name:  theme_gray
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 + theme_gray() # the default
+  Python:
+    print(p2 + theme_gray())
+
+============================================================
+Entity: theme_bw_1
+  Name:  theme_bw
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 + theme_bw()
+  Python:
+    print(p2 + theme_bw())
+
+============================================================
+Entity: theme_linedraw_1
+  Name:  theme_linedraw
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 + theme_linedraw()
+  Python:
+    print(p2 + theme_linedraw())
+
+============================================================
+Entity: theme_light_1
+  Name:  theme_light
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 + theme_light()
+  Python:
+    print(p2 + theme_light())
+
+============================================================
+Entity: theme_dark_1
+  Name:  theme_dark
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 + theme_dark()
+  Python:
+    print(p2 + theme_dark())
+
+============================================================
+Entity: theme_minimal_1
+  Name:  theme_minimal
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 + theme_minimal()
+  Python:
+    print(p2 + theme_minimal())
+
+============================================================
+Entity: theme_classic_1
+  Name:  theme_classic
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 + theme_classic()
+  Python:
+    print(p2 + theme_classic())
+
+============================================================
+Entity: theme_void_1
+  Name:  theme_void
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p2 + theme_void()
+  Python:
+    print(p2 + theme_void())

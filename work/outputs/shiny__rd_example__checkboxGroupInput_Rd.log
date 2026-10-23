@@ -1,0 +1,222 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: interactive
+  Name:  interactive
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    if (interactive()) {
+  Python:
+    # App 1 Implementation
+
+============================================================
+Entity: ui
+  Name:  ui
+  Kind:  Variable
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    ui <- fluidPage(
+      checkboxGroupInput("variable", "Variables to show:",
+                         c("Cylinders" = "cyl",
+                           "Transmission" = "am",
+                           "Gears" = "gear")),
+      tableOutput("data")
+    )
+  Python:
+    ui1 = ui.page_fluid(
+        ui.input_checkbox_group(
+            "variable", 
+            "Variables to show:", 
+            choices=[
+                {"label": "Cylinders", "value": "cyl"}, 
+                {"label": "Transmission", "value": "am"}, 
+                {"label": "Gears", "value": "gear"}
+            ]
+        ),
+        ui.output_table("data")
+    )
+
+============================================================
+Entity: server
+  Name:  server
+  Kind:  FunctionDef
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    server <- function(input, output, session) {
+      output$data <- renderTable({
+        mtcars[, c("mpg", input$variable), drop = FALSE]
+      }, rownames = TRUE)
+    }
+  Python:
+    def server1(input, output, session):
+        @render.table
+        def data():
+            cols = ["mpg"] + (input.variable() if input.variable() else [])
+            return d[cols]
+
+============================================================
+Entity: shinyApp
+  Name:  shinyApp
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    shinyApp(ui, server)
+  Python:
+    app1 = App(ui1, server1)
+    
+    # App 2 Implementation
+    # Note: Shiny for Python handles icons primarily within the UI definition
+
+============================================================
+Entity: ui_1
+  Name:  ui
+  Kind:  Variable
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    ui <- fluidPage(
+      checkboxGroupInput("icons", "Choose icons:",
+        choiceNames =
+          list(icon("calendar"), icon("bed"),
+               icon("cog"), icon("bug")),
+        choiceValues =
+          list("calendar", "bed", "cog", "bug")
+      ),
+      textOutput("txt")
+    )
+  Python:
+    ui2 = ui.page_fluid(
+        ui.input_checkbox_group(
+            "icons", 
+            "Choose icons:", 
+            choices=[
+                {"label": ui.icon("calendar"), "value": "calendar"}, 
+                {"label": ui.icon("bed"), "value": "bed"}, 
+                {"label": ui.icon("cog"), "value": "cog"}, 
+                {"label": ui.icon("bug"), "value": "bug"}
+            ]
+        ),
+        ui.output_text("txt")
+    )
+
+============================================================
+Entity: server_1
+  Name:  server
+  Kind:  FunctionDef
+  Score: 0.233
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    server <- function(input, output, session) {
+      output$txt <- renderText({
+        icons <- paste(input$icons, collapse = ", ")
+        paste("You chose", icons)
+      })
+    }
+  Python:
+    def server2(input, output, session):
+        @render.text
+        def txt():
+            icons = ", ".join(input.icons()) if input.icons() else ""
+            return f"You chose {icons}"
+
+============================================================
+Entity: shinyApp_1
+  Name:  shinyApp
+  Kind:  FunctionCall
+  Score: 0.067
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       False
+
+  R:
+    shinyApp(ui, server)
+  Python:
+    app2 = App(ui2, server2)
+    
+    # To run these, one would typically call app1.run() or app2.run()

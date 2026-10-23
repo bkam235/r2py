@@ -1,0 +1,90 @@
+Translation log
+Final score: 0.896
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(mtcars) +
+  Python:
+        ggplot(mtcars_df) 
+
+============================================================
+Entity: geom_bar
+  Name:  geom_bar
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_bar(aes(mpg)) +
+  Python:
+        + geom_histogram(mapping=aes(x='mpg'))
+    )
+    
+    print(plot)
+
+============================================================
+Entity: scale_x_binned
+  Name:  scale_x_binned
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      scale_x_binned()

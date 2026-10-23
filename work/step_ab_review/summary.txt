@@ -1,0 +1,10 @@
+360 steps; errors 0
+U   steps  120  P(improve) 0.26  (best of 3: 0.59)  mean realized gain +0.0408  followed entity +0.070  no rewrite 4  gate 2  review rej 10
+GV  steps  120  P(improve) 0.29  (best of 3: 0.64)  mean realized gain +0.0577  followed entity +0.134  no rewrite 0  gate 0  review rej 22
+GS  steps  120  P(improve) 0.30  (best of 3: 0.66)  mean realized gain +0.0493  followed entity +0.106  no rewrite 0  gate 1  review rej 15
+GV vs U, realized gain: +0.0169 [+0.0014, +0.0357]  (40 states)
+GV vs U, P(improve): +0.0333 [-0.0583, +0.1333]  (40 states)
+GS vs U, realized gain: +0.0085 [-0.0163, +0.0297]  (40 states)
+GS vs U, P(improve): +0.0417 [-0.0500, +0.1333]  (40 states)
+
+Decision: winner GV

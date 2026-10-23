@@ -1,0 +1,203 @@
+Translation log
+Final score: 0.959
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: import_ps
+  Name:  ps
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: ps_is_supported
+  Name:  ps_is_supported
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check() && ps::ps_os_type()["POSIX"]) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+  Python:
+    try:
+        # p1 <- processx::process$new("sleep", "100")
+
+============================================================
+Entity: is_cran_check
+  Name:  is_cran_check
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check() && ps::ps_os_type()["POSIX"]) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: ps_os_type
+  Name:  ps_os_type
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check() && ps::ps_os_type()["POSIX"]) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: p1
+  Name:  p1
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    p1 <- processx::process$new("sleep", "100")
+  Python:
+        p1_proc = subprocess.Popen(["sleep", "100"])
+        p1 = ps.Process(p1_proc.pid)
+    
+        # p2 <- processx::process$new("sleep", "100")
+
+============================================================
+Entity: p2
+  Name:  p2
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    p2 <- processx::process$new("sleep", "100")
+  Python:
+        p2_proc = subprocess.Popen(["sleep", "100"])
+        p2 = ps.Process(p2_proc.pid)
+    
+        # ps_wait(list(p1$as_ps_handle(), p2$as_ps_handle()), 0)
+        # In R's ps package, ps_wait returns a logical vector indicating if processes terminated.
+        # Python's psutil doesn't have a direct multi-process 'wait' with timeout that returns 
+        # a boolean list like ps_wait. We implement the equivalent logic.
+
+============================================================
+Entity: ps_wait
+  Name:  ps_wait
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ps_wait(list(p1$as_ps_handle(), p2$as_ps_handle()), 0)
+  Python:
+        def ps_wait(processes, timeout_ms):
+            start_time = time.time()
+            timeout_sec = timeout_ms / 1000.0
+            
+            # Convert timeout 0 to immediate check
+            # Convert -1 to indefinite wait (though the example uses 0 and 1000)
+            
+            while True:
+                results = [not p.is_running() for p in processes]
+                if all(results):
+                    return results
+                
+                if timeout_ms == 0:
+                    return results
+                
+                if timeout_ms != -1 and (time.time() - start_time) >= timeout_sec:
+                    return results
+                
+                if timeout_ms == -1 and all(results):
+                    return results
+                    
+                time.sleep(0.01) # Prevent busy loop
+    
+        # returns [False, False] immediately if p1 and p2 are running
+        print(ps_wait([p1, p2], 0))
+    
+        # timeouts at one second
+
+============================================================
+Entity: ps_wait_1
+  Name:  ps_wait
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ps_wait(list(p1$as_ps_handle(), p2$as_ps_handle()), 1000)
+  Python:
+        print(ps_wait([p1, p2], 1000))
+    
+        # p1$kill()
+
+============================================================
+Entity: p1$kill
+  Name:  p1$kill
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    p1$kill()
+  Python:
+        p1_proc.kill()
+        # p2$kill()
+
+============================================================
+Entity: p2$kill
+  Name:  p2$kill
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    p2$kill()
+  Python:
+        p2_proc.kill()
+    
+        # returns [True, True] immediately
+
+============================================================
+Entity: ps_wait_2
+  Name:  ps_wait
+  Kind:  FunctionCall
+  Score: 0.590
+  side_effects:        0.590
+  executed_ok:       True
+
+  R:
+    ps_wait(list(p1$as_ps_handle(), p2$as_ps_handle()), 1000)
+  Python:
+        print(ps_wait([p1, p2], 1000))
+    
+    except Exception as e:
+        print(f"Error executing sleep example: {e}")
+    finally:
+        # Ensure processes are cleaned up if they somehow survived
+        for p in [p1_proc if 'p1_proc' in locals() else None, 
+                   p2_proc if 'p2_proc' in locals() else None]:
+            if p:
+                p.terminate()

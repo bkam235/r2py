@@ -1,0 +1,47 @@
+   bslib__rd_example__layout_column_wrap_Rd.R      GV layout_column_wrap GS layout_column_wrap
+   bslib__rd_example__page_fillable_Rd.R           GV -                  GS ui                
+   bslib__rd_example__value_box_Rd.R               GV value_box          GS value_box         
+   caret__rd_example__update_train_Rd.R            GV update             GS data              
+   caret__vignette__caret_s3.R                     GV inTrain            GS data              
+   e1071__rd_example__boxplot_bclust_Rd.R          GV -                  GS data              
+   fansi__rd_example__normalize_state_Rd.R         GV identical          GS identical         
+   farver__rd_example__as_white_ref_Rd.R           GV as_white_ref_1     GS as_white_ref_1    
+   farver__rd_example__convert_colour_Rd.R         GV spectrum           GS spectrum          
+   farver__rd_example__encode_colour_Rd.R          GV spectrum           GS spectrum          
+   ggplot2__rd_example__geom_bin_2d_Rd.R           GV -                  GS geom_bin_2d_2     
+   gtable__rd_example__gtable_add_cols_Rd.R        GV rect               GS rect              
+   htmltools__rd_example__builder_Rd.R             GV tags$html          GS tags$audio        
+   openssl__rd_example__aes_cbc_Rd.R               GV -                  GS x                 
+   openssl__rd_example__ec_dh_Rd.R                 GV alice_key          GS alice_key         
+   openssl__vignette__bignum_s2.R                  GV y                  GS y                 
+   pROC__rd_example__coords_Rd.R                   GV cc                 GS data              
+   pROC__rd_example__print_Rd.R                    GV -                  GS data              
+   prodlim__rd_example__backGround_Rd.R            GV -                  GS backGround_1      
+   proxy__rd_example__registry_Rd.R                GV length             GS length            
+   purrr__rd_example__attr_getter_Rd.R             GV x                  GS x                 
+   ragg__rd_example__agg_capture_Rd.R              GV -                  GS dev.off           
+   recipes__rd_example__discretize_Rd.R            GV carbon_binned      GS data              
+   recipes__rd_example__step_kpca_Rd.R             GV -                  GS data              
+   reshape2__rd_example__melt_data_frame_Rd.R      GV melt               GS names(ChickWeight)
+   rvest__rd_example__html_table_Rd.R              GV -                  GS sample1           
+   sass__rd_example__as_sass_Rd.R                  GV someFile           GS input             
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+   sass__rd_example__sass_import_Rd.R              GV tmp_scss_file      GS tmp_scss_file     
+   sessioninfo__rd_example__platform_info_Rd.R     GV platform_info      GS platform_info     
+   sessioninfo__rd_example__python_info_Rd.R       GV session_info       GS session_info      
+   shape__rd_example__filledmultigonal_Rd.R        GV -                  GS emptyplot         
+   shiny__rd_example__actionButton_Rd.R            GV ui                 GS ui                
+   shiny__rd_example__updateRadioButtons_Rd.R      GV -                  GS ui                
+   systemfonts__rd_example__glyph_raster_Rd.R      GV -                  GS R                 
+   systemfonts__rd_example__shape_string_Rd.R      GV shape_string       GS shape_string      
+   textshaping__rd_example__get_font_features_Rd.  GV get_font_features  GS sys_fonts         
+   textshaping__rd_example__lorem_text_Rd.R        GV lorem_text_1       GS lorem_text_1      
+   textshaping__rd_example__shape_text_Rd.R        GV shape_text         GS shape_text        
+   timeDate__rd_example__calendar-isBizday_Rd.R    GV tS                 GS tS                
+   xml2__rd_example__xml_attr_Rd.R                 GV -                  GS doc               
+
+40 running states verified
+GV (whole value): target in 27 states, 15% of their loss in the targeted entity
+GS (structured):  target in 40 states, 25% of their loss in the targeted entity
+GS with a locator note: 27

@@ -1,0 +1,192 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(DBI))
+
+============================================================
+Entity: import_DBI
+  Name:  DBI
+  Kind:  LibraryImport
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(DBI))
+
+============================================================
+Entity: requireNamespace
+  Name:  requireNamespace
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    if (requireNamespace("RSQLite", quietly = TRUE) && requireNamespace("nanoarrow", quietly = TRUE)) withAutoprint({ # examplesIf
+
+============================================================
+Entity: requireNamespace_1
+  Name:  requireNamespace
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (requireNamespace("RSQLite", quietly = TRUE) && requireNamespace("nanoarrow", quietly = TRUE)) withAutoprint({ # examplesIf
+  Python:
+    import sqlite3
+    import pandas as pd
+    import pyarrow as pa
+    
+    # Create an in-memory SQLite connection
+
+============================================================
+Entity: con
+  Name:  con
+  Kind:  Variable
+  Score: 0.695
+  type_match:          0.390
+  control_flow_match:  1.000
+  data_output:         0.390
+  variable_output:     0.390
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    con <- dbConnect(RSQLite::SQLite(), ":memory:")
+  Python:
+    con = sqlite3.connect(":memory:")
+    
+    # Load mtcars dataset (using pandas since it's commonly used for this dataset)
+    # Assuming mtcars is available via a CSV or common source, but for simulation:
+    
+    # Write table to SQL
+
+============================================================
+Entity: dbWriteTable
+  Name:  dbWriteTable
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    dbWriteTable(con, "mtcars", mtcars)
+  Python:
+    mtcars.to_sql("mtcars", con, index=False)
+    
+    # Execute query and fetch as a PyArrow Table
+    # SQLite doesn't have a direct 'dbSendQueryArrow' equivalent, 
+    # so we fetch via pandas and convert to arrow
+
+============================================================
+Entity: rs
+  Name:  rs
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    rs <- dbSendQueryArrow(con, "SELECT * FROM mtcars WHERE cyl = 4")
+  Python:
+    df = pd.read_sql_query("SELECT * FROM mtcars WHERE cyl = 4", con)
+    table = pa.Table.from_pandas(df)
+
+============================================================
+Entity: dbFetchArrow
+  Name:  dbFetchArrow
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    dbFetchArrow(rs)
+
+============================================================
+Entity: dbClearResult
+  Name:  dbClearResult
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    dbClearResult(rs)
+  Python:
+    print(table)
+    
+    # Close connection
+
+============================================================
+Entity: dbDisconnect
+  Name:  dbDisconnect
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    dbDisconnect(con)
+  Python:
+    con.close()

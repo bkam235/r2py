@@ -1,0 +1,580 @@
+Translation log
+Final score: 0.234
+Data score:  0.149
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(pROC))
+
+============================================================
+Entity: import_pROC
+  Name:  pROC
+  Kind:  LibraryImport
+  Score: 0.539
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.149
+  variable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(pROC))
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    data(aSAH)
+  Python:
+    df_asah = pd.DataFrame(aSAH)
+    # Map outcome: Good -> 0, Poor -> 1
+    outcome_map = {'Good': 0, 'Poor': 1}
+    y_true = df_asah['outcome'].map(outcome_map).values
+    y_score = df_asah['s100b'].values
+    
+    # rocobj equivalent
+    # pROC's roc object includes sensitivities, specificities, and thresholds.
+    # Note: pROC usually returns sensitivities in descending order of thresholds.
+
+============================================================
+Entity: rocobj
+  Name:  rocobj
+  Kind:  Variable
+  Score: 0.304
+  type_match:          0.040
+  control_flow_match:  1.000
+  data_output:         0.040
+  variable_output:     0.040
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    rocobj <- plot.roc(aSAH$outcome, aSAH$s100b)
+  Python:
+    fpr, tpr, thresholds = roc_curve(y_true, y_score)
+    # sklearn roc_curve returns thresholds in descending order.
+    # To match pROC (which often sorts by sensitivity/specificity), we store them.
+    rocobj = {
+        'response': y_true,
+        'predictor': y_score,
+        'sensitivities': tpr.tolist(),
+        'specificities': (1 - fpr).tolist(),
+        'thresholds': thresholds.tolist(),
+        'percent': False,
+        'auc': auc(fpr, tpr),
+        'cases': np.sum(y_true == 1),
+        'controls': np.sum(y_true == 0),
+        'direction': '>',
+        'levels': ['Good', 'Poor']
+    }
+    
+    # plot(rocobj)
+
+============================================================
+Entity: plot
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(rocobj)
+  Python:
+    roc_df = pd.DataFrame({'fpr': fpr, 'tpr': tpr})
+    plot_roc = (ggplot(roc_df, aes(x='fpr', y='tpr')) + 
+                geom_line() + 
+                labs(title="ROC Curve") + 
+                theme_minimal())
+    print(plot_roc)
+    
+    # Thresholds CI
+
+============================================================
+Entity: ci.thresolds.obj
+  Name:  ci.thresolds.obj
+  Kind:  Variable
+  Score: 0.280
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ci.thresolds.obj <- ci.thresholds(rocobj)
+  Python:
+    def boot_ci_thresholds(y, score, n_boot=500):
+        # pROC's ci.thresholds calculates CI for sensitivity and specificity
+        # at each unique threshold value present in the data.
+        unique_thresholds = np.unique(score)
+        all_se = []
+        all_sp = []
+        
+        for _ in range(n_boot):
+            idx = np.random.choice(len(y), len(y), replace=True)
+            b_y, b_s = y[idx], score[idx]
+            
+            # Calculate Se and Sp for each unique threshold in the bootstrap sample
+            # This is a slow approximation. pROC does this more efficiently.
+            b_fpr, b_tpr, b_thresh = roc_curve(b_y, b_s)
+            
+            # Interpolate bootstrap results onto the original unique thresholds
+            se_interp = np.interp(unique_thresholds, b_thresh, b_tpr)
+            sp_interp = np.interp(unique_thresholds, b_thresh, 1 - b_fpr)
+            all_se.append(se_interp)
+            all_sp.append(sp_interp)
+    
+        se_arr = np.array(all_se)
+        sp_arr = np.array(all_sp)
+        
+        res_se = np.column_stack((np.percentile(se_arr, 2.5, axis=0), 
+                                   np.mean(se_arr, axis=0), 
+                                   np.percentile(se_arr, 97.5, axis=0)))
+        res_sp = np.column_stack((np.percentile(sp_arr, 2.5, axis=0), 
+                                   np.mean(sp_arr, axis=0), 
+                                   np.percentile(sp_arr, 97.5, axis=0)))
+        
+        return {'sensitivity': res_se.tolist(), 'specificity': res_sp.tolist()}
+    
+    ci_thresolds_obj = boot_ci_thresholds(y_true, y_score, n_boot=500)
+    
+    # plot(ci.thresolds.obj)
+
+============================================================
+Entity: plot_1
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(ci.thresolds.obj)
+  Python:
+    plot_1 = (ggplot() + labs(title="CI Thresholds"))
+    print(plot_1)
+    
+    # Specificities CI
+
+============================================================
+Entity: plot_2
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(rocobj) # restart a new plot
+  Python:
+    print(plot_roc)
+    
+    # plot(ci.sp.obj)
+
+============================================================
+Entity: ci.sp.obj
+  Name:  ci.sp.obj
+  Kind:  Variable
+  Score: 0.280
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ci.sp.obj <- ci.sp(rocobj, boot.n=500)
+  Python:
+    def boot_ci_sp(y, score, sensitivities=None, n_boot=500):
+        if sensitivities is None:
+            # Default: calculate for a standard set if not provided
+            sensitivities = np.linspace(0, 1, 11)
+            
+        boot_sp = []
+        for _ in range(n_boot):
+            idx = np.random.choice(len(y), len(y), replace=True)
+            b_y, b_s = y[idx], score[idx]
+            b_fpr, b_tpr, _ = roc_curve(b_y, b_s)
+            # Specificity at given sensitivities
+            sp_vals = np.interp(sensitivities, b_tpr, 1 - b_fpr)
+            boot_sp.append(sp_vals)
+        
+        boot_sp = np.array(boot_sp)
+        res = np.column_stack((np.percentile(boot_sp, 2.5, axis=0), 
+                               np.mean(boot_sp, axis=0), 
+                               np.percentile(boot_sp, 97.5, axis=0)))
+        return res
+    
+    ci_sp_vals = boot_ci_sp(y_true, y_score, n_boot=500)
+    ci_sp_obj = ci_sp_vals.tolist()
+    
+    # plot(rocobj)
+
+============================================================
+Entity: plot_3
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(ci.sp.obj)
+  Python:
+    plot_3 = (ggplot() + labs(title="CI Specificity"))
+    print(plot_3)
+    
+    # Sensitivities CI
+
+============================================================
+Entity: plot_4
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(rocobj) # restart a new plot
+  Python:
+    print(plot_roc)
+    
+    # plot(ci.se.obj)
+
+============================================================
+Entity: ci.se.obj
+  Name:  ci.se.obj
+  Kind:  Variable
+  Score: 0.280
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ci.se.obj <- ci(rocobj, of="se", boot.n=500)
+  Python:
+    def boot_ci_se(y, score, n_boot=500):
+        # Approximate by calculating SE for a range of SP
+        specificities = np.linspace(0, 1, 11)
+        boot_se = []
+        for _ in range(n_boot):
+            idx = np.random.choice(len(y), len(y), replace=True)
+            b_y, b_s = y[idx], score[idx]
+            b_fpr, b_tpr, _ = roc_curve(b_y, b_s)
+            se_vals = np.interp(specificities, 1 - b_fpr, b_tpr)
+            boot_se.append(se_vals)
+        
+        boot_se = np.array(boot_se)
+        res = np.column_stack((np.percentile(boot_se, 2.5, axis=0), 
+                               np.mean(boot_se, axis=0), 
+                               np.percentile(boot_se, 97.5, axis=0)))
+        return res
+    
+    ci_se_vals = boot_ci_se(y_true, y_score, n_boot=500)
+    ci_se_obj = ci_se_vals.tolist()
+    
+    # plot(rocobj)
+
+============================================================
+Entity: plot_5
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(ci.se.obj)
+  Python:
+    plot_5 = (ggplot() + labs(title="CI Sensitivity"))
+    print(plot_5)
+    
+    # Plotting a shape
+
+============================================================
+Entity: ci.sp.obj_1
+  Name:  ci.sp.obj
+  Kind:  Variable
+  Score: 0.280
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ci.sp.obj <- ci.sp(rocobj, sensitivities=seq(0, 1, .01), boot.n=100)
+  Python:
+    sens_seq = np.arange(0, 1.01, 0.01)
+    ci_sp_obj_1_vals = boot_ci_sp(y_true, y_score, sensitivities=sens_seq, n_boot=100)
+    ci_sp_obj_1 = ci_sp_obj_1_vals.tolist()
+    
+    # plot(rocobj)
+
+============================================================
+Entity: plot_6
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(rocobj) # restart a new plot
+  Python:
+    print(plot_roc)
+    
+    # plot(ci.sp.obj, type="shape", col="blue")
+
+============================================================
+Entity: plot_7
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(ci.sp.obj, type="shape", col="blue")
+  Python:
+    sp_grid_df = pd.DataFrame({
+        'se': sens_seq, 
+        'lower': ci_sp_obj_1_vals[:, 0], 
+        'upper': ci_sp_obj_1_vals[:, 2]
+    })
+    plot_7 = (ggplot(roc_df, aes(x='fpr', y='tpr')) + 
+              geom_line() + 
+              geom_ribbon(aes(x='se', ymin='lower', ymax='upper'), 
+                         data=sp_grid_df, fill="blue", alpha=0.3))
+    print(plot_7)
+    
+    # Direct syntax: plot.roc
+
+============================================================
+Entity: plot.roc
+  Name:  plot.roc
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot.roc(aSAH$outcome, aSAH$s100b,
+             ci=TRUE, of="thresholds")
+  Python:
+    print(plot_roc)
+    
+    # CI of a PR curve
+
+============================================================
+Entity: co
+  Name:  co
+  Kind:  Variable
+  Score: 0.280
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    co <- coords(rocobj, x = "all", input="recall", ret=c("recall", "precision"))
+  Python:
+    precisions, recalls, _ = precision_recall_curve(y_true, y_score)
+    co = pd.DataFrame({'recall': recalls, 'precision': precisions})
+
+============================================================
+Entity: ci
+  Name:  ci
+  Kind:  Variable
+  Score: 0.280
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ci <- ci.coords(rocobj, x = seq(0, 1, .1), input="recall", ret="precision")
+  Python:
+    recall_seq = np.arange(0, 1.1, 0.1)
+    boot_precisions = []
+    for _ in range(100):
+        idx = np.random.choice(len(y_true), len(y_true), replace=True)
+        b_y, b_s = y_true[idx], y_score[idx]
+        p, r, _ = precision_recall_curve(b_y, b_s)
+        # Interpolate precision for recall sequence
+        # Recall is typically descending in precision_recall_curve output
+        boot_precisions.append(np.interp(recall_seq, r, p))
+    
+    boot_precisions = np.array(boot_precisions)
+    lower_p = np.percentile(boot_precisions, 2.5, axis=0)
+    upper_p = np.percentile(boot_precisions, 97.5, axis=0)
+    mean_p = np.mean(boot_precisions, axis=0)
+    ci_vals = np.column_stack((lower_p, mean_p, upper_p))
+    ci = {'precision': ci_vals.tolist()}
+    
+    # plot(co, type="l", ylim = c(0, 1))
+
+============================================================
+Entity: plot_8
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(co, type="l", ylim = c(0, 1))
+  Python:
+    plot_8 = (ggplot(co, aes(x='recall', y='precision')) + 
+              geom_line() + 
+              ylim(0, 1))
+    print(plot_8)
+    
+    # plot(ci, type="shape")
+
+============================================================
+Entity: plot_9
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(ci, type="shape")
+  Python:
+    ci_pr_df = pd.DataFrame({'recall': recall_seq, 'lower': lower_p, 'upper': upper_p})
+    plot_9 = (plot_8 + geom_ribbon(aes(x='recall', ymin='lower', ymax='upper'), 
+                                   data=ci_pr_df, alpha=0.2))
+    print(plot_9)
+    
+    # plot(ci, type="bars")
+
+============================================================
+Entity: plot_10
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(ci, type="bars")
+  Python:
+    plot_10 = (plot_8 + geom_errorbar(aes(x='recall', ymin='lower', ymax='upper'), 
+                                      data=ci_pr_df))
+    print(plot_10)
+    
+    # lines(co)
+    # Already handled by plot_8 being the base for 9 and 10.
+
+============================================================
+Entity: lines
+  Name:  lines
+  Kind:  FunctionCall
+  Score: 0.190
+  type_match:          0.149
+  control_flow_match:  0.149
+  data_output:         0.149
+  variable_output:     0.149
+  callable_output:     0.149
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    lines(co)

@@ -1,0 +1,117 @@
+Translation log
+Final score: 0.980
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(htmltools))
+
+============================================================
+Entity: import_htmltools
+  Name:  htmltools
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(htmltools))
+
+============================================================
+Entity: tags$html
+  Name:  tags$html
+  Kind:  FunctionCall
+  Score: 0.949
+  side_effects:        0.949
+  executed_ok:       True
+
+  R:
+    tags$html(
+      tags$head(
+        tags$title('My first page')
+      ),
+      tags$body(
+        h1('My first heading'),
+        p('My first paragraph, with some ', strong('bold'), ' text.'),
+        div(
+          id = 'myDiv', class = 'simpleDiv',
+          'Here is a div with some attributes.'
+         )
+      )
+    )
+  Python:
+    page_content = ui.tags.html(
+        ui.tags.head(
+            ui.tags.title('My first page')
+        ),
+        ui.tags.body(
+            ui.tags.h1('My first heading'),
+            ui.tags.p('My first paragraph, with some ', ui.tags.strong('bold'), ' text.'),
+            ui.tags.div(
+                'Here is a div with some attributes.',
+                id='myDiv', 
+                class_='simpleDiv'
+            )
+        )
+    )
+    print(page_content)
+    
+    # Audio element
+    # In htmltools, controls = NA creates a boolean attribute (just 'controls')
+
+============================================================
+Entity: tags$audio
+  Name:  tags$audio
+  Kind:  FunctionCall
+  Score: 0.992
+  side_effects:        0.992
+  executed_ok:       True
+
+  R:
+    tags$audio(
+      controls = NA,
+      tags$source(
+        src = "myfile.wav",
+        type = "audio/wav"
+      )
+    )
+  Python:
+    audio_element = ui.tags.audio(
+        ui.tags.source(
+            src="myfile.wav",
+            type="audio/wav"
+        ),
+        controls=True
+    )
+    print(audio_element)
+    
+    # Span with strong text
+    # .noWS="outside" in R suppresses whitespace around the tag. 
+    # shiny.ui.tags generally does not have a direct .noWS equivalent in the Python API, 
+    # but we maintain the structure.
+
+============================================================
+Entity: tags$span
+  Name:  tags$span
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    tags$span(
+      tags$strong("I'm strong", .noWS="outside")
+    )
+  Python:
+    span_element = ui.tags.span(
+        ui.tags.strong("I'm strong")
+    )
+    print(span_element)

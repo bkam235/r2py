@@ -1,0 +1,14 @@
+# r2py crawler metadata
+# package: stringr
+# source_type: vignette
+# topic: from-base_s1
+# source_file: C:\Users\bened\AppData\Local\R\win-library\4.5\stringr\doc\from-base.R
+# lines: 7
+
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+
+library(stringr)
+library(magrittr)

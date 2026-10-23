@@ -1,0 +1,22 @@
+{
+ "function": "row.match",
+ "package": "prodlim",
+ "status": "passed",
+ "rounds": 4,
+ "locate": true,
+ "n_calls": 8,
+ "n_cases": 3,
+ "n_core": 3,
+ "n_mined": 3,
+ "attempt": 1,
+ "passed": 3,
+ "total": 3,
+ "core_passed": 3,
+ "core_total": 3,
+ "code": "import numpy as np\nimport pandas as pd\n\ndef r_row_match(x, table, nomatch=np.nan):\n    \"\"\"\n    Reproduces prodlim::row.match.\n    \n    R source:\n    function (x, table, nomatch = NA) \n    {\n        if (inherits(table, \"matrix\")) \n            table <- as.data.frame(table)\n        if (is.null(dim(x))) \n            x <- as.data.frame(matrix(x, nrow = 1))\n        cx <- do.call(\"paste\", c(x[, , drop = FALSE], sep = \"\\r\"))\n        ct <- do.call(\"paste\", c(table[, , drop = FALSE], sep = \"\\r\"))\n        match(cx, ct, nomatch = nomatch)\n    }\n    \"\"\"\n    # Convert table to DataFrame\n    if isinstance(table, np.ndarray):\n        table_df = pd.DataFrame(table)\n    elif isinstance(table, pd.DataFrame):\n        table_df = table\n    else:\n        table_df = pd.DataFrame(table)\n\n    # Convert x to DataFrame\n    # If x is 1D (numpy array or list), R treats it as a single row\n    if isinstance(x, pd.DataFrame):\n        x_df = x\n    elif isinstance(x, np.ndarray) and x.ndim > 1:\n        x_df = pd.DataFrame(x)\n    elif isinstance(x, list) and (len(x) == 0 or not isinstance(x[0], (list, np.ndarray, pd.Series))):\n        # 1D list/array -> 1 row\n        x_df = pd.DataFrame([x])\n    elif isinstance(x, list) and len(x) > 0 and isinstance(x[0], (list, np.ndarray, pd.Series)):\n        x_df = pd.DataFrame(x)\n    elif isinstance(x, np.ndarray) and x.ndim == 1:\n        x_df = pd.DataFrame([x])\n    else:\n        # Scalar or other\n        x_df = pd.DataFrame([x])\n\n    def r_paste_rows(df):\n        # R's paste() with sep=\"\\r\" across columns. \n        # R coerces NA to \"NA\" and elements to character.\n        # we convert all to string, replace NaN with \"NA\", then join with \\r.\n        def format_val(v):\n            if pd.isna(v):\n                return \"NA\"\n            # R's as.character for integers/floats typically doesn't use .0 for ints\n            if isinstance(v, (float, np.floating)) and float(v).is_integer():\n                return str(int(v))\n            return str(v)\n\n        # Apply row-wise concatenation\n        return df.apply(lambda row: \"\\r\".join(row.map(format_val)), axis=1)\n\n    cx = r_paste_rows(x_df)\n    ct = r_paste_rows(table_df)\n\n    # match(cx, ct, nomatch) in R:\n    # Returns the index of the first occurrence of cx in ct.\n    # Indices are 1-based.\n    \n    # Create a map for ct values to their first 1-based index\n    # ct.values is a pandas series of concatenated strings\n    ct_vals = ct.values\n    \n    results = []\n    for val in cx:\n        try:\n            # find first index where ct_vals == val\n            idx = np.where(ct_vals == val)[0][0]\n            results.append(idx + 1)\n        except IndexError:\n            # Not found\n            results.append(nomatch)\n\n    res_array = np.array(results)\n    \n    # If the result is a single value, R returns a scalar (integer/numeric)\n    # but the example shows it returning an integer vector [1] 3. \n    # In R, match() always returns a vector.\n    \n    # Handle the dtype to mimic R's integer return when possible\n    if np.all(np.floor(res_array) == res_array) and not np.isnan(res_array).any():\n        return res_array.astype(int)\n    \n    return res_array\n",
+ "failures": [],
+ "n_failures": 0,
+ "exotic_passed": 0,
+ "exotic_total": 0,
+ "tag": "on demand"
+}

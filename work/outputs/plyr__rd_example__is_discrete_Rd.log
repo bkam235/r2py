@@ -1,0 +1,75 @@
+Translation log
+Final score: 0.870
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(plyr))
+
+============================================================
+Entity: import_plyr
+  Name:  plyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(plyr))
+
+============================================================
+Entity: is.discrete
+  Name:  is.discrete
+  Kind:  FunctionCall
+  Score: 0.611
+  side_effects:        0.611
+  executed_ok:       True
+
+  R:
+    is.discrete(1:10)
+  Python:
+    def is_discrete(x):
+        # In Python/Pandas, discrete variables are typically 
+        # represented by integer types, categories, or object types.
+        if isinstance(x, (list, np.ndarray)):
+            x = pd.Series(x)
+        
+        if pd.api.types.is_integer_dtype(x) or \
+           pd.api.types.is_categorical_dtype(x) or \
+           pd.api.types.is_object_dtype(x):
+            return True
+        return False
+    print(is_discrete(np.arange(1, 11)))
+
+============================================================
+Entity: is.discrete_1
+  Name:  is.discrete
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    is.discrete(c("a", "b", "c"))
+  Python:
+    print(is_discrete(["a", "b", "c"]))
+
+============================================================
+Entity: is.discrete_2
+  Name:  is.discrete
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    is.discrete(factor(c("a", "b", "c")))
+  Python:
+    print(is_discrete(pd.Categorical(["a", "b", "c"])))

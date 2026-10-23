@@ -1,0 +1,57 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: import_stringr
+  Name:  stringr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: grep
+  Name:  grep
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    grep(pattern = "g", x = fruit, value = TRUE)
+  Python:
+    res_grep = [s for s in fruit if re.search("g", s)]
+    print(res_grep)
+    
+    # stringr
+    # str_subset(fruit, pattern = "g")
+
+============================================================
+Entity: str_subset
+  Name:  str_subset
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_subset(fruit, pattern = "g")
+  Python:
+    res_str_subset = [s for s in fruit if re.search("g", s)]
+    print(res_str_subset)

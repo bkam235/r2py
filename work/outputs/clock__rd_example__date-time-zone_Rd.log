@@ -1,0 +1,403 @@
+Translation log
+Final score: 0.704
+Data score:  0.667
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 0.787
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.667
+  variable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_magrittr
+  Name:  magrittr
+  Kind:  LibraryImport
+  Score: 0.787
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.667
+  variable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    library(magrittr)
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    x <- date_parse("2019-01-01")
+  Python:
+    def date_parse(x):
+        # R's date_parse returns a Date object (naive)
+        return pd.to_datetime(x).date()
+    x = date_parse("2019-01-01")
+    
+    # try(date_time_zone(x))
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    try(date_time_zone(x))
+  Python:
+    try:
+        date_time_zone(x)
+    except Exception as e:
+        pass # R's try() just suppresses/reports, we follow the logic
+    
+    # try(date_time_set_zone(x, "America/New_York"))
+
+============================================================
+Entity: try_1
+  Name:  try
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    try(date_time_set_zone(x, "America/New_York"))
+  Python:
+    def date_time_set_zone(x, zone):
+        # R's date_time_set_zone is like tz_convert (keeps underlying duration)
+        if hasattr(x, 'tz_convert'):
+            return x.tz_convert(zone)
+        raise TypeError("Time zones can only be get or set for date-times.")
+    try:
+        date_time_set_zone(x, "America/New_York")
+    except Exception as e:
+        pass
+    
+    # x <- date_time_parse("2019-01-02 01:30:00", "America/New_York")
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    x <- date_time_parse("2019-01-02 01:30:00", "America/New_York")
+  Python:
+    def date_time_parse(x, zone, format=None):
+        # Parses string as naive then localizes to zone
+        ts = pd.to_datetime(x)
+        return ts.tz_localize(zone)
+    x = date_time_parse("2019-01-02 01:30:00", "America/New_York")
+    print(f'[{x.strftime("%Y-%m-%d %H:%M:%S %Z")}]')
+
+============================================================
+Entity: x_2
+  Name:  x
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    x
+  Python:
+    # date_time_zone(x)
+
+============================================================
+Entity: date_time_zone
+  Name:  date_time_zone
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    date_time_zone(x)
+  Python:
+    def date_time_zone(x):
+        # In R clock, date_time_zone returns the zone name
+        if hasattr(x, 'tz') and x.tz is not None:
+            return x.tz.zone
+        # If it's a date object, R's clock throws an error
+        if isinstance(x, (datetime.date, pd.Timestamp)) and (not hasattr(x, 'tz') or x.tz is None):
+            raise TypeError("Date is considered a naive time with an unspecified time zone.")
+        return None
+    print(f'["{date_time_zone(x)}"]')
+
+============================================================
+Entity: date_time_set_zone
+  Name:  date_time_set_zone
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    date_time_set_zone(x, "America/Los_Angeles")
+  Python:
+    # date_time_set_zone(x, "America/Los_Angeles")
+    x_la = date_time_set_zone(x, "America/Los_Angeles")
+    print(f'["{x_la.strftime("%Y-%m-%d %H:%M:%S %Z")}]')
+    
+    # x %>% as_naive_time() %>% as_date_time("America/Los_Angeles")
+
+============================================================
+Entity: as_naive_time
+  Name:  as_naive_time
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      as_naive_time() %>%
+  Python:
+    def as_naive_time(x):
+        # Drops the timezone information
+        if hasattr(x, 'tz_localize'):
+            return x.tz_localize(None)
+        return x
+    x_naive = as_naive_time(x)
+
+============================================================
+Entity: as_date_time
+  Name:  as_date_time
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      as_date_time("America/Los_Angeles")
+  Python:
+    def as_date_time(x, zone, nonexistent=None):
+        # Localizes naive time to zone, handling nonexistent times
+        # nonexistent = "roll-forward" -> shift_forward
+        # nonexistent = "roll-backward" -> shift_backward
+        nonexistent_map = {
+            "roll-forward": "shift_forward",
+            "roll-backward": "shift_backward"
+        }
+        mode = nonexistent_map.get(nonexistent, 'raise')
+        return x.tz_localize(zone, nonexistent=mode)
+    
+    # --- Execution ---
+    
+    # x <- date_parse("2019-01-01")
+    x_final = as_date_time(x_naive, "America/Los_Angeles")
+    print(f'["{x_final.strftime("%Y-%m-%d %H:%M:%S %Z")}]')
+    
+    # y <- date_time_parse("2021-03-28 03:30:00", "America/New_York")
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    y <- date_time_parse("2021-03-28 03:30:00", "America/New_York")
+  Python:
+    y = date_time_parse("2021-03-28 03:30:00", "America/New_York")
+    print(f'["{y.strftime("%Y-%m-%d %H:%M:%S %Z")}]')
+
+============================================================
+Entity: y_1
+  Name:  y
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    y
+  Python:
+    
+    # y_nt <- as_naive_time(y)
+
+============================================================
+Entity: y_nt
+  Name:  y_nt
+  Kind:  Variable
+  Score: 0.320
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    y_nt <- as_naive_time(y)
+  Python:
+    y_nt = as_naive_time(y)
+    print("<naive_time<second>[1]>")
+    print(f'["{y_nt.strftime("%Y-%m-%dT%H:%M:%S")}]')
+
+============================================================
+Entity: y_nt_1
+  Name:  y_nt
+  Kind:  Variable
+  Score: 0.320
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    y_nt
+  Python:
+    # try(as_date_time(y_nt, "Europe/Helsinki"))
+
+============================================================
+Entity: try_2
+  Name:  try
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    try(as_date_time(y_nt, "Europe/Helsinki"))
+  Python:
+    try:
+        as_date_time(y_nt, "Europe/Helsinki")
+    except Exception as e:
+        pass
+    
+    # as_date_time(y_nt, "Europe/Helsinki", nonexistent = "roll-forward")
+
+============================================================
+Entity: as_date_time_1
+  Name:  as_date_time
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    as_date_time(y_nt, "Europe/Helsinki", nonexistent = "roll-forward")
+  Python:
+    y_fwd = as_date_time(y_nt, "Europe/Helsinki", nonexistent="roll-forward")
+    print(f'["{y_fwd.strftime("%Y-%m-%d %H:%M:%S %Z")}]')
+    
+    # as_date_time(y_nt, "Europe/Helsinki", nonexistent = "roll-backward")
+
+============================================================
+Entity: as_date_time_2
+  Name:  as_date_time
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    as_date_time(y_nt, "Europe/Helsinki", nonexistent = "roll-backward")
+  Python:
+    y_bwd = as_date_time(y_nt, "Europe/Helsinki", nonexistent="roll-backward")
+    print(f'["{y_bwd.strftime("%Y-%m-%d %H:%M:%S %Z")}]')

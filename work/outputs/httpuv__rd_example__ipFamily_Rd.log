@@ -1,0 +1,113 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httpuv))
+
+============================================================
+Entity: import_httpuv
+  Name:  httpuv
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httpuv))
+
+============================================================
+Entity: ipFamily
+  Name:  ipFamily
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ipFamily("127.0.0.1")   # 4
+  Python:
+    def ip_family(ip_string):
+        try:
+            addr = ipaddress.ip_address(ip_string)
+            if addr.version == 4:
+                return 4
+            elif addr.version == 6:
+                return 6
+        except ValueError:
+            return -1
+    
+    print(ip_family("127.0.0.1"))                # 4
+
+============================================================
+Entity: ipFamily_1
+  Name:  ipFamily
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ipFamily("500.0.0.500") # -1
+  Python:
+    print(ip_family("500.0.0.500"))              # -1
+
+============================================================
+Entity: ipFamily_2
+  Name:  ipFamily
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ipFamily("500.0.0.500") # -1
+  Python:
+    print(ip_family("500.0.0.500"))              # -1
+
+============================================================
+Entity: ipFamily_3
+  Name:  ipFamily
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ipFamily("::")          # 6
+  Python:
+    print(ip_family("::"))                        # 6
+
+============================================================
+Entity: ipFamily_4
+  Name:  ipFamily
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ipFamily("::1")         # 6
+  Python:
+    print(ip_family("::1"))                       # 6
+
+============================================================
+Entity: ipFamily_5
+  Name:  ipFamily
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ipFamily("fe80::1ff:fe23:4567:890a") # 6
+  Python:
+    print(ip_family("fe80::1ff:fe23:4567:890a")) # 6

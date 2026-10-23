@@ -1,0 +1,170 @@
+Translation log
+Final score: 0.875
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: vec_arith.vctrs_meter.vctrs_meter
+  Name:  vec_arith.vctrs_meter.vctrs_meter
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    vec_arith.vctrs_meter.vctrs_meter <- function(op, x, y, ...) {
+      switch(
+        op,
+        "+" = ,
+        "-" = new_meter(vec_arith_base(op, x, y)),
+        "/" = vec_arith_base(op, x, y),
+        stop_incompatible_op(op, x, y)
+      )
+    }
+
+============================================================
+Entity: meter
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    meter(10) + meter(1)
+  Python:
+    class Meter:
+        def __init__(self, value):
+            self.value = value
+    
+        def __add__(self, other):
+            if isinstance(other, Meter):
+                return Meter(self.value + other.value)
+            raise TypeError("Operands must both be Meter instances")
+    
+        def __sub__(self, other):
+            if isinstance(other, Meter):
+                return Meter(self.value - other.value)
+            raise TypeError("Operands must both be Meter instances")
+    
+        def __truediv__(self, other):
+            if isinstance(other, Meter):
+                return self.value / other.value
+            raise TypeError("Operands must both be Meter instances")
+    
+        def __mul__(self, other):
+            raise TypeError("Multiplication of two Meters is incompatible")
+    
+        def __repr__(self):
+            return f"Meter({self.value})"
+    
+    # Test cases
+    try:
+
+============================================================
+Entity: meter_1
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    meter(10) + meter(1)
+  Python:
+        print(Meter(10) + Meter(1))
+
+============================================================
+Entity: meter_2
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    meter(10) - meter(1)
+
+============================================================
+Entity: meter_3
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    meter(10) - meter(1)
+  Python:
+        print(Meter(10) - Meter(1))
+
+============================================================
+Entity: meter_4
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    meter(10) / meter(1)
+
+============================================================
+Entity: meter_5
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    meter(10) / meter(1)
+  Python:
+        print(Meter(10) / Meter(1))
+
+============================================================
+Entity: meter_6
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    meter(10) * meter(1)
+
+============================================================
+Entity: meter_7
+  Name:  meter
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    meter(10) * meter(1)
+  Python:
+        print(Meter(10) * Meter(1))
+    except TypeError as e:
+        print(f"Error: {e}")

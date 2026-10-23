@@ -1,0 +1,306 @@
+Translation log
+Final score: 0.694
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ids))
+
+============================================================
+Entity: import_ids
+  Name:  ids
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ids))
+
+============================================================
+Entity: adjective_animal
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.664
+  side_effects:        0.664
+  executed_ok:       True
+
+  R:
+    adjective_animal()
+  Python:
+    def toupper_camel(s):
+        if not s: return s
+        return s.capitalize()
+    
+    def cases():
+        return {
+            "snake": {"join": "_", "tr": lambda x: x},
+            "kebab": {"join": "-", "tr": lambda x: x},
+            "dot": {"join": ".", "tr": lambda x: x},
+            "camel": {"join": "", "tr": toupper_camel},
+            "pascal": {"join": "", "tr": lambda x: x.capitalize()},
+            "lower": {"join": " ", "tr": lambda x: x},
+            "upper": {"join": " ", "tr": lambda x: x.upper()},
+            "title": {"join": " ", "tr": lambda x: x.capitalize()},
+            "sentence": {"join": " ", "tr": lambda x: x.capitalize()},
+            "constant": {"join": "_", "tr": lambda x: x.upper()},
+        }
+    
+    def check_style(style):
+        if not isinstance(style, str):
+            raise TypeError("style must be a character vector")
+        normalized = style.lower().replace("_case", "").replace("-case", "").replace("case", "")
+        pos = cases()
+        if normalized not in pos:
+            raise ValueError(f"Invalid style '{style}'")
+        return pos[normalized]
+    
+    def make_combine(style):
+        dat = check_style(style)
+        join = dat["join"]
+        tr = dat["tr"]
+        
+        def combine(x):
+            if not x: return ""
+            results = []
+            num_rows = len(x[0])
+            for i in range(num_rows):
+                row_vals = []
+                for col in range(len(x)):
+                    val = x[col][i]
+                    if style.lower() == "camel" and col == 0:
+                        row_vals.append(val.lower())
+                    else:
+                        row_vals.append(tr(val))
+                results.append(join.join(row_vals))
+            return results
+        return combine
+    
+    def ids_gen(n, vals, style="snake"):
+        combine = make_combine(style)
+        def gen(n_val=1):
+            sampled_cols = [random.choices(v, k=n_val) for v in vals]
+            res = combine(sampled_cols)
+            return res if n_val > 1 else res[0]
+        if n is None:
+            return gen
+        else:
+            return gen(n)
+    
+    def adjective_animal(n=1, n_adjectives=1, style="snake", max_len=float('inf')):
+        adj_pool = gfycat_adjectives[:]
+        ani_pool = gfycat_animals[:]
+        
+        if isinstance(max_len, (list, tuple)):
+            m_adj, m_ani = max_len[0], max_len[1]
+        else:
+            m_adj = m_ani = max_len
+    
+        adj_pool = [a for a in adj_pool if len(a) <= m_adj]
+        ani_pool = [a for a in ani_pool if len(a) <= m_ani]
+    
+        vals = [adj_pool] * n_adjectives + [ani_pool]
+        return ids_gen(n, vals=vals, style=style)
+    
+    def r_print(x):
+        if isinstance(x, list):
+            # Mimic R's vector printing: [1] "val1" "val2" ... [6] "val6"
+            res = []
+            current_line = []
+            for i, val in enumerate(x, 1):
+                if (i - 1) % 5 == 0:
+                    if current_line:
+                        res.append(" ".join(current_line))
+                        current_line = []
+                    res.append(f"[{i}]")
+                current_line.append(f'"{val}"')
+            if current_line:
+                res.append(" ".join(current_line))
+            
+            # Join parts but handle the [1] prefix properly
+            output = " ".join(res).replace("[1] ", "[1] ")
+            print(output)
+        else:
+            print(f'[1] "{x}"')
+    
+    # --- Execution ---
+    
+    # Generate a random identifier:
+    r_print(adjective_animal())
+    
+    # Generate a bunch all at once:
+
+============================================================
+Entity: adjective_animal_1
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.660
+  side_effects:        0.660
+  executed_ok:       True
+
+  R:
+    adjective_animal(5)
+  Python:
+    r_print(adjective_animal(5))
+    
+    # Control the style of punctuation with the style argument:
+
+============================================================
+Entity: adjective_animal_2
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.705
+  side_effects:        0.705
+  executed_ok:       True
+
+  R:
+    adjective_animal(style = "lower")
+  Python:
+    r_print(adjective_animal(style="lower"))
+
+============================================================
+Entity: adjective_animal_3
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.780
+  side_effects:        0.780
+  executed_ok:       True
+
+  R:
+    adjective_animal(style = "CONSTANT")
+  Python:
+    r_print(adjective_animal(style="CONSTANT"))
+
+============================================================
+Entity: adjective_animal_4
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.709
+  side_effects:        0.709
+  executed_ok:       True
+
+  R:
+    adjective_animal(style = "camel")
+  Python:
+    r_print(adjective_animal(style="camel"))
+
+============================================================
+Entity: adjective_animal_5
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.674
+  side_effects:        0.674
+  executed_ok:       True
+
+  R:
+    adjective_animal(style = "kebab")
+  Python:
+    r_print(adjective_animal(style="kebab"))
+    
+    # Control the number of adjectives used
+
+============================================================
+Entity: adjective_animal_6
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.706
+  side_effects:        0.706
+  executed_ok:       True
+
+  R:
+    adjective_animal(n_adjectives = 3)
+  Python:
+    r_print(adjective_animal(n_adjectives=3))
+    
+    # This can get out of hand quickly though:
+
+============================================================
+Entity: adjective_animal_7
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.740
+  side_effects:        0.740
+  executed_ok:       True
+
+  R:
+    adjective_animal(n_adjectives = 7)
+  Python:
+    r_print(adjective_animal(n_adjectives=7))
+    
+    # Limit the length of adjectives and animals used:
+
+============================================================
+Entity: adjective_animal_8
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.732
+  side_effects:        0.732
+  executed_ok:       True
+
+  R:
+    adjective_animal(10, max_len = 6)
+  Python:
+    r_print(adjective_animal(10, max_len=6))
+    
+    # The lengths can be controlled for adjectives and animals separately:
+
+============================================================
+Entity: adjective_animal_9
+  Name:  adjective_animal
+  Kind:  FunctionCall
+  Score: 0.564
+  side_effects:        0.564
+  executed_ok:       True
+
+  R:
+    adjective_animal(10, max_len = c(6, Inf), n_adjectives = 2)
+  Python:
+    r_print(adjective_animal(10, max_len=[6, float('inf')], n_adjectives=2))
+    
+    # Pass n = NULL to bind arguments to a function
+
+============================================================
+Entity: id
+  Name:  id
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    id <- adjective_animal(NULL, n_adjectives = 2, style = "dot", max_len = 6)
+  Python:
+    id_func = adjective_animal(None, n_adjectives=2, style="dot", max_len=6)
+
+============================================================
+Entity: id_1
+  Name:  id
+  Kind:  FunctionCall
+  Score: 0.708
+  side_effects:        0.708
+  executed_ok:       True
+
+  R:
+    id()
+  Python:
+    r_print(id_func())
+
+============================================================
+Entity: id_2
+  Name:  id
+  Kind:  FunctionCall
+  Score: 0.689
+  side_effects:        0.689
+  executed_ok:       True
+
+  R:
+    id(10)
+  Python:
+    r_print(id_func(10))

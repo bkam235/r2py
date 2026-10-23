@@ -1,0 +1,87 @@
+Translation log
+Final score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: stat_lm
+  Name:  stat_lm
+  Kind:  FunctionDef
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    stat_lm <- function(mapping = NULL, data = NULL, geom = "line",
+                        position = "identity", na.rm = FALSE, show.legend = NA, 
+                        inherit.aes = TRUE, n = 50, formula = y ~ x, 
+                        ...) {
+      layer(
+        stat = StatLm, data = data, mapping = mapping, geom = geom, 
+        position = position, show.legend = show.legend, inherit.aes = inherit.aes,
+        params = list(n = n, formula = formula, na.rm = na.rm, ...)
+      )
+    }
+  Python:
+    def stat_lm(**kwargs, mapping=None, data=None, geom="line", position="identity", na_rm=False, show_legend=None, inherit_aes=True, n=50, formula="y ~ x"):
+        
+        def calculate_lm(df):
+            # Basic implementation of a linear model for plotting
+            # Extracts x and y based on the formula (default y ~ x)
+            # Note: plotnine handles most of this internally via geom_smooth, 
+            # but this approximates the stat_lm logic
+            
+            # Handle NaNs if na_rm is True
+            if na_rm:
+                df = df.dropna()
+                
+            # Simplified linear regression using numpy
+            x = df.iloc[:, 0].values # Simplified assumption for formula
+            y = df.iloc[:, 1].values
+            
+            coef = np.polyfit(x, y, 1)
+            poly = np.poly1d(coef)
+            
+            x_range = np.linspace(x.min(), x.max(), n)
+            return pd.DataFrame({'x': x_range, 'y': poly(x_range)})
+    
+        # In plotnine, the equivalent to stat_lm is geom_smooth(method='lm')
+        # We return a geom_smooth object to emulate the R function behavior
+        return geom_smooth(# Typical for stat_lm unless specified
+            **kwargs, mapping=mapping, data=data, geom=geom, position=position, show_legend=show_legend, inherit_aes=inherit_aes, method='lm', se=False)

@@ -1,0 +1,123 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(S7))
+
+============================================================
+Entity: import_S7
+  Name:  S7
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(S7))
+
+============================================================
+Entity: Horse
+  Name:  Horse
+  Kind:  S4Class
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    Horse <- new_class("Horse", properties = list(
+      name = class_character,
+      colour = class_character,
+      height = class_numeric
+    ))
+  Python:
+    @dataclass
+    class Horse:
+        name: str
+        colour: str
+        height: float
+
+============================================================
+Entity: lexington
+  Name:  lexington
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    lexington <- Horse(colour = "bay", height = 15, name = "Lex")
+  Python:
+    lexington = Horse(colour="bay", height=15, name="Lex")
+
+============================================================
+Entity: prop
+  Name:  prop
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  executed_ok:       True
+
+  R:
+    prop(lexington, "colour")
+  Python:
+    print(lexington.colour)
+    print(getattr(lexington, "colour"))
+
+============================================================
+Entity: lexington@height
+  Name:  lexington@height
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    lexington@height <- 14
+  Python:
+    setattr(lexington, "height", 14)
+    # r2py:entity:prop(lexington, "height")
+    setattr(lexington, "height", 15)
+
+============================================================
+Entity: prop(lexington, "height")
+  Name:  prop(lexington, "height")
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    prop(lexington, "height") <- 15

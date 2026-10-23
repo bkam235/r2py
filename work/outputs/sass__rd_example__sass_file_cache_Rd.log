@@ -1,0 +1,52 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(sass))
+
+============================================================
+Entity: import_sass
+  Name:  sass
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(sass))
+
+============================================================
+Entity: cache
+  Name:  cache
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    cache <- sass_file_cache(sass_cache_context_dir())
+  Python:
+    cache_dir = os.environ.get('SASS_CACHE_CONTEXT_DIR', '/tmp/sass_cache')
+
+============================================================
+Entity: cache$reset
+  Name:  cache$reset
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    cache$reset()
+  Python:
+    if os.path.exists(cache_dir):
+        shutil.rmtree(cache_dir)
+        os.makedirs(cache_dir)

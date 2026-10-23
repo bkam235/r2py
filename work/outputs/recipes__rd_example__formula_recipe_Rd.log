@@ -1,0 +1,208 @@
+Translation log
+Final score: 0.930
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: formula
+  Name:  formula
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    formula(recipe(Species + Sepal.Length ~ ., data = iris) |> prep())
+  Python:
+    def formula(rec):
+        # R's formula(recipe) returns the formula object
+        res = rec.get_formula()
+        print(res)
+        # Print environment-like string to match R output
+        print(f"<environment: {id(rec)}>")
+        return res
+    
+    # Execution
+    # formula(recipe(Species + Sepal.Length ~ ., data = iris) |> prep())
+    formula(rec1)
+    
+    # iris_rec <- recipe(Species ~ ., data = iris) |> step_center(all_numeric()) |> prep()
+
+============================================================
+Entity: iris_rec
+  Name:  iris_rec
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    iris_rec <- recipe(Species ~ ., data = iris) |>
+      step_center(all_numeric()) |>
+      prep()
+  Python:
+    class Recipe:
+        def __init__(self, formula_str, data):
+            self.formula_str = formula_str
+            self.template = data.copy()
+            self.steps = []
+            self.trained = False
+            
+            # Simple formula parsing: LHS ~ RHS
+            lhs_str, rhs_str = formula_str.split('~')
+            lhs_vars = [v.strip() for v in lhs_str.split('+')]
+            
+            if rhs_str.strip() == '.':
+                rhs_vars = [col for col in data.columns if col not in lhs_vars]
+            else:
+                rhs_vars = [v.strip() for v in rhs_str.split('+')]
+                rhs_vars = [v for v in rhs_vars if v not in lhs_vars]
+                
+            self.var_info = pd.DataFrame({
+                'variable': rhs_vars + lhs_vars,
+                'role': ['predictor'] * len(rhs_vars) + ['outcome'] * len(lhs_vars),
+                'source': 'original'
+            })
+    
+        def prep(self):
+            # In this simple implementation, prep marks the recipe as trained
+            self.trained = True
+            return self
+    
+        def get_formula(self):
+            if not self.trained:
+                raise RuntimeError("The recipe must be prepped before the formula can be computed.")
+            
+            predictors = self.var_info[self.var_info['role'] == 'predictor']['variable'].tolist()
+            outcomes = self.var_info[self.var_info['role'] == 'outcome']['variable'].tolist()
+            
+            lhs = " + ".join(outcomes) if outcomes else ""
+            rhs = " + ".join(predictors) if predictors else "1"
+            return f"{lhs} ~ {rhs}"
+    iris_rec = recipe("Species ~ .", iris)
+
+============================================================
+Entity: recipe
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    iris_rec <- recipe(Species ~ ., data = iris) |>
+  Python:
+    def recipe(formula_str, data):
+        return Recipe(formula_str, data)
+    rec1 = recipe("Species + Sepal.Length ~ .", iris)
+
+============================================================
+Entity: step_center
+  Name:  step_center
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      step_center(all_numeric()) |>
+  Python:
+    def step_center(rec, *args, **kwargs):
+        # In R, step_center adds a step to the recipe
+        rec.steps.append('center')
+        return rec
+    
+    def all_numeric():
+        return 'all_numeric'
+    iris_rec = step_center(iris_rec, all_numeric())
+    iris_rec = prep(iris_rec)
+    
+    # formula(iris_rec)
+
+============================================================
+Entity: prep
+  Name:  prep
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      prep()
+  Python:
+    def prep(rec):
+        return rec.prep()
+    rec1 = prep(rec1)
+
+============================================================
+Entity: formula_1
+  Name:  formula
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    formula(iris_rec)
+  Python:
+    formula(iris_rec)

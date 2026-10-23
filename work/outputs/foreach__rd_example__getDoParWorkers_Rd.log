@@ -1,0 +1,130 @@
+Translation log
+Final score: 0.885
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(foreach))
+
+============================================================
+Entity: import_foreach
+  Name:  foreach
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(foreach))
+
+============================================================
+Entity: cat
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    cat(sprintf('%s backend is registered\n',
+                if(getDoParRegistered()) 'A' else 'No'))
+  Python:
+    print(f"{'A' if get_do_par_registered() else 'No'} backend is registered")
+
+============================================================
+Entity: cat_1
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    cat(sprintf('Running with %d worker(s)\n', getDoParWorkers()))
+  Python:
+    print(f"Running with {get_do_par_workers()} worker(s)")
+
+============================================================
+Entity: name
+  Name:  name
+  Kind:  Variable
+  Score: 0.812
+  control_flow_match:  1.000
+  side_effects:        0.625
+  executed_ok:       True
+
+  R:
+    (name <- getDoParName())
+  Python:
+    def get_do_par_name():
+        if not get_do_par_registered():
+            return None
+        return "doParallel-Python"
+    name = get_do_par_name()
+    print(name)
+
+============================================================
+Entity: ver
+  Name:  ver
+  Kind:  Variable
+  Score: 0.812
+  control_flow_match:  1.000
+  side_effects:        0.625
+  executed_ok:       True
+
+  R:
+    (ver <- getDoParVersion())
+  Python:
+    def get_do_par_version():
+        if not get_do_par_registered():
+            return None
+        return "1.0.0"
+    
+    # Simulation of the R script execution logic
+    # Note: Since the R example checks registration, and in a fresh script it's typically False
+    # unless specifically set, we follow the logic.
+    ver = get_do_par_version()
+    print(ver)
+
+============================================================
+Entity: getDoParRegistered
+  Name:  getDoParRegistered
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    if (getDoParRegistered())
+  Python:
+    def get_do_par_registered():
+        # In Python, we can check if a multiprocessing pool or similar is active
+        # For the sake of mimicking the R logic provided in the source, 
+        # we check if a global parallel backend is 'registered'.
+        return getattr(__builtins__, '_foreach_globals_registered', False)
+    
+    def get_do_par_workers():
+        # Defaults to 1 if not registered, otherwise returns CPU count or pool size
+        if not get_do_par_registered():
+            return 1
+        return multiprocessing.cpu_count()
+    if get_do_par_registered():
+
+============================================================
+Entity: cat_2
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      cat(sprintf('Currently using %s [%s]\n', name, ver))
+  Python:
+        print(f"Currently using {name} [{ver}]")

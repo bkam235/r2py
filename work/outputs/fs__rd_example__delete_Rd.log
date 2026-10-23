@@ -1,0 +1,371 @@
+Translation log
+Final score: 0.931
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(fs))
+
+============================================================
+Entity: import_fs
+  Name:  fs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(fs))
+
+============================================================
+Entity: .old_wd
+  Name:  .old_wd
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    .old_wd <- setwd(tempdir())
+  Python:
+    old_wd = os.getcwd()
+    temp_dir = tempfile.gettempdir()
+    os.chdir(temp_dir)
+    
+    # create a directory, with some files and a link to it
+
+============================================================
+Entity: dir_create
+  Name:  dir_create
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    dir_create("dir")
+  Python:
+    dir_path = Path("dir")
+    dir_path.mkdir(exist_ok=True)
+    
+    # letters[1:5] in R is 'a', 'b', 'c', 'd', 'e'
+
+============================================================
+Entity: files
+  Name:  files
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    files <- file_create(path("dir", letters[1:5]))
+  Python:
+    files = []
+    for i in range(5):
+        f_path = dir_path / letters[i]
+        f_path.touch()
+        # Store as forward-slash string to match R output
+        files.append(f_path.as_posix())
+    
+    # create a symbolic link to the absolute path of "dir"
+
+============================================================
+Entity: link
+  Name:  link
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    link <- link_create(path_abs("dir"), "link")
+  Python:
+    dir_abs_path = dir_path.resolve()
+    link_path_obj = Path("link")
+    os.symlink(dir_abs_path, link_path_obj)
+    link = "link"
+    
+    # All files created
+
+============================================================
+Entity: dir_exists
+  Name:  dir_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    dir_exists("dir")
+  Python:
+    print(dir_path.exists())
+
+============================================================
+Entity: file_exists
+  Name:  file_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    file_exists(files)
+  Python:
+    print([Path(f).exists() for f in files])
+
+============================================================
+Entity: link_exists
+  Name:  link_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    link_exists("link")
+  Python:
+    print(link_path_obj.is_symlink())
+
+============================================================
+Entity: file_exists_1
+  Name:  file_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    file_exists(link_path("link"))
+  Python:
+    print(link_path_obj.resolve().exists())
+    
+    # Delete a file (files[1] in R is index 0 in Python)
+
+============================================================
+Entity: file_delete
+  Name:  file_delete
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    file_delete(files[1])
+  Python:
+    os.remove(files[0])
+
+============================================================
+Entity: file_exists_2
+  Name:  file_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    file_exists(files[1])
+  Python:
+    print(Path(files[0]).exists())
+    
+    # Delete the directory (which deletes the files as well)
+
+============================================================
+Entity: dir_delete
+  Name:  dir_delete
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    dir_delete("dir")
+  Python:
+    if dir_path.exists():
+        shutil.rmtree(dir_path)
+
+============================================================
+Entity: file_exists_3
+  Name:  file_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    file_exists(files)
+  Python:
+    print([Path(f).exists() for f in files])
+
+============================================================
+Entity: dir_exists_1
+  Name:  dir_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    dir_exists("dir")
+  Python:
+    print(dir_path.exists())
+    
+    # The link still exists, but what it points to does not.
+
+============================================================
+Entity: link_exists_1
+  Name:  link_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    link_exists("link")
+  Python:
+    print(link_path_obj.is_symlink())
+
+============================================================
+Entity: dir_exists_2
+  Name:  dir_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    dir_exists(link_path("link"))
+  Python:
+    print(link_path_obj.resolve().exists())
+    
+    # Delete the link
+
+============================================================
+Entity: link_delete
+  Name:  link_delete
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    link_delete("link")
+  Python:
+    link_path_obj.unlink()
+
+============================================================
+Entity: link_exists_2
+  Name:  link_exists
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    link_exists("link")
+  Python:
+    print(link_path_obj.is_symlink())
+    
+    # Return to original working directory
+
+============================================================
+Entity: setwd
+  Name:  setwd
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    setwd(.old_wd)
+  Python:
+    os.chdir(old_wd)

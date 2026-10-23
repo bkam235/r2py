@@ -1,0 +1,7 @@
+420 calls (provider outages excluded)
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+A2_full_entity   105   14034       2%     32%    30%        32%        27%   -0.082
+A5_local         105    2894       0%     66%    36%        48%        25%   -0.030
+B1_full_entity_shortsys 105    9960       0%     71%    43%        40%        45%   +0.014
+B2_local_agentsys 105    6968       0%     54%    41%        56%        27%   -0.006
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 29)

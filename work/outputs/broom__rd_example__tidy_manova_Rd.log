@@ -1,0 +1,98 @@
+Translation log
+Final score: 0.000
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_broom
+  Name:  broom
+  Kind:  LibraryImport
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: npk2
+  Name:  npk2
+  Kind:  Variable
+  Score: 0.500
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    npk2 <- within(npk, foo <- rnorm(24))
+  Python:
+    npk['foo'] = np.random.normal(size=24)
+    
+    # m <- manova(cbind(yield, foo) ~ block + N * P * K, npk2)
+    # Note: statsmodels MANOVA uses a formula interface. 
+    # In Python, we specify the dependent variables and the model formula.
+
+============================================================
+Entity: m
+  Name:  m
+  Kind:  Variable
+  Score: 0.267
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    m <- manova(cbind(yield, foo) ~ block + N * P * K, npk2)
+  Python:
+    maov = MANOVA.from_formula('yield + foo ~ block + N * P * K', data=npk)
+    result = maov.mv_test()
+    
+    # tidy(m)
+    # The mv_test() output provides the summary statistics similar to broom::tidy()
+
+============================================================
+Entity: tidy
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.100
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       False
+
+  R:
+    tidy(m)
+  Python:
+    print(result)

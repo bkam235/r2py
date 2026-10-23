@@ -1,0 +1,308 @@
+Translation log
+Final score: 0.625
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr))
+
+============================================================
+Entity: import_httr
+  Name:  httr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr))
+
+============================================================
+Entity: req_logger
+  Name:  req_logger
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    req_logger <- function(req) {
+      cat("HTTP request to", sQuote(req$url), "\n")
+    }
+  Python:
+    def req_logger(req):
+        # R's cat adds a newline by default if specified, but we match the R source logic
+        print(f"HTTP request to '{req.url}'\n", end="")
+    
+    old = mgr.set_callback("request", req_logger)
+
+============================================================
+Entity: old
+  Name:  old
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    old <- set_callback("request", req_logger)
+  Python:
+    class RequestManager:
+        def __init__(self):
+            self.callbacks = {"request": None, "response": None}
+    
+        def set_callback(self, type_val, func):
+            old = self.callbacks.get(type_val)
+            self.callbacks[type_val] = func
+            return old
+    
+        def get(self, url):
+            # Request callback
+            if self.callbacks["request"]:
+                req_obj = type('obj', (object,), {'url': url})
+                res_val = self.callbacks["request"](req_obj)
+                if res_val is not None:
+                    return res_val
+            
+            res = requests.get(url)
+            
+            # Response callback
+            if self.callbacks["response"]:
+                req_obj = type('obj', (object,), {'url': url})
+                self.callbacks["response"](req_obj, res)
+                
+            return res
+    
+    mgr = RequestManager()
+
+============================================================
+Entity: g1
+  Name:  g1
+  Kind:  Variable
+  Score: 0.625
+  type_match:          0.500
+  control_flow_match:  1.000
+  data_output:         0.500
+  variable_output:     0.500
+  executed_ok:       True
+
+  R:
+    g1 <- GET("https://httpbin.org")
+  Python:
+    g1 = mgr.get("https://httpbin.org")
+
+============================================================
+Entity: g2
+  Name:  g2
+  Kind:  Variable
+  Score: 0.625
+  type_match:          0.500
+  control_flow_match:  1.000
+  data_output:         0.500
+  variable_output:     0.500
+  executed_ok:       True
+
+  R:
+    g2 <- GET("https://httpbin.org/ip")
+  Python:
+    g2 = mgr.get("https://httpbin.org/ip")
+
+============================================================
+Entity: set_callback
+  Name:  set_callback
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    set_callback("request", old)
+  Python:
+    mgr.set_callback("request", old)
+
+============================================================
+Entity: req_logger2
+  Name:  req_logger2
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    req_logger2 <- function(req) {
+      cat("HTTP request to", sQuote(req$url), "... ")
+    }
+  Python:
+    def req_logger2(req):
+        # R's cat("... ") without \n
+        print(f"HTTP request to '{req.url}' ... ", end="")
+
+============================================================
+Entity: res_logger
+  Name:  res_logger
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    res_logger <- function(req, res) {
+      cat(res$status_code, "\n")
+    }
+  Python:
+    def res_logger(req, res):
+        # R's cat(res$status_code, "\n")
+        print(f"{res.status_code}\n", end="")
+
+============================================================
+Entity: old_req
+  Name:  old_req
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    old_req <- set_callback("request", req_logger2)
+  Python:
+    old_req = mgr.set_callback("request", req_logger2)
+
+============================================================
+Entity: old_res
+  Name:  old_res
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    old_res <- set_callback("response", res_logger)
+  Python:
+    old_res = mgr.set_callback("response", res_logger)
+
+============================================================
+Entity: g3
+  Name:  g3
+  Kind:  Variable
+  Score: 0.625
+  type_match:          0.500
+  control_flow_match:  1.000
+  data_output:         0.500
+  variable_output:     0.500
+  executed_ok:       True
+
+  R:
+    g3 <- GET("https://httpbin.org")
+  Python:
+    g3 = mgr.get("https://httpbin.org")
+
+============================================================
+Entity: g4
+  Name:  g4
+  Kind:  Variable
+  Score: 0.625
+  type_match:          0.500
+  control_flow_match:  1.000
+  data_output:         0.500
+  variable_output:     0.500
+  executed_ok:       True
+
+  R:
+    g4 <- GET("https://httpbin.org/ip")
+  Python:
+    g4 = mgr.get("https://httpbin.org/ip")
+
+============================================================
+Entity: set_callback_1
+  Name:  set_callback
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    set_callback("request", old_req)
+  Python:
+    mgr.set_callback("request", old_req)
+
+============================================================
+Entity: set_callback_2
+  Name:  set_callback
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    set_callback("response", old_res)
+  Python:
+    mgr.set_callback("response", old_res)
+
+============================================================
+Entity: replay
+  Name:  replay
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    replay <- function(req) {
+      if (req$url == "https://httpbin.org") g3
+    }
+  Python:
+    def replay(req):
+        if req.url == "https://httpbin.org":
+            return g3
+
+============================================================
+Entity: old_req_1
+  Name:  old_req
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    old_req <- set_callback("request", replay)
+  Python:
+    old_req = mgr.set_callback("request", replay)
+
+============================================================
+Entity: grec
+  Name:  grec
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    grec <- GET("https://httpbin.org")
+  Python:
+    grec = mgr.get("https://httpbin.org")
+    
+    # Compare date headers. R output shows [1] TRUE
+    res_date_g3 = g3.headers.get('Date')
+    res_date_grec = grec.headers.get('Date')
+    print(f"[1] {res_date_g3 == res_date_grec}")
+
+============================================================
+Entity: set_callback_3
+  Name:  set_callback
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    set_callback("request", old_req)
+  Python:
+    mgr.set_callback("request", old_req)

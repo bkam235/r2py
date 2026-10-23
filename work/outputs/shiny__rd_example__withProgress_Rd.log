@@ -1,0 +1,124 @@
+Translation log
+Final score: 0.250
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: interactive
+  Name:  interactive
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (interactive()) {
+
+============================================================
+Entity: options
+  Name:  options
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    options(device.ask.default = FALSE)
+
+============================================================
+Entity: ui
+  Name:  ui
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    ui <- fluidPage(
+      plotOutput("plot")
+    )
+  Python:
+    ui = ui.page_fluid(
+        ui.output_plot("plot")
+    )
+
+============================================================
+Entity: server
+  Name:  server
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    server <- function(input, output) {
+      output$plot <- renderPlot({
+        withProgress(message = 'Calculation in progress',
+                     detail = 'This may take a while...', value = 0, {
+          for (i in 1:15) {
+            incProgress(1/15)
+            Sys.sleep(0.25)
+          }
+        })
+        plot(cars)
+      })
+    }
+  Python:
+    def server(input, output, session):
+        @output
+        @render.plot
+        def plot():
+            with ui.with_progress(
+                message='Calculation in progress',
+                detail='This may take a while...', 
+                value=0
+            ) as progress:
+                for i in range(1, 16):
+                    progress.inc(1/15)
+                    time.sleep(0.25)
+            
+            # Using a sample dataset similar to R's 'cars'
+            # cars dataset in R: speed vs dist
+            cars_data = pd.DataFrame({
+                'speed': [4, 4, 4, 5, 5, 5, 6, 6, 6, 7, 7, 7, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 14, 15, 15, 15, 16, 16, 16, 17, 17, 17, 18, 18, 18, 19, 19, 19, 20, 20, 20],
+                'dist': [160, 160, 160, 190, 190, 190, 200, 200, 200, 220, 220, 220, 240, 240, 240, 260, 260, 260, 280, 280, 280, 300, 300, 300, 320, 320, 320, 340, 340, 340, 360, 360, 360, 380, 380, 380, 400, 400, 400, 420, 420, 420, 440, 440, 440, 460, 460, 460, 480, 480, 480]
+            })
+            plt.scatter(cars_data['speed'], cars_data['dist'])
+            plt.xlabel('speed')
+            plt.ylabel('dist')
+            return plt.gcf()
+
+============================================================
+Entity: shinyApp
+  Name:  shinyApp
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    shinyApp(ui, server)
+  Python:
+    app = App(ui, server)

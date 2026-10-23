@@ -1,0 +1,53 @@
+Translation log
+Final score: 0.902
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(knitr))
+
+============================================================
+Entity: import_knitr
+  Name:  knitr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(knitr))
+
+============================================================
+Entity: rnorm
+  Name:  rnorm
+  Kind:  FunctionCall
+  Score: 0.815
+  side_effects:        0.815
+  executed_ok:       True
+
+  R:
+    rnorm(5)^2
+  Python:
+    print(np.random.randn(5)**2)
+    
+    # strsplit('hello, markdown vignettes', '')
+
+============================================================
+Entity: strsplit
+  Name:  strsplit
+  Kind:  FunctionCall
+  Score: 0.989
+  side_effects:        0.989
+  executed_ok:       True
+
+  R:
+    strsplit('hello, markdown vignettes', '')
+  Python:
+    print(list('hello, markdown vignettes'))

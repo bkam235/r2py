@@ -1,0 +1,180 @@
+Translation log
+Final score: 0.863
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: import_stringr
+  Name:  stringr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: fruit
+  Name:  fruit
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    fruit <- c("apple", "banana", "pear", "pineapple")
+  Python:
+    fruit = ["apple", "banana", "pear", "pineapple"]
+
+============================================================
+Entity: str_locate
+  Name:  str_locate
+  Kind:  FunctionCall
+  Score: 0.971
+  side_effects:        0.971
+  executed_ok:       True
+
+  R:
+    str_locate(fruit, "$")
+  Python:
+    def str_locate(text_list, pattern):
+        results = []
+        for text in text_list:
+            match = re.search(pattern, text)
+            if match:
+                # R's str_locate is 1-indexed
+                results.append([match.start() + 1, match.end()])
+            else:
+                results.append([np.nan, np.nan])
+        return pd.DataFrame(results, columns=["start", "end"])
+    print(str_locate(fruit, "$"))
+    
+    # str_locate(fruit, "a")
+
+============================================================
+Entity: str_locate_1
+  Name:  str_locate
+  Kind:  FunctionCall
+  Score: 0.970
+  side_effects:        0.970
+  executed_ok:       True
+
+  R:
+    str_locate(fruit, "a")
+  Python:
+    print(str_locate(fruit, "a"))
+    
+    # str_locate(fruit, "e")
+
+============================================================
+Entity: str_locate_2
+  Name:  str_locate
+  Kind:  FunctionCall
+  Score: 0.869
+  side_effects:        0.869
+  executed_ok:       True
+
+  R:
+    str_locate(fruit, "e")
+  Python:
+    print(str_locate(fruit, "e"))
+    
+    # str_locate(fruit, c("a", "b", "p", "p")) -> interpreted as regex OR
+
+============================================================
+Entity: str_locate_3
+  Name:  str_locate
+  Kind:  FunctionCall
+  Score: 0.970
+  side_effects:        0.970
+  executed_ok:       True
+
+  R:
+    str_locate(fruit, c("a", "b", "p", "p"))
+  Python:
+    print(str_locate(fruit, "|".join(["a", "b", "p", "p"])))
+    
+    # str_locate_all(fruit, "a")
+
+============================================================
+Entity: str_locate_all
+  Name:  str_locate_all
+  Kind:  FunctionCall
+  Score: 0.717
+  side_effects:        0.717
+  executed_ok:       True
+
+  R:
+    str_locate_all(fruit, "a")
+  Python:
+    def str_locate_all(text_list, pattern):
+        results = []
+        for text in text_list:
+            matches = [(m.start() + 1, m.end()) for m in re.finditer(f'(?={pattern})' if pattern == "" else pattern, text)]
+            results.append(matches)
+        return results
+    
+    import numpy as np
+    
+    # str_locate(fruit, "$")
+    print(str_locate_all(fruit, "a"))
+    
+    # str_locate_all(fruit, "e")
+
+============================================================
+Entity: str_locate_all_1
+  Name:  str_locate_all
+  Kind:  FunctionCall
+  Score: 0.674
+  side_effects:        0.674
+  executed_ok:       True
+
+  R:
+    str_locate_all(fruit, "e")
+  Python:
+    print(str_locate_all(fruit, "e"))
+    
+    # str_locate_all(fruit, c("a", "b", "p", "p"))
+
+============================================================
+Entity: str_locate_all_2
+  Name:  str_locate_all
+  Kind:  FunctionCall
+  Score: 0.754
+  side_effects:        0.754
+  executed_ok:       True
+
+  R:
+    str_locate_all(fruit, c("a", "b", "p", "p"))
+  Python:
+    print(str_locate_all(fruit, "|".join(["a", "b", "p", "p"])))
+    
+    # str_locate_all(fruit, "")
+
+============================================================
+Entity: str_locate_all_3
+  Name:  str_locate_all
+  Kind:  FunctionCall
+  Score: 0.843
+  side_effects:        0.843
+  executed_ok:       True
+
+  R:
+    str_locate_all(fruit, "")
+  Python:
+    print(str_locate_all(fruit, ""))

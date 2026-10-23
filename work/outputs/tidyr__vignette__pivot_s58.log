@@ -1,0 +1,56 @@
+Translation log
+Final score: 1.000
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: import_tidyr
+  Name:  tidyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: spec
+  Name:  spec
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    spec <- tribble(
+      ~.name,            ~.value, ~units,  ~region,
+      "1 unit",          "n",     "1",     NA,
+      "2 to 4 units",    "n",     "2-4",   NA,
+      "5 units or more", "n",     "5+",    NA,
+      "Northeast",       "n",     NA,      "Northeast",
+      "Midwest",         "n",     NA,      "Midwest",
+      "South",           "n",     NA,      "South",
+      "West",            "n",     NA,      "West",
+    )
+  Python:
+    spec = pd.DataFrame({
+        ".name": ["1 unit", "2 to 4 units", "5 units or more", "Northeast", "Midwest", "South", "West"],
+        ".value": ["n", "n", "n", "n", "n", "n", "n"],
+        "units": ["1", "2-4", "5+", np.nan, np.nan, np.nan, np.nan],
+        "region": [np.nan, np.nan, np.nan, "Northeast", "Midwest", "South", "West"]
+    })

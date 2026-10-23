@@ -1,0 +1,103 @@
+Translation log
+Final score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: import_rlang
+  Name:  rlang
+  Kind:  LibraryImport
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: f
+  Name:  f
+  Kind:  FunctionDef
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    f <- function(..., foofy = 8) {
+      check_dots_unnamed()
+      c(...)
+    }
+  Python:
+    def f(*args, **kwargs, foofy=8):
+        if kwargs:
+            # Simulating check_dots_unnamed() by raising an error if unexpected kwargs are passed
+            raise TypeError(f"Unexpected keyword arguments: {list(kwargs.keys())}")
+        return list(args)
+    
+    # Valid call
+
+============================================================
+Entity: f_1
+  Name:  f
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    f(1, 2, 3, foofy = 4)
+  Python:
+    print(f(1, 2, 3, foofy=4))
+    
+    # Call that triggers the "unexpected keyword" check (simulating the try block)
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    try(f(1, 2, 3, foof = 4))
+  Python:
+    try:
+        f(1, 2, 3, foof=4)
+    except TypeError as e:
+        print(e)

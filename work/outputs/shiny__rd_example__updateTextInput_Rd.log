@@ -1,0 +1,111 @@
+Translation log
+Final score: 0.250
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(shiny))
+
+============================================================
+Entity: interactive
+  Name:  interactive
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (interactive()) {
+
+============================================================
+Entity: ui
+  Name:  ui
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    ui <- fluidPage(
+      sliderInput("controller", "Controller", 0, 20, 10),
+      textInput("inText", "Input text"),
+      textInput("inText2", "Input text 2")
+    )
+  Python:
+    app_ui = ui.page_fluid(
+        ui.input_slider("controller", "Controller", min=0, max=20, value=10),
+        ui.input_text("inText", "Input text"),
+        ui.input_text("inText2", "Input text 2"),
+    )
+
+============================================================
+Entity: server
+  Name:  server
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    server <- function(input, output, session) {
+      observe({
+        # We'll use the input$controller variable multiple times, so save it as x
+        # for convenience.
+        x <- input$controller
+    
+        # This will change the value of input$inText, based on x
+        updateTextInput(session, "inText", value = paste("New text", x))
+    
+        # Can also set the label, this time for input$inText2
+        updateTextInput(session, "inText2",
+          label = paste("New label", x),
+          value = paste("New text", x))
+      })
+    }
+  Python:
+    def server(input, output, session):
+        @render.reactive
+        def update_texts():
+            x = input.controller()
+            
+            # Update values and labels using session.send_input_message or similar mechanisms
+            # In Python Shiny, we use ui.update_text
+            ui.update_text("inText", value=f"New text {x}")
+            ui.update_text("inText2", label=f"New label {x}", value=f"New text {x}")
+    
+        # create a reactive effect to trigger the updates
+        from shiny import reactive
+        reactive.effect(update_texts)
+
+============================================================
+Entity: shinyApp
+  Name:  shinyApp
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    shinyApp(ui, server)
+  Python:
+    app = App(app_ui, server)

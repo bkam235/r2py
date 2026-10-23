@@ -1,0 +1,79 @@
+Translation log
+Final score: 0.944
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xfun))
+
+============================================================
+Entity: import_xfun
+  Name:  xfun
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xfun))
+
+============================================================
+Entity: valid_syntax
+  Name:  valid_syntax
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    xfun::valid_syntax("1+1")
+  Python:
+    def valid_syntax(code):
+        if isinstance(code, list):
+            for item in code:
+                try:
+                    ast.parse(item)
+                    print(True)
+                except SyntaxError:
+                    print(False)
+        else:
+            try:
+                ast.parse(code)
+                print(True)
+            except SyntaxError:
+                print(False)
+    
+    valid_syntax("1+1")
+
+============================================================
+Entity: valid_syntax_1
+  Name:  valid_syntax
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    xfun::valid_syntax("1+")
+  Python:
+    valid_syntax("1+")
+
+============================================================
+Entity: valid_syntax_2
+  Name:  valid_syntax
+  Kind:  ExternalSymbol
+  Score: 0.833
+  side_effects:        0.833
+  executed_ok:       True
+
+  R:
+    xfun::valid_syntax(c("if(T){1+1}", "else {2+2}"), silent = FALSE)
+  Python:
+    valid_syntax(["if True: 1+1", "else: 2+2"])

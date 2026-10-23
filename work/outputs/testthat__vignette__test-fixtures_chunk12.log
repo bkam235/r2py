@@ -1,0 +1,70 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(testthat))
+
+============================================================
+Entity: import_testthat
+  Name:  testthat
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(testthat))
+
+============================================================
+Entity: defer
+  Name:  defer
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    withr::defer(print("hi"))
+  Python:
+    class WithrMock:
+        def __init__(self):
+            self.global_exits = []
+    
+        def defer(self, expr_func, priority="first"):
+            if priority == "first":
+                self.global_exits.insert(0, expr_func)
+            else:
+                self.global_exits.append(expr_func)
+    withr.defer(lambda: print("hi"))
+    
+    # In R: withr::deferred_run()
+
+============================================================
+Entity: deferred_run
+  Name:  deferred_run
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    withr::deferred_run()
+  Python:
+        def deferred_run(self):
+            # Execute and clear the deferred events
+            while self.global_exits:
+                expr_func = self.global_exits.pop()
+                expr_func()
+    
+    withr = WithrMock()
+    
+    # In R: withr::defer(print("hi"))
+    # Python requires a callable for deferred execution
+    withr.deferred_run()

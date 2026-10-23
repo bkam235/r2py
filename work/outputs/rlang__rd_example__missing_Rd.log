@@ -1,0 +1,133 @@
+Translation log
+Final score: 0.952
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: import_rlang
+  Name:  rlang
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: typeof
+  Name:  typeof
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    typeof(NA)
+  Python:
+    def typeof(x):
+        if x is None:
+            return "NULL"
+        
+        # Special handling for the shim/constants to mimic R's behavior
+        if x is globals().get('na_lgl') or (isinstance(x, float) and np.isnan(x)):
+            # Note: In R, NA is logical. na_dbl is also NA but typeof returns "double"
+            # The script specifically tests na_lgl and na_dbl.
+            # If it is exactly na_lgl or a general NA, it's logical unless it's na_dbl.
+            return "logical"
+        if x is globals().get('na_int'):
+            return "integer"
+        if isinstance(x, int):
+            return "integer"
+        if isinstance(x, float):
+            return "double"
+        return type(x).__name__
+    
+    def r_print_typeof(val):
+        print(f'[1] "{val}"')
+    
+    # suppressPackageStartupMessages(library(rlang))
+    # Python has no direct equivalent for suppressPackageStartupMessages, 
+    # and rlang is not available. We proceed to the logic.
+    
+    # typeof(NA)
+    # R's NA is logically a logical type.
+    r_print_typeof(typeof(np.nan))
+    
+    # typeof(na_lgl)
+
+============================================================
+Entity: typeof_1
+  Name:  typeof
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    typeof(na_lgl)
+  Python:
+    r_print_typeof(typeof(globals().get('na_lgl')))
+    
+    # typeof(na_int)
+
+============================================================
+Entity: typeof_2
+  Name:  typeof
+  Kind:  FunctionCall
+  Score: 0.759
+  side_effects:        0.759
+  executed_ok:       True
+
+  R:
+    typeof(na_int)
+  Python:
+    r_print_typeof(typeof(globals().get('na_int')))
+    
+    # Note that while the base R missing symbols cannot be overwritten,
+    # that's not the case for rlang's aliases:
+
+============================================================
+Entity: na_dbl
+  Name:  na_dbl
+  Kind:  Constant
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    na_dbl <- NA
+  Python:
+    na_dbl = np.nan
+    # typeof(na_dbl)
+    # In R, the example says na_dbl <- NA, then typeof(na_dbl) returns "logical" 
+    # (because NA is logical). Wait, if na_dbl is assigned NA, it is logical.
+    # If the example meant NA_real_, it would be "double". 
+    # Based on R source: na_dbl <- NA; typeof(na_dbl) -> "logical"
+
+============================================================
+Entity: typeof_3
+  Name:  typeof
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    typeof(na_dbl)
+  Python:
+    r_print_typeof(typeof(na_dbl))

@@ -1,0 +1,98 @@
+Translation log
+Final score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ellipsis))
+
+============================================================
+Entity: import_ellipsis
+  Name:  ellipsis
+  Kind:  LibraryImport
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(ellipsis))
+
+============================================================
+Entity: f
+  Name:  f
+  Kind:  FunctionDef
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    f <- function(x, ..., foofy = 8) {
+      check_dots_empty()
+      x + foofy
+    }
+  Python:
+    def f(x, **kwargs, foofy=8):
+        if kwargs:
+            raise TypeError("Unexpected keyword arguments found")
+        return x + foofy
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    try(f(1, foof = 4))
+  Python:
+    try:
+        f(1, foof=4)
+    except Exception as e:
+        print(f"Error: {e}")
+
+============================================================
+Entity: f_1
+  Name:  f
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       False
+
+  R:
+    f(1, foofy = 4)
+  Python:
+    print(f(1, foofy=4))

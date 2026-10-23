@@ -1,0 +1,202 @@
+Translation log
+Final score: 0.852
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: import_stringr
+  Name:  stringr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: str_length
+  Name:  str_length
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_length(letters)
+  Python:
+    print([len(s) for s in letters])
+    
+    # str_length(NA)
+
+============================================================
+Entity: str_length_1
+  Name:  str_length
+  Kind:  FunctionCall
+  Score: 0.611
+  side_effects:        0.611
+  executed_ok:       True
+
+  R:
+    str_length(NA)
+  Python:
+    print(len(None) if None else None) # Returns None/Error; in pandas:
+    print(pd.Series([None]).str.len().tolist())
+    
+    # str_length(factor("abc"))
+    # Factors are categorical; usually converted to string
+
+============================================================
+Entity: str_length_2
+  Name:  str_length
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_length(factor("abc"))
+  Python:
+    print(len(str("abc")))
+    
+    # str_length(c("i", "like", "programming", NA))
+
+============================================================
+Entity: str_length_3
+  Name:  str_length
+  Kind:  FunctionCall
+  Score: 0.780
+  side_effects:        0.780
+  executed_ok:       True
+
+  R:
+    str_length(c("i", "like", "programming", NA))
+  Python:
+    vec = pd.Series(["i", "like", "programming", None])
+    print(vec.str.len().tolist())
+    
+    # x <- c("\u6c49\u5b57", "\U0001f60a")
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- c("\u6c49\u5b57", "\U0001f60a")
+  Python:
+    x = ["\u6c49\u5b57", "\U0001f60a"]
+
+============================================================
+Entity: str_view
+  Name:  str_view
+  Kind:  FunctionCall
+  Score: 0.833
+  side_effects:        0.833
+  executed_ok:       True
+
+  R:
+    str_view(x)
+  Python:
+    print(x) # str_view equivalent
+    # str_width is specific to display columns; Python's len() counts code points
+
+============================================================
+Entity: str_width
+  Name:  str_width
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    str_width(x)
+
+============================================================
+Entity: str_length_4
+  Name:  str_length
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_length(x)
+  Python:
+    print([len(s) for s in x]) # str_length equivalent
+    
+    # u <- c("\u00fc", "u\u0308")
+
+============================================================
+Entity: u
+  Name:  u
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    u <- c("\u00fc", "u\u0308")
+  Python:
+    u = ["\u00fc", "u\u0308"]
+    # Python len() counts code points. 
+    # For combined characters (u + umlaut), len is 2.
+
+============================================================
+Entity: str_width_1
+  Name:  str_width
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    str_width(u)
+
+============================================================
+Entity: str_length_5
+  Name:  str_length
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_length(u)
+  Python:
+    print([len(s) for s in u]) 
+    
+    # str_sub(u, 1, 1)
+
+============================================================
+Entity: str_sub
+  Name:  str_sub
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_sub(u, 1, 1)
+  Python:
+    print([s[0:1] for s in u])

@@ -1,0 +1,160 @@
+Translation log
+Final score: 0.792
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xfun))
+
+============================================================
+Entity: import_xfun
+  Name:  xfun
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(xfun))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.375
+  type_match:          0.167
+  control_flow_match:  1.000
+  data_output:         0.167
+  variable_output:     0.167
+  executed_ok:       True
+
+  R:
+    x = sample(c(letters, " "), 200, TRUE, c(rep(0.5/26, 26), 0.5))
+  Python:
+    # for _r2py_shim_n in ['letters', 'x']:
+    #     if _r2py_shim_n in _r2py_shim_data:
+    #         globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]
+    # r2py:data_shim:end
+    
+    import re
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x = rep(paste(x, collapse = ""), 2)
+
+============================================================
+Entity: strwrap
+  Name:  strwrap
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    strwrap(x, width = 30)
+  Python:
+    def strwrap(x, width=72, indent=0, exdent=0, prefix="", simplify=True, initial=None):
+        if initial is None:
+            initial = prefix
+        
+        if not isinstance(x, (list, tuple)):
+            x = [str(x)]
+        else:
+            x = [str(i) for i in x]
+        
+        indent_string = " " * indent
+        exdent_string = " " * exdent
+        
+        y = []
+        for item in x:
+            # R's strwrap splits by whitespace and collapses multiple spaces
+            # unless they are within words.
+            words = item.split()
+            if not words:
+                yi = [""]
+            else:
+                yi = []
+                current_line_words = []
+                # First line uses 'initial' and 'indent'
+                current_prefix = initial + indent_string
+                current_max_width = width - len(current_prefix)
+                
+                line_len = 0
+                for word in words:
+                    w_len = len(word)
+                    # space + word
+                    needed = (1 if line_len > 0 else 0) + w_len
+                    
+                    if line_len == 0 and needed > current_max_width:
+                        # Word is too long for line, but it's the first word
+                        current_line_words.append(word)
+                        line_len += w_len
+                    elif needed <= current_max_width:
+                        current_line_words.append(word)
+                        line_len += needed
+                    else:
+                        # Line is full, wrap to next
+                        yi.append(current_prefix + " ".join(current_line_words))
+                        # Next lines use 'prefix' and 'exdent'
+                        current_prefix = prefix + exdent_string
+                        current_max_width = width - len(current_prefix)
+                        current_line_words = [word]
+                        line_len = len(word)
+                
+                if current_line_words:
+                    yi.append(current_prefix + " ".join(current_line_words))
+            
+            if simplify:
+                y.extend(yi)
+            else:
+                y.append(yi)
+                
+        return y if simplify else y
+    res_strwrap = strwrap(x, width=30)
+    print(res_strwrap)
+    
+    # xfun::str_wrap(x, width = 30)
+
+============================================================
+Entity: str_wrap
+  Name:  str_wrap
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    xfun::str_wrap(x, width = 30)  # same length as x
+  Python:
+    def one_string(lines):
+        return "\n".join(lines)
+    
+    def str_wrap(*args, **kwargs):
+        # xfun::str_wrap calls strwrap(..., simplify = FALSE) and joins
+        res = strwrap(*args, **kwargs, simplify=False)
+        return [one_string(item) for item in res]
+    
+    # Execution
+    # x is provided by shim
+    # result_strwrap = strwrap(x, width=30)
+    # result_str_wrap = str_wrap(x, width=30)
+    
+    # R equivalent calls:
+    # strwrap(x, width = 30)
+    res_str_wrap = str_wrap(x, width=30)
+    print(res_str_wrap)

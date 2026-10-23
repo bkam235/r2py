@@ -1,0 +1,204 @@
+Translation log
+Final score: 0.819
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(modelr))
+
+============================================================
+Entity: import_modelr
+  Name:  modelr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(modelr))
+
+============================================================
+Entity: typical
+  Name:  typical
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    typical(rpois(100, lambda = 10))
+  Python:
+    def typical(x: Any) -> Any:
+        # Convert to pandas Series for consistent handling
+        if not isinstance(x, pd.Series):
+            s = pd.Series(x)
+        else:
+            s = x
+    
+        # Handle ordered categorical (median)
+        if isinstance(s.dtype, pd.CategoricalDtype) and s.dtype.ordered:
+            # R typical for ordered factors returns the median
+            # This is the value at the 50th percentile of the sorted data
+            sorted_s = s.sort_values()
+            n = len(sorted_s)
+            if n == 0:
+                return None
+            
+            # R median for factors: if n is odd, middle element. 
+            # If even, it can be a tie or an average. 
+            # However, modelr::typical for ordered factors usually returns the category.
+            mid = (n - 1) / 2
+            if mid.is_integer():
+                res = sorted_s.iloc[int(mid)]
+                return res
+            else:
+                # For even length, R median typically interpolates. 
+                # For factors, it often returns the two middle values if they differ.
+                low = int(np.floor(mid))
+                high = int(np.ceil(mid))
+                v_low = sorted_s.iloc[low]
+                v_high = sorted_s.iloc[high]
+                if v_low == v_high:
+                    return v_low
+                else:
+                    # Return as a list/array to simulate R's multiple return
+                    return np.array([v_low, v_high])
+    
+        # Handle standard categorical/factor or strings (mode)
+        if isinstance(s.dtype, pd.CategoricalDtype) or s.dtype == object or np.issubdtype(s.dtype, np.bytes_) or (hasattr(np, 'str_') and np.issubdtype(s.dtype, np.str_)):
+            counts = s.value_counts()
+            if counts.empty:
+                return None
+            max_count = counts.max()
+            modes = counts[counts == max_count].index.tolist()
+            # R returns a single value if only one mode, otherwise a vector
+            # To match R's output for typical(x) where x is char:
+            if len(modes) == 1:
+                return modes[0]
+            return np.array(modes)
+    
+        # Handle numeric (median)
+        if np.issubdtype(s.dtype, np.number):
+            return np.median(s)
+    
+        return None
+    
+    # median of numeric vector
+    res_typical_num = typical(np.random.poisson(lam=10, size=100))
+    print(f"[1] {int(res_typical_num) if isinstance(res_typical_num, (float, np.float64)) and res_typical_num.is_integer() else res_typical_num}")
+    
+    # most frequent value of character or factor
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- sample(c("a", "b", "c"), 100, prob = c(0.6, 0.2, 0.2), replace = TRUE)
+  Python:
+    x_vals = np.random.choice(["a", "b", "c"], 100, p=[0.6, 0.2, 0.2], replace=True)
+    # Use the shim variable 'x' if it exists, otherwise use generated
+    x_input = x if 'x' in globals() else x_vals
+
+============================================================
+Entity: typical_1
+  Name:  typical
+  Kind:  FunctionCall
+  Score: 0.833
+  side_effects:        0.833
+  executed_ok:       True
+
+  R:
+    typical(x)
+  Python:
+    res_typical_1 = typical(x_input)
+    if isinstance(res_typical_1, np.ndarray):
+        print(f"[1] {' '.join(map(str, res_typical_1))}")
+    else:
+        print(f'[1] "{res_typical_1}"')
+
+============================================================
+Entity: typical_2
+  Name:  typical
+  Kind:  FunctionCall
+  Score: 0.833
+  side_effects:        0.833
+  executed_ok:       True
+
+  R:
+    typical(factor(x))
+  Python:
+    x_factor = pd.Series(pd.Categorical(x_input))
+    res_typical_2 = typical(x_factor)
+    if isinstance(res_typical_2, np.ndarray):
+        print(f"[1] {' '.join(map(str, res_typical_2))}")
+    else:
+        print(f'[1] "{res_typical_2}"')
+    
+    # if tied, returns them all
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x <- c("a", "a", "b", "b", "c")
+  Python:
+    x_tied = pd.Series(["a", "a", "b", "b", "c"])
+
+============================================================
+Entity: typical_3
+  Name:  typical
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    typical(x)
+  Python:
+    res_typical_3 = typical(x_tied)
+    if isinstance(res_typical_3, np.ndarray):
+        print(f"[1] {' '.join(map(str, res_typical_3))}")
+    else:
+        print(f'[1] "{res_typical_3}"')
+    
+    # median of an ordered factor
+
+============================================================
+Entity: typical_4
+  Name:  typical
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    typical(ordered(c("a", "a", "b", "c", "d")))
+  Python:
+    x_ord_vals = ["a", "a", "b", "c", "d"]
+    x_ordered = pd.Series(pd.Categorical(x_ord_vals, categories=["a", "b", "c", "d"], ordered=True))
+    res_typical_4 = typical(x_ordered)
+    if isinstance(res_typical_4, np.ndarray):
+        print(f"[1] {' '.join(map(str, res_typical_4))}")
+    else:
+        print(f'[1] "{res_typical_4}"')

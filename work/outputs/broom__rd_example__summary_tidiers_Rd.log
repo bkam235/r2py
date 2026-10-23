@@ -1,0 +1,169 @@
+Translation log
+Final score: 0.717
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_broom
+  Name:  broom
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: v
+  Name:  v
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    v <- rnorm(1000)
+  Python:
+    # v is provided by data_shim
+
+============================================================
+Entity: s
+  Name:  s
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    s <- summary(v)
+  Python:
+    class Summary:
+        """Mimics the object returned by R's summary() for a numeric vector."""
+        def __init__(self, data):
+            self.data = np.array(data)
+            self.clean_data = self.data[~pd.isna(self.data)]
+            
+            self.stats_dict = {
+                "minimum": np.min(self.clean_data) if len(self.clean_data) > 0 else np.nan,
+                "q1": np.percentile(self.clean_data, 25) if len(self.clean_data) > 0 else np.nan,
+                "median": np.median(self.clean_data) if len(self.clean_data) > 0 else np.nan,
+                "mean": np.mean(self.clean_data) if len(self.clean_data) > 0 else np.nan,
+                "q3": np.percentile(self.clean_data, 75) if len(self.clean_data) > 0 else np.nan,
+                "maximum": np.max(self.clean_data) if len(self.clean_data) > 0 else np.nan,
+            }
+            self.nas = np.sum(pd.isna(self.data))
+    
+        def __repr__(self):
+            # R's summary(numeric) prints a table with headers and values on two lines
+            headers = "      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. "
+            vals = f"{self.stats_dict['minimum']:10.6f} {self.stats_dict['q1']:10.6f} {self.stats_dict['median']:10.6f} {self.stats_dict['mean']:10.6f} {self.stats_dict['q3']:10.6f} {self.stats_dict['maximum']:10.6f}"
+            res = f"{headers}\n{vals}"
+            if self.nas > 0:
+                res += f"\nNA's   : {int(self.nas)}"
+            return res
+    
+    def summary(v):
+        return Summary(v)
+    s = summary(v)
+
+============================================================
+Entity: s_1
+  Name:  s
+  Kind:  Variable
+  Score: 0.974
+  control_flow_match:  1.000
+  side_effects:        0.947
+  executed_ok:       True
+
+  R:
+    s
+  Python:
+    print(s)
+
+============================================================
+Entity: tidy
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.850
+  side_effects:        0.850
+  executed_ok:       True
+
+  R:
+    tidy(s)
+  Python:
+    def tidy(x):
+        if isinstance(x, Summary):
+            df = pd.DataFrame([x.stats_dict])
+            if x.nas > 0:
+                df['na'] = int(x.nas)
+            df.index = [1]
+            return df
+        raise TypeError(f"No tidy method for objects of class {type(x)}")
+    res_tidy = tidy(s)
+    print(res_tidy)
+
+============================================================
+Entity: glance
+  Name:  glance
+  Kind:  FunctionCall
+  Score: 0.850
+  side_effects:        0.850
+  executed_ok:       True
+
+  R:
+    glance(s)
+  Python:
+    def glance(x):
+        if isinstance(x, Summary):
+            return tidy(x)
+        raise TypeError(f"No glance method for objects of class {type(x)}")
+    res_glance = glance(s)
+    print(res_glance)
+
+============================================================
+Entity: v2
+  Name:  v2
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    v2 <- c(v,NA)
+  Python:
+    v2 = np.append(v, np.nan)
+
+============================================================
+Entity: tidy_1
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.848
+  side_effects:        0.848
+  executed_ok:       True
+
+  R:
+    tidy(summary(v2))
+  Python:
+    res_tidy_v2 = tidy(summary(v2))
+    print(res_tidy_v2)

@@ -1,0 +1,15 @@
+384 calls (provider outages excluded)
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+S0_current        96   14268       0%     26%    22%         0%        26%   -0.007
+S1_minimal        96    9771       2%     25%    31%        12%        35%   +0.068
+S2_rules          96   10611       0%      9%    23%         0%        28%   +0.027
+S3_no_tools       96   12771       0%     25%    23%         0%        28%   +0.054
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 8)
+
+cases whose starting program runs: 384 calls; outcomes blocked by an earlier crash afterwards: 44
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+S0_current        96   14268       0%     26%    22%         0%        26%   -0.007
+S1_minimal        96    9771       2%     25%    31%        12%        35%   +0.068
+S2_rules          96   10611       0%      9%    23%         0%        28%   +0.027
+S3_no_tools       96   12771       0%     25%    23%         0%        28%   +0.054
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 8)

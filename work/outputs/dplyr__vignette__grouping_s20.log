@@ -1,0 +1,125 @@
+Translation log
+Final score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: select
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+      select(name, homeworld, mass) |>
+  Python:
+    df1 = starwars[['name', 'homeworld', 'mass']].copy()
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+      mutate(standard_mass = mass - mean(mass, na.rm = TRUE))
+  Python:
+    df1['standard_mass'] = df1['mass'] - df1['mass'].mean()
+    
+    # Second block: Column selection and grouped mutation
+
+============================================================
+Entity: select_1
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+      select(name, homeworld, mass) |>
+  Python:
+    df2 = starwars[['name', 'homeworld', 'mass']].copy()
+
+============================================================
+Entity: group_by
+  Name:  group_by
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+      group_by(homeworld) |>
+
+============================================================
+Entity: mutate_1
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.133
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.800
+  executed_ok:       False
+
+  R:
+      mutate(standard_mass = mass - mean(mass, na.rm = TRUE))
+  Python:
+    df2['standard_mass'] = df2.groupby('homeworld')['mass'].transform(lambda x: x - x.mean())

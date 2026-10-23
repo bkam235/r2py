@@ -1,0 +1,123 @@
+Translation log
+Final score: 0.250
+Data score:  0.000
+Files score: 0.000
+Iterations:  1
+
+============================================================
+Entity: is_interactive
+  Name:  is_interactive
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_interactive()) withAutoprint({ # examplesIf
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(shiny)
+
+============================================================
+Entity: import_bslib
+  Name:  bslib
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(bslib)
+
+============================================================
+Entity: ui
+  Name:  ui
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    ui <- page_fluid(
+      actionButton("show_simple", "Simple Toast"),
+      actionButton("show_header", "Toast with Header")
+    )
+  Python:
+    app_ui = ui.page_fluid(
+        ui.input_action_button("show_simple", "Simple Toast"),
+        ui.input_action_button("show_header", "Toast with Header"),
+    )
+
+============================================================
+Entity: server
+  Name:  server
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    server <- function(input, output, session) {
+      observeEvent(input$show_simple, {
+        show_toast(
+          toast(
+            "Operation completed successfully!",
+            header = "Success",
+            type = "success"
+          )
+        )
+      })
+    
+      observeEvent(input$show_header, {
+        show_toast(
+          toast(
+            "Your settings have been saved.",
+            header = toast_header(
+              title = "Settings Updated",
+              status = "just now"
+            ),
+            type = "success"
+          )
+        )
+      })
+    }
+  Python:
+    def server(input, output, session):
+        @reactive.Effect.set_source(input.show_simple)
+        def _():
+            session.show_toast(
+                "Operation completed successfully!",
+                type="success"
+            )
+    
+        @reactive.Effect.set_source(input.show_header)
+        def _():
+            # Using a combined string to simulate the header/status behavior
+            session.show_toast(
+                "Settings Updated (just now): Your settings have been saved.",
+                type="success"
+            )
+
+============================================================
+Entity: shinyApp
+  Name:  shinyApp
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    shinyApp(ui, server)
+  Python:
+    app = App(app_ui, server)

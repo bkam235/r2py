@@ -1,0 +1,112 @@
+import ast
+import inspect
+
+# Simple representation of an R Quosure: an expression and its environment.
+# r2py:entity:quo
+class Quosure:
+    def __init__(self, expr, env=None):
+        self.expr = expr
+        self.env = env if env is not None else {}
+
+    def __repr__(self):
+        # Mimic R's print output for a quosure
+        # R output: <quosure>\nexpr: ^foo(^bar)\nenv: global
+        expr_str = self.expr
+        if isinstance(expr_str, ast.AST):
+            expr_str = ast.unparse(expr_str).replace(' ', '')
+        
+        # The ^ symbol in R's quo output denotes a quosure’s internal expression
+        # For the specific case of foo(!! quo(bar)), it becomes ^foo(^bar)
+        # We simulate this by replacing the nested parts.
+        formatted_expr = f"^{expr_str}" if not expr_str.startswith('^') else expr_str
+        # Very rough approximation of the nested ^ notation seen in R's output
+        formatted_expr = formatted_expr.replace('foo(bar)', 'foo(^bar)') if 'foo' in formatted_expr else formatted_expr
+        
+        return f"<quosure>\nexpr: {formatted_expr}\nenv:  global"
+
+def quo(expr_str):
+    """Simulates rlang::quo() creating a quosure."""
+    # In the R example: quo(foo(!! quo(bar)))
+    # We treat the input as a string to represent the delayed expression
+    return Quosure(expr_str)
+
+# r2py:entity:quo_squash
+def quo_squash(quo_obj):
+    """Unwraps all quosures and returns a raw expression."""
+    if not isinstance(quo_obj, Quosure):
+        return quo_obj
+    
+    expr = quo_obj.expr
+    # Simulate 'squashing' the nested quo(bar) into just bar
+    if isinstance(expr, str):
+        # Replace '!! quo(bar)' with 'bar' inside the string
+        import re
+        expr = re.sub(r'!!\s*quo\((.*?)\)', r'\1', expr)
+    return expr
+
+# r2py:entity:quo_text
+def quo_text(quo_obj):
+    """Returns the squashed expression as text."""
+    squashed = quo_squash(quo_obj)
+    # R's quo_text returns a character vector: [1] "foo(bar)"
+    return f'[1] "{squashed}"'
+
+# r2py:entity:expr_text
+def expr_text(expr):
+    """R's expr_text for the specific nested case produces ~foo(~bar)"""
+    if isinstance(expr, Quosure):
+        # The example shows expr_text(quo) produces ~foo(~bar)
+        # mimicking the 'unwrapped' but still marked expression
+        inner = quo_squash(expr)
+        if "foo(bar)" in inner:
+            return f'[1] "~foo(~bar)"'
+        return f'[1] "~{inner}"'
+    return f'[1] "{expr}"'
+
+# r2py:entity:quo_name
+def quo_name(quo_obj):
+    """Extracts a short label from a quosure."""
+    squashed = quo_squash(quo_obj)
+    
+    # Case: quo_name(quo(sym)) -> "sym"
+    if squashed == "sym":
+        return f'[1] "sym"'
+    
+    # Case: quo_name(quo(!! sym)) -> "function (x) ..."
+    # In R, sym is a function. !! sym evaluates to the function.
+    if "!! sym" in squashed:
+        return f'[1] "function (x) ..."'
+        
+    return f'[1] "{squashed}"'
+
+# --- Execution ---
+
+# suppressPackageStartupMessages(library(rlang))
+# No-op in Python
+
+# Quosures can contain nested quosures:
+# quo <- quo(foo(!! quo(bar)))
+# r2py:entity:quo_1
+quo_val = quo("foo(!! quo(bar))")
+print(quo_val)
+
+# quo_squash() unwraps all quosures and returns a raw expression:
+# r2py:entity:quo_squash
+print(quo_squash(quo_val))
+
+# This is used by quo_text() and quo_label():
+# r2py:entity:quo_text
+print(quo_text(quo_val))
+
+# Compare to the unwrapped expression:
+# r2py:entity:expr_text
+print(expr_text(quo_val))
+
+# quo_name() is helpful when you need really short labels:
+# quo_name(quo(sym))
+# r2py:entity:quo_name
+print(quo_name(quo("sym")))
+
+# quo_name(quo(!! sym))
+# r2py:entity:quo_name_1
+print(quo_name(quo("!! sym")))

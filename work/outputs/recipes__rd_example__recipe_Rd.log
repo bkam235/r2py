@@ -1,0 +1,447 @@
+Translation log
+Final score: 0.405
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_installed("modeldata")) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    data(biomass, package = "modeldata")
+  Python:
+    biomass_df = pd.DataFrame(biomass)
+    
+    # split data
+
+============================================================
+Entity: biomass_tr
+  Name:  biomass_tr
+  Kind:  Variable
+  Score: 0.350
+  type_match:          0.083
+  control_flow_match:  1.000
+  data_output:         0.083
+  variable_output:     0.083
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    biomass_tr <- biomass[biomass$dataset == "Training", ]
+  Python:
+    biomass_tr = biomass_df[biomass_df['dataset'] == 'Training'].copy()
+
+============================================================
+Entity: biomass_te
+  Name:  biomass_te
+  Kind:  Variable
+  Score: 0.350
+  type_match:          0.083
+  control_flow_match:  1.000
+  data_output:         0.083
+  variable_output:     0.083
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    biomass_te <- biomass[biomass$dataset == "Testing", ]
+  Python:
+    biomass_te = biomass_df[biomass_df['dataset'] == 'Testing'].copy()
+    
+    # Formula example with single outcome
+
+============================================================
+Entity: rec
+  Name:  rec
+  Kind:  Variable
+  Score: 0.300
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    rec <- recipe(
+      HHV ~ carbon + hydrogen + oxygen + nitrogen + sulfur,
+      data = biomass_tr
+    )
+  Python:
+    rec = recipe("HHV ~ carbon + hydrogen + oxygen + nitrogen + sulfur", data=biomass_tr)
+    
+    # Preprocessing steps
+    numeric_preds = all_numeric_predictors(rec)
+
+============================================================
+Entity: sp_signed
+  Name:  sp_signed
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sp_signed <- rec |>
+      step_normalize(all_numeric_predictors()) |>
+      step_spatialsign(all_numeric_predictors())
+  Python:
+    sp_signed = step_spatialsign(rec, numeric_preds)
+    print(sp_signed)
+    
+    # Formula multivariate example
+
+============================================================
+Entity: step_normalize
+  Name:  step_normalize
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      step_normalize(all_numeric_predictors()) |>
+  Python:
+    def step_normalize(recipe, terms, role=None):
+        recipe.steps.append({'step': 'normalize', 'terms': terms, 'role': role})
+        return recipe
+    rec = step_normalize(rec, numeric_preds)
+
+============================================================
+Entity: step_spatialsign
+  Name:  step_spatialsign
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      step_spatialsign(all_numeric_predictors())
+  Python:
+    def step_spatialsign(recipe, terms, role='predictor'):
+        recipe.steps.append({'step': 'spatialsign', 'terms': terms, 'role': role})
+        return recipe
+
+============================================================
+Entity: multi_y
+  Name:  multi_y
+  Kind:  Variable
+  Score: 0.343
+  type_match:          0.054
+  control_flow_match:  1.000
+  data_output:         0.054
+  variable_output:     0.054
+  side_effects:        0.554
+  executed_ok:       True
+
+  R:
+    multi_y <- recipe(carbon + hydrogen ~ oxygen + nitrogen + sulfur,
+      data = biomass_tr
+    )
+  Python:
+    multi_y = recipe("carbon + hydrogen ~ oxygen + nitrogen + sulfur", data=biomass_tr)
+    numeric_preds_multi = all_numeric_predictors(multi_y)
+
+============================================================
+Entity: multi_y_1
+  Name:  multi_y
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    multi_y <- multi_y |>
+      step_center(all_numeric_predictors()) |>
+      step_scale(all_numeric_predictors())
+  Python:
+    multi_y = step_center(multi_y, numeric_preds_multi)
+
+============================================================
+Entity: step_center
+  Name:  step_center
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      step_center(all_numeric_predictors()) |>
+  Python:
+    def step_center(recipe, terms, role=None):
+        recipe.steps.append({'step': 'center', 'terms': terms, 'role': role})
+        return recipe
+
+============================================================
+Entity: step_scale
+  Name:  step_scale
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      step_scale(all_numeric_predictors())
+  Python:
+    def step_scale(recipe, terms, role=None):
+        recipe.steps.append({'step': 'scale', 'terms': terms, 'role': role})
+        return recipe
+    multi_y = step_scale(multi_y, numeric_preds_multi)
+    
+    # Example using update_role instead of formula
+
+============================================================
+Entity: rec_1
+  Name:  rec
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    rec <- recipe(biomass_tr) |>
+      update_role(carbon, hydrogen, oxygen, nitrogen, sulfur,
+        new_role = "predictor"
+      ) |>
+      update_role(HHV, new_role = "outcome") |>
+      update_role(sample, new_role = "id variable") |>
+      update_role(dataset, new_role = "splitting indicator")
+  Python:
+    rec_role = recipe(biomass_tr)
+
+============================================================
+Entity: recipe
+  Name:  recipe
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    rec <- recipe(biomass_tr) |>
+  Python:
+    class Recipe:
+        def __init__(self, x, data=None):
+            self.steps = []
+            self.var_info = pd.DataFrame()
+            self.template = None
+            
+            if isinstance(x, str) and '~' in x:
+                formula = x
+                self.template = data.copy() if data is not None else None
+                lhs, rhs = formula.split('~')
+                lhs = lhs.strip()
+                rhs_vars = [v.strip() for v in rhs.split('+')]
+                
+                # Handle multivariate LHS
+                lhs_vars = [v.strip() for v in lhs.split('+')] if '+' in lhs else [lhs]
+                
+                vars_all = lhs_vars + rhs_vars
+                self.var_info = pd.DataFrame({
+                    'variable': vars_all,
+                    'role': ['outcome'] * len(lhs_vars) + ['predictor'] * len(rhs_vars),
+                    'type': ['numeric'] * len(vars_all)
+                })
+                
+                if self.template is not None:
+                    for col in self.template.columns:
+                        if col not in vars_all:
+                            self.var_info = pd.concat([self.var_info, pd.DataFrame({
+                                'variable': [col], 
+                                'role': ['id variable'], 
+                                'type': ['numeric' if np.issubdtype(self.template[col].dtype, np.number) else 'nominal']
+                            })], ignore_index=True)
+            
+            elif isinstance(x, (pd.DataFrame, dict)):
+                df = pd.DataFrame(x) if isinstance(x, dict) else x
+                self.template = df.copy()
+                self.var_info = pd.DataFrame({
+                    'variable': df.columns,
+                    'role': ['id variable'] * len(df.columns),
+                    'type': ['numeric' if np.issubdtype(df[col].dtype, np.number) else 'nominal' for col in df.columns]
+                })
+    
+        def __repr__(self):
+            # Attempt to mimic R recipe output
+            res = "Recipe\n  Var Info:\n"
+            res += self.var_info.to_string(index=False)
+            res += f"\n  Steps: {len(self.steps)}"
+            return res
+    
+    def all_numeric_predictors(recipe):
+        return recipe.var_info[(recipe.var_info['role'] == 'predictor') & (recipe.var_info['type'] == 'numeric')]['variable'].tolist()
+    def recipe(x, data=None):
+        return Recipe(x, data=data)
+    
+    # Start script execution
+
+============================================================
+Entity: update_role
+  Name:  update_role
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      update_role(carbon, hydrogen, oxygen, nitrogen, sulfur,
+        new_role = "predictor"
+      ) |>
+  Python:
+    def update_role(recipe, *vars_to_update, new_role='predictor', old_role=None):
+        recipe.var_info.loc[recipe.var_info['variable'].isin(vars_to_update), 'role'] = new_role
+        return recipe
+    rec_role = update_role(rec_role, 'carbon', 'hydrogen', 'oxygen', 'nitrogen', 'sulfur', new_role='predictor')
+
+============================================================
+Entity: update_role_1
+  Name:  update_role
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      update_role(HHV, new_role = "outcome") |>
+  Python:
+    rec_role = update_role(rec_role, 'HHV', new_role='outcome')
+
+============================================================
+Entity: update_role_2
+  Name:  update_role
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      update_role(sample, new_role = "id variable") |>
+  Python:
+    rec_role = update_role(rec_role, 'sample', new_role='id variable')
+
+============================================================
+Entity: update_role_3
+  Name:  update_role
+  Kind:  FunctionCall
+  Score: 0.083
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+      update_role(dataset, new_role = "splitting indicator")
+  Python:
+    rec_role = update_role(rec_role, 'dataset', new_role='splitting indicator')
+    print(rec_role)

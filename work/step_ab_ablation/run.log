@@ -1,0 +1,498 @@
+60 states x 3 arms x 2 samples: 360 steps to do
+[1/360] ModelMetrics__rd_example__auc_Rd.R    N  s0 verified             0.0->0.0 gain 0.0
+[2/360] bslib__rd_example__layout_column_wra  S  s0 verified             0.5487->0.0 gain 0.0
+[3/360] bslib__rd_example__layout_column_wra  U  s0 verified             0.5487->0.5487 gain 0.0
+[4/360] ModelMetrics__rd_example__auc_Rd.R    U  s0 verified             0.0->0.0 gain 0.0
+[5/360] ModelMetrics__rd_example__auc_Rd.R    S  s0 verified             0.0->0.0 gain 0.0
+[6/360] bslib__rd_example__layout_column_wra  N  s0 verified             0.5487->0.0 gain 0.0
+[7/360] bslib__rd_example__value_box_Rd.R     S  s0 verified             0.5->0.5 gain 0.0
+[8/360] bslib__rd_example__value_box_Rd.R     U  s0 verified             0.5->0.6658 gain 0.1658
+[9/360] bslib__rd_example__page_fillable_Rd.  S  s0 verified             0.25->0.25 gain 0.0
+[10/360] bslib__rd_example__value_box_Rd.R     N  s0 verified             0.5->0.5 gain 0.0
+[11/360] broom__rd_example__augment_felm_Rd.R  U  s0 verified             0.0->0.0 gain 0.0
+[12/360] bslib__rd_example__page_fillable_Rd.  U  s0 verified             0.25->0.25 gain 0.0
+[13/360] bslib__rd_example__page_fillable_Rd.  N  s0 verified             0.25->0.25 gain 0.0
+[14/360] broom__rd_example__augment_felm_Rd.R  S  s0 verified             0.0->0.0 gain 0.0
+[15/360] broom__rd_example__augment_felm_Rd.R  N  s0 verified             0.0->0.0 gain 0.0
+[16/360] caret__rd_example__update_train_Rd.R  S  s0 verified             0.55->0.55 gain 0.0
+[17/360] caret__rd_example__update_train_Rd.R  U  s0 verified             0.55->0.5574 gain 0.0074
+[18/360] caret__rd_example__update_train_Rd.R  N  s0 verified             0.55->0.75 gain 0.2
+[19/360] caret__vignette__caret_s3.R           N  s0 verified             0.7419->0.3228 gain 0.0
+[20/360] caret__vignette__caret_s3.R           S  s0 verified             0.7419->0.3421 gain 0.0
+[21/360] caret__vignette__caret_s3.R           U  s0 verified             0.7419->0.4086 gain 0.0
+[22/360] farver__rd_example__as_white_ref_Rd.  S  s0 verified             0.8211->0.5 gain 0.0
+[23/360] e1071__rd_example__boxplot_bclust_Rd  S  s0 verified             0.375->0.2549 gain 0.0
+[24/360] farver__rd_example__as_white_ref_Rd.  N  s0 no rewrite           0.8211->None gain 0.0
+[25/360] fansi__rd_example__normalize_state_R  U  s0 verified             0.7711->0.9003 gain 0.1293
+[26/360] e1071__rd_example__boxplot_bclust_Rd  N  s0 verified             0.375->0.5877 gain 0.2127
+[27/360] farver__rd_example__as_white_ref_Rd.  U  s0 verified             0.8211->1.0 gain 0.0
+[28/360] fansi__rd_example__normalize_state_R  S  s0 verified             0.7711->0.8633 gain 0.0922
+[29/360] fansi__rd_example__normalize_state_R  N  s0 verified             0.7711->0.8562 gain 0.0852
+[30/360] e1071__rd_example__boxplot_bclust_Rd  U  s0 verified             0.375->0.3822 gain 0.0072
+[31/360] ggplot2__rd_example__geom_bin_2d_Rd.  U  s0 verified             0.5->0.0 gain 0.0
+[32/360] ggplot2__rd_example__geom_bin_2d_Rd.  S  s0 verified             0.5->0.5 gain 0.0
+[33/360] farver__rd_example__encode_colour_Rd  N  s0 verified             0.6947->0.5 gain 0.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[34/360] farver__rd_example__encode_colour_Rd  S  s0 verified             0.6947->0.6947 gain 0.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[35/360] farver__rd_example__encode_colour_Rd  U  s0 verified             0.6947->0.85 gain 0.0
+[36/360] ggplot2__rd_example__geom_bin_2d_Rd.  N  s0 verified             0.5->0.5 gain 0.0
+[37/360] farver__rd_example__convert_colour_R  N  s0 verified             0.4429->0.0 gain 0.0
+[38/360] farver__rd_example__convert_colour_R  S  s0 verified             0.4429->0.4382 gain 0.0
+[39/360] farver__rd_example__convert_colour_R  U  s0 verified             0.4429->0.4379 gain 0.0
+[40/360] googledrive__rd_example__drive_cp_Rd  N  s0 gate rejected        0.0->None gain 0.0
+[41/360] googledrive__rd_example__drive_cp_Rd  S  s0 verified             0.0->1.0 gain 1.0
+[42/360] htmltools__rd_example__builder_Rd.R   U  s0 verified             0.5->0.0 gain 0.0
+[43/360] googledrive__rd_example__drive_cp_Rd  U  s0 verified             0.0->1.0 gain 1.0
+[44/360] htmltools__rd_example__builder_Rd.R   N  s0 verified             0.5->0.0 gain 0.0
+[45/360] gtable__rd_example__gtable_add_cols_  S  s0 verified             0.7->0.7136 gain 0.0136
+[46/360] htmltools__rd_example__tagAppendAttr  U  s0 verified             0.0->0.4762 gain 0.4762
+[47/360] htmltools__rd_example__tagAppendAttr  S  s0 verified             0.0->0.4762 gain 0.4762
+[48/360] htmltools__rd_example__builder_Rd.R   S  s0 gate rejected        0.5->None gain 0.0
+[r2py] Installing Python package 'colorspacious' ...
+[r2py] WARNING: 'rect' is a data entity but Python could not serialize it — excluded from comparison
+[49/360] gtable__rd_example__gtable_add_cols_  N  s0 verified             0.7->0.6833 gain 0.0
+[50/360] lava__rd_example__csplit_Rd.R         U  s0 no rewrite           0.0->None gain 0.0
+[51/360] htmltools__rd_example__tagAppendAttr  N  s0 gate rejected        0.0->None gain 0.0
+[52/360] gtable__rd_example__gtable_add_cols_  U  s0 verified             0.7->0.49 gain 0.0
+[53/360] isoband__vignette__isoband3_s2.R      S  s0 verified             0.0->0.0 gain 0.0
+[54/360] isoband__vignette__isoband3_s2.R      U  s0 verified             0.0->0.0 gain 0.0
+[55/360] lava__rd_example__csplit_Rd.R         N  s0 verified             0.0->0.5 gain 0.5
+[56/360] isoband__vignette__isoband3_s2.R      N  s0 verified             0.0->0.7002 gain 0.7002
+[57/360] lava__rd_example__csplit_Rd.R         S  s0 verified             0.0->0.5 gain 0.5
+[58/360] openssl__rd_example__aes_cbc_Rd.R     N  s0 verified             0.55->0.25 gain 0.0
+[r2py] Installing Python package 'bslib' ...
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] WARNING: 'y' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'y' is a data entity but Python could not serialize it — excluded from comparison
+[59/360] openssl__rd_example__aes_cbc_Rd.R     S  s0 verified             0.55->0.25 gain 0.0
+[60/360] openssl__rd_example__certificates_Rd  U  s0 verified             0.0->0.0 gain 0.0
+[61/360] openssl__rd_example__aes_cbc_Rd.R     U  s0 verified             0.55->0.0 gain 0.0
+[62/360] openssl__rd_example__certificates_Rd  S  s0 verified             0.0->0.0 gain 0.0
+[63/360] openssl__rd_example__ec_dh_Rd.R       S  s0 verified             0.6739->0.5833 gain 0.0
+[64/360] openssl__rd_example__ec_dh_Rd.R       N  s0 verified             0.6789->0.5833 gain 0.0
+[65/360] openssl__rd_example__ec_dh_Rd.R       U  s0 verified             0.662->0.6764 gain 0.0144
+[66/360] openssl__vignette__bignum_s2.R        N  s0 verified             0.3621->0.3621 gain 0.0
+[67/360] openssl__vignette__bignum_s2.R        S  s0 verified             0.3621->0.3621 gain 0.0
+[68/360] openssl__rd_example__certificates_Rd  N  s0 verified             0.0->0.0 gain 0.0
+[69/360] openssl__vignette__bignum_s2.R        U  s0 verified             0.3621->0.3621 gain 0.0
+[70/360] lubridate__rd_example__period_Rd.R    S  s0 verified             0.0->0.0 gain 0.0
+[71/360] lubridate__rd_example__period_Rd.R    U  s0 verified             0.0->0.5311 gain 0.5311
+[72/360] prodlim__rd_example__backGround_Rd.R  U  s0 verified             0.5->0.5 gain 0.0
+[73/360] lubridate__rd_example__period_Rd.R    N  s0 verified             0.0->0.5149 gain 0.5149
+[74/360] pROC__rd_example__print_Rd.R          N  s0 verified             0.9611->0.6781 gain 0.0
+[75/360] pROC__rd_example__print_Rd.R          U  s0 verified             0.9611->0.7343 gain 0.0
+[76/360] prodlim__rd_example__backGround_Rd.R  N  s0 verified             0.5->0.5 gain 0.0
+[77/360] pROC__rd_example__print_Rd.R          S  s0 verified             0.9611->0.944 gain 0.0
+[78/360] prodlim__rd_example__backGround_Rd.R  S  s0 verified             0.5->0.5 gain 0.0
+[79/360] pROC__rd_example__coords_Rd.R         U  s0 verified             0.4111->0.0 gain 0.0
+[80/360] pROC__rd_example__coords_Rd.R         N  s0 verified             0.4111->0.0 gain 0.0
+[81/360] purrr__rd_example__attr_getter_Rd.R   S  s0 verified             0.6302->0.0 gain 0.0
+[82/360] purrr__rd_example__attr_getter_Rd.R   U  s0 verified             0.6302->0.625 gain 0.0
+[83/360] purrr__rd_example__attr_getter_Rd.R   N  s0 verified             0.6302->0.625 gain 0.0
+[84/360] proxy__rd_example__registry_Rd.R      S  s0 verified             0.8114->0.8094 gain 0.0
+[85/360] purrr__rd_example__invoke_Rd.R        S  s0 verified             0.0->0.0 gain 0.0
+[86/360] pROC__rd_example__coords_Rd.R         S  s0 verified             0.4111->0.0 gain 0.0
+[87/360] proxy__rd_example__registry_Rd.R      U  s0 verified             0.8114->0.8707 gain 0.0593
+[r2py] Installing Python package 'bslib' ...
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[88/360] purrr__rd_example__invoke_Rd.R        U  s0 verified             0.0->0.5 gain 0.5
+[89/360] purrr__rd_example__invoke_Rd.R        N  s0 verified             0.0->0.0 gain 0.0
+[90/360] proxy__rd_example__registry_Rd.R      N  s0 verified             0.8114->0.7759 gain 0.0
+[91/360] ragg__rd_example__agg_capture_Rd.R    U  s0 verified             0.7149->0.7732 gain 0.0583
+[92/360] ranger__rd_example__csrf_Rd.R         S  s0 verified             0.0->0.0 gain 0.0
+[93/360] ranger__rd_example__csrf_Rd.R         U  s0 verified             0.0->0.0 gain 0.0
+[94/360] ragg__rd_example__agg_webp_anim_Rd.R  N  s0 verified             0.7->0.0 gain 0.0
+[95/360] ragg__rd_example__agg_capture_Rd.R    N  s0 verified             0.7149->0.6552 gain 0.0
+[96/360] ragg__rd_example__agg_webp_anim_Rd.R  U  s0 verified             0.7->0.0 gain 0.0
+[97/360] ragg__rd_example__agg_capture_Rd.R    S  s0 verified             0.7149->0.52 gain 0.0
+[98/360] ragg__rd_example__agg_webp_anim_Rd.R  S  s0 verified             0.7->0.7 gain 0.0
+[99/360] ranger__rd_example__csrf_Rd.R         N  s0 verified             0.0->0.0 gain 0.0
+[100/360] recipes__rd_example__step_kpca_Rd.R   N  s0 verified             0.5805->0.5985 gain 0.018
+[101/360] recipes__rd_example__discretize_Rd.R  S  s0 verified             0.7416->0.8195 gain 0.0779
+[102/360] recipes__rd_example__discretize_Rd.R  N  s0 verified             0.7416->0.8015 gain 0.0598
+[103/360] recipes__rd_example__step_kpca_Rd.R   S  s0 verified             0.5805->0.5354 gain 0.0
+[104/360] recipes__rd_example__discretize_Rd.R  U  s0 verified             0.7416->0.0 gain 0.0
+[105/360] reshape2__rd_example__cast_Rd.R       U  s0 verified             0.0->0.0 gain 0.0
+[106/360] recipes__rd_example__step_kpca_Rd.R   U  s0 verified             0.5805->0.6328 gain 0.0522
+[107/360] reshape2__rd_example__parse_formula_  U  s0 verified             0.0->0.5352 gain 0.5352
+[108/360] reshape2__rd_example__parse_formula_  N  s0 no rewrite           0.0->None gain 0.0
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+[109/360] reshape2__rd_example__parse_formula_  S  s0 verified             0.0->0.0 gain 0.0
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+[110/360] reshape2__rd_example__melt_data_fram  U  s0 verified             0.375->0.3785 gain 0.0035
+[111/360] rmarkdown__rd_example__pandoc_availa  U  s0 verified             0.0->1.0 gain 1.0
+[112/360] rmarkdown__rd_example__pandoc_availa  S  s0 verified             0.0->1.0 gain 1.0
+[113/360] reshape2__rd_example__melt_data_fram  S  s0 verified             0.375->0.375 gain 0.0
+[114/360] reshape2__rd_example__melt_data_fram  N  s0 verified             0.375->0.375 gain 0.0
+[115/360] rmarkdown__rd_example__pandoc_availa  N  s0 verified             0.0->1.0 gain 1.0
+[116/360] reshape2__rd_example__cast_Rd.R       S  s0 verified             0.0->0.0 gain 0.0
+[117/360] rvest__rd_example__html_children_Rd.  U  s0 verified             0.0->0.0 gain 0.0
+[118/360] rvest__rd_example__html_children_Rd.  S  s0 verified             0.0->0.0 gain 0.0
+[119/360] rvest__rd_example__html_children_Rd.  N  s0 verified             0.0->0.0 gain 0.0
+[120/360] rmarkdown__vignette__lua-filters_s3.  U  s0 verified             0.0->0.5 gain 0.5
+[121/360] rmarkdown__vignette__lua-filters_s3.  N  s0 verified             0.0->0.5 gain 0.5
+[122/360] rmarkdown__vignette__lua-filters_s3.  S  s0 verified             0.0->0.5 gain 0.5
+[123/360] rvest__rd_example__html_element_Rd.R  S  s0 gate rejected        0.0->None gain 0.0
+[124/360] reshape2__rd_example__cast_Rd.R       N  s0 verified             0.0->0.0 gain 0.0
+[125/360] rvest__rd_example__html_element_Rd.R  N  s0 verified             0.0->0.0 gain 0.0
+[126/360] rvest__vignette__rvest_s7.R           U  s0 verified             0.0->0.0 gain 0.0
+[127/360] rvest__vignette__rvest_s7.R           S  s0 verified             0.0->0.0 gain 0.0
+[128/360] rvest__rd_example__html_table_Rd.R    S  s0 verified             0.4061->0.3056 gain 0.0
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[r2py] Installing Python package 'ranger' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[129/360] rvest__rd_example__html_table_Rd.R    U  s0 verified             0.4061->0.4061 gain 0.0
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[130/360] rvest__vignette__rvest_s7.R           N  s0 verified             0.0->0.0 gain 0.0
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[131/360] rvest__rd_example__html_table_Rd.R    N  s0 verified             0.4061->0.3056 gain 0.0
+[132/360] rvest__rd_example__html_element_Rd.R  U  s0 verified             0.0->0.0 gain 0.0
+[133/360] sessioninfo__rd_example__platform_in  S  s0 no rewrite           1.0->None gain 0.0
+[134/360] sass__rd_example__as_sass_Rd.R        S  s0 verified             0.8669->0.5833 gain 0.0
+[135/360] sass__rd_example__sass_import_Rd.R    N  s0 verified             0.45->0.6 gain 0.0
+[136/360] sass__rd_example__as_sass_Rd.R        N  s0 verified             0.8669->0.5833 gain 0.0
+[137/360] sass__rd_example__sass_import_Rd.R    U  s0 verified             0.45->0.6 gain 0.15
+[138/360] sass__rd_example__sass_import_Rd.R    S  s0 verified             0.45->0.6 gain 0.15
+[139/360] sessioninfo__rd_example__python_info  U  s0 no rewrite           1.0->None gain 0.0
+[140/360] sessioninfo__rd_example__python_info  S  s0 no rewrite           1.0->None gain 0.0
+[141/360] sass__rd_example__as_sass_Rd.R        U  s0 verified             0.8669->0.8503 gain 0.0
+[142/360] sessioninfo__rd_example__platform_in  N  s0 verified             1.0->1.0 gain 0.0
+[143/360] sessioninfo__rd_example__platform_in  U  s0 verified             1.0->1.0 gain 0.0
+[144/360] sessioninfo__rd_example__python_info  N  s0 verified             1.0->1.0 gain 0.0
+[145/360] shape__rd_example__filledmultigonal_  S  s0 verified             0.75->0.75 gain 0.0
+[146/360] shape__rd_example__filledmultigonal_  U  s0 verified             0.75->0.75 gain 0.0
+[147/360] shape__rd_example__getellipse_Rd.R    S  s0 verified             0.0->0.0 gain 0.0
+[148/360] shape__rd_example__getellipse_Rd.R    U  s0 verified             0.0->0.0 gain 0.0
+[149/360] shape__rd_example__filledmultigonal_  N  s0 verified             0.75->0.75 gain 0.0
+[150/360] shiny__rd_example__actionButton_Rd.R  U  s0 verified             0.5593->0.0 gain 0.0
+[151/360] shiny__rd_example__actionButton_Rd.R  S  s0 verified             0.5593->0.0 gain 0.0
+[152/360] shiny__rd_example__actionButton_Rd.R  N  s0 verified             0.5593->0.0 gain 0.0
+[153/360] shiny__rd_example__updateRadioButton  U  s0 verified             0.25->0.25 gain 0.0
+[154/360] shiny__rd_example__updateRadioButton  S  s0 verified             0.25->0.25 gain 0.0
+[155/360] shape__rd_example__Arrows_Rd.R        S  s0 verified             0.0->0.0 gain 0.0
+[156/360] shape__rd_example__Arrows_Rd.R        U  s0 verified             0.0->0.0 gain 0.0
+[157/360] shiny__rd_example__updateRadioButton  N  s0 verified             0.25->0.25 gain 0.0
+[158/360] shape__rd_example__Arrows_Rd.R        N  s0 verified             0.0->0.0 gain 0.0
+[159/360] shape__rd_example__getellipse_Rd.R    N  s0 verified             0.0->0.0 gain 0.0
+[160/360] systemfonts__rd_example__shape_strin  U  s0 verified             0.7088->0.0 gain 0.0
+[161/360] systemfonts__rd_example__shape_strin  S  s0 verified             0.7088->0.6991 gain 0.0
+[162/360] systemfonts__rd_example__shape_strin  N  s0 verified             0.7088->0.6805 gain 0.0
+[163/360] textshaping__rd_example__lorem_text_  S  s0 no rewrite           0.5937->None gain 0.0
+[164/360] textshaping__rd_example__get_font_fe  U  s0 verified             0.739->0.739 gain 0.0
+[165/360] textshaping__rd_example__lorem_text_  U  s0 verified             0.5943->1.0 gain 0.4057
+[166/360] textshaping__rd_example__lorem_text_  N  s0 verified             0.5937->0.5475 gain 0.0
+[167/360] textshaping__rd_example__get_font_fe  S  s0 verified             0.739->0.7123 gain 0.0
+[168/360] textshaping__rd_example__shape_text_  S  s0 no rewrite           0.6782->None gain 0.0
+[169/360] textshaping__rd_example__get_font_fe  N  s0 verified             0.739->0.7123 gain 0.0
+[170/360] textshaping__rd_example__shape_text_  N  s0 verified             0.6782->0.6667 gain 0.0
+[171/360] textshaping__rd_example__shape_text_  U  s0 verified             0.6782->0.673 gain 0.0
+[172/360] timeDate__rd_example__calendar-isBiz  S  s0 verified             0.8684->0.5833 gain 0.0
+[173/360] timeDate__rd_example__calendar-isBiz  U  s0 verified             0.8684->0.8292 gain 0.0
+[174/360] systemfonts__rd_example__glyph_raste  N  s0 gate rejected        0.7859->None gain 0.0
+[175/360] systemfonts__rd_example__glyph_raste  S  s0 gate rejected        0.7859->None gain 0.0
+[176/360] timeDate__rd_example__calendar-isBiz  N  s0 verified             0.8684->0.5833 gain 0.0
+[177/360] ModelMetrics__rd_example__auc_Rd.R    U  s1 verified             0.0->0.0 gain 0.0
+[178/360] ModelMetrics__rd_example__auc_Rd.R    S  s1 verified             0.0->0.0 gain 0.0
+[179/360] ModelMetrics__rd_example__auc_Rd.R    N  s1 verified             0.0->0.0 gain 0.0
+[180/360] xml2__rd_example__xml_attr_Rd.R       S  s0 verified             0.5474->0.5445 gain 0.0
+[181/360] systemfonts__rd_example__glyph_raste  U  s0 verified             0.7859->0.6275 gain 0.0
+[182/360] xml2__rd_example__xml_attr_Rd.R       U  s0 verified             0.5474->0.8264 gain 0.279
+[183/360] bslib__rd_example__layout_column_wra  N  s1 verified             0.5487->0.5487 gain 0.0
+[184/360] bslib__rd_example__layout_column_wra  U  s1 verified             0.5487->0.5487 gain 0.0
+[185/360] bslib__rd_example__layout_column_wra  S  s1 verified             0.5487->0.5487 gain 0.0
+[186/360] xml2__rd_example__xml_attr_Rd.R       N  s0 verified             0.5474->0.5029 gain 0.0
+[187/360] bslib__rd_example__value_box_Rd.R     S  s1 verified             0.5->0.5 gain 0.0
+[188/360] bslib__rd_example__value_box_Rd.R     U  s1 verified             0.5->0.6658 gain 0.1658
+[189/360] bslib__rd_example__value_box_Rd.R     N  s1 verified             0.5->0.0 gain 0.0
+[190/360] broom__rd_example__augment_felm_Rd.R  U  s1 verified             0.0->0.0 gain 0.0
+[191/360] broom__rd_example__augment_felm_Rd.R  N  s1 verified             0.0->0.0 gain 0.0
+[192/360] broom__rd_example__augment_felm_Rd.R  S  s1 verified             0.0->0.0 gain 0.0
+[193/360] bslib__rd_example__page_fillable_Rd.  U  s1 verified             0.25->0.25 gain 0.0
+[194/360] bslib__rd_example__page_fillable_Rd.  S  s1 verified             0.25->0.25 gain 0.0
+[195/360] bslib__rd_example__page_fillable_Rd.  N  s1 verified             0.25->0.25 gain 0.0
+[196/360] caret__rd_example__update_train_Rd.R  U  s1 verified             0.55->0.0 gain 0.0
+[197/360] caret__rd_example__update_train_Rd.R  S  s1 verified             0.55->0.55 gain 0.0
+[198/360] caret__rd_example__update_train_Rd.R  N  s1 verified             0.55->0.75 gain 0.2
+[199/360] caret__vignette__caret_s3.R           S  s1 verified             0.7419->0.3981 gain 0.0
+[200/360] caret__vignette__caret_s3.R           N  s1 verified             0.7419->0.3652 gain 0.0
+[201/360] caret__vignette__caret_s3.R           U  s1 verified             0.7419->0.7419 gain 0.0
+[202/360] fansi__rd_example__normalize_state_R  N  s1 verified             0.7711->0.8559 gain 0.0
+[203/360] fansi__rd_example__normalize_state_R  S  s1 verified             0.7711->0.8533 gain 0.0
+[204/360] farver__rd_example__as_white_ref_Rd.  N  s1 no rewrite           0.8211->None gain 0.0
+[205/360] farver__rd_example__as_white_ref_Rd.  U  s1 verified             0.8211->0.9341 gain 0.0
+[206/360] fansi__rd_example__normalize_state_R  U  s1 verified             0.7711->0.8903 gain 0.0
+[207/360] farver__rd_example__as_white_ref_Rd.  S  s1 verified             0.8211->0.7458 gain 0.0
+[208/360] e1071__rd_example__boxplot_bclust_Rd  N  s1 verified             0.375->0.2548 gain 0.0
+[209/360] e1071__rd_example__boxplot_bclust_Rd  S  s1 verified             0.375->0.3799 gain 0.0049
+[210/360] e1071__rd_example__boxplot_bclust_Rd  U  s1 verified             0.375->0.2566 gain 0.0
+[211/360] farver__rd_example__encode_colour_Rd  S  s1 verified             0.6947->0.6947 gain 0.0
+[212/360] farver__rd_example__encode_colour_Rd  N  s1 verified             0.6947->0.5 gain 0.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[213/360] ggplot2__rd_example__geom_bin_2d_Rd.  S  s1 no rewrite           0.5->None gain 0.0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[214/360] ggplot2__rd_example__geom_bin_2d_Rd.  U  s1 verified             0.5->0.0 gain 0.0
+[215/360] farver__rd_example__convert_colour_R  S  s1 verified             0.4429->0.4505 gain 0.0
+[216/360] ggplot2__rd_example__geom_bin_2d_Rd.  N  s1 verified             0.5->0.5 gain 0.0
+[217/360] farver__rd_example__encode_colour_Rd  U  s1 verified             0.6947->0.85 gain 0.0
+[218/360] googledrive__rd_example__drive_cp_Rd  N  s1 gate rejected        0.0->None gain 0.0
+[219/360] farver__rd_example__convert_colour_R  U  s1 verified             0.4429->0.6254 gain 0.0
+[220/360] farver__rd_example__convert_colour_R  N  s1 verified             0.4429->0.0 gain 0.0
+[221/360] googledrive__rd_example__drive_cp_Rd  U  s1 verified             0.0->1.0 gain 1.0
+[222/360] googledrive__rd_example__drive_cp_Rd  S  s1 verified             0.0->1.0 gain 1.0
+[223/360] htmltools__rd_example__builder_Rd.R   N  s1 verified             0.5->0.0 gain 0.0
+[224/360] htmltools__rd_example__builder_Rd.R   S  s1 verified             0.5->0.0 gain 0.0
+[225/360] htmltools__rd_example__builder_Rd.R   U  s1 verified             0.5->0.0 gain 0.0
+[226/360] htmltools__rd_example__tagAppendAttr  U  s1 verified             0.0->0.5833 gain 0.5833
+[227/360] htmltools__rd_example__tagAppendAttr  S  s1 verified             0.0->0.5833 gain 0.5833
+[228/360] htmltools__rd_example__tagAppendAttr  N  s1 gate rejected        0.0->None gain 0.0
+[r2py] WARNING: 'rect' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'rect' is a data entity but Python could not serialize it — excluded from comparison
+[229/360] gtable__rd_example__gtable_add_cols_  S  s1 verified             0.7->0.6167 gain 0.0
+[230/360] lava__rd_example__csplit_Rd.R         S  s1 no rewrite           0.0->None gain 0.0
+[231/360] lava__rd_example__csplit_Rd.R         U  s1 no rewrite           0.0->None gain 0.0
+[232/360] lava__rd_example__csplit_Rd.R         N  s1 no rewrite           0.0->None gain 0.0
+[233/360] gtable__rd_example__gtable_add_cols_  N  s1 verified             0.7->0.0 gain 0.0
+[234/360] isoband__vignette__isoband3_s2.R      U  s1 verified             0.0->0.0 gain 0.0
+[235/360] isoband__vignette__isoband3_s2.R      S  s1 verified             0.0->0.0 gain 0.0
+[236/360] gtable__rd_example__gtable_add_cols_  U  s1 verified             0.7->0.69 gain 0.0
+[237/360] isoband__vignette__isoband3_s2.R      N  s1 verified             0.0->0.7002 gain 0.7002
+[238/360] openssl__rd_example__aes_cbc_Rd.R     U  s1 verified             0.55->0.0 gain 0.0
+[r2py] WARNING: 'y' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'y' is a data entity but Python could not serialize it — excluded from comparison
+[239/360] openssl__rd_example__aes_cbc_Rd.R     S  s1 verified             0.55->0.25 gain 0.0
+[240/360] openssl__rd_example__aes_cbc_Rd.R     N  s1 verified             0.55->0.25 gain 0.0
+[241/360] openssl__rd_example__certificates_Rd  S  s1 verified             0.0->0.0 gain 0.0
+[242/360] openssl__rd_example__certificates_Rd  U  s1 verified             0.0->0.0 gain 0.0
+[243/360] openssl__rd_example__ec_dh_Rd.R       N  s1 verified             0.6747->0.6595 gain 0.0
+[244/360] openssl__rd_example__ec_dh_Rd.R       U  s1 verified             0.6739->0.6832 gain 0.0093
+[245/360] openssl__rd_example__ec_dh_Rd.R       S  s1 verified             0.6629->0.3333 gain 0.0
+[246/360] openssl__rd_example__certificates_Rd  N  s1 verified             0.0->0.0 gain 0.0
+[247/360] openssl__vignette__bignum_s2.R        S  s1 verified             0.3621->0.3621 gain 0.0
+[248/360] openssl__vignette__bignum_s2.R        N  s1 verified             0.3621->0.3621 gain 0.0
+[249/360] openssl__vignette__bignum_s2.R        U  s1 verified             0.3621->1.0 gain 0.6379
+[250/360] lubridate__rd_example__period_Rd.R    U  s1 verified             0.0->0.0 gain 0.0
+[251/360] lubridate__rd_example__period_Rd.R    N  s1 verified             0.0->0.0 gain 0.0
+[252/360] pROC__rd_example__print_Rd.R          U  s1 verified             0.9611->0.9863 gain 0.0252
+[253/360] pROC__rd_example__coords_Rd.R         U  s1 verified             0.4111->0.0 gain 0.0
+[254/360] prodlim__rd_example__backGround_Rd.R  S  s1 no rewrite           0.5->None gain 0.0
+[255/360] pROC__rd_example__print_Rd.R          S  s1 verified             0.9611->0.7032 gain 0.0
+[256/360] pROC__rd_example__coords_Rd.R         S  s1 verified             0.4111->0.0 gain 0.0
+[257/360] lubridate__rd_example__period_Rd.R    S  s1 verified             0.0->0.0 gain 0.0
+[258/360] pROC__rd_example__coords_Rd.R         N  s1 verified             0.4111->0.0 gain 0.0
+[259/360] prodlim__rd_example__backGround_Rd.R  U  s1 verified             0.5->0.5 gain 0.0
+[260/360] prodlim__rd_example__backGround_Rd.R  N  s1 verified             0.5->0.5 gain 0.0
+[261/360] pROC__rd_example__print_Rd.R          N  s1 verified             0.9611->0.6406 gain 0.0
+[262/360] purrr__rd_example__attr_getter_Rd.R   U  s1 verified             0.6302->0.625 gain 0.0
+[263/360] purrr__rd_example__attr_getter_Rd.R   S  s1 verified             0.6302->0.4541 gain 0.0
+[264/360] purrr__rd_example__invoke_Rd.R        S  s1 verified             0.0->0.0 gain 0.0
+[265/360] purrr__rd_example__attr_getter_Rd.R   N  s1 verified             0.6302->0.4541 gain 0.0
+[r2py] Installing Python package 'ranger' ...
+[r2py] Skipping install of 'googleapiclient' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[266/360] purrr__rd_example__invoke_Rd.R        U  s1 verified             0.0->0.5 gain 0.5
+[267/360] proxy__rd_example__registry_Rd.R      U  s1 verified             0.8114->0.8108 gain 0.0
+[268/360] proxy__rd_example__registry_Rd.R      S  s1 verified             0.8114->0.8094 gain 0.0
+[269/360] ragg__rd_example__agg_capture_Rd.R    S  s1 gate rejected        0.7149->None gain 0.0
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[270/360] purrr__rd_example__invoke_Rd.R        N  s1 verified             0.0->0.5 gain 0.5
+[271/360] proxy__rd_example__registry_Rd.R      N  s1 verified             0.8114->0.8094 gain 0.0
+[272/360] ragg__rd_example__agg_capture_Rd.R    N  s1 verified             0.7149->0.0 gain 0.0
+[273/360] ranger__rd_example__csrf_Rd.R         S  s1 verified             0.0->0.0 gain 0.0
+[274/360] ragg__rd_example__agg_webp_anim_Rd.R  U  s1 verified             0.7->0.0 gain 0.0
+[275/360] ranger__rd_example__csrf_Rd.R         U  s1 verified             0.0->0.0 gain 0.0
+[276/360] ranger__rd_example__csrf_Rd.R         N  s1 verified             0.0->0.0 gain 0.0
+[277/360] ragg__rd_example__agg_webp_anim_Rd.R  S  s1 verified             0.7->0.0 gain 0.0
+[278/360] ragg__rd_example__agg_webp_anim_Rd.R  N  s1 verified             0.7->0.0 gain 0.0
+[279/360] recipes__rd_example__discretize_Rd.R  U  s1 verified             0.7416->0.7432 gain 0.0016
+[280/360] recipes__rd_example__step_kpca_Rd.R   S  s1 verified             0.5805->0.5921 gain 0.0116
+[281/360] recipes__rd_example__discretize_Rd.R  N  s1 verified             0.7416->0.6824 gain 0.0
+[282/360] recipes__rd_example__step_kpca_Rd.R   U  s1 verified             0.5805->0.5852 gain 0.0046
+[283/360] recipes__rd_example__step_kpca_Rd.R   N  s1 verified             0.5805->0.5786 gain 0.0
+[284/360] recipes__rd_example__discretize_Rd.R  S  s1 verified             0.7416->0.8185 gain 0.0768
+[285/360] reshape2__rd_example__melt_data_fram  U  s1 verified             0.375->0.3785 gain 0.0035
+[286/360] reshape2__rd_example__melt_data_fram  S  s1 verified             0.375->0.375 gain 0.0
+[287/360] reshape2__rd_example__melt_data_fram  N  s1 verified             0.375->0.375 gain 0.0
+[288/360] ragg__rd_example__agg_capture_Rd.R    U  s1 verified             0.7149->0.8452 gain 0.1303
+[289/360] reshape2__rd_example__parse_formula_  U  s1 verified             0.0->0.5 gain 0.5
+[290/360] reshape2__rd_example__parse_formula_  S  s1 verified             0.0->0.0 gain 0.0
+[291/360] reshape2__rd_example__parse_formula_  N  s1 verified             0.0->0.0 gain 0.0
+[292/360] rmarkdown__rd_example__pandoc_availa  U  s1 verified             0.0->1.0 gain 1.0
+[293/360] rmarkdown__rd_example__pandoc_availa  N  s1 verified             0.0->1.0 gain 1.0
+[294/360] rmarkdown__rd_example__pandoc_availa  S  s1 verified             0.0->1.0 gain 1.0
+[295/360] rvest__rd_example__html_children_Rd.  U  s1 verified             0.0->0.0 gain 0.0
+[296/360] rvest__rd_example__html_children_Rd.  S  s1 verified             0.0->0.0 gain 0.0
+[297/360] rvest__rd_example__html_children_Rd.  N  s1 verified             0.0->0.0 gain 0.0
+[298/360] rmarkdown__vignette__lua-filters_s3.  S  s1 verified             0.0->0.5 gain 0.5
+[299/360] rmarkdown__vignette__lua-filters_s3.  U  s1 verified             0.0->0.6167 gain 0.6167
+[300/360] reshape2__rd_example__cast_Rd.R       S  s1 verified             0.0->0.0 gain 0.0
+[301/360] rmarkdown__vignette__lua-filters_s3.  N  s1 verified             0.0->0.5 gain 0.5
+[302/360] reshape2__rd_example__cast_Rd.R       U  s1 verified             0.0->0.0 gain 0.0
+[303/360] rvest__rd_example__html_table_Rd.R    S  s1 verified             0.4061->0.3056 gain 0.0
+[304/360] rvest__vignette__rvest_s7.R           U  s1 verified             0.0->0.0 gain 0.0
+[305/360] reshape2__rd_example__cast_Rd.R       N  s1 verified             0.0->0.0 gain 0.0
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] WARNING: 'sample1' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'sample2' is a data entity but Python could not serialize it — excluded from comparison
+[306/360] rvest__rd_example__html_table_Rd.R    U  s1 verified             0.4061->0.0 gain 0.0
+[307/360] rvest__rd_example__html_element_Rd.R  U  s1 verified             0.0->0.0 gain 0.0
+[308/360] rvest__vignette__rvest_s7.R           N  s1 verified             0.0->0.0 gain 0.0
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[309/360] rvest__rd_example__html_element_Rd.R  N  s1 verified             0.0->0.0 gain 0.0
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[r2py] Installing Python package 'ranger' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[310/360] rvest__rd_example__html_table_Rd.R    N  s1 verified             0.4061->0.5833 gain 0.1772
+[r2py] Skipping install of 'pkg_resources' (known unavailable)
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[311/360] rvest__vignette__rvest_s7.R           S  s1 verified             0.0->0.5833 gain 0.5833
+[312/360] rvest__rd_example__html_element_Rd.R  S  s1 verified             0.0->0.0 gain 0.0
+[313/360] sass__rd_example__sass_import_Rd.R    U  s1 verified             0.45->0.6 gain 0.15
+[314/360] sass__rd_example__sass_import_Rd.R    N  s1 verified             0.45->0.6 gain 0.15
+[315/360] sass__rd_example__sass_import_Rd.R    S  s1 verified             0.45->0.6 gain 0.15
+[316/360] sass__rd_example__as_sass_Rd.R        U  s1 verified             0.8666->0.0 gain 0.0
+[317/360] sass__rd_example__as_sass_Rd.R        N  s1 verified             0.8669->0.0 gain 0.0
+[318/360] sass__rd_example__as_sass_Rd.R        S  s1 verified             0.8669->0.5833 gain 0.0
+[319/360] sessioninfo__rd_example__python_info  S  s1 no rewrite           1.0->None gain 0.0
+[320/360] sessioninfo__rd_example__platform_in  U  s1 verified             1.0->1.0 gain 0.0
+[321/360] sessioninfo__rd_example__platform_in  S  s1 verified             1.0->1.0 gain 0.0
+[322/360] sessioninfo__rd_example__platform_in  N  s1 verified             1.0->1.0 gain 0.0
+[323/360] sessioninfo__rd_example__python_info  U  s1 verified             1.0->1.0 gain 0.0
+[324/360] sessioninfo__rd_example__python_info  N  s1 verified             1.0->1.0 gain 0.0
+[325/360] shape__rd_example__filledmultigonal_  U  s1 verified             0.75->0.75 gain 0.0
+[326/360] shape__rd_example__filledmultigonal_  N  s1 verified             0.75->0.75 gain 0.0
+[327/360] shape__rd_example__getellipse_Rd.R    U  s1 verified             0.0->0.3453 gain 0.3453
+[328/360] shape__rd_example__filledmultigonal_  S  s1 verified             0.75->0.75 gain 0.0
+[329/360] shape__rd_example__Arrows_Rd.R        U  s1 verified             0.0->0.0 gain 0.0
+[330/360] shape__rd_example__getellipse_Rd.R    S  s1 verified             0.0->0.0 gain 0.0
+[331/360] shape__rd_example__Arrows_Rd.R        N  s1 verified             0.0->0.0 gain 0.0
+[332/360] shape__rd_example__Arrows_Rd.R        S  s1 verified             0.0->0.0 gain 0.0
+[333/360] shiny__rd_example__actionButton_Rd.R  U  s1 verified             0.5593->0.0 gain 0.0
+[334/360] shiny__rd_example__actionButton_Rd.R  S  s1 verified             0.5593->0.0 gain 0.0
+[335/360] shiny__rd_example__updateRadioButton  U  s1 verified             0.25->0.25 gain 0.0
+[336/360] shiny__rd_example__actionButton_Rd.R  N  s1 verified             0.5593->0.0 gain 0.0
+[337/360] shiny__rd_example__updateRadioButton  N  s1 verified             0.25->0.25 gain 0.0
+[338/360] shiny__rd_example__updateRadioButton  S  s1 verified             0.25->0.25 gain 0.0
+[339/360] systemfonts__rd_example__shape_strin  S  s1 verified             0.7088->0.697 gain 0.0
+[340/360] shape__rd_example__getellipse_Rd.R    N  s1 verified             0.0->0.0 gain 0.0
+[341/360] systemfonts__rd_example__shape_strin  N  s1 verified             0.7088->0.6832 gain 0.0
+[342/360] textshaping__rd_example__lorem_text_  U  s1 no rewrite           0.5946->None gain 0.0
+[343/360] systemfonts__rd_example__shape_strin  U  s1 verified             0.7088->0.7092 gain 0.0004
+[344/360] textshaping__rd_example__lorem_text_  S  s1 no rewrite           0.5946->None gain 0.0
+[345/360] textshaping__rd_example__lorem_text_  N  s1 no rewrite           0.5937->None gain 0.0
+[346/360] textshaping__rd_example__shape_text_  S  s1 verified             0.6782->0.6698 gain 0.0
+[347/360] textshaping__rd_example__shape_text_  U  s1 verified             0.6782->0.6726 gain 0.0
+[348/360] textshaping__rd_example__shape_text_  N  s1 no rewrite           0.6782->None gain 0.0
+[349/360] textshaping__rd_example__get_font_fe  U  s1 verified             0.739->0.739 gain 0.0
+[350/360] textshaping__rd_example__get_font_fe  S  s1 verified             0.739->0.7123 gain 0.0
+[351/360] textshaping__rd_example__get_font_fe  N  s1 verified             0.739->0.7123 gain 0.0
+[352/360] timeDate__rd_example__calendar-isBiz  S  s1 verified             0.8684->0.5833 gain 0.0
+[353/360] timeDate__rd_example__calendar-isBiz  U  s1 verified             0.8684->0.8255 gain 0.0
+[354/360] timeDate__rd_example__calendar-isBiz  N  s1 gate rejected        0.8684->None gain 0.0
+[355/360] xml2__rd_example__xml_attr_Rd.R       S  s1 verified             0.5474->0.5445 gain 0.0
+[356/360] xml2__rd_example__xml_attr_Rd.R       N  s1 verified             0.5474->0.5445 gain 0.0
+Requirement already satisfied: fontTools in c:\users\bened\desktop\r2py_v0.3\.venv-sandbox\lib\site-packages (4.66.1)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+[357/360] systemfonts__rd_example__glyph_raste  N  s1 verified             0.7859->0.0 gain 0.0
+[358/360] systemfonts__rd_example__glyph_raste  U  s1 verified             0.7859->0.6274 gain 0.0
+[359/360] xml2__rd_example__xml_attr_Rd.R       U  s1 verified             0.5474->0.5417 gain 0.0
+[360/360] systemfonts__rd_example__glyph_raste  S  s1 verified             0.7859->0.7859 gain 0.0
+[r2py] Installing Python package 'ranger' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[r2py] Installing Python package 'ranger' ...
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Skipping install of 'pkg_resources' (known unavailable)
+[r2py] Installing Python package 'fontTools' ...
+[r2py] Installing Python package 'ranger' ...
+[r2py] Skipping install of 'pkg_resources' (known unavailable)
+Traceback (most recent call last):
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 298, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 291, in main
+    text = summary()
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 258, in summary
+    boots = sorted(st.mean(rng.choice(diff) for _ in diff) for _ in range(5000))
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 258, in <genexpr>
+    boots = sorted(st.mean(rng.choice(diff) for _ in diff) for _ in range(5000))
+                   ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\anaconda3\Lib\statistics.py", line 490, in mean
+    raise StatisticsError('mean requires at least one data point')
+statistics.StatisticsError: mean requires at least one data point

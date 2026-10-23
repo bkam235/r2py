@@ -1,0 +1,144 @@
+Translation log
+Final score: 0.875
+Data score:  0.270
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- as.Date("2019-01-01")
+  Python:
+    x = pd.to_datetime("2019-01-01").date()
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x <- add_years(x, 0:5)
+  Python:
+    def add_years(x, n):
+        """
+        Adds n years to x. Handles both single dates/datetimes 
+        and arrays/lists of dates/datetimes.
+        """
+        if isinstance(n, (list, np.ndarray, range)):
+            # If n is a sequence, we produce a matrix-like result or list of lists
+            # In R: add_years(date, 0:5) returns a vector of 6 dates.
+            # If x is a single date, we return a list of dates.
+            if not isinstance(x, (list, np.ndarray, pd.Series)):
+                return [x + relativedelta(years=i) for i in n]
+            else:
+                # If x is also a sequence, this is usually outer-product behavior in R
+                # But for this specific script, x is a single date being expanded.
+                return [[val + relativedelta(years=i) for i in n] for val in x]
+        else:
+            return x + relativedelta(years=n)
+    x_res = add_years(x, range(0, 6))
+    print(date_leap_year(x_res))
+    
+    # Part 2: POSIXct (DateTime with timezone)
+
+============================================================
+Entity: date_leap_year
+  Name:  date_leap_year
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    date_leap_year(x)
+  Python:
+    def date_leap_year(x):
+        """
+        Returns TRUE if the date is in a leap year, FALSE otherwise.
+        """
+        def is_leap(dt):
+            year = dt.year
+            return (year % 4 == 0 and year % 100 != 0) or (year % 400 == 0)
+    
+        if isinstance(x, (list, np.ndarray, pd.Series)):
+            return np.array([is_leap(d) for d in x])
+        else:
+            return is_leap(x)
+    
+    # Part 1: Date
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    y <- as.POSIXct("2019-01-01", "America/New_York")
+  Python:
+    tz = pytz.timezone("America/New_York")
+    y = tz.localize(datetime(2019, 1, 1))
+
+============================================================
+Entity: y_1
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    y <- add_years(y, 0:5)
+  Python:
+    y_res = add_years(y, range(0, 6))
+
+============================================================
+Entity: date_leap_year_1
+  Name:  date_leap_year
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    date_leap_year(y)
+  Python:
+    print(date_leap_year(y_res))

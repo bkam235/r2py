@@ -1,0 +1,270 @@
+   training: base64enc__rd_example__dataURI_Rd             1
+   training: broom__rd_example__augment_drc_Rd             2
+   training: broom__rd_example__augment_loess_Rd           2
+   training: broom__rd_example__tidy_binWidth_Rd           0
+   training: broom__vignette__broom_chunk6                 2
+   training: bslib__rd_example__bs_get_variables_Rd        0
+   training: bslib__rd_example__layout_column_wrap_Rd      2
+   training: bslib__rd_example__page_fillable_Rd           0
+   training: bslib__rd_example__page_sidebar_Rd            0
+   training: bslib__rd_example__value_box_Rd               1
+   training: caret__rd_example__knn3_Rd                    1
+   training: caret__rd_example__lift_Rd                    2
+   training: caret__rd_example__modelLookup_Rd             2
+   training: caret__rd_example__preProcess_Rd              0
+   training: caret__rd_example__update_train_Rd            0
+   training: caret__vignette__caret_s3                     1
+   training: clock__rd_example__iso-year-week-day-getters  1
+   training: clock__rd_example__posixt-group_Rd            1
+   training: clock__rd_example__seq_clock_time_point_Rd    2
+   training: clock__rd_example__time-point-rounding_Rd     0
+   training: clock__vignette__clock_s13                    0
+   training: clock__vignette__recipes_s68                  1
+   training: diagram__rd_example__coordinates_Rd           0
+   training: diagram__rd_example__selfarrow_Rd             0
+   training: diagram__rd_example__splitarrow_Rd            0
+   training: diagram__rd_example__textempty_Rd             0
+   training: diagram__rd_example__textmulti_Rd             0
+   training: diagram__rd_example__textround_Rd             0
+   training: downlit__rd_example__autolink_Rd              0
+   training: downlit__rd_example__downlit_html_path_Rd     0
+   training: downlit__rd_example__highlight_Rd             0
+   training: downlit__rd_example__href_topic_Rd            0
+   training: dplyr__rd_example__glimpse_Rd                 0
+   training: dplyr__rd_example__storms_Rd                  0
+   training: dplyr__vignette__dplyr_s21                    1
+   training: dplyr__vignette__recoding-replacing_s22       0
+   training: dplyr__vignette__rowwise_s36                  0
+   training: e1071__rd_example__boxplot_bclust_Rd          0
+   training: e1071__rd_example__matchClasses_Rd            2
+   training: e1071__rd_example__predict_svm_Rd             0
+   training: e1071__rd_example__read_matrix_csr_Rd         0
+   training: e1071__rd_example__sigmoid_Rd                 0
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:64: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:65: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:66: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:67: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:68: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:69: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:70: SyntaxWarning: invalid escape sequence '\s'
+<unknown>:71: SyntaxWarning: invalid escape sequence '\s'
+   training: e1071__rd_example__write_svm_Rd               2
+   training: fansi__rd_example__normalize_state_Rd         2
+   training: fansi__rd_example__state_at_end_Rd            1
+   training: fansi__rd_example__strsplit_ctl_Rd            1
+   training: fansi__rd_example__strwrap_ctl_Rd             2
+   training: fansi__rd_example__substr_ctl_Rd              2
+   training: fansi__vignette__sgr-in-rmd_s6                0
+   training: farver__rd_example__as_white_ref_Rd           2
+   training: farver__rd_example__compare_colour_Rd         2
+   training: farver__rd_example__convert_colour_Rd         2
+   training: farver__rd_example__encode_colour_Rd          2
+   training: farver__rd_example__manip_channel_Rd          2
+   training: farver__rd_example__native_encoding_Rd        1
+   training: ggplot2__rd_example__geom_bin_2d_Rd           0
+   training: ggplot2__rd_example__position_jitterdodge_Rd  0
+   training: ggplot2__vignette__ggplot2-in-packages_s13    0
+   training: ggplot2__vignette__ggplot2-in-packages_s6     0
+   training: ggplot2__vignette__ggplot2-in-packages_s8     0
+   training: googledrive__rd_example__dribble-checks_Rd    0
+   training: googledrive__rd_example__drive_about_Rd       0
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+   training: googledrive__rd_example__drive_download_Rd    0
+   training: googledrive__rd_example__drive_read_string_R  verify failed: OPENROUTER_API_KEY environment variable is not
+   training: googledrive__rd_example__shortcut_resolve_Rd  0
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+   training: gtable__rd_example__bind_Rd                   2
+   training: gtable__rd_example__gtable_add_cols_Rd        2
+   training: gtable__rd_example__gtable_add_grob_Rd        0
+   training: gtable__rd_example__gtable_add_padding_Rd     0
+[r2py] WARNING: 'rect_mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'rect_mat' is a data entity but Python could not serialize it — excluded from comparison
+   training: gtable__rd_example__gtable_add_space_Rd       1
+   training: gtable__rd_example__gtable_trim_Rd            2
+   training: highr__vignette__highr-custom_s2              1
+   training: hms__rd_example__parse_hms_Rd                 0
+   training: htmltools__rd_example__builder_Rd             2
+   training: htmltools__rd_example__htmlPreserve_Rd        2
+   training: htmltools__rd_example__parseCssColors_Rd      0
+[r2py] WARNING: 'divExtra' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'newDep' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'newObj' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'obj' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'spanExtended' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'spanExtra' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'newDep' is a data entity but Python could not serialize it — excluded from comparison
+   training: htmltools__rd_example__tagAddRenderHook_Rd    2
+   training: htmltools__rd_example__tagQuery_Rd            0
+   training: htmlwidgets__rd_example__htmlwidgets-shiny_R  0
+   training: htmlwidgets__rd_example__JS_Rd                0
+   training: htmlwidgets__vignette__develop_advanced_chun  0
+   training: htmlwidgets__vignette__develop_advanced_chun  0
+   training: isoband__rd_example__plot_iso_Rd              0
+   training: isoband__vignette__isoband1_chunk1            verify failed: OPENROUTER_API_KEY environment variable is not
+   training: isoband__vignette__isoband1_s1                verify failed: OPENROUTER_API_KEY environment variable is not
+   training: isoband__vignette__isoband1_s4                0
+   training: isoband__vignette__isoband1_s5                0
+   training: lava__demo__inference                         2
+   training: lava__rd_example__covariance_Rd               1
+   training: lava__rd_example__scheffe_Rd                  0
+   training: lava__vignette__nonlinear_s1                  0
+   training: lubridate__rd_example__date_Rd                1
+   training: lubridate__rd_example__hms_Rd                 0
+   training: lubridate__rd_example__leap_year_Rd           0
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+   training: lubridate__rd_example__within-interval_Rd     2
+   training: lubridate__vignette__lubridate_s2             0
+   training: magrittr__rd_example__pipe-eager_Rd           0
+   training: magrittr__vignette__magrittr_s1               0
+   training: magrittr__vignette__magrittr_s11              0
+   training: magrittr__vignette__tradeoffs_s1              0
+   training: magrittr__vignette__tradeoffs_s12             0
+   training: magrittr__vignette__tradeoffs_s25             0
+   training: ModelMetrics__rd_example__gini_Rd             2
+   training: ModelMetrics__rd_example__logLoss_Rd          1
+   training: ModelMetrics__rd_example__mse_Rd              1
+   training: ModelMetrics__rd_example__rmse_Rd             1
+   training: ModelMetrics__rd_example__tnr_Rd              0
+   training: openssl__rd_example__aes_cbc_Rd               0
+   training: openssl__rd_example__ec_dh_Rd                 2
+   training: openssl__rd_example__encrypt_envelope_Rd      1
+   training: openssl__rd_example__keygen_Rd                2
+   training: openssl__vignette__bignum_s2                  2
+   training: prettyunits__rd_example__pretty_ms_Rd         0
+   training: prettyunits__rd_example__pretty_num_Rd        0
+   training: prettyunits__rd_example__pretty_sec_Rd        0
+   training: prettyunits__rd_example__time_ago_Rd          2
+   training: prettyunits__rd_example__vague_dt_Rd          2
+   training: pROC__rd_example__aSAH_Rd                     0
+   training: pROC__rd_example__coords_Rd                   2
+   training: pROC__rd_example__lines_roc_Rd                0
+   training: pROC__rd_example__multiclass_Rd               2
+   training: pROC__rd_example__print_Rd                    0
+   training: prodlim__rd_example__as_data_table_prodlim_R  1
+   training: prodlim__rd_example__backGround_Rd            0
+   training: prodlim__rd_example__Hist_Rd                  2
+   training: prodlim__rd_example__plotIllnessDeathModel_R  0
+   training: prodlim__rd_example__row_match_Rd             0
+   training: prodlim__rd_example__summary_prodlim_Rd       2
+   training: proxy__rd_example__registry_Rd                1
+   training: proxy__rd_example__rowSums_dist_Rd            2
+   training: proxy__vignette__overview                     2
+   training: purrr__rd_example__attr_getter_Rd             2
+   training: purrr__rd_example__chuck_Rd                   0
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+   training: purrr__rd_example__keep_Rd                    0
+   training: purrr__rd_example__slowly_Rd                  1
+   training: purrr__vignette__purrr_s10                    0
+   training: ragg__rd_example__agg_capture_Rd              0
+   training: ragg__rd_example__agg_jpeg_Rd                 2
+   training: ragg__rd_example__agg_ppm_Rd                  2
+   training: ragg__rd_example__agg_tiff_Rd                 2
+   training: ragg__rd_example__agg_webp_anim_Rd            2
+   training: ragg__rd_example__agg_webp_Rd                 2
+[r2py] Installing Python package 'ranger' ...
+   training: ranger__rd_example__deforest_Rd               1
+   training: ranger__rd_example__hshrink_Rd                0
+   training: ranger__rd_example__importance_pvalues_Rd     2
+   training: recipes__rd_example__discretize_Rd            2
+   training: recipes__rd_example__step_filter_missing_Rd   0
+   training: recipes__rd_example__step_kpca_Rd             0
+   training: recipes__rd_example__step_rm_Rd               0
+   training: recipes__rd_example__step_YeoJohnson_Rd       1
+   training: recipes__vignette__Roles_chunk11              0
+   training: reshape2__rd_example__colsplit_Rd             0
+   training: reshape2__rd_example__melt_data_frame_Rd      2
+   training: reshape2__rd_example__melt_list_Rd            2
+   training: rmarkdown__rd_example__includes_Rd            1
+   training: rmarkdown__rd_example__pandoc_args_Rd         0
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.1
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+   training: rmarkdown__rd_example__pkg_file_lua_Rd        0
+   training: rmarkdown__vignette__lua-filters_s1           0
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+   training: rvest__rd_example__html_attr_Rd               1
+   training: rvest__rd_example__html_table_Rd              0
+   training: rvest__vignette__rvest_s17                    1
+   training: sass__rd_example__as_sass_Rd                  1
+   training: sass__rd_example__output_template_Rd          1
+   training: sass__rd_example__sass_file_cache_Rd          0
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+   training: sass__rd_example__sass_import_Rd              2
+   training: sass__rd_example__sass_options_Rd             0
+   training: sass__vignette__sass_s1                       0
+   training: sessioninfo__rd_example__external_info_Rd     1
+   training: sessioninfo__rd_example__platform_info_Rd     0
+   training: sessioninfo__rd_example__python_info_Rd       0
+   training: sessioninfo__rd_example__session_diff_Rd      0
+   training: sessioninfo__rd_example__session_info_Rd      1
+   training: shape__rd_example__Arrowhead_Rd               0
+   training: shape__rd_example__filledmultigonal_Rd        0
+   training: shape__rd_example__plotcircle_Rd              0
+   training: shape__rd_example__plotellipse_Rd             0
+   training: shiny__rd_example__actionButton_Rd            2
+   training: shiny__rd_example__isolate_Rd                 1
+   training: shiny__rd_example__modalDialog_Rd             0
+   training: shiny__rd_example__observe_Rd                 1
+   training: shiny__rd_example__resourcePaths_Rd           0
+   training: shiny__rd_example__updateRadioButtons_Rd      0
+   training: sparsevctrs__rd_example__coerce-vector_Rd     1
+   training: sparsevctrs__rd_example__sparse_lag_Rd        2
+   training: sparsevctrs__rd_example__sparse_logical_Rd    0
+   training: sparsevctrs__rd_example__sparse_replace_na_R  0
+   training: sparsevctrs__rd_example__sparse_which_na_Rd   1
+   training: sparsevctrs__vignette__design_s1              verify failed: OPENROUTER_API_KEY environment variable is not
+   training: systemfonts__rd_example__glyph_raster_Rd      0
+   training: systemfonts__rd_example__match_fonts_Rd       0
+   training: systemfonts__rd_example__register_variant_Rd  1
+   training: systemfonts__rd_example__shape_string_Rd      1
+   training: systemfonts__vignette__c_interface_s1         verify failed: OPENROUTER_API_KEY environment variable is not
+   training: systemfonts__vignette__fonts_basics_chunk1    0
+   training: textshaping__rd_example__get_font_features_R  0
+   training: textshaping__rd_example__lorem_text_Rd        1
+   training: textshaping__rd_example__plot_shape_Rd        0
+   training: textshaping__rd_example__shape_text_Rd        1
+   training: textshaping__vignette__c_interface_chunk1     0
+   training: tidyr__rd_example__chop_Rd                    2
+   training: tidyr__rd_example__complete_Rd                0
+   training: tidyr__rd_example__separate_rows_Rd           2
+   training: tidyr__vignette__pivot_s18                    1
+   training: tidyr__vignette__pivot_s4                     1
+   training: tidyr__vignette__tidy-data_s9                 1
+   training: timeDate__rd_example__calendar-isBizday_Rd    1
+   training: timeDate__rd_example__methods-mathOps_Rd      1
+   training: timeDate__rd_example__timeDate-Calendar_Rd    0
+   training: timeDate__rd_example__timeDate-finCenter_Rd   0
+   training: timeDate__rd_example__timeDate-midnightStand  0
+   training: timeDate__rd_example__timeDate-Sequence_Rd    1
+   training: tinytex__rd_example__check_installed_Rd       0
+   training: utf8__rd_example__output_utf8_Rd              2
+   training: vctrs__rd_example__vec_cast_Rd                1
+   training: vctrs__vignette__s3-vector_s6                 0
+   training: vctrs__vignette__s3-vector_s76                0
+   training: vctrs__vignette__type-size_s17                0
+   training: vctrs__vignette__type-size_s23                0
+   training: vctrs__vignette__type-size_s29                0
+   training: xml2__rd_example__xml_attr_Rd                 0
+   training: xml2__rd_example__xml_children_Rd             1
+   training: xml2__rd_example__xml_dtd_Rd                  2
+   training: xml2__rd_example__xml_name_Rd                 1
+   training: xml2__rd_example__xml_type_Rd                 1
+   training: xml2__vignette__modification_s7               2
+pool 159 {'print': 86, 'value': 73}; sampled 60 {'print': 30, 'value': 30} from 56 scripts

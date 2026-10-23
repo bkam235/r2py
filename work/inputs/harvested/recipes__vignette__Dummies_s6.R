@@ -1,0 +1,13 @@
+# r2py crawler metadata
+# package: recipes
+# source_type: vignette
+# topic: Dummies_s6
+# source_file: C:\Users\bened\AppData\Local\R\win-library\4.5\recipes\doc\Dummies.R
+# lines: 6
+
+suppressPackageStartupMessages(library(recipes))
+model.matrix(~ Species*Sepal.Length, data = iris) |> 
+  as.data.frame() |> 
+  # show a few specific rows
+  slice(c(1, 51, 101)) |> 
+  as.data.frame()

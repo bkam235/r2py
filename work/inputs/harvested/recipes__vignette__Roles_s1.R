@@ -1,0 +1,16 @@
+# r2py crawler metadata
+# package: recipes
+# source_type: vignette
+# topic: Roles_s1
+# source_file: C:\Users\bened\AppData\Local\R\win-library\4.5\recipes\doc\Roles.R
+# lines: 9
+
+knitr::opts_chunk$set(
+  message = FALSE,
+  digits = 3,
+  collapse = TRUE,
+  comment = "#>",
+  eval = requireNamespace("modeldata", quietly = TRUE)
+  )
+options(digits = 3)
+library(recipes)

@@ -1,0 +1,499 @@
+Translation log
+Final score: 0.931
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df <- expand.grid(X1 = 1:10, X2 = 1:10)
+  Python:
+    data = []
+    for x2 in range(1, 11):
+        for x1 in range(1, 11):
+            data.append({'X1': x1, 'X2': x2})
+    df = pd.DataFrame(data)
+
+============================================================
+Entity: df$value
+  Name:  df$value
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    df$value <- df$X1 * df$X2
+  Python:
+    df['value'] = df['X1'] * df['X2']
+
+============================================================
+Entity: p1
+  Name:  p1
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 <- ggplot(df, aes(X1, X2)) + geom_tile(aes(fill = value))
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 <- ggplot(df, aes(X1, X2)) + geom_tile(aes(fill = value))
+
+============================================================
+Entity: geom_tile
+  Name:  geom_tile
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 <- ggplot(df, aes(X1, X2)) + geom_tile(aes(fill = value))
+  Python:
+    p1 = ggplot(df, aes('X1', 'X2')) + geom_tile(aes(fill='value'))
+
+============================================================
+Entity: p2
+  Name:  p2
+  Kind:  Variable
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p2 <- p1 + geom_point(aes(size = value))
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p2 <- p1 + geom_point(aes(size = value))
+  Python:
+    p2 = p1 + geom_point(aes(size='value'))
+    
+    # Basic form
+
+============================================================
+Entity: scale_fill_continuous
+  Name:  scale_fill_continuous
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + scale_fill_continuous(guide = "colourbar")
+  Python:
+    p1_basic1 = p1 + scale_fill_continuous(guide='colourbar')
+
+============================================================
+Entity: scale_fill_continuous_1
+  Name:  scale_fill_continuous
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + scale_fill_continuous(guide = guide_colourbar())
+  Python:
+    p1_basic2 = p1 + scale_fill_continuous(guide=guide_colourbar())
+
+============================================================
+Entity: guides
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + guides(fill = guide_colourbar())
+  Python:
+    p1_basic3 = p1 + guides(fill=guide_colourbar())
+    
+    # Control styles
+    
+    # bar size
+
+============================================================
+Entity: guides_1
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + guides(fill = guide_colourbar(theme = theme(
+      legend.key.width  = unit(0.5, "lines"),
+      legend.key.height = unit(10, "lines")
+    )))
+  Python:
+    p1_style1 = p1 + guides(fill=guide_colourbar(theme=theme(
+        legend_key_width=0.5, 
+        legend_key_height=10
+    )))
+    
+    # no label
+
+============================================================
+Entity: guides_2
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + guides(fill = guide_colourbar(theme = theme(
+      legend.text = element_blank()
+    )))
+  Python:
+    p1_style2 = p1 + guides(fill=guide_colourbar(theme=theme(
+        legend_text=element_blank()
+    )))
+    
+    # no tick marks
+
+============================================================
+Entity: guides_3
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + guides(fill = guide_colourbar(theme = theme(
+      legend.ticks = element_blank()
+    )))
+  Python:
+    p1_style3 = p1 + guides(fill=guide_colourbar(theme=theme(
+        legend_ticks=element_blank()
+    )))
+    
+    # label position
+
+============================================================
+Entity: guides_4
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + guides(fill = guide_colourbar(theme = theme(
+      legend.text.position = "left"
+    )))
+  Python:
+    p1_style4 = p1 + guides(fill=guide_colourbar(theme=theme(
+        legend_text_position='left'
+    )))
+    
+    # label theme
+
+============================================================
+Entity: guides_5
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + guides(fill = guide_colourbar(theme = theme(
+      legend.text = element_text(colour = "blue", angle = 0)
+    )))
+  Python:
+    p1_style5 = p1 + guides(fill=guide_colourbar(theme=theme(
+        legend_text=element_text(colour='blue', angle=0)
+    )))
+    
+    # small number of bins
+
+============================================================
+Entity: guides_6
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + guides(fill = guide_colourbar(nbin = 3))
+  Python:
+    p1_style6 = p1 + guides(fill=guide_colourbar(nbin=3))
+    
+    # large number of bins
+
+============================================================
+Entity: guides_7
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p1 + guides(fill = guide_colourbar(nbin = 100))
+  Python:
+    p1_style7 = p1 + guides(fill=guide_colourbar(nbin=100))
+    
+    # make top- and bottom-most ticks invisible
+
+============================================================
+Entity: scale_fill_continuous_2
+  Name:  scale_fill_continuous
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      scale_fill_continuous(
+        limits = c(0,20), breaks = c(0, 5, 10, 15, 20),
+        guide = guide_colourbar(nbin = 100, draw.ulim = FALSE, draw.llim = FALSE)
+      )
+  Python:
+    p1_style8 = p1 + scale_fill_continuous(
+        limits=[0, 20], 
+        breaks=[0, 5, 10, 15, 20],
+        guide=guide_colourbar(nbin=100, draw_ulim=False, draw_llim=False)
+    )
+    
+    # guides can be controlled independently
+
+============================================================
+Entity: scale_fill_continuous_3
+  Name:  scale_fill_continuous
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      scale_fill_continuous(guide = "colourbar") +
+
+============================================================
+Entity: scale_size
+  Name:  scale_size
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      scale_size(guide = "legend")
+  Python:
+    p2_style1 = p2 + scale_fill_continuous(guide='colourbar') + scale_size(guide='legend')
+
+============================================================
+Entity: guides_8
+  Name:  guides
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    p2 + guides(fill = "colourbar", size = "legend")
+  Python:
+    p2_style2 = p2 + guides(fill='colourbar', size='legend')
+
+============================================================
+Entity: scale_fill_continuous_4
+  Name:  scale_fill_continuous
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      scale_fill_continuous(guide = guide_colourbar(theme = theme(
+        legend.direction = "horizontal"
+      ))) +
+  Python:
+    p2_style3 = (p2 + scale_fill_continuous(guide=guide_colourbar(theme=theme(
+        legend_direction='horizontal'
+
+============================================================
+Entity: scale_size_1
+  Name:  scale_size
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      scale_size(guide = guide_legend(theme = theme(
+        legend.direction = "vertical"
+      )))
+  Python:
+    ))) + scale_size(guide=guide_legend(theme=theme(
+        legend_direction='vertical'
+    ))))

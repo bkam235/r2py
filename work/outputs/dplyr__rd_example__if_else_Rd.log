@@ -1,0 +1,213 @@
+Translation log
+Final score: 0.830
+Data score:  0.782
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- c(-5:5, NA)
+  Python:
+    x = pd.Series(list(range(-5, 6)) + [np.nan])
+    
+    # if_else(x < 0, NA, x)
+
+============================================================
+Entity: if_else
+  Name:  if_else
+  Kind:  FunctionCall
+  Score: 0.724
+  side_effects:        0.724
+  executed_ok:       True
+
+  R:
+    if_else(x < 0, NA, x)
+  Python:
+    def if_else(condition, true_val, false_val, missing=None):
+        """
+        Equivalent to dplyr::if_else.
+        Strictly typed and handles NA values in condition.
+        """
+        cond = pd.Series(condition)
+        
+        # Convert values to Series for element-wise operation
+        t_val = pd.Series(true_val) if isinstance(true_val, (list, np.ndarray, pd.Series)) else pd.Series([true_val] * len(cond))
+        f_val = pd.Series(false_val) if isinstance(false_val, (list, np.ndarray, pd.Series)) else pd.Series([false_val] * len(cond))
+        
+        # R's if_else logic:
+        # Result is true_val where condition is TRUE
+        # Result is false_val where condition is FALSE
+        # Result is 'missing' where condition is NA
+        
+        # We create a result series. We use object type to avoid casting issues with strings and NAs
+        result = pd.Series(index=cond.index, dtype=object)
+        
+        # TRUE
+        mask_true = cond == True
+        result[mask_true] = t_val[mask_true]
+        
+        # FALSE
+        mask_false = cond == False
+        result[mask_false] = f_val[mask_false]
+        
+        # NA
+        mask_na = cond.isna()
+        if missing is not None:
+            result[mask_na] = missing
+        else:
+            result[mask_na] = np.nan
+                
+        return result
+    res1 = if_else(x < 0, np.nan, x)
+    print(res1.values)
+    
+    # if_else(x < 0, "negative", "positive", missing = "missing")
+
+============================================================
+Entity: if_else_1
+  Name:  if_else
+  Kind:  FunctionCall
+  Score: 0.974
+  side_effects:        0.974
+  executed_ok:       True
+
+  R:
+    if_else(x < 0, "negative", "positive", missing = "missing")
+  Python:
+    res2 = if_else(x < 0, "negative", "positive", missing="missing")
+    print(res2.values)
+    
+    # x <- factor(sample(letters[1:5], 10, replace = TRUE))
+
+============================================================
+Entity: x_1
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    x <- factor(sample(letters[1:5], 10, replace = TRUE))
+  Python:
+    sample_letters = letters[0:5] 
+    # To ensure reproducibility or match R's behavior, but here we use random.choice
+    x_sampled = [random.choice(sample_letters) for _ in range(10)]
+    x_factor = pd.Series(x_sampled).astype('category')
+    
+    # ifelse(x %in% c("a", "b", "c"), x, NA)
+
+============================================================
+Entity: ifelse
+  Name:  ifelse
+  Kind:  FunctionCall
+  Score: 0.705
+  side_effects:        0.705
+  executed_ok:       True
+
+  R:
+    ifelse(x %in% c("a", "b", "c"), x, NA)
+  Python:
+    def ifelse(test, yes, no):
+        """
+        Equivalent to base::ifelse.
+        Less strict about types than if_else.
+        """
+        test_ser = pd.Series(test)
+        
+        # R's ifelse logic:
+        # result[test == TRUE] = yes
+        # result[test == FALSE] = no
+        # result[test == NA] = NA
+        
+        res = pd.Series(index=test_ser.index, dtype=object)
+        
+        mask_true = test_ser == True
+        # Handle broadcasting for 'yes' and 'no'
+        y_val = pd.Series(yes) if isinstance(yes, (list, np.ndarray, pd.Series)) else pd.Series([yes] * len(test_ser))
+        n_val = pd.Series(no) if isinstance(no, (list, np.ndarray, pd.Series)) else pd.Series([no] * len(test_ser))
+        
+        res[mask_true] = y_val[mask_true]
+        
+        mask_false = test_ser == False
+        res[mask_false] = n_val[mask_false]
+        
+        res[test_ser.isna()] = np.nan
+        return res
+    
+    # x <- c(-5:5, NA)
+    res3 = ifelse(x_factor.isin(["a", "b", "c"]), x_factor, np.nan)
+    print(res3.values)
+    
+    # if_else(x %in% c("a", "b", "c"), x, NA)
+
+============================================================
+Entity: if_else_2
+  Name:  if_else
+  Kind:  FunctionCall
+  Score: 0.731
+  side_effects:        0.731
+  executed_ok:       True
+
+  R:
+    if_else(x %in% c("a", "b", "c"), x, NA)
+  Python:
+    res4 = if_else(x_factor.isin(["a", "b", "c"]), x_factor, np.nan)
+    print(res4.values)
+    
+    # starwars |> mutate(category = if_else(height < 100, "short", "tall"), .keep = "used")
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.846
+  side_effects:        0.846
+  executed_ok:       True
+
+  R:
+      mutate(category = if_else(height < 100, "short", "tall"), .keep = "used")
+  Python:
+    df_starwars = pd.DataFrame(starwars)
+    # .keep = "used" in R's mutate means keep only the columns used in the operation
+    # The operation uses 'height'
+    heights = df_starwars['height']
+    categories = if_else(heights < 100, "short", "tall")
+    
+    # Result should contain 'height' and 'category'
+    res_mutate = pd.DataFrame({
+        'height': heights,
+        'category': categories
+    })
+    print(res_mutate.head(10))

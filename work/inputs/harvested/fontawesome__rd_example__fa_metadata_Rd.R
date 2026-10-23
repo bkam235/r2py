@@ -1,0 +1,15 @@
+# r2py crawler metadata
+# package: fontawesome
+# source_type: rd_example
+# topic: fa_metadata.Rd
+# source_file: C:\Users\bened\AppData\Local\R\win-library\4.5\fontawesome\help
+# lines: 8
+
+suppressPackageStartupMessages(library(fontawesome))
+if (interactive()) {
+
+# Get information on the Font Awesome
+# assets included in this package
+fa_metadata()
+
+}

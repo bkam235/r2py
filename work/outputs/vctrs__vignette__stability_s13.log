@@ -1,0 +1,53 @@
+Translation log
+Final score: 0.800
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: c
+  Name:  c
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    c(getRversion(), "x")
+  Python:
+        print([version, "x"])
+
+============================================================
+Entity: c_1
+  Name:  c
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    c("x", getRversion())
+  Python:
+        print(["x", version])
+    except Exception as e:
+        pass

@@ -1,0 +1,71 @@
+Translation log
+Final score: 0.250
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(purrr))
+
+============================================================
+Entity: import_purrr
+  Name:  purrr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(purrr))
+
+============================================================
+Entity: xs
+  Name:  xs
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    xs <- map(1:8, ~ runif(10))
+  Python:
+    xs = [np.random.uniform(0, 1, 10).tolist() for _ in range(8)]
+
+============================================================
+Entity: xs[[1]][[1]]
+  Name:  xs[[1]][[1]]
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    xs[[1]][[1]] <- NA
+  Python:
+    xs[0][0] = np.nan
+
+============================================================
+Entity: ws
+  Name:  ws
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    ws <- map(1:8, ~ rpois(10, 5) + 1)
+  Python:
+    ws = [(np.random.poisson(5, 10) + 1).tolist() for _ in range(8)]

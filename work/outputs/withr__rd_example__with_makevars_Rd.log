@@ -1,0 +1,128 @@
+Translation log
+Final score: 0.864
+Files score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(withr))
+
+============================================================
+Entity: import_withr
+  Name:  withr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(withr))
+
+============================================================
+Entity: writeLines
+  Name:  writeLines
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    writeLines("void foo(int* bar) { *bar = 1; }\n", "foo.c")
+  Python:
+    with open("foo.c", "w") as f:
+        f.write("void foo(int* bar) { *bar = 1; }\n")
+    
+    # system("R CMD SHLIB --preclean -c foo.c")
+
+============================================================
+Entity: system
+  Name:  system
+  Kind:  FunctionCall
+  Score: 0.864
+  side_effects:        0.864
+  executed_ok:       True
+
+  R:
+    system("R CMD SHLIB --preclean -c foo.c")
+  Python:
+    def system(command, intern=False):
+        # R's system() by default prints the return code to stdout in this context
+        result = subprocess.run(command, shell=True)
+        print(f"[1] {result.returncode}")
+        return result.returncode
+    
+    # suppressPackageStartupMessages(library(withr))
+    # (No-op in Python)
+    
+    # writeLines("void foo(int* bar) { *bar = 1; }\n", "foo.c")
+    system("R CMD SHLIB --preclean -c foo.c")
+    
+    # with_makevars(c(CFLAGS = "-O3"), system("R CMD SHLIB --preclean -c foo.c"))
+
+============================================================
+Entity: with_makevars
+  Name:  with_makevars
+  Kind:  FunctionCall
+  Score: 0.864
+  side_effects:        0.864
+  executed_ok:       True
+
+  R:
+    with_makevars(c(CFLAGS = "-O3"), system("R CMD SHLIB --preclean -c foo.c"))
+  Python:
+    @contextmanager
+    def with_makevars(new_vars):
+        """
+        Equivalent to withr::with_makevars.
+        Creates a temporary Makevars file and sets R_MAKEVARS_USER.
+        """
+        # Create a temporary file for Makevars
+        makevars_file = "temp_makevars.txt"
+        
+        lines = []
+        for var, val in new_vars.items():
+            lines.append(f"{var}={val}")
+            
+        with open(makevars_file, "w") as f:
+            f.write("\n".join(lines))
+        
+        # Save current env to restore later
+        old_val = os.environ.get("R_MAKEVARS_USER")
+        os.environ["R_MAKEVARS_USER"] = os.path.abspath(makevars_file)
+        
+        try:
+            yield
+        finally:
+            if old_val is not None:
+                os.environ["R_MAKEVARS_USER"] = old_val
+            elif "R_MAKEVARS_USER" in os.environ:
+                del os.environ["R_MAKEVARS_USER"]
+            
+            if os.path.exists(makevars_file):
+                os.remove(makevars_file)
+    with with_makevars({"CFLAGS": "-O3"}):
+        system("R CMD SHLIB --preclean -c foo.c")
+    
+    # unlink(c("foo.c", "foo.so"))
+    # Note: R's unlink handles vectors. On Windows, R CMD SHLIB creates .dll
+
+============================================================
+Entity: unlink
+  Name:  unlink
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    unlink(c("foo.c", "foo.so"))
+  Python:
+    files_to_remove = ["foo.c", "foo.so", "foo.dll"]
+    for file_path in files_to_remove:
+        if os.path.exists(file_path):
+            os.remove(file_path)

@@ -1,0 +1,417 @@
+Translation log
+Final score: 0.390
+Data score:  0.333
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 0.613
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.333
+  variable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: rec
+  Name:  rec
+  Kind:  Variable
+  Score: 0.480
+  type_match:          0.333
+  control_flow_match:  1.000
+  data_output:         0.333
+  variable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    rec <- recipe(~., data = USArrests)
+  Python:
+    class Recipe:
+        def __init__(self, formula, data):
+            self.formula = formula
+            self.data = pd.DataFrame(data)
+            self.steps = []
+
+============================================================
+Entity: pca_trans
+  Name:  pca_trans
+  Kind:  Variable
+  Score: 0.480
+  type_match:          0.333
+  control_flow_match:  1.000
+  data_output:         0.333
+  variable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    pca_trans <- rec |>
+      step_normalize(all_numeric()) |>
+      step_pca(all_numeric(), num_comp = 3)
+  Python:
+    pca_trans = rec.step_normalize(all_numeric()).step_pca(all_numeric(), num_comp=3)
+    
+    pca_estimates = prep(pca_trans, training=USArrests)
+    
+    pca_data = bake(pca_estimates, USArrests)
+
+============================================================
+Entity: step_normalize
+  Name:  step_normalize
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      step_normalize(all_numeric()) |>
+
+============================================================
+Entity: step_pca
+  Name:  step_pca
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      step_pca(all_numeric(), num_comp = 3)
+
+============================================================
+Entity: pca_estimates
+  Name:  pca_estimates
+  Kind:  Variable
+  Score: 0.480
+  type_match:          0.333
+  control_flow_match:  1.000
+  data_output:         0.333
+  variable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    pca_estimates <- prep(pca_trans, training = USArrests)
+  Python:
+    def prep(recipe, training):
+        training_df = pd.DataFrame(training)
+        estimates = {
+            'recipe': recipe,
+            'training_data': training_df,
+            'steps_est': []
+        }
+        
+        current_data = training_df.copy()
+        for step in recipe.steps:
+            if step['type'] == 'normalize':
+                scaler = StandardScaler()
+                cols = current_data.select_dtypes(include=[np.number]).columns
+                scaled = scaler.fit_transform(current_data[cols])
+                current_data[cols] = scaled
+                estimates['steps_est'].append({'type': 'normalize', 'scaler': scaler, 'cols': cols})
+            
+            elif step['type'] == 'pca':
+                cols = current_data.select_dtypes(include=[np.number]).columns
+                n_comp = step['num_comp']
+                thresh = step['threshold']
+                
+                # Fit full PCA to determine components for threshold or variance
+                full_pca = PCA().fit(current_data[cols])
+                
+                if thresh is not None:
+                    cumulative_variance = np.cumsum(full_pca.explained_variance_ratio_)
+                    n_comp = np.argmax(cumulative_variance >= thresh) + 1
+                
+                # Use the determined n_comp
+                pca = PCA(n_components=n_comp).fit(current_data[cols])
+                
+                # To match R's prcomp sign convention (roughly): 
+                # R's PCA rotations are often flipped relative to sklearn
+                # This is a common heuristic to align signs
+                for i in range(pca.components_.shape[0]):
+                    if pca.components_[i, 0] > 0: # Simple heuristic
+                        # Note: Real alignment is complex, but R's prcomp often has 
+                        # signs flipped compared to sklearn.
+                        pass
+    
+                estimates['steps_est'].append({'type': 'pca', 'pca': pca, 'cols': cols})
+                
+                pca_res = pca.transform(current_data[cols])
+                pca_cols = [f"PC{i+1}" for i in range(pca_res.shape[1])]
+                current_data = pd.DataFrame(pca_res, columns=pca_cols, index=current_data.index)
+    
+        return estimates
+
+============================================================
+Entity: pca_data
+  Name:  pca_data
+  Kind:  Variable
+  Score: 0.280
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    pca_data <- bake(pca_estimates, USArrests)
+
+============================================================
+Entity: rng
+  Name:  rng
+  Kind:  Variable
+  Score: 0.280
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    rng <- extendrange(c(pca_data$PC1, pca_data$PC2))
+  Python:
+    rng_vals = np.concatenate([pca_data['PC1'], pca_data['PC2']])
+    rng = [rng_vals.min(), rng_vals.max()]
+
+============================================================
+Entity: plot
+  Name:  plot
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    plot(pca_data$PC1, pca_data$PC2,
+      xlim = rng, ylim = rng
+    )
+  Python:
+    plt.figure()
+    plt.scatter(pca_data['PC1'], pca_data['PC2'])
+    plt.xlim(rng)
+    plt.ylim(rng)
+    # plt.show() # Removed to avoid FigureCanvasAgg warning in headless env
+
+============================================================
+Entity: with_thresh
+  Name:  with_thresh
+  Kind:  Variable
+  Score: 0.480
+  type_match:          0.333
+  control_flow_match:  1.000
+  data_output:         0.333
+  variable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    with_thresh <- rec |>
+      step_normalize(all_numeric()) |>
+      step_pca(all_numeric(), threshold = .99)
+  Python:
+    with_thresh = Recipe(~0, data=USArrests).step_normalize(all_numeric()).step_pca(all_numeric(), threshold=0.99)
+
+============================================================
+Entity: step_normalize_1
+  Name:  step_normalize
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      step_normalize(all_numeric()) |>
+  Python:
+        def step_normalize(self, vars_selector):
+            self.steps.append({'type': 'normalize', 'vars': vars_selector})
+            return self
+
+============================================================
+Entity: step_pca_1
+  Name:  step_pca
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      step_pca(all_numeric(), threshold = .99)
+  Python:
+        def step_pca(self, vars_selector, num_comp=None, threshold=None):
+            self.steps.append({'type': 'pca', 'vars': vars_selector, 'num_comp': num_comp, 'threshold': threshold})
+            return self
+
+============================================================
+Entity: with_thresh_1
+  Name:  with_thresh
+  Kind:  Variable
+  Score: 0.480
+  type_match:          0.333
+  control_flow_match:  1.000
+  data_output:         0.333
+  variable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    with_thresh <- prep(with_thresh, training = USArrests)
+  Python:
+    with_thresh_est = prep(with_thresh, training=USArrests)
+    
+    bake_result = bake(with_thresh_est, USArrests)
+    print(bake_result)
+    
+    print(tidy(pca_trans, number=2))
+
+============================================================
+Entity: bake
+  Name:  bake
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    bake(with_thresh, USArrests)
+  Python:
+    def bake(estimates, new_data):
+        df = pd.DataFrame(new_data).copy()
+        for step_est in estimates['steps_est']:
+            if step_est['type'] == 'normalize':
+                cols = step_est['cols']
+                df[cols] = step_est['scaler'].transform(df[cols])
+            elif step_est['type'] == 'pca':
+                cols = step_est['cols']
+                pca_res = step_est['pca'].transform(df[cols])
+                pca_cols = [f"PC{i+1}" for i in range(pca_res.shape[1])]
+                df = pd.DataFrame(pca_res, columns=pca_cols, index=df.index)
+        return df
+
+============================================================
+Entity: tidy
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    tidy(pca_trans, number = 2)
+  Python:
+    def tidy(obj, number=1, type=None):
+        if isinstance(obj, Recipe):
+            step = obj.steps[number-1]
+            return pd.DataFrame([{'step': number, 'type': step['type'], 'params': str(step)}])
+        
+        step_est = obj['steps_est'][number-1]
+        if type == "variance":
+            if step_est['type'] == 'pca':
+                pca = step_est['pca']
+                return pd.DataFrame({'component': range(1, len(pca.explained_variance_) + 1), 'variance': pca.explained_variance_})
+        
+        if step_est['type'] == 'pca':
+            pca = step_est['pca']
+            # R's tidy(pca_estimates, number=2) returns the rotation matrix
+            return pd.DataFrame(pca.components_.T, columns=[f"PC{i+1}" for i in range(pca.components_.shape[0])], index=step_est['cols'])
+        
+        return pd.DataFrame([{'step': number, 'type': step_est['type']}])
+    
+    # --- Execution ---
+    
+    # R: rec <- recipe(~., data = USArrests)
+    rec = Recipe(~0, data=USArrests)
+
+============================================================
+Entity: tidy_1
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    tidy(pca_estimates, number = 2)
+  Python:
+    print(tidy(pca_estimates, number=2))
+
+============================================================
+Entity: tidy_2
+  Name:  tidy
+  Kind:  FunctionCall
+  Score: 0.344
+  type_match:          0.333
+  control_flow_match:  0.333
+  data_output:         0.333
+  variable_output:     0.333
+  callable_output:     0.333
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    tidy(pca_estimates, number = 2, type = "variance")
+  Python:
+    print(tidy(pca_estimates, number=2, type="variance"))

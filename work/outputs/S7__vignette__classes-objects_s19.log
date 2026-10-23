@@ -1,0 +1,89 @@
+Translation log
+Final score: 0.750
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(S7))
+
+============================================================
+Entity: import_S7
+  Name:  S7
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(S7))
+
+============================================================
+Entity: Person
+  Name:  Person
+  Kind:  S4Class
+  Score: 0.500
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    Person <- new_class("Person", properties = list(
+     name = new_property(
+       class_character,
+       default = quote(stop("@name is required")))
+    ))
+  Python:
+    @dataclass
+    class Person:
+        name: Optional[str] = None
+    
+        def __post_init__(self):
+            # S7 property default: quote(stop("@name is required"))
+            if self.name is None:
+                raise RuntimeError("@name is required")
+    
+        def __repr__(self):
+            # Mimic R S7 print output: <Person>\n @ name: chr "Alice"
+            return f"<Person>\n @ name: chr \"{self.name}\""
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    try(Person())
+  Python:
+    try:
+        # In R, try(Person()) catches the error from the default property value
+        Person()
+    except Exception:
+        # try() in R by default doesn't print the error to stdout in a way that 
+        # matches the Python print() output used previously.
+        pass
+
+============================================================
+Entity: Person_1
+  Name:  Person
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    Person("Alice")
+  Python:
+    alice = Person("Alice")
+    print(alice)

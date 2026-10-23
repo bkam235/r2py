@@ -1,0 +1,183 @@
+Translation log
+Final score: 0.811
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(fs))
+
+============================================================
+Entity: import_fs
+  Name:  fs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(fs))
+
+============================================================
+Entity: .old_wd
+  Name:  .old_wd
+  Kind:  Variable
+  Score: 0.900
+  control_flow_match:  1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    .old_wd <- setwd(tempdir())
+  Python:
+    old_wd = os.getcwd()
+    temp_dir = tempfile.gettempdir()
+    os.chdir(temp_dir)
+    
+    # file_create("foo")
+
+============================================================
+Entity: file_create
+  Name:  file_create
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    file_create("foo")
+  Python:
+    with open("foo", "w") as f:
+        pass
+    
+    # is_file("foo")
+
+============================================================
+Entity: is_file
+  Name:  is_file
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    is_file("foo")
+  Python:
+    print(os.path.isfile("foo"))
+    
+    # try(dir_create("foo"))
+
+============================================================
+Entity: try
+  Name:  try
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    try(dir_create("foo"))
+  Python:
+    try:
+        os.mkdir("foo")
+    except OSError:
+        pass
+    
+    # dir_create("bar")
+
+============================================================
+Entity: dir_create
+  Name:  dir_create
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    dir_create("bar")
+  Python:
+    os.mkdir("bar")
+    
+    # is_dir("bar")
+
+============================================================
+Entity: is_dir
+  Name:  is_dir
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    is_dir("bar")
+  Python:
+    print(os.path.isdir("bar"))
+    
+    # try(file_create("bar"))
+
+============================================================
+Entity: try_1
+  Name:  try
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    try(file_create("bar"))
+  Python:
+    try:
+        with open("bar", "w") as f:
+            pass
+    except OSError:
+        pass
+    
+    # file_delete("foo")
+
+============================================================
+Entity: file_delete
+  Name:  file_delete
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    file_delete("foo")
+  Python:
+    if os.path.isfile("foo"):
+        os.remove("foo")
+    
+    # dir_delete("bar")
+
+============================================================
+Entity: dir_delete
+  Name:  dir_delete
+  Kind:  FunctionCall
+  Score: 0.800
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    dir_delete("bar")
+  Python:
+    if os.path.isdir("bar"):
+        shutil.rmtree("bar")
+
+============================================================
+Entity: setwd
+  Name:  setwd
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    setwd(.old_wd)
+  Python:
+    os.chdir(old_wd)

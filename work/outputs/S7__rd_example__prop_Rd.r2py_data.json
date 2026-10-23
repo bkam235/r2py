@@ -1,0 +1,24 @@
+{
+  "class_character": {
+    "class": "character",
+    "constructor_name": "character",
+    "constructor": {},
+    "validator": {}
+  },
+  "class_numeric": {
+    "classes": [
+      {
+        "class": "integer",
+        "constructor_name": "integer",
+        "constructor": {},
+        "validator": {}
+      },
+      {
+        "class": "double",
+        "constructor_name": "double",
+        "constructor": {},
+        "validator": {}
+      }
+    ]
+  }
+}

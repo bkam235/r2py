@@ -1,0 +1,209 @@
+Translation log
+Final score: 0.932
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(bit64))
+
+============================================================
+Entity: import_bit64
+  Name:  bit64
+  Kind:  LibraryImport
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(bit64))
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    data(benchmark64.data)
+  Python:
+    if 'benchmark64.data' in globals():
+        # If the shim loaded it as a list of lists/dicts, convert to DataFrame
+        # R's benchmark64.data usually has row names and col names.
+        # Based on R output: rows are tasks, cols are contexts.
+        raw_data = globals()['benchmark64.data']
+        if isinstance(raw_data, dict):
+            # Handle case where it might be a dict representing a dataframe
+            benchmark64_data = pd.DataFrame(raw_data)
+        else:
+            # Handle list/array representation
+            benchmark64_data = pd.DataFrame(raw_data)
+    else:
+        # Fallback if shim fails (though it shouldn't)
+        benchmark64_data = pd.DataFrame()
+    
+    # In R: data(benchmark64.data)
+    # print(benchmark64.data)
+
+============================================================
+Entity: print
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    print(benchmark64.data)
+  Python:
+    print(benchmark64_data)
+    
+    # R: matplot(log2(benchmark64.data[-1,1]/benchmark64.data[-1,]), ...)
+    # benchmark64.data[-1, 1] is the first column excluding the first row.
+    # benchmark64.data[-1, ] is the entire matrix excluding the first row.
+
+============================================================
+Entity: matplot
+  Name:  matplot
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    matplot(log2(benchmark64.data[-1,1]/benchmark64.data[-1,])
+    , pch=c("3", "6", "h", "s", "o", "a")
+    , xlab="tasks [last=session]"
+    , ylab="log2(relative speed) [bigger is better]"
+    )
+  Python:
+    # Extract values excluding the first row
+    subset_data = benchmark64_data.iloc[1:, :].values
+    first_col = subset_data[:, 0]
+    relative_speed = np.log2(first_col[:, np.newaxis] / subset_data)
+    
+    # First plot
+    plt.figure()
+    # R pch=c("3", "6", "h", "s", "o", "a") 
+    # Python approximations: '3'->'v', '6'->'^', 'h'->'H', 's'->'s', 'o'->'o', 'a'->'.'
+    markers = ['v', '^', 'H', 's', 'o', '.']
+    for i in range(relative_speed.shape[1]):
+        plt.plot(range(1, relative_speed.shape[0] + 1), relative_speed[:, i], 
+                 marker=markers[i] if i < len(markers) else 'o', linestyle='None')
+    plt.xlabel("tasks [last=session]")
+    plt.ylabel("log2(relative speed) [bigger is better]")
+
+============================================================
+Entity: matplot_1
+  Name:  matplot
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    matplot(t(log2(benchmark64.data[-1,1]/benchmark64.data[-1,]))
+    , axes=FALSE
+    , type="b"
+    , lwd=c(rep(1, 14), 3)
+    , xlab="context"
+    , ylab="log2(relative speed) [bigger is better]"
+    )
+  Python:
+    # Second plot: matplot(t(log2(benchmark64.data[-1,1]/benchmark64.data[-1,])), ...)
+    plt.figure()
+    relative_speed_t = relative_speed.T
+    # R: lwd=c(rep(1, 14), 3) -> first 14 lines width 1, 15th width 3
+    # Note: The number of lines depends on the number of columns in original data.
+    lwd_vals = [1] * 14 + [3]
+    
+    for i in range(relative_speed_t.shape[0]):
+        lw = lwd_vals[i] if i < len(lwd_vals) else 1
+        plt.plot(range(1, relative_speed_t.shape[1] + 1), relative_speed_t[i, :], 
+                 marker='o', markerfacecolor='none', linewidth=lw)
+    
+    # axis(1, labels=c("32-bit", "64-bit", "hash", "sortorder", "order", "hash+sortorder"), at=1:6)
+
+============================================================
+Entity: axis
+  Name:  axis
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    axis(1
+    , labels=c("32-bit", "64-bit", "hash", "sortorder", "order", "hash+sortorder")
+    , at=1:6
+    )
+  Python:
+    plt.xticks(
+        ticks=range(1, 7), 
+        labels=["32-bit", "64-bit", "hash", "sortorder", "order", "hash+sortorder"]
+    )
+
+============================================================
+Entity: axis_1
+  Name:  axis
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    axis(2)
+  Python:
+    # axis(2)
+    plt.ylabel("log2(relative speed) [bigger is better]")
+    plt.xlabel("context")
+    
+    plt.show()

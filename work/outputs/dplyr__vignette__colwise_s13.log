@@ -1,0 +1,69 @@
+Translation log
+Final score: 0.959
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    df <- data.frame(x = c(1, 2, 3), y = c(1, 4, 9))
+  Python:
+    df = pd.DataFrame({'x': [1, 2, 3], 'y': [1, 4, 9]})
+    
+    # R: summarise(n = n(), across(where(is.numeric), sd))
+    # n() in R's summarise is the number of rows.
+    # across(where(is.numeric), sd) computes the standard deviation for all numeric columns.
+
+============================================================
+Entity: summarise
+  Name:  summarise
+  Kind:  FunctionCall
+  Score: 0.919
+  side_effects:        0.919
+  executed_ok:       True
+
+  R:
+      summarise(n = n(), across(where(is.numeric), sd))
+  Python:
+    numeric_cols = df.select_dtypes(include=[np.number]).columns
+    sd_values = df[numeric_cols].std()
+    
+    res = pd.DataFrame({
+        'n': [len(df)]
+    })
+    
+    for col in numeric_cols:
+        res[col] = sd_values[col]
+    
+    print(res)

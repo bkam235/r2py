@@ -1,0 +1,13 @@
+241 trials, errors 1, step 2 ran in 212; conversation turns used in 212
+
+all (212 trials): step 1 improved 0.297; step 2 improved: fresh 0.302, conversation 0.358
+  conversation - fresh, P(step 2 improves): +0.0491 [-0.0134, +0.1161]  (56 states)
+  conversation - fresh, step-2 gain: +0.0158 [-0.0057, +0.0391]  (56 states)
+
+running starts (140 trials): step 1 improved 0.243; step 2 improved: fresh 0.264, conversation 0.321
+  conversation - fresh, P(step 2 improves): +0.0658 [-0.0197, +0.1579]  (38 states)
+  conversation - fresh, step-2 gain: +0.0176 [-0.0055, +0.0437]  (38 states)
+
+crashing starts (72 trials): step 1 improved 0.403; step 2 improved: fresh 0.375, conversation 0.431
+  conversation - fresh, P(step 2 improves): +0.0614 [-0.0439, +0.1754]  (19 states)
+  conversation - fresh, step-2 gain: +0.0172 [-0.0317, +0.0633]  (19 states)

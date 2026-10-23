@@ -1,0 +1,13 @@
+# r2py crawler metadata
+# package: vctrs
+# source_type: vignette
+# topic: type-size_s23
+# source_file: C:\Users\bened\AppData\Local\R\win-library\4.5\vctrs\doc\type-size.R
+# lines: 6
+
+suppressPackageStartupMessages(library(vctrs))
+allow_lossy_cast(
+  vec_cast(c(1.5, 2), integer()),
+  x_ptype = double(),
+  to_ptype = integer()
+)

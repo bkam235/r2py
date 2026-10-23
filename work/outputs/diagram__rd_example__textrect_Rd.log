@@ -1,0 +1,248 @@
+Translation log
+Final score: 0.637
+Data score:  0.667
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(diagram))
+
+============================================================
+Entity: import_diagram
+  Name:  diagram
+  Kind:  LibraryImport
+  Score: 0.787
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.667
+  variable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(diagram))
+
+============================================================
+Entity: openplotmat
+  Name:  openplotmat
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    openplotmat(xlim = c(-0.1, 1.1), main = "textrect")
+  Python:
+    fig, ax = plt.subplots()
+    ax.set_xlim(-0.1, 1.1)
+    ax.set_ylim(-0.1, 1.1)
+    ax.set_title("textrect")
+    ax.axis('off')
+    
+    letters = list("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+============================================================
+Entity: textrect
+  Name:  textrect
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+        textrect(mid = runif(2), col = i, radx = 0.1, rady = 0.1,
+                lab = LETTERS[i], cex = 2)
+  Python:
+    for i in range(1, 11):
+        mid = np.random.uniform(0, 1, 2)
+        # radx/rady in R diagram refers to the rounding; we approximate with boxstyle
+        # Drawing a rounded box and text
+        rect = FancyBboxPatch((mid[0]-0.05, mid[1]-0.05), 0.1, 0.1, 
+                               boxstyle="round,pad=0.02", 
+                               edgecolor=plt.cm.tab10(i-1), facecolor='none')
+        ax.add_patch(rect)
+        ax.text(mid[0], mid[1], letters[i-1], 
+                ha='center', va='center', fontsize=12, 
+                color=plt.cm.tab10(i-1))
+    
+    plt.show()
+    
+    # Part 2: textparallel equivalent
+    # R's coordinates(c(1,1,1,1,1)) creates a vertical line of points
+    # textparallel creates rotated rounded rectangles
+
+============================================================
+Entity: openplotmat_1
+  Name:  openplotmat
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      openplotmat(xlim = c(-0.1, 1.1), main = "textparallel")
+  Python:
+    fig, ax = plt.subplots()
+    ax.set_xlim(-0.1, 1.1)
+    ax.set_ylim(-0.1, 1.1)
+    ax.set_title("textparallel")
+    ax.axis('off')
+    
+    # elpos mapping: 5 points evenly spaced vertically at x=1
+
+============================================================
+Entity: elpos
+  Name:  elpos
+  Kind:  Variable
+  Score: 0.320
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      elpos <-coordinates (c(1, 1, 1, 1, 1))
+  Python:
+    elpos = np.array([[1.0, y] for y in np.linspace(0.1, 0.9, 5)])
+
+============================================================
+Entity: textparallel
+  Name:  textparallel
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      textparallel(mid = elpos[1,], col = 1, radx = 0.2, rady = 0.1,
+                lab = "theta=20", theta = 20)
+  Python:
+    thetas = [20, 60, 100, 140, 170]
+    for idx, theta in enumerate(thetas):
+        mid = elpos[idx]
+        label = f"theta={theta}"
+        
+        # Create a rotated rectangle using a transformation
+        # radx=0.2, rady=0.1 is the size of the box
+        width, height = 0.2, 0.1
+        angle_rad = np.radians(theta)
+        
+        # Calculate coordinates for a rotated box
+        # We use a simple Matplotlib Patch with rotation
+        import matplotlib.transforms as transforms
+        
+        # Offset to center and rotate
+        t = transforms.Affine2D().rotate_deg(theta).translate(mid[0], mid[1])
+        rect = plt.Rectangle((-width/2, -height/2), width, height, 
+                             edgecolor='blue', facecolor='none', 
+                             transform=t + ax.transData)
+        ax.add_patch(rect)
+        
+        # Rotate text to match
+        ax.text(mid[0], mid[1], label, 
+                ha='center', va='center', rotation=theta, 
+                fontsize=10, color='blue')
+    
+    plt.show()
+
+============================================================
+Entity: textparallel_1
+  Name:  textparallel
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      textparallel(mid = elpos[2,], col = 1, radx = 0.2, rady = 0.1,
+                lab = "theta=60", theta = 60)
+
+============================================================
+Entity: textparallel_2
+  Name:  textparallel
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      textparallel(mid = elpos[3,], col = 1, radx = 0.2, rady = 0.1,
+                lab = "theta=100", theta = 100)
+
+============================================================
+Entity: textparallel_3
+  Name:  textparallel
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      textparallel(mid = elpos[4,], col = 1, radx = 0.2, rady = 0.1,
+                lab = "theta=140", theta = 140)
+
+============================================================
+Entity: textparallel_4
+  Name:  textparallel
+  Kind:  FunctionCall
+  Score: 0.656
+  type_match:          0.667
+  control_flow_match:  0.667
+  data_output:         0.667
+  variable_output:     0.667
+  callable_output:     0.667
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      textparallel(mid = elpos[5,], col = 1, radx = 0.2, rady = 0.1,
+                lab = "theta=170", theta = 170)

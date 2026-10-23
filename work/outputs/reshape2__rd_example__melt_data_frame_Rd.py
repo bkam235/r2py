@@ -1,0 +1,38 @@
+# Translated from <R script> by r2py v0.3.0
+# Model: openrouter:google/gemma-4-31b-it  ScriptMap entities: 6
+
+# r2py:data_shim:begin
+# import json as _r2py_shim_json
+# from pathlib import Path as _r2py_shim_Path
+# _r2py_shim_data = _r2py_shim_json.loads((_r2py_shim_Path(__file__).parent / 'reshape2__rd_example__melt_data_frame_Rd.r2py_data.json').read_text(encoding='utf-8'))
+# for _r2py_shim_n in ['ChickWeight', 'airquality']:
+#     if _r2py_shim_n in _r2py_shim_data:
+#         globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]
+# r2py:data_shim:end
+
+import pandas as pd
+import numpy as np
+
+# Convert shimmed data to DataFrames
+airquality = pd.DataFrame(airquality)
+ChickWeight = pd.DataFrame(ChickWeight)
+
+# names(airquality) <- tolower(names(airquality))
+# r2py:entity:names(airquality)
+airquality.columns = [c.lower() for c in airquality.columns]
+
+# melt(airquality, id=c("month", "day"))
+# R's melt on data.frame uses id as id_vars.
+# r2py:entity:melt
+melt_res1 = airquality.melt(id_vars=["month", "day"])
+
+# names(ChickWeight) <- tolower(names(ChickWeight))
+# r2py:entity:names(ChickWeight)
+ChickWeight.columns = [c.lower() for c in ChickWeight.columns]
+
+# melt(ChickWeight, id=2:4)
+# In R, id=2:4 refers to the 2nd, 3rd, and 4th columns (1-indexed).
+# These correspond to indices 1, 2, 3 in Python.
+# r2py:entity:melt_1
+id_cols = ChickWeight.columns[1:4].tolist()
+melt_res2 = ChickWeight.melt(id_vars=id_cols)

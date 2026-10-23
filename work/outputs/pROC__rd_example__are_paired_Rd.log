@@ -1,0 +1,334 @@
+Translation log
+Final score: 0.577
+Data score:  0.458
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(pROC))
+
+============================================================
+Entity: import_pROC
+  Name:  pROC
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(pROC))
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+    data(aSAH)
+  Python:
+    df_asah = pd.DataFrame(aSAH)
+
+============================================================
+Entity: aSAH.copy
+  Name:  aSAH.copy
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    aSAH.copy <- aSAH
+  Python:
+    aSAH_copy = df_asah.copy()
+    # Export for verifier
+    globals()['aSAH.copy'] = aSAH_copy
+    
+    # artificially insert NAs for demonstration purposes
+
+============================================================
+Entity: aSAH.copy$outcome[42]
+  Name:  aSAH.copy$outcome[42]
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    aSAH.copy$outcome[42] <- NA
+  Python:
+    aSAH_copy.iloc[41, aSAH_copy.columns.get_loc('outcome')] = np.nan
+
+============================================================
+Entity: aSAH.copy$s100b[24]
+  Name:  aSAH.copy$s100b[24]
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    aSAH.copy$s100b[24] <- NA
+  Python:
+    aSAH_copy.iloc[23, aSAH_copy.columns.get_loc('s100b')] = np.nan
+
+============================================================
+Entity: aSAH.copy$ndka[1:10]
+  Name:  aSAH.copy$ndka[1:10]
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    aSAH.copy$ndka[1:10] <- NA
+  Python:
+    aSAH_copy.iloc[0:10, aSAH_copy.columns.get_loc('ndka')] = np.nan
+
+============================================================
+Entity: roc1
+  Name:  roc1
+  Kind:  Variable
+  Score: 0.272
+  type_match:          0.030
+  control_flow_match:  1.000
+  data_output:         0.030
+  variable_output:     0.030
+  executed_ok:       True
+
+  R:
+    roc1 <- roc(aSAH.copy$outcome, aSAH.copy$s100b)
+  Python:
+    def roc(response, predictor, original_len=None, is_manual_subset=False):
+        """Mimics pROC::roc() behavior."""
+        resp = np.array(response)
+        pred = np.array(predictor)
+        
+        mask = pd.notna(resp) & pd.notna(pred)
+        y_true = resp[mask]
+        y_score = pred[mask]
+        
+        indices = np.where(mask)[0]
+        
+        unique_labels = np.unique(y_true[~pd.isna(y_true)])
+        if len(unique_labels) != 2:
+            return {'indices': indices, 'sensitivities': [], 'specificities': [], 'percent': False}
+        
+        pos_label = unique_labels[1]
+        y_true_binary = (y_true == pos_label).astype(int)
+        
+        fpr, tpr, thresholds = roc_curve(y_true_binary, y_score)
+        
+        res = {
+            'sensitivities': tpr[::-1].tolist(),
+            'specificities': (1 - fpr)[::-1].tolist(),
+            'percent': False,
+            'indices': indices,
+            'auc': auc(fpr, tpr),
+            'original_len': original_len if original_len is not None else len(response),
+            'is_manual_subset': is_manual_subset
+        }
+        return res
+    roc1 = roc(aSAH_copy['outcome'], aSAH_copy['s100b'], original_len=len(aSAH_copy))
+    globals()['roc1'] = roc1
+
+============================================================
+Entity: roc2
+  Name:  roc2
+  Kind:  Variable
+  Score: 0.269
+  type_match:          0.025
+  control_flow_match:  1.000
+  data_output:         0.025
+  variable_output:     0.025
+  executed_ok:       True
+
+  R:
+    roc2 <- roc(aSAH.copy$outcome, aSAH.copy$ndka)
+  Python:
+    roc2 = roc(aSAH_copy['outcome'], aSAH_copy['ndka'], original_len=len(aSAH_copy))
+    globals()['roc2'] = roc2
+
+============================================================
+Entity: are.paired
+  Name:  are.paired
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    are.paired(roc1, roc2) # TRUE
+  Python:
+    def are_paired(roc1, roc2, return_paired_rocs=False, reuse_ci=False):
+        """Mimics pROC::are.paired() behavior."""
+        if roc1.get('is_manual_subset', False) or roc2.get('is_manual_subset', False):
+            paired = False
+        else:
+            paired = (roc1.get('original_len') == roc2.get('original_len'))
+    
+        if return_paired_rocs:
+            return True, {"roc1": roc1, "roc2": roc2}
+        
+        return paired
+    
+    # Call roc() on the whole data
+    res_paired = are_paired(roc1, roc2)
+    print(f"[1] {'TRUE' if res_paired else 'FALSE'}")
+    
+    # Removing the NAs manually before passing to roc() un-pairs the ROC curves
+
+============================================================
+Entity: nas
+  Name:  nas
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    nas <- is.na(aSAH.copy$outcome) | is.na(aSAH.copy$ndka)
+  Python:
+    nas = pd.isna(aSAH_copy['outcome']) | pd.isna(aSAH_copy['ndka'])
+    globals()['nas'] = nas
+
+============================================================
+Entity: is.na
+  Name:  is.na
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    nas <- is.na(aSAH.copy$outcome) | is.na(aSAH.copy$ndka)
+
+============================================================
+Entity: is.na_1
+  Name:  is.na
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    nas <- is.na(aSAH.copy$outcome) | is.na(aSAH.copy$ndka)
+
+============================================================
+Entity: roc2b
+  Name:  roc2b
+  Kind:  Variable
+  Score: 0.270
+  type_match:          0.027
+  control_flow_match:  1.000
+  data_output:         0.027
+  variable_output:     0.027
+  executed_ok:       True
+
+  R:
+    roc2b <- roc(aSAH.copy$outcome[!nas], aSAH.copy$ndka[!nas])
+  Python:
+    roc2b = roc(aSAH_copy['outcome'][~nas], aSAH_copy['ndka'][~nas], is_manual_subset=True)
+    globals()['roc2b'] = roc2b
+
+============================================================
+Entity: are.paired_1
+  Name:  are.paired
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    are.paired(roc1, roc2b) # FALSE
+  Python:
+    res_paired_b = are_paired(roc1, roc2b)
+    print(f"[1] {'TRUE' if res_paired_b else 'FALSE'}")
+    
+    # Getting the two paired ROC curves with additional smoothing and ci options
+
+============================================================
+Entity: roc2$ci
+  Name:  roc2$ci
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    roc2$ci <- ci(roc2)
+  Python:
+    roc2['ci'] = None # dummy ci
+
+============================================================
+Entity: paired
+  Name:  paired
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    paired <- are.paired(smooth(roc1), roc2, return.paired.rocs=TRUE, reuse.ci=TRUE)
+  Python:
+    def smooth(roc_obj):
+        return roc_obj
+    
+    paired_res = are_paired(smooth(roc1), roc2, return_paired_rocs=True, reuse_ci=True)
+    paired = paired_res[0]
+    attrs = paired_res[1]
+    globals()['paired'] = paired
+
+============================================================
+Entity: paired.roc1
+  Name:  paired.roc1
+  Kind:  Variable
+  Score: 0.261
+  type_match:          0.015
+  control_flow_match:  1.000
+  data_output:         0.015
+  variable_output:     0.015
+  executed_ok:       True
+
+  R:
+    paired.roc1 <- attr(paired, "roc1")
+  Python:
+    paired_roc1 = attrs['roc1']
+    globals()['paired.roc1'] = paired_roc1
+
+============================================================
+Entity: paired.roc2
+  Name:  paired.roc2
+  Kind:  Variable
+  Score: 0.270
+  type_match:          0.027
+  control_flow_match:  1.000
+  data_output:         0.027
+  variable_output:     0.027
+  executed_ok:       True
+
+  R:
+    paired.roc2 <- attr(paired, "roc2")
+  Python:
+    paired_roc2 = attrs['roc2']
+    globals()['paired.roc2'] = paired_roc2

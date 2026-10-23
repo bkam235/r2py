@@ -1,0 +1,66 @@
+Translation log
+Final score: 0.983
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- date_time_build(1970, 04, 25, 02, 30, 00, zone = "America/New_York")
+  Python:
+        # date_time_build equivalent using pandas/pytz
+        # 1970, 04, 25, 02, 30, 00
+        x = pd.Timestamp(year=1970, month=4, day=25, hour=2, minute=30, second=0, tz="America/New_York")
+        print(x)
+
+============================================================
+Entity: add_days
+  Name:  add_days
+  Kind:  FunctionCall
+  Score: 0.967
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.800
+  executed_ok:       True
+
+  R:
+    x %>% add_days(1)
+  Python:
+        # add_days(1) equivalent
+        print(x + pd.Timedelta(days=1))
+    except Exception as e:
+        print(e)

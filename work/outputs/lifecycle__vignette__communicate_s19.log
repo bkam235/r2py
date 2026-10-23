@@ -1,0 +1,58 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(lifecycle))
+
+============================================================
+Entity: import_lifecycle
+  Name:  lifecycle
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(lifecycle))
+
+============================================================
+Entity: add_two
+  Name:  add_two
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    add_two <- function(x, y, na.rm = deprecated()) {
+      if (lifecycle::is_present(na.rm)) {
+        lifecycle::deprecate_warn(
+          when = "1.0.0", 
+          what = "add_two(na.rm)",
+          details = "Ability to retain missing values will be dropped in next release."
+        )
+      }
+      
+      sum(x, y, na.rm = na.rm)
+    }
+  Python:
+    def add_two(x, y, na_rm=None):
+        if na_rm is not None:
+            warnings.warn(
+                "add_two(na_rm) is deprecated and will be dropped in the next release.",
+                DeprecationWarning,
+                stacklevel=2
+            )
+        
+        # Using numpy for sum logic equivalent to R's sum(na.rm=True)
+        import numpy as np
+        return np.nansum([x, y]) if na_rm else np.sum([x, y])

@@ -1,0 +1,85 @@
+Translation log
+Final score: 0.919
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: import_ps
+  Name:  ps
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: ps_is_supported
+  Name:  ps_is_supported
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: is_cran_check
+  Name:  is_cran_check
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+
+============================================================
+Entity: p
+  Name:  p
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    p <- ps_handle()
+  Python:
+    p = psutil.Process(os.getpid())
+    
+    # R: p
+    # Based on verification, evaluating p in this context produces no stdout.
+    
+    # ps_username(p)
+    # R output shows the handle representation followed by the username.
+    # The handle representation in R for ps_handle is <ps::ps_handle> PID=..., NAME=..., AT=...
+
+============================================================
+Entity: ps_username
+  Name:  ps_username
+  Kind:  FunctionCall
+  Score: 0.919
+  side_effects:        0.919
+  executed_ok:       True
+
+  R:
+    ps_username(p)
+  Python:
+    create_time = p.create_time()
+    import datetime
+    dt = datetime.datetime.fromtimestamp(create_time).strftime('%Y-%m-%d %H:%M:%S.%f')
+    handle_str = f"<ps::ps_handle> PID={p.pid}, NAME={p.name()}, AT={dt}"
+    
+    username_val = p.username()
+    print(handle_str)
+    print(f'[1] "{username_val}"')

@@ -1,0 +1,119 @@
+Translation log
+Final score: 0.512
+Data score:  0.024
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    x <- year_month_day(2000, 01, 05)
+  Python:
+    def year_month_day(year, month=None, day=None):
+        """
+        Simplified implementation of clock::year_month_day.
+        Handles scalars and sequences for the 'day' argument to match R's vectorization.
+        """
+        if month is None:
+            # Precision is year
+            return np.array([date(int(year), 1, 1)]) if isinstance(year, (list, np.ndarray)) else date(int(year), 1, 1)
+        
+        if day is None:
+            # Precision is month
+            return np.array([date(int(year), int(month), 1)]) if isinstance(year, (list, np.ndarray)) else date(int(year), int(month), 1)
+        
+        # Precision is day
+        # Handle R-style sequence: 04:06 -> [4, 5, 6]
+        if isinstance(day, (list, np.ndarray)):
+            return np.array([date(int(year), int(month), int(d)) for d in day])
+        else:
+            return date(int(year), int(month), int(day))
+    x = year_month_day(2000, 1, 5)
+    # R's 04:06 is a sequence [4, 5, 6]
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 0.287
+  type_match:          0.049
+  control_flow_match:  1.000
+  data_output:         0.049
+  variable_output:     0.049
+  executed_ok:       True
+
+  R:
+    y <- year_month_day(2005, 01, 04:06)
+  Python:
+    y = year_month_day(2005, 1, [4, 5, 6])
+    
+    # Note that `2000-01-05 -> 2005-01-04` is only 4 full years
+
+============================================================
+Entity: calendar_count_between
+  Name:  calendar_count_between
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    calendar_count_between(x, y, "year")
+  Python:
+    def calendar_count_between(start, end, precision):
+        """
+        Mimics clock::calendar_count_between for 'year' precision.
+        Calculates the number of whole units (years) between dates.
+        """
+        if precision != "year":
+            raise NotImplementedError("Only 'year' precision is implemented for this translation.")
+    
+        # Convert start to list/array if scalar to handle vectorized 'end'
+        starts = np.atleast_1d(start)
+        ends = np.atleast_1d(end)
+        
+        # Ensure starts is broadcasted to match ends length
+        if len(starts) == 1 and len(ends) > 1:
+            starts = np.repeat(starts, len(ends))
+        
+        results = []
+        for s, e in zip(starts, ends):
+            # relativedelta calculates difference in years, months, days
+            diff = relativedelta(e, s)
+            results.append(diff.years)
+        
+        return np.array(results) if len(results) > 1 else results[0]
+    
+    # Number of whole years between these dates
+    result = calendar_count_between(x, y, "year")
+    print(result)

@@ -1,0 +1,369 @@
+Translation log
+Final score: 0.879
+Data score:  0.785
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(hardhat))
+
+============================================================
+Entity: import_hardhat
+  Name:  hardhat
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(hardhat))
+
+============================================================
+Entity: framed
+  Name:  framed
+  Kind:  Variable
+  Score: 0.876
+  type_match:          0.835
+  control_flow_match:  1.000
+  data_output:         0.835
+  variable_output:     0.835
+  executed_ok:       True
+
+  R:
+    framed <- model_frame(Sepal.Width ~ Species, iris)
+  Python:
+    def model_frame(formula: str, data: pd.DataFrame) -> Dict[str, Any]:
+        """
+        Simulates hardhat::model_frame.
+        Returns a dict with 'data' (the frame) and 'terms'.
+        Only keeps columns present in the RHS of the formula.
+        """
+        # Extract variables from the formula
+        if '~' in formula:
+            rhs = formula.split('~')[1].strip()
+        else:
+            rhs = formula.strip()
+        
+        # Simple extraction of column names (split by + or *)
+        import re
+        vars_found = re.findall(r'[a-zA-Z_][a-zA-Z0-9_.]*', rhs)
+        
+        df_frame = data[vars_found].copy() if vars_found else data.copy()
+        return {'data': df_frame, 'terms': formula}
+    framed = model_frame('Sepal.Width ~ Species', df_iris)
+
+============================================================
+Entity: model_matrix
+  Name:  model_matrix
+  Kind:  FunctionCall
+  Score: 0.607
+  side_effects:        0.607
+  executed_ok:       True
+
+  R:
+    model_matrix(framed$terms, framed$data)
+  Python:
+    def model_matrix(terms: str, data: pd.DataFrame, contrasts_override: Optional[Any] = None) -> pd.DataFrame:
+        """
+        Simulates hardhat::model_matrix.
+        Missing values never result in dropped rows.
+        """
+        # Simple formula parser for these examples
+        if '~' not in terms:
+            rhs = terms
+        else:
+            rhs = terms.split('~')[1].strip()
+        
+        # Determine contrast type
+        contrast_type = 'treatment'
+        if isinstance(contrasts_override, dict) and 'unordered' in contrasts_override:
+            if contrasts_override['unordered'] == 'contr.sum':
+                contrast_type = 'sum'
+        elif isinstance(contrasts_override, list) and len(contrasts_override) > 0:
+            if 'contr.sum' in contrasts_override:
+                contrast_type = 'sum'
+    
+        # Variable extraction
+        col_name = rhs
+        if col_name not in data.columns:
+            # Try to find the first valid column name if rhs is complex
+            import re
+            vars_found = re.findall(r'[a-zA-Z_][a-zA-Z0-9_.]*', rhs)
+            if vars_found and vars_found[0] in data.columns:
+                col_name = vars_found[0]
+            else:
+                # Fallback for empty/intercept-only formulas
+                return pd.DataFrame({'(Intercept)': np.ones(len(data))})
+        
+        series = data[col_name]
+        # Get unique values excluding NA for contrast levels
+        all_levels = pd.Series(series).dropna().unique()
+        # R's factor levels are typically sorted alphabetically if not specified
+        all_levels = np.sort(all_levels)
+        
+        # Intercept
+        res_cols = {'(Intercept)': np.ones(len(data))}
+        
+        if contrast_type == 'treatment':
+            # Treatment: 1st level is baseline. Others get 1/0.
+            for level in all_levels[1:]:
+                col_name_final = f"{col_name}{level}"
+                col = np.where(series == level, 1.0, 0.0)
+                col[pd.isna(series)] = np.nan
+                res_cols[col_name_final] = col
+        elif contrast_type == 'sum':
+            # Contr.sum for 2 levels is [1, -1]^T
+            if len(all_levels) == 2:
+                col_name_final = f"{col_name}1"
+                col = np.where(series == all_levels[0], 1.0, 0.0)
+                col = np.where(series == all_levels[1], -1.0, col)
+                col[pd.isna(series)] = np.nan
+                res_cols[col_name_final] = col
+            else:
+                # Simplified generic sum contrast
+                for i in range(1, len(all_levels)):
+                    col_name_final = f"{col_name}{i}"
+                    col = np.zeros(len(data))
+                    for j, level in enumerate(all_levels):
+                        val = 1.0 if j == i-1 else (-1.0 / (len(all_levels)-1) if j == len(all_levels)-1 else 0.0)
+                        col[series == level] = val
+                    col[pd.isna(series)] = np.nan
+                    res_cols[col_name_final] = col
+    
+        return pd.DataFrame(res_cols)
+    
+    # --- Main Execution ---
+    
+    # 1. Basic usage
+    df_iris = pd.DataFrame(iris)
+    print(model_matrix(framed['terms'], framed['data']))
+    
+    # 2. Missing values
+
+============================================================
+Entity: iris2
+  Name:  iris2
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    iris2 <- iris
+  Python:
+    iris2 = df_iris.copy()
+
+============================================================
+Entity: iris2$Species[1]
+  Name:  iris2$Species[1]
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    iris2$Species[1] <- NA
+  Python:
+    iris2.loc[0, 'Species'] = np.nan
+
+============================================================
+Entity: framed2
+  Name:  framed2
+  Kind:  Variable
+  Score: 0.876
+  type_match:          0.835
+  control_flow_match:  1.000
+  data_output:         0.835
+  variable_output:     0.835
+  executed_ok:       True
+
+  R:
+    framed2 <- model_frame(Sepal.Width ~ Species, iris2)
+  Python:
+    framed2 = model_frame('Sepal.Width ~ Species', iris2)
+
+============================================================
+Entity: model_matrix_1
+  Name:  model_matrix
+  Kind:  FunctionCall
+  Score: 0.620
+  side_effects:        0.620
+  executed_ok:       True
+
+  R:
+    model_matrix(framed2$terms, framed2$data)
+  Python:
+    print(model_matrix(framed2['terms'], framed2['data']))
+    
+    # 3. Contrasts
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    y <- factor(c("a", "b"))
+  Python:
+    y = pd.Series(['a', 'b'])
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- data.frame(y = y)
+  Python:
+    x = pd.DataFrame({'y': y})
+
+============================================================
+Entity: framed_1
+  Name:  framed
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    framed <- model_frame(~y, x)
+  Python:
+    framed_c = model_frame('~ y', x)
+
+============================================================
+Entity: y_with_contrast
+  Name:  y_with_contrast
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    y_with_contrast <- y
+  Python:
+    y_with_contrast = y.copy()
+    # Simulated by passing the override to model_matrix
+
+============================================================
+Entity: contrasts(y_with_contrast)
+  Name:  contrasts(y_with_contrast)
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    contrasts(y_with_contrast) <- contr.sum(2)
+
+============================================================
+Entity: x2
+  Name:  x2
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x2 <- data.frame(y = y_with_contrast)
+  Python:
+    x2 = pd.DataFrame({'y': y_with_contrast})
+
+============================================================
+Entity: framed2_1
+  Name:  framed2
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    framed2 <- model_frame(~y, x2)
+  Python:
+    framed2_c = model_frame('~ y', x2)
+
+============================================================
+Entity: model_matrix_2
+  Name:  model_matrix
+  Kind:  FunctionCall
+  Score: 0.785
+  side_effects:        0.785
+  executed_ok:       True
+
+  R:
+    model_matrix(framed$terms, framed$data)
+  Python:
+    print(model_matrix(framed_c['terms'], framed_c['data']))
+    
+    # Setting contrasts directly
+
+============================================================
+Entity: model_matrix_3
+  Name:  model_matrix
+  Kind:  FunctionCall
+  Score: 0.779
+  side_effects:        0.779
+  executed_ok:       True
+
+  R:
+    model_matrix(framed2$terms, framed2$data)
+  Python:
+    print(model_matrix(framed2_c['terms'], framed2_c['data'], contrasts_override={'unordered': 'contr.sum'}))
+    
+    # Global override
+
+============================================================
+Entity: global_override
+  Name:  global_override
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    global_override <- c(unordered = "contr.sum", ordered = "contr.poly")
+  Python:
+    global_override = ['contr.sum', 'contr.poly'] 
+    # rlang::with_options simulation
+
+============================================================
+Entity: model_matrix_4
+  Name:  model_matrix
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+        model_matrix(framed$terms, framed$data)
+  Python:
+    _ = model_matrix(framed_c['terms'], framed_c['data'], contrasts_override=global_override)

@@ -1,0 +1,92 @@
+Translation log
+Final score: 0.912
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(testthat))
+
+============================================================
+Entity: import_testthat
+  Name:  testthat
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(testthat))
+
+============================================================
+Entity: sloppy
+  Name:  sloppy
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    sloppy <- function(x, sig_digits) {
+      options(digits = sig_digits)
+      print(x)
+    }
+  Python:
+    def sloppy(x, sig_digits):
+        # Python's equivalent to options(digits = sig_digits) for printing
+        # is using formatted strings or numpy's printoptions
+        print(f"{x:.{sig_digits}g}")
+    
+    # pi (In Python, np.pi is the equivalent)
+
+============================================================
+Entity: pi
+  Name:  pi
+  Kind:  Variable
+  Score: 0.910
+  control_flow_match:  1.000
+  side_effects:        0.820
+  executed_ok:       True
+
+  R:
+    pi
+  Python:
+    print(np.pi)
+    
+    # sloppy(pi, 2)
+
+============================================================
+Entity: sloppy_1
+  Name:  sloppy
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sloppy(pi, 2)
+  Python:
+    sloppy(np.pi, 2)
+    
+    # pi
+
+============================================================
+Entity: pi_1
+  Name:  pi
+  Kind:  Variable
+  Score: 0.825
+  control_flow_match:  1.000
+  side_effects:        0.650
+  executed_ok:       True
+
+  R:
+    pi
+  Python:
+    print(np.pi)

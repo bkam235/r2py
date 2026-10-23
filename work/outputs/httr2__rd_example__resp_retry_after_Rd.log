@@ -1,0 +1,149 @@
+Translation log
+Final score: 0.750
+Data score:  0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr2))
+
+============================================================
+Entity: import_httr2
+  Name:  httr2
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(httr2))
+
+============================================================
+Entity: resp
+  Name:  resp
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    resp <- response(headers = "Retry-After: 30")
+  Python:
+    class Response:
+        def __init__(self, status_code=200, url="https://example.com", method="GET", headers=None, body=b"", timing=None):
+            self.status_code = status_code
+            self.url = url
+            self.method = method
+            # Convert string headers "K: V, K2: V2" to a dictionary
+            if isinstance(headers, str):
+                self.headers = {}
+                for line in headers.split('\n'):
+                    if ':' in line:
+                        k, v = line.split(':', 1)
+                        self.headers[k.strip()] = v.strip()
+            elif headers is None:
+                self.headers = {}
+            else:
+                self.headers = headers
+            
+            if 'Date' not in self.headers:
+                # Mimic R's default date in the response() function
+                self.headers['Date'] = "Wed, 01 Jan 2020 00:00:00 UTC"
+            
+            self.body = body
+            self.timing = timing
+    
+        def get_header(self, name):
+            # Case-insensitive lookup to mimic R's behavior
+            for k, v in self.headers.items():
+                if k.lower() == name.lower():
+                    return v
+            return None
+    resp = Response(headers="Retry-After: 30")
+
+============================================================
+Entity: resp_retry_after
+  Name:  resp_retry_after
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    resp |> resp_retry_after()
+  Python:
+    def resp_date(resp):
+        date_str = resp.get_header("Date")
+        return email.utils.parsedate_to_datetime(date_str)
+    
+    def resp_header(resp, name):
+        return resp.get_header(name)
+    
+    def resp_retry_after(resp):
+        val = resp_header(resp, "Retry-After")
+        if val is None:
+            return None # Equivalent to R's NA in this context
+        
+        if " " in val:
+            # Parse HTTP date
+            retry_date = email.utils.parsedate_to_datetime(val)
+            resp_date_val = resp_date(resp)
+            diff = (retry_date - resp_date_val).total_seconds()
+            return float(diff)
+        else:
+            try:
+                return float(val)
+            except ValueError:
+                return None
+    
+    def r_print(val):
+        """Helper to mimic R's print output format [1] value"""
+        if val is None:
+            print("[1] NA")
+        elif isinstance(val, float) and val.is_integer():
+            print(f"[1] {int(val)}")
+        else:
+            print(f"[1] {val}")
+    
+    # Example 1
+    res1 = resp_retry_after(resp)
+    r_print(res1)
+    
+    # Example 2
+
+============================================================
+Entity: resp_1
+  Name:  resp
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    resp <- response(headers = "Retry-After: Mon, 20 Sep 2025 21:44:05 UTC")
+  Python:
+    resp = Response(headers="Retry-After: Mon, 20 Sep 2025 21:44:05 UTC")
+
+============================================================
+Entity: resp_retry_after_1
+  Name:  resp_retry_after
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    resp |> resp_retry_after()
+  Python:
+    res2 = resp_retry_after(resp)
+    r_print(res2)

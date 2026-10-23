@@ -1,0 +1,60 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: opts_chunk$set
+  Name:  opts_chunk$set
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    knitr::opts_chunk$set(comment = "")
+
+============================================================
+Entity: options
+  Name:  options
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    options(width = 120, max.print = 100)
+
+============================================================
+Entity: wrap.simpleError
+  Name:  wrap.simpleError
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    wrap.simpleError <- function(x, options) {
+      paste0("```\n## Error: ", x$message, "\n```")
+    }
+
+============================================================
+Entity: import_curl
+  Name:  curl
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(curl)
+
+============================================================
+Entity: import_jsonlite
+  Name:  jsonlite
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(jsonlite)

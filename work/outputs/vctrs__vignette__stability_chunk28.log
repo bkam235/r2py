@@ -1,0 +1,73 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: vec_c
+  Name:  vec_c
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    vec_c <- function(...) {
+      args <- compact(list2(...))
+    
+      ptype <- vec_ptype_common(!!!args)
+      if (is.null(ptype))
+        return(NULL)
+    
+      ns <- map_int(args, vec_size)
+      out <- vec_init(ptype, sum(ns))
+    
+      pos <- 1
+      for (i in seq_along(ns)) {
+        n <- ns[[i]]
+        
+        x <- vec_cast(args[[i]], to = ptype)
+        vec_slice(out, pos:(pos + n - 1)) <- x
+        pos <- pos + n
+      }
+    
+      out
+    }
+  Python:
+    def vec_c(*args):
+        # Filter out None values (equivalent to compact)
+        args = [arg for arg in args if arg is not None]
+        
+        if not args:
+            return None
+    
+        # Use numpy to find the common type and concatenate
+        # np.concatenate handles the casting to a common type automatically
+        try:
+            result = np.concatenate([np.asarray(arg) for arg in args])
+            return result
+        except ValueError:
+            # Fallback for incompatible types (e.g., mixing strings and numbers)
+            # Pandas series/arrays handle object-type mixing more like R's vec_c
+            return pd.Series([item for arg in args for item in np.asarray(arg)]).values

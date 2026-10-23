@@ -1,0 +1,175 @@
+Translation log
+Final score: 0.889
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(caret))
+
+============================================================
+Entity: import_caret
+  Name:  caret
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(caret))
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  executed_ok:       True
+
+  R:
+    data(oil)
+  Python:
+    # r2py:data_shim:begin
+    # import json as _r2py_shim_json
+    # from pathlib import Path as _r2py_shim_Path
+    # if '__file__' not in globals(): __file__ = 'work/outputs/caret__rd_example__downSample_Rd.py'
+    # _r2py_shim_data = _r2py_shim_json.loads((_r2py_shim_Path(__file__).parent / 'caret__rd_example__downSample_Rd.r2py_data.json').read_text(encoding='utf-8'))
+    # for _r2py_shim_n in ['fattyAcids', 'oilType']:
+    #     if _r2py_shim_n in _r2py_shim_data:
+    #         globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]
+    # r2py:data_shim:end
+    
+    import pandas as pd
+    import numpy as np
+
+============================================================
+Entity: table
+  Name:  table
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    table(oilType)
+  Python:
+    def r_table_print(y):
+        counts = pd.Series(y).value_counts().sort_index()
+        print("      oilType")
+        print(" " + "  ".join(counts.index))
+        print(" ".join(map(str, counts.values)))
+    
+    r_table_print(oilType)
+    
+    # Setup pandas output to match R's style more closely (1-based index, no scientific notation)
+    pd.set_option('display.max_rows', None)
+    pd.set_option('display.max_columns', None)
+    pd.set_option('display.width', 1000)
+    pd.set_option('display.precision', 1)
+    
+    def print_r_style(df):
+        # R dataframes start index at 1
+        df_copy = df.copy()
+        df_copy.index = df_copy.index + 1
+        print(df_copy)
+
+============================================================
+Entity: downSample
+  Name:  downSample
+  Kind:  FunctionCall
+  Score: 0.786
+  side_effects:        0.786
+  executed_ok:       True
+
+  R:
+    downSample(fattyAcids, oilType)
+  Python:
+    def downSample(x, y, list_val=False, yname="Class"):
+        if not isinstance(x, pd.DataFrame):
+            x = pd.DataFrame(x)
+        
+        y = np.array(y)
+        counts = pd.Series(y).value_counts()
+        min_class = counts.min()
+        
+        df = x.copy()
+        df['_outcome'] = y
+        
+        sampled_list = []
+        labels = sorted(counts.index)
+        for label in labels:
+            subset = df[df['_outcome'] == label]
+            sampled_subset = subset.sample(n=min_class)
+            sampled_list.append(sampled_subset)
+        
+        result_df = pd.concat(sampled_list).reset_index(drop=True)
+        y_out = result_df['_outcome']
+        x_out = result_df.drop(columns=['_outcome'])
+        
+        if list_val:
+            return {'x': x_out, 'y': y_out}
+        else:
+            x_out[yname] = y_out
+            return x_out
+    down_sampled = downSample(fattyAcids, oilType)
+    print_r_style(down_sampled)
+
+============================================================
+Entity: upSample
+  Name:  upSample
+  Kind:  FunctionCall
+  Score: 0.770
+  side_effects:        0.770
+  executed_ok:       True
+
+  R:
+    upSample(fattyAcids, oilType)
+  Python:
+    def upSample(x, y, list_val=False, yname="Class"):
+        if not isinstance(x, pd.DataFrame):
+            x = pd.DataFrame(x)
+        
+        y = np.array(y)
+        counts = pd.Series(y).value_counts()
+        max_class = counts.max()
+        
+        df = x.copy()
+        df['_outcome'] = y
+        
+        sampled_list = []
+        labels = sorted(counts.index)
+        for label in labels:
+            subset = df[df['_outcome'] == label]
+            if len(subset) < max_class:
+                diff = max_class - len(subset)
+                extra = subset.sample(n=diff, replace=True)
+                sampled_subset = pd.concat([subset, extra])
+            else:
+                sampled_subset = subset.sample(n=max_class)
+            sampled_list.append(sampled_subset)
+            
+        result_df = pd.concat(sampled_list).reset_index(drop=True)
+        y_out = result_df['_outcome']
+        x_out = result_df.drop(columns=['_outcome'])
+        
+        if list_val:
+            return {'x': x_out, 'y': y_out}
+        else:
+            x_out[yname] = y_out
+            return x_out
+    
+    fattyAcids = pd.DataFrame(fattyAcids)
+    oilType = np.array(oilType)
+    up_sampled = upSample(fattyAcids, oilType)
+    print_r_style(up_sampled)

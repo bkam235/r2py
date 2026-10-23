@@ -1,0 +1,126 @@
+Translation log
+Final score: 0.500
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(bslib))
+
+============================================================
+Entity: import_bslib
+  Name:  bslib
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(bslib))
+
+============================================================
+Entity: bs4
+  Name:  bs4
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    bs4 <- bs_theme(version = 4)
+  Python:
+    class BSTheme:
+        def __init__(self, version=4):
+            self.version = version
+            self.components = {
+                "_print": "print-styles",
+                "_carousel": "carousel-styles",
+                "bs3compat": "compat-styles"
+            }
+
+============================================================
+Entity: bs_retrieve
+  Name:  bs_retrieve
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    bs_retrieve(bs4, "_print", include_unnamed = FALSE)
+  Python:
+        def retrieve(self, component, include_unnamed=False):
+            return self.components.get(component, None)
+    bs4.retrieve("_print", include_unnamed=False)
+    
+    # bs4_no_print <- bs_remove(bs4, c("_print", "_carousel"))
+    bs4_no_print = bs4.remove(["_print", "_carousel"])
+    
+    # suppressWarnings(bs_retrieve(bs4_no_print, "_print", include_unnamed = FALSE))
+
+============================================================
+Entity: bs4_no_print
+  Name:  bs4_no_print
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    bs4_no_print <- bs_remove(bs4, c("_print", "_carousel"))
+  Python:
+        def remove(self, components_to_remove):
+            new_theme = BSTheme(self.version)
+            new_theme.components = {k: v for k, v in self.components.items() 
+                                   if k not in components_to_remove}
+            return new_theme
+    
+    bs4 = BSTheme(version=4)
+    
+    # bs_retrieve(bs4, "_print", include_unnamed = FALSE)
+
+============================================================
+Entity: suppressWarnings
+  Name:  suppressWarnings
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    suppressWarnings(
+      bs_retrieve(bs4_no_print, "_print", include_unnamed = FALSE)
+    )
+  Python:
+    bs4_no_print.retrieve("_print", include_unnamed=False)
+    
+    # bs4_no_compat <- bs_remove(bs4, "bs3compat")
+
+============================================================
+Entity: bs4_no_compat
+  Name:  bs4_no_compat
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    bs4_no_compat <- bs_remove(bs4, "bs3compat")
+  Python:
+    bs4_no_compat = bs4.remove(["bs3compat"])

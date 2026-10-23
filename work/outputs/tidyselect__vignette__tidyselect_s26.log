@@ -1,0 +1,48 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyselect))
+
+============================================================
+Entity: import_tidyselect
+  Name:  tidyselect
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyselect))
+
+============================================================
+Entity: if_width
+  Name:  if_width
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    if_width <- function(n, vars = peek_vars(fn = "if_width")) {
+      which(nchar(vars) == n)
+    }
+  Python:
+    def if_width(n, vars=None):
+        if vars is None:
+            # Approximating peek_vars behavior by accessing a global or context-specific set of column names
+            # In the absence of a specific dataframe context, we assume 'vars' should be passed or defined
+            return []
+        
+        # nchar(vars) == n returns a boolean array, which(..) returns indices
+        # Adding 1 because R is 1-indexed and Python is 0-indexed
+        return [i + 1 for i, length in enumerate([len(str(v)) for v in vars]) if length == n]

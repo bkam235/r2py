@@ -1,0 +1,61 @@
+Translation log
+Final score: 0.661
+Data score:  0.140
+Iterations:  1
+
+============================================================
+Entity: import_tidyr
+  Name:  tidyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(tidyr)
+
+============================================================
+Entity: nest
+  Name:  nest
+  Kind:  FunctionCall
+  Score: 0.661
+  side_effects:        0.661
+  executed_ok:       True
+
+  R:
+      nest(data = !Species)
+  Python:
+    iris_nested = iris.groupby('Species').apply(lambda x: x.drop(columns=['Species'])).unstack()
+    
+    # However, to strictly replicate the 'nested' structure where a column 
+    # contains dataframes (similar to tidyr::nest), we do:
+    iris_nested = (
+        iris.groupby('Species')
+        .apply(lambda x: x.drop(columns=['Species']))
+        .reset_index(level=0)
+        .rename(columns={0: 'data'})
+    )
+    
+    # Since the R code specified `nest(data = !Species)`, 
+    # the result is a dataframe with 'Species' and a 'data' column containing the other values.
+    # A more direct idiomatic pandas approach for this specific logic:
+    iris_nested = iris.groupby('Species').apply(lambda x: x.drop(columns=['Species'])).reset_index(level=0).rename(columns={0: 'data'})
+    
+    # To match the tidyr output precisely (where 'data' is a list of dataframes):
+    iris_nested = (
+        iris.groupby('Species')
+        .apply(lambda x: x.drop(columns=['Species']))
+        .reset_index()
+        .rename(columns={'level_1': 'data'}) # This depends on pandas version
+    )
+    
+    # Correct Pythonic way to mimic tidyr::nest for the provided R snippet:
+    iris_nested = iris.groupby('Species').apply(lambda x: x.drop(columns=['Species'])).reset_index(level=0).rename(columns={0: 'data'})
+    # In newer pandas versions, the apply result can be tricky. The most robust way to get "nested" dataframes:
+    iris_nested = pd.DataFrame({
+        'Species': iris['Species'].unique(),
+        'data': [iris[iris['Species'] == s].drop(columns=['Species']) for s in iris['Species'].unique()]
+    })
+    
+    print(iris_nested)

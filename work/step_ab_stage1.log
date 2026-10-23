@@ -1,0 +1,361 @@
+40 states x 2 arms x 4 samples: 320 steps to do
+[1/320] bslib__rd_example__value_box_Rd.R     F  s0 verified             0.5->0.6658 gain 0.1658
+[2/320] bslib__rd_example__value_box_Rd.R     U  s0 verified             0.5->0.6615 gain 0.1615
+[3/320] bslib__rd_example__layout_column_wra  F  s0 verified             0.5487->0.5487 gain 0.0
+[4/320] bslib__rd_example__layout_column_wra  U  s0 verified             0.5487->0.5487 gain 0.0
+[5/320] caret__rd_example__update_train_Rd.R  U  s0 verified             0.55->0.5607 gain 0.0107
+[6/320] caret__rd_example__update_train_Rd.R  F  s0 verified             0.55->0.5569 gain 0.0069
+[7/320] bslib__rd_example__page_fillable_Rd.  F  s0 verified             0.25->0.25 gain 0.0
+[8/320] caret__vignette__caret_s3.R           F  s0 verified             0.7419->0.4086 gain 0.0
+[9/320] caret__vignette__caret_s3.R           U  s0 verified             0.7419->0.4086 gain 0.0
+[10/320] farver__rd_example__as_white_ref_Rd.  U  s0 verified             0.8211->0.8573 gain 0.0363
+[11/320] bslib__rd_example__page_fillable_Rd.  U  s0 verified             0.25->0.0 gain 0.0
+[12/320] e1071__rd_example__boxplot_bclust_Rd  F  s0 verified             0.375->0.3822 gain 0.0072
+[13/320] fansi__rd_example__normalize_state_R  U  s0 verified             0.7711->0.8958 gain 0.0
+[14/320] e1071__rd_example__boxplot_bclust_Rd  U  s0 verified             0.375->0.2565 gain 0.0
+[15/320] fansi__rd_example__normalize_state_R  F  s0 verified             0.7711->0.8953 gain 0.0
+[16/320] farver__rd_example__encode_colour_Rd  U  s0 verified             0.6947->0.85 gain 0.1553
+[17/320] farver__rd_example__convert_colour_R  U  s0 verified             0.4429->0.6256 gain 0.0
+[18/320] ggplot2__rd_example__geom_bin_2d_Rd.  U  s0 verified             0.5->0.0 gain 0.0
+[19/320] ggplot2__rd_example__geom_bin_2d_Rd.  F  s0 verified             0.5->0.0 gain 0.0
+[20/320] farver__rd_example__encode_colour_Rd  F  s0 verified             0.6947->0.85 gain 0.0
+[21/320] farver__rd_example__convert_colour_R  F  s0 verified             0.4429->0.6304 gain 0.0
+[22/320] farver__rd_example__as_white_ref_Rd.  F  s0 verified             0.8211->1.0 gain 0.1789
+[23/320] gtable__rd_example__gtable_add_cols_  U  s0 verified             0.7->0.48 gain 0.0
+[24/320] htmltools__rd_example__builder_Rd.R   U  s0 gate rejected        0.5->None gain 0.0
+[25/320] htmltools__rd_example__builder_Rd.R   F  s0 gate rejected        0.5->None gain 0.0
+[26/320] openssl__rd_example__ec_dh_Rd.R       U  s0 verified             0.673->0.6789 gain 0.0059
+[27/320] gtable__rd_example__gtable_add_cols_  F  s0 verified             0.7->0.7317 gain 0.0317
+[28/320] openssl__vignette__bignum_s2.R        F  s0 no rewrite           0.3621->None gain 0.0
+[29/320] openssl__rd_example__ec_dh_Rd.R       F  s0 verified             0.6646->0.6722 gain 0.0076
+[30/320] openssl__rd_example__aes_cbc_Rd.R     U  s0 verified             0.55->0.4 gain 0.0
+[31/320] openssl__rd_example__aes_cbc_Rd.R     F  s0 verified             0.55->0.4 gain 0.0
+[32/320] openssl__vignette__bignum_s2.R        U  s0 verified             0.3621->1.0 gain 0.6379
+[33/320] prodlim__rd_example__backGround_Rd.R  U  s0 verified             0.6381->0.819 gain 0.181
+[34/320] proxy__rd_example__registry_Rd.R      F  s0 verified             0.8114->0.8142 gain 0.0028
+[35/320] prodlim__rd_example__backGround_Rd.R  F  s0 verified             0.6381->0.6381 gain 0.0
+[36/320] purrr__rd_example__attr_getter_Rd.R   U  s0 verified             0.6302->0.75 gain 0.1198
+[37/320] pROC__rd_example__print_Rd.R          F  s0 verified             0.9611->0.9863 gain 0.0252
+[38/320] pROC__rd_example__print_Rd.R          U  s0 verified             0.9611->0.9863 gain 0.0252
+[39/320] proxy__rd_example__registry_Rd.R      U  s0 verified             0.8114->0.7964 gain 0.0
+[40/320] purrr__rd_example__attr_getter_Rd.R   F  s0 verified             0.6302->0.625 gain 0.0
+[41/320] ragg__rd_example__agg_capture_Rd.R    U  s0 verified             0.4038->0.4038 gain 0.0
+[42/320] reshape2__rd_example__melt_data_fram  U  s0 verified             0.375->0.3785 gain 0.0035
+[43/320] reshape2__rd_example__melt_data_fram  F  s0 verified             0.375->0.3785 gain 0.0035
+[44/320] ragg__rd_example__agg_capture_Rd.R    F  s0 verified             0.4038->0.4404 gain 0.0367
+[45/320] recipes__rd_example__step_kpca_Rd.R   F  s0 verified             0.3711->0.3711 gain 0.0
+[46/320] recipes__rd_example__step_kpca_Rd.R   U  s0 verified             0.3711->0.3711 gain 0.0
+[47/320] sass__rd_example__as_sass_Rd.R        F  s0 verified             0.7425->0.7416 gain 0.0
+[48/320] rvest__rd_example__html_table_Rd.R    U  s0 verified             0.2697->0.9759 gain 0.7062
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[49/320] rvest__rd_example__html_table_Rd.R    F  s0 verified             0.2697->0.6283 gain 0.3586
+[50/320] sass__rd_example__sass_import_Rd.R    U  s0 verified             0.45->0.45 gain 0.0
+[51/320] sass__rd_example__sass_import_Rd.R    F  s0 verified             0.45->0.45 gain 0.0
+[52/320] sass__rd_example__as_sass_Rd.R        U  s0 verified             0.7419->0.7252 gain 0.0
+[53/320] sessioninfo__rd_example__platform_in  F  s0 verified             0.7523->0.7699 gain 0.0
+[54/320] sessioninfo__rd_example__platform_in  U  s0 verified             0.7523->0.8166 gain 0.0
+[55/320] sessioninfo__rd_example__python_info  F  s0 verified             0.8053->0.7946 gain 0.0
+[56/320] sessioninfo__rd_example__python_info  U  s0 verified             0.8053->0.8291 gain 0.0
+[57/320] shiny__rd_example__actionButton_Rd.R  U  s0 verified             0.5516->0.0 gain 0.0
+[58/320] shiny__rd_example__actionButton_Rd.R  F  s0 verified             0.5516->0.0 gain 0.0
+[59/320] shiny__rd_example__updateRadioButton  U  s0 verified             0.25->0.25 gain 0.0
+[60/320] shiny__rd_example__updateRadioButton  F  s0 verified             0.25->0.25 gain 0.0
+[61/320] shape__rd_example__filledmultigonal_  U  s0 verified             0.6197->0.8127 gain 0.193
+[62/320] shape__rd_example__filledmultigonal_  F  s0 verified             0.6197->0.6197 gain 0.0
+[63/320] systemfonts__rd_example__shape_strin  U  s0 verified             0.7088->0.6955 gain 0.0
+[64/320] pROC__rd_example__coords_Rd.R         U  s0 verified             0.4111->0.0 gain 0.0
+[65/320] systemfonts__rd_example__shape_strin  F  s0 verified             0.7088->0.6998 gain 0.0
+[66/320] textshaping__rd_example__lorem_text_  U  s0 verified             0.5943->1.0 gain 0.4057
+[67/320] textshaping__rd_example__lorem_text_  F  s0 verified             0.5946->1.0 gain 0.0
+[68/320] textshaping__rd_example__shape_text_  U  s0 verified             0.6782->0.6727 gain 0.0
+[69/320] textshaping__rd_example__get_font_fe  U  s0 verified             0.739->0.7241 gain 0.0
+[70/320] textshaping__rd_example__get_font_fe  F  s0 verified             0.739->0.7358 gain 0.0
+[71/320] pROC__rd_example__coords_Rd.R         F  s0 verified             0.4111->0.0 gain 0.0
+[72/320] textshaping__rd_example__shape_text_  F  s0 verified             0.6782->0.6728 gain 0.0
+[73/320] recipes__rd_example__discretize_Rd.R  F  s0 verified             0.7416->0.0 gain 0.0
+[74/320] bslib__rd_example__layout_column_wra  U  s1 verified             0.5487->0.5487 gain 0.0
+[75/320] xml2__rd_example__xml_attr_Rd.R       U  s0 verified             0.7926->0.776 gain 0.0
+[76/320] timeDate__rd_example__calendar-isBiz  U  s0 verified             0.8684->0.8292 gain 0.0
+[77/320] timeDate__rd_example__calendar-isBiz  F  s0 verified             0.8684->0.8292 gain 0.0
+[78/320] xml2__rd_example__xml_attr_Rd.R       F  s0 verified             0.7926->0.7926 gain 0.0
+[79/320] bslib__rd_example__layout_column_wra  F  s1 verified             0.5487->0.0 gain 0.0
+[80/320] bslib__rd_example__value_box_Rd.R     U  s1 verified             0.5->0.0 gain 0.0
+[81/320] bslib__rd_example__value_box_Rd.R     F  s1 verified             0.5->0.6658 gain 0.1658
+[82/320] bslib__rd_example__page_fillable_Rd.  F  s1 verified             0.25->0.0 gain 0.0
+[83/320] caret__rd_example__update_train_Rd.R  U  s1 verified             0.55->0.5562 gain 0.0062
+[84/320] recipes__rd_example__discretize_Rd.R  U  s0 verified             0.7416->0.6844 gain 0.0
+[85/320] caret__vignette__caret_s3.R           U  s1 verified             0.7419->0.7374 gain 0.0
+[86/320] bslib__rd_example__page_fillable_Rd.  U  s1 verified             0.25->0.25 gain 0.0
+[87/320] caret__rd_example__update_train_Rd.R  F  s1 verified             0.55->0.5596 gain 0.0096
+[88/320] e1071__rd_example__boxplot_bclust_Rd  U  s1 verified             0.375->0.2573 gain 0.0
+[89/320] systemfonts__rd_example__glyph_raste  U  s0 verified             0.6634->0.4686 gain 0.0
+[90/320] e1071__rd_example__boxplot_bclust_Rd  F  s1 verified             0.375->0.3818 gain 0.0068
+[91/320] farver__rd_example__as_white_ref_Rd.  U  s1 verified             0.8211->0.9483 gain 0.0
+[92/320] fansi__rd_example__normalize_state_R  U  s1 verified             0.7711->0.8916 gain 0.1205
+[93/320] systemfonts__rd_example__glyph_raste  F  s0 verified             0.6634->0.4686 gain 0.0
+[94/320] caret__vignette__caret_s3.R           F  s1 verified             0.7419->0.4086 gain 0.0
+[95/320] farver__rd_example__as_white_ref_Rd.  F  s1 verified             0.8211->1.0 gain 0.0
+[96/320] fansi__rd_example__normalize_state_R  F  s1 verified             0.7711->0.9157 gain 0.0
+[97/320] farver__rd_example__encode_colour_Rd  F  s1 verified             0.6947->0.85 gain 0.1553
+[98/320] farver__rd_example__encode_colour_Rd  U  s1 verified             0.6947->0.85 gain 0.0
+[99/320] ggplot2__rd_example__geom_bin_2d_Rd.  U  s1 verified             0.5->0.0 gain 0.0
+[100/320] ggplot2__rd_example__geom_bin_2d_Rd.  F  s1 verified             0.5->0.0 gain 0.0
+[101/320] farver__rd_example__convert_colour_R  U  s1 verified             0.4429->0.6254 gain 0.0
+[102/320] gtable__rd_example__gtable_add_cols_  U  s1 verified             0.7->0.4704 gain 0.0
+[103/320] farver__rd_example__convert_colour_R  F  s1 verified             0.4429->0.6301 gain 0.0
+[104/320] htmltools__rd_example__builder_Rd.R   U  s1 verified             0.5->0.9804 gain 0.4804
+[105/320] htmltools__rd_example__builder_Rd.R   F  s1 verified             0.5->0.9804 gain 0.4804
+[106/320] openssl__vignette__bignum_s2.R        U  s1 no rewrite           0.3621->None gain 0.0
+[107/320] openssl__rd_example__ec_dh_Rd.R       F  s1 verified             0.6764->0.6612 gain 0.0
+[108/320] openssl__rd_example__ec_dh_Rd.R       U  s1 verified             0.6772->0.6629 gain 0.0
+[109/320] openssl__rd_example__aes_cbc_Rd.R     F  s1 verified             0.55->0.0 gain 0.0
+[110/320] gtable__rd_example__gtable_add_cols_  F  s1 verified             0.7->0.0 gain 0.0
+[r2py] WARNING: 'y' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'y' is a data entity but Python could not serialize it — excluded from comparison
+[111/320] openssl__rd_example__aes_cbc_Rd.R     U  s1 verified             0.55->0.4 gain 0.0
+[112/320] openssl__vignette__bignum_s2.R        F  s1 verified             0.3621->0.0 gain 0.0
+[113/320] prodlim__rd_example__backGround_Rd.R  U  s1 verified             0.6381->0.6381 gain 0.0
+[114/320] prodlim__rd_example__backGround_Rd.R  F  s1 verified             0.6381->0.6381 gain 0.0
+[115/320] pROC__rd_example__print_Rd.R          U  s1 verified             0.9611->0.9863 gain 0.0252
+[116/320] proxy__rd_example__registry_Rd.R      F  s1 verified             0.8114->0.8114 gain 0.0
+[117/320] pROC__rd_example__print_Rd.R          F  s1 verified             0.9611->0.9863 gain 0.0252
+[118/320] proxy__rd_example__registry_Rd.R      U  s1 verified             0.8114->0.8169 gain 0.0
+[119/320] purrr__rd_example__attr_getter_Rd.R   U  s1 verified             0.6302->0.625 gain 0.0
+[120/320] purrr__rd_example__attr_getter_Rd.R   F  s1 verified             0.6302->0.7929 gain 0.1627
+[121/320] pROC__rd_example__coords_Rd.R         U  s1 verified             0.0->0.0 gain 0.0
+[122/320] pROC__rd_example__coords_Rd.R         F  s1 verified             0.0->0.0 gain 0.0
+[123/320] ragg__rd_example__agg_capture_Rd.R    F  s1 verified             0.4038->0.0 gain 0.0
+[124/320] ragg__rd_example__agg_capture_Rd.R    U  s1 verified             0.4038->0.0 gain 0.0
+[125/320] recipes__rd_example__discretize_Rd.R  U  s1 verified             0.7416->0.8266 gain 0.0849
+[126/320] reshape2__rd_example__melt_data_fram  U  s1 verified             0.375->0.3785 gain 0.0035
+[127/320] reshape2__rd_example__melt_data_fram  F  s1 verified             0.375->0.3785 gain 0.0035
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[128/320] recipes__rd_example__step_kpca_Rd.R   U  s1 verified             0.3711->0.3711 gain 0.0
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[129/320] sass__rd_example__sass_import_Rd.R    U  s1 verified             0.45->0.45 gain 0.0
+[130/320] rvest__rd_example__html_table_Rd.R    F  s1 verified             0.2697->0.2339 gain 0.0
+[131/320] recipes__rd_example__discretize_Rd.R  F  s1 verified             0.7416->0.7486 gain 0.0069
+[132/320] sass__rd_example__sass_import_Rd.R    F  s1 verified             0.45->0.45 gain 0.0
+[133/320] recipes__rd_example__step_kpca_Rd.R   F  s1 verified             0.3711->0.3711 gain 0.0
+[134/320] sass__rd_example__as_sass_Rd.R        U  s1 verified             0.7419->0.7261 gain 0.0
+[135/320] rvest__rd_example__html_table_Rd.R    U  s1 verified             0.2697->0.9759 gain 0.7062
+[136/320] sessioninfo__rd_example__platform_in  U  s1 verified             0.7523->0.7855 gain 0.0
+[137/320] sass__rd_example__as_sass_Rd.R        F  s1 verified             0.7416->0.7252 gain 0.0
+[138/320] sessioninfo__rd_example__platform_in  F  s1 verified             0.7523->0.8224 gain 0.0
+[139/320] shiny__rd_example__actionButton_Rd.R  U  s1 verified             0.5516->0.0 gain 0.0
+[140/320] sessioninfo__rd_example__python_info  U  s1 verified             0.8053->0.8053 gain 0.0
+[141/320] shiny__rd_example__actionButton_Rd.R  F  s1 verified             0.5516->0.0 gain 0.0
+[142/320] shiny__rd_example__updateRadioButton  U  s1 verified             0.25->0.25 gain 0.0
+[143/320] shiny__rd_example__updateRadioButton  F  s1 verified             0.25->0.25 gain 0.0
+[144/320] sessioninfo__rd_example__python_info  F  s1 verified             0.8053->0.8416 gain 0.0
+[145/320] shape__rd_example__filledmultigonal_  U  s1 verified             0.6197->0.6197 gain 0.0
+[146/320] textshaping__rd_example__lorem_text_  U  s1 no rewrite           0.5937->None gain 0.0
+[147/320] systemfonts__rd_example__shape_strin  U  s1 verified             0.7088->0.7012 gain 0.0
+[148/320] systemfonts__rd_example__shape_strin  F  s1 verified             0.7088->0.6938 gain 0.0
+[149/320] shape__rd_example__filledmultigonal_  F  s1 verified             0.6197->0.6197 gain 0.0
+[150/320] textshaping__rd_example__shape_text_  F  s1 verified             0.6782->0.6729 gain 0.0
+[151/320] textshaping__rd_example__lorem_text_  F  s1 verified             0.5937->0.9608 gain 0.3671
+[152/320] textshaping__rd_example__shape_text_  U  s1 verified             0.6782->0.0 gain 0.0
+[153/320] timeDate__rd_example__calendar-isBiz  U  s1 verified             0.8684->0.8326 gain 0.0
+[154/320] textshaping__rd_example__get_font_fe  U  s1 verified             0.739->0.7255 gain 0.0
+[155/320] bslib__rd_example__layout_column_wra  U  s2 verified             0.5487->0.5487 gain 0.0
+[156/320] timeDate__rd_example__calendar-isBiz  F  s1 verified             0.8684->0.8292 gain 0.0
+[157/320] xml2__rd_example__xml_attr_Rd.R       F  s1 verified             0.7926->0.7926 gain 0.0
+[158/320] bslib__rd_example__layout_column_wra  F  s2 verified             0.5487->0.5487 gain 0.0
+[159/320] xml2__rd_example__xml_attr_Rd.R       U  s1 verified             0.7926->0.7926 gain 0.0
+[160/320] bslib__rd_example__value_box_Rd.R     U  s2 verified             0.5->0.6658 gain 0.1658
+[161/320] bslib__rd_example__value_box_Rd.R     F  s2 verified             0.5->0.6658 gain 0.1658
+[162/320] textshaping__rd_example__get_font_fe  F  s1 verified             0.739->0.758 gain 0.019
+[163/320] bslib__rd_example__page_fillable_Rd.  U  s2 verified             0.25->0.25 gain 0.0
+[164/320] caret__rd_example__update_train_Rd.R  U  s2 verified             0.55->0.5538 gain 0.0038
+[165/320] caret__rd_example__update_train_Rd.R  F  s2 verified             0.55->0.561 gain 0.011
+[166/320] bslib__rd_example__page_fillable_Rd.  F  s2 verified             0.25->0.0 gain 0.0
+[167/320] caret__vignette__caret_s3.R           U  s2 verified             0.7419->0.4041 gain 0.0
+[168/320] caret__vignette__caret_s3.R           F  s2 verified             0.7419->0.4086 gain 0.0
+[169/320] e1071__rd_example__boxplot_bclust_Rd  F  s2 verified             0.375->0.257 gain 0.0
+[170/320] e1071__rd_example__boxplot_bclust_Rd  U  s2 verified             0.375->0.0 gain 0.0
+[171/320] farver__rd_example__as_white_ref_Rd.  U  s2 verified             0.8211->0.9483 gain 0.0
+[172/320] farver__rd_example__as_white_ref_Rd.  F  s2 verified             0.8211->0.9483 gain 0.1272
+[173/320] fansi__rd_example__normalize_state_R  F  s2 verified             0.7711->0.8811 gain 0.0
+[174/320] fansi__rd_example__normalize_state_R  U  s2 verified             0.7711->0.8798 gain 0.0
+[175/320] farver__rd_example__convert_colour_R  U  s2 verified             0.4429->0.6257 gain 0.0
+[176/320] ggplot2__rd_example__geom_bin_2d_Rd.  U  s2 verified             0.5->0.0 gain 0.0
+[177/320] farver__rd_example__encode_colour_Rd  F  s2 verified             0.6947->0.7968 gain 0.1022
+[178/320] farver__rd_example__encode_colour_Rd  U  s2 verified             0.6947->0.7796 gain 0.0
+[179/320] gtable__rd_example__gtable_add_cols_  U  s2 verified             0.7->0.615 gain 0.0
+[180/320] farver__rd_example__convert_colour_R  F  s2 verified             0.4429->0.6265 gain 0.0
+[181/320] ggplot2__rd_example__geom_bin_2d_Rd.  F  s2 verified             0.5->0.0 gain 0.0
+[182/320] gtable__rd_example__gtable_add_cols_  F  s2 verified             0.7->0.0 gain 0.0
+[183/320] htmltools__rd_example__builder_Rd.R   F  s2 verified             0.5->0.9804 gain 0.4804
+[184/320] htmltools__rd_example__builder_Rd.R   U  s2 verified             0.5->0.9804 gain 0.4804
+[185/320] openssl__rd_example__ec_dh_Rd.R       U  s2 verified             0.6662->0.6815 gain 0.0152
+[186/320] openssl__rd_example__ec_dh_Rd.R       F  s2 verified             0.6654->0.6713 gain 0.0059
+[187/320] openssl__vignette__bignum_s2.R        U  s2 verified             0.3621->0.3621 gain 0.0
+[188/320] openssl__rd_example__aes_cbc_Rd.R     F  s2 verified             0.55->0.4 gain 0.0
+[189/320] openssl__rd_example__aes_cbc_Rd.R     U  s2 verified             0.55->0.4 gain 0.0
+[190/320] openssl__vignette__bignum_s2.R        F  s2 no rewrite           0.3621->None gain 0.0
+[191/320] prodlim__rd_example__backGround_Rd.R  U  s2 verified             0.6381->0.819 gain 0.181
+[192/320] prodlim__rd_example__backGround_Rd.R  F  s2 verified             0.6381->0.6381 gain 0.0
+[193/320] proxy__rd_example__registry_Rd.R      U  s2 verified             0.8114->0.812 gain 0.0006
+[194/320] pROC__rd_example__print_Rd.R          U  s2 verified             0.9611->0.9863 gain 0.0252
+[195/320] pROC__rd_example__print_Rd.R          F  s2 verified             0.9611->0.9863 gain 0.0252
+[196/320] pROC__rd_example__coords_Rd.R         F  s2 verified             0.4111->0.0 gain 0.0
+[197/320] purrr__rd_example__attr_getter_Rd.R   U  s2 verified             0.6302->0.7929 gain 0.1627
+[198/320] proxy__rd_example__registry_Rd.R      F  s2 verified             0.8114->0.7929 gain 0.0
+[199/320] purrr__rd_example__attr_getter_Rd.R   F  s2 verified             0.6302->0.625 gain 0.0
+[200/320] pROC__rd_example__coords_Rd.R         U  s2 verified             0.4111->0.0 gain 0.0
+[201/320] ragg__rd_example__agg_capture_Rd.R    U  s2 verified             0.4038->0.0 gain 0.0
+[202/320] ragg__rd_example__agg_capture_Rd.R    F  s2 verified             0.4038->0.4038 gain 0.0
+[203/320] systemfonts__rd_example__glyph_raste  U  s1 verified             0.6634->0.5023 gain 0.0
+[204/320] systemfonts__rd_example__glyph_raste  F  s1 verified             0.6634->0.4656 gain 0.0
+[205/320] recipes__rd_example__discretize_Rd.R  F  s2 verified             0.7416->0.0 gain 0.0
+[206/320] recipes__rd_example__step_kpca_Rd.R   U  s2 verified             0.3711->0.3711 gain 0.0
+[207/320] reshape2__rd_example__melt_data_fram  U  s2 verified             0.375->0.3785 gain 0.0035
+[208/320] rvest__rd_example__html_table_Rd.R    U  s2 verified             0.2697->0.9759 gain 0.7062
+[209/320] reshape2__rd_example__melt_data_fram  F  s2 verified             0.375->0.3785 gain 0.0035
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[210/320] recipes__rd_example__step_kpca_Rd.R   F  s2 verified             0.3711->0.3711 gain 0.0
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'sample1' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'sample2' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'sample3' is a data entity but Python could not serialize it — excluded from comparison
+[211/320] rvest__rd_example__html_table_Rd.R    F  s2 verified             0.2697->0.2697 gain 0.0
+[212/320] sass__rd_example__sass_import_Rd.R    F  s2 verified             0.45->0.45 gain 0.0
+[213/320] sass__rd_example__as_sass_Rd.R        U  s2 verified             0.7419->0.7252 gain 0.0
+[214/320] sessioninfo__rd_example__python_info  U  s2 verified             0.8053->0.8053 gain 0.0
+[215/320] sass__rd_example__as_sass_Rd.R        F  s2 verified             0.7422->0.7252 gain 0.0
+[216/320] sass__rd_example__sass_import_Rd.R    U  s2 verified             0.45->0.45 gain 0.0
+[217/320] shiny__rd_example__actionButton_Rd.R  U  s2 verified             0.5516->0.0 gain 0.0
+[218/320] shiny__rd_example__actionButton_Rd.R  F  s2 verified             0.5516->0.0 gain 0.0
+[219/320] sessioninfo__rd_example__platform_in  F  s2 verified             0.7523->0.9088 gain 0.0
+[220/320] recipes__rd_example__discretize_Rd.R  U  s2 verified             0.7416->0.6092 gain 0.0
+[221/320] shiny__rd_example__updateRadioButton  U  s2 verified             0.25->0.25 gain 0.0
+[222/320] sessioninfo__rd_example__platform_in  U  s2 verified             0.7523->0.8166 gain 0.0
+[223/320] shiny__rd_example__updateRadioButton  F  s2 verified             0.25->0.25 gain 0.0
+[224/320] sessioninfo__rd_example__python_info  F  s2 verified             0.8053->0.7946 gain 0.0
+[225/320] shape__rd_example__filledmultigonal_  U  s2 verified             0.6197->0.8127 gain 0.193
+[226/320] systemfonts__rd_example__shape_strin  U  s2 verified             0.7088->0.7037 gain 0.0
+[227/320] systemfonts__rd_example__shape_strin  F  s2 verified             0.7088->0.7092 gain 0.0004
+[228/320] shape__rd_example__filledmultigonal_  F  s2 verified             0.6197->0.6197 gain 0.0
+[229/320] textshaping__rd_example__lorem_text_  F  s2 verified             0.5946->0.7716 gain 0.177
+[230/320] textshaping__rd_example__shape_text_  U  s2 verified             0.6782->0.6733 gain 0.0
+[231/320] textshaping__rd_example__lorem_text_  U  s2 verified             0.5937->0.0 gain 0.0
+[232/320] textshaping__rd_example__shape_text_  F  s2 verified             0.6782->0.6727 gain 0.0
+[233/320] xml2__rd_example__xml_attr_Rd.R       U  s2 verified             0.7926->0.776 gain 0.0
+[234/320] bslib__rd_example__layout_column_wra  U  s3 verified             0.5487->0.5487 gain 0.0
+[235/320] textshaping__rd_example__get_font_fe  F  s2 verified             0.739->0.7233 gain 0.0
+[236/320] bslib__rd_example__layout_column_wra  F  s3 verified             0.5487->0.5487 gain 0.0
+[237/320] timeDate__rd_example__calendar-isBiz  F  s2 verified             0.8684->0.8292 gain 0.0
+[238/320] timeDate__rd_example__calendar-isBiz  U  s2 verified             0.8684->0.8333 gain 0.0
+[239/320] textshaping__rd_example__get_font_fe  U  s2 verified             0.739->0.727 gain 0.0
+[240/320] bslib__rd_example__page_fillable_Rd.  U  s3 verified             0.25->0.0 gain 0.0
+[241/320] bslib__rd_example__value_box_Rd.R     F  s3 verified             0.5->0.0 gain 0.0
+[242/320] bslib__rd_example__value_box_Rd.R     U  s3 verified             0.5->0.6658 gain 0.1658
+[243/320] xml2__rd_example__xml_attr_Rd.R       F  s2 verified             0.7926->0.7926 gain 0.0
+[244/320] caret__rd_example__update_train_Rd.R  U  s3 verified             0.55->0.5585 gain 0.0085
+[245/320] bslib__rd_example__page_fillable_Rd.  F  s3 verified             0.25->0.25 gain 0.0
+[246/320] caret__rd_example__update_train_Rd.R  F  s3 verified             0.55->0.5603 gain 0.0103
+[247/320] caret__vignette__caret_s3.R           U  s3 verified             0.7419->0.4041 gain 0.0
+[248/320] e1071__rd_example__boxplot_bclust_Rd  U  s3 verified             0.375->0.2564 gain 0.0
+[249/320] caret__vignette__caret_s3.R           F  s3 verified             0.7419->0.4086 gain 0.0
+[250/320] systemfonts__rd_example__glyph_raste  U  s2 verified             0.6634->0.4683 gain 0.0
+[251/320] systemfonts__rd_example__glyph_raste  F  s2 verified             0.6634->0.4686 gain 0.0
+[252/320] fansi__rd_example__normalize_state_R  U  s3 verified             0.7711->0.0 gain 0.0
+[253/320] farver__rd_example__as_white_ref_Rd.  U  s3 verified             0.8211->0.7953 gain 0.0
+[254/320] farver__rd_example__as_white_ref_Rd.  F  s3 verified             0.8211->0.9833 gain 0.0
+[255/320] farver__rd_example__encode_colour_Rd  F  s3 verified             0.6947->0.8447 gain 0.15
+[256/320] fansi__rd_example__normalize_state_R  F  s3 verified             0.7711->0.8957 gain 0.0
+[257/320] e1071__rd_example__boxplot_bclust_Rd  F  s3 verified             0.375->0.3814 gain 0.0064
+[258/320] farver__rd_example__convert_colour_R  F  s3 verified             0.4429->0.6252 gain 0.0
+[259/320] ggplot2__rd_example__geom_bin_2d_Rd.  U  s3 verified             0.5->0.0 gain 0.0
+[260/320] ggplot2__rd_example__geom_bin_2d_Rd.  F  s3 verified             0.5->0.0 gain 0.0
+[261/320] farver__rd_example__convert_colour_R  U  s3 verified             0.4429->0.6254 gain 0.0
+[262/320] htmltools__rd_example__builder_Rd.R   F  s3 verified             0.5->0.9804 gain 0.4804
+[263/320] htmltools__rd_example__builder_Rd.R   U  s3 verified             0.5->0.9804 gain 0.4804
+[264/320] openssl__rd_example__aes_cbc_Rd.R     F  s3 verified             0.55->0.4 gain 0.0
+[265/320] farver__rd_example__encode_colour_Rd  U  s3 verified             0.6947->0.85 gain 0.0
+[266/320] gtable__rd_example__gtable_add_cols_  F  s3 verified             0.7->0.0 gain 0.0
+[267/320] openssl__rd_example__ec_dh_Rd.R       F  s3 verified             0.6688->0.6722 gain 0.0034
+[268/320] openssl__vignette__bignum_s2.R        F  s3 no rewrite           0.3621->None gain 0.0
+[269/320] openssl__rd_example__aes_cbc_Rd.R     U  s3 verified             0.55->0.55 gain 0.0
+[270/320] openssl__vignette__bignum_s2.R        U  s3 verified             0.3621->0.3621 gain 0.0
+[271/320] openssl__rd_example__ec_dh_Rd.R       U  s3 verified             0.673->0.6612 gain 0.0
+[272/320] gtable__rd_example__gtable_add_cols_  U  s3 verified             0.7->0.54 gain 0.0
+[273/320] proxy__rd_example__registry_Rd.R      F  s3 verified             0.8114->0.813 gain 0.0016
+[274/320] pROC__rd_example__print_Rd.R          F  s3 verified             0.9611->0.9863 gain 0.0252
+[275/320] prodlim__rd_example__backGround_Rd.R  F  s3 verified             0.6381->0.819 gain 0.181
+[276/320] purrr__rd_example__attr_getter_Rd.R   U  s3 verified             0.6302->0.625 gain 0.0
+[277/320] prodlim__rd_example__backGround_Rd.R  U  s3 verified             0.6381->0.819 gain 0.181
+[278/320] purrr__rd_example__attr_getter_Rd.R   F  s3 verified             0.6302->0.7929 gain 0.1627
+[279/320] proxy__rd_example__registry_Rd.R      U  s3 verified             0.8114->0.8116 gain 0.0002
+[280/320] pROC__rd_example__print_Rd.R          U  s3 verified             0.9611->0.9863 gain 0.0252
+[281/320] ragg__rd_example__agg_capture_Rd.R    U  s3 verified             0.4038->0.4038 gain 0.0
+[282/320] ragg__rd_example__agg_capture_Rd.R    F  s3 verified             0.4038->0.4038 gain 0.0
+[283/320] pROC__rd_example__coords_Rd.R         U  s3 verified             0.4111->0.0 gain 0.0
+[284/320] recipes__rd_example__discretize_Rd.R  F  s3 verified             0.7416->0.7545 gain 0.0129
+[285/320] reshape2__rd_example__melt_data_fram  U  s3 verified             0.375->0.3785 gain 0.0035
+[286/320] recipes__rd_example__discretize_Rd.R  U  s3 verified             0.7416->0.7519 gain 0.0103
+[287/320] pROC__rd_example__coords_Rd.R         F  s3 verified             0.4111->0.0 gain 0.0
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[288/320] recipes__rd_example__step_kpca_Rd.R   U  s3 verified             0.3711->0.3711 gain 0.0
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[289/320] reshape2__rd_example__melt_data_fram  F  s3 verified             0.375->0.3785 gain 0.0035
+[290/320] recipes__rd_example__step_kpca_Rd.R   F  s3 verified             0.3711->0.3711 gain 0.0
+[291/320] sass__rd_example__sass_import_Rd.R    U  s3 verified             0.45->0.45 gain 0.0
+[292/320] sass__rd_example__sass_import_Rd.R    F  s3 verified             0.45->0.45 gain 0.0
+[r2py] WARNING: 'sample1' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'sample2' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'sample3' is a data entity but Python could not serialize it — excluded from comparison
+[293/320] rvest__rd_example__html_table_Rd.R    U  s3 verified             0.2697->0.2697 gain 0.0
+[294/320] rvest__rd_example__html_table_Rd.R    F  s3 verified             0.2697->0.9759 gain 0.7062
+[295/320] sessioninfo__rd_example__platform_in  U  s3 verified             0.7523->0.8381 gain 0.0
+[296/320] sessioninfo__rd_example__platform_in  F  s3 verified             0.7523->0.8327 gain 0.0
+[297/320] sass__rd_example__as_sass_Rd.R        U  s3 verified             0.7422->0.7425 gain 0.0003
+[298/320] sass__rd_example__as_sass_Rd.R        F  s3 verified             0.7425->0.7252 gain 0.0
+[299/320] shiny__rd_example__actionButton_Rd.R  U  s3 verified             0.5516->0.0 gain 0.0
+[300/320] shiny__rd_example__actionButton_Rd.R  F  s3 verified             0.5516->0.0 gain 0.0
+[301/320] shape__rd_example__filledmultigonal_  U  s3 verified             0.6197->0.6197 gain 0.0
+[302/320] shiny__rd_example__updateRadioButton  U  s3 verified             0.25->0.25 gain 0.0
+[303/320] shiny__rd_example__updateRadioButton  F  s3 verified             0.25->0.25 gain 0.0
+[304/320] shape__rd_example__filledmultigonal_  F  s3 verified             0.6197->0.6197 gain 0.0
+[305/320] sessioninfo__rd_example__python_info  U  s3 verified             0.8053->0.8291 gain 0.0
+[306/320] systemfonts__rd_example__shape_strin  U  s3 verified             0.7088->0.0 gain 0.0
+[307/320] systemfonts__rd_example__shape_strin  F  s3 verified             0.7088->0.6975 gain 0.0
+[308/320] textshaping__rd_example__lorem_text_  U  s3 verified             0.5946->0.9984 gain 0.4039
+[309/320] textshaping__rd_example__shape_text_  U  s3 verified             0.6782->0.6735 gain 0.0
+[310/320] textshaping__rd_example__get_font_fe  U  s3 verified             0.739->0.0 gain 0.0
+[311/320] textshaping__rd_example__lorem_text_  F  s3 verified             0.5937->0.674 gain 0.0803
+[312/320] textshaping__rd_example__shape_text_  F  s3 verified             0.6782->0.6733 gain 0.0
+[313/320] sessioninfo__rd_example__python_info  F  s3 verified             0.8053->0.7966 gain 0.0
+[314/320] timeDate__rd_example__calendar-isBiz  F  s3 verified             0.8684->0.8333 gain 0.0
+[315/320] xml2__rd_example__xml_attr_Rd.R       F  s3 verified             0.7926->0.7926 gain 0.0
+[316/320] xml2__rd_example__xml_attr_Rd.R       U  s3 verified             0.7926->0.776 gain 0.0
+[317/320] timeDate__rd_example__calendar-isBiz  U  s3 verified             0.8684->0.8292 gain 0.0
+[318/320] textshaping__rd_example__get_font_fe  F  s3 verified             0.739->0.73 gain 0.0
+[319/320] systemfonts__rd_example__glyph_raste  U  s3 verified             0.6634->0.4686 gain 0.0
+[320/320] systemfonts__rd_example__glyph_raste  F  s3 verified             0.6634->0.5025 gain 0.0
+[r2py] Installing Python package 'bslib' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a42ec64534.py
+Traceback (most recent call last):
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 280, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 273, in main
+    text = summary()
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 241, in summary
+    boots = sorted(st.mean(rng.choice(diff) for _ in diff) for _ in range(5000))
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 241, in <genexpr>
+    boots = sorted(st.mean(rng.choice(diff) for _ in diff) for _ in range(5000))
+                   ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\anaconda3\Lib\statistics.py", line 490, in mean
+    raise StatisticsError('mean requires at least one data point')
+statistics.StatisticsError: mean requires at least one data point

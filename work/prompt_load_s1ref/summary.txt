@@ -1,0 +1,15 @@
+720 calls (provider outages excluded)
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+S0_current       180   13414       0%     24%    21%          -        22%   +0.067
+S1_minimal       180    8917       3%     37%    28%          -        41%   +0.097
+S1a_follow       180    9034       1%     48%    26%          -        32%   +0.076
+S1b_follow_compute 180    9119       4%     43%    27%          -        34%   +0.112
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 33)
+
+cases whose starting program runs: 715 calls; outcomes blocked by an earlier crash afterwards: 73
+arm                n   chars  no code  canary  adopt adopt snip adopt prnt  d score
+S0_current       179   13420       0%     24%    21%          -        22%   +0.067
+S1_minimal       179    8923       3%     37%    27%          -        40%   +0.092
+S1a_follow       178    9040       1%     48%    26%          -        33%   +0.077
+S1b_follow_compute 179    9125       4%     43%    27%          -        35%   +0.112
+(rates over all calls: no code / refused splices count as not following; print cases that pasted R's output as a literal: 33)

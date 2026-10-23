@@ -1,0 +1,111 @@
+Translation log
+Final score: 0.476
+Data score:  0.158
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(prodlim))
+
+============================================================
+Entity: import_prodlim
+  Name:  prodlim
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(prodlim))
+
+============================================================
+Entity: import_lava
+  Name:  lava
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(lava)
+
+============================================================
+Entity: m
+  Name:  m
+  Kind:  Variable
+  Score: 0.265
+  type_match:          0.019
+  control_flow_match:  1.000
+  data_output:         0.019
+  variable_output:     0.019
+  executed_ok:       True
+
+  R:
+    m <- crModel()
+  Python:
+    m = {
+        "n_events": 2,
+        "baseline_hazard": [0.1, 0.05]
+    }
+    
+    # d <- sim(m, 6)
+    # This simulates data for 6 individuals based on the model m.
+    # In a competing risks simulation, we typically generate 
+    # survival times and the event type (1, 2, or 0 for censored).
+
+============================================================
+Entity: d
+  Name:  d
+  Kind:  Variable
+  Score: 0.473
+  type_match:          0.298
+  control_flow_match:  1.000
+  data_output:         0.298
+  variable_output:     0.298
+  executed_ok:       True
+
+  R:
+    d <- sim(m,6)
+  Python:
+    np.random.seed(42)
+    n_sim = 6
+    
+    # Approximate simulation: 
+    # Using an exponential distribution to simulate times to failure for competing risks
+    # T = -log(U) / lambda
+    lambdas = np.array(m["baseline_hazard"])
+    u = np.random.uniform(0, 1, (n_sim, len(lambdas)))
+    times = -np.log(u) / lambdas
+    
+    # For each individual, the event is the one that occurs first (minimum time)
+    event_times = np.min(times, axis=1)
+    event_types = np.argmin(times, axis=1) + 1 # 1-indexed to match R
+    
+    # Create the dataframe d
+    d = pd.DataFrame({
+        "time": event_times,
+        "status": event_types
+    })
+    
+    # print(d)
+
+============================================================
+Entity: print
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.690
+  side_effects:        0.690
+  executed_ok:       True
+
+  R:
+    print(d)
+  Python:
+    print(d)

@@ -1,0 +1,241 @@
+Translation log
+Final score: 0.497
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: import_recipes
+  Name:  recipes
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(recipes))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_installed("modeldata")) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+  Python:
+    # for _r2py_shim_n in ['Sacramento']:
+    #     if _r2py_shim_n in _r2py_shim_data:
+    #         globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]
+    # r2py:data_shim:end
+    
+    import pandas as pd
+    import numpy as np
+    
+    # --- Simulation of recipes package ---
+
+============================================================
+Entity: data
+  Name:  data
+  Kind:  FunctionCall
+  Score: 0.000
+  type_match:          0.000
+  control_flow_match:  0.000
+  data_output:         0.000
+  variable_output:     0.000
+  callable_output:     0.000
+  executed_ok:       True
+
+  R:
+    data(Sacramento, package = "modeldata")
+  Python:
+    Sacramento = pd.DataFrame(Sacramento)
+    
+    # rec <- recipe(~ city + zip, data = Sacramento)
+
+============================================================
+Entity: rec
+  Name:  rec
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    rec <- recipe(~ city + zip, data = Sacramento)
+  Python:
+    class Recipe:
+        def __init__(self, formula, data):
+            self.formula = formula
+            self.data = data
+            self.steps = []
+            # Simulate var_info and term_info based on the formula/data
+            # In R, rec <- recipe(~ city + zip, data = Sacramento)
+            # We extract the predictors from the formula "~ city + zip"
+            predictors = [col for col in data.columns if col in formula]
+            self.var_info = pd.DataFrame({
+                'variable': predictors,
+                'type': ['factor' if data[col].dtype == 'object' else 'numeric' for col in predictors],
+                'role': ['predictor'] * len(predictors),
+                'source': ['original'] * len(predictors)
+            })
+            self.term_info = self.var_info.copy()
+            self.template = data.copy()
+            self.retained = True
+    
+        def __repr__(self):
+            return f"Recipe(steps={len(self.steps)}, var_info={self.var_info.to_dict('list')})"
+    rec = Recipe("city + zip", Sacramento)
+    
+    # make_string <- rec |> step_factor2string(city)
+
+============================================================
+Entity: make_string
+  Name:  make_string
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    make_string <- rec |>
+      step_factor2string(city)
+  Python:
+    make_string = step_factor2string(rec, 'city')
+    
+    # make_string <- prep(make_string, training = Sacramento, strings_as_factors = FALSE)
+
+============================================================
+Entity: step_factor2string
+  Name:  step_factor2string
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      step_factor2string(city)
+  Python:
+    def step_factor2string(recipe, column):
+        step = {
+            'subclass': 'factor2string',
+            'terms': column,
+            'role': None,
+            'trained': False,
+            'columns': column,
+            'skip': False,
+            'id': 'step_factor2string_1'
+        }
+        recipe.steps.append(step)
+        return recipe
+
+============================================================
+Entity: make_string_1
+  Name:  make_string
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    make_string <- prep(make_string,
+      training = Sacramento,
+      strings_as_factors = FALSE
+    )
+  Python:
+    def prep(recipe, training=None, strings_as_factors=False):
+        # In R: prep fits the transformation
+        if training is None:
+            training = recipe.template
+        
+        # Update training data based on strings_as_factors
+        tr_df = training.copy()
+        
+        for step in recipe.steps:
+            if step['subclass'] == 'factor2string':
+                col = step['terms']
+                # Mark as trained
+                step['trained'] = True
+                # In R, this step changes the type in term_info
+                recipe.term_info.loc[recipe.term_info['variable'] == col, 'type'] = 'string'
+        
+        # The result of prep is the recipe object itself (trained)
+        return recipe
+    make_string = prep(make_string, training=Sacramento, strings_as_factors=False)
+    
+    # make_string (print)
+    print(make_string)
+    
+    # bake(make_string, new_data = NULL) |> head()
+
+============================================================
+Entity: bake
+  Name:  bake
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    bake(make_string, new_data = NULL) |> head()
+  Python:
+    def bake(recipe, new_data=None):
+        # In R: bake applies the recipe. If new_data is NULL, it uses the training set (juice)
+        if new_data is None:
+            df = recipe.template.copy()
+        else:
+            df = new_data.copy()
+        
+        for step in recipe.steps:
+            if step['subclass'] == 'factor2string':
+                col = step['terms']
+                df[col] = df[col].astype(str)
+                
+        return df
+    
+    # --- Main Script ---
+    
+    # data(Sacramento, package = "modeldata")
+
+============================================================
+Entity: head
+  Name:  head
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    bake(make_string, new_data = NULL) |> head()
+  Python:
+    print(bake(make_string, new_data=None).head())
+    
+    # Sacramento |> head()
+
+============================================================
+Entity: head_1
+  Name:  head
+  Kind:  FunctionCall
+  Score: 0.737
+  side_effects:        0.737
+  executed_ok:       True
+
+  R:
+    Sacramento |> head()
+  Python:
+    print(Sacramento.head())

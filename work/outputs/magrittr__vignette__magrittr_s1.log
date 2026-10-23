@@ -1,0 +1,38 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: import_magrittr
+  Name:  magrittr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(magrittr)
+
+============================================================
+Entity: options
+  Name:  options
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    options(scipen = 3)
+  Python:
+    np.set_printoptions(suppress=True)
+    pd.set_option('display.float_format', lambda x: '%.3f' % x)
+
+============================================================
+Entity: opts_chunk$set
+  Name:  opts_chunk$set
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    knitr::opts_chunk$set(comment = "#>", collapse = TRUE)

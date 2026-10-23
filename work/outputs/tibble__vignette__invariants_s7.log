@@ -1,0 +1,129 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tibble))
+
+============================================================
+Entity: import_tibble
+  Name:  tibble
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tibble))
+
+============================================================
+Entity: with_df
+  Name:  with_df
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    with_df <- function(code, verbose = FALSE) {
+      code <- rlang::enexpr(code)
+    
+      full_code <- rlang::quo({
+        df <- new_df()
+        !!code
+        df
+      })
+      if (verbose) rlang::expr_print(rlang::quo_get_expr(full_code))
+      rlang::eval_tidy(full_code)
+    }
+  Python:
+    def with_df(code_func, verbose=False):
+        df = new_df()
+        result = code_func(df)
+        if verbose:
+            print(f"Executing operation on df: {code_func}")
+        return result
+
+============================================================
+Entity: with_tbl
+  Name:  with_tbl
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    with_tbl <- function(code, verbose = FALSE) {
+      code <- rlang::enexpr(code)
+    
+      full_code <- rlang::quo({
+        tbl <- new_tbl()
+        !!code
+        tbl
+      })
+      if (verbose) rlang::expr_print(rlang::quo_get_expr(full_code))
+      rlang::eval_tidy(full_code)
+    }
+  Python:
+    def with_tbl(code_func, verbose=False):
+        tbl = new_tbl()
+        result = code_func(tbl)
+        if verbose:
+            print(f"Executing operation on tbl: {code_func}")
+        return result
+
+============================================================
+Entity: with_df2
+  Name:  with_df2
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    with_df2 <- function(code) {
+      code <- rlang::enexpr(code)
+    
+      full_code <- rlang::quo({
+        df2 <- new_df2()
+        !!code
+        df2
+      })
+      rlang::eval_tidy(full_code)
+    }
+  Python:
+    def with_df2(code_func):
+        df2 = new_df2()
+        return code_func(df2)
+
+============================================================
+Entity: with_tbl2
+  Name:  with_tbl2
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    with_tbl2 <- function(code) {
+      code <- rlang::enexpr(code)
+    
+      full_code <- rlang::quo({
+        tbl2 <- new_tbl2()
+        !!code
+        tbl2
+      })
+      rlang::eval_tidy(full_code)
+    }
+  Python:
+    def with_tbl2(code_func):
+        tbl2 = new_tbl2()
+        return code_func(tbl2)

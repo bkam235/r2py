@@ -1,0 +1,25 @@
+240 steps, errors 0
+
+all:
+  U: steps 120  P(improve) 0.333  realized gain +0.0796
+  D: steps 120  P(improve) 0.358  realized gain +0.1021
+  U best of 2: P(improve) 0.450
+  D - U, P(improve): +0.0250 [-0.0583, +0.1167]  (60 states)
+  D - U, realized gain: +0.0225 [-0.0070, +0.0556]  (60 states)
+  D - U best of 2, P(improve): -0.0917 [-0.1917, +0.0083]  (60 states)
+
+running starts:
+  U: steps 80  P(improve) 0.263  realized gain +0.0284
+  D: steps 80  P(improve) 0.350  realized gain +0.0575
+  U best of 2: P(improve) 0.375
+  D - U, P(improve): +0.0875 [-0.0125, +0.1875]  (40 states)
+  D - U, realized gain: +0.0291 [-0.0072, +0.0713]  (40 states)
+  D - U best of 2, P(improve): -0.0250 [-0.1375, +0.1000]  (40 states)
+
+crashing starts:
+  U: steps 40  P(improve) 0.475  realized gain +0.1821
+  D: steps 40  P(improve) 0.375  realized gain +0.1915
+  U best of 2: P(improve) 0.600
+  D - U, P(improve): -0.1000 [-0.2250, +0.0250]  (20 states)
+  D - U, realized gain: +0.0094 [-0.0352, +0.0540]  (20 states)
+  D - U best of 2, P(improve): -0.2250 [-0.4250, -0.0500]  (20 states)

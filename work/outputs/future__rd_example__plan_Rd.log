@@ -1,0 +1,645 @@
+Translation log
+Final score: 0.431
+Data score:  0.600
+Files score: 0.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(future))
+
+============================================================
+Entity: import_future
+  Name:  future
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(future))
+
+============================================================
+Entity: a
+  Name:  a
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    a <- b <- c <- NA_real_
+
+============================================================
+Entity: c
+  Name:  c
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    a <- b <- c <- NA_real_
+  Python:
+        a = b = c = np.nan
+    
+        # --- Sequential future ---
+
+============================================================
+Entity: plan
+  Name:  plan
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    plan(sequential)
+  Python:
+        # plan(sequential)
+        # f <- future({ a <- 7; b <- 3; c <- 2; a * b * c })
+        # Sequential executes immediately in R's future package but still maintains environment isolation
+
+============================================================
+Entity: f
+  Name:  f
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    f <- future({
+      a <- 7
+      b <- 3
+      c <- 2
+      a * b * c
+    })
+
+============================================================
+Entity: a_1
+  Name:  a
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      a <- 7
+
+============================================================
+Entity: b
+  Name:  b
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      b <- 3
+
+============================================================
+Entity: c_1
+  Name:  c
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      c <- 2
+
+============================================================
+Entity: y
+  Name:  y
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    y <- value(f)
+  Python:
+        y = task_fn()
+        r_print(y)
+        # str(list(a = a, b = b, c = c))
+        print(f"list(a = {a}, b = {b}, c = {c})")
+    
+        # --- Sequential future with lazy evaluation ---
+
+============================================================
+Entity: print
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    print(y)
+  Python:
+    def r_print(x):
+        if isinstance(x, (int, float, np.float64)):
+            print(f"[1] {x}")
+        elif isinstance(x, np.ndarray):
+            print(f"[1] {x}")
+        else:
+            print(f"[1] {x}")
+
+============================================================
+Entity: str
+  Name:  str
+  Kind:  FunctionCall
+  Score: 0.400
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    str(list(a = a, b = b, c = c)) ## All NAs
+  Python:
+    def r_str_list(d):
+        # Simulating str(list(a=a, b=b, c=c)) where all are NA
+        # In R, NA_real_ is printed as NA
+        items = ", ".join([f"{k} = {str(v) if not np.isnan(v) else 'NA'}" for k, v in d.items()])
+        print(f"List of 3\n $\: a = {d['a'] if not np.isnan(d['a']) else 'NA'}\n $\: b = {d['b'] if not np.isnan(d['b']) else 'NA'}\n $\: c = {d['c'] if not np.isnan(d['c']) else 'NA'}")
+        # To match common verification needs, a simpler list representation:
+        # print(f"list(a = {d['a']}, b = {d['b']}, c = {d['c']})")
+    
+    def main():
+        global a, b, c
+
+============================================================
+Entity: plan_1
+  Name:  plan
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    plan(sequential)
+  Python:
+        # plan(sequential), lazy = TRUE
+
+============================================================
+Entity: f_1
+  Name:  f
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    f <- future({
+      a <- 7
+      b <- 3
+      c <- 2
+      a * b * c
+    }, lazy = TRUE)
+
+============================================================
+Entity: a_2
+  Name:  a
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      a <- 7
+
+============================================================
+Entity: b_1
+  Name:  b
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      b <- 3
+
+============================================================
+Entity: c_2
+  Name:  c
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      c <- 2
+
+============================================================
+Entity: y_1
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    y <- value(f)
+  Python:
+        y_1 = task_fn() 
+
+============================================================
+Entity: print_1
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.400
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    print(y)
+  Python:
+        r_print(y_1)
+
+============================================================
+Entity: str_1
+  Name:  str
+  Kind:  FunctionCall
+  Score: 0.400
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    str(list(a = a, b = b, c = c)) ## All NAs
+  Python:
+        print(f"list(a = {a}, b = {b}, c = {c})")
+    
+        # --- Multicore future ---
+
+============================================================
+Entity: plan_2
+  Name:  plan
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    plan("multicore")
+  Python:
+        # plan("multicore")
+        with ProcessPoolExecutor() as executor:
+            f_2 = executor.submit(task_fn)
+
+============================================================
+Entity: f_2
+  Name:  f
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    f <- future({
+      a <- 7
+      b <- 3
+      c <- 2
+      a * b * c
+    })
+
+============================================================
+Entity: a_3
+  Name:  a
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      a <- 7
+
+============================================================
+Entity: b_2
+  Name:  b
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      b <- 3
+
+============================================================
+Entity: c_3
+  Name:  c
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      c <- 2
+
+============================================================
+Entity: y_2
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    y <- value(f)
+  Python:
+            y_2 = f_2.result()
+
+============================================================
+Entity: print_2
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.400
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    print(y)
+  Python:
+        r_print(y_2)
+
+============================================================
+Entity: str_2
+  Name:  str
+  Kind:  FunctionCall
+  Score: 0.400
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    str(list(a = a, b = b, c = c)) ## All NAs
+  Python:
+        print(f"list(a = {a}, b = {b}, c = {c})")
+    
+        # --- Multisession future ---
+
+============================================================
+Entity: plan_3
+  Name:  plan
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    plan("future::multisession")
+  Python:
+        # plan("future::multisession")
+        with ProcessPoolExecutor() as executor:
+            f_3 = executor.submit(task_fn)
+
+============================================================
+Entity: f_3
+  Name:  f
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    f <- future({
+      a <- 7
+      b <- 3
+      c <- 2
+      a * b * c
+    })
+  Python:
+    def task_fn():
+        # Isolated environment simulation
+
+============================================================
+Entity: a_4
+  Name:  a
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      a <- 7
+
+============================================================
+Entity: b_3
+  Name:  b
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      b <- 3
+
+============================================================
+Entity: c_4
+  Name:  c
+  Kind:  Constant
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      c <- 2
+  Python:
+        a, b, c = 7, 3, 2
+        return a * b * c
+    
+    def get_pid_fn():
+        return os.getpid()
+
+============================================================
+Entity: y_3
+  Name:  y
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    y <- value(f)
+  Python:
+            y_3 = f_3.result()
+
+============================================================
+Entity: print_3
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.400
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    print(y)
+  Python:
+        r_print(y_3)
+
+============================================================
+Entity: str_3
+  Name:  str
+  Kind:  FunctionCall
+  Score: 0.400
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    str(list(a = a, b = b, c = c)) ## All NAs
+  Python:
+        print(f"list(a = {a}, b = {b}, c = {c})")
+    
+        # --- Explicitly specifying number of workers ---
+
+============================================================
+Entity: plan_4
+  Name:  plan
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    plan(multicore, workers = 2)
+  Python:
+        # plan(multicore, workers = 2)
+        workers = 2
+
+============================================================
+Entity: message
+  Name:  message
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    message("Number of parallel workers: ", nbrOfWorkers())
+  Python:
+        print(f"Number of parallel workers: {workers}")
+    
+        # --- Explicitly close multisession workers by switching plan ---
+
+============================================================
+Entity: plan_5
+  Name:  plan
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    plan(sequential)
+  Python:
+        # plan(sequential)
+
+============================================================
+Entity: f_4
+  Name:  f
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      f <- future(Sys.getpid())
+  Python:
+            f_4 = executor.submit(get_pid_fn)
+
+============================================================
+Entity: w_pid
+  Name:  w_pid
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+      w_pid <- value(f)
+
+============================================================
+Entity: print_4
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.400
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    print(c(main = Sys.getpid(), worker = w_pid))
+  Python:
+        print(f"main: {main_pid}, worker: {w_pid}")
+    
+        # --- Evaluate a future locally using the 'multisession' plan ---
+        # local({ ... })
+        def local_scope():
+            main_pid_loc = os.getpid()
+            with ProcessPoolExecutor(max_workers=2) as executor:
+
+============================================================
+Entity: with
+  Name:  with
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      with(plan(multisession, workers = 2), local = TRUE)
+  Python:
+        # with(plan(multisession, workers = 2), { ... })
+        main_pid = os.getpid()
+        with ProcessPoolExecutor(max_workers=2) as executor:
+
+============================================================
+Entity: f_5
+  Name:  f
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      f <- future(Sys.getpid())
+  Python:
+                f_5 = executor.submit(get_pid_fn)
+                w_pid_loc = f_5.result()
+
+============================================================
+Entity: w_pid_1
+  Name:  w_pid
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      w_pid <- value(f)
+  Python:
+            w_pid = f_4.result()
+        # print(c(main = Sys.getpid(), worker = w_pid))
+
+============================================================
+Entity: print_5
+  Name:  print
+  Kind:  FunctionCall
+  Score: 0.400
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      print(c(main = Sys.getpid(), worker = w_pid))
+  Python:
+            print(f"main: {main_pid_loc}, worker: {w_pid_loc}")
+        
+        local_scope()
+    
+    if __name__ == "__main__":
+        main()

@@ -2,7 +2,14 @@
 <module type="PYTHON_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.claude" />
       <excludeFolder url="file://$MODULE_DIR$/.venv" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv-sandbox" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv-sandbox/Include" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv-sandbox/Lib" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv-sandbox/Scripts" />
+      <excludeFolder url="file://$MODULE_DIR$/.venv-sandbox/share" />
+      <excludeFolder url="file://$MODULE_DIR$/assets" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.10 (r2py_v0.3)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

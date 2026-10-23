@@ -1,0 +1,98 @@
+Translation log
+Final score: 0.930
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(diagram))
+
+============================================================
+Entity: import_diagram
+  Name:  diagram
+  Kind:  LibraryImport
+  Score: 0.920
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(diagram))
+
+============================================================
+Entity: openplotmat
+  Name:  openplotmat
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+    openplotmat(xlim = c(-0.1, 1.1), main = "textdiamond")
+  Python:
+    fig, ax = plt.subplots(figsize=(6, 6))
+    ax.set_xlim(-0.1, 1.1)
+    ax.set_ylim(-0.1, 1.1)
+    ax.set_title("textdiamond")
+    ax.axis('off')
+
+============================================================
+Entity: textdiamond
+  Name:  textdiamond
+  Kind:  FunctionCall
+  Score: 0.933
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.600
+  executed_ok:       True
+
+  R:
+      textdiamond(mid = runif(2), col = i, radx = 0.1, rady = 0.05,
+                  lab = LETTERS[i], cex = 2, angle = runif(1)*360)
+  Python:
+    for idx, row in data.iterrows():
+        # Create diamond shape using an Ellipse
+        diamond = Ellipse(
+            xy=(row['x'], row['y']),
+            width=0.2,  # radx * 2
+            height=0.1, # rady * 2
+            angle=row['angle'],
+            edgecolor=plt.cm.tab10(row['color']/10),
+            facecolor='none',
+            linewidth=2
+        )
+        ax.add_patch(diamond)
+        
+        # Add text label
+        ax.text(
+            row['x'], row['y'], 
+            row['label'], 
+            ha='center', va='center', 
+            fontsize=14, 
+            rotation=row['angle']
+        )
+    
+    plt.show()

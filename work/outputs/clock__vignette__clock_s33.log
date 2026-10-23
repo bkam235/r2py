@@ -1,0 +1,78 @@
+Translation log
+Final score: 0.750
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: import_clock
+  Name:  clock
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(clock))
+
+============================================================
+Entity: x
+  Name:  x
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    x <- date_build(2020, 1, 1)
+  Python:
+    def date_build(year, month=1, day=1):
+        # Mimics R's date_build which returns a Date object
+        return pd.Timestamp(year=year, month=month, day=day).date()
+    
+    x = date_build(2020, 1, 1)
+
+============================================================
+Entity: add_years
+  Name:  add_years
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    add_years(x, 1:5)
+  Python:
+    def add_years(date_obj, n):
+        # n can be a scalar or a sequence (1:5 in R)
+        if isinstance(n, (list, np.ndarray, range)):
+            results = []
+            for val in n:
+                # Use DateOffset to add years
+                res = pd.Timestamp(date_obj) + pd.DateOffset(years=int(val))
+                results.append(res.strftime('%Y-%m-%d'))
+            return results
+        else:
+            res = pd.Timestamp(date_obj) + pd.DateOffset(years=int(n))
+            return res.strftime('%Y-%m-%d')
+    
+    # R code: add_years(x, 1:5)
+    years_to_add = np.arange(1, 6)
+    res_add_years = add_years(x, years_to_add)
+    
+    # To match R's output: [1] "2021-01-01" "2022-01-01" ...
+    formatted_output = ' '.join([f'"{d}"' for d in res_add_years])
+    print(f"[1] {formatted_output}")

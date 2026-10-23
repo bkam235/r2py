@@ -1,0 +1,113 @@
+Translation log
+Final score: 0.867
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: import_dplyr
+  Name:  dplyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(dplyr))
+
+============================================================
+Entity: gdf
+  Name:  gdf
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    gdf <- iris |> group_by(Species)
+
+============================================================
+Entity: group_by
+  Name:  group_by
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    gdf <- iris |> group_by(Species)
+  Python:
+    df_iris = pd.DataFrame(iris)
+    
+    # gdf <- iris |> group_by(Species)
+    gdf = df_iris.copy()
+    # In R, group_by doesn't change the data, just adds metadata. 
+    group_cols_list = ['Species']
+    
+    # gdf |> select(group_cols())
+
+============================================================
+Entity: select
+  Name:  select
+  Kind:  FunctionCall
+  Score: 0.823
+  side_effects:        0.823
+  executed_ok:       True
+
+  R:
+    gdf |> select(group_cols())
+  Python:
+    res_select = gdf[group_cols_list]
+    print(res_select.head(10))
+    
+    # Remove the grouping variables from mutate selections:
+    # gdf |> mutate_at(vars(-group_cols()), `/`, 100)
+
+============================================================
+Entity: mutate_at
+  Name:  mutate_at
+  Kind:  FunctionCall
+  Score: 0.822
+  side_effects:        0.822
+  executed_ok:       True
+
+  R:
+    gdf |> mutate_at(vars(-group_cols()), `/`, 100)
+  Python:
+    cols_to_mutate = [c for c in gdf.columns if c not in group_cols_list]
+    gdf_mutate_at = gdf.copy()
+    gdf_mutate_at[cols_to_mutate] = gdf_mutate_at[cols_to_mutate] / 100
+    print(gdf_mutate_at.head(10))
+    
+    # gdf |> mutate(across(everything(), ~ . / 100))
+
+============================================================
+Entity: mutate
+  Name:  mutate
+  Kind:  FunctionCall
+  Score: 0.822
+  side_effects:        0.822
+  executed_ok:       True
+
+  R:
+    gdf |> mutate(across(everything(), ~ . / 100))
+  Python:
+    gdf_final = gdf.copy()
+    # across(everything()) applies to all columns.
+    # In R, dividing a factor by 100 usually results in NA for that column, 
+    # but the column is kept. In Python, we only divide numeric types to avoid TypeError.
+    numeric_cols = gdf_final.select_dtypes(include=[np.number]).columns
+    gdf_final[numeric_cols] = gdf_final[numeric_cols] / 100
+    print(gdf_final.head(10))

@@ -1,0 +1,82 @@
+Translation log
+Final score: 0.750
+Data score:  0.500
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(cli))
+
+============================================================
+Entity: import_cli
+  Name:  cli
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(cli))
+
+============================================================
+Entity: str
+  Name:  str
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    str <- paste0(
+      "\U0001f477\U0001f3ff\u200d\u2640\ufe0f",
+      "\U0001f477\U0001f3ff",
+      "\U0001f477\u200d\u2640\ufe0f",
+      "\U0001f477\U0001f3fb",
+      "\U0001f477\U0001f3ff")
+  Python:
+    text_str = (
+        "\U0001f477\U0001f3ff\u200d\u2640\ufe0f"
+        "\U0001f477\U0001f3ff"
+        "\U0001f477\u200d\u2640\ufe0f"
+        "\U0001f477\U0001f3fb"
+        "\U0001f477\U0001f3ff"
+    )
+
+============================================================
+Entity: cat
+  Name:  cat
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    cat(str, "\n")
+  Python:
+    print(text_str)
+
+============================================================
+Entity: chrs
+  Name:  chrs
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    chrs <- utf8_graphemes(str)
+  Python:
+    chrs = list(grapheme.graphemes(text_str))

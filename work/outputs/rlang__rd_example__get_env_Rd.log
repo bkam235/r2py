@@ -1,0 +1,332 @@
+Translation log
+Final score: 0.902
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: import_rlang
+  Name:  rlang
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(rlang))
+
+============================================================
+Entity: fn
+  Name:  fn
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    fn <- function() "foo"
+  Python:
+    def _fn_impl():
+        return "foo"
+    fn = _fn_impl
+
+============================================================
+Entity: get_env
+  Name:  get_env
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    get_env(fn)
+  Python:
+    def get_env(obj, default=None):
+        """Translates get_env logic."""
+        # Closure functions
+        if isinstance(obj, types.FunctionType):
+            if hasattr(obj, "_r_env"):
+                return obj._r_env
+            return current_env()
+        
+        # RFunction wrapper (simulating closure with env)
+        if isinstance(obj, RFunction):
+            return obj.env
+    
+        # Quosures (dicts with 'env')
+        if isinstance(obj, dict) and "env" in obj:
+            return obj["env"]
+        
+        # Formulas
+        if isinstance(obj, RFormula):
+            return obj.env if obj.env is not None else default
+    
+        # Environments
+        if isinstance(obj, REnv):
+            return obj
+    
+        return default
+    
+    class RFunction:
+        """Wrapper to simulate R closure with a specific environment."""
+        def __init__(self, func, env_val):
+            self.func = func
+            self.env = env_val
+        def __call__(self, *args, **kwargs):
+            return self.func(*args, **kwargs)
+        def __repr__(self):
+            # Simulate the R output format for functions
+            return f"function () \nNULL\n<environment: {self.env}>"
+    print(get_env(fn))
+    
+    # Or of quosures or formulas:
+
+============================================================
+Entity: get_env_1
+  Name:  get_env
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    get_env(~foo)
+  Python:
+    formula_obj = RFormula("foo", env_val=current_env())
+    print(get_env(formula_obj))
+
+============================================================
+Entity: get_env_2
+  Name:  get_env
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    get_env(quo(foo))
+  Python:
+    def quo(expr):
+        """Simulates R's quo() capturing expression and environment."""
+        return {"expr": expr, "env": current_env()}
+    print(get_env(quo("foo")))
+    
+    # Provide a default in case the object doesn't bundle an environment.
+
+============================================================
+Entity: f
+  Name:  f
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    f <- quote(~foo)
+  Python:
+    class RFormula:
+        def __init__(self, expr, env_val=None):
+            self.expr = expr
+            self.env = env_val
+        def __repr__(self):
+            return f"~{self.expr}"
+    f = RFormula("foo") # Unevaluated formulas in R don't have an env yet
+
+============================================================
+Entity: default
+  Name:  default
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    default <- env()
+  Python:
+    def env():
+        """Returns a new empty environment."""
+        return REnv(name="empty_env")
+    
+    def current_env():
+        """Returns the simulated global environment."""
+        if not hasattr(current_env, "_global"):
+            current_env._global = REnv(name="R_GlobalEnv")
+        return current_env._global
+    default = env()
+
+============================================================
+Entity: identical
+  Name:  identical
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    identical(get_env(f, default), default)
+  Python:
+    def identical(x, y):
+        """Equivalent to R's identical()."""
+        return x is y
+    
+    def format_bool(val):
+        return "TRUE" if val else "FALSE"
+    
+    # --- Execution ---
+    
+    # Environment of closure functions:
+    print(f"[1] {format_bool(identical(get_env(f, default), default))}")
+    
+    # set_env() can be used to set the enclosure of functions and formulas.
+
+============================================================
+Entity: env
+  Name:  env
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    env <- child_env("base")
+  Python:
+    def child_env(parent_val=None):
+        """Creates a child environment."""
+        if isinstance(parent_val, str):
+            # Simulate namespace environments like "base"
+            return REnv(name=parent_val)
+        parent = parent_val if isinstance(parent_val, REnv) else current_env()
+        return REnv(name="child_env", parent=parent)
+    env_val = child_env("base")
+
+============================================================
+Entity: fn_1
+  Name:  fn
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    fn <- set_env(function() NULL, env)
+  Python:
+    def _fn_null():
+        return None
+    fn = set_env(_fn_null, env_val)
+    
+    # That function now has `env_val` as enclosure:
+
+============================================================
+Entity: identical_1
+  Name:  identical
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    identical(get_env(fn), env)
+  Python:
+    print(f"[1] {format_bool(identical(get_env(fn), env_val))}")
+
+============================================================
+Entity: identical_2
+  Name:  identical
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    identical(get_env(fn), current_env())
+  Python:
+    print(f"[1] {format_bool(identical(get_env(fn), current_env()))}")
+    
+    # set_env() does not work by side effect.
+
+============================================================
+Entity: other_env
+  Name:  other_env
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    other_env <- child_env(NULL)
+  Python:
+    other_env = child_env(None)
+
+============================================================
+Entity: set_env
+  Name:  set_env
+  Kind:  FunctionCall
+  Score: 0.500
+  side_effects:        0.500
+  executed_ok:       True
+
+  R:
+    set_env(fn, other_env)
+  Python:
+    def set_env(obj, new_env_val):
+        """Translates set_env. No side effects on the original object."""
+        if isinstance(obj, RFormula):
+            return RFormula(obj.expr, new_env_val)
+        
+        if isinstance(obj, (types.FunctionType, RFunction)):
+            actual_func = obj.func if isinstance(obj, RFunction) else obj
+            return RFunction(actual_func, new_env_val)
+    
+        return new_env_val
+    res = set_env(fn, other_env)
+    print(res) 
+
+============================================================
+Entity: identical_3
+  Name:  identical
+  Kind:  FunctionCall
+  Score: 0.617
+  side_effects:        0.617
+  executed_ok:       True
+
+  R:
+    identical(get_env(fn), other_env)
+  Python:
+    print(f"[1] {format_bool(identical(get_env(fn), other_env))}")
+    
+    # Since set_env() returns a new function, reassign the result:
+
+============================================================
+Entity: fn_2
+  Name:  fn
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    fn <- set_env(fn, other_env)
+  Python:
+    fn = set_env(fn, other_env)
+
+============================================================
+Entity: identical_4
+  Name:  identical
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    identical(get_env(fn), other_env)
+  Python:
+    print(f"[1] {format_bool(identical(get_env(fn), other_env))}")

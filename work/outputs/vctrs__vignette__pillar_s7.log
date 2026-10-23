@@ -1,0 +1,70 @@
+Translation log
+Final score: 1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: import_vctrs
+  Name:  vctrs
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(vctrs))
+
+============================================================
+Entity: deg_min_color
+  Name:  deg_min_color
+  Kind:  FunctionDef
+  Score: 1.000
+  type_match:          1.000
+  executed_ok:       True
+
+  R:
+    deg_min_color <- function(x, direction) {
+      pm <- if (direction == "lat") c("N", "S") else c("E", "W")
+    
+      sign <- sign(x)
+      x <- abs(x)
+      deg <- trunc(x)
+      x <- x - deg
+      rad <- round(x * 60)
+      ret <- sprintf(
+        "%d%s%.2d%s%s",
+        deg,
+        pillar::style_subtle("°"),
+        rad,
+        pillar::style_subtle("'"),
+        pm[ifelse(sign >= 0, 1, 2)]
+      )
+      format(ret, justify = "right")
+    }
+  Python:
+    def deg_min_color(x, direction):
+        pm = ["N", "S"] if direction == "lat" else ["E", "W"]
+        
+        sign_val = np.sign(x)
+        abs_x = abs(x)
+        deg = int(abs_x)
+        rem = abs_x - deg
+        rad = int(round(rem * 60))
+        
+        # Note: pillar::style_subtle is for console formatting; 
+        # standard strings are used here for general Python compatibility.
+        suffix = pm[0] if sign_val >= 0 else pm[1]
+        
+        ret = f"{deg}°{rad:02d}'{suffix}"
+        
+        return ret.rjust()

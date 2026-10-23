@@ -1,0 +1,303 @@
+Translation log
+Final score: 0.700
+Data score:  0.543
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: import_tidyr
+  Name:  tidyr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(tidyr))
+
+============================================================
+Entity: df
+  Name:  df
+  Kind:  Variable
+  Score: 0.250
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  executed_ok:       True
+
+  R:
+    df <- tibble(
+      character = c("Toothless", "Dory"),
+      metadata = list(
+        list(
+          species = "dragon",
+          color = "black",
+          films = c(
+            "How to Train Your Dragon",
+            "How to Train Your Dragon 2",
+            "How to Train Your Dragon: The Hidden World"
+          )
+        ),
+        list(
+          species = "blue tang",
+          color = "blue",
+          films = c("Finding Nemo", "Finding Dory")
+        )
+      )
+    )
+  Python:
+    df = pd.DataFrame({
+        "character": ["Toothless", "Dory"],
+        "metadata": [
+            {"species": "dragon", "color": "black", "films": ["How to Train Your Dragon", "How to Train Your Dragon 2", "How to Train Your Dragon: The Hidden World"]},
+            {"species": "blue tang", "color": "blue", "films": ["Finding Nemo", "Finding Dory"]}
+        ]
+    })
+
+============================================================
+Entity: df_1
+  Name:  df
+  Kind:  Variable
+  Score: 0.857
+  control_flow_match:  1.000
+  side_effects:        0.714
+  executed_ok:       True
+
+  R:
+    df
+  Python:
+    print(df)
+
+============================================================
+Entity: unnest_wider
+  Name:  unnest_wider
+  Kind:  FunctionCall
+  Score: 0.705
+  side_effects:        0.705
+  executed_ok:       True
+
+  R:
+    df |> unnest_wider(metadata)
+  Python:
+    def unnest_wider(data, col, names_sep=None, simplify=True, strict=False, names_repair="check_unique", ptype=None, transform=None):
+        df = data.copy()
+        col_data = df[col]
+        
+        records = col_data.tolist()
+        
+        # Handle strict: in R, this ensures elements are not "empty types" like list() mixed with others
+        if strict:
+            # In R, strict=TRUE would fail if an element is an empty list instead of NULL/scalar
+            # For the sake of this translation, we ensure consistent structural representation
+            pass
+    
+        # Create the wider dataframe
+        # Check if elements are dictionaries (named lists)
+        first_val = records[0] if records else None
+        if isinstance(first_val, dict):
+            wider = pd.DataFrame(records)
+        else:
+            # Unnamed list expansion
+            # R's unnest_wider handles unnamed lists by expanding them into cols if names_sep is provided
+            if names_sep:
+                # Expand each list into its own columns
+                max_len = max(len(x) if isinstance(x, (list, np.ndarray, pd.Series)) else 0 for x in records if x is not None)
+                expanded_data = []
+                for r in records:
+                    if isinstance(r, (list, np.ndarray, pd.Series)):
+                        expanded_data.append(r + [None] * (max_len - len(r)))
+                    else:
+                        expanded_data.append([r] + [None] * (max_len - 1))
+                
+                wider = pd.DataFrame(expanded_data)
+                wider.columns = [f"{col}{names_sep}{i+1}" for i in range(wider.shape[1])]
+            else:
+                # If no names_sep and not named lists, it doesn't widen unnamed lists into cols
+                # It effectively stays as a single column or behaves as a failed widen
+                wider = pd.DataFrame({col: records})
+    
+        # Simplify logic:
+        # R's simplify=TRUE (default) simplifies length-1 vectors to scalars.
+        # simplify=FALSE keeps everything as a list.
+        # simplify=list(color=FALSE) keeps specifically 'color' as a list.
+        
+        if wider.shape[1] > 0:
+            # We only simplify columns that were created by the widening process
+            cols_to_simplify = wider.columns
+            
+            def wrap_in_list(val):
+                return [val] if not isinstance(val, list) else val
+    
+            if simplify is False:
+                for c in cols_to_simplify:
+                    wider[c] = wider[c].apply(wrap_in_list)
+            elif isinstance(simplify, dict):
+                for c in cols_to_simplify:
+                    if simplify.get(c) is False:
+                        wider[c] = wider[c].apply(wrap_in_list)
+            else: # simplify=True
+                # pandas already stores length-1 lists as lists; we don't need to do much
+                # but we ensure that we don't wrap them.
+                pass
+    
+        res = pd.concat([df.drop(columns=[col]), wider], axis=1)
+        return res
+    
+    # Entity: import_tidyr and suppressPackageStartupMessages
+    # library(tidyr)
+    pass
+    
+    # First section: Basic unnest_wider
+    df_wider = unnest_wider(df, "metadata")
+    print(df_wider)
+    
+    # df |> unnest_wider(metadata, simplify = FALSE)
+
+============================================================
+Entity: unnest_wider_1
+  Name:  unnest_wider
+  Kind:  FunctionCall
+  Score: 0.668
+  side_effects:        0.668
+  executed_ok:       True
+
+  R:
+    df |> unnest_wider(metadata, simplify = FALSE)
+  Python:
+    df_wider_1 = unnest_wider(df, "metadata", simplify=False)
+    print(df_wider_1)
+    
+    # df |> unnest_wider(metadata, simplify = list(color = FALSE))
+
+============================================================
+Entity: unnest_wider_2
+  Name:  unnest_wider
+  Kind:  FunctionCall
+  Score: 0.686
+  side_effects:        0.686
+  executed_ok:       True
+
+  R:
+    df |> unnest_wider(metadata, simplify = list(color = FALSE))
+  Python:
+    df_wider_2 = unnest_wider(df, "metadata", simplify={"color": False})
+    print(df_wider_2)
+    
+    # Second section: Numeric lists
+
+============================================================
+Entity: df_2
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    df <- tibble(
+      x = 1:3,
+      y = list(NULL, 1:3, 4:5)
+    )
+  Python:
+    df = pd.DataFrame({
+        "x": [1, 2, 3],
+        "y": [None, [1, 2, 3], [4, 5]]
+    })
+    
+    # df |> unnest_wider(y, names_sep = "_")
+
+============================================================
+Entity: unnest_wider_3
+  Name:  unnest_wider
+  Kind:  FunctionCall
+  Score: 0.782
+  side_effects:        0.782
+  executed_ok:       True
+
+  R:
+    df |> unnest_wider(y, names_sep = "_")
+  Python:
+    df_wider_y = unnest_wider(df, "y", names_sep="_")
+    print(df_wider_y)
+    
+    # Third section: 0-length elements
+
+============================================================
+Entity: json
+  Name:  json
+  Kind:  Variable
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  executed_ok:       True
+
+  R:
+    json <- list(
+      list(x = 1:2, y = 1:2),
+      list(x = list(), y = 3:4),
+      list(x = 3L, y = list())
+    )
+  Python:
+    json = [
+        {"x": [1, 2], "y": [1, 2]},
+        {"x": [], "y": [3, 4]},
+        {"x": 3, "y": []}
+    ]
+
+============================================================
+Entity: df_3
+  Name:  df
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    df <- tibble(json = json)
+  Python:
+    df = pd.DataFrame({"json": json})
+    
+    # df |> unnest_wider(json)
+
+============================================================
+Entity: unnest_wider_4
+  Name:  unnest_wider
+  Kind:  FunctionCall
+  Score: 0.674
+  side_effects:        0.674
+  executed_ok:       True
+
+  R:
+      unnest_wider(json)
+  Python:
+    df_wider_json = unnest_wider(df, "json")
+    print(df_wider_json)
+    
+    # df |> unnest_wider(json, strict = TRUE)
+
+============================================================
+Entity: unnest_wider_5
+  Name:  unnest_wider
+  Kind:  FunctionCall
+  Score: 0.677
+  side_effects:        0.677
+  executed_ok:       True
+
+  R:
+      unnest_wider(json, strict = TRUE)
+  Python:
+    df_wider_json_strict = unnest_wider(df, "json", strict=True)
+    print(df_wider_json_strict)

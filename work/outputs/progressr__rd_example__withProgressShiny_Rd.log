@@ -1,0 +1,172 @@
+Translation log
+Final score: 0.476
+Data score:  0.650
+Iterations:  1
+
+============================================================
+Entity: import_shiny
+  Name:  shiny
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(shiny)
+
+============================================================
+Entity: import_progressr
+  Name:  progressr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    library(progressr)
+
+============================================================
+Entity: app
+  Name:  app
+  Kind:  Variable
+  Score: 0.476
+  type_match:          0.301
+  control_flow_match:  1.000
+  data_output:         0.301
+  variable_output:     0.301
+  executed_ok:       True
+
+  R:
+    app <- shinyApp(
+      ui = fluidPage(
+        plotOutput("plot")
+      ),
+    
+      server = function(input, output) {
+        output$plot <- renderPlot({
+          X <- 1:15
+          withProgressShiny(message = "Calculation in progress",
+                            detail = "Starting ...",
+                            value = 0, {
+            p <- progressor(along = X)
+            y <- lapply(X, FUN=function(x) {
+              Sys.sleep(0.25)
+              p(sprintf("x=%d", x))
+            })
+          })
+          
+          plot(cars)
+    
+          ## Terminate the Shiny app
+          Sys.sleep(1.0)
+          stopApp(returnValue = invisible())
+        })
+      }
+    )
+  Python:
+    def with_progress_shiny(message, detail, value, func):
+        # In a real Shiny Python app, you would use ui.output_text or a progress bar
+        # For this translation, we simulate the wrapping logic
+        print(f"Progress: {message} | {detail} | Value: {value}")
+        return func()
+    
+    def progressor(along):
+        def p(msg):
+            # Simulation of the progressor call in R
+            print(f"Progression: {msg}")
+        return p
+    
+    def stop_app():
+        # In shiny for python, session.close() or similar is used, 
+        # but stopApp is an R-specific force-termination.
+        import os
+        os._exit(0)
+    
+    # Prepare the 'cars' dataset equivalent for plotting
+    cars_df = pd.DataFrame({
+        'speed': [4, 4, 7, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 20],
+        'dist': [2, 0, 4, 2, 6, 3, 7, 5, 9, 4, 10, 10, 11, 13, 26]
+    })
+    app_ui = ui.page_fluid(
+        ui.output_plot("plot")
+    )
+    
+    def server(input, output, session):
+        @render.plot
+        def plot():
+            X = list(range(1, 16))
+            
+            def calculation():
+                p = progressor(along=X)
+                for x in X:
+                    time.sleep(0.25)
+                    p(f"x={x}")
+                return None
+    
+            with_progress_shiny(
+                message="Calculation in progress",
+                detail="Starting ...",
+                value=0,
+                func=calculation
+            )
+            
+            # Plotting cars dataset
+            plt.figure()
+            plt.scatter(cars_df['speed'], cars_df['dist'])
+            plt.xlabel("speed")
+            plt.ylabel("dist")
+            plt.title("Cars")
+            plt.show()
+    
+            # Terminate the Shiny app
+            time.sleep(1.0)
+            stop_app()
+    
+    app = App(app_ui, server)
+
+============================================================
+Entity: oopts
+  Name:  oopts
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+      oopts <- options(device.ask.default = FALSE)
+
+============================================================
+Entity: on.exit
+  Name:  on.exit
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      on.exit(options(oopts))
+
+============================================================
+Entity: interactive
+  Name:  interactive
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      if (interactive()) print(app)
+
+============================================================
+Entity: print
+  Name:  print
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+      if (interactive()) print(app)
+  Python:
+    if __name__ == "__main__":
+        # Equivalent to print(app) in R to run/describe the app
+        print(app)

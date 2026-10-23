@@ -1,0 +1,74 @@
+Translation log
+Final score: 0.813
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(withr))
+
+============================================================
+Entity: import_withr
+  Name:  withr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(withr))
+
+============================================================
+Entity: getwd
+  Name:  getwd
+  Kind:  FunctionCall
+  Score: 0.827
+  side_effects:        0.827
+  executed_ok:       True
+
+  R:
+    getwd()
+  Python:
+    def getwd():
+        return os.getcwd()
+    
+    # suppressPackageStartupMessages(library(withr)) - No-op in Python
+    # import_withr - No-op in Python
+    
+    # Execution of getwd()
+    res_getwd = getwd()
+    print(f'[1] "{res_getwd}"')
+    
+    # Execution of with_dir(tempdir(), getwd())
+    # tempdir() in R creates a session-specific directory, 
+    # tempfile.mkdtemp() is the closest equivalent.
+
+============================================================
+Entity: with_dir
+  Name:  with_dir
+  Kind:  FunctionCall
+  Score: 0.798
+  side_effects:        0.798
+  executed_ok:       True
+
+  R:
+    with_dir(tempdir(), getwd())
+  Python:
+    def with_dir(new, code):
+        old = os.getcwd()
+        os.chdir(new)
+        try:
+            # In R, force(code) evaluates the expression and returns the result
+            result = code()
+            return result
+        finally:
+            os.chdir(old)
+    temp_dir = tempfile.mkdtemp()
+    res_with_dir = with_dir(temp_dir, getwd)
+    print(f'[1] "{res_with_dir}"')

@@ -1,0 +1,262 @@
+Translation log
+Final score: 0.896
+Data score:  1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: p
+  Name:  p
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p <- ggplot(mpg, aes(displ, hwy, size = hwy)) +
+       geom_point()
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p <- ggplot(mpg, aes(displ, hwy, size = hwy)) +
+  Python:
+    p = (ggplot(mpg_df, aes('displ', 'hwy', size='hwy')) 
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+       geom_point()
+  Python:
+         + geom_point())
+
+============================================================
+Entity: p_1
+  Name:  p
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p
+  Python:
+    print(p)
+    
+    # Scale size with a label
+
+============================================================
+Entity: scale_size
+  Name:  scale_size
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p + scale_size("Highway mpg")
+  Python:
+    print(p + scale_size(name="Highway mpg"))
+    
+    # Scale size with a specific range
+
+============================================================
+Entity: scale_size_1
+  Name:  scale_size
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p + scale_size(range = c(0, 10))
+  Python:
+    print(p + scale_size(range=(0, 10)))
+    
+    # Scale size area (maps area to value instead of radius)
+
+============================================================
+Entity: scale_size_area
+  Name:  scale_size_area
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p + scale_size_area()
+  Python:
+    print(p + scale_size_area())
+    
+    # Binning can sometimes make it easier to match the scaled data to the legend
+    # plotnine does not have scale_size_binned; using scale_size as closest approximation
+
+============================================================
+Entity: scale_size_binned
+  Name:  scale_size_binned
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p + scale_size_binned()
+  Python:
+    print(p + scale_size())
+    
+    # This is most useful when size is a count
+
+============================================================
+Entity: ggplot_1
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(mpg, aes(class, cyl)) +
+  Python:
+    print((ggplot(mpg_df, aes('class', 'cyl')) 
+
+============================================================
+Entity: geom_count
+  Name:  geom_count
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_count() +
+  Python:
+           + geom_count() 
+
+============================================================
+Entity: scale_size_area_1
+  Name:  scale_size_area
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      scale_size_area()
+  Python:
+           + scale_size_area()))
+    
+    # If you want to map size to radius (usually bad idea), use scale_radius
+    # plotnine does not have scale_radius; using scale_size as closest approximation
+
+============================================================
+Entity: scale_radius
+  Name:  scale_radius
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p + scale_radius()
+  Python:
+    print(p + scale_size())

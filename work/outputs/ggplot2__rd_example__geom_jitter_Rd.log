@@ -1,0 +1,245 @@
+Translation log
+Final score: 0.897
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ggplot2))
+
+============================================================
+Entity: p
+  Name:  p
+  Kind:  Variable
+  Score: 0.880
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p <- ggplot(mpg, aes(cyl, hwy))
+  Python:
+    from plotnine import ggplot, aes, geom_point, geom_jitter
+    from plotnine.data import mpg
+    
+    p = ggplot(mpg, aes('cyl', 'hwy'))
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p + geom_point()
+  Python:
+    p + geom_point()
+
+============================================================
+Entity: geom_jitter
+  Name:  geom_jitter
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p + geom_jitter()
+  Python:
+    p + geom_jitter()
+
+============================================================
+Entity: geom_jitter_1
+  Name:  geom_jitter
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    p + geom_jitter(aes(colour = class))
+  Python:
+    p + geom_jitter(aes(colour='class'))
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(mpg, aes(cyl, hwy)) +
+
+============================================================
+Entity: geom_jitter_2
+  Name:  geom_jitter
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_jitter()
+  Python:
+    ggplot(mpg, aes('cyl', 'hwy')) + geom_jitter()
+
+============================================================
+Entity: ggplot_1
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(mpg, aes(cyl, hwy)) +
+
+============================================================
+Entity: geom_jitter_3
+  Name:  geom_jitter
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_jitter(width = 0.25)
+  Python:
+    ggplot(mpg, aes('cyl', 'hwy')) + geom_jitter(width=0.25)
+
+============================================================
+Entity: ggplot_2
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(mpg, aes(cty, hwy)) +
+
+============================================================
+Entity: geom_jitter_4
+  Name:  geom_jitter
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_jitter()
+  Python:
+    ggplot(mpg, aes('cty', 'hwy')) + geom_jitter()
+
+============================================================
+Entity: ggplot_3
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+    ggplot(mpg, aes(cty, hwy)) +
+
+============================================================
+Entity: geom_jitter_5
+  Name:  geom_jitter
+  Kind:  FunctionCall
+  Score: 0.900
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        0.400
+  executed_ok:       True
+
+  R:
+      geom_jitter(width = 0.5, height = 0.5)
+  Python:
+    ggplot(mpg, aes('cty', 'hwy')) + geom_jitter(width=0.5, height=0.5)

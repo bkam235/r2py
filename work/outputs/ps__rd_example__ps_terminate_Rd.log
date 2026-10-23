@@ -1,0 +1,181 @@
+Translation log
+Final score: 1.000
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: import_ps
+  Name:  ps
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: ps_is_supported
+  Name:  ps_is_supported
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ps::ps_os_type()["POSIX"] && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+  Python:
+    def ps_is_supported():
+        """Mimics ps::ps_is_supported()"""
+        # In Python, psutil is generally supported if installed.
+        # R's ps_is_supported checks for /proc/stat on Linux.
+        if platform.system() == "Linux":
+            try:
+                with open("/proc/stat", "r") as f:
+                    f.readline()
+                return True
+            except Exception:
+                return False
+        return True
+
+============================================================
+Entity: ps_os_type
+  Name:  ps_os_type
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ps::ps_os_type()["POSIX"] && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+  Python:
+    def ps_os_type():
+        """Mimics ps::ps_os_type()"""
+        system = platform.system()
+        return {
+            "POSIX": system in ("Linux", "Darwin"),
+            "LINUX": system == "Linux",
+            "MACOS": system == "Darwin",
+            "WINDOWS": system == "Windows"
+        }
+
+============================================================
+Entity: is_cran_check
+  Name:  is_cran_check
+  Kind:  ExternalSymbol
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (ps::ps_is_supported() && ps::ps_os_type()["POSIX"] && ! ps:::is_cran_check()) (if (getRversion() >= "3.4") withAutoprint else force)({ # examplesIf
+  Python:
+    def is_cran_check():
+        """Mimics ps:::is_cran_check()"""
+        if os.environ.get("NOT_CRAN") == "true":
+            return False
+        return os.environ.get("_R_CHECK_PACKAGE_NAME_", "") != ""
+    
+    # suppressPackageStartupMessages(library(ps))
+    # R: if (ps::ps_is_supported() && ps::ps_os_type()["POSIX"] && ! ps:::is_cran_check())
+    if ps_is_supported() and ps_os_type()["POSIX"] and not is_cran_check():
+        # px <- processx::process$new("sleep", "10")
+        # r2py:entity:px
+
+============================================================
+Entity: px
+  Name:  px
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    px <- processx::process$new("sleep", "10")
+  Python:
+        px = subprocess.Popen(["sleep", "10"])
+        
+        # p <- ps_handle(px$get_pid())
+        # r2py:entity:p
+
+============================================================
+Entity: p
+  Name:  p
+  Kind:  Variable
+  Score: 1.000
+  control_flow_match:  1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    p <- ps_handle(px$get_pid())
+  Python:
+        p = psutil.Process(px.pid)
+        print(p)
+        
+        # ps_terminate(p)
+        # r2py:entity:ps_terminate
+
+============================================================
+Entity: ps_terminate
+  Name:  ps_terminate
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ps_terminate(p)
+  Python:
+        p.terminate()
+        
+        # p
+        print(p)
+        
+        # ps_is_running(p)
+        # r2py:entity:ps_is_running
+        # psutil.Process.is_running() is available in newer versions, 
+        # otherwise use p.status() or check if it's still alive.
+
+============================================================
+Entity: ps_is_running
+  Name:  ps_is_running
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    ps_is_running(p)
+  Python:
+        try:
+            print(p.is_running())
+        except AttributeError:
+            print(p.status() != psutil.STATUS_ZOMBIE)
+            
+        # px$get_exit_status()
+        # r2py:entity:px$get_exit_status
+
+============================================================
+Entity: px$get_exit_status
+  Name:  px$get_exit_status
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    px$get_exit_status()
+  Python:
+        print(px.poll() if px.poll() is not None else px.wait())

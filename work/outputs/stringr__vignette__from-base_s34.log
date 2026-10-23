@@ -1,0 +1,89 @@
+Translation log
+Final score: 0.991
+Data score:  1.000
+Iterations:  0
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: import_stringr
+  Name:  stringr
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(stringr))
+
+============================================================
+Entity: order
+  Name:  order
+  Kind:  FunctionCall
+  Score: 0.981
+  side_effects:        0.981
+  executed_ok:       True
+
+  R:
+    order(letters)
+  Python:
+    res_order = np.argsort(letters).tolist()
+    print(res_order)
+    
+    # sort(letters) returns the sorted vector
+
+============================================================
+Entity: sort
+  Name:  sort
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    sort(letters)
+  Python:
+    res_sort = sorted(letters)
+    print(res_sort)
+    
+    # stringr
+    # str_order is equivalent to order() for strings
+
+============================================================
+Entity: str_order
+  Name:  str_order
+  Kind:  FunctionCall
+  Score: 0.981
+  side_effects:        0.981
+  executed_ok:       True
+
+  R:
+    str_order(letters)
+  Python:
+    res_str_order = np.argsort(letters).tolist()
+    print(res_str_order)
+    
+    # str_sort is equivalent to sort() for strings
+
+============================================================
+Entity: str_sort
+  Name:  str_sort
+  Kind:  FunctionCall
+  Score: 1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    str_sort(letters)
+  Python:
+    res_str_sort = sorted(letters)
+    print(res_str_sort)

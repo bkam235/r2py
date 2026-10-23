@@ -1,0 +1,51 @@
+Translation log
+Final score: 0.500
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: import_ps
+  Name:  ps
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(ps))
+
+============================================================
+Entity: tryCatch
+  Name:  tryCatch
+  Kind:  FunctionCall
+  Score: 0.917
+  side_effects:        0.917
+  executed_ok:       True
+
+  R:
+    tryCatch(
+      ps_tty_size(),
+      ps_unknown_tty_size = function(err) {
+        c(width = getOption("width"), height = NA_integer_)
+      }
+    )
+  Python:
+    try:
+        # shutil.get_terminal_size() is the Python equivalent to ps_tty_size()
+        width, height = shutil.get_terminal_size()
+        result = {'width': width, 'height': height}
+    except Exception:
+        # Fallback to a default width (similar to getOption("width")) and None for height
+        result = {'width': 80, 'height': None}
+    
+    print(result)

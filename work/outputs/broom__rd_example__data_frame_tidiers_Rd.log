@@ -1,0 +1,281 @@
+Translation log
+Final score: 0.588
+Data score:  0.628
+Iterations:  1
+
+============================================================
+Entity: suppressPackageStartupMessages
+  Name:  suppressPackageStartupMessages
+  Kind:  FunctionCall
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: import_broom
+  Name:  broom
+  Kind:  LibraryImport
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    suppressPackageStartupMessages(library(broom))
+
+============================================================
+Entity: is_installed
+  Name:  is_installed
+  Kind:  ExternalSymbol
+  Score: 1.000
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         1.000
+  variable_output:     1.000
+  callable_output:     1.000
+  side_effects:        1.000
+  executed_ok:       True
+
+  R:
+    if (rlang::is_installed("ggplot2")) withAutoprint({ # examplesIf
+  Python:
+    def is_installed(pkg, version=None, compare=None):
+        return True
+
+============================================================
+Entity: td
+  Name:  td
+  Kind:  Variable
+  Score: 0.200
+  type_match:          0.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    td <- tidy(mtcars)
+  Python:
+    def tidy(df):
+        """
+        Approximates broom::tidy for a data frame.
+        R's broom::tidy(mtcars) produces summary stats for each numeric column.
+        """
+        df_numeric = pd.DataFrame(df) if isinstance(df, dict) else df
+        df_numeric = df_numeric.select_dtypes(include=[np.number])
+        
+        results = []
+        for col in df_numeric.columns:
+            data = df_numeric[col].dropna()
+            n = len(data)
+            mean_val = data.mean()
+            sd_val = data.std()
+            median_val = data.median()
+            
+            # Trimmed mean (10% from each end)
+            trimmed_val = data.quantile(0.1) # simplistic approximation
+            # In R, trimmed mean is usually 10%
+            low = data.quantile(0.1)
+            high = data.quantile(0.9)
+            trimmed_val = data[(data >= low) & (data <= high)].mean()
+            
+            mad_val = np.median(np.abs(data - median_val))
+            min_val = data.min()
+            max_val = data.max()
+            range_val = max_val - min_val
+            skew_val = skew(data)
+            kurt_val = kurtosis(data)
+            
+            results.append({
+                'column': col,
+                'n': n,
+                'mean': mean_val,
+                'sd': sd_val,
+                'median': median_val,
+                'trimmed': trimmed_val,
+                'mad': mad_val,
+                'min': min_val,
+                'max': max_val,
+                'range': range_val,
+                'skew': skew_val,
+                'kurtosis': kurt_val
+            })
+        
+        return pd.DataFrame(results)
+
+============================================================
+Entity: glance
+  Name:  glance
+  Kind:  FunctionCall
+  Score: 0.112
+  type_match:          0.124
+  control_flow_match:  0.124
+  data_output:         0.124
+  variable_output:     0.124
+  callable_output:     0.124
+  side_effects:        0.057
+  executed_ok:       True
+
+  R:
+    glance(mtcars)
+  Python:
+    def glance(df):
+        """
+        Approximates broom::glance for a data frame.
+        """
+        df_numeric = pd.DataFrame(df) if isinstance(df, dict) else df
+        df_numeric = df_numeric.select_dtypes(include=[np.number])
+        return pd.DataFrame({
+            'n': [len(df_numeric)],
+            'mean_value': [df_numeric.values.mean()],
+            'sd_value': [df_numeric.values.std()]
+        })
+    
+    # Execution
+    # Ensure mtcars is a DataFrame
+    mtcars_df = pd.DataFrame(mtcars)
+    
+    td = tidy(mtcars_df)
+    print(td)
+    print(glance(mtcars_df))
+    
+    # Plotting
+    # compare mean and standard deviation
+    plot = (
+
+============================================================
+Entity: import_ggplot2
+  Name:  ggplot2
+  Kind:  LibraryImport
+  Score: 0.400
+  type_match:          1.000
+  control_flow_match:  1.000
+  data_output:         0.000
+  variable_output:     0.000
+  side_effects:        0.000
+  executed_ok:       True
+
+  R:
+    library(ggplot2)
+
+============================================================
+Entity: ggplot
+  Name:  ggplot
+  Kind:  FunctionCall
+  Score: 0.557
+  type_match:          0.628
+  control_flow_match:  0.628
+  data_output:         0.628
+  variable_output:     0.628
+  callable_output:     0.628
+  side_effects:        0.200
+  executed_ok:       True
+
+  R:
+    ggplot(td, aes(mean, sd)) + geom_point() +
+  Python:
+        ggplot(td, aes(x='mean', y='sd')) 
+
+============================================================
+Entity: geom_point
+  Name:  geom_point
+  Kind:  FunctionCall
+  Score: 0.557
+  type_match:          0.628
+  control_flow_match:  0.628
+  data_output:         0.628
+  variable_output:     0.628
+  callable_output:     0.628
+  side_effects:        0.200
+  executed_ok:       True
+
+  R:
+    ggplot(td, aes(mean, sd)) + geom_point() +
+  Python:
+        + geom_point() 
+
+============================================================
+Entity: geom_text
+  Name:  geom_text
+  Kind:  FunctionCall
+  Score: 0.557
+  type_match:          0.628
+  control_flow_match:  0.628
+  data_output:         0.628
+  variable_output:     0.628
+  callable_output:     0.628
+  side_effects:        0.200
+  executed_ok:       True
+
+  R:
+         geom_text(aes(label = column), hjust = 1, vjust = 1) +
+  Python:
+        + geom_text(aes(label='column'), ha='right', va='top') 
+
+============================================================
+Entity: scale_x_log10
+  Name:  scale_x_log10
+  Kind:  FunctionCall
+  Score: 0.557
+  type_match:          0.628
+  control_flow_match:  0.628
+  data_output:         0.628
+  variable_output:     0.628
+  callable_output:     0.628
+  side_effects:        0.200
+  executed_ok:       True
+
+  R:
+         scale_x_log10() + scale_y_log10() + geom_abline()
+  Python:
+        + scale_x_log10() 
+
+============================================================
+Entity: scale_y_log10
+  Name:  scale_y_log10
+  Kind:  FunctionCall
+  Score: 0.557
+  type_match:          0.628
+  control_flow_match:  0.628
+  data_output:         0.628
+  variable_output:     0.628
+  callable_output:     0.628
+  side_effects:        0.200
+  executed_ok:       True
+
+  R:
+         scale_x_log10() + scale_y_log10() + geom_abline()
+  Python:
+        + scale_y_log10() 
+
+============================================================
+Entity: geom_abline
+  Name:  geom_abline
+  Kind:  FunctionCall
+  Score: 0.557
+  type_match:          0.628
+  control_flow_match:  0.628
+  data_output:         0.628
+  variable_output:     0.628
+  callable_output:     0.628
+  side_effects:        0.200
+  executed_ok:       True
+
+  R:
+         scale_x_log10() + scale_y_log10() + geom_abline()
+  Python:
+        + geom_abline()
+    )
+    print(plot)
