@@ -1,7 +1,7 @@
 <p align="center">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="assets/banner-dark.svg">
-    <img alt="r2py" src="assets/banner-light.svg" width="420">
+    <source media="(prefers-color-scheme: dark)" srcset="banner/banner-dark.svg">
+    <img alt="r2py" src="banner/banner-light.svg" width="420">
   </picture>
 </p>
 
