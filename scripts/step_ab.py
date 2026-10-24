@@ -218,10 +218,10 @@ def _ablate_feedback(content: str, arm: str) -> str:
     return content[:i + len(head)] + section[:min(cuts) if cuts else len(section)] + "\n" + content[j:]
 
 
-def run(samples: int, workers: int, arms=ARMS, with_crashing: bool = False) -> None:
+def run(samples: int, workers: int, arms=ARMS, with_crashing: bool = False, pool: str = "") -> None:
     targets = json.loads((ROOT / "work/step_ab/targets.json").read_text(encoding="utf-8"))
     import replay
-    states = replay.training_states() if with_crashing else running_states()
+    states = replay.pool_states(pool) if pool else (replay.training_states() if with_crashing else running_states())
     targets = {n: targets.get(n, {}) for n in states}
     path = OUT / "results.jsonl"
     done = [json.loads(l) for l in path.open(encoding="utf-8")] if path.exists() else []
@@ -290,6 +290,7 @@ def main() -> int:
     p.add_argument("--workers", type=int, default=6)
     p.add_argument("--arms", nargs="+", default=list(ARMS), choices=["U", "GV", "GS", "F", "S", "N", "D"])
     p.add_argument("--with-crashing", action="store_true", help="the whole training pool, crashing starts included")
+    p.add_argument("--pool", choices=["training", "heldout"], default="", help="a whole pool, crashing starts included")
     sp = sub.add_parser("summary")
     for q in (p, sp):
         q.add_argument("--tag", default="", help="separate output directory; guidance stays work/step_ab/targets.json")
@@ -302,7 +303,7 @@ def main() -> int:
         guidable()
         return 0
     if args.cmd == "run":
-        run(args.samples, args.workers, args.arms, args.with_crashing)
+        run(args.samples, args.workers, args.arms, args.with_crashing, args.pool)
     text = summary()
     print("\n" + text)
     (OUT / "summary.txt").write_text(text + "\n", encoding="utf-8")

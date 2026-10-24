@@ -3556,3 +3556,11 @@ concurrent; days apart).
 - **Workflow for a scorer change** (human-gated): make the change -> `scoring_epoch.py check` -> read the report -> if
   the R-capture code changed, re-capture the maps (`refresh_entity_bundles.py`) and check again -> `accept --note` ->
   rebuild the curves (`learning_curves.py --rescore`). A full check takes about 10 minutes and costs nothing.
+
+**Meta-loop infrastructure, step 2: the held-out pool (2026-10-24).** `experiments/pools/heldout.json`, frozen by
+`scripts/select_heldout.py` (seed 1; the script refuses to overwrite it): 46 training translations outside the
+60-state training pool, below the threshold, with source and script map: **40 running starts and all 6 remaining
+crashing starts**. Changes are tried and chosen on the training pool; a winner is confirmed here before its default
+changes. Limits: only 6 crashing starts remain, so crash-specific changes cannot be confirmed on held-out data; most
+packages also occur in the training pool, so it holds out scripts, not packages. Instruments: `replay.py --pool
+heldout`, `step_ab.py run --pool heldout`, `two_step.py run --pool heldout` (results in `work/two_step_heldout`).

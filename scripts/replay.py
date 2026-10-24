@@ -104,6 +104,25 @@ def training_states(max_start: float = 0.9, seed: int = 0) -> dict[str, dict]:
     return out
 
 
+def heldout_states() -> dict[str, dict]:
+    """The meta-loop's held-out pool (experiments/pools/heldout.json, frozen 2026-10-24 by select_heldout.py): 46
+    training translations outside the training pool, for confirming a change before it becomes the default."""
+    from r2py.harness import trajectory
+    names = json.loads((ROOT / "experiments/pools/heldout.json").read_text(encoding="utf-8"))["states"]
+    by = {json.loads(l)["script"]: json.loads(l) for l in (ROOT / "work/reverify/rows_v3.jsonl").open(encoding="utf-8")}
+    out = {}
+    for name in names:
+        src = (TRAIN_SOURCES / f"{Path(name).stem}.py").read_text(encoding="utf-8")
+        out[name] = {"source": src, "label": "heldout", "aggregate": by[name]["aggregate"],
+                     "hash": trajectory.source_hash(src)}
+    return out
+
+
+def pool_states(pool: str, max_start: float = 0.9) -> dict[str, dict]:
+    """`training` (where changes are tried) or `heldout` (where winners are confirmed)."""
+    return heldout_states() if pool == "heldout" else training_states(max_start)
+
+
 def best_states(arms: list[str], max_start: float) -> dict[str, dict]:
     """script -> {source, label, aggregate, hash} of the highest-scoring logged seed."""
     from r2py.harness import trajectory
@@ -294,8 +313,9 @@ def main() -> int:
     keep_awake()   # an idle laptop freezes background jobs (Modern Standby)
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--arms", nargs="+", default=[], help="dev arms whose best seeds are the frozen states")
-    ap.add_argument("--pool", choices=["dev", "training"], default="dev",
-                    help="training: a fixed pool of 40 running + 20 crashing training translations")
+    ap.add_argument("--pool", choices=["dev", "training", "heldout"], default="dev",
+                    help="training: a fixed pool of 40 running + 20 crashing training translations; "
+                         "heldout: the 46 states for confirming winners (experiments/pools/heldout.json)")
     ap.add_argument("--policies", nargs="+", default=["rewrite", "entity_esc"], choices=sorted(POLICIES))
     ap.add_argument("--samples", type=int, default=3)
     ap.add_argument("--workers", type=int, default=6)
@@ -319,8 +339,8 @@ def main() -> int:
         print(summarise(done))
         return 0
 
-    if args.pool == "training":
-        states = training_states(args.max_start)
+    if args.pool in ("training", "heldout"):
+        states = pool_states(args.pool, args.max_start)
         cache = str(TRAIN_MAPS)   # analysed maps are cached; the loop keeps the dev manifest's settings (max_stalls 3)
     else:
         states = best_states(args.arms, args.max_start)

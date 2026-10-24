@@ -122,12 +122,12 @@ def run_one(task: dict) -> dict:
     return row
 
 
-def run(samples: int, workers: int) -> None:
+def run(samples: int, workers: int, pool: str = "training") -> None:
     import replay
     OUT.mkdir(parents=True, exist_ok=True)
     out = OUT / "results.jsonl"
     done = {(r["script"], r["sample"]) for r in map(json.loads, out.open(encoding="utf-8")) if "error" not in r} if out.exists() else set()
-    states = replay.training_states()
+    states = replay.pool_states(pool)
     tasks = [{"script": n, "sample": s, "source": v["source"]} for s in range(samples) for n, v in sorted(states.items())
              if (n, s) not in done]
     print(f"{len(tasks)} trials, {workers} workers", flush=True)
@@ -170,5 +170,8 @@ if __name__ == "__main__":
     ap.add_argument("cmd", choices=["run", "summary"])
     ap.add_argument("--samples", type=int, default=2)
     ap.add_argument("--workers", type=int, default=8)
+    ap.add_argument("--pool", choices=["training", "heldout"], default="training")
     a = ap.parse_args()
-    run(a.samples, a.workers) if a.cmd == "run" else summary()
+    if a.pool == "heldout":   # confirmations keep their own results
+        OUT = ROOT / "work/two_step_heldout"
+    run(a.samples, a.workers, a.pool) if a.cmd == "run" else summary()
