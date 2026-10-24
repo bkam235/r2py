@@ -122,22 +122,30 @@ def run_one(task: dict) -> dict:
     return row
 
 
-def run(samples: int, workers: int, pool: str = "training") -> None:
+def run(samples: int, workers: int, pool: str = "training", budget: "float | None" = None, reserve: float = 0.5) -> None:
     import replay
     OUT.mkdir(parents=True, exist_ok=True)
     out = OUT / "results.jsonl"
-    done = {(r["script"], r["sample"]) for r in map(json.loads, out.open(encoding="utf-8")) if "error" not in r} if out.exists() else set()
+    done = {(r["script"], r["sample"]) for r in map(json.loads, out.open(encoding="utf-8"))
+            if "error" not in r and not r.get("invalid")} if out.exists() else set()
     states = replay.pool_states(pool)
     tasks = [{"script": n, "sample": s, "source": v["source"]} for s in range(samples) for n, v in sorted(states.items())
              if (n, s) not in done]
     print(f"{len(tasks)} trials, {workers} workers", flush=True)
-    with multiprocessing.get_context("spawn").Pool(workers) as pool, out.open("a", encoding="utf-8") as f:
+    from expkit import RunGuard
+    with RunGuard(OUT, budget=budget, reserve=reserve) as guard, \
+            multiprocessing.get_context("spawn").Pool(workers) as pool, out.open("a", encoding="utf-8") as f:
         for i, row in enumerate(pool.imap_unordered(run_one, tasks), 1):
+            row = guard.annotate(row)
             f.write(json.dumps(row) + "\n")
             f.flush()
             print(f"[{i}/{len(tasks)}] {row['script'][:40]} s{row['sample']}: "
                   + (f"start {row['start']:.3f} step1 {row['best1']:.3f} | fresh {row['fresh']:.3f} conv {row['conv']:.3f}"
                      if "error" not in row else f"ERROR {row['error'][:100]}"), flush=True)
+            if guard.should_stop():   # budget or reserve reached: stop cleanly; the same command resumes
+                print(f"[guard] stopping: {guard.stop_reason}", flush=True)
+                pool.terminate()
+                break
 
 
 def summary() -> None:
@@ -170,8 +178,10 @@ if __name__ == "__main__":
     ap.add_argument("cmd", choices=["run", "summary"])
     ap.add_argument("--samples", type=int, default=2)
     ap.add_argument("--workers", type=int, default=8)
+    from expkit import add_guard_args
+    add_guard_args(ap)
     ap.add_argument("--pool", choices=["training", "heldout"], default="training")
     a = ap.parse_args()
     if a.pool == "heldout":   # confirmations keep their own results
         OUT = ROOT / "work/two_step_heldout"
-    run(a.samples, a.workers, a.pool) if a.cmd == "run" else summary()
+    run(a.samples, a.workers, a.pool, a.budget, a.reserve) if a.cmd == "run" else summary()

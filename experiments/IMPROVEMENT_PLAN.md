@@ -3564,3 +3564,24 @@ crashing starts**. Changes are tried and chosen on the training pool; a winner i
 changes. Limits: only 6 crashing starts remain, so crash-specific changes cannot be confirmed on held-out data; most
 packages also occur in the training pool, so it holds out scripts, not packages. Instruments: `replay.py --pool
 heldout`, `step_ab.py run --pool heldout`, `two_step.py run --pool heldout` (results in `work/two_step_heldout`).
+
+**Meta-loop infrastructure, step 3: run guard, common result format, generic analysis (2026-10-24).**
+`scripts/expkit.py`, used by `replay.py`, `step_ab.py` and `two_step.py`.
+- **Run guard:** records the OpenRouter balance and polls it every minute; stops the instrument cleanly at a budget
+  (`--budget USD`) or a remaining reserve (`--reserve`, default $0.50; the in-flight refusals of October came near
+  zero); detects wall-clock gaps (a sleeping laptop) and marks every row whose run overlapped one `invalid: "sleep"`,
+  which resuming reruns; writes `run_manifest.json` (command, times, scorer version, balance, cost, stop reason,
+  gaps). Live test on the held-out pool with a $0.01 budget: stopped by itself at $0.03 with its manifest written.
+  The balance OpenRouter reports lags, so a run can overshoot its budget by about a minute of spending.
+- **Common format** (`expkit.load`): rows of every instrument as state, arm, sample, stratum, improved, gain, final,
+  invalid. A state belongs to one stratum (the majority over its rows with a known start, ties crashing): a few states
+  start crashing in some runs and running in others.
+- **Generic analysis:** `python scripts/expkit.py analyze <results.jsonl> --baseline ARM [--metric improved|gain|final]
+  [--rule free | --rule costly --best-of K]`: per arm means; each arm against the baseline paired by state, with 95%
+  and 90% intervals, P(> 0), better/worse/tied, for all, running and crashing starts; the tiered rule's verdict; a
+  warning when rows come from more than one scorer version; invalid rows excluded and counted.
+- **Reproduces the registered results:** feedback ablation U - N +0.175 [+0.075, +0.275]; diagnose against best of 2
+  -0.092 (P = 0.03); conversation - fresh +0.049 [-0.013, +0.112], P = 0.93; 3 per step - width 3 on running starts
+  -0.011 [-0.030, +0.004]. **One difference:** with one stratum per state, conversation mode on running starts is
+  +0.041 (P = 0.82, 37 states), against +0.066 with the row-by-row strata of the registered analysis; the overall
+  estimate the decision rested on is unchanged.

@@ -218,26 +218,35 @@ def _ablate_feedback(content: str, arm: str) -> str:
     return content[:i + len(head)] + section[:min(cuts) if cuts else len(section)] + "\n" + content[j:]
 
 
-def run(samples: int, workers: int, arms=ARMS, with_crashing: bool = False, pool: str = "") -> None:
+def run(samples: int, workers: int, arms=ARMS, with_crashing: bool = False, pool: str = "",
+        budget: "float | None" = None, reserve: float = 0.5) -> None:
     targets = json.loads((ROOT / "work/step_ab/targets.json").read_text(encoding="utf-8"))
     import replay
     states = replay.pool_states(pool) if pool else (replay.training_states() if with_crashing else running_states())
     targets = {n: targets.get(n, {}) for n in states}
     path = OUT / "results.jsonl"
     done = [json.loads(l) for l in path.open(encoding="utf-8")] if path.exists() else []
-    finished = {(r["script"], r["arm"], r["sample"]) for r in done if r.get("outcome") != "provider_unavailable"}
+    finished = {(r["script"], r["arm"], r["sample"]) for r in done
+                if r.get("outcome") != "provider_unavailable" and not r.get("invalid")}
     tasks = [{"name": n, "arm": a, "sample": s, "state": states[n], "targets": targets[n], "out": str(OUT)}
              for s in range(samples) for n in sorted(targets) for a in arms if (n, a, s) not in finished]
     print(f"{len(targets)} states x {len(arms)} arms x {samples} samples: {len(tasks)} steps to do", flush=True)
     outages = 0
-    with multiprocessing.get_context("spawn").Pool(workers) as pool, path.open("a", encoding="utf-8") as fh:
+    from expkit import RunGuard
+    with RunGuard(OUT, budget=budget, reserve=reserve) as guard, \
+            multiprocessing.get_context("spawn").Pool(workers) as pool, path.open("a", encoding="utf-8") as fh:
         for i, row in enumerate(pool.imap_unordered(run_one, tasks), 1):
+            row = guard.annotate(row)
             fh.write(json.dumps(row) + "\n")
             fh.flush()
             outages += row.get("outcome") == "provider_unavailable"
             print(f"[{i}/{len(tasks)}] {row['script'][:36]:<38}{row['arm']:<3}s{row['sample']} "
                   f"{row.get('outcome', '')[:20]:<20} {row.get('before')}->{row.get('after')} gain {row.get('gain')}",
                   flush=True)
+            if guard.should_stop():   # budget or reserve reached: stop cleanly; the same command resumes
+                print(f"[guard] stopping: {guard.stop_reason}", flush=True)
+                pool.terminate()
+                break
             if outages >= 3:
                 print("3 provider outages: stopping; the same command resumes", flush=True)
                 pool.terminate()
@@ -288,6 +297,8 @@ def main() -> int:
     p = sub.add_parser("run")
     p.add_argument("--samples", type=int, default=4)
     p.add_argument("--workers", type=int, default=6)
+    from expkit import add_guard_args
+    add_guard_args(p)
     p.add_argument("--arms", nargs="+", default=list(ARMS), choices=["U", "GV", "GS", "F", "S", "N", "D"])
     p.add_argument("--with-crashing", action="store_true", help="the whole training pool, crashing starts included")
     p.add_argument("--pool", choices=["training", "heldout"], default="", help="a whole pool, crashing starts included")
@@ -303,7 +314,7 @@ def main() -> int:
         guidable()
         return 0
     if args.cmd == "run":
-        run(args.samples, args.workers, args.arms, args.with_crashing, args.pool)
+        run(args.samples, args.workers, args.arms, args.with_crashing, args.pool, args.budget, args.reserve)
     text = summary()
     print("\n" + text)
     (OUT / "summary.txt").write_text(text + "\n", encoding="utf-8")

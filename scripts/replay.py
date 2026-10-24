@@ -319,6 +319,8 @@ def main() -> int:
     ap.add_argument("--policies", nargs="+", default=["rewrite", "entity_esc"], choices=sorted(POLICIES))
     ap.add_argument("--samples", type=int, default=3)
     ap.add_argument("--workers", type=int, default=6)
+    from expkit import add_guard_args
+    add_guard_args(ap)
     ap.add_argument("--max-start", type=float, default=0.9, help="skip states whose seed already reaches this")
     ap.add_argument("--only", nargs="+", help="substrings of script names")
     ap.add_argument("--budget-s", type=float, default=1200)
@@ -347,7 +349,7 @@ def main() -> int:
         cache = str(ROOT / "work/replay/script_maps")
     if args.only:
         states = {n: s for n, s in states.items() if any(o in n for o in args.only)}
-    finished = {(r["script"], r["policy"], r["sample"]) for r in done if "final_score" in r}
+    finished = {(r["script"], r["policy"], r["sample"]) for r in done if "final_score" in r and not r.get("invalid")}
     tasks = []
     # sample-major order: every state/policy gets sample 0 before any gets sample 1, so an early stop
     # still leaves a balanced design
@@ -365,14 +367,21 @@ def main() -> int:
     print(f"{len(tasks)} runs to do ({len(finished)} already finished), {args.workers} workers", flush=True)
 
     ctx = multiprocessing.get_context("spawn")
-    with ctx.Pool(args.workers) as pool, out.open("a", encoding="utf-8") as f:
+    from expkit import RunGuard
+    with RunGuard(out.parent, budget=args.budget, reserve=args.reserve) as guard, \
+            ctx.Pool(args.workers) as pool, out.open("a", encoding="utf-8") as f:
         for i, row in enumerate(pool.imap_unordered(run_one, tasks), 1):
+            row = guard.annotate(row)
             f.write(json.dumps(row) + "\n")
             f.flush()
             done.append(row)
             print(f"[{i}/{len(tasks)}] {row['script'][:36]:36s} {row['policy']:11s} s{row['sample']}: "
                   + (f"{row['start_score']:.2f} -> {row['final_score']:.2f} ({row['seconds'] / 60:.0f} min)"
                      if "final_score" in row else f"ERROR {row.get('error', '')[:80]}"), flush=True)
+            if guard.should_stop():   # budget or reserve reached: stop cleanly; the same command resumes
+                print(f"[guard] stopping: {guard.stop_reason}", flush=True)
+                pool.terminate()
+                break
     print("\n" + summarise(done))
     return 0
 
