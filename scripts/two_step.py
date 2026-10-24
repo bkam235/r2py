@@ -41,6 +41,8 @@ def run_one(task: dict) -> dict:
     from r2py.library import PatternLibrary
 
     row = {"script": task["script"], "sample": task["sample"]}
+    from r2py.scoring import scoring_version
+    row["scoring_version"] = scoring_version()   # scores compare only within one scoring epoch
     started = time.monotonic()
     manifest = ho.load_manifest(ROOT / "experiments/dev_run/manifest.json")
     cfg = manifest["protocol"]["translate"]

@@ -156,6 +156,8 @@ def run_one(task: dict) -> dict:
     manifest = ho.load_manifest(task["manifest"])
     cfg = manifest["protocol"]["translate"]
     row = {k: task[k] for k in ("script", "policy", "sample", "label", "start_hash")}
+    from r2py.scoring import scoring_version
+    row["scoring_version"] = scoring_version()   # scores compare only within one scoring epoch
     started = time.monotonic()
     out_dir = Path(task["out_dir"])
     try:

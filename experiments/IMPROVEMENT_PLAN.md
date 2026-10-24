@@ -3533,3 +3533,26 @@ concurrent; days apart).
     invites pasting.
   - Not concurrent (one to three days apart, drift of 0.01-0.02 seen before); one sample.
 - Chart updated: the measured default is drawn in all three views; the step-2 marker is removed.
+
+**Meta-loop infrastructure, step 1: scoring epochs and the scorer regression check (2026-10-24).**
+- **Scoring version** (`r2py/scoring.py`): a hash of the scorer's code (effect capture, sandboxes, verifier and
+  comparators, R checkpointing, shim, entity attribution, objective; declared, so agent and prompt changes stay
+  outside) plus a hash of the stored R ground truth (`work/reverify/script_maps`); a separate hash of the R-capture
+  code says when the stored maps must be re-captured. `replay.py`, `step_ab.py` and `two_step.py` record it in every
+  result row.
+- **Epochs and the check** (`scripts/scoring_epoch.py`): a fixed reference set of 147 programs (the 60 pool start
+  states and the final programs of the default run of 2026-10-20 and the width-3 runs of 2026-10-17), verified twice
+  for the baseline with no model calls; 11 whose two scores differ (random output: openssl keys, sass/e1071 temp files,
+  ragg animation, textshaping fonts) are marked flaky and judged against their range. `check` re-verifies them when the
+  scorer changed and reports every program that moved, entity by entity (`work/scoring/check_<time>.md`); `accept`
+  opens a new epoch.
+- **Epoch 1** (scorer `e7e41acd32cb-3fce340317f5`): the scorer after the fixes of 2026-10-17/18.
+- **Validated twice:**
+  - unchanged scorer, forced check: 4 programs moved by at most 0.002 (no entity more than 0.006, no run/crash flip),
+    so moves of at most 0.005 with no entity above 0.02 and no flip are listed as small moves and do not fail the
+    check;
+  - deliberate scorer change (temp-path rule disabled, then restored from git): exactly the 7 programs with temp-path
+    entities flagged (`file`, `tmp_scss_file`, `someFile` 1.0 -> 0.25), nothing else.
+- **Workflow for a scorer change** (human-gated): make the change -> `scoring_epoch.py check` -> read the report -> if
+  the R-capture code changed, re-capture the maps (`refresh_entity_bundles.py`) and check again -> `accept --note` ->
+  rebuild the curves (`learning_curves.py --rescore`). A full check takes about 10 minutes and costs nothing.

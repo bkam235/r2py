@@ -1,0 +1,884 @@
+[
+ {
+  "id": "start:ModelMetrics__rd_example__auc_Rd",
+  "script": "ModelMetrics__rd_example__auc_Rd.R",
+  "file": "work/scoring/programs/start_ModelMetrics__rd_example__auc_Rd.py",
+  "sha": "7494cbfa57071fb3aa890a29cd2fa9717eeba152"
+ },
+ {
+  "id": "start:broom__rd_example__augment_felm_Rd",
+  "script": "broom__rd_example__augment_felm_Rd.R",
+  "file": "work/scoring/programs/start_broom__rd_example__augment_felm_Rd.py",
+  "sha": "f098deaa81280c2a9d7fe29fe2148317eaabc02d"
+ },
+ {
+  "id": "start:bslib__rd_example__layout_column_wrap_Rd",
+  "script": "bslib__rd_example__layout_column_wrap_Rd.R",
+  "file": "work/scoring/programs/start_bslib__rd_example__layout_column_wrap_Rd.py",
+  "sha": "6ef2fef34c5163cf1d7a1eae38c06c9a73a4d002"
+ },
+ {
+  "id": "start:bslib__rd_example__page_fillable_Rd",
+  "script": "bslib__rd_example__page_fillable_Rd.R",
+  "file": "work/scoring/programs/start_bslib__rd_example__page_fillable_Rd.py",
+  "sha": "7f073efb7743cc22e9b9156b3c01e51158c71e61"
+ },
+ {
+  "id": "start:bslib__rd_example__value_box_Rd",
+  "script": "bslib__rd_example__value_box_Rd.R",
+  "file": "work/scoring/programs/start_bslib__rd_example__value_box_Rd.py",
+  "sha": "3f01b572d7b7a9e631ad587a3e472c16e4fc0b28"
+ },
+ {
+  "id": "start:caret__rd_example__update_train_Rd",
+  "script": "caret__rd_example__update_train_Rd.R",
+  "file": "work/scoring/programs/start_caret__rd_example__update_train_Rd.py",
+  "sha": "2b72c37291817b1ca855a9532a7a0df0f40c4e4b"
+ },
+ {
+  "id": "start:caret__vignette__caret_s3",
+  "script": "caret__vignette__caret_s3.R",
+  "file": "work/scoring/programs/start_caret__vignette__caret_s3.py",
+  "sha": "d856505c2535a13079a7032fc85ef31028bd748e"
+ },
+ {
+  "id": "start:e1071__rd_example__boxplot_bclust_Rd",
+  "script": "e1071__rd_example__boxplot_bclust_Rd.R",
+  "file": "work/scoring/programs/start_e1071__rd_example__boxplot_bclust_Rd.py",
+  "sha": "6cdc92e13c9fb152091a40bddfea2b2c5cc6fd18"
+ },
+ {
+  "id": "start:fansi__rd_example__normalize_state_Rd",
+  "script": "fansi__rd_example__normalize_state_Rd.R",
+  "file": "work/scoring/programs/start_fansi__rd_example__normalize_state_Rd.py",
+  "sha": "ef550b33fcc231ac8d6495a376325e6190bdfbf9"
+ },
+ {
+  "id": "start:farver__rd_example__as_white_ref_Rd",
+  "script": "farver__rd_example__as_white_ref_Rd.R",
+  "file": "work/scoring/programs/start_farver__rd_example__as_white_ref_Rd.py",
+  "sha": "04f1cf816771d66abecce6d8b9e20ad64751c3af"
+ },
+ {
+  "id": "start:farver__rd_example__convert_colour_Rd",
+  "script": "farver__rd_example__convert_colour_Rd.R",
+  "file": "work/scoring/programs/start_farver__rd_example__convert_colour_Rd.py",
+  "sha": "e161de645f8aa0f2c2a0c95df82df5d049f64068"
+ },
+ {
+  "id": "start:farver__rd_example__encode_colour_Rd",
+  "script": "farver__rd_example__encode_colour_Rd.R",
+  "file": "work/scoring/programs/start_farver__rd_example__encode_colour_Rd.py",
+  "sha": "0fa7f6a82e761cb81d0603e46fc5e2ca2dacf9c4"
+ },
+ {
+  "id": "start:ggplot2__rd_example__geom_bin_2d_Rd",
+  "script": "ggplot2__rd_example__geom_bin_2d_Rd.R",
+  "file": "work/scoring/programs/start_ggplot2__rd_example__geom_bin_2d_Rd.py",
+  "sha": "47835ee7aa49f6e818f054467ef525fc58c131c6"
+ },
+ {
+  "id": "start:googledrive__rd_example__drive_cp_Rd",
+  "script": "googledrive__rd_example__drive_cp_Rd.R",
+  "file": "work/scoring/programs/start_googledrive__rd_example__drive_cp_Rd.py",
+  "sha": "bb74d958ace5b35926cdc71e3a7a70b83a19cb62"
+ },
+ {
+  "id": "start:gtable__rd_example__gtable_add_cols_Rd",
+  "script": "gtable__rd_example__gtable_add_cols_Rd.R",
+  "file": "work/scoring/programs/start_gtable__rd_example__gtable_add_cols_Rd.py",
+  "sha": "57ae44d2dfc2f2f917ab6f7a8074f1fcc73f76e4"
+ },
+ {
+  "id": "start:htmltools__rd_example__builder_Rd",
+  "script": "htmltools__rd_example__builder_Rd.R",
+  "file": "work/scoring/programs/start_htmltools__rd_example__builder_Rd.py",
+  "sha": "1a32243ebe0dc663a5868e48282dcb26a02cf9e1"
+ },
+ {
+  "id": "start:htmltools__rd_example__tagAppendAttributes_Rd",
+  "script": "htmltools__rd_example__tagAppendAttributes_Rd.R",
+  "file": "work/scoring/programs/start_htmltools__rd_example__tagAppendAttributes_Rd.py",
+  "sha": "9717c5c82d94e8f74498928c219c78302ab71fa6"
+ },
+ {
+  "id": "start:isoband__vignette__isoband3_s2",
+  "script": "isoband__vignette__isoband3_s2.R",
+  "file": "work/scoring/programs/start_isoband__vignette__isoband3_s2.py",
+  "sha": "4ce3bd11bb678605264edad23422a11ee359cda6"
+ },
+ {
+  "id": "start:lava__rd_example__csplit_Rd",
+  "script": "lava__rd_example__csplit_Rd.R",
+  "file": "work/scoring/programs/start_lava__rd_example__csplit_Rd.py",
+  "sha": "1ffc32b3ffd0f5b380a3cb6bde0628081d8d5386"
+ },
+ {
+  "id": "start:lubridate__rd_example__period_Rd",
+  "script": "lubridate__rd_example__period_Rd.R",
+  "file": "work/scoring/programs/start_lubridate__rd_example__period_Rd.py",
+  "sha": "68d77b23735727f8c92a1b0452241239c22ca03a"
+ },
+ {
+  "id": "start:openssl__rd_example__aes_cbc_Rd",
+  "script": "openssl__rd_example__aes_cbc_Rd.R",
+  "file": "work/scoring/programs/start_openssl__rd_example__aes_cbc_Rd.py",
+  "sha": "6fa530d24e9b5cb5c08576109c9d0f44a3d61c9b"
+ },
+ {
+  "id": "start:openssl__rd_example__certificates_Rd",
+  "script": "openssl__rd_example__certificates_Rd.R",
+  "file": "work/scoring/programs/start_openssl__rd_example__certificates_Rd.py",
+  "sha": "3e08eed98d2551d651cc68d8eb89197a1c43d11e"
+ },
+ {
+  "id": "start:openssl__rd_example__ec_dh_Rd",
+  "script": "openssl__rd_example__ec_dh_Rd.R",
+  "file": "work/scoring/programs/start_openssl__rd_example__ec_dh_Rd.py",
+  "sha": "92787586fbbefcb5e124bf7e6a2f107175036ea5"
+ },
+ {
+  "id": "start:openssl__vignette__bignum_s2",
+  "script": "openssl__vignette__bignum_s2.R",
+  "file": "work/scoring/programs/start_openssl__vignette__bignum_s2.py",
+  "sha": "d2fe4ac723ec9fa5e71bc83f8eb21acb09fc9cef"
+ },
+ {
+  "id": "start:pROC__rd_example__coords_Rd",
+  "script": "pROC__rd_example__coords_Rd.R",
+  "file": "work/scoring/programs/start_pROC__rd_example__coords_Rd.py",
+  "sha": "e30f1f7f8c04da8727a8482c64f62ac41e58a605"
+ },
+ {
+  "id": "start:pROC__rd_example__print_Rd",
+  "script": "pROC__rd_example__print_Rd.R",
+  "file": "work/scoring/programs/start_pROC__rd_example__print_Rd.py",
+  "sha": "1bfecaeb4b9e4abd2122f8a331ec709106205a0c"
+ },
+ {
+  "id": "start:prodlim__rd_example__backGround_Rd",
+  "script": "prodlim__rd_example__backGround_Rd.R",
+  "file": "work/scoring/programs/start_prodlim__rd_example__backGround_Rd.py",
+  "sha": "b8791a60013558bff2a1235b6d6a8ac7efd5982a"
+ },
+ {
+  "id": "start:proxy__rd_example__registry_Rd",
+  "script": "proxy__rd_example__registry_Rd.R",
+  "file": "work/scoring/programs/start_proxy__rd_example__registry_Rd.py",
+  "sha": "3a498383714ae93bbb2b7db3beba66772b375c3a"
+ },
+ {
+  "id": "start:purrr__rd_example__attr_getter_Rd",
+  "script": "purrr__rd_example__attr_getter_Rd.R",
+  "file": "work/scoring/programs/start_purrr__rd_example__attr_getter_Rd.py",
+  "sha": "e5c419493364c16a9909e1003eeefae7821784f9"
+ },
+ {
+  "id": "start:purrr__rd_example__invoke_Rd",
+  "script": "purrr__rd_example__invoke_Rd.R",
+  "file": "work/scoring/programs/start_purrr__rd_example__invoke_Rd.py",
+  "sha": "44e88bd8764722dbce491f7e4e11889b10a5b177"
+ },
+ {
+  "id": "start:ragg__rd_example__agg_capture_Rd",
+  "script": "ragg__rd_example__agg_capture_Rd.R",
+  "file": "work/scoring/programs/start_ragg__rd_example__agg_capture_Rd.py",
+  "sha": "97dc382d420aca06ed98d869ad6715fae5d94c6f"
+ },
+ {
+  "id": "start:ragg__rd_example__agg_webp_anim_Rd",
+  "script": "ragg__rd_example__agg_webp_anim_Rd.R",
+  "file": "work/scoring/programs/start_ragg__rd_example__agg_webp_anim_Rd.py",
+  "sha": "170170c9a618aee1615c8ac1db0688b10e5b8343"
+ },
+ {
+  "id": "start:ranger__rd_example__csrf_Rd",
+  "script": "ranger__rd_example__csrf_Rd.R",
+  "file": "work/scoring/programs/start_ranger__rd_example__csrf_Rd.py",
+  "sha": "8eeb59b95254103666c43136d1ae9cd3c023dd9f"
+ },
+ {
+  "id": "start:recipes__rd_example__discretize_Rd",
+  "script": "recipes__rd_example__discretize_Rd.R",
+  "file": "work/scoring/programs/start_recipes__rd_example__discretize_Rd.py",
+  "sha": "d7f23c67971f7004964a603d783133fbcc35e508"
+ },
+ {
+  "id": "start:recipes__rd_example__step_kpca_Rd",
+  "script": "recipes__rd_example__step_kpca_Rd.R",
+  "file": "work/scoring/programs/start_recipes__rd_example__step_kpca_Rd.py",
+  "sha": "edc9a906e94f472ab9084ba25c78fc9ee7b7656a"
+ },
+ {
+  "id": "start:reshape2__rd_example__cast_Rd",
+  "script": "reshape2__rd_example__cast_Rd.R",
+  "file": "work/scoring/programs/start_reshape2__rd_example__cast_Rd.py",
+  "sha": "a335dc87642d87daa9f864d233d9b69c8ffdbc54"
+ },
+ {
+  "id": "start:reshape2__rd_example__melt_data_frame_Rd",
+  "script": "reshape2__rd_example__melt_data_frame_Rd.R",
+  "file": "work/scoring/programs/start_reshape2__rd_example__melt_data_frame_Rd.py",
+  "sha": "a21946243fe356da52301f68c0533a8b988f19da"
+ },
+ {
+  "id": "start:reshape2__rd_example__parse_formula_Rd",
+  "script": "reshape2__rd_example__parse_formula_Rd.R",
+  "file": "work/scoring/programs/start_reshape2__rd_example__parse_formula_Rd.py",
+  "sha": "1d52635576230ddf18d7bc6292cba74f855c156a"
+ },
+ {
+  "id": "start:rmarkdown__rd_example__pandoc_available_Rd",
+  "script": "rmarkdown__rd_example__pandoc_available_Rd.R",
+  "file": "work/scoring/programs/start_rmarkdown__rd_example__pandoc_available_Rd.py",
+  "sha": "5d0cac30e75d77d628e8b98b6f96b9c0426c4d12"
+ },
+ {
+  "id": "start:rmarkdown__vignette__lua-filters_s3",
+  "script": "rmarkdown__vignette__lua-filters_s3.R",
+  "file": "work/scoring/programs/start_rmarkdown__vignette__lua-filters_s3.py",
+  "sha": "67714f09e7cd9cdd8edb91527b5498b4e4b796c7"
+ },
+ {
+  "id": "start:rvest__rd_example__html_children_Rd",
+  "script": "rvest__rd_example__html_children_Rd.R",
+  "file": "work/scoring/programs/start_rvest__rd_example__html_children_Rd.py",
+  "sha": "16159961f0b3351a10f9dc82ab6512d7e46de000"
+ },
+ {
+  "id": "start:rvest__rd_example__html_element_Rd",
+  "script": "rvest__rd_example__html_element_Rd.R",
+  "file": "work/scoring/programs/start_rvest__rd_example__html_element_Rd.py",
+  "sha": "a9245916e0ea82a7901af5bd49cd44027e6ba98b"
+ },
+ {
+  "id": "start:rvest__rd_example__html_table_Rd",
+  "script": "rvest__rd_example__html_table_Rd.R",
+  "file": "work/scoring/programs/start_rvest__rd_example__html_table_Rd.py",
+  "sha": "242ed313336655ecd5a9314e38766c5a0b3781c1"
+ },
+ {
+  "id": "start:rvest__vignette__rvest_s7",
+  "script": "rvest__vignette__rvest_s7.R",
+  "file": "work/scoring/programs/start_rvest__vignette__rvest_s7.py",
+  "sha": "18f5a89b82cffc10a1fd42356c345710d8f5cd34"
+ },
+ {
+  "id": "start:sass__rd_example__as_sass_Rd",
+  "script": "sass__rd_example__as_sass_Rd.R",
+  "file": "work/scoring/programs/start_sass__rd_example__as_sass_Rd.py",
+  "sha": "a3e71709a693846527957fe1e759999fb374df4f"
+ },
+ {
+  "id": "start:sass__rd_example__sass_import_Rd",
+  "script": "sass__rd_example__sass_import_Rd.R",
+  "file": "work/scoring/programs/start_sass__rd_example__sass_import_Rd.py",
+  "sha": "a8dababf9d9cf4457f6ee4f20c259f0a1ee7b527"
+ },
+ {
+  "id": "start:sessioninfo__rd_example__platform_info_Rd",
+  "script": "sessioninfo__rd_example__platform_info_Rd.R",
+  "file": "work/scoring/programs/start_sessioninfo__rd_example__platform_info_Rd.py",
+  "sha": "ecf056eef627cd5a25c5ae4a794a4f21a1486916"
+ },
+ {
+  "id": "start:sessioninfo__rd_example__python_info_Rd",
+  "script": "sessioninfo__rd_example__python_info_Rd.R",
+  "file": "work/scoring/programs/start_sessioninfo__rd_example__python_info_Rd.py",
+  "sha": "c63902e8dcb334b6fff086473f5effdc1dbee783"
+ },
+ {
+  "id": "start:shape__rd_example__Arrows_Rd",
+  "script": "shape__rd_example__Arrows_Rd.R",
+  "file": "work/scoring/programs/start_shape__rd_example__Arrows_Rd.py",
+  "sha": "580f247dac9cf3f1d6b5cf70cc12a5e4f8054aa1"
+ },
+ {
+  "id": "start:shape__rd_example__filledmultigonal_Rd",
+  "script": "shape__rd_example__filledmultigonal_Rd.R",
+  "file": "work/scoring/programs/start_shape__rd_example__filledmultigonal_Rd.py",
+  "sha": "1ebd52888a1c62483fea01672dc6b40008987ec2"
+ },
+ {
+  "id": "start:shape__rd_example__getellipse_Rd",
+  "script": "shape__rd_example__getellipse_Rd.R",
+  "file": "work/scoring/programs/start_shape__rd_example__getellipse_Rd.py",
+  "sha": "ff1251886a3da776a54c59cf55178b6552225eb4"
+ },
+ {
+  "id": "start:shiny__rd_example__actionButton_Rd",
+  "script": "shiny__rd_example__actionButton_Rd.R",
+  "file": "work/scoring/programs/start_shiny__rd_example__actionButton_Rd.py",
+  "sha": "aeb09fea485564fa7bb556b4ab29c5b91d002944"
+ },
+ {
+  "id": "start:shiny__rd_example__updateRadioButtons_Rd",
+  "script": "shiny__rd_example__updateRadioButtons_Rd.R",
+  "file": "work/scoring/programs/start_shiny__rd_example__updateRadioButtons_Rd.py",
+  "sha": "677712d89d5a0594973fdb7af7776c28591fc540"
+ },
+ {
+  "id": "start:systemfonts__rd_example__glyph_raster_Rd",
+  "script": "systemfonts__rd_example__glyph_raster_Rd.R",
+  "file": "work/scoring/programs/start_systemfonts__rd_example__glyph_raster_Rd.py",
+  "sha": "93e05ab3f4a60a2b8cf90be73a5d11cd7687cf07"
+ },
+ {
+  "id": "start:systemfonts__rd_example__shape_string_Rd",
+  "script": "systemfonts__rd_example__shape_string_Rd.R",
+  "file": "work/scoring/programs/start_systemfonts__rd_example__shape_string_Rd.py",
+  "sha": "1186da58e6e9d5715e1c0f00bfad2139d05e947c"
+ },
+ {
+  "id": "start:textshaping__rd_example__get_font_features_Rd",
+  "script": "textshaping__rd_example__get_font_features_Rd.R",
+  "file": "work/scoring/programs/start_textshaping__rd_example__get_font_features_Rd.py",
+  "sha": "ae1e61e8f29be343fe018d4438cc06ec130c31f0"
+ },
+ {
+  "id": "start:textshaping__rd_example__lorem_text_Rd",
+  "script": "textshaping__rd_example__lorem_text_Rd.R",
+  "file": "work/scoring/programs/start_textshaping__rd_example__lorem_text_Rd.py",
+  "sha": "6ae61066d6351c772da1a1c4ba400c257502a6a5"
+ },
+ {
+  "id": "start:textshaping__rd_example__shape_text_Rd",
+  "script": "textshaping__rd_example__shape_text_Rd.R",
+  "file": "work/scoring/programs/start_textshaping__rd_example__shape_text_Rd.py",
+  "sha": "7efea3e037791682b6e3256292659315efc6f1d6"
+ },
+ {
+  "id": "start:timeDate__rd_example__calendar-isBizday_Rd",
+  "script": "timeDate__rd_example__calendar-isBizday_Rd.R",
+  "file": "work/scoring/programs/start_timeDate__rd_example__calendar-isBizday_Rd.py",
+  "sha": "b0b5ffacb868f61774fed8c501175d3b2e0fba95"
+ },
+ {
+  "id": "start:xml2__rd_example__xml_attr_Rd",
+  "script": "xml2__rd_example__xml_attr_Rd.R",
+  "file": "work/scoring/programs/start_xml2__rd_example__xml_attr_Rd.py",
+  "sha": "07a1a60e742e4e88ae60e3612db67e00633d9e3d"
+ },
+ {
+  "id": "final_default:ModelMetrics__rd_example__auc_Rd",
+  "script": "ModelMetrics__rd_example__auc_Rd.R",
+  "file": "work/scoring/programs/final_default_ModelMetrics__rd_example__auc_Rd.py",
+  "sha": "f3d15ecb62d6938373a5b9849fd39fac85dfe19a"
+ },
+ {
+  "id": "final_default:broom__rd_example__augment_felm_Rd",
+  "script": "broom__rd_example__augment_felm_Rd.R",
+  "file": "work/scoring/programs/final_default_broom__rd_example__augment_felm_Rd.py",
+  "sha": "6a9fd8298585671784b25f6e0c2a8ff4110e6df7"
+ },
+ {
+  "id": "final_default:bslib__rd_example__value_box_Rd",
+  "script": "bslib__rd_example__value_box_Rd.R",
+  "file": "work/scoring/programs/final_default_bslib__rd_example__value_box_Rd.py",
+  "sha": "f6ddaf7ea79fc9359549892f1cb35040e78f66ad"
+ },
+ {
+  "id": "final_default:caret__rd_example__update_train_Rd",
+  "script": "caret__rd_example__update_train_Rd.R",
+  "file": "work/scoring/programs/final_default_caret__rd_example__update_train_Rd.py",
+  "sha": "5b28dbd5f2057e57c28ad0cf6e4b47ab98c19962"
+ },
+ {
+  "id": "final_default:e1071__rd_example__boxplot_bclust_Rd",
+  "script": "e1071__rd_example__boxplot_bclust_Rd.R",
+  "file": "work/scoring/programs/final_default_e1071__rd_example__boxplot_bclust_Rd.py",
+  "sha": "536b1b762e5f0549e7072b97c8b2b874df2683e2"
+ },
+ {
+  "id": "final_default:fansi__rd_example__normalize_state_Rd",
+  "script": "fansi__rd_example__normalize_state_Rd.R",
+  "file": "work/scoring/programs/final_default_fansi__rd_example__normalize_state_Rd.py",
+  "sha": "0b57837cd8e2a188c02cd7ff8ad204af3e7e59aa"
+ },
+ {
+  "id": "final_default:farver__rd_example__as_white_ref_Rd",
+  "script": "farver__rd_example__as_white_ref_Rd.R",
+  "file": "work/scoring/programs/final_default_farver__rd_example__as_white_ref_Rd.py",
+  "sha": "e8d73fdd180b856edcf241f2a0b23302b6c887be"
+ },
+ {
+  "id": "final_default:farver__rd_example__convert_colour_Rd",
+  "script": "farver__rd_example__convert_colour_Rd.R",
+  "file": "work/scoring/programs/final_default_farver__rd_example__convert_colour_Rd.py",
+  "sha": "2190ec1d3c1c3d76ccb7c6c63f48f86330cdd836"
+ },
+ {
+  "id": "final_default:farver__rd_example__encode_colour_Rd",
+  "script": "farver__rd_example__encode_colour_Rd.R",
+  "file": "work/scoring/programs/final_default_farver__rd_example__encode_colour_Rd.py",
+  "sha": "105eb7f0d10f5b0e3220daffb17d43102fad3149"
+ },
+ {
+  "id": "final_default:googledrive__rd_example__drive_cp_Rd",
+  "script": "googledrive__rd_example__drive_cp_Rd.R",
+  "file": "work/scoring/programs/final_default_googledrive__rd_example__drive_cp_Rd.py",
+  "sha": "5301912706e26a91e703462408b2950cea328c49"
+ },
+ {
+  "id": "final_default:htmltools__rd_example__builder_Rd",
+  "script": "htmltools__rd_example__builder_Rd.R",
+  "file": "work/scoring/programs/final_default_htmltools__rd_example__builder_Rd.py",
+  "sha": "4f3434e9073fe3e57ce680bc2223c653aab79c40"
+ },
+ {
+  "id": "final_default:htmltools__rd_example__tagAppendAttributes_Rd",
+  "script": "htmltools__rd_example__tagAppendAttributes_Rd.R",
+  "file": "work/scoring/programs/final_default_htmltools__rd_example__tagAppendAttributes_Rd.py",
+  "sha": "54b4989f925194a8d5bba528c3ba6dc1c612c698"
+ },
+ {
+  "id": "final_default:isoband__vignette__isoband3_s2",
+  "script": "isoband__vignette__isoband3_s2.R",
+  "file": "work/scoring/programs/final_default_isoband__vignette__isoband3_s2.py",
+  "sha": "095580591e8e607185a92b9a98561a4bbb16015d"
+ },
+ {
+  "id": "final_default:lava__rd_example__csplit_Rd",
+  "script": "lava__rd_example__csplit_Rd.R",
+  "file": "work/scoring/programs/final_default_lava__rd_example__csplit_Rd.py",
+  "sha": "ff0334a8d8bef1947134b96a67619ae1db898627"
+ },
+ {
+  "id": "final_default:lubridate__rd_example__period_Rd",
+  "script": "lubridate__rd_example__period_Rd.R",
+  "file": "work/scoring/programs/final_default_lubridate__rd_example__period_Rd.py",
+  "sha": "0e82bec778692a11ed4b0bed986a5e2227a6a8fc"
+ },
+ {
+  "id": "final_default:openssl__rd_example__ec_dh_Rd",
+  "script": "openssl__rd_example__ec_dh_Rd.R",
+  "file": "work/scoring/programs/final_default_openssl__rd_example__ec_dh_Rd.py",
+  "sha": "dd582195dba0cac564a1e5cb4ef39006c1fdd489"
+ },
+ {
+  "id": "final_default:openssl__vignette__bignum_s2",
+  "script": "openssl__vignette__bignum_s2.R",
+  "file": "work/scoring/programs/final_default_openssl__vignette__bignum_s2.py",
+  "sha": "80b934f99dcacdf421b956917ad037951895f02d"
+ },
+ {
+  "id": "final_default:pROC__rd_example__coords_Rd",
+  "script": "pROC__rd_example__coords_Rd.R",
+  "file": "work/scoring/programs/final_default_pROC__rd_example__coords_Rd.py",
+  "sha": "35bed680b7f67059467dcd89d4764b1cb9609be0"
+ },
+ {
+  "id": "final_default:proxy__rd_example__registry_Rd",
+  "script": "proxy__rd_example__registry_Rd.R",
+  "file": "work/scoring/programs/final_default_proxy__rd_example__registry_Rd.py",
+  "sha": "bd676a06c45d63ef5499cb13b52a523d89c3579a"
+ },
+ {
+  "id": "final_default:purrr__rd_example__attr_getter_Rd",
+  "script": "purrr__rd_example__attr_getter_Rd.R",
+  "file": "work/scoring/programs/final_default_purrr__rd_example__attr_getter_Rd.py",
+  "sha": "df7aa49ba87493b18cf79d270dbac6118f67f5c3"
+ },
+ {
+  "id": "final_default:purrr__rd_example__invoke_Rd",
+  "script": "purrr__rd_example__invoke_Rd.R",
+  "file": "work/scoring/programs/final_default_purrr__rd_example__invoke_Rd.py",
+  "sha": "d7bfa96cb5c0d0be1e98c1452587fbd3f9065b6e"
+ },
+ {
+  "id": "final_default:ragg__rd_example__agg_capture_Rd",
+  "script": "ragg__rd_example__agg_capture_Rd.R",
+  "file": "work/scoring/programs/final_default_ragg__rd_example__agg_capture_Rd.py",
+  "sha": "f85ddd4ab48578bb68b1d5788a04830bdfc263ba"
+ },
+ {
+  "id": "final_default:ragg__rd_example__agg_webp_anim_Rd",
+  "script": "ragg__rd_example__agg_webp_anim_Rd.R",
+  "file": "work/scoring/programs/final_default_ragg__rd_example__agg_webp_anim_Rd.py",
+  "sha": "c5ade3f457e860b1e002de97e1c542e98e2664bf"
+ },
+ {
+  "id": "final_default:ranger__rd_example__csrf_Rd",
+  "script": "ranger__rd_example__csrf_Rd.R",
+  "file": "work/scoring/programs/final_default_ranger__rd_example__csrf_Rd.py",
+  "sha": "bf3990ea6f2db7d90ec36e36d172994bb3294e5a"
+ },
+ {
+  "id": "final_default:recipes__rd_example__discretize_Rd",
+  "script": "recipes__rd_example__discretize_Rd.R",
+  "file": "work/scoring/programs/final_default_recipes__rd_example__discretize_Rd.py",
+  "sha": "83528cbd46dba71b3ac9178cfbf63dec2af130f3"
+ },
+ {
+  "id": "final_default:recipes__rd_example__step_kpca_Rd",
+  "script": "recipes__rd_example__step_kpca_Rd.R",
+  "file": "work/scoring/programs/final_default_recipes__rd_example__step_kpca_Rd.py",
+  "sha": "f762143d6b17dad956923f04f5c0440ed0e45ed0"
+ },
+ {
+  "id": "final_default:reshape2__rd_example__cast_Rd",
+  "script": "reshape2__rd_example__cast_Rd.R",
+  "file": "work/scoring/programs/final_default_reshape2__rd_example__cast_Rd.py",
+  "sha": "9c2b5ec16830d91ff95e53ef91745b52bd7f05f7"
+ },
+ {
+  "id": "final_default:reshape2__rd_example__melt_data_frame_Rd",
+  "script": "reshape2__rd_example__melt_data_frame_Rd.R",
+  "file": "work/scoring/programs/final_default_reshape2__rd_example__melt_data_frame_Rd.py",
+  "sha": "6dfabb747965daabd78a8000e1555fb4ad6f7ea6"
+ },
+ {
+  "id": "final_default:reshape2__rd_example__parse_formula_Rd",
+  "script": "reshape2__rd_example__parse_formula_Rd.R",
+  "file": "work/scoring/programs/final_default_reshape2__rd_example__parse_formula_Rd.py",
+  "sha": "63e33539cce0c2d3bb1cf59116166e28884b9f8f"
+ },
+ {
+  "id": "final_default:rmarkdown__rd_example__pandoc_available_Rd",
+  "script": "rmarkdown__rd_example__pandoc_available_Rd.R",
+  "file": "work/scoring/programs/final_default_rmarkdown__rd_example__pandoc_available_Rd.py",
+  "sha": "09be18f8581453634954ba676c4e27384acc32b7"
+ },
+ {
+  "id": "final_default:rmarkdown__vignette__lua-filters_s3",
+  "script": "rmarkdown__vignette__lua-filters_s3.R",
+  "file": "work/scoring/programs/final_default_rmarkdown__vignette__lua-filters_s3.py",
+  "sha": "3c645bfd98e98cc35a90904a47261486a4a1de95"
+ },
+ {
+  "id": "final_default:rvest__rd_example__html_children_Rd",
+  "script": "rvest__rd_example__html_children_Rd.R",
+  "file": "work/scoring/programs/final_default_rvest__rd_example__html_children_Rd.py",
+  "sha": "c79536f6622fc24ab125798c939b995493df23b9"
+ },
+ {
+  "id": "final_default:rvest__rd_example__html_element_Rd",
+  "script": "rvest__rd_example__html_element_Rd.R",
+  "file": "work/scoring/programs/final_default_rvest__rd_example__html_element_Rd.py",
+  "sha": "5c97b37b62b5cecd6aeafafdc163ea0896e27f5a"
+ },
+ {
+  "id": "final_default:rvest__rd_example__html_table_Rd",
+  "script": "rvest__rd_example__html_table_Rd.R",
+  "file": "work/scoring/programs/final_default_rvest__rd_example__html_table_Rd.py",
+  "sha": "d3ca1eeee2e86443f361c91f8bd911594ce2d89f"
+ },
+ {
+  "id": "final_default:rvest__vignette__rvest_s7",
+  "script": "rvest__vignette__rvest_s7.R",
+  "file": "work/scoring/programs/final_default_rvest__vignette__rvest_s7.py",
+  "sha": "4dc954cbc80810b56405f37061485496a5e572b4"
+ },
+ {
+  "id": "final_default:sass__rd_example__as_sass_Rd",
+  "script": "sass__rd_example__as_sass_Rd.R",
+  "file": "work/scoring/programs/final_default_sass__rd_example__as_sass_Rd.py",
+  "sha": "14856d9360a0e5f9f1efd24131c037e3300589a8"
+ },
+ {
+  "id": "final_default:sass__rd_example__sass_import_Rd",
+  "script": "sass__rd_example__sass_import_Rd.R",
+  "file": "work/scoring/programs/final_default_sass__rd_example__sass_import_Rd.py",
+  "sha": "fbac69406912ff92b3078e34ef8960f8046cab8c"
+ },
+ {
+  "id": "final_default:shape__rd_example__Arrows_Rd",
+  "script": "shape__rd_example__Arrows_Rd.R",
+  "file": "work/scoring/programs/final_default_shape__rd_example__Arrows_Rd.py",
+  "sha": "5a129450f6f3d3b98dd1b50c41cb45f303ea8bc1"
+ },
+ {
+  "id": "final_default:shape__rd_example__getellipse_Rd",
+  "script": "shape__rd_example__getellipse_Rd.R",
+  "file": "work/scoring/programs/final_default_shape__rd_example__getellipse_Rd.py",
+  "sha": "89fb59921bbb8a2cd9fb15c16b45026cb33261c7"
+ },
+ {
+  "id": "final_default:shiny__rd_example__actionButton_Rd",
+  "script": "shiny__rd_example__actionButton_Rd.R",
+  "file": "work/scoring/programs/final_default_shiny__rd_example__actionButton_Rd.py",
+  "sha": "29b663fd27136f7bab59c93c69a8a5b02af8d302"
+ },
+ {
+  "id": "final_default:shiny__rd_example__updateRadioButtons_Rd",
+  "script": "shiny__rd_example__updateRadioButtons_Rd.R",
+  "file": "work/scoring/programs/final_default_shiny__rd_example__updateRadioButtons_Rd.py",
+  "sha": "d24cfbb65f352cff27c251756ac5b02d45ff6d3e"
+ },
+ {
+  "id": "final_default:systemfonts__rd_example__shape_string_Rd",
+  "script": "systemfonts__rd_example__shape_string_Rd.R",
+  "file": "work/scoring/programs/final_default_systemfonts__rd_example__shape_string_Rd.py",
+  "sha": "ef2e9b66590aaf209c9aeb25b4cc915bc2b9f426"
+ },
+ {
+  "id": "final_default:textshaping__rd_example__lorem_text_Rd",
+  "script": "textshaping__rd_example__lorem_text_Rd.R",
+  "file": "work/scoring/programs/final_default_textshaping__rd_example__lorem_text_Rd.py",
+  "sha": "503dae474dd8f292f26d545a3e98e856a106adf4"
+ },
+ {
+  "id": "final_default:timeDate__rd_example__calendar-isBizday_Rd",
+  "script": "timeDate__rd_example__calendar-isBizday_Rd.R",
+  "file": "work/scoring/programs/final_default_timeDate__rd_example__calendar-isBizday_Rd.py",
+  "sha": "9613d8f72543eb2e1f0f432bafc1bffac4e55135"
+ },
+ {
+  "id": "final_default:xml2__rd_example__xml_attr_Rd",
+  "script": "xml2__rd_example__xml_attr_Rd.R",
+  "file": "work/scoring/programs/final_default_xml2__rd_example__xml_attr_Rd.py",
+  "sha": "99229444a5ee338bbd54d81d17b61afc305d83a9"
+ },
+ {
+  "id": "final_w3:ModelMetrics__rd_example__auc_Rd",
+  "script": "ModelMetrics__rd_example__auc_Rd.R",
+  "file": "work/scoring/programs/final_w3_ModelMetrics__rd_example__auc_Rd.py",
+  "sha": "cb496098c343ab829d9caa336e0c9648b93fde22"
+ },
+ {
+  "id": "final_w3:broom__rd_example__augment_felm_Rd",
+  "script": "broom__rd_example__augment_felm_Rd.R",
+  "file": "work/scoring/programs/final_w3_broom__rd_example__augment_felm_Rd.py",
+  "sha": "e80356c59096556c7a2f9d21daa33e42e7763550"
+ },
+ {
+  "id": "final_w3:bslib__rd_example__value_box_Rd",
+  "script": "bslib__rd_example__value_box_Rd.R",
+  "file": "work/scoring/programs/final_w3_bslib__rd_example__value_box_Rd.py",
+  "sha": "1986fcdb47bd79f3ade65991ccbbd82a2d5ecb61"
+ },
+ {
+  "id": "final_w3:caret__rd_example__update_train_Rd",
+  "script": "caret__rd_example__update_train_Rd.R",
+  "file": "work/scoring/programs/final_w3_caret__rd_example__update_train_Rd.py",
+  "sha": "64332ba6ea1311d5504c2cee5ac5e73c024fdaf6"
+ },
+ {
+  "id": "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+  "script": "e1071__rd_example__boxplot_bclust_Rd.R",
+  "file": "work/scoring/programs/final_w3_e1071__rd_example__boxplot_bclust_Rd.py",
+  "sha": "e2fdcc09d419ce282e5cbe3b63ae81e844d00fea"
+ },
+ {
+  "id": "final_w3:fansi__rd_example__normalize_state_Rd",
+  "script": "fansi__rd_example__normalize_state_Rd.R",
+  "file": "work/scoring/programs/final_w3_fansi__rd_example__normalize_state_Rd.py",
+  "sha": "c7615574e19c9e1a14c6485a13b7a0de13a749e1"
+ },
+ {
+  "id": "final_w3:farver__rd_example__as_white_ref_Rd",
+  "script": "farver__rd_example__as_white_ref_Rd.R",
+  "file": "work/scoring/programs/final_w3_farver__rd_example__as_white_ref_Rd.py",
+  "sha": "3e7b34ee23cf95c526e0745e6df5e8fe511d2d45"
+ },
+ {
+  "id": "final_w3:farver__rd_example__convert_colour_Rd",
+  "script": "farver__rd_example__convert_colour_Rd.R",
+  "file": "work/scoring/programs/final_w3_farver__rd_example__convert_colour_Rd.py",
+  "sha": "d5f07b0ee12e77c49709b874f6018721df2b3416"
+ },
+ {
+  "id": "final_w3:farver__rd_example__encode_colour_Rd",
+  "script": "farver__rd_example__encode_colour_Rd.R",
+  "file": "work/scoring/programs/final_w3_farver__rd_example__encode_colour_Rd.py",
+  "sha": "303a7b0460ffb62bba36814c08dd8155a1efccda"
+ },
+ {
+  "id": "final_w3:googledrive__rd_example__drive_cp_Rd",
+  "script": "googledrive__rd_example__drive_cp_Rd.R",
+  "file": "work/scoring/programs/final_w3_googledrive__rd_example__drive_cp_Rd.py",
+  "sha": "485860b528261d51bca79c56fd0334d411b9eb68"
+ },
+ {
+  "id": "final_w3:htmltools__rd_example__builder_Rd",
+  "script": "htmltools__rd_example__builder_Rd.R",
+  "file": "work/scoring/programs/final_w3_htmltools__rd_example__builder_Rd.py",
+  "sha": "b375ffcb727db2ba4dd297708405d275582f57e6"
+ },
+ {
+  "id": "final_w3:htmltools__rd_example__tagAppendAttributes_Rd",
+  "script": "htmltools__rd_example__tagAppendAttributes_Rd.R",
+  "file": "work/scoring/programs/final_w3_htmltools__rd_example__tagAppendAttributes_Rd.py",
+  "sha": "821b3f65168f2f59c764e6ffebcc40c20c5a46b6"
+ },
+ {
+  "id": "final_w3:isoband__vignette__isoband3_s2",
+  "script": "isoband__vignette__isoband3_s2.R",
+  "file": "work/scoring/programs/final_w3_isoband__vignette__isoband3_s2.py",
+  "sha": "10dd8fc73a9b53e69e6b835afbe6e2d10cf3bfc6"
+ },
+ {
+  "id": "final_w3:lava__rd_example__csplit_Rd",
+  "script": "lava__rd_example__csplit_Rd.R",
+  "file": "work/scoring/programs/final_w3_lava__rd_example__csplit_Rd.py",
+  "sha": "ac83c2610259598dd78f74c819acff40a04bd4cb"
+ },
+ {
+  "id": "final_w3:lubridate__rd_example__period_Rd",
+  "script": "lubridate__rd_example__period_Rd.R",
+  "file": "work/scoring/programs/final_w3_lubridate__rd_example__period_Rd.py",
+  "sha": "2d3f9da4678b94fbce8a70f2bdb6125d31fd6929"
+ },
+ {
+  "id": "final_w3:openssl__rd_example__ec_dh_Rd",
+  "script": "openssl__rd_example__ec_dh_Rd.R",
+  "file": "work/scoring/programs/final_w3_openssl__rd_example__ec_dh_Rd.py",
+  "sha": "74344ca6c92365af6fe3774dd8ec424753bbee17"
+ },
+ {
+  "id": "final_w3:openssl__vignette__bignum_s2",
+  "script": "openssl__vignette__bignum_s2.R",
+  "file": "work/scoring/programs/final_w3_openssl__vignette__bignum_s2.py",
+  "sha": "19ceaaa3d6a4e5292808033a1aa6d24ade834a6e"
+ },
+ {
+  "id": "final_w3:pROC__rd_example__coords_Rd",
+  "script": "pROC__rd_example__coords_Rd.R",
+  "file": "work/scoring/programs/final_w3_pROC__rd_example__coords_Rd.py",
+  "sha": "2bad814127962bbc2bada1534025f67608ddd087"
+ },
+ {
+  "id": "final_w3:prodlim__rd_example__backGround_Rd",
+  "script": "prodlim__rd_example__backGround_Rd.R",
+  "file": "work/scoring/programs/final_w3_prodlim__rd_example__backGround_Rd.py",
+  "sha": "5280dce7fb14c99b0e293c2313bfa14bca6b1446"
+ },
+ {
+  "id": "final_w3:proxy__rd_example__registry_Rd",
+  "script": "proxy__rd_example__registry_Rd.R",
+  "file": "work/scoring/programs/final_w3_proxy__rd_example__registry_Rd.py",
+  "sha": "1e0a96cf1f60b0431bb23f5acfa1eee87733cc1c"
+ },
+ {
+  "id": "final_w3:purrr__rd_example__attr_getter_Rd",
+  "script": "purrr__rd_example__attr_getter_Rd.R",
+  "file": "work/scoring/programs/final_w3_purrr__rd_example__attr_getter_Rd.py",
+  "sha": "f251989f015aa631498f4e8a55e6ab229b9383d7"
+ },
+ {
+  "id": "final_w3:purrr__rd_example__invoke_Rd",
+  "script": "purrr__rd_example__invoke_Rd.R",
+  "file": "work/scoring/programs/final_w3_purrr__rd_example__invoke_Rd.py",
+  "sha": "dfc07521393cf6f85cfabc830e689d422a67431d"
+ },
+ {
+  "id": "final_w3:ragg__rd_example__agg_capture_Rd",
+  "script": "ragg__rd_example__agg_capture_Rd.R",
+  "file": "work/scoring/programs/final_w3_ragg__rd_example__agg_capture_Rd.py",
+  "sha": "ab0567723d45ba61f5835de7e6a1fdcc1d9cd547"
+ },
+ {
+  "id": "final_w3:ragg__rd_example__agg_webp_anim_Rd",
+  "script": "ragg__rd_example__agg_webp_anim_Rd.R",
+  "file": "work/scoring/programs/final_w3_ragg__rd_example__agg_webp_anim_Rd.py",
+  "sha": "552243a7c0dea1c151e5fd0ffead17b71cd1c3a1"
+ },
+ {
+  "id": "final_w3:ranger__rd_example__csrf_Rd",
+  "script": "ranger__rd_example__csrf_Rd.R",
+  "file": "work/scoring/programs/final_w3_ranger__rd_example__csrf_Rd.py",
+  "sha": "2aae6ffbc0ebad4fd4dcc08ec9be2ac0ce16603d"
+ },
+ {
+  "id": "final_w3:recipes__rd_example__discretize_Rd",
+  "script": "recipes__rd_example__discretize_Rd.R",
+  "file": "work/scoring/programs/final_w3_recipes__rd_example__discretize_Rd.py",
+  "sha": "4b838b6338be86b9d5f2fff2fff1ef67cd159f44"
+ },
+ {
+  "id": "final_w3:recipes__rd_example__step_kpca_Rd",
+  "script": "recipes__rd_example__step_kpca_Rd.R",
+  "file": "work/scoring/programs/final_w3_recipes__rd_example__step_kpca_Rd.py",
+  "sha": "0917356cde7b5249adf4e0ab184fd884c07cc6ff"
+ },
+ {
+  "id": "final_w3:reshape2__rd_example__cast_Rd",
+  "script": "reshape2__rd_example__cast_Rd.R",
+  "file": "work/scoring/programs/final_w3_reshape2__rd_example__cast_Rd.py",
+  "sha": "c0962be72d630088e08ef1d8fa08da80e6de48bf"
+ },
+ {
+  "id": "final_w3:reshape2__rd_example__melt_data_frame_Rd",
+  "script": "reshape2__rd_example__melt_data_frame_Rd.R",
+  "file": "work/scoring/programs/final_w3_reshape2__rd_example__melt_data_frame_Rd.py",
+  "sha": "95ed02c77eb114303dc94fcc698a11075e16c6c3"
+ },
+ {
+  "id": "final_w3:reshape2__rd_example__parse_formula_Rd",
+  "script": "reshape2__rd_example__parse_formula_Rd.R",
+  "file": "work/scoring/programs/final_w3_reshape2__rd_example__parse_formula_Rd.py",
+  "sha": "5a1bd9f6d31f8fbf9ae0c14e722ace380252f6c7"
+ },
+ {
+  "id": "final_w3:rmarkdown__rd_example__pandoc_available_Rd",
+  "script": "rmarkdown__rd_example__pandoc_available_Rd.R",
+  "file": "work/scoring/programs/final_w3_rmarkdown__rd_example__pandoc_available_Rd.py",
+  "sha": "9829a20efedaaf1cf716fc0d29f2ea451630780a"
+ },
+ {
+  "id": "final_w3:rmarkdown__vignette__lua-filters_s3",
+  "script": "rmarkdown__vignette__lua-filters_s3.R",
+  "file": "work/scoring/programs/final_w3_rmarkdown__vignette__lua-filters_s3.py",
+  "sha": "1aab32ce6e9ffc32093aebc3bbb2cec4f4435289"
+ },
+ {
+  "id": "final_w3:rvest__rd_example__html_children_Rd",
+  "script": "rvest__rd_example__html_children_Rd.R",
+  "file": "work/scoring/programs/final_w3_rvest__rd_example__html_children_Rd.py",
+  "sha": "9a1ac99511c32cd767b250fac93d0f3d14861b7a"
+ },
+ {
+  "id": "final_w3:rvest__rd_example__html_table_Rd",
+  "script": "rvest__rd_example__html_table_Rd.R",
+  "file": "work/scoring/programs/final_w3_rvest__rd_example__html_table_Rd.py",
+  "sha": "1efc085d54477ea2feca601b9ed18982bf674268"
+ },
+ {
+  "id": "final_w3:sass__rd_example__as_sass_Rd",
+  "script": "sass__rd_example__as_sass_Rd.R",
+  "file": "work/scoring/programs/final_w3_sass__rd_example__as_sass_Rd.py",
+  "sha": "950ab5052ae50f936e6fc516bf1c8d8f95d97b82"
+ },
+ {
+  "id": "final_w3:sass__rd_example__sass_import_Rd",
+  "script": "sass__rd_example__sass_import_Rd.R",
+  "file": "work/scoring/programs/final_w3_sass__rd_example__sass_import_Rd.py",
+  "sha": "3380e959fc2ff7999d1023fc7feb0ca37731854c"
+ },
+ {
+  "id": "final_w3:sessioninfo__rd_example__platform_info_Rd",
+  "script": "sessioninfo__rd_example__platform_info_Rd.R",
+  "file": "work/scoring/programs/final_w3_sessioninfo__rd_example__platform_info_Rd.py",
+  "sha": "0c269971884630da372d293678d13524083e2ec1"
+ },
+ {
+  "id": "final_w3:shape__rd_example__Arrows_Rd",
+  "script": "shape__rd_example__Arrows_Rd.R",
+  "file": "work/scoring/programs/final_w3_shape__rd_example__Arrows_Rd.py",
+  "sha": "be556d7e3eb1a76428600224e35162d1db887e9f"
+ },
+ {
+  "id": "final_w3:shape__rd_example__filledmultigonal_Rd",
+  "script": "shape__rd_example__filledmultigonal_Rd.R",
+  "file": "work/scoring/programs/final_w3_shape__rd_example__filledmultigonal_Rd.py",
+  "sha": "ff4b25eae2941e12c57b31f65f8c1d896d606862"
+ },
+ {
+  "id": "final_w3:shape__rd_example__getellipse_Rd",
+  "script": "shape__rd_example__getellipse_Rd.R",
+  "file": "work/scoring/programs/final_w3_shape__rd_example__getellipse_Rd.py",
+  "sha": "93a934f43c5735eabaac24f862fa8cfce0ee4917"
+ },
+ {
+  "id": "final_w3:textshaping__rd_example__lorem_text_Rd",
+  "script": "textshaping__rd_example__lorem_text_Rd.R",
+  "file": "work/scoring/programs/final_w3_textshaping__rd_example__lorem_text_Rd.py",
+  "sha": "43e2f40203b17202caecbe40af4be67cf8130ae5"
+ },
+ {
+  "id": "final_w3:xml2__rd_example__xml_attr_Rd",
+  "script": "xml2__rd_example__xml_attr_Rd.R",
+  "file": "work/scoring/programs/final_w3_xml2__rd_example__xml_attr_Rd.py",
+  "sha": "2bcaafb6477421e272ca164f37bbe7525fc5695a"
+ }
+]

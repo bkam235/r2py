@@ -110,6 +110,8 @@ def run_one(task: dict) -> dict:
 
     name, arm, t = task["name"], task["arm"], task["targets"]
     row = {"script": name, "arm": arm, "sample": task["sample"]}
+    from r2py.scoring import scoring_version
+    row["scoring_version"] = scoring_version()   # scores compare only within one scoring epoch
     started = time.monotonic()
     try:
         manifest = ho.load_manifest(ROOT / "experiments/dev_run/manifest.json")
