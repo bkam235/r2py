@@ -3667,3 +3667,23 @@ for the 10 experiments since 2026-10-17 (`"backfilled": true`; costs as logged, 
 `experiments/META_LOOP.md`: it reads the protocol and the latest results, checks step 0, takes the user's question or
 proposes up to three from the health report, and stops at the four gates (scorer acceptance, spend, default change,
 publishing).
+
+**The graphics epilogue printed "null device 1" into R's stdout (scorer track, registered 2026-10-25, before the
+check).** Found by `health_report.py --deep` on `work/replay_default`: three never-improving states (prodlim
+`backGround`, shape `filledmultigonal`, systemfonts `glyph_raster`) lose stdout to `R printed 'null device \r\n 1 \r\n>'
+but Python printed ''`, and none of the three scripts calls `dev.off()`. Cause, shown offline: the script runs under
+`source(..., print.eval=TRUE)`, so the graphics epilogue's top-level `tryCatch(dev.off(), ...)` prints its value; a
+plain R sandbox run of `x <- 1` ends its stdout with `null device / 1` and the prompt `R -e` prints on exit. The
+checkpointed capture sinks that output and is unaffected, but 49 of the 249 stored maps hold the whole-script stdout
+of a plain run (from before the checkpoint fixes; `refresh_entity_bundles.py` never replaced it). The verifier
+compares the whole-script stdout only when no entity printed, which is the case in 18 of the 49: there the stored R
+stdout is nothing but the harness's output, and the stdout score of 0 is copied onto every entity. In the other 31
+the per-entity comparison is used and nothing changes.
+- Change: `invisible(...)` around the epilogue's `dev.off()` (`r2py/stage0/effects/graphics.py`), and the R sandbox
+  drops the final bare prompt line (`r2py/stage0/sandbox/r_sandbox.py`; not in the shared `collect`, which the
+  Python sandbox also uses). Test `tests/test_harness_stdout.py` (fails before). Re-capture: the whole-script stdout of
+  the 49 maps only (`refresh_entity_bundles.py --stdout`, new), everything else in them kept.
+- Instrument: `scoring_epoch.py check` on the 147 reference programs, no model calls, $0.
+- Expected: programs of the 18 states whose stored stdout was only the harness's move up (stdout no longer fails on
+  every entity); nothing else moves beyond the noise band; no run/crash flip. Any other move sends the change back.
+- Decision: the person's acceptance of the check report (opens epoch 4 and rebuilds the curves).
