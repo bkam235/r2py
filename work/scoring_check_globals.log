@@ -1,0 +1,47 @@
+re-verifying 147 reference programs (epoch 1 scorer e7e41acd32cb-3fce340317f5 -> afb7a6706ca5-3fce340317f5)
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.2
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.2
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Installing Python package 'ranger' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+# Scorer regression check, 2026-10-24 22:49
+
+- Epoch 1 scorer `e7e41acd32cb-3fce340317f5`; current scorer `afb7a6706ca5-3fce340317f5`.
+- Programs: 147; unchanged 130, **changed 6**, small moves within noise 4, flaky within their range 7, errors 0.
+- Mean change over the changed programs +0.5884; up 6, down 0; run/crash flips 5.
+
+| program | before | after | exit | entities that moved (before -> after) |
+|---|---|---|---|---|
+| final_w3:openssl__rd_example__ec_dh_Rd | 0.6747 | 0.6798 | 0->0 | ec_dh 0.774->0.789; ec_dh_1 0.774->0.789 |
+| start:rvest__vignette__rvest_s7 | 0.0000 | 0.4611 | 1->0 | import_rvest 0.0->1.0; html 0.0->0.25; html_elements 0.0->0.133; html_text2 0.0->1.0; suppressPackageStartupMessages 0.0->None |
+| start:rvest__rd_example__html_children_Rd | 0.0000 | 0.5461 | 1->0 | import_rvest 0.0->1.0; html 0.0->0.25; ul 0.0->0.25; html_children 0.0->0.981; html_1 0.0->1.0; p 0.0->0.25 |
+| start:openssl__rd_example__certificates_Rd | 0.0000 | 0.7406 | 1->0 | import_openssl 0.0->1.0; chain 0.0->0.25; print 0.0->0.964; cert_data 0.0->0.25; print_1 0.0->0.72; print_2 0.0->1.0 |
+| start:rvest__rd_example__html_element_Rd | 0.0000 | 0.7778 | 1->0 | import_rvest 0.0->1.0; html 0.0->0.25; html_element 0.0->0.675; html_elements 0.0->0.954; html_elements_1 0.0->0.512; html_elements_2 0.0->0.917 |
+| start:ModelMetrics__rd_example__auc_Rd | 0.0000 | 1.0000 | 1->0 | import_ModelMetrics 0.0->1.0; data 0.0->1.0; glmModel 0.0->1.0; Preds 0.0->1.0; auc 0.0->1.0; auc_1 0.0->1.0 |
+
+Small moves (aggregate <= 0.005, no entity > 0.02, no run/crash flip; not counted as changes): start:textshaping__rd_example__lorem_text_Rd 0.5937->0.5946, final_default:proxy__rd_example__registry_Rd 0.8735->0.8735, final_w3:e1071__rd_example__boxplot_bclust_Rd 0.4002->0.4015, final_w3:sass__rd_example__as_sass_Rd 0.8669->0.8672
+
+report: work\scoring\check_20261024_2249.md

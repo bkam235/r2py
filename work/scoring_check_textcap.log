@@ -1,0 +1,50 @@
+re-verifying 147 reference programs (epoch 2 scorer afb7a6706ca5-3fce340317f5 -> f7ab9e20cea0-3fce340317f5)
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.2
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.2
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] Installing Python package 'ranger' ...
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+# Scorer regression check, 2026-10-25 08:46
+
+- Epoch 2 scorer `afb7a6706ca5-3fce340317f5`; current scorer `f7ab9e20cea0-3fce340317f5`.
+- Programs: 147; unchanged 125, **changed 9**, small moves within noise 8, flaky within their range 5, errors 0.
+- Mean change over the changed programs +0.0140; up 6, down 3; run/crash flips 0.
+
+| program | before | after | exit | entities that moved (before -> after) |
+|---|---|---|---|---|
+| start:textshaping__rd_example__get_font_features_Rd | 0.7390 | 0.6645 | 0->0 | sys_fonts 0.479->0.255 |
+| final_w3:isoband__vignette__isoband3_s2 | 0.7214 | 0.7086 | 0->0 | lines 0.302->0.271; g 0.305->0.272 |
+| final_default:reshape2__rd_example__cast_Rd | 0.6822 | 0.6800 | 0->0 | chick_m 1.0->0.94 |
+| final_default:ragg__rd_example__agg_capture_Rd | 0.7441 | 0.7499 | 0->0 | raster_n 0.97->1.0 |
+| final_w3:recipes__rd_example__step_kpca_Rd | 0.6616 | 0.6762 | 0->0 | rec 0.337->0.377; kpca_trans 0.315->0.452; ggplot 0.499->0.527 |
+| final_default:recipes__rd_example__step_kpca_Rd | 0.5542 | 0.5748 | 0->0 | rec 0.337->0.377; kpca_trans 0.315->0.451; step_YeoJohnson 0.499->0.527; step_normalize 0.499->0.527; ggplot 0.499->0.527; geom_point 0.499->0.527 |
+| start:recipes__rd_example__step_kpca_Rd | 0.5805 | 0.6012 | 0->0 | rec 0.337->0.377; kpca_trans 0.315->0.452; step_YeoJohnson 0.499->0.527; step_normalize 0.499->0.527; ggplot 0.499->0.527; geom_point 0.499->0.527 |
+| start:ragg__rd_example__agg_capture_Rd | 0.7149 | 0.7916 | 0->0 | raster_n 0.616->1.0 |
+| final_w3:ragg__rd_example__agg_capture_Rd | 0.4731 | 0.5499 | 0->0 | raster_n 0.615->1.0 |
+
+Small moves (aggregate <= 0.005, no entity > 0.02, no run/crash flip; not counted as changes): start:pROC__rd_example__coords_Rd 0.4111->0.4110, start:systemfonts__rd_example__glyph_raster_Rd 0.7859->0.7862, final_default:ModelMetrics__rd_example__auc_Rd 0.8842->0.8847, final_default:e1071__rd_example__boxplot_bclust_Rd 0.3820->0.3814, final_default:isoband__vignette__isoband3_s2 0.7018->0.7056, final_default:openssl__rd_example__ec_dh_Rd 0.6722->0.6730, final_w3:ModelMetrics__rd_example__auc_Rd 0.5798->0.5800, final_w3:e1071__rd_example__boxplot_bclust_Rd 0.4012->0.4015
+
+report: work\scoring\check_20261025_0846.md
