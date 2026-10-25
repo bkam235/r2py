@@ -59,12 +59,31 @@ def _r_stdout(sm, eid: str) -> str:
     return strip_echoed_source(getattr(eb, "stdout", "") or "").strip() if eb is not None else ""
 
 
+_LIB = None
+
+
+def _private_library():
+    """A per-process copy of the empty library: loading a library rewrites its index.json, and parallel workers that
+    shared one on disk read it half-written (JSONDecodeError, PermissionError; 2026-10-25). The loop copies its
+    library per run in the same way."""
+    global _LIB
+    if _LIB is None:
+        import atexit
+        import shutil
+        import tempfile
+        from r2py.library import PatternLibrary
+        d = Path(tempfile.mkdtemp(prefix="r2py_lib_"))
+        shutil.copytree(ROOT / "work/dev_run/checkpoints/empty", d / "lib")
+        atexit.register(shutil.rmtree, d, ignore_errors=True)
+        _LIB = PatternLibrary(d / "lib")
+    return _LIB
+
+
 def _tools(sm, stem):
     from r2py import heldout as ho
     from r2py.harness.tools import HarnessTools
-    from r2py.library import PatternLibrary
     cfg = ho.load_manifest(ROOT / "experiments/dev_run/manifest.json")["protocol"]["translate"]
-    return HarnessTools(sm, PatternLibrary(ROOT / "work/dev_run/checkpoints/empty"), model=cfg["model"],
+    return HarnessTools(sm, _private_library(), model=cfg["model"],
                         data_compare=cfg["data_compare"], timeout_s=cfg["timeout_s"],
                         sidecar_filename=f"{stem}.r2py_data.json")
 

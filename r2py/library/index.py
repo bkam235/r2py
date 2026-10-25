@@ -142,12 +142,29 @@ class PatternIndex:
     # ------------------------------------------------------------------ #
 
     def _load(self) -> None:
+        import time
+        for attempt in range(10):   # a read can land in another process's atomic swap (_save) for a moment
+            try:
+                self._data = json.loads(self._path.read_text(encoding="utf-8"))
+                return
+            except (PermissionError, json.JSONDecodeError):
+                time.sleep(0.05 * (attempt + 1))
         self._data = json.loads(self._path.read_text(encoding="utf-8"))
 
     def _save(self) -> None:
-        self._path.write_text(
-            json.dumps(self._data, indent=2), encoding="utf-8"
-        )
+        # Atomic: write a temporary file and swap it in. Parallel workers that share a library read index.json while
+        # another rewrites it, and a plain write_text let them read an empty file (JSONDecodeError, 2026-10-25).
+        import os
+        import time
+        tmp = self._path.with_suffix(f".{os.getpid()}.tmp")
+        tmp.write_text(json.dumps(self._data, indent=2), encoding="utf-8")
+        for attempt in range(40):
+            try:
+                os.replace(tmp, self._path)
+                return
+            except PermissionError:   # Windows: the target is open in another process for a moment
+                time.sleep(0.05)
+        os.replace(tmp, self._path)
 
 
 def _make_key(package: str, ast_shape_hash: str) -> str:

@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import math
 import re
+from collections import Counter
 from typing import Any
 
 from ...types import ComparatorResult, EffectClass
@@ -228,9 +229,43 @@ def _compare_pair(
     )
 
 
+TEXT_FALLBACK_CHARS = 5000   # as the fingerprint comparator's text tier
+_TOKEN_RE = re.compile(r"[^\s,\[\]{}()'\":]+")
+
+
+def _chunks(text: str) -> "Counter[str]":
+    """Content-defined chunks of a text's tokens: a chunk ends after a token whose hash falls on an anchor, so an
+    insertion disturbs only the chunks around it (as rsync aligns files)."""
+    import zlib
+    out: Counter = Counter()
+    cur: list[str] = []
+    for tok in _TOKEN_RE.findall(text):
+        cur.append(tok)
+        if zlib.crc32(tok.encode("utf-8")) % 8 == 0 or len(cur) >= 64:
+            out["\x1f".join(cur)] += 1
+            cur = []
+    if cur:
+        out["\x1f".join(cur)] += 1
+    return out
+
+
 def _text_fallback(r_val: Any, py_val: Any) -> float:
-    """Embedding-stand-in fallback: text similarity of str representations."""
-    return text_similarity(str(r_val), str(py_val))
+    """Embedding-stand-in fallback: text similarity of str representations.
+
+    Bounded: difflib is quadratic, and the text of a large value (a captured raster, ragg `agg_capture`, 2026-10-25)
+    took 15-25 minutes of CPU per comparison. A long text is compared by the overlap of its content-defined chunks
+    (linear): a difference anywhere counts (a prefix alone gave a raster that differs after its first 5,000 characters
+    full credit) and a small insertion does not shift the rest (windows at fixed relative positions halved the credit
+    of an almost identical value).
+    """
+    a, b = str(r_val), str(py_val)
+    if len(a) <= TEXT_FALLBACK_CHARS and len(b) <= TEXT_FALLBACK_CHARS:
+        return text_similarity(a, b)
+    ca, cb = _chunks(a), _chunks(b)
+    na, nb = sum(ca.values()), sum(cb.values())
+    if not na and not nb:
+        return 1.0
+    return 2 * sum((ca & cb).values()) / (na + nb)
 
 
 # ---------------------------------------------------------------------------

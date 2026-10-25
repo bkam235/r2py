@@ -1,13 +1,15 @@
 # Improvement plan — harness and agent loop
 
-## In-loop learning curves (current: 2026-10-20)
+## In-loop learning curves (current: 2026-10-25, scoring epoch 3)
 
 ![In-loop score curves: mean best score after each agent step, same 60 training states](figures/inloop_curves.png)
 
 Mean score of the best program after each agent step, on the same 60 training-pool states for every line (step 0 =
 the frozen starting translation). Regenerate with `python scripts/learning_curves.py` (inputs: the compact extract of the run logs in
-`work/curves/inputs.json.gz`, committed; `--extract` refreshes it from the full logs in `work/`; the re-scoring of the 10 states touched by the harness fixes of 2026-10-18 is cached in
-`work/curves/rescored.json`, `--rescore` redoes it). Outputs: `figures/inloop_curves.png`, `figures/inloop_curves.json`
+`work/curves/inputs.json.gz`, committed; `--extract` refreshes it from the full logs in `work/`). Every program the
+curves use (about 1,400) is re-scored with the current scorer, so all lines are in one scoring epoch; the scores are
+cached in `work/curves/rescored.json` with the scorer version, and `scripts/scoring_epoch.py accept` rebuilds the
+curves whenever a new epoch opens. A state's stratum (running or crashing) is its re-scored start. Outputs: `figures/inloop_curves.png`, `figures/inloop_curves.json`
 and the interactive page `figures/inloop_curves.html` (also published as the artifact "In-Loop Score Curves",
 https://claude.ai/artifact/GiaQX4F35dr6npk1zWTyjN). How each line is built is in the script's docstring and on the
 page.
@@ -16,15 +18,28 @@ page.
 
 | | plateau | what changed |
 |---|---|---|
-| one chain (width 1) | 0.637 | the agent loop alone: +0.21 over the starting translation |
-| width 3 | 0.698 | three independent chains, the verifier keeps the best (the default since Stage 11d) |
-| + crashing starts: width 6, patience 5, twice the time limit | 0.719 | 2026-10-18/19 |
-| + conversation mode | **0.782** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
+| one chain (width 1) | 0.665 | the agent loop alone: +0.19 over the starting translation (0.473) |
+| width 3 | 0.719 | three independent chains, the verifier keeps the best (the default since Stage 11d) |
+| + crashing starts: width 6, patience 5, twice the time limit | 0.741 | 2026-10-18/19 |
+| + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
 
-The harness ceiling fixes of 2026-10-17/18 (R checkpoint injection, tag lists, temp paths, session reports) lifted
-the whole picture: starting mean 0.405 -> 0.427, width-3 plateau 0.686 -> 0.698. The comparisons between the lines are
-one to three days apart (drift of 0.01-0.02 seen between days); the gain of conversation mode is solid on running
-starts (+0.045 [+0.008, +0.092]) and on crashing starts largely three crash-or-not swings.
+The harness ceiling fixes lifted the whole picture: those of 2026-10-17/18 (R checkpoint injection, tag lists, temp
+paths, session reports) the starting mean 0.405 -> 0.427, the checkpoint fix of epoch 2 (2026-10-25) 0.427 -> 0.473,
+because 5 start states had crashed only because of the harness; they now count as running starts (45 running, 15
+crashing; before 41 and 19). The comparisons between the lines are one to three days apart (drift of 0.01-0.02 seen
+between days). The gain of conversation mode is solid on running starts (+0.045 [+0.008, +0.092], measured under
+epoch 1; on the epoch-3 curves 0.770 against 0.724 for width 3); on crashing starts it was largely three crash-or-not
+swings, partly in the 5 falsely crashing states.
+
+| plateau, epoch 1 -> epoch 3 | all (60) | running (41 -> 45) | crashing (19 -> 15) |
+|---|---|---|---|
+| width 1 | 0.637 -> 0.665 | 0.704 -> 0.697 | 0.492 -> 0.569 |
+| width 3 | 0.698 -> 0.719 | 0.739 -> 0.724 | 0.611 -> 0.705 |
+| width 6 + patience 5 (crashing starts) | 0.719 -> 0.741 | | 0.676 -> 0.793 |
+| default with conversation | 0.782 -> 0.791 | 0.765 -> 0.770 | 0.819 -> 0.856 |
+
+The per-stratum changes are mostly composition: 5 states changed stratum, so running and crashing starts are not
+the same states in the two columns; only the "all" column compares the same 60 states.
 
 **What these iterations taught** (2026-10-11 to 2026-10-20):
 1. **Pushing knowledge at the model does not change what it writes.** Library, lessons and a perfect oracle were
@@ -3585,3 +3600,47 @@ heldout`, `step_ab.py run --pool heldout`, `two_step.py run --pool heldout` (res
   -0.011 [-0.030, +0.004]. **One difference:** with one stratum per state, conversation mode on running starts is
   +0.041 (P = 0.82, 37 states), against +0.066 with the row-by-row strata of the registered analysis; the overall
   estimate the decision rested on is unchanged.
+
+**Meta-loop infrastructure, step 4: health report (2026-10-24).** `python scripts/health_report.py <run_dir>
+[--deep]` writes `<run_dir>/health_report.md` from a run's results and trajectories, with no model calls: arms
+table, how entities were attributed (sentinels, deterministic repair, model mapping), crash exception types,
+never-improving states (`--deep` re-verifies their final programs), a check for pasted R values in the programs, and
+invalid runs. On `work/replay_default`: 13% of entities attributed by the model mapping, 12 never-improving states, 4
+of 45 programs flagged by the paste check (to be read by hand), and many crash types "unclassified" because the
+trajectories keep only the first 600 characters of a crash message (`agent.py`, `crash=crash_msg[:600]`; not changed
+yet).
+
+**Epoch 2: the checkpoint iterates a snapshot of globals() (2026-10-25).** The Python checkpoint looped over
+`globals().items()` while serializing values, and serializing some objects adds globals ("dictionary changed size
+during iteration"). 5 start states of the training pool crashed only because of that (ModelMetrics `auc`, rvest
+`html_element`, `html_children` and the vignette, openssl `certificates`); the fix is `for k, v in
+list(g.items())`, with a test. Check: the 5 starts flipped from crashing to running (rvest `html_element` 0 -> 0.778,
+ModelMetrics `auc` 0 -> 1.0), one more program moved by +0.005, nothing else beyond the noise band; 13 programs flaky. **What it qualifies:** every crashing-start result before 2026-10-25
+(crash patience +0.027, width 6 + patience 5, the crashing-start part of conversation mode) included these 5 states,
+whose programs could crash only because of the harness until the agent happened to avoid the objects concerned. Those
+results are not re-estimated; the epoch-3 curves show the corrected picture (15 crashing starts).
+
+**The text fallback was quadratic; epoch 3 (2026-10-25).** The first curve rebuild under epoch 2 seemed to hang.
+faulthandler showed it in `_text_fallback` (`r2py/stage4/comparators/data.py`): values with no structured comparator
+are compared as text with difflib, which is quadratic, and ragg `agg_capture` produces raster text of hundreds of
+kilobytes (15-25 minutes per comparison). Up to 5,000 characters the comparison is unchanged. Three versions for longer
+texts, each judged by the regression check:
+- compare only the first 5,000 characters: rejected, it raised `raster_n` to 1.0 (the start of the raster is the
+  same, the difference is later);
+- fixed-size windows: rejected, a single insertion shifts every later window (reshape2 `chick_m` fell to 0.529);
+- **content-defined chunks** (boundary after a token whose crc32 is divisible by 8, or after 64 tokens; Dice overlap
+  of the chunk multisets), linear and robust to insertions: accepted. Check: 13 programs moved (6 up, 7 down), mean
+  -0.003, no run/crash flip; the check took about 5 minutes instead of hours.
+Epoch 3: scorer `b81c6657f20a-3fce340317f5`, 12 programs flaky. `accept` now rebuilds the curves by default (re-scoring
+all ~1,400 programs, about 20 minutes, no model calls; `--no-curves` skips it).
+
+**Parallel workers raced on the library index (2026-10-25).** The offline verification helpers run 8 processes on one
+library, and `PatternIndex._save` rewrote `index.json` in place, so a reader could see an empty file
+(`JSONDecodeError`) or a locked one (`PermissionError` on Windows). `_save` now writes a temporary file and swaps it
+in (`os.replace`, retried while the target is open elsewhere) and `_load` retries; `scripts/prompt_load.py` also gives
+each process its own copy of the empty library. Test `tests/test_library_index_atomic.py` (fails on the old code).
+
+**Curves under epoch 3 (2026-10-25).** All programs re-scored; the top section of this plan is updated. Same 60
+states: start 0.427 -> 0.473, width 1 0.637 -> 0.665, width 3 0.698 -> 0.719, default without conversation 0.719 ->
+0.741, default with conversation 0.782 -> 0.791. The order of the lines and the steps between them are unchanged;
+conversation mode adds +0.050 on all starts against the default without it.

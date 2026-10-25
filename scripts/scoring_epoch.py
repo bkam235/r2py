@@ -12,7 +12,8 @@ the width-3 runs of 2026-10-17 (sample 0). Each is verified twice for the baseli
     python scripts/scoring_epoch.py baseline --note "..."   # first epoch: build the reference set and its scores
     python scripts/scoring_epoch.py check                    # after a scorer change: what moved?
     python scripts/scoring_epoch.py check --force            # re-verify even if the version is unchanged
-    python scripts/scoring_epoch.py accept --note "..."      # open a new epoch at the current scorer
+    python scripts/scoring_epoch.py accept --note "..."      # open a new epoch at the current scorer, then rebuild
+                                                             # the learning curves in it (--no-curves to skip)
     python scripts/scoring_epoch.py status
 
 Files in work/scoring/: programs/ (the reference programs), reference.json, baseline.json, epochs.json, and a
@@ -245,6 +246,7 @@ def main() -> int:
     b = sub.add_parser("baseline"); b.add_argument("--note", required=True); b.add_argument("--rebuild-reference", action="store_true")
     c = sub.add_parser("check"); c.add_argument("--force", action="store_true")
     a = sub.add_parser("accept"); a.add_argument("--note", required=True)
+    a.add_argument("--no-curves", action="store_true", help="do not rebuild the learning curves in the new epoch")
     sub.add_parser("status")
     for p in (b, c, a):
         p.add_argument("--workers", type=int, default=8)
@@ -253,6 +255,10 @@ def main() -> int:
         make_baseline(args.note, args.workers, args.rebuild_reference)
     elif args.cmd == "accept":
         make_baseline(args.note, args.workers, False)
+        if not args.no_curves:   # a new epoch rebuilds the curves by default (user's decision, 2026-10-24)
+            import subprocess
+            print("rebuilding the learning curves in the new epoch", flush=True)
+            subprocess.run([sys.executable, str(ROOT / "scripts/learning_curves.py")], check=False)
     elif args.cmd == "check":
         return check(args.force, args.workers)
     else:

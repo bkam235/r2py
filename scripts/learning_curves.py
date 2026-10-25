@@ -10,11 +10,14 @@ training-pool states:
   work/replay_crash6p5_b2       crash default: width 6, patience 5, doubled time limit (2026-10-19)
   work/replay_default           the production default with conversation mode (2026-10-20)
 
-The programs of the 2026-10-17 runs are re-scored with the harness of 2026-10-18 for the 10 states its fixes touch
-(tag lists, temp paths, session reports); that needs verification runs and is cached in work/curves/rescored.json.
+Every program the curves use (the starting programs and every program a chain accepted, in all five runs) is
+re-scored with the current scorer, so all lines are in one scoring epoch (r2py.scoring). The scores are cached in
+work/curves/rescored.json together with the scorer version; when the scorer has changed, the next call re-scores
+everything (about 1,400 verifications, no model calls). `scripts/scoring_epoch.py accept` calls this script, so a
+new epoch rebuilds the curves by default. A state's stratum is its re-scored start: running or crashing.
 
-    python scripts/learning_curves.py             # data, PNG and HTML (re-scoring only if the cache is missing)
-    python scripts/learning_curves.py --rescore   # redo the re-scoring first
+    python scripts/learning_curves.py             # data, PNG and HTML (re-scores first if the scorer changed)
+    python scripts/learning_curves.py --rescore   # re-score even if the scorer is unchanged
     python scripts/learning_curves.py --extract   # refresh work/curves/inputs.json.gz from the full run logs
 
 The full trajectories (~48 MB) are not in the repository. What the curves need from them (per step: kind, chain,
@@ -111,35 +114,35 @@ def series(recs: list[dict], start: tuple, branches, n: int, value=None) -> dict
 
 # ---------------------------------------------------------------------------------------------- re-scoring
 
-def affected_states() -> list[str]:
-    """Training-pool states the harness fixes of 2026-10-18 change: tag lists, temp paths, session reports."""
+def logs_available() -> bool:
+    return all((ROOT / run / "trajectories").is_dir() for run in RUNS)
+
+
+def all_programs() -> dict:
+    """script -> {hash: source}: every program the curves use (starting programs and accepted programs of all runs)."""
     import replay
-    from r2py.stage4.verifier import _environment_report_entities
-    out = []
-    for name in sorted(replay.training_states()):
-        sm = pickle.loads((ROOT / "work/reverify/script_maps" / f"{Path(name).stem}.pkl").read_bytes())
-        tag = any("shiny.tag" in i.get("class", "") for t in (sm.entity_types or {}).values() for i in t.values())
-        if tag or "tempfile" in (sm.source or "") or _environment_report_entities(sm):
-            out.append(name)
-    return out
+    progs = defaultdict(dict)
+    for name, st_ in replay.training_states().items():
+        progs[name][H(st_["source"])] = st_["source"]
+    for run in RUNS:
+        for f in (ROOT / run / "trajectories").glob("*.jsonl"):
+            name = f.name.split(".")[0] + ".R"
+            for line in f.open(encoding="utf-8"):
+                r = json.loads(line)
+                if r["kind"] == "accepted" and r.get("source"):
+                    progs[name][H(r["source"])] = r["source"]
+    return progs
 
 
-def _rescore_one(name: str):
+def _rescore_one(item):
+    name, progs = item
     from dotenv import load_dotenv
     load_dotenv(ROOT / ".env", override=True)
-    import replay
     from prompt_load import _tools
     stem = Path(name).stem
-    srcs = {}
-    start = replay.training_states()[name]["source"]
-    srcs[H(start)] = start
-    for f in (ROOT / "work/replay_k3/trajectories").glob(f"{stem}.*.jsonl"):
-        for r in _jsonl(f):
-            if r["kind"] == "accepted" and r.get("source"):
-                srcs[H(r["source"])] = r["source"]
     sm = pickle.loads((ROOT / "work/reverify/script_maps" / f"{stem}.pkl").read_bytes())
     out = {}
-    for h, src in srcs.items():
+    for h, src in progs.items():
         t = _tools(sm, stem)
         t.note_reference(src)   # as the loop does: attribution read off the sentinels, no model call
         try:
@@ -151,11 +154,15 @@ def _rescore_one(name: str):
 
 
 def rescore() -> dict:
-    CACHE.parent.mkdir(parents=True, exist_ok=True)
+    from r2py.scoring import scoring_version
+    progs = all_programs()
+    print(f"re-scoring {sum(len(v) for v in progs.values())} programs of {len(progs)} states with the current scorer", flush=True)
     with ProcessPoolExecutor(8) as ex:
-        res = dict(ex.map(_rescore_one, affected_states()))
-    CACHE.write_text(json.dumps(res), encoding="utf-8")
-    return res
+        res = dict(ex.map(_rescore_one, sorted(progs.items())))
+    cache = {"scoring_version": scoring_version(), "values": res}
+    CACHE.parent.mkdir(parents=True, exist_ok=True)
+    CACHE.write_text(json.dumps(cache), encoding="utf-8")
+    return cache
 
 
 # ---------------------------------------------------------------------------------------------- curves
@@ -173,9 +180,10 @@ def compute(res: dict) -> dict:
 
     rows = {(r["script"], r["policy"], r["sample"]): r for r in _jsonl(ROOT / "work/replay_k3/results.jsonl")}
     single, k3, crash, w3runs = defaultdict(list), defaultdict(list), {}, {}
+    start_of = lambda s, r: val(s, H(starts[s]["source"]), (r["start_exit"] == 0, r["start_score"]))   # noqa: E731
     for (s, pol, smp), row in rows.items():
-        crash[s] = row["start_exit"] != 0
-        start = val(s, H(starts[s]["source"]), (row["start_exit"] == 0, row["start_score"]))
+        start = start_of(s, row)
+        crash[s] = not start[0]                 # the stratum is the re-scored start
         recs = _traj("work/replay_k3", s, pol, smp)
         v = lambda src, fb, s=s: val(s, src, fb)   # noqa: E731
         if pol == "rewrite_w3":
@@ -198,7 +206,8 @@ def compute(res: dict) -> dict:
             if r is None:
                 per[s].append([final[1]] * (k + 1))
                 continue
-            cs = series(_traj("work/continue_plateau", s, pol, smp), (r["start_exit"] == 0, r["start_score"]), (None,), k)[None]
+            v = lambda src, fb, s=s: val(s, src, fb)   # noqa: E731
+            cs = series(_traj("work/continue_plateau", s, pol, smp), final, (None,), k, v)[None]   # starts where the run stopped
             per[s].append([max(final, c)[1] for c in cs])
         ext[name] = per
     done = {(r["script"], r["sample"]): r for r in _jsonl(ROOT / "work/continue_stalled/results.jsonl") if "final_score" in r}
@@ -210,8 +219,8 @@ def compute(res: dict) -> dict:
             if r is None:
                 cols.append([c[-1]] * 3)
             else:
-                cs = series(_traj("work/continue_stalled", s, "continue2", f"{smp}.{b}"),
-                            (r["start_exit"] == 0, r["start_score"]), (None,), 2)[None]
+                v = lambda src, fb, s=s: val(s, src, fb)   # noqa: E731
+                cs = series(_traj("work/continue_stalled", s, "continue2", f"{smp}.{b}"), c[-1], (None,), 2, v)[None]
                 cols.append([max(c[-1], x) for x in cs])
         per[s].append([max(col[i] for col in cols)[1] for i in range(3)])
     ext["patience 5"] = per
@@ -221,7 +230,8 @@ def compute(res: dict) -> dict:
         for r in _jsonl(ROOT / run / "results.jsonl"):
             recs = _traj(run, r["script"], policy, r["sample"])
             branches = sorted({x.get("branch") for x in recs if x["kind"] == "step"}, key=lambda b: (b is None, b))
-            chs = list(series(recs, (r["start_exit"] == 0, r["start_score"]), branches or [None], N_LONG).values())
+            v = lambda src, fb, s=r["script"]: val(s, src, fb)   # noqa: E731
+            chs = list(series(recs, start_of(r["script"], r), branches or [None], N_LONG, v).values())
             out[r["script"]] = [max(c[k] for c in chs)[1] for k in range(N_LONG + 1)]
         return out
     crash6 = best_of("work/replay_crash6p5_b2", "rewrite_w3_crash6p5", 6)
@@ -296,13 +306,22 @@ def plot(data: dict, path: Path) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--rescore", action="store_true", help="redo the re-scoring of the affected states")
+    ap.add_argument("--rescore", action="store_true", help="re-score every program even if the scorer is unchanged")
     ap.add_argument("--extract", action="store_true", help="refresh work/curves/inputs.json.gz from the full run logs")
     a = ap.parse_args()
     if a.extract:
         extract()
-    res = rescore() if (a.rescore or not CACHE.exists()) else json.loads(CACHE.read_text(encoding="utf-8"))
-    data = compute(res)
+    from r2py.scoring import scoring_version
+    cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {}
+    current = scoring_version()
+    if a.rescore or cache.get("scoring_version") != current:
+        if logs_available():
+            cache = rescore()
+        else:
+            print(f"WARNING: the curves were scored with {cache.get('scoring_version', 'an older scorer')}; the current "
+                  f"scorer is {current}, and re-scoring needs the full run logs in work/")
+    data = compute(cache.get("values", {}))
+    data["scoring_version"] = cache.get("scoring_version")
     FIG.mkdir(parents=True, exist_ok=True)
     (FIG / "inloop_curves.json").write_text(json.dumps(data, indent=1), encoding="utf-8")
     plot(data, FIG / "inloop_curves.png")

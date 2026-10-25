@@ -553,7 +553,9 @@ def _r2py_checkpoint(eid):
     new_vars = {}
     uncapturable_vars = []
     uncapturable_types = {}
-    for k, v in g.items():
+    # A snapshot: reading a value's attributes while serializing it can run program code that adds a global, and
+    # iterating globals() itself then crashed the program (2026-10-24: 216 candidates of one run, 5 states).
+    for k, v in list(g.items()):
         if k.startswith('_r2py'):
             continue
         if k in _r2py_prev_ns:

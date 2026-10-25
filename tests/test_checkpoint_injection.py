@@ -101,3 +101,26 @@ class TestTagListSerialisation(unittest.TestCase):
             self.skipTest(f"R not available: {exc}")
         self.assertIsInstance(b["x"].data["x"], str)          # not htmltools' internal list
         self.assertIn("<p>a</p>", b["x"].data["x"])
+
+
+class TestPythonCheckpointGlobals(unittest.TestCase):
+    """2026-10-24: reading an object's attributes while serializing it can run program code that adds a global; the
+    checkpoint iterated globals() directly and crashed the program (216 candidates of one run, 5 states)."""
+
+    def test_a_global_added_during_serialization_does_not_crash_the_checkpoint(self):
+        import tempfile
+        from pathlib import Path
+        from r2py.stage0.sandbox.py_sandbox import PySandbox
+        from r2py.stage4.verifier import _PY_CHECKPOINT_PREAMBLE
+        src = ("class Lazy:\n"
+               "    @property\n"
+               "    def coef(self):\n"
+               "        globals()['added_during_checkpoint'] = 1\n"
+               "        return [1.5, 2.5]\n"
+               "x = Lazy()\n"
+               "_r2py_checkpoint('x')\n")
+        with tempfile.TemporaryDirectory() as d:
+            from r2py.stage1.runner import DEFAULT_CAPTURE
+            bundle = PySandbox().run(src, workdir=Path(d), capture=DEFAULT_CAPTURE, preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=60)
+            self.assertEqual(bundle.exit_code, 0, bundle.stderr[-400:])
+            self.assertTrue((Path(d) / "_r2py_cp_x.json").exists())
