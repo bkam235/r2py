@@ -1,7 +1,9 @@
 # Meta-loop: the cycle protocol
 
 How the harness is improved, one question at a time. Written 2026-10-25 from the cycles of 2026-10-11 to 2026-10-25
-(the log is `IMPROVEMENT_PLAN.md`); a session that runs a cycle follows this file.
+(the log is `IMPROVEMENT_PLAN.md`); a session that runs a cycle follows this file. In Claude Code the
+project skill `/meta-cycle [question]` (`.claude/skills/meta-cycle/SKILL.md`, local, not in git) starts a cycle by
+this protocol, one cycle per session.
 
 ## Two loops
 
@@ -98,13 +100,21 @@ Trace one loss to its cause on a concrete program, and show the cause with an of
 
 ### 4. Register, before any data
 
-Append an entry to `IMPROVEMENT_PLAN.md` and commit it before the run:
+Append an entry to `IMPROVEMENT_PLAN.md` (the reasoning) and a record to the experiment registry
+(`experiments/registry.jsonl`, the structured fields), and commit both before the run:
 - hypothesis and the option it tests;
 - instrument, pool (training), arms, samples, workers;
 - primary metric, secondary metrics, strata (running and crashing starts apart);
 - decision rule and tier (below), and what each outcome will mean;
 - cost estimate and the run guard budget;
 - the analysis command.
+
+```bash
+python scripts/registry.py register spec.json
+```
+The spec holds `id, question, track, instrument, pool, arms, baseline, primary, rule, est_cost, plan` (the plan
+entry's bold heading) and optionally `option, samples, strata, run_dir, analysis, budget, note`; the registry adds
+the date, the scorer version and the commit.
 
 An extension (more samples) is registered the same way before it runs, and the rule is applied once to the
 combined data. No other look at the data in between.
@@ -130,7 +140,11 @@ Apply the registered rule once:
 ```bash
 python scripts/expkit.py analyze <results.jsonl> --baseline <arm> --metric <metric> --rule free
 ```
-(`--rule costly --best-of K` for a change that costs calls.) The decision rules (the person's, 2026-10-20):
+(`--rule costly --best-of K` for a change that costs calls.) Then complete the record; the actual cost comes from
+the run guard's manifest:
+```bash
+python scripts/registry.py result <id> --estimate "<primary estimate>" --decision "<adopted | not adopted | extended | descriptive>" --heldout pending
+``` The decision rules (the person's, 2026-10-20):
 - **free and reversible** (no extra model calls, no stratum harmed, switchable): adopt if P(effect > 0) >= 0.9 in
   the bootstrap over states;
 - **costs extra calls:** adopt only if it beats the same calls spent on sampling (best of k) with P >= 0.9;
@@ -140,7 +154,8 @@ python scripts/expkit.py analyze <results.jsonl> --baseline <arm> --metric <metr
 
 A change that passed on the training pool is run once more on the 46 held-out states (`--pool heldout`; frozen in
 `experiments/pools/heldout.json`) with the same instrument and the same rule, registered like any test. Pass: the
-rule holds again. Fail: the default does not change, and the result is recorded. The held-out pool has only 6
+rule holds again. Fail: the default does not change, and the result is recorded. Either way the original record's
+`--heldout` becomes `passed` or `failed` (the held-out run is a record of its own). The held-out pool has only 6
 crashing starts, so a crash-specific change cannot be confirmed there; that is stated, and the person decides.
 
 ### 8. Adopt
@@ -151,6 +166,8 @@ watch: a later run that contradicts them reverts them by the same rule.
 
 ### 9. Record
 
+- The registry record is complete (`python scripts/registry.py show <id>`): decision, held-out status, the commit
+  of the result.
 - The result in `IMPROVEMENT_PLAN.md` under the registered entry: numbers with intervals, actual cost, decision,
   caveats; corrections of earlier readings where the result changes them.
 - The run's health report stays in its run directory.
@@ -163,7 +180,4 @@ watch: a later run that contradicts them reverts them by the same rule.
 
 ## Not yet built
 
-- **Experiment registry:** a structured record per experiment (id, hypothesis, arms, rule, estimated and actual
-  cost, result, decision, commit) next to the prose log. Today the prose entries in `IMPROVEMENT_PLAN.md` are the
-  registry.
 - **Telemetry gaps:** the trajectories do not record each step's cost or exactly which feedback was shown.

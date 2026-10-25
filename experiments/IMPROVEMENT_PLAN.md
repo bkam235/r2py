@@ -3656,3 +3656,14 @@ their three interfaces (settings, telemetry, versions), who decides what, what i
 cycle: observe, diagnose, scorer track or harness track, register, test (instrument ladder with measured costs),
 decide by the tiered rule, confirm on the held-out pool, adopt, record. Not yet built: a structured experiment
 registry; per-step cost and the shown feedback in the trajectories.
+
+**Experiment registry and the cycle skill (2026-10-25).** `experiments/registry.jsonl`, written by
+`scripts/registry.py`: one structured record per experiment, next to the prose entry it names. `register` (before the
+run) refuses a missing field or a used id and stamps the date, scorer version and commit; `result` adds the estimate,
+decision, held-out status and the actual cost from the run guard's manifest (only the invocations started after the
+registration, since a run directory can hold several experiments); `list` and `show` read it. Backfilled from this log
+for the 10 experiments since 2026-10-17 (`"backfilled": true`; costs as logged, $28.64 in all). Tests in
+`tests/test_registry.py`. The project skill `/meta-cycle` (local, `.claude/` is not in git) runs one cycle by
+`experiments/META_LOOP.md`: it reads the protocol and the latest results, checks step 0, takes the user's question or
+proposes up to three from the health report, and stops at the four gates (scorer acceptance, spend, default change,
+publishing).
