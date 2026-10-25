@@ -3644,3 +3644,15 @@ each process its own copy of the empty library. Test `tests/test_library_index_a
 states: start 0.427 -> 0.473, width 1 0.637 -> 0.665, width 3 0.698 -> 0.719, default without conversation 0.719 ->
 0.741, default with conversation 0.782 -> 0.791. The order of the lines and the steps between them are unchanged;
 conversation mode adds +0.050 on all starts against the default without it.
+
+**Health report follow-ups (2026-10-25).** 141 of the 177 "unclassified" crashes in `work/replay_default` were
+messages cut at 600 characters before the exception line; trajectories now keep the whole message (the verifier
+already keeps only the last 800 characters of stderr), and the report counts old cut messages as "truncated". The
+other 36 were sandbox timeouts (`TimeoutExpired`), now a type of their own. `replay.py` writes the health report at
+the end of every run.
+
+**Meta-loop infrastructure, step 5: the cycle protocol (2026-10-25).** `experiments/META_LOOP.md`: the two loops and
+their three interfaces (settings, telemetry, versions), who decides what, what is off limits to the proposer, and the
+cycle: observe, diagnose, scorer track or harness track, register, test (instrument ladder with measured costs),
+decide by the tiered rule, confirm on the held-out pool, adopt, record. Not yet built: a structured experiment
+registry; per-step cost and the shown feedback in the trajectories.
