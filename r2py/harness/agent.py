@@ -580,7 +580,7 @@ def reason(
 
             _ctx.update(
                 aggregate=round(new_report.aggregate, 4), exit_code=new_report.py_exit_code,
-                crash=crash_msg[:600],
+                crash=crash_msg,   # whole: the exception line is last (the verifier keeps stderr's last 800 chars)
                 per_entity={eid: round(_entity_score(es), 3) for eid, es in new_report.by_entity.items()})
             _stat("outcome", f"{action_type}:" + (
                 "improved" if new_report.aggregate > best_score + 1e-9 else

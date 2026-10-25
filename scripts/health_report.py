@@ -30,7 +30,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(ROOT / "scripts"))
 SOURCES = ROOT / "work/heldout/train_outputs"
 MAPS = ROOT / "work/reverify/script_maps"
-EXC_RE = re.compile(r"\b([A-Z][A-Za-z]*(?:Error|Exception|Warning)|KeyboardInterrupt|StopIteration)\b")
+EXC_RE = re.compile(r"\b([A-Z][A-Za-z]*(?:Error|Exception|Warning)|KeyboardInterrupt|StopIteration|TimeoutExpired)\b")
 
 
 def _calls(agent: dict) -> int:
@@ -129,7 +129,8 @@ def report(run_dir: Path, deep: bool = False) -> str:
         for x in trajs[id(r)]:
             if x["kind"] == "step" and x.get("exit_code") not in (0, None) and x.get("crash"):
                 m = EXC_RE.search(x["crash"])
-                exc[m.group(1) if m else "unclassified"] += 1
+                # trajectories before 2026-10-25 kept only 600 characters, which cut off the exception line
+                exc[m.group(1) if m else "truncated" if len(x["crash"]) == 600 else "unclassified"] += 1
         if r["final_exit"] != 0:
             ending.append(f"{Path(r['script']).stem} ({r['policy']} s{r['sample']})")
     out += ["", "## Crashes", "",

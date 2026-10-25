@@ -383,6 +383,12 @@ def main() -> int:
                 pool.terminate()
                 break
     print("\n" + summarise(done))
+    from health_report import report
+    try:   # a failing report must not hide the run's results, which are already written
+        (out.parent / "health_report.md").write_text(report(out.parent.resolve()), encoding="utf-8")
+        print(f"health report: {out.parent / 'health_report.md'}")
+    except Exception as e:
+        print(f"health report failed: {type(e).__name__}: {e}")
     return 0
 
 
