@@ -187,7 +187,7 @@ tryCatch({
 R_EPILOGUE = """\
 # r2py graphics capture: fingerprint the last page, then close the PNG device
 tryCatch(.r2py_fp_write_all(), error = function(e) NULL)
-tryCatch(dev.off(), error = function(e) NULL)
+invisible(tryCatch(dev.off(), error = function(e) NULL))
 """
 
 

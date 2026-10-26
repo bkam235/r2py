@@ -1,6 +1,6 @@
 # Improvement plan — harness and agent loop
 
-## In-loop learning curves (current: 2026-10-25, scoring epoch 3)
+## In-loop learning curves (current: 2026-10-26, scoring epoch 4)
 
 ![In-loop score curves: mean best score after each agent step, same 60 training states](figures/inloop_curves.png)
 
@@ -18,27 +18,31 @@ page.
 
 | | plateau | what changed |
 |---|---|---|
-| one chain (width 1) | 0.665 | the agent loop alone: +0.19 over the starting translation (0.473) |
-| width 3 | 0.719 | three independent chains, the verifier keeps the best (the default since Stage 11d) |
+| one chain (width 1) | 0.677 | the agent loop alone: +0.19 over the starting translation (0.485) |
+| width 3 | 0.732 | three independent chains, the verifier keeps the best (the default since Stage 11d) |
 | + crashing starts: width 6, patience 5, twice the time limit | 0.741 | 2026-10-18/19 |
 | + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
 
 The harness ceiling fixes lifted the whole picture: those of 2026-10-17/18 (R checkpoint injection, tag lists, temp
 paths, session reports) the starting mean 0.405 -> 0.427, the checkpoint fix of epoch 2 (2026-10-25) 0.427 -> 0.473,
 because 5 start states had crashed only because of the harness; they now count as running starts (45 running, 15
-crashing; before 41 and 19). The comparisons between the lines are one to three days apart (drift of 0.01-0.02 seen
+crashing; before 41 and 19). Under epoch 4 (2026-10-26) the start is 0.485 and the strata 46 and 14: the epoch-3 curve
+cache had stored all 14 programs of ragg `agg_webp_anim` as crashes (0), while the reference check on the same scorer
+scored its start running (0.70); the rebuild under epoch 4 scores them running (0.70-0.77). The cause of the epoch-3
+crashes was not found (no install, no timeout in the log); the epoch-4 change itself moved no curve program but this
+state and the noisy openssl `ec_dh`, `lava` `csplit`, `ranger` `csrf` and `textshaping` `lorem_text`. The comparisons between the lines are one to three days apart (drift of 0.01-0.02 seen
 between days). The gain of conversation mode is solid on running starts (+0.045 [+0.008, +0.092], measured under
-epoch 1; on the epoch-3 curves 0.770 against 0.724 for width 3); on crashing starts it was largely three crash-or-not
+epoch 1; on the epoch-4 curves 0.773 against 0.725 for width 3); on crashing starts it was largely three crash-or-not
 swings, partly in the 5 falsely crashing states.
 
-| plateau, epoch 1 -> epoch 3 | all (60) | running (41 -> 45) | crashing (19 -> 15) |
+| plateau, epoch 1 -> epoch 3 -> epoch 4 | all (60) | running (41 -> 45 -> 46) | crashing (19 -> 15 -> 14) |
 |---|---|---|---|
-| width 1 | 0.637 -> 0.665 | 0.704 -> 0.697 | 0.492 -> 0.569 |
-| width 3 | 0.698 -> 0.719 | 0.739 -> 0.724 | 0.611 -> 0.705 |
-| width 6 + patience 5 (crashing starts) | 0.719 -> 0.741 | | 0.676 -> 0.793 |
-| default with conversation | 0.782 -> 0.791 | 0.765 -> 0.770 | 0.819 -> 0.856 |
+| width 1 | 0.637 -> 0.665 -> 0.677 | 0.704 -> 0.697 -> 0.698 | 0.492 -> 0.569 -> 0.610 |
+| width 3 | 0.698 -> 0.719 -> 0.732 | 0.739 -> 0.724 -> 0.725 | 0.611 -> 0.705 -> 0.756 |
+| width 6 + patience 5 (crashing starts) | 0.719 -> 0.741 -> 0.741 | | 0.676 -> 0.793 -> 0.795 |
+| default with conversation | 0.782 -> 0.791 -> 0.791 | 0.765 -> 0.770 -> 0.773 | 0.819 -> 0.856 -> 0.850 |
 
-The per-stratum changes are mostly composition: 5 states changed stratum, so running and crashing starts are not
+The per-stratum changes are mostly composition: 5 states changed stratum (and ragg `agg_webp_anim` under epoch 4), so running and crashing starts are not
 the same states in the two columns; only the "all" column compares the same 60 states.
 
 **What these iterations taught** (2026-10-11 to 2026-10-20):
@@ -3687,3 +3691,29 @@ the per-entity comparison is used and nothing changes.
 - Expected: programs of the 18 states whose stored stdout was only the harness's move up (stdout no longer fails on
   every entity); nothing else moves beyond the noise band; no run/crash flip. Any other move sends the change back.
 - Decision: the person's acceptance of the check report (opens epoch 4 and rebuilds the curves).
+- **Result (2026-10-25/26): accepted, epoch 4; no score moved.** Check `work/scoring/check_20261025_2225.md`: 147
+  programs, 139 unchanged, 1 changed, 4 small moves, 3 flaky within range, no run/crash flip, no error. The prediction
+  failed: none of the 4 training states among the 18 moved. The one change (`final_w3:openssl ec_dh` 0.667 -> 0.675)
+  is unrelated: its map was not re-captured, and it has moved in every earlier check (0.66-0.69, random openssl keys).
+  **Why nothing moved:** an entity with its own checkpoint bundle is scored only from that bundle
+  (`r2py/stage4/decompose.py`); the whole-script stdout feeds only the global fallback (entities without a bundle, 40
+  in the affected maps, none of them scored in the reference set) and the **feedback**: the verifier copied the false
+  item `R printed 'null device 1' but Python printed ''` onto every entity. On prodlim `backGround` the old map gave 7
+  such items of 19 feedback items, the new map none, same score (0.5). So this was a feedback fault, not a measurement
+  fault, on the reference set. Corrections: 37 maps (not 49) held the harness's output in the scored stdout; the other
+  12 had the string only elsewhere in the pickle; all 249 now have the same form. Cost $0.
+  Whether the cleaner feedback helps the model was not measured: only 4 training states (and at most 1 held-out)
+  carried the false items, too few for the rule, and no default depends on it.
+- **Open questions left by this cycle** (for the next cycles; none run):
+  - **Q2, env vars set by package loading.** The openssl and caret states lose on `envvar:GIT_ASKPASS` /
+    `SSH_ASKPASS` and `envvar:TZDIR`, present only in R (10 of 60 training states have an envvar entity; `--deep` on
+    `work/replay_default`). Hypothesis, untested: set when the package loads (askpass), not by the script. First the
+    lesson of Q1: check offline whether these entries reach the score or only the feedback (verify the programs with
+    them removed), then whether loading sets them. Scorer track, free.
+  - **Q3, bslib temp font files.** Both bslib never-improving states lose on `[files] missing: tempfile:*.woff2`
+    (fonts bslib writes to its temp folder; 4 stored maps). Scorer track, free.
+  - **Audit of harness-made feedback** (covers Q2, Q3 and their kind in one pass): list every feedback item in
+    `work/replay_default` whose R side the harness produced (prompts, device output, env vars, temp files), with how
+    many states and entities each reaches and whether it reaches the score. Free.
+  - **openssl `ec_dh` is unflagged noise** in the reference set (random keys; 0.66-0.69 across every check since
+    2026-10-24). Marking it flaky changes the reference set: the person's call.

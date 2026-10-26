@@ -25,6 +25,9 @@ from .isolation import TempWorkdir, check_escape, scrub_env, snapshot_home
 # Project library — the only library the R sandbox is allowed to use.
 _R_PROJECT_LIB = _R_ENV_DIR / "library"
 
+# The prompt `R -e` prints when it exits, after the sourced script.
+_FINAL_PROMPT_RE = re.compile(r'(^|\n)>\s*$')
+
 # R code prepended to every script to lock down the library search path,
 # enable rlang::is_interactive() so examplesIf-guarded code executes,
 # and prevent shinyApp() auto-print from blocking on runApp().
@@ -258,7 +261,7 @@ class RSandbox:
 
         # Always collect stdout/stderr — they're free from the subprocess streams.
         collected = _stdout_effects.collect(result.stdout, result.stderr)
-        bundle.stdout = collected["stdout"]
+        bundle.stdout = _FINAL_PROMPT_RE.sub(r"\1", collected["stdout"])
         bundle.stderr = collected["stderr"]
 
         if EffectClass.FILES in capture:
