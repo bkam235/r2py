@@ -1,6 +1,6 @@
 # Improvement plan — harness and agent loop
 
-## In-loop learning curves (current: 2026-10-26, scoring epoch 4)
+## In-loop learning curves (current: 2026-10-28, scoring epoch 6; the numbers are those of epoch 4)
 
 ![In-loop score curves: mean best score after each agent step, same 60 training states](figures/inloop_curves.png)
 
@@ -29,7 +29,9 @@ because 5 start states had crashed only because of the harness; they now count a
 crashing; before 41 and 19). Under epoch 4 (2026-10-26) the start is 0.485 and the strata 46 and 14: the epoch-3 curve
 cache had stored all 14 programs of ragg `agg_webp_anim` as crashes (0), while the reference check on the same scorer
 scored its start running (0.70); the rebuild under epoch 4 scores them running (0.70-0.77). The cause of the epoch-3
-crashes was not found (no install, no timeout in the log); the epoch-4 change itself moved no curve program but this
+crashes, found 2026-10-28: the harness's checkpoints serialized the program's image frames, so verification took
+20-90 s and crossed the 60 s limit depending on load; fixed in epoch 6, which gives exactly the epoch-4 curves (epoch 5,
+the env-var fix, moved only recipes `step_kpca` by +0.002 to +0.010). The epoch-4 change itself moved no curve program but this
 state and the noisy openssl `ec_dh`, `lava` `csplit`, `ranger` `csrf` and `textshaping` `lorem_text`. The comparisons between the lines are one to three days apart (drift of 0.01-0.02 seen
 between days). The gain of conversation mode is solid on running starts (+0.045 [+0.008, +0.092], measured under
 epoch 1; on the epoch-4 curves 0.773 against 0.725 for width 3); on crashing starts it was largely three crash-or-not
@@ -3833,3 +3835,26 @@ check).** Q4 asked whether ragg `agg_webp_anim` is only a timeout problem. It is
   under epoch 4 run again with their epoch-4 scores; every other program equal to the epoch-5 cache except
   same-scorer noise in the known states, and timeouts of reshape2 `melt_data_frame` (35-77 s alone) or crashes under
   load like shape `getellipse` in the first re-score, each to be verified alone in both arms.
+- **Result (2026-10-28): narrowed version accepted, epoch 6 (scorer `4eecc923a958-cd4621d951ad`).** Check
+  `work/scoring/check_20261028_2022.md`: 147 programs, 137 unchanged, 3 changed, 3 small moves, 4 flaky within range,
+  no error; ragg start 0 -> 0.70 as predicted; openssl `ec_dh` +0.012/+0.014 is noise (alone: old 0.653/0.672, new
+  0.676/0.682). Full re-score of the 1,414 curve programs against the epoch-5 cache: the 11 ragg programs back to their
+  epoch-4 scores, no other flip, other moves in 12 states that also moved between the earlier same-scorer rebuilds.
+  One moved program per state, verified alone with the change disabled and enabled: caret, e1071, lava, lubridate,
+  proxy, purrr, both sass, textshaping and xml2 overlap; `ec_dh` random keys; ranger `csrf` trains an unseeded random
+  forest (5 runs each: old 0.728-0.808, new 0.787-0.795). No score caused by the change outside ragg. Cost $0.
+- **Curves under epoch 6:** the rebuild agrees with the verified re-score (noise only, no flip); all 51 ragg programs
+  equal their epoch-4 values. Start 0.485, strata 46/14, plateaus (all 60) width 1 0.677, width 3 0.732, width 6
+  (estimated) 0.758, 3 per step 0.709, default without conversation 0.741, default with conversation 0.792: the epoch-4
+  picture, so the top section's tables stand. The published page still names epoch 4 (its numbers are the same).
+- **What it qualifies:** every ragg `agg_webp_anim` result before epoch 6 depended on the 60 s limit and machine load,
+  in the ground loop too (36 timeouts in `work/replay_default`). Not re-estimated: one state of 60.
+- **Open questions:**
+  - **reshape2 `melt_data_frame` takes 35-77 s alone** (crossed the limit in the parallel re-score of the first
+    version, not in the later runs). Its slow values are not plain arrays, so the narrowed fix does not cover it. Free
+    next step: profile one of its programs as for ragg.
+  - **Fingerprints depend on what was fingerprinted before** in the same process (ModelMetrics `auc`: `glmModel` 1,638
+    against 2,141 numbers; statsmodels lazy attributes, not traced further), and fingerprinting can emit warnings the
+    verifier counts as the program's (rvest `rvest_s7`). Both are harness-made; fixing them moves scores, so it is a
+    scorer change of its own.
+  - **Q3** (bslib temp font files) and the **audit of harness-made feedback** remain.
