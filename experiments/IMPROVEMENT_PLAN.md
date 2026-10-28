@@ -3774,3 +3774,34 @@ check).** 27 of the 249 stored maps carry `envvar:*` entries in the whole-script
   time every curve program's Python run once, list the programs within, say, 20% of the limit, and check whether any
   other state straddles it. Possible fixes (scorer track, the person's call): a longer limit for verification only,
   fewer workers for checks and rebuilds, or marking such states flaky.
+
+**The checkpoints serialized values R never had; ragg timed out (Q4, scorer track, registered 2026-10-28, before the
+check).** Q4 asked whether ragg `agg_webp_anim` is only a timeout problem. It is not; diagnosis offline, no model calls:
+- The program draws 10 small plots and writes them as an animated webp. Bare, it runs in 2.9 s; as the verifier runs
+  it, with checkpoints, 20.4 s (the start program), and up to 60-90 s for programs that keep more frames. cProfile: the
+  time is in `json.dump` and `_r2py_sanitize` in the harness's checkpoint (`_r2py_try_serialize`). The checkpoint
+  serializes every new or rebound global as nested JSON lists, and `frames` is a list of up to 10 RGBA images
+  (400x500x4, about 8M numbers per dump; 7.3 s of serializing, `image` 0.9 s, then writing it again). The R ground
+  truth of this script holds only `file` and `i`; Python-only names are never compared (`DataComparator`).
+- With Python-only values replaced by a type placeholder, the instrumented program runs in 1.3 s.
+- The ground loop was hit too: all 36 sandbox timeouts in `work/replay_default` (`TimeoutExpired 36` in its health
+  report) are this state, 36 of its 218 steps.
+- Change: the verifier prepends a preamble (`_py_only_preamble`, `r2py/stage4/verifier.py`) that wraps
+  `_r2py_try_serialize`. A name that has no R data (global bundle or any entity bundle) is recorded as
+  `{'__r2py_py_only__': <type name>}`. The checkpoints and the data epilogue both call the wrapper. The name stays, so
+  the entity's "Python produced data" (`decompose.py`, empty against empty) is unchanged. One possible side effect: a
+  Python-only value that cannot be serialized at all was "uncapturable" and is now a placeholder; uncapturable names
+  matter only when R has them. No R capture code changed (`r_capture_hash` unchanged), so no re-capture. Test
+  `tests/test_py_only_values.py` (fails before). Smoke test: the start program verifies in 1.5 s (0.70); the 11 curve
+  programs that differed from epoch 4 all reproduce their epoch-4 scores (0.70 or 0.7667) in 1.4-3.1 s, without
+  timeouts.
+- Instruments, no model calls, $0: (1) `scoring_epoch.py check` on the 147 reference programs; (2) at the person's
+  request, a full re-score of all 1,414 curve programs with the new scorer into a separate file, compared program by
+  program with the epoch-5 cache (`work/curves/rescored.json`) and read against the same-scorer noise of the earlier
+  rebuilds.
+- Expected: (1) ragg `agg_webp_anim` start 0 -> 0.70 (crash -> run, the epoch-5 baseline recorded it crashing
+  twice); nothing else beyond the noise band or flaky range; no other flip. (2) the 14 ragg programs that ran under
+  epoch 4 run again with their epoch-4 scores; every other program equal to the epoch-5 cache except moves of the
+  size and in the states seen between same-scorer rebuilds (lava `csplit`, openssl `ec_dh`, e1071 `boxplot_bclust`,
+  sass, textshaping, proxy, purrr, xml2); no other flip.
+- Decision: the person's acceptance of both reports (opens epoch 6 and rebuilds the curves).

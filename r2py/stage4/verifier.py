@@ -644,6 +644,28 @@ def _r2py_checkpoint(eid):
 """
 
 
+def _py_only_preamble(r_bundle: EffectBundle, r_entity_bundles: dict | None) -> str:
+    """Python preamble: a variable R has no data for is recorded by its type, not serialized.
+
+    Data is compared by name and Python-only names are ignored (``DataComparator``), but the
+    checkpoints and the data epilogue serialized every global: ragg ``agg_webp_anim`` kept a list
+    of RGBA frames (8M numbers per dump) and ran 20-90 s instead of 1.3 s, past the sandbox limit
+    (2026-10-28).  The name stays, so "Python produced data for this entity" is unchanged.
+    Wraps ``_r2py_try_serialize`` from the data-capture preamble, so both callers use it."""
+    names = set(r_bundle.data or {})
+    for eb in (r_entity_bundles or {}).values():
+        names |= set(getattr(eb, "data", None) or {})
+    return (
+        f"_r2py_r_names = {sorted(names)!r}\n"
+        "_r2py_r_names = set(_r2py_r_names)\n"
+        "_r2py_try_serialize_all = _r2py_try_serialize\n"
+        "def _r2py_try_serialize(name, obj):\n"
+        "    if name not in _r2py_r_names:\n"
+        "        return {'__r2py_py_only__': type(obj).__name__}, True\n"
+        "    return _r2py_try_serialize_all(name, obj)\n"
+    )
+
+
 def _multiline_string_rows(source: str) -> set[int]:
     """1-based rows L such that the boundary after row L lies inside a string token."""
     import io
@@ -841,11 +863,12 @@ def verify(
         payload = _build_sidecar_payload(script_map)
         sidecar_files = {sidecar_filename: payload}
 
+    preamble = _py_only_preamble(r_bundle, getattr(script_map, "entity_bundles", None)) + _PY_CHECKPOINT_PREAMBLE
     sandbox = PySandbox()
     if workdir is not None:
         py_bundle = sandbox.run(
             py_source_activated, workdir=workdir, capture=capture,
-            preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=timeout_s,
+            preamble=preamble, timeout_s=timeout_s,
             sidecar_files=sidecar_files, replay=_rng_replay(r_bundle),
         )
         py_entity_bundles = _collect_py_checkpoints(workdir, cp_eids)
@@ -854,7 +877,7 @@ def verify(
             _wd = Path(_tmpdir)
             py_bundle = sandbox.run(
                 py_source_activated, workdir=_wd, capture=capture,
-                preamble=_PY_CHECKPOINT_PREAMBLE, timeout_s=timeout_s,
+                preamble=preamble, timeout_s=timeout_s,
                 sidecar_files=sidecar_files, replay=_rng_replay(r_bundle),
             )
             py_entity_bundles = _collect_py_checkpoints(_wd, cp_eids)
