@@ -3744,3 +3744,33 @@ check).** 27 of the 249 stored maps carry `envvar:*` entries in the whole-script
 - Expected: the three `step_kpca` programs move up (start 0.610 -> ~0.619, final_default 0.583 -> ~0.593, final_w3
   0.682 -> ~0.685), no other program moves beyond the noise band or its flaky range, no run/crash flip.
 - Decision: the person's acceptance of the check report (opens epoch 5 and rebuilds the curves).
+- **Result (2026-10-28): accepted, epoch 5 (scorer `b663d0aae183-cd4621d951ad`).** Check
+  `work/scoring/check_20261028_1220.md`: 147 programs, 132 unchanged, 7 changed, 5 small moves, 3 flaky within range,
+  no error. As predicted, the three `step_kpca` programs moved up (start 0.6098 -> 0.6193, final_default 0.5835 ->
+  0.5930, final_w3 0.6823 -> 0.6847; the 4 entities without their own bundle 0.539 -> 0.572). openssl `ec_dh` (-0.013,
+  -0.008) is noise: 6 verifications with one fixed scorer ranged from 0.661 to 0.680. textshaping `lorem_text` +0.006 is
+  known noise; its map has no env entries. **One run/crash flip not caused by the change:** ragg `agg_webp_anim` start
+  0.70 -> 0. Its map has no env entries, so the filter changes nothing for it. Before acceptance, at the person's request:
+  run one at a time with the new scorer, all 9 runs of its 3 reference programs reproduce the epoch-4 baseline exactly
+  (start 0.70 in 22-28 s, final_default 0.9333 in 4-5 s, final_w3 0.7667 in 17-18 s), and with the filter made the
+  identity (exactly the epoch-4 behaviour), 8 runs in parallel all crash at 63 s, the Python sandbox's 60 s limit.
+  Feedback: the 346 false env items on the reference set are gone. Cost $0.
+- **Curves under epoch 5.** The rebuild (8 workers) moved the 13 `step_kpca` programs up as intended (+0.002 to
+  +0.010), noise in the usual states (lava `csplit`, `ec_dh`, e1071, sass, textshaping; no flip), and **flipped all 14
+  ragg `agg_webp_anim` programs that ran under epoch 4 to crashes**. A single-process re-score of that state
+  (`learning_curves._rescore_one`, same scorer, written back into `work/curves/rescored.json`) brought back only 3 of
+  them; 11 still differ from epoch 4. One of them, verified alone on an idle machine (CPU 10%, no stray processes),
+  times out at 63.6 s; with the limit raised to 240 s (diagnostic only) it scores 0.70 as in epoch 4, in 89.9 s. So
+  most of the state's programs sit at or beyond the 60 s limit even alone, and whether they run depends on how fast the
+  machine is at the time. This also explains the epoch-3 cache, where they all crashed. The epoch-5 curves therefore
+  count this state as crashing: start 0.473, strata 45/15 (epoch 4: 0.485, 46/14); plateaus all 60: width 1 0.677 ->
+  0.669, width 3 0.732 -> 0.729, width 6 (estimated) 0.758 -> 0.758, 3 per step 0.709 -> 0.697, default without
+  conversation 0.741 -> 0.741, default with conversation 0.791 -> 0.792. The moves come from this one state and from
+  `step_kpca`. The top section and the published page are not updated yet (the person's call, pending Q4).
+- **Q4, timeouts decide a score (new open question).** ragg `agg_webp_anim` (an animated webp written to a temp file)
+  needs about 60-90 s for the Python side, so its score depends on the 60 s sandbox limit (`timeout_s` in the
+  translate protocol), on machine speed and on how many workers run: 0.70 or 0 for the same program and scorer. The
+  epoch-3 cache, the epoch-4 check baseline and the epoch-5 rebuild each caught it on a different side. Free instrument:
+  time every curve program's Python run once, list the programs within, say, 20% of the limit, and check whether any
+  other state straddles it. Possible fixes (scorer track, the person's call): a longer limit for verification only,
+  fewer workers for checks and rebuilds, or marking such states flaky.

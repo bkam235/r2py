@@ -92,5 +92,29 @@
   "errors": [],
   "model_mappings": 5,
   "note": "graphics epilogue dev.off() made invisible and R -e's final prompt dropped (R sandbox); 37 maps' whole-script stdout re-captured (held 'null device 1'). Scores unchanged on the reference set; removes false stdout feedback items."
+ },
+ {
+  "epoch": 5,
+  "scoring_version": "b663d0aae183-cd4621d951ad",
+  "r_capture": "7eb21ff7f7b9",
+  "date": "2026-10-28 13:06",
+  "programs": 147,
+  "flaky": [
+   "final_default:e1071__rd_example__boxplot_bclust_Rd",
+   "final_default:lubridate__rd_example__period_Rd",
+   "final_default:openssl__rd_example__ec_dh_Rd",
+   "final_default:proxy__rd_example__registry_Rd",
+   "final_default:sass__rd_example__as_sass_Rd",
+   "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+   "final_w3:openssl__rd_example__ec_dh_Rd",
+   "final_w3:sass__rd_example__as_sass_Rd",
+   "final_w3:textshaping__rd_example__lorem_text_Rd",
+   "start:openssl__rd_example__ec_dh_Rd",
+   "start:sass__rd_example__as_sass_Rd",
+   "start:textshaping__rd_example__lorem_text_Rd"
+  ],
+  "errors": [],
+  "model_mappings": 5,
+  "note": "R envvar entries whose value is a path into the harness's R install (r2py/stage0/r_env/: GIT_ASKPASS/SSH_ASKPASS from askpass, TZDIR from timechange, TCLLIBPATH from Tcl; set by package loading, 27 maps) dropped from the R ground truth in verify(). Removes 346 false env feedback items on the reference set; recipes step_kpca +0.002-0.010 (4 entities without own bundle). ragg agg_webp_anim flip in the check: 60 s timeout under parallel load, not the change."
  }
 ]
