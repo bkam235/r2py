@@ -3730,7 +3730,7 @@ check).** 27 of the 249 stored maps carry `envvar:*` entries in the whole-script
   tcltk sets it during the script (not traced further).
 - **Feedback and score** (Q1's lesson; scratch instrument, 22 reference programs of the 10 training states with
   such maps, each verified as stored, as stored again, and with the env entries removed in memory; no model calls,
-  $0): the verifier put an `[env] only in R: [...]` item on every entity of every affected program, 368 items in all;
+  $0): the verifier put an `[env] only in R: [...]` item on every entity of every affected program, 346 items in all;
   in 5 programs they were the whole feedback (both `bignum_s2` finals score 1.0 and got 10 of 10). The score moves
   only in recipes `step_kpca`, whose 4 entities without their own bundle (`ggplot`, `geom_point`, `step_normalize`,
   `step_YeoJohnson`) are scored from the whole-script bundle, where env is active: 0.539 -> 0.572 each, programs
