@@ -85,6 +85,19 @@ def _get_r_bundle(script_map) -> EffectBundle:
     return EffectBundle()
 
 
+def _drop_harness_envvars(env: dict) -> dict:
+    """Drop env vars R set to a path inside the harness's own R install (``r2py/stage0/r_env/``).
+
+    Loading a namespace sets them, not the script: askpass sets GIT_ASKPASS/SSH_ASKPASS, timechange
+    sets TZDIR, Tcl sets TCLLIBPATH (27 stored maps, 2026-10-28).  No translation can reproduce a
+    path into R's install; the verifier copied the false item onto every entity and scored it for
+    entities without their own bundle.  Matched by the path within the package, so maps captured in
+    another checkout still match."""
+    return {k: v for k, v in env.items()
+            if not (k.startswith("envvar:") and isinstance(v, str)
+                    and "/r2py/stage0/r_env/" in v.replace("\\", "/").lower())}
+
+
 def _rng_replay(r_bundle: EffectBundle):
     """R's recorded random draws as a replay log for the Python run; None when R drew nothing."""
     from ..stage0.sandbox.base import ReplayLog
@@ -795,7 +808,8 @@ def verify(
     # collect_source_lookups() needs it to recover the real source.
     from ..stage1.runner import strip_echoed_source as _strip_echoed_source
     r_bundle = _dataclasses.replace(
-        r_bundle, stdout=_strip_echoed_source(r_bundle.stdout)
+        r_bundle, stdout=_strip_echoed_source(r_bundle.stdout),
+        env=_drop_harness_envvars(r_bundle.env or {}),
     )
 
     # Determine which effects were actually captured in R so we capture the same in Python

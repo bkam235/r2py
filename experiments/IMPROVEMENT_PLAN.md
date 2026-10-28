@@ -3717,3 +3717,30 @@ the per-entity comparison is used and nothing changes.
     many states and entities each reaches and whether it reaches the score. Free.
   - **openssl `ec_dh` is unflagged noise** in the reference set (random keys; 0.66-0.69 across every check since
     2026-10-24). Marking it flaky changes the reference set: the person's call.
+
+**Env vars set by loading a package were R ground truth (Q2, scorer track, registered 2026-10-28, before the
+check).** 27 of the 249 stored maps carry `envvar:*` entries in the whole-script R bundle, and only four names:
+`TZDIR` (19 maps: caret, lubridate, recipes, timechange), `GIT_ASKPASS` and `SSH_ASKPASS` (6, openssl), `TCLLIBPATH`
+(2, sessioninfo). No per-entity checkpoint bundle carries an env entry. Shown offline:
+- **Loading sets them.** In an R sandbox run with env capture, `library(openssl)` or `requireNamespace('askpass')`
+  alone sets both askpass vars, and `library(caret|lubridate|recipes|timechange)` or `requireNamespace('timechange')`
+  alone sets `TZDIR`; `x <- 1` and a POSIXct with `tz='UTC'` set nothing. Every value is a path into the harness's R
+  install (`r2py/stage0/r_env/library/askpass/win-askpass.exe`, `r2py/stage0/r_env/runtime/share/zoneinfo`,
+  `.../runtime/Tcl/lib`). `TCLLIBPATH` is not set by `library(sessioninfo)`; its value is the bundled Tcl, so loading
+  tcltk sets it during the script (not traced further).
+- **Feedback and score** (Q1's lesson; scratch instrument, 22 reference programs of the 10 training states with
+  such maps, each verified as stored, as stored again, and with the env entries removed in memory; no model calls,
+  $0): the verifier put an `[env] only in R: [...]` item on every entity of every affected program, 368 items in all;
+  in 5 programs they were the whole feedback (both `bignum_s2` finals score 1.0 and got 10 of 10). The score moves
+  only in recipes `step_kpca`, whose 4 entities without their own bundle (`ggplot`, `geom_point`, `step_normalize`,
+  `step_YeoJohnson`) are scored from the whole-script bundle, where env is active: 0.539 -> 0.572 each, programs
+  +0.009, +0.010, +0.003 (both stored runs agree). openssl `ec_dh` moved within its known noise; nothing else moved.
+  So this is mostly a feedback fault, and a small measurement fault where entities fall back to the global bundle.
+- Change: `verify()` drops R `envvar:*` entries whose value is a path inside `r2py/stage0/r_env/`
+  (`_drop_harness_envvars`, `r2py/stage4/verifier.py`, applied with the echo strip). Env vars a script sets itself
+  stay compared; none of the 249 maps has one. No R capture code changed, so no re-capture. Test
+  `tests/test_harness_envvars.py` (fails before).
+- Instrument: `scoring_epoch.py check` on the 147 reference programs, no model calls, $0.
+- Expected: the three `step_kpca` programs move up (start 0.610 -> ~0.619, final_default 0.583 -> ~0.593, final_w3
+  0.682 -> ~0.685), no other program moves beyond the noise band or its flaky range, no run/crash flip.
+- Decision: the person's acceptance of the check report (opens epoch 5 and rebuilds the curves).
