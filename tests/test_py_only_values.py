@@ -24,5 +24,20 @@ def test_names_r_has_are_serialized_and_others_get_a_placeholder():
     assert ser("frames", [np.zeros((400, 500, 4), dtype="uint8")] * 10) == ({"__r2py_py_only__": "list"}, True)
 
 
-def test_no_r_data_means_every_value_is_a_placeholder():
+def test_no_r_data_means_every_plain_value_is_a_placeholder():
     assert _serializer([], [])("x", 1.5) == ({"__r2py_py_only__": "float"}, True)
+
+
+def test_other_python_only_objects_keep_the_old_path():
+    """An unserializable object stays uncapturable (an entity's "Python produced data" depends on it), and an
+    object with attributes is still fingerprinted (rvest html_table, ModelMetrics auc moved otherwise)."""
+    class Opaque:
+        __slots__ = ()
+    class Model:
+        def __init__(self):
+            self.coef = 0.123456789
+    ser = _serializer(["x"], [])
+    assert ser("node", Opaque()) == (None, False)
+    value, ok = ser("model", Model())
+    assert ok and value.get("__r2py_fp__")
+    assert ser("mixed", [np.zeros(3), Opaque()])[0] != {"__r2py_py_only__": "list"}

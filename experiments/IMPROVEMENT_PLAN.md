@@ -3805,3 +3805,31 @@ check).** Q4 asked whether ragg `agg_webp_anim` is only a timeout problem. It is
   size and in the states seen between same-scorer rebuilds (lava `csplit`, openssl `ec_dh`, e1071 `boxplot_bclust`,
   sass, textshaping, proxy, purrr, xml2); no other flip.
 - Decision: the person's acceptance of both reports (opens epoch 6 and rebuilds the curves).
+- **Result of the first version (2026-10-28): not adopted; it moved other scores.** Check
+  `work/scoring/check_20261028_1724.md`: ragg start 0 -> 0.70 as predicted, openssl `ec_dh` within its noise, and one
+  unpredicted move, rvest `rvest_s7` +0.011. Full re-score of the 1,414 curve programs against the epoch-5 cache: the 11
+  ragg programs back to their epoch-4 scores, the usual noisy states, and more unpredicted moves. Each was verified
+  one at a time with the change disabled and enabled, twice each:
+  - **caused by the change:** rvest `html_table` -0.278 (5 programs): R has no bundle for the `html_element`
+    entities, and the Python-only `res1` (an lxml node) could not be serialized, so Python's data for the entity was
+    empty (empty against empty, 1.0); the placeholder made it non-empty (0.167). ModelMetrics `auc` +0.075 (1):
+    `glmModel` keeps its full value, but its fingerprint held 1,638 numbers when the Python-only statsmodels objects
+    were fingerprinted before it and 2,141 when they were not, so a fingerprint depends on which objects were
+    fingerprinted before it in the process (lazy attributes; not traced further). rvest `rvest_s7` +0.011:
+    fingerprinting the Python-only bs4 `ResultSet` emitted a warning the verifier counted as the program's.
+  - **not the change** (same score in both arms): reshape2 `melt_data_frame` (2 run -> crash flips in the parallel
+    re-score; verified alone it takes **35-77 s**, a second state close to the time limit), shape `getellipse` (2
+    flips in the re-score; 2.5 s alone, no difference), broom `augment_felm` (noise).
+- **Narrowed version (registered as `py-only-values-narrow`, before its check):** a Python-only name gets the
+  placeholder only when its value always serializes with no side effects: numpy numeric arrays and scalars, plain
+  numbers, strings, booleans and None, and lists, tuples or dicts of these (depth 2). Every other value takes the old
+  path, so uncapturable names, fingerprints and their warnings are unchanged. One at a time, change disabled against
+  enabled, twice each: rvest `html_table` (3 programs), ModelMetrics `auc` and rvest `rvest_s7` identical; the ragg
+  programs keep their scores and verify in 1.4-2.9 s instead of 22-34 s. Test `tests/test_py_only_values.py` extended
+  (an unserializable object stays uncapturable, an object with attributes is still fingerprinted, a list mixing an
+  array with such an object takes the old path).
+- Instruments as before: `scoring_epoch.py check` and the full re-score against the epoch-5 cache, no model calls, $0.
+- Expected: (1) ragg start 0 -> 0.70; nothing else beyond the noise band or flaky range. (2) the ragg programs that ran
+  under epoch 4 run again with their epoch-4 scores; every other program equal to the epoch-5 cache except
+  same-scorer noise in the known states, and timeouts of reshape2 `melt_data_frame` (35-77 s alone) or crashes under
+  load like shape `getellipse` in the first re-score, each to be verified alone in both arms.
