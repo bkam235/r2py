@@ -29,7 +29,12 @@ held-out pool. Every cycle says what it does to that number:
   plateau only through what the model does with the cleaner feedback, and that is unmeasured until the default is
   replayed (step 9).
 
-Measurement hygiene is not an end in itself: a scorer question is worth its share of the gap, like any other.
+The first is a **gain** (the loop writes better programs); the second is a **correction** (the same programs
+measured differently); the third is a correction that may lead to a gain, unmeasured until a replay. The meta-loop
+exists for gains. Measurement hygiene is not an end in itself: a scorer
+question earns a cycle when the fault blocks a gain, by hiding real progress from the model or misleading its
+feedback, and it is ranked by what it unblocks, not by the points it moves. That a scorer check is free is no reason
+to prefer it; harness questions have instruments of $0.30-1.20.
 
 ## Roles
 
@@ -82,17 +87,30 @@ python scripts/health_report.py work/replay_default --deep
 Start from the report's score gap: how much of 1 - mean final sits in states that never improve, in states that
 improve and stop below 0.9, and in runs that end crashing, by start stratum, and which states hold the most of it.
 Then look for causes: never-improving states, crash types, model-mapping share, paste flags, stop reasons, strata
-that lag. A candidate question names the part of the gap it addresses and how many points of it it could reach at
-most (the states it touches times what they lose); candidates are ranked by that reach, the chance it holds and the
-cost of finding out.
+that lag. `--deep` shows what the scorer says about the start programs, so on its own it finds measurement faults;
+for the states holding the most of the gap, also read the trajectories (`<run_dir>/trajectories/`): what each step
+tried, its outcome and crash, its stop reason, and whether the next step used the feedback. Look across states for
+behaviour patterns too: candidate crash types, stop reasons, review rejections, step success rates, where the curves
+flatten.
+
+A candidate question names the part of the gap it addresses and how many points of it it could reach at most. For a
+scorer question that is the states it touches times what they lose. A harness lever usually touches many states a
+little: its reach is the share of the gap in the states it touches times a success rate from the nearest past result
+(one step with feedback improves 27% of the time; a third step after two failures 5-9%). Candidates are ranked by
+**expected gain in the plateau** (reach times the chance it holds) and the cost of finding out. Every proposal has
+at least one harness question, or says why there is none; after two scorer cycles in a row, the best harness
+question goes first unless a scorer fault is shown to block it.
 
 ### 2. Diagnose
 
 Trace one loss to its cause on a concrete program, and show the cause with an offline test. Then classify it:
 - **measurement** (the scorer is wrong: the October checkpoint, temp-path, tag-list and globals faults) -> scorer
   track;
-- **behaviour** (the loop or the model does something it should not, or misses a lever: width, patience,
-  conversation) -> harness track.
+- **behaviour** (the scorer is right and the program is wrong; the loop or the model does something it should not,
+  or misses a lever: width, patience, conversation) -> harness track. The trajectories show it: the same mistake
+  repeated across steps, crashes in a library's API, chains stopping while gains were still being found, feedback
+  that names the difference with no step acting on it, good candidates rejected by a gate. A behaviour cause is shown
+  on the trajectories and, where it can be, with the cheapest instrument that calls a model (step 5).
 
 ### 3a. Scorer track (person-gated, no model calls)
 
@@ -192,7 +210,7 @@ watch: a later run that contradicts them reverts them by the same rule.
   of the result.
 - The result in `IMPROVEMENT_PLAN.md` under the registered entry: numbers with intervals, actual cost, decision,
   caveats; corrections of earlier readings where the result changes them; the plateau of the production default
-  before and after, and why it moved or did not.
+  before and after, split into gain and correction, and why it moved or did not.
 - The run's health report stays in its run directory.
 - **Replay of the default.** A replay of `default_<date>` on the training pool (`replay.py --pool training`, about
   $4.35, registered as descriptive) is the only measurement of the objective itself. It makes sense when:
