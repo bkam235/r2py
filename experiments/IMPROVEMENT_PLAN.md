@@ -3896,3 +3896,20 @@ calls, $0):
   run/crash flip, sends the change back.
 - Decision: the person's acceptance of the check report (opens epoch 7 and rebuilds the curves). Then the replay of the
   default (registered separately) measures epochs 4-7 together.
+- **Result (2026-10-29): accepted, epoch 7 (scorer `826cb943a9e2-db31b28ade02`); no score moved, feedback only.**
+  Re-capture: 249 maps, none failed; 34 changed; every count change is -1 (the harness's "built under R version", 20
+  maps); no `''` left. Check `work/scoring/check_20261029_1407.md`: 147 programs, 138 unchanged, 1 changed (openssl
+  `ec_dh` 0.678 -> 0.660, its known random-key noise), 3 small moves, 5 flaky within range, no flip, no error. **The
+  predicted score moves did not happen** (33 reference programs are in changed maps): warnings enter an entity's score
+  only through the global fallback, and the entities of these states have their own checkpoint bundles, which carry
+  no warnings (fansi start: warnings effect 1.0 -> 0.0, aggregate 0.7711 both). This is Q1's lesson again. Feedback on
+  the 14 start programs, old map -> new: fansi, caret `update_train`, recipes `discretize` 0 -> 7-15 warnings items
+  showing R's real warning (before, Python's silence matched R's `''`); ggplot2 `geom_bin_2d`, purrr `invoke`, shape
+  `Arrows` the same item counts, now with R's text instead of `; ; ;`; the 8 harness-warning states now have no R
+  warnings (items remain only where Python itself warns, unscored). The Agg item is gone in 9 states. Curves under
+  epoch 7: identical to epoch 6 (start 0.485, strata 46/14, default with conversation 0.792). Cost $0.
+- **What it qualifies:** every warnings item the model saw before epoch 7 was blank on the R side; whether real R
+  warnings help it is unmeasured (the replay below measures epochs 4-7 together). Map backup
+  `work/reverify/script_maps_epoch6` (not in git).
+- **Open:** warnings are not scored for entities with their own bundle (the checkpoint bundles carry no warnings), so
+  a faithful program gains nothing by reproducing them; whether that is right is the person's call.

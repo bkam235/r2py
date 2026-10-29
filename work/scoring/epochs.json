@@ -139,5 +139,27 @@
   "errors": [],
   "model_mappings": 5,
   "note": "Python-only plain values (numeric arrays and scalars, numbers, strings, lists/tuples/dicts of these) recorded by type in the checkpoints and the data epilogue instead of serialized (_py_only_preamble). ragg agg_webp_anim verified in 20-90 s (60 s timeouts, all 36 sandbox timeouts of replay_default) and now 1.4-2.9 s, back to its epoch-4 scores; no other score moved (check + full re-score, A/B per moved state)."
+ },
+ {
+  "epoch": 7,
+  "scoring_version": "826cb943a9e2-db31b28ade02",
+  "r_capture": "d64333a70433",
+  "date": "2026-10-29 14:50",
+  "programs": 147,
+  "flaky": [
+   "final_default:e1071__rd_example__boxplot_bclust_Rd",
+   "final_default:openssl__rd_example__ec_dh_Rd",
+   "final_default:sass__rd_example__as_sass_Rd",
+   "final_default:sass__rd_example__sass_import_Rd",
+   "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+   "final_w3:openssl__rd_example__ec_dh_Rd",
+   "final_w3:sass__rd_example__as_sass_Rd",
+   "final_w3:sass__rd_example__sass_import_Rd",
+   "final_w3:textshaping__rd_example__lorem_text_Rd",
+   "start:openssl__rd_example__ec_dh_Rd"
+  ],
+  "errors": [],
+  "model_mappings": 5,
+  "note": "R warnings captured with their texts (warning.expression keeps the count, a global calling handler the message), R run with LANGUAGE=en, R's 'package was built under R version' and matplotlib's Agg plt.show() warning not recorded; all 249 maps' whole-script warnings re-captured. Feedback only: the reference check moved no score (warnings are not scored for entities with their own bundle); 3 training states now see R's real warnings, 3 see their text instead of '; ; ;', 8 lose a harness-made R warning, 9 lose the Agg item."
  }
 ]
