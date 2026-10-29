@@ -17,6 +17,20 @@ this protocol, one cycle per session.
   - **versions, both ways:** every run row carries the scorer version (`r2py/scoring.py`) and a policy name
     (`default_2026_10_20`); the curves carry the scorer version they were re-scored with.
 
+## The objective
+
+The meta-loop exists to raise **the plateau of the production default**: the mean final score of the current
+`default_<date>` policy on the 60 training states under the open scoring epoch (0.792 in epoch 6), confirmed on the
+held-out pool. Every cycle says what it does to that number:
+- a **harness change** can raise it; the replay or test measures by how much;
+- a **scorer change that corrects scores** (false losses removed) moves the plateau without any translation changing;
+  the curve rebuild shows it, and it is a correction of the measurement, not a gain;
+- a **scorer change that only corrects feedback** (false messages, false timeouts, curves unchanged) can raise the
+  plateau only through what the model does with the cleaner feedback, and that is unmeasured until the default is
+  replayed (step 9).
+
+Measurement hygiene is not an end in itself: a scorer question is worth its share of the gap, like any other.
+
 ## Roles
 
 | who | decides or does |
@@ -54,7 +68,8 @@ git status
 python scripts/scoring_epoch.py status
 ```
 The tree is committed, the scorer is `same` as the open epoch (if `CHANGED`, finish the scorer track first), and no
-run is in progress.
+run is in progress. Compare the scorer version of the latest replay of the production default with the open epoch:
+if a replay of the default makes sense (step 9), say so before choosing the question.
 
 ### 1. Observe
 
@@ -64,7 +79,12 @@ the never-improving starts and lists their losing entities (no model calls):
 ```bash
 python scripts/health_report.py work/replay_default --deep
 ```
-Look for: never-improving states, crash types, model-mapping share, paste flags, stop reasons, strata that lag.
+Start from the report's score gap: how much of 1 - mean final sits in states that never improve, in states that
+improve and stop below 0.9, and in runs that end crashing, by start stratum, and which states hold the most of it.
+Then look for causes: never-improving states, crash types, model-mapping share, paste flags, stop reasons, strata
+that lag. A candidate question names the part of the gap it addresses and how many points of it it could reach at
+most (the states it touches times what they lose); candidates are ranked by that reach, the chance it holds and the
+cost of finding out.
 
 ### 2. Diagnose
 
@@ -90,7 +110,9 @@ Trace one loss to its cause on a concrete program, and show the cause with an of
    python scripts/scoring_epoch.py accept --note "<what changed and why>"
    ```
    This opens the epoch and rebuilds the curves (all ~1,400 programs re-scored, about 20 minutes, no model calls).
-5. Record (step 9): which earlier results the change qualifies, and the curves before and after.
+5. Record (step 9): which earlier results the change qualifies, and the curves before and after; and whether the
+   change corrected scores (the plateau moved) or only feedback the model sees (the plateau did not move, and its
+   effect on translations is unmeasured).
 
 ### 3b. Harness track
 
@@ -169,11 +191,18 @@ watch: a later run that contradicts them reverts them by the same rule.
 - The registry record is complete (`python scripts/registry.py show <id>`): decision, held-out status, the commit
   of the result.
 - The result in `IMPROVEMENT_PLAN.md` under the registered entry: numbers with intervals, actual cost, decision,
-  caveats; corrections of earlier readings where the result changes them.
+  caveats; corrections of earlier readings where the result changes them; the plateau of the production default
+  before and after, and why it moved or did not.
 - The run's health report stays in its run directory.
-- When a default changed, the person decides whether to measure the new default's curve (a replay of
-  `default_<date>` on the training pool, about $4.50); a new line in the curves needs a change to
-  `scripts/learning_curves.py`.
+- **Replay of the default.** A replay of `default_<date>` on the training pool (`replay.py --pool training`, about
+  $4.35, registered as descriptive) is the only measurement of the objective itself. It makes sense when:
+  - a default changed (the new default's curve is unmeasured), or
+  - since the latest replay of the production default, one or more accepted epochs corrected feedback the model sees
+    without moving the curves (their effect on translations is unmeasured), or
+  - the next question would be ranked by a gap table that no longer describes the current harness.
+
+  The strong model points this out, says which of these applies and what the replay would tell, and asks; the person
+  decides. A new line in the curves needs a change to `scripts/learning_curves.py`.
 - When the plateau table or the lessons change, update the top section of `IMPROVEMENT_PLAN.md`, the figure and the
   page "In-Loop Score Curves".
 - Commit.

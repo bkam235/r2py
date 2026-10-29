@@ -3,6 +3,8 @@
 Reads a replay output directory (results.jsonl, trajectories/, run_manifest.json) and writes health_report.md:
   - per arm: runs, start and final, improved, reaching the threshold, ending in a running program, model calls,
     stop reasons, review rejections, conversation turns;
+  - score gap: 1 - mean final split exactly by outcome (never improved, improved below 0.9, at 0.9 or above, ending
+    in a crash) and start stratum, and the states that hold the most of it;
   - attribution paths: how often a verification needed a model mapping (the one remaining scoring noise);
   - crashes: exception types of the crashing candidates, and the runs that end with a crashing program;
   - never-improving states: states where no run improved on its start (14 of 40 such states found the checkpoint,
@@ -112,6 +114,30 @@ def report(run_dir: Path, deep: bool = False) -> str:
                    f"| {st.mean(r['final_score'] > r['start_score'] + 1e-9 for r in rs):.2f} | {st.mean(r['final_score'] >= 0.9 for r in rs):.2f} "
                    f"| {sum(r['final_exit'] == 0 for r in rs)}/{len(rs)} | {st.mean(_calls(r['agent']) for r in rs):.1f} "
                    f"| {', '.join(f'{k} {v}' for k, v in stops.most_common())} | {rej} | {conv} |")
+
+    # where the remaining score sits (exact: the parts add up to 1 - mean final)
+    def group(r):
+        if r["final_exit"] != 0:
+            return "ends crashing"
+        if r["final_score"] >= 0.9:
+            return "final >= 0.9"
+        return "improved, final < 0.9" if r["final_score"] > r["start_score"] + 1e-9 else "never improved"
+    out += ["", f"## Score gap (1 - mean final = {st.mean(1 - r['final_score'] for r in rows):.3f})", "",
+            "Points of the gap by outcome and start stratum (each run's 1 - final, divided by all runs; the cells add up "
+            "to the gap). Questions are worth what share of it they can reach.", "",
+            "| outcome | runs | start runs | start crashes | total | share |", "|---|---|---|---|---|---|"]
+    gap_total = sum(1 - r["final_score"] for r in rows) or 1.0
+    for g in ("never improved", "improved, final < 0.9", "final >= 0.9", "ends crashing"):
+        rs = [r for r in rows if group(r) == g]
+        pts = [sum(1 - r["final_score"] for r in rs if bool(r["start_exit"]) == c) / len(rows) for c in (False, True)]
+        out.append(f"| {g} | {len(rs)} | {pts[0]:.3f} | {pts[1]:.3f} | {sum(pts):.3f} | "
+                   f"{sum(1 - r['final_score'] for r in rs) / gap_total:.0%} |")
+    lost = defaultdict(list)
+    for r in rows:
+        lost[r["script"]].append(r)
+    top = sorted(lost.items(), key=lambda kv: -sum(1 - r["final_score"] for r in kv[1]))[:10]
+    out += ["", "States holding the most of the gap: " + ", ".join(
+        f"`{Path(s).stem}` {sum(1 - r['final_score'] for r in rs) / len(rows):.3f} ({group(rs[0])})" for s, rs in top)]
 
     # attribution paths
     paths = Counter()
