@@ -3878,8 +3878,10 @@ calls, $0):
   (9 states): `plt.show()` under the sandbox's Agg backend, attributed to the script's line, so the `matplotlib`
   filename filter misses it. The rest are Python library notices (pandas, cryptography, statsmodels, numpy) and stay.
 - Change (the person's choices 2026-10-29: text comparison as designed; R in English):
-  - R: a global calling handler records each warning's message; `warning.expression` stays a no-op, so nothing is
-    printed, as before; messages containing `was built under R version` are not recorded;
+  - R: `warning.expression` still records one entry per warning that reaches R's default handling (the old count),
+    now with the message a global calling handler kept for it; a handler alone counted rlang's warnings twice
+    (`cnd_signal`, then `warning()`; seen on purrr `keep`/`invoke`, broom `augment_survreg` in a first re-capture, fixed
+    before the check); messages containing `was built under R version` are not recorded;
   - R sandbox: `LANGUAGE=en`;
   - Python: the Agg `plt.show()` warning is not recorded;
   - the comparator is unchanged. Test `tests/test_warning_capture.py` (both fail before).

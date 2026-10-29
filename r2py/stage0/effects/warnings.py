@@ -34,18 +34,19 @@ writeLines(jsonlite::toJSON(.r2py_warnings), '_r2py_warnings.json')
 
 
 # Simpler preamble/epilogue that doesn't require wrapping (used by r_sandbox):
-# A global calling handler records each warning's message (2026-10-29: warning.expression has no condition in
-# scope, so every warning was stored as ''); warning.expression stays a no-op so nothing is printed, as before.
+# warning.expression runs once per warning that reaches the default handling, but has no condition in scope
+# (2026-10-29: every warning was stored as ''), so a global calling handler keeps the latest message for it.
+# The handler alone would count rlang's warnings twice (it signals the condition, then calls warning()).
 # "package 'x' was built under R version y" comes from the harness's R install, not from the script.
 R_PREAMBLE_SIMPLE = """\
 .r2py_warnings <- character(0)
+.r2py_last_warning <- ''
 .r2py_orig_warning <- getOption('warning.expression')
-options(warning.expression = quote({}))
-globalCallingHandlers(warning = function(w) {
-  .r2py_msg <- conditionMessage(w)
-  if (!grepl('was built under R version', .r2py_msg, fixed = TRUE))
-    .r2py_warnings <<- c(.r2py_warnings, .r2py_msg)
-})
+globalCallingHandlers(warning = function(w) .r2py_last_warning <<- conditionMessage(w))
+options(warning.expression = quote({
+  if (!grepl('was built under R version', .r2py_last_warning, fixed = TRUE))
+    .r2py_warnings <<- c(.r2py_warnings, .r2py_last_warning)
+}))
 """
 
 R_EPILOGUE_SIMPLE = """\

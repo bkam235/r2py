@@ -23,10 +23,11 @@ def test_r_warnings_keep_their_english_text():
     src = ("x <- as.integer('a')\n"
            "warning('my own warning')\n"
            "y <- suppressWarnings(as.integer('b'))\n"
+           "rlang::warn('an rlang warning')\n"
            "warning(gettextf('package %s was built under R version %s', sQuote('foo'), '9.9.9'))\n")
     with TempWorkdir() as wd:
         bundle = RSandbox().run(src, workdir=wd, capture=frozenset({EffectClass.WARNINGS}))
-    assert bundle.warnings == ["NAs introduced by coercion", "my own warning"]
+    assert bundle.warnings == ["NAs introduced by coercion", "my own warning", "an rlang warning"]
 
 
 def test_python_agg_show_warning_is_not_the_programs():
