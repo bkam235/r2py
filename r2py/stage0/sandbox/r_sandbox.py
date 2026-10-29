@@ -226,6 +226,8 @@ class RSandbox:
         # files written via temp paths are captured by the FILES snapshot.
         run_env = scrub_env()
         run_env["TMPDIR"] = str(workdir)
+        # R's messages and warnings in English, whatever the machine's locale (2026-10-29: they were German)
+        run_env["LANGUAGE"] = "en"
 
         script_path_r = str(script_path).replace("\\", "/")
         r_cmd = [str(r_exe), "--vanilla", "--quiet", "-e",

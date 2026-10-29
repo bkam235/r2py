@@ -34,16 +34,23 @@ writeLines(jsonlite::toJSON(.r2py_warnings), '_r2py_warnings.json')
 
 
 # Simpler preamble/epilogue that doesn't require wrapping (used by r_sandbox):
+# A global calling handler records each warning's message (2026-10-29: warning.expression has no condition in
+# scope, so every warning was stored as ''); warning.expression stays a no-op so nothing is printed, as before.
+# "package 'x' was built under R version y" comes from the harness's R install, not from the script.
 R_PREAMBLE_SIMPLE = """\
 .r2py_warnings <- character(0)
 .r2py_orig_warning <- getOption('warning.expression')
-options(warning.expression = quote({
-  .r2py_warnings <<- c(.r2py_warnings, tryCatch(conditionMessage(w), error=function(e) ''))
-}))
+options(warning.expression = quote({}))
+globalCallingHandlers(warning = function(w) {
+  .r2py_msg <- conditionMessage(w)
+  if (!grepl('was built under R version', .r2py_msg, fixed = TRUE))
+    .r2py_warnings <<- c(.r2py_warnings, .r2py_msg)
+})
 """
 
 R_EPILOGUE_SIMPLE = """\
 options(warning.expression = .r2py_orig_warning)
+globalCallingHandlers(NULL)
 suppressWarnings(
   writeLines(jsonlite::toJSON(.r2py_warnings), '_r2py_warnings.json')
 )
@@ -54,7 +61,8 @@ import warnings as _r2py_warnings_mod
 _r2py_warn_list = []
 _r2py_orig_showwarning = _r2py_warnings_mod.showwarning
 def _r2py_capture_warning(message, category, filename, lineno, file=None, line=None):
-    if 'matplotlib' not in (filename or ''):
+    # plt.show() under the sandbox's Agg backend warns from the script's own line, not from matplotlib
+    if 'matplotlib' not in (filename or '') and 'is non-interactive, and thus cannot be shown' not in str(message):
         _r2py_warn_list.append(str(message))
 _r2py_warnings_mod.showwarning = _r2py_capture_warning
 """

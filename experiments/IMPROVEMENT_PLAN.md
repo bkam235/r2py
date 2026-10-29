@@ -3858,3 +3858,39 @@ check).** Q4 asked whether ragg `agg_webp_anim` is only a timeout problem. It is
     verifier counts as the program's (rvest `rvest_s7`). Both are harness-made; fixing them moves scores, so it is a
     scorer change of its own.
   - **Q3** (bslib temp font files) and the **audit of harness-made feedback** remain.
+
+**R warnings were stored without their texts (warnings, scorer track, registered 2026-10-29, before the check).** The
+health report of `work/replay_default` shows `[warnings] warnings similarity 0.000 < 0.95` on most never-improving
+states. Diagnosis offline (the 60 final programs of `work/replay_default` re-verified from their trajectories, no model
+calls, $0):
+- **R kept only the count.** The R sandbox's warning capture (`R_PREAMBLE_SIMPLE`, `r2py/stage0/effects/warnings.py`)
+  calls `conditionMessage(w)` inside `options(warning.expression = ...)`, where no condition is in scope, so every
+  warning was stored as `''` (a direct R run: one coercion and one `warning()` give `"" ""`). 14 of 60 training states
+  have R warnings. With one R warning, a silent Python program scored 1.0 (`'' == ''`) and a faithful one that warns
+  scored 0; with 2 or more (ggplot2 `geom_bin_2d`, purrr `invoke`, shape `Arrows`) the joined newlines can never be
+  matched. The model was shown `R produced: ; ; ;`.
+- **Captured properly (scratch, r2py not edited), 8 of the 14 hold only a harness-made warning:** `Paket 'rvest' wurde
+  unter R Version 4.6.1 erstellt` (the package was built under R 4.6.1, the harness runs 4.6.0), in German, the
+  machine's locale. The other 6 are the script's own (fansi, caret `update_train`, ggplot2 `geom_bin_2d`, purrr
+  `invoke`, recipes `discretize`, shape `Arrows`, the last in German). No stored R stdout has German text.
+- **Python side:** 230 warnings feedback items in 17 states; in 13 of them R has no warnings (warnings not scored, but an
+  item on every entity). The most common is matplotlib's `FigureCanvasAgg is non-interactive, and thus cannot be shown`
+  (9 states): `plt.show()` under the sandbox's Agg backend, attributed to the script's line, so the `matplotlib`
+  filename filter misses it. The rest are Python library notices (pandas, cryptography, statsmodels, numpy) and stay.
+- Change (the person's choices 2026-10-29: text comparison as designed; R in English):
+  - R: a global calling handler records each warning's message; `warning.expression` stays a no-op, so nothing is
+    printed, as before; messages containing `was built under R version` are not recorded;
+  - R sandbox: `LANGUAGE=en`;
+  - Python: the Agg `plt.show()` warning is not recorded;
+  - the comparator is unchanged. Test `tests/test_warning_capture.py` (both fail before).
+- R capture code changed, so the 249 maps get their whole-script warnings re-captured
+  (`refresh_entity_bundles.py --warnings`, new; everything else in them kept; backup `work/reverify/script_maps_epoch6`).
+- Instrument: `scoring_epoch.py check` on the 147 reference programs, no model calls, $0.
+- Expected: moves only in states with R warnings or with the Agg warning: states whose only R warning was the
+  harness's lose the warnings dimension (it was 1.0 for a silent Python program, or 0 where Python warned); states
+  with one real R warning and a silent Python program go 1.0 -> 0 on warnings (fansi, caret `update_train`, recipes
+  `discretize`); states with several R warnings get partial similarity where Python warns alike; the Agg warning no
+  longer counts where R has warnings. Every move is to be traced to one of these, entity by entity; anything else, or a
+  run/crash flip, sends the change back.
+- Decision: the person's acceptance of the check report (opens epoch 7 and rebuilds the curves). Then the replay of the
+  default (registered separately) measures epochs 4-7 together.

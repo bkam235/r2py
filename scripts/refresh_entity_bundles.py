@@ -11,6 +11,9 @@ rendered HTML); values only the stored map has (inherited datasets probed separa
 
 ``--stdout`` replaces only the whole-script stdout and keeps everything else (2026-10-25: 49 maps held the stdout of a
 plain run, which ended in the graphics epilogue's own "null device / 1").
+
+``--warnings`` replaces only the whole-script warnings and keeps everything else (2026-10-29: every R warning was
+stored as '', in the machine's locale, with the harness's "package was built under R version" among them).
 """
 import pickle
 import sys
@@ -21,7 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 
-def refresh(path: str, main: bool = False, stdout: bool = False) -> str:
+def refresh(path: str, main: bool = False, stdout: bool = False, warnings: bool = False) -> str:
     from r2py.stage1.runner import run_script_checkpointed
     f = Path(path)
     sm = pickle.loads(f.read_bytes())
@@ -39,6 +42,15 @@ def refresh(path: str, main: bool = False, stdout: bool = False) -> str:
         tmp.write_bytes(pickle.dumps(sm))
         tmp.replace(f)
         return f"{f.stem}: stdout {sorted(old)!r} -> {full.stdout!r}"[:300]
+    if warnings:
+        mains = {id(e.actual_bundle): e.actual_bundle for e in sm.entities.values() if getattr(e, "actual_bundle", None) is not None}
+        old = [b.warnings for b in mains.values()]
+        for b in mains.values():
+            b.warnings = list(full.warnings)
+        tmp = f.with_suffix(".tmp")
+        tmp.write_bytes(pickle.dumps(sm))
+        tmp.replace(f)
+        return f"{f.stem}: warnings {old[:1]!r} -> {full.warnings!r}"[:400]
     sm.entity_bundles, sm.entity_types = bundles, types
     if main:
         mains = {id(e.actual_bundle): e.actual_bundle for e in sm.entities.values() if getattr(e, "actual_bundle", None) is not None}
@@ -52,7 +64,8 @@ def refresh(path: str, main: bool = False, stdout: bool = False) -> str:
 
 if __name__ == "__main__":
     maps, stems = Path(sys.argv[1]), [s.strip() for s in open(sys.argv[2]) if s.strip()]
-    main, stdout = "--main" in sys.argv[3:], "--stdout" in sys.argv[3:]
+    main, stdout, warnings = "--main" in sys.argv[3:], "--stdout" in sys.argv[3:], "--warnings" in sys.argv[3:]
     with ProcessPoolExecutor(6) as ex:
-        for line in ex.map(refresh, [str(maps / f"{s}.pkl") for s in stems], [main] * len(stems), [stdout] * len(stems)):
+        for line in ex.map(refresh, [str(maps / f"{s}.pkl") for s in stems], [main] * len(stems), [stdout] * len(stems),
+                            [warnings] * len(stems)):
             print(line, flush=True)
