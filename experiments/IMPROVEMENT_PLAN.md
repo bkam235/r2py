@@ -3913,3 +3913,19 @@ calls, $0):
   `work/reverify/script_maps_epoch6` (not in git).
 - **Open:** warnings are not scored for entities with their own bundle (the checkpoint bundles carry no warnings), so
   a faithful program gains nothing by reproducing them; whether that is right is the person's call.
+
+**Replay of the production default under epoch 7 (registered 2026-10-29, before the run).** The only replay of
+`default_2026_10_20` (`work/replay_default`, 2026-10-20) ran under epoch 1. Since then epochs 4-7 corrected feedback
+the model sees without moving the curves: false `null device 1` stdout items (4), false `[env] only in R` items (5),
+the checkpoint slowdown behind all 36 sandbox timeouts of that replay, all ragg (6), and blank R warnings, the
+harness's R warning and the Agg item (7). Their effect on translations is unmeasured, and the gap table the next
+question is ranked by describes the epoch-1 harness.
+- Instrument: `replay.py --pool training --policies default_2026_10_20 --samples 1 --workers 6`, frozen starts, the 60
+  training states, into `work/replay_default_e7`; run guard `--budget 5.50`, reserve $0.50.
+- Rule: descriptive. Reported: mean final all / running / crashing under epoch 7; paired by state against the 2026-10-20
+  replay's finals re-scored under epoch 7 (the curves' "default with conversation (measured)", 0.792), mean
+  difference with a 95% bootstrap interval over states; the health report's score gap table and `--deep`.
+- What it can mean: a difference is the four feedback fixes plus run-to-run noise (one sample each; SD within a state
+  about 0.08) and drift between days and of the model service (0.01-0.02 seen); it is not a test of any one fix. If
+  the plateau moves up, the corrections led to a gain; if not, they did not show one at this size.
+- Cost estimate $4.35 (the 2026-10-20 replay).
