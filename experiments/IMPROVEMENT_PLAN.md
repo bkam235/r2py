@@ -23,6 +23,9 @@ page.
 | + crashing starts: width 6, patience 5, twice the time limit | 0.741 | 2026-10-18/19 |
 | + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
 
+A fresh replay of the default under epoch 7 (2026-10-30, after the feedback corrections of epochs 4-7) ended at 0.781,
+paired −0.013 [−0.044, +0.009] against the October replay re-scored (0.794): the corrections showed no gain.
+
 The harness ceiling fixes lifted the whole picture: those of 2026-10-17/18 (R checkpoint injection, tag lists, temp
 paths, session reports) the starting mean 0.405 -> 0.427, the checkpoint fix of epoch 2 (2026-10-25) 0.427 -> 0.473,
 because 5 start states had crashed only because of the harness; they now count as running starts (45 running, 15
@@ -3929,3 +3932,31 @@ question is ranked by describes the epoch-1 harness.
   about 0.08) and drift between days and of the model service (0.01-0.02 seen); it is not a test of any one fix. If
   the plateau moves up, the corrections led to a gain; if not, they did not show one at this size.
 - Cost estimate $4.35 (the 2026-10-20 replay).
+- **Result (2026-10-30): descriptive; no gain from the feedback corrections of epochs 4-7 at this size.** 60 of 60
+  runs valid, scorer `826cb943a9e2-db31b28ade02`. Run in two invocations: the guard stopped at $5.58 after 49 states,
+  and the person approved finishing the 11 left with `--budget 7.20`, so the cost was $6.93 against the estimate of
+  $4.35. Calls per run 15.8 against 18.5 on 2026-10-20, but about $0.0073 per call against $0.0039. Gemma 4 31B is
+  listed at $0.20 / $0.40 per M tokens today; the October price was not recorded, and the trajectories do not log
+  tokens, so it is unknown whether the price or the prompt length changed. Mean final 0.781 (running 0.762, crashing
+  0.844) against 0.794 for the October replay re-scored (0.777 / 0.850). Paired difference by state −0.013
+  [−0.044, +0.009], 9 better / 10 worse / 41 tied (±0.01); running −0.015 [−0.056, +0.014]; crashing −0.006
+  [−0.016, +0.002]. The two large drops are single-sample: shiny `updateRadioButtons` −0.71 (in October one of three
+  branches reached 0.96 at step 1; here all rewrites came back unchanged) and rvest `html_children` −0.36 (in October
+  it reached 0.55 mostly through checkpoint crashes, `dictionary changed size during iteration`). The ground loop is
+  cleaner: crashing candidates RuntimeError 216 -> 2 and TimeoutExpired 36 -> 0, no run ends crashing (October 1),
+  model mapping 13% -> 12% of verifications. The gap table under epoch 7: 0.219, of which never improved 44%,
+  improved but final < 0.9 51%, final >= 0.9 5%, ends crashing 0%. The plateau stays at 0.792 (the curves'
+  measured default). Since the latest harness adoption, gain 0 and corrections net 0.
+- **Diagnosis (2026-10-30, offline, $0):** a sweep re-verified the 60 start programs and printed what the model is
+  shown (`format_score_report`). 416 entities lose (score < 0.95); for 159 of them in 30 states, no item names a loss
+  in data, output, graphics, HTML or files. Of these, 23 states have running starts and hold 0.088 of the 0.219 gap.
+  Three mechanisms, shown on rvest `html_children` (never improved, 0.546): (1) the data details come from the
+  whole-script comparison keyed by variable name, while the entity is scored from its own checkpoint bundle. A
+  repeated name lands on its last entity: the model sees `[data] [html_1] score=0.000`, while `html_1` scores 1.0
+  and the losers are `html`, `ul`, `p`. (2) Script-wide items are copied onto every entity: 8 identical
+  `warnings similarity 0.000` lines fill 8 of the 10 feedback lines. (3) Those warnings are made by the harness: the
+  Python data capture's fingerprint walker (`r2py/stage0/effects/data.py`, `getattr` on every public attribute)
+  fires library DeprecationWarnings (`nextSibling`, `parserClass`, `co_lnotab`; in openssl `certificates`,
+  `not_valid_after`). The programs never use those names. 6 states have Python warnings where R has none. In 6 of
+  its 9 rewrites the model added warning filters. Also seen: a `BeautifulSoup` is callable, so the capture stores
+  it as a function's metadata ("Python has no text form").
