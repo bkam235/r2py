@@ -115,6 +115,7 @@ def reason(
     accept_equal: bool = False,
     crash_stalls: "int | None" = None,
     converse: bool = False,
+    entity_feedback: bool = False,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -247,7 +248,8 @@ def reason(
             # what that answer did, instead of rebuilding the whole turn around the current best version.
             messages = conv_messages + [
                 {"role": "assistant", "content": conv_raw},
-                {"role": "user", "content": _conversation_delta(history[conv_mark:], conv_report, conv_before, report)},
+                {"role": "user", "content": _conversation_delta(history[conv_mark:], conv_report, conv_before, report,
+                                                                   entity_bundles if entity_feedback else None)},
             ]
             _stat("outcome", "conversation_turn")
         else:
@@ -266,6 +268,7 @@ def reason(
                 sidecar_filename=getattr(harness, "_sidecar_filename", ""),
                 audit_feedback=audit_feedback,
                 runtime_section=runtime_section,
+                entity_feedback=entity_feedback,
             )
         if crash_note:
             messages[-1]["content"] += "\n\n" + crash_note
@@ -754,7 +757,7 @@ def _widen_entity_repair(action: dict, messages: list, system: str, model: str, 
     return {**action, "new_source": best_frag}
 
 
-def _conversation_delta(notes: list[str], cand, before, best) -> str:
+def _conversation_delta(notes: list[str], cand, before, best, r_entity_bundles=None) -> str:
     """Conversation mode: what the model's previous answer did, as the next user message (2026-10-19)."""
     from .objective import entity_score
     parts = ["Result of your previous answer:"]
@@ -779,7 +782,7 @@ def _conversation_delta(notes: list[str], cand, before, best) -> str:
             parts += [t for _, t in sorted(changes)]
         parts.append("")
         parts.append("Verification of your rewrite:")
-        parts.append(_prompt.format_score_report(cand))
+        parts.append(_prompt.format_score_report(cand, r_entity_bundles))
     parts.append("")
     parts.append("Revise your rewrite: keep what improved, fix what got worse or still differs from R. Answer as "
                  "before: brief analysis, then the action with the complete Python file.")

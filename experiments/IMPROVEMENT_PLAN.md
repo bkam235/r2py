@@ -3985,3 +3985,21 @@ change was built and checked in one session.
   `html` now gets a text comparison (similarity 0.79) instead of "no text form".
 - **Open:** rvest `ul`, `p`: R's node list of one `xml_node` against a bs4 `ResultSet` is "uncomparable" (0 on data);
   that is the comparator's call on a list against a fingerprint, unchanged here.
+
+**Entity-addressed feedback (option entity_feedback), registered 2026-10-31 before any data (Q1 of the diagnosis).**
+- Change (harness, off by default; `scoring_epoch.py status` still `same`): `format_score_report(report,
+  r_entity_bundles)` shows each losing entity that has its own checkpoint bundles the data comparison of those bundles
+  (the one that scores it, "uncomparable" with its reason). It drops the whole-script data item that the name lookup
+  pinned on such an entity, and shows a feedback message that several entities share once, with their names (or "all
+  entities"). Plumbed through `reason(entity_feedback=...)`, `build_agent_turn` and the conversation reply. Tests:
+  `tests/test_entity_feedback.py` (two fail before, pass after).
+- Offline, epoch 8, the 40 running training starts: the report differs in 33. Of 156 losing entities, 134 -> 146 are
+  named by a data, output, graphics, HTML or files line, and 102 -> 112 by a line of their own (not a broadcast).
+  Feedback lines 217 -> 100; report characters 413k -> 273k. Examples: rvest `ul`, `p` now see their node-list
+  comparisons; xml2 `xml_attr` sees `kids` missing in Python and `doc`'s value at that entity, not the last one.
+- Instrument: `step_ab.py run --arms U E --samples 4 --only experiments/pools/entity_feedback_states.txt --tag
+  entity_feedback --budget 1.50`: one production step from frozen starts, 33 states x 2 arms x 4 = 264 steps.
+- Rule: free and reversible. Adopt if P(E - U > 0) >= 0.9 in the bootstrap over states on mean gain per step;
+  secondary P(improve), crashes after, review rejections. All are running starts (no crashing stratum). If adopted:
+  the held-out pool with the same instrument, then a policy default with the option.
+- Cost estimate about $0.90 (October's 360-step ablation cost $0.54; calls cost about twice as much now).

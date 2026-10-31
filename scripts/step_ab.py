@@ -9,6 +9,7 @@ candidate improves, as in the loop), then verification.
     python scripts/step_ab.py run --samples 4     # step 2
     python scripts/step_ab.py summary
 
+Arm E (2026-10-31): U with option entity_feedback (each losing entity shown the comparison that scores it).
 Arms: U (no guidance), GV (whole-value guidance: R's print, or R's values <= 1,500 characters), GS (structured:
 the verifier's per-path differences, the first differing printed lines, the locator's first diverging call).
 """
@@ -126,7 +127,7 @@ def run_one(task: dict) -> dict:
         if common:
             row["common_before"] = round(obj.entity_score(base.by_entity[common]), 4)
         msgs = P.build_agent_turn(sm.source or "", hide_data_shim(annotated), base, sm, 1, cfg["max_iters"], 10,
-                                  history=[], sidecar_filename=f"{stem}.r2py_data.json")
+                                  history=[], sidecar_filename=f"{stem}.r2py_data.json", entity_feedback=arm == "E")
         if guide:
             msgs[-1]["content"] += "\n\n" + guide[1]
         if arm in ("S", "N"):   # feedback ablation (2026-10-19)
@@ -219,10 +220,13 @@ def _ablate_feedback(content: str, arm: str) -> str:
 
 
 def run(samples: int, workers: int, arms=ARMS, with_crashing: bool = False, pool: str = "",
-        budget: "float | None" = None, reserve: float = 0.5) -> None:
+        budget: "float | None" = None, reserve: float = 0.5, only: str = "") -> None:
     targets = json.loads((ROOT / "work/step_ab/targets.json").read_text(encoding="utf-8"))
     import replay
     states = replay.pool_states(pool) if pool else (replay.training_states() if with_crashing else running_states())
+    if only:   # a registered subset of the states, one name per line
+        keep = set((ROOT / only).read_text(encoding="utf-8").split())
+        states = {n: s for n, s in states.items() if n in keep}
     targets = {n: targets.get(n, {}) for n in states}
     path = OUT / "results.jsonl"
     done = [json.loads(l) for l in path.open(encoding="utf-8")] if path.exists() else []
@@ -299,7 +303,8 @@ def main() -> int:
     p.add_argument("--workers", type=int, default=6)
     from expkit import add_guard_args
     add_guard_args(p)
-    p.add_argument("--arms", nargs="+", default=list(ARMS), choices=["U", "GV", "GS", "F", "S", "N", "D"])
+    p.add_argument("--arms", nargs="+", default=list(ARMS), choices=["U", "GV", "GS", "F", "S", "N", "D", "E"])
+    p.add_argument("--only", default="", help="file of state names (relative to the repository): run only these")
     p.add_argument("--with-crashing", action="store_true", help="the whole training pool, crashing starts included")
     p.add_argument("--pool", choices=["training", "heldout"], default="", help="a whole pool, crashing starts included")
     sp = sub.add_parser("summary")
@@ -314,7 +319,7 @@ def main() -> int:
         guidable()
         return 0
     if args.cmd == "run":
-        run(args.samples, args.workers, args.arms, args.with_crashing, args.pool, args.budget, args.reserve)
+        run(args.samples, args.workers, args.arms, args.with_crashing, args.pool, args.budget, args.reserve, args.only)
     text = summary()
     print("\n" + text)
     (OUT / "summary.txt").write_text(text + "\n", encoding="utf-8")

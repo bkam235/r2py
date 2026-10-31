@@ -187,9 +187,52 @@ function definitions AND all call sites (e.g. `from` → `from_val`, \
 """
 
 
-def format_score_report(report: "ScoreReport") -> str:
-    """Format a ScoreReport as human-readable text for the agent prompt."""
+def _own_data_details(report: "ScoreReport", r_entity_bundles: dict) -> tuple[set[str], list[tuple[str, str, str, float, str]]]:
+    """Entities scored from their own checkpoint bundles, and the failing data comparisons of the losing ones as
+    (entity, R value, Python value, score, diff), from the comparison that scores them."""
+    from ..stage4.decompose import _compare_entity_bundles
+    from ..stage4.verifier import _extract_var_explanation, _serialize_value
+    from ..types import EffectClass
+    from .objective import entity_score
+    py_bundles = report.py_entity_bundles or {}
+    owned = {e for e in report.by_entity if e in r_entity_bundles and e in py_bundles}
+    details = []
+    for eid in sorted(owned, key=lambda e: entity_score(report.by_entity[e])):
+        es = report.by_entity[eid]
+        if not es.active_dims or entity_score(es) >= 0.95:
+            continue
+        r_eb, py_eb = r_entity_bundles[eid], py_bundles[eid]
+        res = _compare_entity_bundles(r_eb, py_eb).get(EffectClass.DATA)
+        if res is None:
+            continue
+        # "uncomparable" has no per-variable scores, only its reason (rvest `ul`: R's node list, a bs4 ResultSet)
+        per_variable = res.per_variable or ({v: res.score for v in r_eb.data or {}} if res.score < 1.0 else {})
+        for var, score in per_variable.items():
+            if score >= 1.0:
+                continue
+            details.append((eid, _serialize_value(r_eb.data.get(var, "<missing>")),
+                            _serialize_value((py_eb.data or {}).get(var, "<missing>")), score,
+                            _extract_var_explanation(res.explanation, var)
+                            or (res.explanation if not res.per_variable else "") or f"{var}: score {score:.3f}"))
+    return owned, details
+
+
+def format_score_report(report: "ScoreReport", r_entity_bundles: "dict | None" = None) -> str:
+    """Format a ScoreReport as human-readable text for the agent prompt.
+
+    With ``r_entity_bundles`` (option ``entity_feedback``, 2026-10-31): an entity with its own checkpoint bundles
+    is shown the data comparison of those bundles, which is what scores it. The whole-script data comparison is
+    keyed by variable name, so a repeated name put the last value's difference on the last entity of that name
+    (rvest ``html_children``: ``html_1`` 1.0 was shown the difference, ``html``, ``ul``, ``p`` at 0.25 nothing);
+    and an item every entity shares is shown once instead of once per entity (8 of the 10 feedback lines)."""
+    from ..types import EffectClass
     parts = [f"Aggregate score: {report.aggregate:.3f}"]
+    comparisons, feedback = report.comparisons, report.feedback
+    own: list = []
+    if r_entity_bundles is not None:
+        owned, own = _own_data_details(report, r_entity_bundles)
+        comparisons = [c for c in comparisons if not (c.effect_class == EffectClass.DATA and c.entity_id in owned)]
+        feedback = [f for f in feedback if not (f.effect_class == EffectClass.DATA and f.entity_id in owned)]
 
     if report.py_exit_code != 0:
         parts.append(f"Python exit code: {report.py_exit_code} (CRASHED)")
@@ -203,10 +246,15 @@ def format_score_report(report: "ScoreReport") -> str:
             ok = "OK" if es.executed_ok else "CRASH"
             parts.append(f"  {eid}: {avg:.3f} ({ok})")
 
-    if report.comparisons:
+    if comparisons or own:
         parts.append("")
         parts.append("Output comparisons (R vs Python):")
-        for c in report.comparisons:
+        for eid, r_value, py_value, score, diff in own:
+            parts.append(f"  [data] [{eid}] score={score:.3f}")
+            parts.append(f"    R produced:      {r_value}")
+            parts.append(f"    Python produced: {py_value}")
+            parts.append(f"    Diff: {diff}")
+        for c in comparisons:
             eid_label = f" [{c.entity_id}]" if c.entity_id else ""
             parts.append(f"  [{c.effect_class.value}]{eid_label} score={c.score:.3f}")
             parts.append(f"    R produced:      {c.r_value}")
@@ -214,11 +262,20 @@ def format_score_report(report: "ScoreReport") -> str:
             if c.diff_summary:
                 parts.append(f"    Diff: {c.diff_summary}")
 
-    if report.feedback:
+    lines = [f"  [{f.entity_id}] {f.effect_class.value}: {f.message}" for f in feedback]
+    if r_entity_bundles is not None:
+        lines = [f"  [{eid}] data: {diff}" for eid, _, _, _, diff in own]
+        groups: dict[tuple, list[str]] = {}
+        for f in feedback:
+            groups.setdefault((f.effect_class.value, f.message), []).append(f.entity_id)
+        for (ec, msg), eids in groups.items():
+            label = eids[0] if len(eids) == 1 else (
+                "all entities" if len(eids) == len(report.by_entity) else ", ".join(eids))
+            lines.append(f"  [{label}] {ec}: {msg}")
+    if lines:
         parts.append("")
         parts.append("Verifier feedback:")
-        for f in report.feedback[:10]:
-            parts.append(f"  [{f.entity_id}] {f.effect_class.value}: {f.message}")
+        parts += lines[:10]
 
     return "\n".join(parts)
 
@@ -355,6 +412,7 @@ def build_agent_turn(
     sidecar_filename: str = "",
     audit_feedback: str = "",
     runtime_section: str = "",
+    entity_feedback: bool = False,
 ) -> list[dict]:
     """Build the messages for one agent reasoning turn."""
     parts = []
@@ -376,7 +434,8 @@ def build_agent_turn(
     parts.append("")
 
     parts.append("### Verification result")
-    parts.append(format_score_report(report))
+    parts.append(format_score_report(
+        report, (getattr(script_map, "entity_bundles", None) or {}) if entity_feedback else None))
     parts.append("")
 
     parts.append("### Entities")
