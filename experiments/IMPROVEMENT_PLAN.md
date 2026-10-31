@@ -4003,3 +4003,11 @@ change was built and checked in one session.
   secondary P(improve), crashes after, review rejections. All are running starts (no crashing stratum). If adopted:
   the held-out pool with the same instrument, then a policy default with the option.
 - Cost estimate about $0.90 (October's 360-step ablation cost $0.54; calls cost about twice as much now).
+- **Result (2026-10-31): adopted by the free rule on the training pool; held-out pending.** 264 of 264 steps valid,
+  scorer `36a93ea5bd69-db31b28ade02`, cost $0.47 (estimate $0.90). Mean gain per step E 0.059 against U 0.035:
+  E - U +0.024 [+0.004, +0.051], P(>0) 1.00, 12 better / 5 worse / 16 tied (33 states, all running starts). P(step
+  improves) 37.9% against 28.0%: +0.099 [+0.015, +0.189], P 0.99. Secondary: candidates crashing after the step 22
+  against 17 of 132, review rejections 9 against 8, gate rejections 2 and 2. `step_ab.py`'s own summary failed after
+  the run (it expects the guidance arms); the registered `expkit.py analyze` is the analysis. The option is not yet
+  in a policy: next are the held-out pool with the same instrument (step 7), then a default with
+  `entity_feedback=True` (step 8, the person's call).
