@@ -615,6 +615,10 @@ def _r2py_checkpoint(eid):
                     _r2py_av = getattr(v, _r2py_an, None)
                     if _r2py_av is not None:
                         _r2py_meta['attributes'][_r2py_an] = _r2py_av
+                # as the data epilogue: a callable object's text form, for an R value that is not a function
+                _r2py_fpv, _r2py_fp_ok = _r2py_try_serialize(k, v)
+                if _r2py_fp_ok and isinstance(_r2py_fpv, dict) and _r2py_fpv.get('__r2py_fp__') and _r2py_fpv.get('texts'):
+                    _r2py_meta['value'] = _r2py_fpv
                 new_vars[k] = _r2py_meta
                 continue
             _r2py_serialized, _r2py_ok = _r2py_try_serialize(k, v)

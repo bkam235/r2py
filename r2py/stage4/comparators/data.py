@@ -135,6 +135,10 @@ def _compare_pair(
     verdict is one of: "pass", "fail".
     failure_tag is "value" or "infra" (only on fail), or None on pass.
     """
+    # A callable Python object with a text form (bs4's BeautifulSoup) is compared by it when R's value is no function
+    if (isinstance(py_val, dict) and py_val.get("__r2py_callable_meta__") and "value" in py_val
+            and not (isinstance(r_val, dict) and r_val.get("__r2py_callable_meta__"))):
+        py_val = py_val["value"]
     # An object JSON cannot represent (a fitted model, an XML document) is a generic fingerprint on one side
     # or both: compared by value, not by structure.
     if _fingerprint.is_fp(r_val) or _fingerprint.is_fp(py_val):

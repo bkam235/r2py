@@ -3960,3 +3960,28 @@ question is ranked by describes the epoch-1 harness.
   `not_valid_after`). The programs never use those names. 6 states have Python warnings where R has none. In 6 of
   its 9 rewrites the model added warning filters. Also seen: a `BeautifulSoup` is callable, so the capture stores
   it as a function's metadata ("Python has no text form").
+
+**Python capture: harness-made warnings and callable objects with a text form (2026-10-31, scorer track, Q2 of the
+diagnosis above).** Registered after the check had run: the person picked Q1 and Q2 after the diagnosis, and this
+change was built and checked in one session.
+- Change: `_r2py_try_serialize`, which both the data epilogue and the per-entity checkpoints use, reads an object's
+  attributes with warnings ignored, so library DeprecationWarnings fired by the capture (bs4's `nextSibling`,
+  `parserClass`, `co_lnotab` of a generator's code; cryptography's `not_valid_after`) no longer count as the
+  program's. A callable object that is not a function (bs4's `BeautifulSoup`, whose `__call__` is `find_all`) keeps
+  its fingerprint as `value` when that fingerprint has a text form, and the data comparator uses it when R's value is
+  not a function. Functions and `functools.partial` are unchanged (their text holds `at 0x`). Tests:
+  `tests/test_python_capture_objects.py` (the two about the change fail before, pass after).
+  `test_stage2.py::...with_locale_dataframe_date_column_round_trip` fails before and after (unrelated).
+- Check `work/scoring/check_20261031_0930.md`: 147 programs, 133 unchanged, 7 changed, no flip, no error. rvest
+  `html_table` start 0.406 -> 0.615, `rvest_s7` 0.461 -> 0.592, `html_children` 0.546 -> 0.605, `html_element` 0.778
+  -> 0.787 (soup and tags compared by text); openssl `ec_dh` ±0.03 (known noise); textshaping `lorem_text` final_w3
+  +0.018: `lorem_bidi` is a plain function, which the change does not touch; four re-verifications on the new code
+  gave 0.546-0.568. The report flags "R capture code changed" because `r2py/stage0/effects` is under
+  `R_CAPTURE_PATHS`. Both changed hunks are in Python-only templates, and the R-side strings hash the same before and
+  after, so the maps were not re-captured.
+- **Result: accepted, epoch 8 (scorer `36a93ea5bd69-db31b28ade02`); a correction.** Curves: start 0.485 -> 0.492
+  (the rvest starts); default with conversation (measured) 0.7917, unchanged (its rvest finals had the best
+  program before as well); running 46 / crashing 14. Feedback: no harness-made warnings item in the 6 states; rvest
+  `html` now gets a text comparison (similarity 0.79) instead of "no text form".
+- **Open:** rvest `ul`, `p`: R's node list of one `xml_node` against a bs4 `ResultSet` is "uncomparable" (0 on data);
+  that is the comparator's call on a list against a fingerprint, unchanged here.

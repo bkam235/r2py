@@ -351,6 +351,11 @@ for _r2py_k, _r2py_v in list(globals().items()):
             _r2py_av = getattr(_r2py_v, _r2py_an, None)
             if _r2py_av is not None:
                 _r2py_meta['attributes'][_r2py_an] = _r2py_av
+        # A callable object can be data (bs4's BeautifulSoup: __call__ is find_all); its text form is kept for an
+        # R value that is not a function (2026-10-31)
+        _r2py_fpv, _r2py_fp_ok = _r2py_try_serialize(_r2py_k, _r2py_v)
+        if _r2py_fp_ok and isinstance(_r2py_fpv, dict) and _r2py_fpv.get('__r2py_fp__') and _r2py_fpv.get('texts'):
+            _r2py_meta['value'] = _r2py_fpv
         _r2py_state[_r2py_k] = _r2py_meta
         continue
     _r2py_serialized, _r2py_ok = _r2py_try_serialize(_r2py_k, _r2py_v)
@@ -567,7 +572,16 @@ def _r2py_try_serialize(name, obj):
     (dict/list/str/number/bool/None) and can be re-serialized without a custom
     encoder.  An object the encoder cannot handle is captured as a generic fingerprint
     (see ``_r2py_fingerprint``); ``(None, False)`` only when it has no numbers and no text.
+    Reading an object's attributes can fire library warnings (bs4's ``nextSibling``); they are the capture's, not
+    the program's, so none reaches the warnings capture (2026-10-31: they did in 6 of 60 training states).
     \"\"\"
+    import warnings as _r2py_warn_mod
+    with _r2py_warn_mod.catch_warnings():
+        _r2py_warn_mod.simplefilter('ignore')
+        return _r2py_try_serialize_quiet(name, obj)
+
+
+def _r2py_try_serialize_quiet(name, obj):
     try:
         raw = _r2py_json.dumps(obj, cls=_R2PyEncoder, allow_nan=True)
         return _r2py_sanitize(_r2py_json.loads(raw, parse_constant=lambda c: {
