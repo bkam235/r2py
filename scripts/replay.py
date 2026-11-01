@@ -57,6 +57,9 @@ POLICIES = {
     # The production default as of 2026-10-20: the above plus conversation mode from step 2 on.
     "default_2026_10_20": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
                                converse=True),
+    # The production default as of 2026-11-01: the above plus entity-addressed feedback.
+    "default_2026_11_01": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
+                               converse=True, entity_feedback=True),
     "continue3": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3),
     "continue3_eq": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3, accept_equal=True),
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this

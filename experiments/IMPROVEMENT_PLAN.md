@@ -4019,3 +4019,8 @@ change was built and checked in one session.
   124, review rejections 3 against 1. The effect is smaller than on training (+0.024) and its 95% interval touches
   zero; the free rule asks for P >= 0.9. More crashes after the step with the option, on both pools (37 against 26 of
   256), is the cost to watch. Next: a default with `entity_feedback=True` (step 8, the person's call), then a replay.
+- **Default flipped (2026-11-01, the person's decision):** `DEFAULT_ENTITY_FEEDBACK = True` in `r2py/loop.py`
+  (`run_loop(agent_entity_feedback=...)`, manifest key `agent_entity_feedback`), and the replay policy
+  `default_2026_11_01` = `default_2026_10_20` plus `entity_feedback=True`. The plateau of the new default is not
+  measured yet: 0.792 is `default_2026_10_20`'s under epoch 6. A replay of `default_2026_11_01` on the 60 training
+  states (step 9) would measure it.

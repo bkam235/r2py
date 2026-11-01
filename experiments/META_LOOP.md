@@ -15,7 +15,7 @@ this protocol, one cycle per session.
     default. Nothing else reaches production translations;
   - **telemetry, ground -> meta:** results rows, trajectories, `run_manifest.json`, the health report;
   - **versions, both ways:** every run row carries the scorer version (`r2py/scoring.py`) and a policy name
-    (`default_2026_10_20`); the curves carry the scorer version they were re-scored with.
+    (`default_2026_11_01`); the curves carry the scorer version they were re-scored with.
 
 ## The objective
 
