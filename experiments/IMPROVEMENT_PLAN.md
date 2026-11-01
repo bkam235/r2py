@@ -4011,3 +4011,11 @@ change was built and checked in one session.
   the run (it expects the guidance arms); the registered `expkit.py analyze` is the analysis. The option is not yet
   in a policy: next are the held-out pool with the same instrument (step 7), then a default with
   `entity_feedback=True` (step 8, the person's call).
+- **Held-out (2026-11-01): passed** (`entity-feedback-step-heldout`, registered before any data). Same instrument and
+  rule on the 39 running held-out starts; the report differs in 31 (`experiments/pools/entity_feedback_heldout_states.txt`).
+  248 of 248 steps valid, cost $0.35. Mean gain per step E 0.044 against U 0.028: E - U +0.016 [-0.002, +0.038]
+  (90% [+0.000, +0.034]), P(>0) 0.96, 11 better / 6 worse / 14 tied; one stratum (running starts). P(step improves)
+  33.9% against 26.6%: +0.073 [-0.016, +0.169], P 0.92. Secondary: candidates crashing after the step 15 against 9 of
+  124, review rejections 3 against 1. The effect is smaller than on training (+0.024) and its 95% interval touches
+  zero; the free rule asks for P >= 0.9. More crashes after the step with the option, on both pools (37 against 26 of
+  256), is the cost to watch. Next: a default with `entity_feedback=True` (step 8, the person's call), then a replay.
