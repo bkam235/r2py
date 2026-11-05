@@ -11,7 +11,7 @@ data, and completed when it is decided (`experiments/META_LOOP.md`, steps 4 and 
     python scripts/registry.py show ID
 
 Registered fields (required): id, question, track (harness | scorer), instrument, pool, arms, baseline, primary,
-rule, est_cost (USD, or null), plan. Optional: option, samples, strata, run_dir, analysis, budget, note.
+rule, est_cost (USD, or null), plan; track is harness, scorer or learning. Optional: option, samples, strata, run_dir, analysis, budget, note.
 Added on register: registered (date and time), status "registered", scoring_version, commit_registered (HEAD).
 Added on result: decided (date), status "decided", cost (from <run_dir>/run_manifest.json: the invocations that
 started after the registration, since a run directory can hold several experiments; else --cost),
@@ -30,7 +30,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 REGISTRY = ROOT / "experiments/registry.jsonl"
 REQUIRED = ("id", "question", "track", "instrument", "pool", "arms", "baseline", "primary", "rule", "est_cost", "plan")
-TRACKS = ("harness", "scorer")
+TRACKS = ("harness", "scorer", "learning")
 DECISIONS = ("adopted", "not adopted", "extended", "descriptive")
 HELDOUT = ("pending", "passed", "failed", "not possible", "not run")
 

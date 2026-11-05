@@ -29,6 +29,11 @@ class TestRegistry(unittest.TestCase):
             registry.register({k: v for k, v in SPEC.items() if k != "rule"} | {"id": "y"}, self.path)
         self.assertEqual(len(registry.load(self.path)), 1)
 
+    def test_tracks(self):
+        registry.register(dict(SPEC, id="l", track="learning"), self.path)
+        with self.assertRaises(ValueError):
+            registry.register(dict(SPEC, id="o", track="other"), self.path)
+
     def test_result_takes_cost_only_from_invocations_after_registration(self):
         run = ROOT / "work" / f"_registry_test_{self.dir.name}"
         run.mkdir(parents=True)

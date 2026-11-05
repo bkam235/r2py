@@ -23,14 +23,17 @@ The meta-loop exists to raise **the plateau of the production default**: the mea
 `default_<date>` policy on the 60 training states under the open scoring epoch (0.792 in epoch 6), confirmed on the
 held-out pool. Every cycle says what it does to that number:
 - a **harness change** can raise it; the replay or test measures by how much;
+- a **learning change** (the model trained on translations the loop verified) can raise it the same way, through a
+  policy with another model; the replay or test measures by how much;
 - a **scorer change that corrects scores** (false losses removed) moves the plateau without any translation changing;
   the curve rebuild shows it, and it is a correction of the measurement, not a gain;
 - a **scorer change that only corrects feedback** (false messages, false timeouts, curves unchanged) can raise the
   plateau only through what the model does with the cleaner feedback, and that is unmeasured until the default is
   replayed (step 9).
 
-The first is a **gain** (the loop writes better programs); the second is a **correction** (the same programs
-measured differently); the third is a correction that may lead to a gain, unmeasured until a replay. The meta-loop
+The harness and learning changes are **gains** (the loop writes better programs); a scorer change that corrects scores
+is a **correction** (the same programs measured differently); one that corrects only feedback is a correction that
+may lead to a gain, unmeasured until a replay. The meta-loop
 exists for gains. Measurement hygiene is not an end in itself: a scorer
 question earns a cycle when the fault blocks a gain, by hiding real progress from the model or misleading its
 feedback, and it is ranked by what it unblocks, not by the points it moves. That a scorer check is free is no reason
@@ -40,7 +43,7 @@ to prefer it; harness questions have instruments of $0.30-1.20.
 
 | who | decides or does |
 |---|---|
-| **Person** (owner) | which question a cycle asks; accepting a scorer change (opening an epoch); every spend of credits; the decision rules; adopting a default; what is published |
+| **Person** (owner) | which question a cycle asks; accepting a scorer change (opening an epoch); every spend of credits or training compute; the decision rules; the training data's audit; adopting a default (a tuned model included); what is published |
 | **Strong model** (proposer, analyst) | observes, diagnoses, proposes, builds and tests code, registers the test, runs it once approved, analyses by the registered rule, records |
 | **Gemma** | the ground loop only; never proposes harness changes |
 
@@ -110,7 +113,9 @@ Trace one loss to its cause on a concrete program, and show the cause with an of
   or misses a lever: width, patience, conversation) -> harness track. The trajectories show it: the same mistake
   repeated across steps, crashes in a library's API, chains stopping while gains were still being found, feedback
   that names the difference with no step acting on it, good candidates rejected by a gate. A behaviour cause is shown
-  on the trajectories and, where it can be, with the cheapest instrument that calls a model (step 5).
+  on the trajectories and, where it can be, with the cheapest instrument that calls a model (step 5);
+- **capability** (the scorer is right, the feedback names the difference, and the model rarely proposes a correct
+  program: varied attempts across steps and chains, none right; more width does not reach it) -> learning track.
 
 ### 3a. Scorer track (person-gated, no model calls)
 
@@ -137,6 +142,22 @@ Trace one loss to its cause on a concrete program, and show the cause with an of
 1. Build the change behind an option that is off by default, with a unit test. `scoring_epoch.py status` must still
    say `same`; if it does not, the change touches the scorer and belongs in 3a.
 2. Smoke-test it on one state.
+
+### 3c. Learning track (person-gated: the data audit and every training spend)
+
+Search with the verifier finds programs better than the model alone writes; training the model on them makes the
+next round's search start from a stronger policy (expert iteration). Open question in `IMPROVEMENT_PLAN.md`
+(2026-11-05); not yet run.
+1. **Data.** Collect verified pairs (R source, final Python, and the trajectory) from finished runs, with their scorer
+   version. The training and held-out states of `experiments/pools/` never enter the data, nor other scripts of the
+   same Rd example or vignette. Record the count by package and a hash of the data set.
+2. **Audit, before any training.** Training exploits the scorer's remaining faults far harder than the frozen model
+   does. Read a sample of the highest-scoring pairs for faithfulness (pasting, hard-coded values, behaviour that only
+   the comparison accepts) and show the person the audit; a fault found is a scorer question (3a) first.
+3. **Train** behind a policy that names the model (`model=...` in a replay policy), off by default; record the base
+   model, the data hash and the training settings. Training compute is a spend: gated like a run.
+4. Register and test as below, the tuned model against the base model at the same calls. The decision rule for
+   tuned models is the person's, set when the first one is registered.
 
 ### 4. Register, before any data
 
@@ -200,7 +221,7 @@ crashing starts, so a crash-specific change cannot be confirmed there; that is s
 
 ### 8. Adopt
 
-On the person's sign-off: flip the default in `r2py/loop.py` (and its manifest key), add a replay policy named
+On the person's sign-off: flip the default in `r2py/loop.py` (and its manifest key; for a tuned model, the model), add a replay policy named
 `default_<date>` for the new production default, add a test that the default is on. Adopted changes stay under
 watch: a later run that contradicts them reverts them by the same rule.
 
