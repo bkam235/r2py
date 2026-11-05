@@ -4040,3 +4040,21 @@ change was built and checked in one session.
   `shape_string`, textshaping `shape_text`, rvest_s7 `html_elements` with no R bundle); the bslib woff2 tempfiles (Q3);
   sass `input` tempfile missing; "all variables uncomparable" (openssl certificates); ggplot2 `geom_bin_2d` figure
   count R=1 Python=0 with a warnings item on each entity.
+
+**Open question: a learning track (2026-11-05, from a discussion of Sutton's "The Bitter Lesson"; not registered, none run).**
+- Observation: the harness has search (width, the only search lever that paid) and no learning: the model's weights are
+  frozen, so resampling saturates where the policy rarely proposes a correct program (38% of the gap in states that
+  never improve). The levers that pushed our knowledge at the model (guided targets, entity repair, locator, libraries,
+  runtime store, prompt variants) did not raise the plateau; those that improved the signal from the verifier
+  (conversation mode, entity-addressed feedback) did. Scorer and feedback work is the reward, not built-in knowledge.
+- The transferable idea is AlphaZero's loop without the adversary (expert iteration): search with the verifier finds
+  programs better than the policy alone; fine-tune the policy on them; repeat, so each round's search starts stronger.
+- First step, offline and free: count the verified (R, Python) pairs (final >= 0.95, say) and their trajectories in
+  the existing runs, by package, after removing the training and held-out states (or keeping them out of evaluation).
+  A few hundred pairs make a small LoRA run on an open model a realistic experiment; a few dozen mean generating more
+  with width on the harvested pool first.
+- Preconditions: (1) reward hacking: optimising against the scorer exploits its remaining faults far harder than the
+  frozen model does, so audit high-scoring programs for faithfulness before training; (2) infrastructure: OpenRouter
+  does not fine-tune, so a self-hosted open model or a provider's fine-tuning service is needed; (3) the protocol knows
+  only the tracks harness and scorer (`META_LOOP.md`, `registry.py` TRACKS): a learning experiment needs a track of
+  its own, and its comparison is a policy with a different model, which a default flip has not covered so far.
