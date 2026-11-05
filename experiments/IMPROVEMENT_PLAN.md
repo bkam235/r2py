@@ -22,6 +22,7 @@ page.
 | width 3 | 0.732 | three independent chains, the verifier keeps the best (the default since Stage 11d) |
 | + crashing starts: width 6, patience 5, twice the time limit | 0.741 | 2026-10-18/19 |
 | + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
+| + entity-addressed feedback | **0.809** (measured, epoch 8) | 2026-11-01: each losing entity is shown the comparison that scores it, shared feedback once; paired +0.034 [+0.001, +0.072] against the previous default's replay re-scored (0.775) |
 
 A fresh replay of the default under epoch 7 (2026-10-30, after the feedback corrections of epochs 4-7) ended at 0.781,
 paired −0.013 [−0.044, +0.009] against the October replay re-scored (0.794): the corrections showed no gain.
@@ -4024,3 +4025,14 @@ change was built and checked in one session.
   `default_2026_11_01` = `default_2026_10_20` plus `entity_feedback=True`. The plateau of the new default is not
   measured yet: 0.792 is `default_2026_10_20`'s under epoch 6. A replay of `default_2026_11_01` on the 60 training
   states (step 9) would measure it.
+- **Replay of `default_2026_11_01` (registered 2026-11-05 before the run; descriptive):** `replay.py --pool training
+  --policies default_2026_11_01 --samples 1 --workers 6 --out work/replay_default_e8/results.jsonl --budget 9.00`,
+  60/60 valid, scorer `36a93ea5bd69-db31b28ade02`, cost $3.76 (estimate $7; the per-call price is back to October's).
+  Mean final 0.809 (running 0.791, crashing 0.869), start 0.492. Baseline: the final programs of the epoch-7 replay of
+  `default_2026_10_20` re-scored under epoch 8, 0.775 (running 0.755, crashing 0.841; 0.781 as recorded under epoch 7).
+  Paired by state: +0.034 [+0.001, +0.072], P 0.98, 20 better / 11 worse / 29 tied; running +0.036 [-0.006, +0.084],
+  crashing +0.028 [+0.003, +0.061]. Final >= 0.9 in 23 against 19; model calls 948 against 945; no run ends crashing.
+  One sample per state on both sides and a non-concurrent baseline: replay-to-replay noise was -0.013 on the last pair,
+  so this is a gain of the size the step A/B predicted, not a precise one. Gap table: never improved 38% (12 states),
+  improved but final < 0.9 57%, final >= 0.9 5%. The first re-scoring of the baseline ran beside the replay and three
+  states timed out to 0 (ragg x2, e1071); the recorded baseline is the re-scoring on an idle machine.
