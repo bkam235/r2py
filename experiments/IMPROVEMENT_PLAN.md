@@ -4036,3 +4036,7 @@ change was built and checked in one session.
   so this is a gain of the size the step A/B predicted, not a precise one. Gap table: never improved 38% (12 states),
   improved but final < 0.9 57%, final >= 0.9 5%. The first re-scoring of the baseline ran beside the replay and three
   states timed out to 0 (ragg x2, e1071); the recorded baseline is the re-scoring on an idle machine.
+  `--deep` on the 12 never-improving starts: losing entities with no feedback message at all (systemfonts
+  `shape_string`, textshaping `shape_text`, rvest_s7 `html_elements` with no R bundle); the bslib woff2 tempfiles (Q3);
+  sass `input` tempfile missing; "all variables uncomparable" (openssl certificates); ggplot2 `geom_bin_2d` figure
+  count R=1 Python=0 with a warnings item on each entity.
