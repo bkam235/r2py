@@ -4177,3 +4177,8 @@ change was built and checked in one session.
   (ranger dotted shim name, reshape2 `names<-`): unverified, a scorer-track question.
 - Next: held-out confirmation with the same instrument (step 7), registered on the person's yes; the default is the
   person's call after it.
+- Held-out run (`refuse-done-heldout`, registered da77c75f), 2026-11-06: **stopped by the guard at the balance
+  reserve** after $2.36, 62 of 92 runs (16 states with 2 samples, 30 with 1). Not decided: the registered design is
+  2 samples per state; the same command resumes the 30 missing runs (about $1.15) once the balance is topped up.
+  Interim, for the record only (not a decision): gain per extra call 0.0053 [0.0000, 0.0209], P(better) 0.80;
+  gain on the plateau +0.0030 [+0.0000, +0.0081]; 41 refused dones, 37 steps after them, 11 improvements.
