@@ -4228,3 +4228,24 @@ re-verified with one-line A/B variants of the programs the model had (`work/shim
   the harness guard and the scorer disagree on what a faithful translation does. A fix is a scorer change (record a
   pre-loaded name at the entity where R records it, changed or not; or in-place changes too), so it goes through a
   scoring epoch with a check report and the person's acceptance.
+
+**Shim-loaded names recorded where R records them (test `shim-record-at-r-entity`, scorer track), registered
+2026-11-06 before any data.**
+- Fault (offline check above): a name the data shim pre-loads is recorded at a Python checkpoint only when the code
+  binds it to a new object; R records it at the entity that assigns it. A translation that uses the input as it is
+  (`data(testDF)`, `train.idx <- sample(...)` whose value the shim supplies) or changes it in place (`names(df) <-`
+  as `df.columns = ...`) loses that entity's data, while the loop strips the rebinding that would score
+  (`remove_shim_overrides`) and the feedback names no missing value. Bound +0.014 training / +0.010 held-out.
+- Change (scorer): the verifier passes, per name, the entities whose R bundle records it
+  (`_r2py_r_record_at`); `_r2py_checkpoint(eid)` also records a pre-loaded name at those entities, changed or not.
+  Elsewhere the id rule is unchanged (a pre-loaded name the code replaces is recorded once where it is replaced; one
+  left alone at an entity where R records nothing is not recorded). Unit test fails before, passes after.
+- Instrument: `scoring_epoch.py check` on the reference set (147 programs), no model calls; then each moved state
+  A/B'd alone with the change disabled and enabled, and the ~35 states where R records a pre-loaded name re-verified
+  (final programs) as in the offline check.
+- Rule: the person's acceptance of the check report. Intended moves: entities where R records a pre-loaded name and
+  the Python bundle lacked it, up or (if the value now compared differs) at their true score; no other entity moves.
+  An unintended move sends the change back.
+- What it means: a correction, plus feedback the model sees for these entities (the value is compared instead of
+  "missing"); its effect on translations is unmeasured until a replay. Held-out: the same check covers its states
+  through the offline re-verification only.
