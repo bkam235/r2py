@@ -4182,3 +4182,20 @@ change was built and checked in one session.
   2 samples per state; the same command resumes the 30 missing runs (about $1.15) once the balance is topped up.
   Interim, for the record only (not a decision): gain per extra call 0.0053 [0.0000, 0.0209], P(better) 0.80;
   gain on the plateau +0.0030 [+0.0000, +0.0081]; 41 refused dones, 37 steps after them, 11 improvements.
+- **Held-out result (2026-11-06, resumed after a top-up: 92 runs, none invalid, $3.61 in all): failed.** Gain per
+  extra call **0.00313 [0.00000, 0.01266]** against 0.00148: P(better) 0.77 < 0.9. Gain on the plateau +0.0019
+  [+0.0000, +0.0048] (46 states, so per state = plateau). 61 refused dones, 56 steps after them, 18 accepted
+  improvements; the gain is in 3 states (timechange time-zones +0.051, clock time-point-rounding +0.034, dplyr
+  programming +0.003). The direction holds on both pools, the size does not beat one more chain: the training estimate
+  rested on one state (shiny). `refuse-done` stays `adopted` on training with held-out `failed`; the default does not
+  change. The interim reading on 62 runs (P 0.80) is superseded.
+- Held-out done texts (`work/refuse_done_heldout/done_reasons.md`, 66, all below 0.9): the same two reasons as on
+  training. Mostly "the remaining difference is the R object or print format" (clock rcrd/vctr, tibble vs DataFrame
+  printing, farver colour metrics, broom influence metrics, plotnine missing stats); then blame on the verifier or
+  randomness (`data()` datasets "not captured" in ModelMetrics and recipes, sass temp paths and cache keys, openssl
+  random keys, rmarkdown "shifted" outputs, ggplot2 where R itself lacked hexbin). 43 of 66 at stall 2. Two
+  sparsevctrs texts claim "an aggregate score of 1.000" while the chain's accepted best was 0.8125: the model's
+  account of its own score is not reliable.
+- What it leaves: refusing alone does not pay; the reasons point at the wording instead (the hint offers "done" at
+  stall 2, the model never sees the target, and it calls differences irreducible without probing R). A prompt
+  question would change the prompts before the first "done", so it needs a fresh replay A/B, not this counterfactual.
