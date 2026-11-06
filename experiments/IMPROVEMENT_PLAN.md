@@ -24,6 +24,8 @@ page.
 | + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
 | + entity-addressed feedback | **0.809** (measured, epoch 8) | 2026-11-01: each losing entity is shown the comparison that scores it, shared feedback once; paired +0.034 [+0.001, +0.072] against the previous default's replay re-scored (0.775) |
 
+A second sample of `default_2026_11_01` on the 46 running starts (2026-11-06, test `width6-running-pool`) ended 0.024 lower than the first on the same states: one replay sample moves by about ±0.03, and the two-sample plateau of the default is 0.800. In the same test, 6 chains on running starts beat 3 by +0.019 [+0.007, +0.038] (not adopted: the registered bar was a 95% lower bound of +0.010).
+
 A fresh replay of the default under epoch 7 (2026-10-30, after the feedback corrections of epochs 4-7) ended at 0.781,
 paired −0.013 [−0.044, +0.009] against the October replay re-scored (0.794): the corrections showed no gain.
 
@@ -4091,3 +4093,26 @@ change was built and checked in one session.
   one replay and enters best of 3 and best of 6 alike. Running starts only (crashing starts already have width 6).
 - Cost estimate about $2.00 (the running starts' share of the e8 replay, $3.76 x 487/948); guard budget $3.50,
   reserve $0.50.
+- **Result (2026-11-06): not adopted by the registered rule; the gain is real but smaller than predicted.** 46 of 46
+  runs valid, scorer `36a93ea5bd69-db31b28ade02`, cost $1.41 (estimate $2.00), 450 calls. Pooled 6 chains per state
+  (`width_pool.py`): best of k = 0.749, 0.768, 0.779, 0.786, 0.793, 0.798 for k = 1..6 (increments +0.019, +0.011,
+  +0.008, +0.006, +0.006). Primary, best of 6 minus best of 3: **+0.019 [+0.007, +0.038]** (90% [+0.008, +0.034]),
+  12 better / 0 worse / 34 tied (±0.01). The 95% lower bound is below the registered +0.010, so not adopted. On the
+  plateau that would be about +0.015 (46/60) for about +0.37 of a replay's cost (3.7 calls per chain, about 470 more
+  calls per training replay). The increments fall more slowly than a geometric fit and faster than the log fit of the
+  e8 chains predicted (log: +0.010, +0.008, +0.007 for k = 4..6); the k = 3 -> 6 gain sits between the two
+  extrapolations. The gain is carried by 12 states; 34 states are tied, most of them at a threshold or never improving.
+- **Replay-to-replay noise, first measured:** the same policy from the same starts, one sample each, a day apart:
+  final 0.766 against 0.791 on the 46 running starts, paired −0.024 [−0.063, +0.001], 5 better / 9 worse / 32 tied.
+  So one sample of a replay moves by about ±0.03 on running starts. This qualifies the e8 replay's paired +0.034
+  [+0.001, +0.072] over the previous default: it is of the size of one replay's noise, and the e8 sample was a
+  favourable one. The two-sample estimate of `default_2026_11_01`'s plateau is **0.800** (running 0.779 as the mean of
+  the two finals, crashing 0.869 from e8 alone), against 0.809 from e8 alone. Gap table of the second sample: never
+  improved 55%, improved but final < 0.9 39%, final >= 0.9 5%.
+- **Plateau of the production default:** unchanged in substance, no translation changed by a decision: 0.809 (one
+  sample) is re-read as 0.800 (two samples on running starts); neither a gain nor a scorer correction, a better
+  measurement of the same default.
+- What it qualifies: replay comparisons with one sample per state cannot resolve differences below about 0.03; the
+  next replay comparison needs two samples, or a step A/B. Width 6 on running starts remains the measured price list
+  for a later decision: about +0.015 on the plateau per +0.37 replays of calls; whether to spend it is the person's
+  call under a new registration (the rule of this one is not changed after the data).
