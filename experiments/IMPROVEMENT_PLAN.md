@@ -4199,3 +4199,32 @@ change was built and checked in one session.
 - What it leaves: refusing alone does not pay; the reasons point at the wording instead (the hint offers "done" at
   stall 2, the model never sees the target, and it calls differences irreducible without probing R). A prompt
   question would change the prompts before the first "done", so it needs a fresh replay A/B, not this counterfactual.
+
+**Offline check of the "done" texts that blame the verifier (2026-11-06, $0, no scorer change).** Four complaints
+re-verified with one-line A/B variants of the programs the model had (`work/shim_capture_check/`):
+- **One fault behind three of them: a name the data shim loads is credited at an entity only if the program binds it
+  to a new object.** The Python checkpoint records a pre-loaded name only when `id(v)` changes
+  (`r2py/stage4/verifier.py`, `_r2py_checkpoint`, rule of 2026-10-16), while R records it where the script assigns it.
+  ranger csrf: `globals()['train.idx'] = train_idx_val` scores train.idx 0.25, `= list(train_idx_val)` 1.00 (program
+  0.792 -> 0.980). reshape2 melt_data_frame: `airquality.columns = [...]` (in place) 0.25, `airquality =
+  airquality.rename(columns=str.lower)` 1.00, the same for ChickWeight (program 0.624 -> 0.812 each). ModelMetrics
+  gini: the start scored `data` 1.00 through `testDF = pd.DataFrame(testDF)`; every chain removed that line ("do not
+  reassign") and `data` went to 0. The loop pushes towards the zero-scoring form: `remove_shim_overrides` strips any
+  top-level assignment to a shim name and the note says "Use these as they are"; the only forms that score are
+  workarounds (`globals()[...] = copy`). The losing entity's feedback names no missing value (ranger: only "RNG
+  sequence length mismatch"), so the model concludes the verifier cannot see the name, which is what the "done"
+  texts say.
+- ModelMetrics rmse / mse / logLoss: not affected (their starts keep `testDF = pd.DataFrame(testDF)`, `data` 1.00).
+- Reach (final programs re-verified, e8 sample 0 on training, refuse-done-heldout sample 0 on held-out): R records a
+  shim name at an entity in 18 of 60 training and 17 of 46 held-out states. The entity loses with the name absent
+  from the Python bundle in 6 training states (caret update_train, pROC coords, recipes discretize, reshape2 cast,
+  reshape2 melt_data_frame, shape getellipse) and 4 held-out (ModelMetrics gini, e1071 matchClasses, ranger deforest,
+  recipes step_filter_missing). Upper bound if each such entity scored 1.00: **+0.014 on the training plateau, +0.010
+  on held-out** (a correction); entities with no Python bundle add at most +0.001 / +0.002. Where the name is
+  recorded and still loses (farver spec_lab, sass input, xml2 kids, e1071 g1/g2, timeDate date) the values differ:
+  not this fault.
+- Not checked: sass temp paths, openssl random keys, clock / timeDate objects reported uncomparable.
+- What it unblocks: the feedback on these entities misleads the model (it blames the verifier and says "done"), and
+  the harness guard and the scorer disagree on what a faithful translation does. A fix is a scorer change (record a
+  pre-loaded name at the entity where R records it, changed or not; or in-place changes too), so it goes through a
+  scoring epoch with a check report and the person's acceptance.
