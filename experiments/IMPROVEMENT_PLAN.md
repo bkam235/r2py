@@ -4058,3 +4058,36 @@ change was built and checked in one session.
   does not fine-tune, so a self-hosted open model or a provider's fine-tuning service is needed; (3) the protocol knows
   only the tracks harness and scorer (`META_LOOP.md`, `registry.py` TRACKS): a learning experiment needs a track of
   its own, and its comparison is a policy with a different model, which a default flip has not covered so far.
+
+**Width 6 on running starts (test `width6-running-pool`), registered 2026-11-06 before any data.**
+- Observation (offline, $0, `work/replay_default_e8`): running starts get 3 chains (`DEFAULT_AGENT_WIDTH`),
+  crashing starts 6. On the 42 running starts that ran chains, the mean best of k of their 3 chains is 0.733 (k=1),
+  0.758 (k=2), 0.772 (k=3), which 0.733 + 0.036 ln k fits almost exactly; extrapolated, best of 6 is about 0.797
+  (+0.025 on those states, about +0.017 on the plateau); a geometric fit of the same increments gives about +0.015
+  (+0.011). The gap it addresses: the behaviour part of "improved, final < 0.9" (57%) and "never improved" (38%) on
+  running starts. Width was the one search lever that paid (lesson 3).
+- Hypothesis: more independent chains on running starts raise the plateau by about +0.01 to +0.02, at about twice the
+  calls on running starts (487 of 948 calls in the e8 replay; about +50% of all calls).
+- Option: none new; `width` of the replay policy (`DEFAULT_AGENT_WIDTH` if adopted). Chains of one run share
+  nothing, so 3 chains from a second replay of the same policy from the same frozen starts are 3 more chains of a
+  width-6 run (the wall-clock limit is per chain either way).
+- Instrument: a second sample of `default_2026_11_01` on the 46 running training starts of the e8 replay:
+  `replay.py --pool training --policies default_2026_11_01 --samples 1 --workers 6 --only $(cat experiments/width6_running_states.txt)
+  --out work/replay_default_e8_s1/results.jsonl --budget 3.50`; frozen starts, scorer epoch 8, nothing in `r2py/`
+  changes.
+- Analysis (`python scripts/width_pool.py work/replay_default_e8 work/replay_default_e8_s1 --stratum running`):
+  each chain's best (highest accepted aggregate on its branch); per state the mean over all k-subsets of its 6 chains
+  of their best, k = 1..6; primary: best of 6 minus best of 3 (best of 3 averaged over all 3-subsets, so both days
+  count alike), paired by state, 95% and 90% bootstrap over states; secondary: the increments k -> k+1, calls per
+  chain, and the replay-to-replay difference of the two finals (noise of one sample of the same policy, never
+  measured so far). The difference is >= 0 by construction (a maximum over more chains), so the question is its size,
+  not its sign.
+- Rule (costs calls; the protocol's "beat the same calls on sampling" is this test itself, since width is sampling):
+  proposed to the person: adopt width 6 on running starts if the 95% lower bound of the primary is >= +0.010 (about
+  +0.008 on the plateau for about +50% of all calls); below that, not adopted, and the measured k-curve says where the
+  calls are worth more. If adopted: the held-out pool's 39 running starts with the same instrument (step 7), then a
+  default (step 8, the person's call).
+- What it can mean: the curve is measured, not extrapolated; a day effect between the two replays shifts all chains of
+  one replay and enters best of 3 and best of 6 alike. Running starts only (crashing starts already have width 6).
+- Cost estimate about $2.00 (the running starts' share of the e8 replay, $3.76 x 487/948); guard budget $3.50,
+  reserve $0.50.
