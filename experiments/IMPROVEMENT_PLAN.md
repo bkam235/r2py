@@ -4158,3 +4158,22 @@ change was built and checked in one session.
   the strata are reported, not tested apart.
 - Cost estimate about $3.00 (25 states at 12-19 calls per run, $0.003-0.004 per call, two samples, about 10% extra
   steps); guard budget $4.50, reserve $0.50.
+- **Result (2026-11-06, $3.64, 50 runs, none invalid, scorer `36a93ea5bd69-db31b28ade02`): adopted on the training
+  pool, held-out pending.** 71 chains had a "done" refused (all 79 logged "done"s were below 0.9), 61 steps ran after
+  them, 16 of those were accepted improvements. Mean final 0.7683 vs counterfactual default 0.7563. Gain per extra
+  call **0.00978 [0.00009, 0.02639]** against one more chain 0.00148: P(better) 0.94 -> adopt by the costly rule. Gain
+  per state +0.0119 [+0.0001, +0.0299], on the plateau +0.0050 [+0.0000, +0.0125] (a gain, not a correction).
+  Fragile: 3 states carry it, shiny actionButton +0.194 (0.759 -> 0.953 in both samples, the chain found a fix after
+  a refusal on a difference it had called a library default), timeDate isBizday +0.061, bslib layout_column_wrap
+  +0.042; 20 states 0. Refusals at stall 2 (50 of 79) end the chain at once (it is the third stall), so they cost no
+  call and gain nothing; the paying refusals are those at stall 0-1.
+- Why the model says "done" (`work/refuse_done/done_reasons.md`, all 79 read): never a misparse and never plain
+  satisfaction with the score. About 70% (55) say the remaining difference is an **irreducible difference between
+  the R package and its Python counterpart** (bslib / shiny HTML attributes, BeautifulSoup vs xml_document, R print
+  format of lists, felm vs linearmodels, contouring algorithms, HCL spaces); about 30% (23) **blame the verifier or
+  randomness** (ranger `train.idx` not found because of the dot, reshape2 `names(df) <-` not seen as a change, sass
+  temp paths, openssl random keys, ragg capture, timeDate `tS` uncomparable). 50 of 79 come at stall 2, right after
+  the hint. The shiny case shows the "irreducible" claim can be wrong. Some verifier claims may be measurement faults
+  (ranger dotted shim name, reshape2 `names<-`): unverified, a scorer-track question.
+- Next: held-out confirmation with the same instrument (step 7), registered on the person's yes; the default is the
+  person's call after it.
