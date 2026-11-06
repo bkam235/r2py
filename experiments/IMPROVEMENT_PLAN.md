@@ -4116,3 +4116,45 @@ change was built and checked in one session.
   next replay comparison needs two samples, or a step A/B. Width 6 on running starts remains the measured price list
   for a later decision: about +0.015 on the plateau per +0.37 replays of calls; whether to spend it is the person's
   call under a new registration (the rule of this one is not changed after the data).
+
+**Refusing "done" below the threshold (option refuse_done, test `refuse-done`), registered 2026-11-06 before any data.**
+- Observation (offline, $0, the two replays `work/replay_default_e8` and `work/replay_default_e8_s1`): 63 chains
+  stopped on the model's own "done" (38 + 25), almost all below the threshold 0.9, in 25 of the 60 states. Per
+  decision point, the model says "done" after an improving step in 2.7% (18 of 675), after one failed step in 1.3%
+  (5 of 396), and after **two failed steps in 15.8%** (45 of 285; counts inferred from where chains end). Two failed
+  steps is exactly where the harness adds "Try probe_r ... or action:done if you cannot improve further"
+  (`agent.py`, stall_count >= stall_limit - 1); the system prompt also offers "done" twice ("Use when satisfied with
+  the score or when further progress is unlikely"; "If you cannot improve further, use action done"). The model never
+  sees the threshold. A step after an improving step improves 44% of the time (e8), so the 18 early stops after a
+  gain forgo the best-placed steps; after two failures a third step succeeds 5-9% (October).
+- Why the model says "done" is not in the telemetry: the trajectories did not keep its words. The test logs them.
+- Change (harness, off by default; `scoring_epoch.py status` still `same`): `reason(refuse_done=True)`: a "done"
+  while the current version scores below the threshold is refused and counts as a failed step (the chain stops by the
+  threshold, stalling or its budget); the next turn says so ("done refused: the current version scores X, below the
+  target 0.90, and steps remain ..."), in conversation mode as the note of the previous answer. The stall-2 hint is
+  unchanged, so a chain is identical to the default's up to its first refused "done". Telemetry, with and without the
+  option: every "done" is logged in the trajectory with the model's text (first 4000 characters), whether it was
+  refused, and the stall count. Tests `tests/test_refuse_done.py` (both fail before, pass after); the suite passes
+  (1042, the known locale test deselected). Replay policy `default_2026_11_01_rd`.
+- Instrument: `replay.py --pool training --policies default_2026_11_01_rd --samples 2 --workers 6 --only $(cat
+  experiments/refuse_done_states.txt) --out work/refuse_done/results.jsonl --budget 4.50`: the 25 states where a
+  chain said "done" in either replay (20 running, 5 crashing starts), two samples each. No baseline arm: chains are
+  independent, so each run holds its own counterfactual under the default (every chain cut at its first refused
+  "done").
+- Analysis (`python scripts/refuse_done_analysis.py work/refuse_done --width-per-call 0.00148`): per state (mean over
+  the 2 samples) gain = final - counterfactual final, and extra calls = steps after the first refused "done". Primary:
+  gain per extra call against the marginal gain per call of one more chain (width 5 -> 6 on running starts,
+  `width6-running-pool`: +0.0055 per state / 3.72 calls = 0.00148), bootstrap over states. Secondary: gain per state
+  and on the plateau (sum over the 25 states / 60; the other 35 states had no "done" in 6 chains, so this is close to
+  the whole effect), refused dones, improvements after them; and the logged reasons
+  (`--reasons > work/refuse_done/done_reasons.md`), read and sorted by kind (satisfied, no idea left, following the
+  hint, misparse).
+- Rule (costs calls): adopt if P(gain per extra call > 0.00148) >= 0.9 in the bootstrap over states, i.e. the extra
+  calls do better than spending them on width; then the held-out pool with the same instrument (step 7) and a default
+  (step 8, the person's call). Otherwise not adopted; the reasons still decide whether the prompt's "done" wording is
+  worth a question of its own.
+- What it can mean: the counterfactual is exact for the chains run (no replay noise between arms); it measures the
+  refusal only, not removing the hint (that would change the prompts before the first "done"). With 5 crashing starts
+  the strata are reported, not tested apart.
+- Cost estimate about $3.00 (25 states at 12-19 calls per run, $0.003-0.004 per call, two samples, about 10% extra
+  steps); guard budget $4.50, reserve $0.50.

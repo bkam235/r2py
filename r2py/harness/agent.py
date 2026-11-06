@@ -116,6 +116,7 @@ def reason(
     crash_stalls: "int | None" = None,
     converse: bool = False,
     entity_feedback: bool = False,
+    refuse_done: bool = False,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -371,6 +372,18 @@ def reason(
         _stat("action", action_type)
 
         if action_type == "done":
+            # Telemetry (2026-11-06): the model's own words when it stops; the trajectories did not keep them.
+            refused = refuse_done and report.aggregate < score_threshold
+            _trajectory.log("done", raw=raw[:4000], refused=refused, stall_count=stall_count, **_ctx)
+            if refused:
+                # refuse_done (2026-11-06): below the threshold a "done" counts as a failed step, so the chain
+                # stops only by the threshold, stalling or its budget.
+                _stat("outcome", "done_refused")
+                history.append(
+                    f"Step {step}: done refused: the current version scores {report.aggregate:.3f}, below the "
+                    f"target {score_threshold:.2f}, and steps remain. Rewrite it: fix what still differs from R.")
+                stall_count += 1
+                continue
             history.append(f"Step {step}: done")
             _stat("stop", "done")
             break

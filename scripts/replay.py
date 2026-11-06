@@ -60,6 +60,9 @@ POLICIES = {
     # The production default as of 2026-11-01: the above plus entity-addressed feedback.
     "default_2026_11_01": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
                                converse=True, entity_feedback=True),
+    # Test refuse-done (registered 2026-11-06): the default, and below the threshold "done" counts as a failed step.
+    "default_2026_11_01_rd": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
+                                  converse=True, entity_feedback=True, refuse_done=True),
     "continue3": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3),
     "continue3_eq": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3, accept_equal=True),
     # Upper bound on retrieval: a library holding a verified example of exactly the functions this
