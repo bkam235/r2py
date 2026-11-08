@@ -121,6 +121,7 @@ def reason(
     max_tokens: int = 16384,
     free_probe: bool = False,
     start_stalls: int = 0,
+    probe_state: bool = False,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -133,7 +134,9 @@ def reason(
     failed step and shows 100 characters, so the stall-2 hint's "Try probe_r" ended the chain); the harness's
     10-probe limit still holds, and a probe past it counts as a stall. With it the stall hint points at the probe and
     no longer offers "done". ``start_stalls``: the stall count the chain starts with (an instrument that continues a
-    saved chain at its stall-2 point, 2026-11-08); 0 in the loop.
+    saved chain at its stall-2 point, 2026-11-08); 0 in the loop. ``probe_state`` (2026-11-08): probe_r evaluates
+    the expression after the R script has run, with its variables and packages (``harness.probe_state``); by default it
+    runs in a bare R session.
     """
     review_model = review_model or model
     from ..stage1.runner import strip_r_guards
@@ -231,8 +234,9 @@ def reason(
                     history.append(
                         f"SYSTEM: You have rewritten {'twice' if stall_count == 2 else f'{stall_count} times'} without improving the score. "
                         "Before you rewrite again, check what R actually produces for the failing entities: use "
-                        "probe_r (a probe does not count as a failed attempt, and you see its output). Then rewrite "
-                        "with what you found."
+                        "probe_r (a probe does not count as a failed attempt, and you see its output"
+                        + ("; it runs after the R script, so the script's variables and packages are there" if probe_state else "")
+                        + "). Then rewrite with what you found."
                     )
             else:
                 history.append(
@@ -419,7 +423,11 @@ def reason(
                 history.append(f"Step {step}: probe_r (empty expression)")
                 continue
             try:
-                result = harness.probe_r(expression)
+                if probe_state:
+                    from . import probe_state as _probe_state
+                    result = _probe_state.probe(harness, script_map, expression)
+                else:
+                    result = harness.probe_r(expression)
             except Exception as exc:
                 result = f"ERROR: {exc}"
             print(f"[Agent]   Probe result: {result[:200]!r}")

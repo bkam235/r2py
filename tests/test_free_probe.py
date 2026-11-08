@@ -1,6 +1,7 @@
 """free_probe (2026-11-08): a probe_r costs no stall and shows its full result; past the probe limit it stalls."""
 import unittest
 from types import SimpleNamespace as NS
+from pathlib import Path
 from unittest.mock import patch
 
 from r2py.harness import agent
@@ -65,6 +66,35 @@ class TestFreeProbe(unittest.TestCase):
         self.assertNotIn("action:done", "".join(sent))
         self.assertEqual("".join(sent).count("Before you rewrite again"), 1)
         self.assertEqual(len(sent), 3)                       # two free probes, one failed rewrite
+
+    def test_probe_state_runs_the_probe_after_the_script(self):
+        seen = []
+        with patch("r2py.harness.probe_state.probe", side_effect=lambda h, sm, e: seen.append(e) or "[1] 3"):
+            _, sent = self.run_loop([], n_probes=1, start_stalls=2, free_probe=True, probe_state=True)
+        self.assertEqual(seen, ["print(1)"])
+        self.assertIn("the script's variables and packages are there", sent[0])
+        self.assertIn("[1] 3", sent[1])
+
+
+class TestProbeStateProgram(unittest.TestCase):
+
+    def test_the_script_runs_silently_then_the_expression_prints_like_a_console(self):
+        import subprocess, tempfile
+        from r2py.harness import probe_state
+        from r2py.stage0.sandbox.r_sandbox import find_rscript
+        try:
+            rscript = find_rscript()
+        except Exception:
+            self.skipTest("no Rscript")
+        prog = probe_state.program('x <- 41\nprint("noise")\nstop("skipped")\ny <- x + 1\n', 'y\ninvisible(5)\nstop("bad")')
+        with tempfile.TemporaryDirectory() as d:
+            f = Path(d) / "p.R"
+            f.write_text(prog, encoding="utf-8")
+            out = subprocess.run([str(rscript), str(f)], capture_output=True, text=True).stdout
+        self.assertNotIn("noise", out)
+        self.assertIn("[1] 42", out)
+        self.assertNotIn("[1] 5", out)
+        self.assertIn("Error: bad", out)
 
 
 if __name__ == "__main__":
