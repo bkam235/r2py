@@ -79,28 +79,27 @@ def chains() -> dict:
     return out
 
 
-def run(workers: int, budget: float, reserve: float) -> None:
+def run(workers: int, budget: float, reserve: float, arms=ARMS, out_dir=OUT, limit=None) -> None:
     import replay
     from expkit import RunGuard
-    OUT.mkdir(parents=True, exist_ok=True)
-    out = OUT / "results.jsonl"
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out = out_dir / "results.jsonl"
     done = {(r["script"], r["policy"], r["sample"]) for r in map(json.loads, out.open(encoding="utf-8"))
             if "final_score" in r and not r.get("invalid")} if out.exists() else set()
     tasks = []
-    for (script, run_label, b), c in sorted(chains().items()):
-        if not c["reached"]:
-            continue
-        for arm in ARMS:
+    reached = [(k, c) for k, c in sorted(chains().items()) if c["reached"]]
+    for (script, run_label, b), c in reached[:limit]:
+        for arm in arms:
             key = f"{run_label}.{b}"
             if (script, arm, key) in done:
                 continue
             tasks.append(dict(script=script, policy=arm, sample=key, source=c["source"], label="stall2",
                               start_hash=c["hash"], manifest=str(ROOT / "experiments/dev_run/manifest.json"),
                               library=str(ROOT / "work/dev_run/checkpoints/empty"), runtime_dir=None,
-                              cache=str(replay.TRAIN_MAPS), out_dir=str(OUT), budget_s=1200))
+                              cache=str(replay.TRAIN_MAPS), out_dir=str(out_dir), budget_s=1200))
     print(f"{len(tasks)} continuations to run, {workers} workers", flush=True)
     ctx = multiprocessing.get_context("spawn")
-    with RunGuard(OUT, budget=budget, reserve=reserve) as guard, ctx.Pool(workers) as pool, \
+    with RunGuard(out_dir, budget=budget, reserve=reserve) as guard, ctx.Pool(workers) as pool, \
             out.open("a", encoding="utf-8") as f:
         for i, row in enumerate(pool.imap_unordered(replay.run_one, tasks), 1):
             row = guard.annotate(row)

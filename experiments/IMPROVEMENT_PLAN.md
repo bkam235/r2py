@@ -4397,3 +4397,25 @@ before any data.**
   the open part (GLM probed a third of its actions). `free_probe` stays off; the GLM probe-cap reading of
   `glm53-ceiling` stands.
 - **Plateau of the production default:** unchanged, 0.816 (epoch 9, e8 sample re-verified); no gain, no correction.
+
+### Model screen at the stall-2 step (test `model-screen-stall2`, harness track) — registered 2026-11-08
+
+- Question: with free probes that run in the script's own R state, does a cheap model as agent probe more than Gemma
+  and do better at the stall-2 step, and at what cost per chain?
+- Build: `reason(probe_state=True)` (`r2py/harness/probe_state.py`, commit 01a92a65). The R script runs first,
+  statement by statement (a failing statement is skipped), with its output and plots discarded, and then the probe
+  is evaluated like a console line. It shares the harness's 10-probe limit. Offline check: in the logs, bare
+  probes failed on a missing variable or package in 9 of 18 Gemma probes (free-probe-stall2), against 15 of 235
+  GLM 5.3 probes. GLM rebuilds the setup inside its probes, and 27 of its failures were its own R mistakes.
+- Instrument: `scripts/model_screen.py`, the 235 chains of free-probe-stall2 at their stall-2 point, `free_probe` +
+  `probe_state`. One arm per agent: `stall2_ps` (Gemma) and `stall2_ps_glmflash` (z-ai/glm-5.3-flash,
+  novita/fp8), `stall2_ps_gptoss` (openai/gpt-oss-120b, deepinfra/bf16), `stall2_ps_dsflash`
+  (deepseek/deepseek-v4.1-flash-1017, deepinfra/fp8). Reasoning is capped at 8k and the output limit is 36k. The
+  review stays on Gemma. Prices are from OpenRouter's endpoint list on 2026-11-08. qwen/qwen3.7-flash was dropped:
+  its only provider is excluded by the account's zero-data-retention setting.
+- Smoke (2 chains per arm, $0.06): the three models answer, and the in-state probes read the script's objects.
+  DeepSeek probed 4 times and improved both chains at about $0.017 per chain; GLM Flash and gpt-oss made 1-2 calls
+  at about $0.003-0.006 per chain.
+- Rule (descriptive): per arm, the gain on the plateau against `stall2_ps`, bootstrap over states. A model with
+  P(gain > 0) >= 0.9 becomes a candidate for a full 60-state default run with that agent, which is its own gated
+  test. Secondary: chains improved, free probes per chain, dones, calls, cost per chain. Estimate $8, budget $10.

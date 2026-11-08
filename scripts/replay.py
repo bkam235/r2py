@@ -89,6 +89,20 @@ POLICIES = {
                            start_stalls=2, max_steps=8),
     "stall2_fp": dict(entity_repair=False, escalate_after=None, width=1, converse=True, entity_feedback=True,
                       start_stalls=2, max_steps=8, free_probe=True),
+    # Test model-screen-stall2 (2026-11-08): the same continuations with free probes evaluated in the script's state
+    # (probe_state), the agent on Gemma or on a cheap model (pinned provider, reasoning capped as for GLM 5.3); the
+    # review stays on Gemma.
+    "stall2_ps": dict(entity_repair=False, escalate_after=None, width=1, converse=True, entity_feedback=True,
+                      start_stalls=2, max_steps=8, free_probe=True, probe_state=True),
+    **{f"stall2_ps_{tag}": dict(entity_repair=False, escalate_after=None, width=1, converse=True, entity_feedback=True,
+                                start_stalls=2, max_steps=8, free_probe=True, probe_state=True,
+                                agent_model=f"openrouter:{model}",
+                                agent_provider={"only": [provider], "allow_fallbacks": False},
+                                agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000)
+       for tag, model, provider in (("glmflash", "z-ai/glm-5.3-flash", "novita/fp8"),
+                                    ("qwenflash", "qwen/qwen3.7-flash", "alibaba"),
+                                    ("gptoss", "openai/gpt-oss-120b", "deepinfra/bf16"),
+                                    ("dsflash", "deepseek/deepseek-v4.1-flash-1017", "deepinfra/fp8"))},
     "default_2026_11_01_rd": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
                                   converse=True, entity_feedback=True, refuse_done=True),
     "continue3": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3),
