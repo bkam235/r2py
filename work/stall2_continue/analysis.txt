@@ -1,0 +1,15 @@
+chains at stall 2: 235, both arms finished: 235
+  stall2_default improved 33/235  mean gain +0.0088  calls 339  actions {'rewrite': 330, 'probe_r': 2, 'done': 7}
+  stall2_fp      improved 27/235  mean gain +0.0063  calls 336  actions {'rewrite': 319, 'probe_r': 16, 'done': 1}
+states 56; gain on the plateau (sum over states / 60) -0.0026 [-0.0065, +0.0008]; extra calls +1.0
+gain per extra call -0.15315 [-0.12310, inf] against one more chain 0.00148: P(better) 0.07
+  purrr__rd_example__invoke_Rd.R                     gain -0.082  extra calls +9.0
+  fansi__rd_example__normalize_state_Rd.R            gain -0.045  extra calls -1.0
+  xml2__rd_example__xml_attr_Rd.R                    gain +0.042  extra calls -2.5
+  pROC__rd_example__coords_Rd.R                      gain -0.033  extra calls -3.0
+  bslib__rd_example__layout_column_wrap_Rd.R         gain -0.032  extra calls +0.0
+  ragg__rd_example__agg_webp_anim_Rd.R               gain -0.017  extra calls -3.0
+  lubridate__rd_example__period_Rd.R                 gain -0.013  extra calls +2.0
+  recipes__rd_example__step_kpca_Rd.R                gain +0.009  extra calls +4.0
+  farver__rd_example__as_white_ref_Rd.R              gain +0.005  extra calls +0.5
+  broom__rd_example__augment_felm_Rd.R               gain +0.004  extra calls +0.0

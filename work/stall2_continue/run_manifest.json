@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/stall2_continue.py run --workers 6 --budget 4.00",
+  "started": "2026-11-08 16:51:22",
+  "ended": "2026-11-08 19:42:16",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 470,
+  "balance_start": 9.87,
+  "balance_end": 7.55,
+  "cost": 2.32,
+  "budget": 4.0,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

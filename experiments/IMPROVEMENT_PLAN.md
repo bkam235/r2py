@@ -4381,3 +4381,19 @@ before any data.**
   programs have 5 stalls (crash_stalls) and a later hint, not tested here.
 - Cost estimate about $2.80 (470 continuations, about 1.5 and 2.5 agent calls each, $0.003 per call with review and
   audit); guard budget $4.00, reserve $0.50.
+- **Result (2026-11-08, $2.32, 470 continuations, none invalid, scorer `6a9611f2ee76-db31b28ade02`): not adopted.**
+  Gain on the plateau **-0.0026 [-0.0065, +0.0008]** at the same calls (336 against 339); gain per extra call
+  P(> 0.00148) 0.07 (the ratio's interval is unstable because the arms used the same calls; the plateau gain is the
+  readable number). Chains that improved: 27 of 235 with free probes, 33 of 235 with the default hint (14% and 12%
+  above the e8 replays' 10%, the same order).
+- Why: the hint did not make Gemma probe. 16 probes in 235 chains (2 with the default hint); "done" fell from 7 to 1
+  and plain rewrites took the freed turns. Half the probes it made failed (9 of 18): `probe_r` runs a bare R session,
+  without the script's variables or its `library()` calls (`kpca_te`, `Sonar`, `createDataPartition` not found), so a
+  probe cannot show what R produces for an entity, which is what the hint asks for.
+- What it leaves: for Gemma the stall-2 step is not held back by the probe's cost or the "done" offer; it rarely uses
+  the probe and the probe it has cannot see the script's state. A probe evaluated in the script's own R session
+  (after the entity's statements; R values are already captured per entity, so this is a harness-side tool, not the
+  scorer) is the version that could carry facts; it is a separate question, and whether the model would use it is
+  the open part (GLM probed a third of its actions). `free_probe` stays off; the GLM probe-cap reading of
+  `glm53-ceiling` stands.
+- **Plateau of the production default:** unchanged, 0.816 (epoch 9, e8 sample re-verified); no gain, no correction.
