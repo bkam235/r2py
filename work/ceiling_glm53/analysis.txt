@@ -1,0 +1,22 @@
+states paired: 60 (ceiling rows 60, baseline 60, ceiling finals 60)
+all              n=60  baseline 0.816  ceiling 0.858  diff +0.042 [+0.015, +0.070]  better 26 / worse 6 / tied 28
+running starts   n=46  baseline 0.803  ceiling 0.841  diff +0.038 [+0.007, +0.072]  better 20 / worse 4 / tied 22
+crashing starts  n=14  baseline 0.861  ceiling 0.915  diff +0.054 [+0.014, +0.104]  better 6 / worse 2 / tied 6
+finals >= 0.9: baseline 23, ceiling 35 of 60
+entities the baseline final loses (< 0.9): 173; the ceiling final scores >= 0.9 on 71 (41%)
+calls: {'agent steps': 723}
+  google/gemma-4-31b-it: calls 409, input 1,386,355, output 102,244 (reasoning 0), cost $0.21
+  z-ai/glm-5.3: calls 759, input 13,214,298, output 2,619,176 (reasoning 1,676,705), cost $8.72
+largest moves:
+  rvest__vignette__rvest_s7                          0.592 -> 1.000
+  rvest__rd_example__html_children_Rd                0.624 -> 1.000
+  pROC__rd_example__coords_Rd                        0.720 -> 0.411
+  broom__rd_example__augment_felm_Rd                 0.674 -> 0.978
+  rvest__rd_example__html_table_Rd                   0.729 -> 1.000
+  bslib__rd_example__layout_column_wrap_Rd           0.780 -> 0.970
+  farver__rd_example__as_white_ref_Rd                1.000 -> 0.821
+  gtable__rd_example__gtable_add_cols_Rd             0.836 -> 1.000
+  ragg__rd_example__agg_capture_Rd                   0.753 -> 0.912
+  reshape2__rd_example__cast_Rd                      0.728 -> 0.874
+  textshaping__rd_example__get_font_features_Rd      0.772 -> 0.902
+  isoband__vignette__isoband3_s2                     0.745 -> 0.869

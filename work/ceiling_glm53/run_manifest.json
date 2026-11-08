@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/replay.py --pool training --policies default_2026_11_01_glm53_r8k --samples 1 --workers 6 --out work/ceiling_glm53/results.jsonl --budget 15.00",
+  "started": "2026-11-08 14:21:26",
+  "ended": "2026-11-08 15:55:25",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 60,
+  "balance_start": 8.91,
+  "balance_end": 9.92,
+  "cost": 8.99,
+  "budget": 15.0,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

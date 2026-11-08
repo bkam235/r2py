@@ -4315,3 +4315,33 @@ registered 2026-11-08 before any data.**
   written for Gemma), fp8 serving, reasoning capped.
 - Cost estimate $5-14 (60 states, about $0.006-0.015 per GLM call plus Gemma review and mapping); guard budget $15,
   reserve $0.50.
+- **Result (2026-11-08, $8.99, 60 runs, none invalid, scorer `6a9611f2ee76-db31b28ade02`): descriptive, the middle
+  band: both capability and scorer/harness.** Mean final **0.858** against the default's 0.816, paired **+0.042
+  [+0.015, +0.070]**, 26 states better / 6 worse / 28 tied; running starts +0.038 [+0.007, +0.072], crashing starts
+  +0.054 [+0.014, +0.104]. Finals >= 0.9: 35 against 23. Of the 173 entities the default's finals lose, GLM's finals
+  score 71 (41%) at >= 0.9. Gap table: never improved 54%, improved < 0.9 36%, >= 0.9 10% (gap 0.139).
+- **The part no model moves:** 14 states tie below 0.9 and hold 0.080 of the 0.142 remaining gap (56%): random keys
+  and draws (openssl aes_cbc, ec_dh; caret_s3 inTrain), temp font files and paths (bslib page_fillable, sass
+  as_sass), uncomparable objects (openssl certificates), graphics (ggplot2 geom_bin_2d, prodlim backGround, shape
+  filledmultigonal, getellipse) and text shaping (systemfonts, textshaping). These are the next scorer and library
+  questions, now with a model-independent list.
+- **A harness rule written for Gemma caps GLM:** GLM took `probe_r` 237 times in 723 actions (Gemma: 5 in 1,355).
+  Each probe counts as a stall and shows the model 100 characters of its result, so in 7 states the chains stalled
+  out after 0-1 rewrites (pROC coords 0.72 -> 0.41, farver as_white_ref 1.00 -> 0.82, openssl certificates and
+  ec_dh, proxy registry, systemfonts shape_string, textshaping shape_text). 0.858 is a lower bound for GLM in this
+  harness; a probe that costs no stall and shows its result is the obvious next harness question (it also bears on
+  Q1, the stall-2 hint). 5 GLM calls hit the 36k limit with no content (each ended its chain).
+- Audit of the largest jumps (fansi normalize_state, broom augment_felm, caret update_train, rvest html_children /
+  html_table, shape Arrows): the results are computed (fansi is a real SGR state machine, the caret summary is
+  formatted from computed values, no long decimal literals); paste check 3 of 44 flagged, all print labels. ranger
+  csrf scores `train.idx` through the shim-rebinding workaround (`globals()['train.idx'] = list`), about 0.003 on
+  the plateau.
+- Cost: GLM $8.72 (759 calls, 13.2M input / 2.6M output tokens, 1.7M of them reasoning, about $0.011 per call),
+  Gemma review, audit and mapping $0.21 (409 calls); within the $5-14 estimate.
+- **Plateau of the production default:** unchanged, 0.816 (the e8 sample re-verified under epoch 9; no default
+  changed). This was a measurement of the ceiling, not a gain.
+- What it means for the next cycles: (1) about half of what is left is outside any translator's reach under the
+  current scorer, so scorer and library questions there are corrections worth ranking by what they unblock; (2) the
+  other half moves with a stronger model (+0.042 now, more once probes stop costing stalls), so the learning track
+  has room, and GLM's verified finals (35 of 60 at >= 0.9 here, audited) are a data source; (3) the probe rule is a
+  harness question for both models.
