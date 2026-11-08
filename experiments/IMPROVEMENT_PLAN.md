@@ -4249,3 +4249,27 @@ re-verified with one-line A/B variants of the programs the model had (`work/shim
 - What it means: a correction, plus feedback the model sees for these entities (the value is compared instead of
   "missing"); its effect on translations is unmeasured until a replay. Held-out: the same check covers its states
   through the offline re-verification only.
+- **Result (2026-11-06/08, $0): adopted, epoch 9** (opened 2026-11-08 09:11, scorer `6a9611f2ee76-db31b28ade02`;
+  commit 1ab1223b). First version (every pre-loaded name R records at an entity) checked 21 programs up, but the
+  shim also pre-loads values R computes (clock x/y, farver spec_lab, timeDate tS/date, xml2 kids, shape x, ranger
+  dfo, sparsevctrs x_sparse, and getellipse's loop variable `i`, which the shim builder took for an input): a program
+  leaving one out would get R's value for free; getellipse lines_5 went 0 -> 1.0 that way. **Narrowed (the person's
+  choice):** only shim inputs (`shim_input_names`, names the R script never assigns) are recorded where R records
+  them, and a `for` loop now assigns its variable (also: the loop guard no longer strips `i = ...`). Lost with it:
+  ranger csrf `train.idx` (R assigns it with `sample`), which still scores only when rebound.
+- Check of the narrow version (`work/scoring/check_20261108_0854.md`): 17 of 147 programs up, all on entities where R
+  records a shim input: reshape2 cast / melt_data_frame `names(...)` 0.25 -> 1.0 (melt_data_frame 0.625 -> 1.000),
+  `data` 0 -> 1.0 in e1071 boxplot_bclust (+0.33), caret update_train (+0.20), pROC coords (+0.05), recipes discretize
+  (+0.08), ModelMetrics auc (+0.20); openssl ec_dh -0.005 and textshaping lorem_text +0.006 (noise, as in epoch 8); no
+  run/crash flip. Affected final programs re-verified: +0.013 on the training plateau (5 states), +0.0075 on held-out
+  (ModelMetrics gini 0.80 -> 1.00, recipes step_filter_missing 0.86 -> 1.00). Suite 1047 passed.
+- Curves in epoch 9 (all ~1,400 programs re-scored): start 0.492 -> 0.508, width 1 0.681 -> 0.700, width 3 0.735
+  -> 0.755, measured default line 0.792 -> 0.811; moved programs per state all up in the affected states (ModelMetrics
+  auc 43, caret 38, e1071 38, melt_data_frame 32, cast 23, pROC 17, recipes discretize 11, step_kpca 1). Moves
+  elsewhere (lava csplit 5 programs +-, ranger csrf 1) A/B'd alone: the same score with the change off and on (their
+  record-at list is empty), so run-to-run variance of the re-scoring, not the change.
+- **Plateau of the production default:** 0.800 (epoch 8, two samples) -> about **0.813** (epoch 9, estimated from the
+  re-verified sample-0 finals): **+0.013, all correction**, no gain. Not a replay: the feedback the model sees on these
+  entities is now the compared value instead of a silent loss, and the loop guard no longer strips loop variables;
+  their effect on translations is unmeasured. Earlier results are qualified only through these 10 training / held-out
+  states; none of the decided tests hinged on them.

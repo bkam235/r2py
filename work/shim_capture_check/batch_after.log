@@ -1,0 +1,35 @@
+training ModelMetrics__rd_example__auc_Rd 1.0 {'data': 1.0}
+training caret__rd_example__update_train_Rd 0.814 {'data': 1.0}
+training caret__vignette__caret_s3 0.742 {'data': 1.0}
+training e1071__rd_example__boxplot_bclust_Rd 0.734 {'data': 1.0}
+training farver__rd_example__convert_colour_Rd 0.636 {'spec_lab': 0.25}
+training pROC__rd_example__coords_Rd 0.72 {'data': 1.0}
+training pROC__rd_example__print_Rd 0.961 {'data': 1.0}
+training ranger__rd_example__csrf_Rd 0.995 {'train.idx': 1.0}
+training recipes__rd_example__discretize_Rd 0.852 {'data': 1.0}
+training recipes__rd_example__step_kpca_Rd 0.732 {'data': 1.0}
+training reshape2__rd_example__cast_Rd 0.728 {'names(airquality)': 1.0, 'names(ChickWeight)': 1.0}
+training reshape2__rd_example__melt_data_frame_Rd 0.999 {'names(airquality)': 1.0, 'names(ChickWeight)': 1.0}
+training sass__rd_example__as_sass_Rd 0.867 {'input': 0.25}
+training shape__rd_example__Arrows_Rd 0.633 {'x0': 0.25, 'y0': 0.25, 'x1': 1.0, 'y1': 1.0, 'x': 0.25}
+training shape__rd_example__getellipse_Rd 0.815 {'lines_5': 1.0}
+training textshaping__rd_example__get_font_features_Rd 0.772 {'random_font': 1.0}
+training timeDate__rd_example__calendar-isBizday_Rd 0.998 {'tS': 0.988}
+training xml2__rd_example__xml_attr_Rd 0.835 {'kids': 0.25}
+heldout ModelMetrics__rd_example__gini_Rd 1.0 {'data': 1.0}
+heldout ModelMetrics__rd_example__logLoss_Rd 0.838 {'data': 1.0}
+heldout ModelMetrics__rd_example__mse_Rd 0.789 {'data': 1.0}
+heldout ModelMetrics__rd_example__rmse_Rd 0.875 {'data': 1.0}
+heldout caret__rd_example__preProcess_Rd 0.847 {'data': 1.0}
+heldout clock__rd_example__iso-year-week-day-getters_Rd 0.982 {'x': 0.952}
+heldout clock__rd_example__posixt-group_Rd 0.875 {'y': 0.25}
+heldout e1071__rd_example__matchClasses_Rd 0.583 {'g1': 0.25, 'g2': 0.25, 'k': 0.25}
+heldout fansi__rd_example__strwrap_ctl_Rd 0.736 {'NEWS': 1.0}
+heldout farver__rd_example__native_encoding_Rd 1.0 {'native_col': 1.0}
+heldout lava__rd_example__fplot_Rd 1.0 {'data': 1.0}
+heldout pROC__rd_example__aSAH_Rd 0.995 {'data': 0.977}
+heldout ranger__rd_example__deforest_Rd 0.829 {'dfo': 0.25}
+heldout recipes__rd_example__step_YeoJohnson_Rd 0.731 {'data': 1.0}
+heldout recipes__rd_example__step_filter_missing_Rd 0.999 {'data': 1.0}
+heldout sparsevctrs__rd_example__coerce-vector_Rd 0.987 {'x_sparse': 1.0}
+heldout timeDate__rd_example__timeDate-finCenter_Rd 0.85 {'date': 0.25}

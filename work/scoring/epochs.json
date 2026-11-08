@@ -183,5 +183,30 @@
   "errors": [],
   "model_mappings": 5,
   "note": "Python capture: no warnings from the capture itself (the serializer reads attributes under ignored warnings; bs4 deprecations had counted as the program's in 6 training states), and a callable object with a text form (bs4's BeautifulSoup) keeps it and is compared by it when R's value is no function. R side byte-identical, maps not re-captured. Check: 4 rvest states up (html_table +0.21, rvest_s7 +0.13, html_children +0.06, html_element +0.01), openssl ec_dh and textshaping lorem_text noise."
+ },
+ {
+  "epoch": 9,
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "r_capture": "7e6e74c773b0",
+  "date": "2026-11-08 09:11",
+  "programs": 147,
+  "flaky": [
+   "final_default:e1071__rd_example__boxplot_bclust_Rd",
+   "final_default:openssl__rd_example__ec_dh_Rd",
+   "final_default:proxy__rd_example__registry_Rd",
+   "final_default:sass__rd_example__sass_import_Rd",
+   "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+   "final_w3:openssl__rd_example__ec_dh_Rd",
+   "final_w3:sass__rd_example__as_sass_Rd",
+   "final_w3:textshaping__rd_example__lorem_text_Rd",
+   "start:openssl__rd_example__ec_dh_Rd",
+   "start:sass__rd_example__as_sass_Rd"
+  ],
+  "errors": [
+   "start:broom__rd_example__augment_felm_Rd",
+   "start:fansi__rd_example__normalize_state_Rd"
+  ],
+  "model_mappings": 5,
+  "note": "Shim inputs recorded where R records them (shim-record-at-r-entity): a name the R script never assigns (data() loads, inputs changed in place by names(df) <-) is recorded at the Python entity where R records it, changed or not; before, only a rebinding to a new object was recorded, which the loop guard strips. A for-loop variable is no shim input. Check: 17 programs up (reshape2 cast/melt_data_frame names, e1071 boxplot_bclust, caret update_train, pROC coords, recipes discretize, ModelMetrics auc data), openssl ec_dh and textshaping lorem_text noise, no flip. Affected final programs: +0.013 training, +0.0075 held-out."
  }
 ]
