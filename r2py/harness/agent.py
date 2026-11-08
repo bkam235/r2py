@@ -119,6 +119,8 @@ def reason(
     refuse_done: bool = False,
     review_model: "str | None" = None,
     max_tokens: int = 16384,
+    free_probe: bool = False,
+    start_stalls: int = 0,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -126,7 +128,12 @@ def reason(
 
     ``review_model`` (2026-11-08): the model of the anti-hardcoding review; None reviews with ``model``. A run with
     another agent model keeps the gate's judge fixed, so only the translator changes. ``max_tokens``: the output
-    limit of the agent's own calls (a reasoning model spends part of it on reasoning).
+    limit of the agent's own calls (a reasoning model spends part of it on reasoning). ``free_probe`` (2026-11-08): a
+    probe_r costs no stall and the model sees up to 2,000 characters of its result (by default a probe counts as a
+    failed step and shows 100 characters, so the stall-2 hint's "Try probe_r" ended the chain); the harness's
+    10-probe limit still holds, and a probe past it counts as a stall. With it the stall hint points at the probe and
+    no longer offers "done". ``start_stalls``: the stall count the chain starts with (an instrument that continues a
+    saved chain at its stall-2 point, 2026-11-08); 0 in the loop.
     """
     review_model = review_model or model
     from ..stage1.runner import strip_r_guards
@@ -183,7 +190,8 @@ def reason(
     if entity_repair:
         max_stalls = max(max_stalls, ENTITY_REPAIR_MAX_STALLS)
 
-    stall_count = 0
+    stall_count = start_stalls
+    hinted_at = None   # free_probe: the stall count at which the stall hint was last given
     crash_rewrite_failed = False   # crash_first="fallback": a full rewrite already failed to make the program run
     last_was_crash_rewrite = False
     guided_tries: dict[str, int] = {}          # guided steps aimed at each entity (guided_k)
@@ -217,11 +225,21 @@ def reason(
             break
 
         if stall_count > 0 and stall_count >= stall_limit - 1:
-            history.append(
-                f"SYSTEM: You have rewritten {'twice' if stall_count == 2 else f'{stall_count} times'} without improving the score. "
-                "Try probe_r to investigate what R actually produces for the "
-                "failing entities, or action:done if you cannot improve further."
-            )
+            if free_probe:
+                if hinted_at != stall_count:   # a free probe leaves the count unchanged: say it once
+                    hinted_at = stall_count
+                    history.append(
+                        f"SYSTEM: You have rewritten {'twice' if stall_count == 2 else f'{stall_count} times'} without improving the score. "
+                        "Before you rewrite again, check what R actually produces for the failing entities: use "
+                        "probe_r (a probe does not count as a failed attempt, and you see its output). Then rewrite "
+                        "with what you found."
+                    )
+            else:
+                history.append(
+                    f"SYSTEM: You have rewritten {'twice' if stall_count == 2 else f'{stall_count} times'} without improving the score. "
+                    "Try probe_r to investigate what R actually produces for the "
+                    "failing entities, or action:done if you cannot improve further."
+                )
 
         # Harness-driven targeted repair: the model does not choose replace_entity on its own
         # (1 use in 84 actions), so the harness picks the failing entity and asks for just that.
@@ -405,8 +423,12 @@ def reason(
             except Exception as exc:
                 result = f"ERROR: {exc}"
             print(f"[Agent]   Probe result: {result[:200]!r}")
-            history.append(f"Step {step}: probe_r -> {result[:100]!r}")
-            stall_count += 1
+            if free_probe and result != "(probe limit reached)":   # HarnessTools.probe_r past its 10 probes
+                _stat("outcome", "probe_r:free")
+                history.append(f"Step {step}: probe_r {expression[:300]!r} ->\n{result[:2000]}")
+            else:
+                history.append(f"Step {step}: probe_r -> {result[:100]!r}")
+                stall_count += 1
 
         elif action_type == "lookup_docs":
             package = action.get("package", "")

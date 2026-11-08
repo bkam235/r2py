@@ -73,6 +73,22 @@ POLICIES = {
                                          agent_model="openrouter:z-ai/glm-5.3",
                                          agent_provider={"only": ["novita/fp8"], "allow_fallbacks": False},
                                          agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000),
+    # Free probes (2026-11-08): a probe_r costs no stall and shows its result (2,000 characters); the default, and the
+    # GLM ceiling policy, otherwise unchanged.
+    "default_2026_11_01_fp": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
+                                  converse=True, entity_feedback=True, free_probe=True),
+    "default_2026_11_01_glm53_r8k_fp": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6,
+                                            crash_stalls=5, converse=True, entity_feedback=True,
+                                            agent_model="openrouter:z-ai/glm-5.3",
+                                            agent_provider={"only": ["novita/fp8"], "allow_fallbacks": False},
+                                            agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
+                                            free_probe=True),
+    # Test free-probe-stall2 (2026-11-08): saved chains continued at their stall-2 point (scripts/stall2_continue.py),
+    # with the default hint, and with free probes and the probe hint.
+    "stall2_default": dict(entity_repair=False, escalate_after=None, width=1, converse=True, entity_feedback=True,
+                           start_stalls=2, max_steps=8),
+    "stall2_fp": dict(entity_repair=False, escalate_after=None, width=1, converse=True, entity_feedback=True,
+                      start_stalls=2, max_steps=8, free_probe=True),
     "default_2026_11_01_rd": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
                                   converse=True, entity_feedback=True, refuse_done=True),
     "continue3": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3),

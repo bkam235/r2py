@@ -4345,3 +4345,39 @@ registered 2026-11-08 before any data.**
   other half moves with a stronger model (+0.042 now, more once probes stop costing stalls), so the learning track
   has room, and GLM's verified finals (35 of 60 at >= 0.9 here, audited) are a data source; (3) the probe rule is a
   harness question for both models.
+
+**Free probes at the stall-2 step (option free_probe, test `free-probe-stall2`, harness track), registered 2026-11-08
+before any data.**
+- Observation (offline, $0, the e8 replays and the GLM ceiling run): at two failed rewrites in a row the harness says
+  "Try probe_r ... or action:done if you cannot improve further". Both options end the chain: a probe counts as a
+  failed step (2 -> 3, the limit) and the model sees 100 characters of its result; "done" stops it. Gemma probed 5
+  times in 1,355 actions and said "done" 50 times of 79 right after this hint; GLM, which probes (237 of 723
+  actions), stalled out probing in 7 states. 235 chains of the two e8 replays reach this point with a running best
+  (47 states); 24 of them (10%) improved afterwards.
+- Change (harness, off by default; `scoring_epoch.py status` `same`): `reason(free_probe=True)`: a probe costs no
+  stall and the model sees up to 2,000 characters of its result (the harness's 10 probes per chain still bound it;
+  a probe past the limit counts as a stall), and the stall hint reads "Before you rewrite again, check what R actually
+  produces for the failing entities: use probe_r (a probe does not count as a failed attempt, and you see its
+  output). Then rewrite with what you found." (given once per stall count, no "done" offer). For the instrument,
+  `reason(start_stalls=2)` starts a chain at its stall-2 point. Tests `tests/test_free_probe.py` (5; the new
+  behaviour fails before); suite passed. Two changes in one arm, on purpose: a free probe without the hint does
+  nothing for a model that does not probe.
+- Instrument (`scripts/stall2_continue.py`): the 235 chains continued from their best program at their stall-2 point,
+  width 1, conversation and entity feedback as in the default, at most 8 steps, in two arms from the same program and
+  turn: `stall2_default` (the default hint) and `stall2_fp` (free probe and the probe hint). One continuation per
+  chain and arm. `python scripts/stall2_continue.py run --workers 6 --budget 4.00`; frozen programs, scorer epoch 9;
+  nothing in `r2py/` changes during the run. Smoke on one bslib chain: both arms ran ($0.006).
+- Analysis (`python scripts/stall2_continue.py analyze`): each run's final recomputed with every continued chain in
+  place of what it did after its stall-2 point, once per arm; per state (mean over its runs) gain = final(fp) -
+  final(default hint) and extra calls = calls(fp) - calls(default hint). Primary: gain per extra call against one
+  more chain (0.00148 per call, `width6-running-pool`), bootstrap over states. Secondary: chain improvement rates,
+  probes and "done"s per arm, gain on the plateau (sum over states / 60).
+- Rule (costs calls): adopt if P(gain per extra call > 0.00148) >= 0.9 in the bootstrap over states; then the held-out
+  pool with the same instrument (step 7; its chains come from the held-out runs of `refuse-done-heldout`, the default
+  plus refuse_done, so the held-out design is registered then) and a default (step 8, the person's call). If the
+  arm uses no more calls and gains, P(better) counts it as better.
+- What it can mean: it measures the stall-2 decision point only (chains in the loop also reach it later or more than
+  once; the substitution keeps their recorded results before the point). Running best programs only: crashing best
+  programs have 5 stalls (crash_stalls) and a later hint, not tested here.
+- Cost estimate about $2.80 (470 continuations, about 1.5 and 2.5 agent calls each, $0.003 per call with review and
+  audit); guard budget $4.00, reserve $0.50.
