@@ -13,6 +13,7 @@ from ..stage0.effects import bundle as _bundle_mod
 from ..stage0.effects.data import serialize_bundle_data
 from ..stage0.sandbox.py_sandbox import PySandbox
 from ..stage2.stitch import DATA_SHIM_RE
+from ..stage2.stitch import shim_input_names as _shim_input_names
 from ..types import (
     CaptureSpec,
     ComparisonDetail,
@@ -516,6 +517,7 @@ import sys as _r2py_sys
 
 _r2py_prev_ns: set = set()
 _r2py_base_ids: dict = {}
+_r2py_r_record_at: dict = {}   # name -> entities whose R bundle records it (_record_at_preamble)
 _r2py_stdout_buf = _r2py_io.StringIO()
 _r2py_real_stdout = _r2py_sys.stdout
 _r2py_sys.stdout = type('_Tee', (), {
@@ -576,7 +578,9 @@ def _r2py_checkpoint(eid):
             # once, here, as R records it where the script assigns it (2026-10-16: before, it was never recorded).
             if k in _r2py_base_ids and _r2py_builtins.id(v) != _r2py_base_ids[k]:
                 del _r2py_base_ids[k]
-            else:
+            # ... and at an entity where R records it, changed or not: used as it is (`data(testDF)`) or changed in
+            # place (`names(df) <- ...` as `df.columns = ...`) (2026-11-06: before, these entities lost their data).
+            elif not (k in _r2py_base_ids and eid in _r2py_r_record_at.get(k, ())):
                 continue
         try:
             if callable(v) and not isinstance(v, type):
@@ -686,6 +690,22 @@ def _py_only_preamble(r_bundle: EffectBundle, r_entity_bundles: dict | None) -> 
         "        return {'__r2py_py_only__': type(obj).__name__}, True\n"
         "    return _r2py_try_serialize_all(name, obj)\n"
     )
+
+
+def _record_at_preamble(record_at: dict) -> str:
+    """Python preamble, after the checkpoint preamble: per name, the entities whose R bundle records it."""
+    return f"_r2py_r_record_at = {{k: set(v) for k, v in {dict(sorted(record_at.items()))!r}.items()}}\n"
+
+
+def _r_record_at(r_entity_bundles: dict | None, inputs: set) -> dict:
+    """Per shim input (a name the R script never assigns), the entities whose R bundle records it. Values the
+    script computes are left out: the shim may hold R's result for them, and the code must compute it to score."""
+    out: dict = {}
+    for eid, eb in (r_entity_bundles or {}).items():
+        for name in getattr(eb, "data", None) or {}:
+            if name in inputs:
+                out.setdefault(name, []).append(eid)
+    return {k: sorted(v) for k, v in out.items()}
 
 
 def _multiline_string_rows(source: str) -> set[int]:
@@ -885,7 +905,9 @@ def verify(
         payload = _build_sidecar_payload(script_map)
         sidecar_files = {sidecar_filename: payload}
 
-    preamble = _py_only_preamble(r_bundle, getattr(script_map, "entity_bundles", None)) + _PY_CHECKPOINT_PREAMBLE
+    preamble = (_py_only_preamble(r_bundle, getattr(script_map, "entity_bundles", None)) + _PY_CHECKPOINT_PREAMBLE
+                + _record_at_preamble(_r_record_at(getattr(script_map, "entity_bundles", None),
+                                                 set(_shim_input_names(script_map)) if has_shim else set())))
     sandbox = PySandbox()
     if workdir is not None:
         py_bundle = sandbox.run(

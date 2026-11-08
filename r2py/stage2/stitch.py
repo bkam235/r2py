@@ -299,9 +299,12 @@ def _first_assign_and_use(script_map: "ScriptMap") -> tuple[dict[str, int], dict
 
 
 def shim_input_names(script_map: "ScriptMap") -> list[str]:
-    """Shim names the R script never assigns: the ones a translation must use as they are and never overwrite."""
+    """Shim names the R script never assigns: the ones a translation must use as they are and never overwrite.
+    A `for` loop assigns its variable (2026-11-06: shape getellipse's `i` counted as an input)."""
     first_assign, _ = _first_assign_and_use(script_map)
-    return [n for n in collect_shim_needed_names(script_map) if n not in first_assign]
+    src = _R_COMMENT_RE.sub("", getattr(script_map, "source", "") or "")
+    loop_vars = set(re.findall(r"\bfor\s*\(\s*`?([A-Za-z.][\w.]*)`?\s+in\b", src))
+    return [n for n in collect_shim_needed_names(script_map) if n not in first_assign and n not in loop_vars]
 
 
 def remove_shim_overrides(text: str, shim_names: set[str]) -> str:

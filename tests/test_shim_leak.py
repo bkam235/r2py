@@ -6,6 +6,7 @@ computes `e` still ran (lava 0.694 vs a crash without it), and one that computes
 it, because the verifier skips names bound before the first entity (lubridate 0.850 vs 1.000).
 """
 import unittest
+import unittest.mock
 
 from r2py.stage0.effects.bundle import EffectBundle
 from r2py.stage1.entities import Entity, SourceLocation
@@ -55,6 +56,16 @@ class TestShimInputsOnly(unittest.TestCase):
     def test_names_the_script_never_assigns_are_the_ones_guarded(self):
         from r2py.stage2.stitch import shim_input_names
         self.assertEqual(shim_input_names(self.sm()), ["iris"])     # storms is reassigned by R itself
+
+    def test_a_for_loop_variable_is_assigned_not_an_input(self):
+        # shape getellipse (2026-11-06): `for (i in seq(0, 180, by = 2)) lines(..., angle = i)` put R's last i in the
+        # shim, and i counted as an input (guarded, and credited where R records it, without the code computing it)
+        from r2py.stage2.stitch import shim_input_names
+        src = "for (i in seq(0, 180, by = 2))\n  lines(f(angle = i))\n"
+        sm = ScriptMap(source=src, entities={"lines": ent("lines", "lines", 0, kind=EntityKind.FUNCTION_CALL,
+                                                          refs=["i"], data={"i": [180]})})
+        with unittest.mock.patch("r2py.stage2.stitch.collect_shim_needed_names", return_value=["i", "iris"]):
+            self.assertEqual(shim_input_names(sm), ["iris"])
 
 
 if __name__ == "__main__":
@@ -125,6 +136,49 @@ class TestPreloadedNameRecorded(unittest.TestCase):
         cps = self.run_instrumented("z = len(x)")
         self.assertNotIn("x", cps["e1"])
         self.assertEqual(cps["e1"].get("z"), 2)
+
+
+class TestPreloadedNameRecordedWhereRRecordsIt(unittest.TestCase):
+    """2026-11-06: R records a pre-loaded input at the entity that assigns or modifies it (`data(testDF)`,
+    `names(df) <- ...`); the Python entity that uses it as it is, or changes it in place, is recorded there too."""
+
+    def run_instrumented(self, body, record_at):
+        import tempfile
+        from pathlib import Path
+        from r2py.stage0.sandbox.py_sandbox import PySandbox
+        from r2py.stage4.verifier import (_ALL_CAPTURE, _PY_CHECKPOINT_PREAMBLE, _collect_py_checkpoints,
+                                          _inject_py_checkpoints, _record_at_preamble)
+        src = "x = [9, 9]\nkeep = [7]\n# r2py:entity:e1\n" + body + "\n# r2py:entity:e2\ny = 1\n"
+        n = body.count("\n") + 1
+        instrumented, eids = _inject_py_checkpoints(src, {"e1": (4, 3 + n), "e2": (5 + n, 5 + n)})
+        with tempfile.TemporaryDirectory() as d:
+            bundle = PySandbox().run(instrumented, workdir=Path(d), capture=_ALL_CAPTURE, timeout_s=60,
+                                     preamble=_PY_CHECKPOINT_PREAMBLE + _record_at_preamble(record_at))
+            self.assertEqual(bundle.exit_code, 0, (bundle.stderr or "")[-800:])
+            return {e: b.data for e, b in _collect_py_checkpoints(Path(d), eids).items()}
+
+    def test_used_as_it_is_at_the_entity_where_r_records_it(self):
+        cps = self.run_instrumented("z = len(x)", {"x": ["e1"]})
+        self.assertEqual(cps["e1"].get("x"), [9, 9])
+        self.assertNotIn("keep", cps["e1"])              # R records nothing for keep here
+        self.assertNotIn("x", cps["e2"])
+
+    def test_changed_in_place_at_the_entity_where_r_records_it(self):
+        cps = self.run_instrumented("x.append(1)", {"x": ["e1"]})
+        self.assertEqual(cps["e1"].get("x"), [9, 9, 1])
+
+    def test_elsewhere_the_old_rule_holds(self):
+        cps = self.run_instrumented("z = len(x)", {"x": ["e2"]})
+        self.assertNotIn("x", cps["e1"])
+        self.assertEqual(cps["e2"].get("x"), [9, 9])
+        cps = self.run_instrumented("x = [1]", {})
+        self.assertEqual(cps["e1"].get("x"), [1])
+
+
+    def test_only_inputs_are_listed_not_values_the_script_computes(self):
+        from r2py.stage4.verifier import _r_record_at
+        bundles = {"data": EffectBundle(data={"testDF": {"y": [1]}}), "x": EffectBundle(data={"x": [1, 2]})}
+        self.assertEqual(_r_record_at(bundles, {"testDF"}), {"testDF": ["data"]})
 
 
 class TestShadowedBuiltins(unittest.TestCase):
