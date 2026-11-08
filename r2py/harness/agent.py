@@ -117,11 +117,18 @@ def reason(
     converse: bool = False,
     entity_feedback: bool = False,
     refuse_done: bool = False,
+    review_model: "str | None" = None,
+    max_tokens: int = 16384,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
     Returns (improved_source, score_report) or None if no improvement was achieved.
+
+    ``review_model`` (2026-11-08): the model of the anti-hardcoding review; None reviews with ``model``. A run with
+    another agent model keeps the gate's judge fixed, so only the translator changes. ``max_tokens``: the output
+    limit of the agent's own calls (a reasoning model spends part of it on reasoning).
     """
+    review_model = review_model or model
     from ..stage1.runner import strip_r_guards
     from ..seed import expand_echoed_calls
     r_source = strip_r_guards(getattr(script_map, "source", "") or "")
@@ -302,7 +309,7 @@ def reason(
         try:
             raw = _llm.call(
                 messages, turn_system,
-                model=model, max_tokens=16384,
+                model=model, max_tokens=max_tokens,
             )
         except TruncatedResponseError as exc:
             raw = exc.partial_text
@@ -329,7 +336,7 @@ def reason(
         elif guided_k > 1 and action and action.get("action") == "rewrite":
             action = _widen_rewrite(action, messages, turn_system, model, guided_k, best_source, harness,
                                     report=report, review=lambda src: review_translation(
-                                        r_source, src, script_map, model=model,
+                                        r_source, src, script_map, model=review_model,
                                         unavailable_packages=unavailable_packages),
                                     shim_inputs=shim_inputs)
         if action is None:
@@ -348,7 +355,7 @@ def reason(
                 continuation = _llm.call(
                     retry_messages,
                     system_prompt,
-                    model=model, max_tokens=16384,
+                    model=model, max_tokens=max_tokens,
                 )
                 action = _parse_action('{"action": "' + continuation)
                 if action:
@@ -618,7 +625,7 @@ def reason(
                     passed, reason = action["reviewed"]   # reviewed while choosing among k drafts
                 elif new_report.py_exit_code == 0:
                     passed, reason = review_translation(
-                        r_source, new_source, script_map, model=model,
+                        r_source, new_source, script_map, model=review_model,
                         unavailable_packages=unavailable_packages,
                     )
                 else:

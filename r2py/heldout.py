@@ -503,8 +503,40 @@ def _with_deadline(fn, deadline_s: float):
     return box["result"]
 
 
+# Tokens and cost per model of the pinned requests in this process (2026-11-08: the runs logged no tokens, so a
+# change of model could not be priced); read and reset with drain_usage().
+_usage: dict[str, Counter] = {}
+_usage_lock = threading.Lock()
+
+
+def drain_usage() -> dict[str, dict]:
+    """{model: {calls, prompt_tokens, completion_tokens, reasoning_tokens, cost}} since the last drain."""
+    with _usage_lock:
+        out = {m: dict(c) for m, c in _usage.items()}
+        _usage.clear()
+    return out
+
+
+def _record_usage(model: str, resp) -> None:
+    u = getattr(resp, "usage", None)
+    details = getattr(u, "completion_tokens_details", None) if u else None
+    with _usage_lock:
+        c = _usage.setdefault(model, Counter())
+        c["calls"] += 1
+        if u is None:
+            return
+        c["prompt_tokens"] += getattr(u, "prompt_tokens", 0) or 0
+        c["completion_tokens"] += getattr(u, "completion_tokens", 0) or 0
+        c["reasoning_tokens"] += (getattr(details, "reasoning_tokens", 0) or 0) if details else 0
+        c["cost"] += float(getattr(u, "cost", 0) or 0)
+
+
 class _PinnedClient:
-    """Proxy for an openai client that forces settings onto every chat request."""
+    """Proxy for an openai client that forces settings onto every chat request.
+
+    ``settings["provider_by_model"]`` ({model: provider}) pins a model to its own provider (2026-11-08: an agent
+    on another model than the review and the mapping); every other model gets ``settings["provider"]``.
+    ``settings["extra_by_model"]`` ({model: {field: value}}) adds request fields for that model only."""
 
     def __init__(self, inner, settings: dict, served: Counter) -> None:
         self._inner, self._settings, self._served = inner, settings, served
@@ -514,8 +546,12 @@ class _PinnedClient:
         import openai
 
         extra = dict(kw.pop("extra_body", None) or {})
-        if self._settings.get("provider"):
-            extra["provider"] = self._settings["provider"]
+        provider = (self._settings.get("provider_by_model") or {}).get(kw.get("model"), self._settings.get("provider"))
+        if provider:
+            extra["provider"] = provider
+        extra.setdefault("usage", {"include": True})   # OpenRouter usage accounting: the cost of each request
+        for k, v in ((self._settings.get("extra_by_model") or {}).get(kw.get("model")) or {}).items():
+            extra.setdefault(k, v)   # per-model request fields, e.g. {"reasoning": {"max_tokens": 8000}}
         kw.setdefault("temperature", self._settings["temperature"])   # a call may fix its own (entity mapping: 0)
         kw.setdefault("timeout", self._settings["request_timeout_s"])
         for attempt in range(RATE_LIMIT_TRIES):
@@ -529,6 +565,7 @@ class _PinnedClient:
                     raise
                 time.sleep(RATE_LIMIT_WAIT_S * 2 ** attempt)  # parallel workers back off, not fail
         self._served[getattr(resp, "provider", None)] += 1  # OpenRouter reports who answered
+        _record_usage(kw.get("model", "?"), resp)
         return resp
 
 

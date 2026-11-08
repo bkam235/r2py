@@ -61,6 +61,18 @@ POLICIES = {
     "default_2026_11_01": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
                                converse=True, entity_feedback=True),
     # Test refuse-done (registered 2026-11-06): the default, and below the threshold "done" counts as a failed step.
+    # Capability ceiling (2026-11-08): the default with the translating agent on GLM 5.3 (Novita fp8, the person's
+    # choice); review, audit and mapping stay on the manifest's model. Descriptive, not a candidate default.
+    "default_2026_11_01_glm53": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
+                                     converse=True, entity_feedback=True, agent_model="openrouter:z-ai/glm-5.3",
+                                     agent_provider={"only": ["novita/fp8"], "allow_fallbacks": False}),
+    # The same with GLM's reasoning capped at 8k tokens and the agent's output limit at 36k (2026-11-08: uncapped,
+    # its first answers spent all 16,384 tokens on reasoning and returned no code).
+    "default_2026_11_01_glm53_r8k": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6,
+                                         crash_stalls=5, converse=True, entity_feedback=True,
+                                         agent_model="openrouter:z-ai/glm-5.3",
+                                         agent_provider={"only": ["novita/fp8"], "allow_fallbacks": False},
+                                         agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000),
     "default_2026_11_01_rd": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
                                   converse=True, entity_feedback=True, refuse_done=True),
     "continue3": dict(entity_repair=False, escalate_after=None, width=1, max_steps=3),
@@ -185,11 +197,27 @@ def run_one(task: dict) -> dict:
     row["scoring_version"] = scoring_version()   # scores compare only within one scoring epoch
     started = time.monotonic()
     out_dir = Path(task["out_dir"])
+    # agent_model (2026-11-08): the translating agent on another model, pinned to agent_provider; the review gate,
+    # the static audit and the entity mapping stay on the manifest's model, so only the translator changes.
+    agent_model = POLICIES[task["policy"]].get("agent_model")
+    settings = ho.llm_settings(manifest)
+    if agent_model:
+        row["agent_model"] = agent_model
+        name = agent_model.removeprefix("openrouter:")
+        settings = {**settings, "provider_by_model": {name: POLICIES[task["policy"]]["agent_provider"]}}
+        if POLICIES[task["policy"]].get("agent_reasoning"):
+            settings["extra_by_model"] = {name: {"reasoning": POLICIES[task["policy"]]["agent_reasoning"]}}
+    ho.drain_usage()
     try:
-        with ho.pinned_llm(cfg["model"], ho.llm_settings(manifest)):
+        with ho.pinned_llm(cfg["model"], settings):
             sm = _script_map(task["script"], manifest, Path(task["cache"]))
             with tempfile.TemporaryDirectory(ignore_cleanup_errors=True) as tmp:
                 policy = dict(POLICIES[task["policy"]])
+                policy.pop("agent_model", None)
+                policy.pop("agent_provider", None)
+                policy.pop("agent_reasoning", None)
+                if "agent_max_tokens" in policy:
+                    policy["max_tokens"] = policy.pop("agent_max_tokens")
                 runtime_dir = policy.pop("runtime", None)
                 lib_dir = Path(task["library"])
                 if policy.pop("oracle", False):
@@ -251,7 +279,10 @@ def run_one(task: dict) -> dict:
                 max_steps = policy.pop("max_steps", cfg["max_iters"])   # continuation tests stop early (2026-10-18)
                 beam_cfg = policy.pop("beam", None)
                 harnesses = [harness] + [new_harness() for _ in range(width - 1)]
-                common = dict(current_source=task["source"], score_report=start_report, script_map=sm, model=cfg["model"],
+                if agent_model:
+                    policy["review_model"] = cfg["model"]
+                common = dict(current_source=task["source"], score_report=start_report, script_map=sm,
+                              model=agent_model or cfg["model"],
                               score_threshold=cfg["score_threshold"], max_stalls=cfg["max_stalls"],
                               budget_s=task["budget_s"], audit_feedback=audit, replace_entity=False, **policy)
                 if beam_cfg:
@@ -269,6 +300,7 @@ def run_one(task: dict) -> dict:
                 trajectory.end(final_score=row["final_score"])
     except Exception as exc:
         row["error"] = f"{type(exc).__name__}: {exc}"[:300]
+    row["usage"] = ho.drain_usage()   # tokens and cost per model of this run (2026-11-08)
     row["seconds"] = round(time.monotonic() - started, 1)
     return row
 

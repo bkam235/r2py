@@ -4273,3 +4273,45 @@ re-verified with one-line A/B variants of the programs the model had (`work/shim
   entities is now the compared value instead of a silent loss, and the loop guard no longer strips loop variables;
   their effect on translations is unmeasured. Earlier results are qualified only through these 10 training / held-out
   states; none of the decided tests hinged on them.
+
+**Capability ceiling: the default with its agent on GLM 5.3 (test `glm53-ceiling`, learning track, descriptive),
+registered 2026-11-08 before any data.**
+- Observation (offline, $0, the e8 replays and the e8 sample-0 finals re-verified under epoch 9, mean 0.816): the
+  harness levers left are small. Review-gate rejections of better candidates bound at +0.003 / +0.008 (most are real
+  hardcoding), splicing entities across the 3 chains at +0.003, adaptive width buys gain in proportion to calls. Of
+  the 154 entities no candidate ever solved (40 states), 105 were tried with 4 or more different texts. That is the
+  sign of a capability limit, or of feedback that does not name the fix; the trajectories cannot tell which.
+- Question: is the remaining gap the model's? The same harness with a much stronger translator answers it: if it
+  reaches about 0.95, the gap is Gemma's capability (learning track, and the stronger model's verified translations
+  are a cheap data source); if it stops near the default, the loss is in the scorer or the harness.
+- Change (off by default; `scoring_epoch.py status` `same`): replay policies can put the translating agent on another
+  model (`agent_model`, `agent_provider`, `agent_reasoning`, `agent_max_tokens`); the review gate, the static audit
+  and the entity mapping stay on Gemma (`reason(review_model=...)`), so only the translator changes. The pinned
+  client pins each model to its own provider and adds per-model request fields. Telemetry, for every run: tokens,
+  reasoning tokens and cost per model in each result row (`usage`). Tests `tests/test_agent_model.py` (5 fail before,
+  pass after); suite 1053 passed (the known locale test deselected).
+- Policy `default_2026_11_01_glm53_r8k`: the default (width 3, crashing starts 6, conversation, entity feedback) with
+  the agent on `z-ai/glm-5.3`, Novita fp8 (the person's choice of provider), reasoning capped at 8k tokens, agent
+  output limit 36k. Smoke tests on `rvest__vignette__rvest_s7` (never improved by Gemma, 0.592): uncapped, each
+  chain's first answer spent all 16,384 tokens on reasoning and returned no code ($0.11); capped, all 3 chains reached
+  1.000 in 2-4 steps, 7 calls, about 6.9k input / 2.3k output (1.6k reasoning) tokens per call, $0.046. The final
+  program parses with BeautifulSoup and builds xml2's serialisation from its inputs; review passed, no paste flag.
+- Instrument: `replay.py --pool training --policies default_2026_11_01_glm53_r8k --samples 1 --workers 6 --out
+  work/ceiling_glm53/results.jsonl --budget 15.00`; the 60 frozen training starts, scorer epoch 9; nothing in
+  `r2py/` changes during the run. Then the finals re-verified on an idle machine: `python scripts/reverify_finals.py
+  work/ceiling_glm53 default_2026_11_01_glm53_r8k work/ceiling_glm53/finals_epoch9.jsonl`.
+- Baseline: the default's e8 sample-0 finals re-verified under epoch 9
+  (`work/ceiling_glm53/baseline_default_e8_s0_epoch9.jsonl`, 0.816), the same states and starts.
+- Analysis (`python scripts/ceiling_analysis.py work/ceiling_glm53/results.jsonl
+  work/ceiling_glm53/baseline_default_e8_s0_epoch9.jsonl work/ceiling_glm53/finals_epoch9.jsonl`): primary, mean
+  final ceiling minus baseline, paired by state, 95% bootstrap over states; secondary, by start stratum, states
+  better / worse / tied, finals >= 0.9, the share of the baseline's losing entities the ceiling solves, calls and cost
+  per model, and the run's health report (gap table, crashes, paste check).
+- Rule: descriptive, no adoption (a different model is not a candidate default; adopting one is the person's call
+  under a rule of its own). Reading: ceiling plateau >= 0.93, the gap is mostly capability; within 0.03 of the
+  baseline (one replay sample's noise), it is mostly scorer or harness; between, both, sorted state by state.
+  Programs scoring much higher are read for faithfulness (paste check, hardcoding), as the learning track's audit will.
+- Caveats: one sample per arm (a sample moves by about +-0.03), a different model behind the same prompts (they were
+  written for Gemma), fp8 serving, reasoning capped.
+- Cost estimate $5-14 (60 states, about $0.006-0.015 per GLM call plus Gemma review and mapping); guard budget $15,
+  reserve $0.50.
