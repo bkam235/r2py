@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/model_screen.py run --workers 6 --budget 6.85 --reserve 0.5",
+  "started": "2026-11-11 14:07:15",
+  "ended": "2026-11-11 17:11:01",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 425,
+  "balance_start": 4.06,
+  "balance_end": 2.15,
+  "cost": 1.91,
+  "budget": 6.85,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

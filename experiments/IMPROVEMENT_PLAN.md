@@ -4419,3 +4419,28 @@ before any data.**
 - Rule (descriptive): per arm, the gain on the plateau against `stall2_ps`, bootstrap over states. A model with
   P(gain > 0) >= 0.9 becomes a candidate for a full 60-state default run with that agent, which is its own gated
   test. Secondary: chains improved, free probes per chain, dones, calls, cost per chain. Estimate $8, budget $10.
+- Result (2026-11-11, $4.99, scorer 6a9611f2ee76-db31b28ade02). Gain on the plateau against `stall2_ps` (Gemma with
+  the same in-state free probes), bootstrap over 56 states:
+
+  | agent | gain | P(gain > 0) | better / worse | chains improved | free probes / chain | cost / chain |
+  |---|---|---|---|---|---|---|
+  | Gemma (`stall2_ps`) | — | — | — | 28 / 235 | 0.04 | $0.0053 |
+  | gpt-oss-120b | +0.0010 [-0.0030, +0.0068] | 0.59 | 5 / 5 | 31 | 0.41 | $0.0022 |
+  | GLM 5.3 Flash | +0.0245 [+0.0121, +0.0393] | 1.00 | 17 / 2 | 60 | 1.47 | $0.0057 |
+  | DeepSeek V4.1 Flash | +0.0477 [+0.0292, +0.0692] | 1.00 | 24 / 0 | 100 | 1.50 | $0.0065 |
+
+  Costs per chain include the Gemma review. For reference, Gemma's two earlier arms (default hint, bare free probe)
+  improved 33 and 27 chains, so the in-state probe changes little for Gemma: it still rarely probes.
+- Audit: some final programs contain numeric literals that appear in neither the start nor the R source. Most are
+  library tables (farver white references, sRGB matrices, bslib CSS/SVG). Some are pasted R results: farver
+  `convert_colour` outputs, and textshaping/systemfonts glyph metrics, which Python cannot compute without the font
+  engine. The Gemma review passed them. Robustness check: without the 7 states holding any such chain in any arm,
+  DeepSeek +0.0349 [+0.0185, +0.0549] and GLM Flash +0.0152 [+0.0057, +0.0259], both P = 1.00
+  (`work/model_screen/robustness.txt`).
+- Decision: descriptive. By the rule, DeepSeek V4.1 Flash and GLM 5.3 Flash are candidates for a full 60-state run
+  of the default with that agent; each run is its own gated test. `probe_state` stays off: in-state probes make it
+  easy to paste R outputs, so it needs a hardcoding check before any adoption.
+- Run notes: the first invocation died when the session ended, and machine sleep invalidated 37 rows. 4 rows
+  crashed on console logging (non-cp1252 characters in model output). The resume (`PYTHONIOENCODING=utf-8` on the
+  runner, which does not touch the sandbox: it forces UTF-8 itself) reran all of them. Rows whose agent model was
+  never called count as invalid unless the start was already at or above the threshold.

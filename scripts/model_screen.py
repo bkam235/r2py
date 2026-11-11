@@ -42,7 +42,9 @@ def _rows(path: Path) -> dict:
         if "final_score" not in r or r.get("invalid"):
             continue
         # A blocked or failing agent model leaves an ordinary-looking row with no calls of that model: not valid.
-        if r.get("agent_model") and r["agent_model"].removeprefix("openrouter:") not in (r.get("usage") or {}):
+        # A start at or above the threshold (0.9) needs no call and is valid.
+        if (r.get("agent_model") and r["agent_model"].removeprefix("openrouter:") not in (r.get("usage") or {})
+                and float(r["start_score"]) < 0.9):
             print(f"  invalid (no {r['agent_model']} calls): {r['script']} {r['policy']} {r['sample']}")
             continue
         out[(r["script"], r["policy"], r["sample"])] = r

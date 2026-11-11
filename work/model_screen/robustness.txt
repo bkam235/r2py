@@ -1,0 +1,7 @@
+robustness: the 7 states with a chain that has >= 3 new long numeric literals in any arm removed
+  stall2_ps_glmflash   all              states 56  gain +0.0245 [+0.0121, +0.0393]  P 1.00
+  stall2_ps_glmflash   without flagged  states 49  gain +0.0152 [+0.0057, +0.0259]  P 1.00
+  stall2_ps_gptoss     all              states 56  gain +0.0010 [-0.0030, +0.0068]  P 0.59
+  stall2_ps_gptoss     without flagged  states 49  gain +0.0013 [-0.0027, +0.0071]  P 0.64
+  stall2_ps_dsflash    all              states 56  gain +0.0477 [+0.0292, +0.0692]  P 1.00
+  stall2_ps_dsflash    without flagged  states 49  gain +0.0349 [+0.0185, +0.0549]  P 1.00
