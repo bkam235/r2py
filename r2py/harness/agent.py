@@ -122,6 +122,7 @@ def reason(
     free_probe: bool = False,
     start_stalls: int = 0,
     probe_state: bool = False,
+    literal_check: bool = False,
 ) -> "tuple[str, ScoreReport] | None":
     """Run the reasoning loop until the score reaches threshold or budget is exhausted.
 
@@ -136,7 +137,9 @@ def reason(
     no longer offers "done". ``start_stalls``: the stall count the chain starts with (an instrument that continues a
     saved chain at its stall-2 point, 2026-11-08); 0 in the loop. ``probe_state`` (2026-11-08): probe_r evaluates
     the expression after the R script has run, with its variables and packages (``harness.probe_state``); by default it
-    runs in a bare R session.
+    runs in a bare R session. ``literal_check`` (2026-11-11): a running candidate that adds 3 or more numeric literals
+    equal to R's recorded values for this script (``harness.literal_check``) is rejected like a review failure, before
+    the LLM review is asked.
     """
     review_model = review_model or model
     from ..stage1.runner import strip_r_guards
@@ -148,6 +151,7 @@ def reason(
         r_source, entities, entity_bundles,
     )
     best_source = current_source
+    start_source = current_source   # literal_check: literals new since the chain's start
     if hasattr(harness, "note_reference"):
         harness.note_reference(current_source)
     best_score = score_report.aggregate
@@ -651,7 +655,15 @@ def reason(
             if _obj.better(new_report, report) or equal_move:
                 # Code review gate: check for rule violations before adopting. A candidate that
                 # still crashes is only a stepping stone (Stage 7); the review judges what runs.
-                if new_report.py_exit_code == 0 and action.get("reviewed") is not None:
+                pasted_reason = None
+                if literal_check and new_report.py_exit_code == 0:
+                    from . import literal_check as _literal_check
+                    pasted_reason = _literal_check.check(new_source, start_source,
+                                                         getattr(script_map, "source", "") or "", script_map)
+                if pasted_reason:
+                    passed, reason = False, pasted_reason
+                    _stat("outcome", "literal_check_rejected")
+                elif new_report.py_exit_code == 0 and action.get("reviewed") is not None:
                     passed, reason = action["reviewed"]   # reviewed while choosing among k drafts
                 elif new_report.py_exit_code == 0:
                     passed, reason = review_translation(

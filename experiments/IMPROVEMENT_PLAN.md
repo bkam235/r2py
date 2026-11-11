@@ -4444,3 +4444,27 @@ before any data.**
   crashed on console logging (non-cp1252 characters in model output). The resume (`PYTHONIOENCODING=utf-8` on the
   runner, which does not touch the sandbox: it forces UTF-8 itself) reran all of them. Rows whose agent model was
   never called count as invalid unless the start was already at or above the threshold.
+
+### Pasted R output check (`literal_check`, built 2026-11-11, offline, $0)
+
+- Why: in model-screen-stall2, in-state probes let a model copy R's results into the Python, and the Gemma review
+  passed them. This check is deterministic (`r2py/harness/literal_check.py`; option `reason(literal_check=True)`,
+  off by default). It rejects a running candidate before the LLM review when it adds 3 or more numeric literals that
+  meet all of these: at least 4 significant digits, in code and not inside strings, not in the chain's start program
+  or the R script, and equal to a value in the script's recorded R ground truth (entity data and printed output) at
+  the literal's own precision.
+- Validation (`scripts/literal_check_offline.py`; `work/model_screen/literal_check_*.txt`). The thresholds (4
+  digits, 3 literals) were fixed before any data. Counting only literals in code is a change made after seeing the
+  data: inside strings, bslib value_box's SVG icon coordinates matched R's HTML output (about 50 per program), and
+  the review allows such an SVG literal for a package Python lacks.
+  - Flags in the screen: DeepSeek 3 chains (textshaping/systemfonts glyph metrics), Gemma 1 (caret accuracies),
+    GLM Flash 0, gpt-oss 0. The farver numbers my first audit suspected (convert_colour, encode_colour,
+    as_white_ref tables) are conversion constants, not R output, and are not flagged.
+  - Elsewhere: 2 of 466 accepted programs in the default's e8 replays (one farver as_white_ref chain, D65 white
+    point: R's output there is the library's table, a borderline case), 0 of 278 in the GLM 5.3 ceiling run, 0 of
+    102 in free-probe-stall2.
+  - Screen rescored with the check as a gate (each continuation keeps its best accepted step that passes; an
+    approximation): DeepSeek +0.0477 [+0.0293, +0.0690], GLM Flash +0.0246 [+0.0123, +0.0394], gpt-oss +0.0012.
+    These are unchanged: the flagged chains did not decide any state's final.
+- Consequence: the screen's gains do not rest on pasted values. A full run with probe_state should turn on
+  literal_check.
