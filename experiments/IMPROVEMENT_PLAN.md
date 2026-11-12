@@ -4561,3 +4561,8 @@ before any data.**
 - Replay policy `default_2026_11_12` (= `default_2026_11_01_dsflash`); tests in `tests/test_loop.py`,
   `tests/test_devrun.py`, `tests/test_heldout.py`.
 - Plateau of the production default: 0.816 -> 0.881 on training (+0.065, gain; no correction), 0.904 on held-out.
+- Curves rebuilt (2026-11-12, all ~2,000 programs of 7 runs re-scored under epoch 9, no model calls): two new
+  measured lines, the 2026-11-01 default (`work/replay_default_e8`) and the 2026-11-12 default
+  (`work/dsflash_default`). All starts end at 0.821 and 0.886 (running 0.806 / 0.867, crashing 0.871 / 0.950); the
+  curve values sit ~0.005 above the re-verified finals (0.816 / 0.881) because the curves take each chain's best
+  accepted score. The new default reaches the old default's plateau by step 2. `experiments/figures/inloop_curves.*`.
