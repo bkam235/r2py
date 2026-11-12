@@ -1,0 +1,37 @@
+[
+ {
+  "command": "scripts/patience_continue.py run --workers 6 --budget 4",
+  "started": "2026-11-12 14:54:33",
+  "ended": "2026-11-12 22:48:03",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 123,
+  "balance_start": 8.76,
+  "balance_end": 7.51,
+  "cost": 1.26,
+  "budget": 4.0,
+  "stop_reason": "finished",
+  "sleep_gaps": [
+   [
+    "2026-11-12 16:24:36",
+    "2026-11-12 21:13:35"
+   ],
+   [
+    "2026-11-12 21:16:58",
+    "2026-11-12 22:17:08"
+   ]
+  ]
+ },
+ {
+  "command": "scripts/patience_continue.py run --workers 6 --budget 2.5",
+  "started": "2026-11-12 22:48:15",
+  "ended": "2026-11-12 23:00:03",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 10,
+  "balance_start": 7.51,
+  "balance_end": 7.43,
+  "cost": 0.08,
+  "budget": 2.5,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

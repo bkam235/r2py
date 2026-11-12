@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/patience_continue.py run --workers 6 --budget 0.5 --limit 1 --out work/patience_dsflash_smoke",
+  "started": "2026-11-12 14:38:19",
+  "ended": "2026-11-12 14:54:18",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 6,
+  "balance_start": 8.82,
+  "balance_end": 8.77,
+  "cost": 0.05,
+  "budget": 0.5,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

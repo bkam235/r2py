@@ -1,0 +1,8 @@
+{"kind": "run_start", "t": 0.0, "script": "farver__rd_example__convert_colour_Rd.R", "policy": "dsf_chain", "sample": "c1"}
+{"kind": "step", "t": 39.12, "outcome": "probe_r:free", "step": 1, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "f4823bcd8441", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 29.6}
+{"kind": "step", "t": 39.12, "outcome": "conversation_turn", "step": 1, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "f4823bcd8441", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 29.6}
+{"kind": "step", "t": 116.51, "outcome": "probe_r:free", "step": 2, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "1d54f7529b57", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 77.0}
+{"kind": "step", "t": 116.51, "outcome": "conversation_turn", "step": 2, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "1d54f7529b57", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 77.0}
+{"kind": "step", "t": 145.82, "outcome": "probe_r:free", "step": 3, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "e875d4315e68", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 29.0}
+{"kind": "step", "t": 145.82, "outcome": "conversation_turn", "step": 3, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "e875d4315e68", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 29.0}
+{"kind": "run_end", "t": 186.25, "final_score": 0.4429}

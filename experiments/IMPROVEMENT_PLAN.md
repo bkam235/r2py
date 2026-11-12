@@ -4592,3 +4592,33 @@ before any data.**
 - Caveat: the continuation starts a fresh conversation, so it approximates a restart from the best program, not a
   higher `max_stalls` inside one conversation. States at or above 0.9 (0.018 of the gap) are left out.
 - Estimate about $2.0 (123 chains, about 8 DeepSeek calls each), budget $4.
+- **Result (2026-11-13): not adopted.** All 123 chains valid after the resume (10 rows overlapped two machine sleeps
+  and were rerun); guard cost $1.34 ($1.26 + $0.08). By the registered rule (`work/patience_dsflash/analysis.txt`):
+  - patience minus width per call **+0.00039 [-0.00181, +0.00253], P(> 0) = 0.66**, below the 0.9 bar;
+  - patience gained +0.0103 [+0.0028, +0.0194] on the plateau with 388 calls (0.00159 per call); width gained
+    +0.0071 [+0.0004, +0.0178] with 356 calls (0.00120 per call). Chains improved: 19 of 66 against 26 of 57;
+    "done" 18 and 15.
+  - The first analysis run counted every state twice (a set missing in `analyze`), which doubled the sums and
+    narrowed the intervals; fixed before any decision, and the rule is unchanged. That output is kept as
+    `analysis_duplicated_states_bug.txt`.
+- **A measurement artefact inflates the patience arm, and the decision holds without it.** 15 of the 66 continued
+  chains started at a score other than their recorded best, although their program was unchanged. farver
+  convert_colour b1/b2 started at 0.890 against 0.703 recorded, so farver's +0.188 "patience gain" is a re-score,
+  not a better program. Counting a chain only when it beat its own re-verified start: patience 0.00098 per call,
+  width 0.00120. Width does at least as well per call.
+- Offline reproduction, no agent, deterministic (`work/patience_dsflash/rescore_*.py`): the same farver program
+  scores 0.7027 three times through the offline re-verification (`prompt_load._tools`, the path of
+  `reverify_finals.py`, the gap table and the epoch-9 finals) and 0.8902 through a fresh `replay.run_one` harness,
+  with either the chain's or the frozen start as reference. caret_s3 b2: 0.7419 against 0.4086. recipes step_kpca
+  b0 scores 0.772 on both paths, but was recorded at 0.701 inside its chain. The cause is not found: a hypothesis
+  until tested, and a scorer question (3a) for its own cycle. It matters beyond this test: in-loop scores, replay
+  starts and re-verified finals do not always measure a program the same way.
+- What it says about the gap: in the 19 states below 0.9, both arms together gain +0.016 on the plateau for about
+  744 calls (about 60% more calls than the default's whole run). The moving states gained +0.007 from patience and
+  +0.003 from width. Three of the nine "never moved" states moved by more than artefact: caret_s3 reached 1.0 in a
+  width chain by re-implementing R's Mersenne Twister and `sample()` (read: no pasted values); ggplot2 geom_bin_2d
+  +0.178 and shape filledmultigonal +0.027 by patience. The "stuck" states are not all measurement.
+- Plateau of the production default: unchanged, 0.881 training / 0.904 held-out (no gain, no correction). The cycle
+  was worth running: lesson 5 (patience adds nothing) is now also measured under the DeepSeek agent. Patience gains
+  but no more per call than width. More calls on states that end below 0.9 return about 0.001 per call either way.
+  The cycle also found the scoring inconsistency above.

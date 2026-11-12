@@ -122,7 +122,7 @@ def analyze(out_dir=OUT) -> None:
     for r in map(json.loads, (out_dir / "results.jsonl").open(encoding="utf-8")):
         if _valid(r):
             rows[(r["script"], r["policy"])].append(r)
-    states = sorted(s for s, _ in want if all(len(rows[(s, a)]) == want[(s, a)] for a in ("dsf_cont", "dsf_chain")))
+    states = sorted({s for s, _ in want if all(len(rows[(s, a)]) == want[(s, a)] for a in ("dsf_cont", "dsf_chain"))})
     print(f"states {len(states)} of {len({s for s, _ in want})} complete")
     gain, calls = {a: {} for a in ("dsf_cont", "dsf_chain")}, {a: {} for a in ("dsf_cont", "dsf_chain")}
     for a in gain:
