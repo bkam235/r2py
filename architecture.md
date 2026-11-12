@@ -97,6 +97,13 @@ learning is the non-parametric Pattern Library, per D5):
   script B (online, cross-script in-context learning).
 - The loop halts on `best_score ≥ threshold` or `iterations ≥ max_iterations`.
 
+**Two loops.** This translation loop is the *ground loop*. The harness around it
+(its options and defaults, the scorer, the model) is changed only by a second,
+slower *meta-loop*: a person and a strong model ask one question per cycle,
+register a test before any data, and flip an off-by-default option only when a
+pre-registered decision rule holds on a training pool and again on a held-out
+pool. See §12.7 and `experiments/META_LOOP.md`.
+
 ---
 
 ## 2. Stage 0 — Substrate
@@ -1304,6 +1311,103 @@ hash is added to the determinism tuple (§12.1).
 The reranker defaults to the existing heuristic if its model artifact is absent,
 below the data threshold, or losing the held-out A/B — so enabling D6 is
 strictly opt-in upside with a clean fallback.
+
+### 12.7 The meta-loop (how the harness itself is improved)
+
+Everything above describes the **ground loop**: the system that translates one
+script in minutes (Gemma 4 31B as the model). Since October 2026 the harness is
+changed only through a second loop, the **meta-loop**: a person and a strong
+model, one question per cycle, days per cycle. The authoritative protocol is
+[`experiments/META_LOOP.md`](experiments/META_LOOP.md); the log of every cycle
+is `experiments/IMPROVEMENT_PLAN.md`. This section summarizes the structure.
+
+```
+                 META-LOOP  (person + strong model, one question per cycle, days)
+ ┌─────────────────────────────────────────────────────────────────────────────────────┐
+ │ Observe ─► Diagnose ─┬─ measurement ─► Scorer fix ─► reference check ─► accept ─┐   │
+ │    ▲                 │                                         (new epoch)      │   │
+ │    │                 ├─ behaviour ───► Harness option (off) ──┐                 │   │
+ │    │                 └─ capability ──► Trained model (off) ───┤                 │   │
+ │    │                    ┌─────────────────────────────────────┘                 │   │
+ │    │                    ▼                                                       │   │
+ │    │                   Register ─► Test ─► Decide ─► Held-out confirm           │   │
+ │    │                                         │ fails       │ passes             │   │
+ │    │                                         ▼             ▼                    │   │
+ │    └──────────────────────────────────── Record ◄─── Adopt: flip default        │   │
+ │                                            ▲                                    │   │
+ │                                            └────────────────────────────────────┘   │
+ └─────▲──────────────────────────────────────────────────┬────────────────────────────┘
+       │ telemetry: results rows, trajectories,           │ settings: an option's default
+       │ run_manifest.json, health report                 │ versions: scorer epoch, policy name
+ ┌─────┴──────────────────────────────────────────────────▼────────────────────────────┐
+ │ GROUND LOOP  (Gemma 4 31B, minutes per script)                                      │
+ │ Analyze ─► Seed ─► Verify ─► Agent rewrite ─► Verify ─► ... ─► Python + report      │
+ └─────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Three interfaces, nothing else.** The meta-loop touches the ground loop only
+through:
+- **settings (meta → ground):** every change is built behind an option that is
+  off by default (`DEFAULT_*` in `r2py/loop.py`, the run manifest); adopting it
+  flips the default. Nothing else reaches production translations;
+- **telemetry (ground → meta):** results rows, trajectories,
+  `run_manifest.json`, and the health report `replay.py` writes at the end of
+  every run (`scripts/health_report.py`, `--deep` re-verifies the
+  never-improving starts offline);
+- **versions (both ways):** every run row carries the scorer version
+  (`r2py/scoring.py`) and a policy name (`default_<date>`, the replay policies in
+  `scripts/replay.py`).
+
+**The objective** is one number: the plateau of the production default, the
+mean final score of the current `default_<date>` policy on the 60 frozen
+training states under the open scoring epoch, confirmed on the 46 held-out
+states (`experiments/pools/heldout.json`). Changes are classified by what they
+do to it: a harness or learning change is a **gain** (better programs); a scorer
+change that removes false losses is a **correction** (the same programs measured
+differently); a scorer change that only cleans the feedback is a correction whose
+effect on translations stays unmeasured until the default is replayed.
+
+**Three tracks**, chosen by the diagnosis of a concrete loss:
+
+| diagnosis | track | gate |
+|---|---|---|
+| measurement: the scorer is wrong | **scorer** — change + unit test, `scoring_epoch.py check` on 147 reference programs, `accept` opens a new **scoring epoch** and re-scores all ~1,400 curve programs | the person accepts the epoch |
+| behaviour: the scorer is right, the loop does the wrong thing | **harness** — option off by default, unit test, smoke test on one state; `scoring_epoch.py status` must stay `same` | registered test, decision rule |
+| capability: correct feedback, varied attempts, none right | **learning** — train the model on verified translations (expert iteration) behind a model policy; data audited for scorer exploits first | the person gates data audit and every training spend; not yet run |
+
+**Experiments, not edits.** Each harness or learning question is
+pre-registered (`experiments/registry.jsonl` via `scripts/registry.py`, with
+hypothesis, arms, primary metric, decision rule, cost) and committed before any
+data. The test uses the cheapest instrument that can answer it — offline
+re-verification (free), `step_ab.py` and `two_step.py` (one or two steps from
+frozen states, under $1), `continue_stalled.py` / `continue_plateau.py`, and
+only then `replay.py --pool training` (the whole loop, about $4). All write one
+format that `scripts/expkit.py analyze` reads. The decision rules are the
+person's: a free, reversible setting is adopted at P(effect > 0) ≥ 0.9 in a
+bootstrap over states; a change that costs calls must beat spending the same
+calls on best-of-k sampling; claims keep the 95% interval. A winner is re-run
+once on the held-out pool under the same rule before the default flips and a new
+`default_<date>` policy is added.
+
+**Invariants** (in addition to §12.5):
+- No edit to `r2py/` while a run is in progress (the run would mix two harnesses).
+- The scorer (`SCORER_PATHS` in `r2py/scoring.py`), the stored R ground truth,
+  the pools and the decision rules are off limits to the proposer without the
+  person's acceptance; a scorer change is made because a measurement is wrong on
+  a concrete program, never to move a result.
+- No pasting back: R values or R stdout never reach the model's program
+  (`paste_check` in the health report; `literal_check` in the loop).
+- Every run goes through the run guard (`--budget`), which records its cost and
+  marks rows that overlapped a laptop sleep invalid.
+
+**Relation to D5 and D6.** The ground loop's model stays frozen during a
+translation and no reward is learned (D5, D6 hold). The learning track trains a
+model *between* runs, offline, behind a policy that is off by default, and is
+adopted only through the same registered test and held-out confirmation as any
+other change.
+
+In Claude Code, the local project skill `/meta-cycle [question]`
+(`.claude/skills/meta-cycle/`, not in git) runs one cycle by this protocol.
 
 ---
 

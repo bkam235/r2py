@@ -26,16 +26,37 @@ Verified patterns are extracted into a **Pattern Library** — a collection of M
 ## How It Works
 
 ```mermaid
-flowchart LR
-    R["R Script"] --> A["Analyze"]
-    A --> S["Seed Translate"]
-    S --> V["Verify"]
-    V --> D{"score ≥\nthreshold?"}
-    D -- yes --> P["Python Output"]
-    D -- no --> AG["Agent Refine"]
-    AG --> V
-    V -. learn .-> L[("Pattern Library")]
-    L -. guide .-> S
+flowchart TB
+    subgraph META["Meta-loop: improves the harness (person + strong model, one question per cycle)"]
+        direction LR
+        O["Observe"] --> DG["Diagnose"]
+        DG -- measurement --> SC["Scorer fix:<br/>new epoch"]
+        DG -- behaviour --> H["Harness option,<br/>off by default"]
+        DG -- capability --> TM["Trained model,<br/>off by default"]
+        H --> RG["Register"]
+        TM --> RG
+        RG --> T["Test"]
+        T --> DC{"rule holds on<br/>training + held-out?"}
+        DC -- yes --> AD["Adopt:<br/>flip the default"]
+        DC -- no --> REC["Record"]
+        SC --> REC
+        AD --> REC
+        REC --> O
+    end
+    subgraph GROUND["Ground loop: translates one script (Gemma 4 31B)"]
+        direction LR
+        R["R Script"] --> A["Analyze"]
+        A --> S["Seed Translate"]
+        S --> V["Verify"]
+        V --> D{"score ≥<br/>threshold?"}
+        D -- yes --> P["Python Output"]
+        D -- no --> AG["Agent Refine"]
+        AG --> V
+        V -. learn .-> L[("Pattern Library")]
+        L -. guide .-> S
+    end
+    META == "settings: defaults · versions: scorer epoch, policy" ==> GROUND
+    GROUND == "telemetry: results, trajectories, health report" ==> META
 ```
 
 **Analyze** — Parses R via tree-sitter, executes the script and unevaluated branches, catalogs all entities and effects, and flags R-specific gotchas (1-based indexing, NA semantics, vector recycling, non-standard evaluation).
@@ -47,6 +68,17 @@ flowchart LR
 **Agent Refine** — If the score is below threshold, a reasoning agent iteratively rewrites the translation. Each rewrite must strictly improve the score — ties are rejected.
 
 **Pattern Library** — Verified improvements are extracted as reusable patterns with confidence levels (`confirmed`, `tentative`, `contradicted`). Contradicted patterns are hidden from future translations. The library is diffable, version-controllable, and fully human-readable.
+
+### The meta-loop
+
+The translation loop above is the **ground loop**. The harness around it (its options and defaults, the scorer, the model) is improved by a second, slower loop: a person and a strong model ask one question per cycle and answer it with a pre-registered experiment.
+
+- **One objective.** The plateau of the production default: the mean final score of the current `default_<date>` policy on 60 frozen training states, confirmed on 46 held-out states.
+- **Three tracks.** Each cycle traces a concrete loss to its cause. A *measurement* fault goes to the scorer (a change is accepted by the person and opens a new scoring epoch, after which all past programs are re-scored); a *behaviour* fault becomes a harness option; a *capability* gap is a candidate for training the model on verified translations.
+- **Experiments, not edits.** Every change is built behind an option that is off by default, registered in `experiments/registry.jsonl` with its hypothesis, metric and decision rule before any data, and tested with the cheapest instrument that answers it (single steps from frozen states cost under $1; a full replay about $4). It becomes the default only if the registered rule holds on the training pool and again on the held-out pool.
+- **Three interfaces.** The meta-loop reaches the ground loop only through settings (an option's default), and reads it only through telemetry (results, trajectories, health reports); every result carries its scorer version and policy name.
+
+The protocol is [`experiments/META_LOOP.md`](experiments/META_LOOP.md); every cycle is logged in [`experiments/IMPROVEMENT_PLAN.md`](experiments/IMPROVEMENT_PLAN.md), with the in-loop score curves in [`experiments/figures/`](experiments/figures/).
 
 ## Quick Start
 
@@ -153,6 +185,8 @@ print(f"{len(script_map.entities)} entities, {len(script_map.effects)} effects")
 
 **Falsification-based epistemology.** Patterns are promoted by evidence and demoted by contradictions. Contradicted patterns are suppressed, not deleted, preserving the reasoning trail.
 
+**Harness changes are experiments.** The harness changes only through the meta-loop: off-by-default options, tests registered before any data, decision rules set in advance, confirmation on a held-out pool. A scorer change is made because a measurement is wrong on a concrete program, never to move a result.
+
 **Exact-first data comparison.** Numeric data is compared by dtype, shape, and value within tolerance. Embedding-based comparison is a fallback for infrastructure mismatches only, never for real value disagreements.
 
 ## Architecture
@@ -165,12 +199,15 @@ print(f"{len(script_map.entities)} entities, {len(script_map.effects)} effects")
 | `r2py/stage4/`  | Verification — effect comparison, scoring, library updates             |
 | `r2py/harness/` | Reasoning agent — iterative rewrite loop                               |
 | `r2py/library/` | Pattern Library — storage, retrieval, epistemology                     |
+| `r2py/scoring.py` | Scorer version and scoring epochs (meta-loop)                        |
+| `scripts/`      | Meta-loop instruments — replay, step A/B, health report, registry, analysis |
+| `experiments/`  | Meta-loop protocol, cycle log, experiment registry, pools, curves      |
 
 For the full design rationale, stage specifications, and invariants, see [`architecture.md`](architecture.md).
 
 ## Status
 
-r2py is a research prototype demonstrating that execution-verified, self-improving code translation is viable. The Pattern Library currently contains patterns learned from translating examples across the tidyverse, base R, and statistical modeling packages.
+r2py is a research prototype demonstrating that execution-verified, self-improving code translation is viable. The Pattern Library currently contains patterns learned from translating examples across the tidyverse, base R, and statistical modeling packages. The harness is developed through the meta-loop; the production default currently reaches a mean final score of 0.816 on the 60 training states (scoring epoch 9).
 
 ## License
 
