@@ -4535,3 +4535,15 @@ before any data.**
   its done are dropped, which slightly understates the default's step budget for the other chains.
 - Rule: as on training, P(gain > 0) >= 0.9 passes. Only 4 crashing starts, so the bundle is confirmed, not
   review_crashing alone. Estimate $2.0, budget $4. Flipping the default stays with the person.
+- **Result (2026-11-12): passed.** 46 runs valid, guard cost $1.14 (DeepSeek $1.01, Gemma review $0.09), no sleep
+  gaps. Finals re-verified under epoch 9: **0.904 vs 0.816, gain +0.088 [+0.053, +0.129], P(gain > 0) = 1.00**;
+  better 28 / worse 2 / tied 16. Running starts +0.073 [+0.045, +0.104]; crashing starts (4) +0.250 [+0.003,
+  +0.497]. Finals >= 0.9: 34 vs 18 of 46. The baseline's two samples (0.826, 0.805) differ by -0.021, inside the
+  known replay noise; the gain is four times that.
+- Secondary: 167 free probes (3.6 per run); literal_check rejected 1 candidate (the review rejected it too); the
+  review rejected 25. The wins with numeric output were read: farver compare_colour's literals are colour-science
+  constants (sRGB matrix, CMC/CIE94 coefficients); ModelMetrics logLoss computes with statsmodels and sklearn (its
+  one R value sits in a docstring showing R's print format); no pasted results.
+- `deepseek-flash-default` held-out: **passed**. The default is not flipped: step 8 is the person's sign-off
+  (flip `r2py/loop.py` and its manifest key to the DeepSeek agent with probe_state, literal_check, review_crashing;
+  a `default_<date>` policy; a test). Analysis: `work/dsflash_heldout/analysis.txt`.

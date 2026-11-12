@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/replay.py --pool heldout --policies default_2026_11_01_dsflash --samples 1 --workers 6 --out work/dsflash_heldout/results.jsonl --budget 4.00",
+  "started": "2026-11-12 10:37:27",
+  "ended": "2026-11-12 12:06:43",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 46,
+  "balance_start": 9.97,
+  "balance_end": 8.84,
+  "cost": 1.14,
+  "budget": 4.0,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]
