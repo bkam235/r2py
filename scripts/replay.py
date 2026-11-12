@@ -89,6 +89,15 @@ POLICIES = {
                            start_stalls=2, max_steps=8),
     "stall2_fp": dict(entity_repair=False, escalate_after=None, width=1, converse=True, entity_feedback=True,
                       start_stalls=2, max_steps=8, free_probe=True),
+    # Test deepseek-flash-default (2026-11-12): the default with its agent on DeepSeek V4.1 Flash (deepinfra/fp8, as in
+    # model-screen-stall2), free probes in the script's own R state, and both hardcoding gates on every adopted
+    # candidate (the LLM review on Gemma, literal_check, review_crashing).
+    "default_2026_11_01_dsflash": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6,
+                                       crash_stalls=5, converse=True, entity_feedback=True,
+                                       agent_model="openrouter:deepseek/deepseek-v4.1-flash-1017",
+                                       agent_provider={"only": ["deepinfra/fp8"], "allow_fallbacks": False},
+                                       agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
+                                       free_probe=True, probe_state=True, literal_check=True, review_crashing=True),
     # Test model-screen-stall2 (2026-11-08): the same continuations with free probes evaluated in the script's state
     # (probe_state), the agent on Gemma or on a cheap model (pinned provider, reasoning capped as for GLM 5.3); the
     # review stays on Gemma.
