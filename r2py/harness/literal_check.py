@@ -7,6 +7,9 @@ deterministic. A literal counts when its value has at least 4 significant digits
 and printed output) to the literal's own precision. Only numbers in code count (Python NUMBER tokens), not numbers
 inside strings: the review allows an HTML/SVG literal for a package Python lacks, and its coordinates match R's HTML
 output (bslib value_box, about 50 per program). Pasted printed output inside a string is left to the LLM review.
+Integers are left to it too (2026-11-12): offline, 3+-digit integers found 2 pastes but also matched by chance
+(a seed 123 against R's resample indices, 2**24 against a black pixel), and a false rejection repeats on every later
+step of its chain.
 """
 from __future__ import annotations
 

@@ -4481,3 +4481,17 @@ before any data.**
     table.
   Screen gated: DeepSeek +0.0477 [+0.0293, +0.0690], GLM Flash +0.0246 [+0.0123, +0.0394], gpt-oss +0.0012,
   unchanged.
+- Revision (2026-11-12, the person's decisions):
+  - The LLM review always runs. `literal_check` is an extra gate, never a substitute: it runs after the review on
+    every candidate the review judges, and it can only add a rejection. `agent_stats["literal_check"]` counts
+    whether the review also rejected each flagged candidate. Before this, a flagged candidate skipped the review.
+  - Integers stay with the LLM review. Offline, 3+-digit integers added 4 cases in 1,133 programs: 2 pastes (broom
+    `df_t=103`; textshaping glyph tables, already caught by the decimal rule) and 2 chance matches (a caret seed 123
+    against R's resample indices; ragg's 2**24 bit constant against a black pixel). A chance match repeats on every
+    later step of its chain and would block it.
+  - New option `reason(review_crashing=True)`, off by default: the review and literal_check also judge a candidate
+    that still crashes. By default such a candidate is adopted unreviewed as a stepping stone, and on a crashing
+    start it can be the final program. It is on for new runs that use probe_state; making it the default is a flip
+    that needs its own test.
+  - Tests: `tests/test_literal_check.py` (9). The test that a flagged candidate is still reviewed fails on the old
+    gate. Suite passed (1,069).
