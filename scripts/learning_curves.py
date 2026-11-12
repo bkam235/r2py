@@ -287,7 +287,7 @@ def plot(data: dict, path: Path) -> None:
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
     titles = {"all": "All starts", "running": "Starts that run", "crashing": "Starts that crash"}
-    fig, axes = plt.subplots(1, 3, figsize=(16, 5.2), sharey=True)   # one y scale for every panel
+    fig, axes = plt.subplots(1, 3, figsize=(16, 5.2), sharey=False)
     for ax, (k, st_) in zip(axes, data["strata"].items()):
         last = data["steps"][-1]
         ax.axvspan(last + 0.3, last + 3.6, color="#eef1f5", zorder=0)

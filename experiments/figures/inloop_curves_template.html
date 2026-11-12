@@ -92,8 +92,7 @@ try { const s = localStorage.getItem("inloop-stratum"); if (s && DATA.strata[s])
 function draw() {
   const st = DATA.strata[current];
   const SERIES = SERIES_BY[current] || SERIES_BY.base;
-  // One y scale for every view: the range of all strata, not only the one shown.
-  const vals = Object.values(DATA.strata).flatMap(s => [...Object.values(s.lines).flat(), ...Object.values(s.ext).flat()]);
+  const vals = [...Object.values(st.lines).flat(), ...Object.values(st.ext).flat()];
   const lo = Math.max(0, Math.floor(Math.min(...vals) * 10) / 10), hi = Math.min(1, Math.ceil(Math.max(...vals) * 10) / 10);
   const x = i => M.l + (i / XMAX) * (W - M.l - M.r);
   const y = v => M.t + (1 - (v - lo) / (hi - lo)) * (H - M.t - M.b);
