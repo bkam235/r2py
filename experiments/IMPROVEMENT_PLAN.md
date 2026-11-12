@@ -4495,3 +4495,17 @@ before any data.**
     that needs its own test.
   - Tests: `tests/test_literal_check.py` (9). The test that a flagged candidate is still reviewed fails on the old
     gate. Suite passed (1,069).
+
+### DeepSeek Flash as the default's agent (test `deepseek-flash-default`, harness track) — registered 2026-11-12
+
+- Question: does the default reach a higher plateau with its agent on DeepSeek V4.1 Flash than on Gemma?
+- Arm: `default_2026_11_01_dsflash` (deepseek/deepseek-v4.1-flash-1017 on deepinfra/fp8, reasoning 8k, output
+  36k). It uses free probes evaluated in the script's own R state, and every adopted candidate passes the Gemma LLM
+  review, `literal_check` and `review_crashing`. Review, mapping and audit stay on Gemma.
+- Instrument: one replay sample of the 60 training starts; finals re-verified under epoch 9; paired with the
+  default's e8 sample-0 finals (0.816), as in glm53-ceiling (GLM 5.3 reached 0.858).
+- Rule: about Gemma's cost per call, so treated as a free change: P(gain > 0) >= 0.9 makes it a default candidate
+  for held-out. Flipping the default stays with the person. Estimate $3.5, budget $6.
+- Smoke (2 states, $0.11): lava csplit (crashing start) 0.000 -> 1.000; textshaping shape_text 0.678 -> 0.971.
+  There, literal_check rejected a paste of four glyph metrics that the Gemma review had passed, and the 19 probes
+  ran with no errors.
