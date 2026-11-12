@@ -118,8 +118,19 @@ def llm_settings(manifest: dict) -> dict:
 
     ``{"provider": None}`` leaves provider routing to OpenRouter (a development run: faster and
     cheaper, but the weights/quantisation behind the model string are no longer fixed).
+
+    The agent model (2026-11-12) gets its own provider pin and reasoning cap (``protocol["translate"]`` keys
+    ``agent_provider``, ``agent_reasoning``; defaults in r2py/loop.py) unless ``protocol["llm"]`` sets them.
     """
-    return {**LLM_SETTINGS, **(manifest["protocol"].get("llm") or {})}
+    from r2py.loop import DEFAULT_AGENT_MODEL, DEFAULT_AGENT_PROVIDER, DEFAULT_AGENT_REASONING
+    s = {**LLM_SETTINGS, **(manifest["protocol"].get("llm") or {})}
+    cfg = manifest["protocol"].get("translate") or {}
+    agent = cfg.get("agent_model", DEFAULT_AGENT_MODEL)
+    if agent != cfg.get("model"):
+        name = agent.removeprefix("openrouter:")
+        s.setdefault("provider_by_model", {name: cfg.get("agent_provider", DEFAULT_AGENT_PROVIDER)})
+        s.setdefault("extra_by_model", {name: {"reasoning": cfg.get("agent_reasoning", DEFAULT_AGENT_REASONING)}})
+    return s
 
 
 def package_of(script: str) -> str:
@@ -391,8 +402,10 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
     experiment.
     """
     from r2py import seed_from_translation
-    from r2py.loop import (DEFAULT_AGENT_WIDTH, DEFAULT_CONVERSE, DEFAULT_CRASH_BUDGET_FACTOR, DEFAULT_CRASH_STALLS,
-                           DEFAULT_CRASH_WIDTH, DEFAULT_ENTITY_FEEDBACK, run_loop)
+    from r2py.loop import (DEFAULT_AGENT_MAX_TOKENS, DEFAULT_AGENT_MODEL, DEFAULT_AGENT_WIDTH, DEFAULT_CONVERSE,
+                           DEFAULT_CRASH_BUDGET_FACTOR, DEFAULT_CRASH_STALLS, DEFAULT_CRASH_WIDTH,
+                           DEFAULT_ENTITY_FEEDBACK, DEFAULT_FREE_PROBE, DEFAULT_LITERAL_CHECK, DEFAULT_PROBE_STATE,
+                           DEFAULT_REVIEW_CRASHING, run_loop)
     from r2py.stage1 import analyze
 
     from r2py.harness import trajectory
@@ -413,7 +426,7 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         n_planned_seeds=cfg.get("n_planned_seeds", 0),
         checkpoint_path=py_path,
         model=cfg["model"],
-        escalation_model=cfg["model"],
+        escalation_model=cfg.get("agent_model", DEFAULT_AGENT_MODEL),
         timeout_s=cfg["timeout_s"],
         max_stalls=cfg["max_stalls"],
         agent_budget_s=cfg.get("agent_budget_s"),
@@ -425,6 +438,11 @@ def _translate_once(r_path: Path, py_path: Path, lib, cfg: dict, *, learn: bool)
         agent_crash_budget_factor=cfg.get("agent_crash_budget_factor", DEFAULT_CRASH_BUDGET_FACTOR),
         agent_converse=cfg.get("agent_converse", DEFAULT_CONVERSE),
         agent_entity_feedback=cfg.get("agent_entity_feedback", DEFAULT_ENTITY_FEEDBACK),
+        agent_free_probe=cfg.get("free_probe", DEFAULT_FREE_PROBE),
+        agent_probe_state=cfg.get("probe_state", DEFAULT_PROBE_STATE),
+        agent_literal_check=cfg.get("literal_check", DEFAULT_LITERAL_CHECK),
+        agent_review_crashing=cfg.get("review_crashing", DEFAULT_REVIEW_CRASHING),
+        agent_max_tokens=cfg.get("agent_max_tokens", DEFAULT_AGENT_MAX_TOKENS),
         agent_entity_width=cfg.get("entity_width", 1),
         agent_locate=cfg.get("locate", False),
         runtime_dir=cfg.get("runtime_dir"),

@@ -9,10 +9,20 @@ from r2py import heldout as ho
 class TestLlmSettings(unittest.TestCase):
     def test_defaults_and_override(self):
         base = {"protocol": {}}
-        self.assertEqual(ho.llm_settings(base), ho.LLM_SETTINGS)
+        s = ho.llm_settings(base)
+        self.assertEqual({k: s[k] for k in ho.LLM_SETTINGS}, ho.LLM_SETTINGS)
         s = ho.llm_settings({"protocol": {"llm": {"provider": None}}})
         self.assertIsNone(s["provider"])
         self.assertEqual(s["temperature"], ho.LLM_SETTINGS["temperature"])  # only what was overridden
+
+    def test_the_default_agent_model_gets_its_own_pin_and_reasoning_cap(self):
+        from r2py.loop import DEFAULT_AGENT_MODEL, DEFAULT_AGENT_PROVIDER, DEFAULT_AGENT_REASONING
+        name = DEFAULT_AGENT_MODEL.removeprefix("openrouter:")
+        s = ho.llm_settings({"protocol": {"translate": {"model": "openrouter:google/gemma-4-31b-it"}}})
+        self.assertEqual(s["provider_by_model"], {name: DEFAULT_AGENT_PROVIDER})
+        self.assertEqual(s["extra_by_model"], {name: {"reasoning": DEFAULT_AGENT_REASONING}})
+        same = ho.llm_settings({"protocol": {"translate": {"model": "m", "agent_model": "m"}}})
+        self.assertNotIn("provider_by_model", same)   # an agent on the manifest's model needs no pin of its own
 
     def test_unpinned_client_sends_no_provider(self):
         seen = {}

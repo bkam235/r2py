@@ -107,6 +107,15 @@ class TestAgentEscalation(unittest.TestCase):
             run_loop(SM, lib, score_threshold=0.85)
         self.assertTrue(mock_agent.call_args.kwargs["entity_feedback"])
 
+    def test_the_2026_11_12_agent_options_are_on_by_default_and_the_review_stays_on_model(self):
+        lib = _mock_lib()
+        with patch(_S2, return_value=("seed", {})), patch(_S4, return_value=_sr(0.4)),              patch(_AGENT, return_value=None) as mock_agent, patch(_EP, return_value=[]):
+            run_loop(SM, lib, score_threshold=0.85, model="m", escalation_model="agent")
+        kw = mock_agent.call_args.kwargs
+        for k in ("free_probe", "probe_state", "literal_check", "review_crashing"):
+            self.assertTrue(kw[k], k)
+        self.assertEqual((kw["model"], kw["review_model"]), ("agent", "m"))
+
     def test_a_running_start_keeps_its_budget(self):
         lib = _mock_lib()
         with patch(_S2, return_value=("seed", {})), patch(_S4, return_value=_sr(0.4)),              patch(_AGENT, return_value=None) as mock_agent, patch(_EP, return_value=[]):

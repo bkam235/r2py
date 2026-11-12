@@ -232,7 +232,9 @@ class TestTranslateOnce(unittest.TestCase):
         loop, _ = self._run(learn=False, score=0.1)
         kw = loop.call_args.kwargs
         cfg = ho.DEFAULT_PROTOCOL["translate"]
-        self.assertEqual((kw["model"], kw["escalation_model"]), (cfg["model"], cfg["model"]))
+        from r2py.loop import DEFAULT_AGENT_MODEL   # the agent's own model since 2026-11-12; seeds stay on the manifest's
+        self.assertEqual((kw["model"], kw["escalation_model"]), (cfg["model"], DEFAULT_AGENT_MODEL))
+        self.assertTrue(kw["agent_probe_state"] and kw["agent_literal_check"] and kw["agent_review_crashing"])
         self.assertEqual(kw["score_threshold"], cfg["score_threshold"])
 
 
@@ -470,7 +472,7 @@ class TestScoreOrder(unittest.TestCase):
             ho.score(self.m, self.work, ["empty"], log=lambda *_: None)
         row = ho._read_jsonl(self.work / "scores.jsonl")[0]
         self.assertEqual(row["order_seed"], f"{self.m['protocol']['seed']}:score:0")
-        self.assertEqual(row["llm"], ho.LLM_SETTINGS)
+        self.assertEqual(row["llm"], ho.llm_settings(self.m))   # the module defaults plus the agent's pin (2026-11-12)
 
 
 class TestPinnedLlm(unittest.TestCase):

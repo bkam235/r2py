@@ -4547,3 +4547,17 @@ before any data.**
 - `deepseek-flash-default` held-out: **passed**. The default is not flipped: step 8 is the person's sign-off
   (flip `r2py/loop.py` and its manifest key to the DeepSeek agent with probe_state, literal_check, review_crashing;
   a `default_<date>` policy; a test). Analysis: `work/dsflash_heldout/analysis.txt`.
+
+### Default 2026-11-12: the agent on DeepSeek V4.1 Flash (step 8, the person's flip) — 2026-11-12
+
+- After `deepseek-flash-default` (+0.065 training) passed held-out (`deepseek-flash-default-heldout`, +0.088), the
+  person flipped the default. `r2py/loop.py`: `DEFAULT_AGENT_MODEL` (deepseek/deepseek-v4.1-flash-1017),
+  `DEFAULT_AGENT_PROVIDER` (deepinfra/fp8), `DEFAULT_AGENT_REASONING` (8k), `DEFAULT_AGENT_MAX_TOKENS` (36k), and
+  `DEFAULT_FREE_PROBE`, `DEFAULT_PROBE_STATE`, `DEFAULT_LITERAL_CHECK`, `DEFAULT_REVIEW_CRASHING` on; `run_loop`
+  passes them to the agent, with the review on `model`. `r2py/heldout.py`: the agent model is the translate key
+  `agent_model` (default DeepSeek), and `llm_settings` pins its provider and reasoning cap (keys `agent_provider`,
+  `agent_reasoning`), so rows record the pin. Seeds, review, audit and mapping stay on the manifest's model (Gemma).
+  `r2py.translate()` keeps its own `escalation_model` argument (no provider pin there), but gets the new options.
+- Replay policy `default_2026_11_12` (= `default_2026_11_01_dsflash`); tests in `tests/test_loop.py`,
+  `tests/test_devrun.py`, `tests/test_heldout.py`.
+- Plateau of the production default: 0.816 -> 0.881 on training (+0.065, gain; no correction), 0.904 on held-out.

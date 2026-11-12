@@ -33,6 +33,19 @@ DEFAULT_CONVERSE = True
 # Each losing entity is shown the comparison that scores it, shared feedback once (2026-11-01: one step gains +0.024
 # [+0.004, +0.051] on training, +0.016 [-0.002, +0.038] P 0.96 on held-out; adopted under the free rule).
 DEFAULT_ENTITY_FEEDBACK = True
+# The agent on DeepSeek V4.1 Flash (2026-11-12, `deepseek-flash-default`: +0.065 [+0.026, +0.099] on training,
+# +0.088 [+0.053, +0.129] on held-out; the person's flip). It probes the script's own R state without a stall, and
+# every candidate passes the LLM review (on the manifest's model), literal_check, and the review when it crashes too.
+# The model, its provider pin, reasoning cap and output limit are manifest keys (r2py/heldout.py); seeds, the review,
+# the audit and the entity mapping stay on the manifest's model.
+DEFAULT_AGENT_MODEL = "openrouter:deepseek/deepseek-v4.1-flash-1017"
+DEFAULT_AGENT_PROVIDER = {"only": ["deepinfra/fp8"], "allow_fallbacks": False}
+DEFAULT_AGENT_REASONING = {"max_tokens": 8000}
+DEFAULT_AGENT_MAX_TOKENS = 36000
+DEFAULT_FREE_PROBE = True
+DEFAULT_PROBE_STATE = True
+DEFAULT_LITERAL_CHECK = True
+DEFAULT_REVIEW_CRASHING = True
 
 if TYPE_CHECKING:
     from .types import ScriptMap
@@ -118,6 +131,11 @@ def run_loop(
     agent_crash_budget_factor: float = DEFAULT_CRASH_BUDGET_FACTOR,
     agent_converse: bool = DEFAULT_CONVERSE,
     agent_entity_feedback: bool = DEFAULT_ENTITY_FEEDBACK,
+    agent_free_probe: bool = DEFAULT_FREE_PROBE,
+    agent_probe_state: bool = DEFAULT_PROBE_STATE,
+    agent_literal_check: bool = DEFAULT_LITERAL_CHECK,
+    agent_review_crashing: bool = DEFAULT_REVIEW_CRASHING,
+    agent_max_tokens: int = 16384,
     agent_entity_width: int = 1,
     agent_locate: bool = False,
     runtime_dir: "str | Path | None" = None,
@@ -339,6 +357,12 @@ def run_loop(
         crash_stalls=agent_crash_stalls,
         converse=agent_converse,
         entity_feedback=agent_entity_feedback,
+        free_probe=agent_free_probe,
+        probe_state=agent_probe_state,
+        literal_check=agent_literal_check,
+        review_crashing=agent_review_crashing,
+        max_tokens=agent_max_tokens,
+        review_model=model,
         budget_s=budget_s,
         replace_entity=agent_replace_entity,
         entity_repair=agent_entity_repair,

@@ -98,6 +98,13 @@ POLICIES = {
                                        agent_provider={"only": ["deepinfra/fp8"], "allow_fallbacks": False},
                                        agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
                                        free_probe=True, probe_state=True, literal_check=True, review_crashing=True),
+    # The production default as of 2026-11-12: the above (the person's flip after it passed held-out).
+    "default_2026_11_12": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
+                               converse=True, entity_feedback=True,
+                               agent_model="openrouter:deepseek/deepseek-v4.1-flash-1017",
+                               agent_provider={"only": ["deepinfra/fp8"], "allow_fallbacks": False},
+                               agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
+                               free_probe=True, probe_state=True, literal_check=True, review_crashing=True),
     # Test model-screen-stall2 (2026-11-08): the same continuations with free probes evaluated in the script's state
     # (probe_state), the agent on Gemma or on a cheap model (pinned provider, reasoning capped as for GLM 5.3); the
     # review stays on Gemma.
