@@ -2,7 +2,7 @@
 
 With probes that show R's results (`probe_state`), a model can copy R's output into the Python as literals, and the
 LLM review passed such programs (`model-screen-stall2`: textshaping/systemfonts glyph metrics, caret accuracies). This check is
-deterministic. A literal counts when it has at least 4 significant digits, appears neither in the reference program
+deterministic. A literal counts when its value has at least 4 significant digits (trailing zeros do not count), appears neither in the reference program
 (the chain's start) nor in the R script, and equals a number in the script's recorded R ground truth (entity data
 and printed output) to the literal's own precision. Only numbers in code count (Python NUMBER tokens), not numbers
 inside strings: the review allows an HTML/SVG literal for a package Python lacks, and its coordinates match R's HTML
@@ -18,13 +18,14 @@ import re
 import tokenize
 
 MIN_SIG = 4
-REJECT_AT = 3
+REJECT_AT = 1   # one pasted value is hardcoding (2026-11-12; was 3)
 _NUM = re.compile(r"(?<![\w.])-?(?:\d+\.\d+(?:[eE][-+]?\d+)?|\d+[eE][-+]?\d+)")
 
 
 def _sig(lit: str) -> int:
+    """Significant digits of the value: leading and trailing zeros carry none (100.00000 has 1)."""
     mant = re.split(r"[eE]", lit.lstrip("-"))[0]
-    return len(mant.replace(".", "").lstrip("0"))
+    return len(mant.replace(".", "").strip("0"))
 
 
 def _half_ulp(lit: str) -> float:
@@ -82,9 +83,9 @@ def pasted(candidate: str, reference: str, r_source: str, truth: list[float]) ->
 
 
 def check(candidate: str, reference: str, r_source: str, script_map) -> "str | None":
-    """A rejection reason when the candidate pastes REJECT_AT or more recorded R values, else None."""
+    """A rejection reason when the candidate pastes a recorded R value (REJECT_AT or more), else None."""
     hits = pasted(candidate, reference, r_source, truth_numbers(script_map))
     if len(hits) < REJECT_AT:
         return None
-    return (f"{len(hits)} numeric literals equal values R computed for this script "
+    return (f"{len(hits)} numeric literal{'s' if len(hits) > 1 else ''} equal to values R computed for this script "
             f"({', '.join(hits[:5])}{', ...' if len(hits) > 5 else ''}); compute them instead of copying them")

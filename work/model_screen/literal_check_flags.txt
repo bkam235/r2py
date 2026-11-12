@@ -1,6 +1,20 @@
-  farver__rd_example__as_white_ref_Rd.default_2026_11_01.0               step 2: 3 ['95.04285', '100.00000', '108.89004']
-  farver__rd_example__as_white_ref_Rd.default_2026_11_01.0               step 3: 4 ['95.04285', '100.00000', '108.89004', '100.000']
-replay_default_e8: 2 of 350 accepted programs flagged
-replay_default_e8_s1: 0 of 116 accepted programs flagged
+  farver__rd_example__as_white_ref_Rd.default_2026_11_01.0               step 2: 2 ['95.04285', '108.89004']
+  farver__rd_example__as_white_ref_Rd.default_2026_11_01.0               step 2: 2 ['95.04285', '108.89004']
+  farver__rd_example__as_white_ref_Rd.default_2026_11_01.0               step 3: 2 ['95.04285', '108.89004']
+  farver__rd_example__as_white_ref_Rd.default_2026_11_01.0               step 3: 2 ['95.04285', '108.89004']
+  farver__rd_example__encode_colour_Rd.default_2026_11_01.0              step 2: 1 ['12.17']
+replay_default_e8: 5 of 350 accepted programs flagged
+  farver__rd_example__as_white_ref_Rd.default_2026_11_01.0               step 3: 2 ['95.04285', '108.89004']
+replay_default_e8_s1: 1 of 116 accepted programs flagged
 ceiling_glm53: 0 of 278 accepted programs flagged
 stall2_continue: 0 of 102 accepted programs flagged
+  caret__rd_example__update_train_Rd.stall2_ps.replay_default_e8_s1.0.2  step 4: 4 ['0.9666667', '0.9533333', '0.966666666666667', '0.953333333333333']
+  systemfonts__rd_example__shape_string_Rd.stall2_ps_dsflash.replay_defa step 4: 2 ['0.859375', '2.546875']
+  systemfonts__rd_example__shape_string_Rd.stall2_ps_dsflash.replay_defa step 2: 2 ['10.859', '2.547']
+  systemfonts__rd_example__shape_string_Rd.stall2_ps_dsflash.replay_defa step 4: 2 ['10.859', '2.547']
+  systemfonts__rd_example__shape_string_Rd.stall2_ps_dsflash.replay_defa step 7: 3 ['13.40625', '0.859375', '2.546875']
+  textshaping__rd_example__shape_text_Rd.stall2_ps_dsflash.replay_defaul step 2: 11 ['3.328125', '7.328125', '6.671875', '2.671875', '8.671875']
+  textshaping__rd_example__shape_text_Rd.stall2_ps_dsflash.replay_defaul step 2: 1 ['2.546875']
+  textshaping__rd_example__shape_text_Rd.stall2_ps_dsflash.replay_defaul step 5: 5 ['-2.546875', '0.28125', '0.46875', '2.265625', '2.40625']
+  textshaping__rd_example__shape_text_Rd.stall2_ps_dsflash.replay_defaul step 8: 5 ['-2.546875', '0.28125', '0.46875', '2.265625', '2.40625']
+model_screen: 9 of 389 accepted programs flagged

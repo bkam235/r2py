@@ -4468,3 +4468,16 @@ before any data.**
     These are unchanged: the flagged chains did not decide any state's final.
 - Consequence: the screen's gains do not rest on pasted values. A full run with probe_state should turn on
   literal_check.
+- Revision (2026-11-12, at the person's request): a single pasted value is hardcoding, so `REJECT_AT` is 1 (it was
+  3). Significant digits are now counted from the value, so trailing zeros carry none (100.00000 has 1). Re-run
+  offline: 5 of 350 / 1 of 116 accepted programs flagged in the default's e8 / e8_s1 replays, 0 of 278 in the GLM
+  5.3 ceiling run, 0 of 102 in free-probe-stall2, 9 of 389 in the screen. Every flag was read, and none is a
+  coincidental match:
+  - caret accuracies copied as a list (Gemma);
+  - a fudge offset `(hue + 12.17) % 360` fitted to R's hue 12.1744 in farver encode_colour (Gemma; a single value
+    that the 3-value rule missed);
+  - Arial glyph metrics at size 12 copied from systemfonts/textshaping output (DeepSeek);
+  - farver as_white_ref's D65 white point (Gemma). This one is borderline: R's output there is the library's
+    table.
+  Screen gated: DeepSeek +0.0477 [+0.0293, +0.0690], GLM Flash +0.0246 [+0.0123, +0.0394], gpt-oss +0.0012,
+  unchanged.

@@ -1,4 +1,4 @@
-chains with a flagged accepted step: {'stall2_ps': 1, 'stall2_ps_dsflash': 3, 'stall2_ps_gptoss': 0, 'stall2_ps_glmflash': 0}
+chains with a flagged accepted step: {'stall2_ps': 1, 'stall2_ps_dsflash': 5, 'stall2_ps_gptoss': 0, 'stall2_ps_glmflash': 0}
   stall2_ps_glmflash   gated: states 56  gain +0.0246 [+0.0123, +0.0394]  P 1.00
   stall2_ps_gptoss     gated: states 56  gain +0.0012 [-0.0029, +0.0070]  P 0.62
   stall2_ps_dsflash    gated: states 56  gain +0.0477 [+0.0293, +0.0690]  P 1.00
