@@ -1,0 +1,9 @@
+{"kind": "run_start", "t": 0.0, "script": "systemfonts__rd_example__glyph_raster_Rd.R", "policy": "stall2_ps_gptoss", "sample": "replay_default_e8_s1.0.1"}
+{"kind": "step", "t": 9.49, "outcome": "conversation_turn", "step": 1, "best_score": 0.7859, "best_hash": "93e05ab3f4a6", "prompt_hash": "487b0e2b7b02", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 3.4}
+{"kind": "step", "t": 12.05, "outcome": "conversation_turn", "step": 2, "best_score": 0.7859, "best_hash": "93e05ab3f4a6", "prompt_hash": "d8154645dab3", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 2.6}
+{"kind": "step", "t": 14.09, "outcome": "conversation_turn", "step": 3, "best_score": 0.7859, "best_hash": "93e05ab3f4a6", "prompt_hash": "95c32ec317e4", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 2.0}
+{"kind": "step", "t": 44.36, "outcome": "conversation_turn", "step": 4, "best_score": 0.7859, "best_hash": "93e05ab3f4a6", "prompt_hash": "94735d435027", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 30.3}
+{"kind": "step", "t": 74.82, "outcome": "conversation_turn", "step": 5, "best_score": 0.7859, "best_hash": "93e05ab3f4a6", "prompt_hash": "14d9b284ce4a", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 30.5}
+{"kind": "step", "t": 115.99, "outcome": "conversation_turn", "step": 6, "best_score": 0.7859, "best_hash": "93e05ab3f4a6", "prompt_hash": "c440c0cbcc16", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 41.2}
+{"kind": "step", "t": 144.46, "outcome": "conversation_turn", "step": 7, "best_score": 0.7859, "best_hash": "93e05ab3f4a6", "prompt_hash": "0b9aca260e09", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 28.5}
+{"kind": "run_end", "t": 171.47, "final_score": 0.7859}

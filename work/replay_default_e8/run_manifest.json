@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/replay.py --pool training --policies default_2026_11_01 --samples 1 --workers 6 --out work/replay_default_e8/results.jsonl --budget 9.00 --reserve 0.50",
+  "started": "2026-11-05 08:19:16",
+  "ended": "2026-11-05 10:09:04",
+  "scoring_version": "36a93ea5bd69-db31b28ade02",
+  "rows": 60,
+  "balance_start": 11.6,
+  "balance_end": 7.84,
+  "cost": 3.76,
+  "budget": 9.0,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

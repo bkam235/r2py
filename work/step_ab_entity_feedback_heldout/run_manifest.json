@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/step_ab.py run --arms U E --samples 4 --pool heldout --only experiments/pools/entity_feedback_heldout_states.txt --tag entity_feedback_heldout --budget 1.0",
+  "started": "2026-11-01 09:08:36",
+  "ended": "2026-11-01 09:32:57",
+  "scoring_version": "36a93ea5bd69-db31b28ade02",
+  "rows": 248,
+  "balance_start": 1.96,
+  "balance_end": 1.61,
+  "cost": 0.35,
+  "budget": 1.0,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

@@ -1,0 +1,23 @@
+1 frozen states: rvest__vignette__r(0.00)
+1 runs to do (0 already finished), 1 workers
+[1/1] rvest__vignette__rvest_s7.R          default_2026_11_01_glm53 s0: 0.59 -> 0.59 (4 min)
+[Agent]   Starting reasoning loop (model=openrouter:z-ai/glm-5.3, score=0.592, threshold=0.9, max_steps=20)
+[Agent]   Starting reasoning loop (model=openrouter:z-ai/glm-5.3, score=0.592, threshold=0.9, max_steps=20)
+[Agent]   Starting reasoning loop (model=openrouter:z-ai/glm-5.3, score=0.592, threshold=0.9, max_steps=20)
+[LLM]     Warning: OpenRouter response truncated at 16384 tokens (max_tokens=16384)
+[Agent]   LLM call failed: OpenRouter returned null content (finish_reason='length'). The model may have emitted a tool call or an empty response.
+[Agent]   No improvement achieved (score=0.592)
+[LLM]     Warning: OpenRouter response truncated at 16384 tokens (max_tokens=16384)
+[Agent]   LLM call failed: OpenRouter returned null content (finish_reason='length'). The model may have emitted a tool call or an empty response.
+[Agent]   No improvement achieved (score=0.592)
+[LLM]     Warning: OpenRouter response truncated at 16384 tokens (max_tokens=16384)
+[Agent]   LLM call failed: OpenRouter returned null content (finish_reason='length'). The model may have emitted a tool call or an empty response.
+[Agent]   No improvement achieved (score=0.592)
+[Agent]   Width 3: no branch improved
+[guard] finished; cost $0.04; sleep gaps 0
+
+1 runs over 1 frozen states, policies ['default_2026_11_01_glm53']
+
+policy        runs  mean final  mean gain  P(improve)  P(final>=0.9)  min sd within state
+default_2026_11_01_glm53     1       0.592      0.000          0%             0%                  nan
+health report: work\smoke_glm53\health_report.md

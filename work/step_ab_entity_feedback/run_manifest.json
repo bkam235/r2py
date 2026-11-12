@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/step_ab.py run --arms U E --samples 4 --only experiments/pools/entity_feedback_states.txt --tag entity_feedback --budget 1.50 --reserve 0.50",
+  "started": "2026-10-31 14:35:51",
+  "ended": "2026-10-31 15:06:34",
+  "scoring_version": "36a93ea5bd69-db31b28ade02",
+  "rows": 264,
+  "balance_start": 2.43,
+  "balance_end": 1.96,
+  "cost": 0.47,
+  "budget": 1.5,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

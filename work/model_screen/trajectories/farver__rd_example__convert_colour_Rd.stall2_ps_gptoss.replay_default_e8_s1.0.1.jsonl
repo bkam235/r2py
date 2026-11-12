@@ -1,0 +1,5 @@
+{"kind": "run_start", "t": 0.0, "script": "farver__rd_example__convert_colour_Rd.R", "policy": "stall2_ps_gptoss", "sample": "replay_default_e8_s1.0.1"}
+{"kind": "step", "t": 5.8, "outcome": "probe_r:free", "step": 1, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "d3fadb3fe445", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 2.5}
+{"kind": "step", "t": 5.8, "outcome": "conversation_turn", "step": 1, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "d3fadb3fe445", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 2.5}
+{"kind": "done", "t": 9.83, "raw": "ACTION: done", "refused": false, "stall_count": 2, "step": 2, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "ec594f7cb813", "entity_repair": null, "branch": null, "action": "done", "entity": null, "llm_s": 4.0}
+{"kind": "run_end", "t": 9.83, "final_score": 0.4429}

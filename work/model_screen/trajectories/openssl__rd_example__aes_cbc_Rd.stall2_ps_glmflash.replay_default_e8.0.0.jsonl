@@ -1,0 +1,6 @@
+{"kind": "run_start", "t": 0.0, "script": "openssl__rd_example__aes_cbc_Rd.R", "policy": "stall2_ps_glmflash", "sample": "replay_default_e8.0.0"}
+{"kind": "step", "t": 104.82, "outcome": "probe_r:free", "step": 1, "best_score": 0.55, "best_hash": "6fa530d24e9b", "prompt_hash": "c90b308fe201", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 65.7}
+{"kind": "step", "t": 104.82, "outcome": "conversation_turn", "step": 1, "best_score": 0.55, "best_hash": "6fa530d24e9b", "prompt_hash": "c90b308fe201", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 65.7}
+{"kind": "step", "t": 354.61, "outcome": "probe_r:free", "step": 2, "best_score": 0.55, "best_hash": "6fa530d24e9b", "prompt_hash": "c083d669199c", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 249.4}
+{"kind": "step", "t": 354.61, "outcome": "conversation_turn", "step": 2, "best_score": 0.55, "best_hash": "6fa530d24e9b", "prompt_hash": "c083d669199c", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 249.4}
+{"kind": "run_end", "t": 672.09, "final_score": 0.55}

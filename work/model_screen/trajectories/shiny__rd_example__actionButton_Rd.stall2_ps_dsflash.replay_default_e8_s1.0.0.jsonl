@@ -1,0 +1,4 @@
+{"kind": "run_start", "t": 0.0, "script": "shiny__rd_example__actionButton_Rd.R", "policy": "stall2_ps_dsflash", "sample": "replay_default_e8_s1.0.0"}
+{"kind": "step", "t": 19.71, "outcome": "probe_r:free", "step": 1, "best_score": 0.759, "best_hash": "67b3e1969d76", "prompt_hash": "c88e4e9cb0d7", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 7.5}
+{"kind": "step", "t": 19.71, "outcome": "conversation_turn", "step": 1, "best_score": 0.759, "best_hash": "67b3e1969d76", "prompt_hash": "c88e4e9cb0d7", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 7.5}
+{"kind": "run_end", "t": 35.7, "final_score": 0.759}

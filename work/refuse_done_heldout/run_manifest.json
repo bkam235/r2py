@@ -1,0 +1,28 @@
+[
+ {
+  "command": "scripts/replay.py --pool heldout --policies default_2026_11_01_rd --samples 2 --workers 6 --out work/refuse_done_heldout/results.jsonl --budget 8.50",
+  "started": "2026-11-06 11:15:17",
+  "ended": "2026-11-06 12:06:48",
+  "scoring_version": "36a93ea5bd69-db31b28ade02",
+  "rows": 62,
+  "balance_start": 2.75,
+  "balance_end": 0.38,
+  "cost": 2.36,
+  "budget": 8.5,
+  "stop_reason": "balance at the reserve: $0.42 left",
+  "sleep_gaps": []
+ },
+ {
+  "command": "scripts/replay.py --pool heldout --policies default_2026_11_01_rd --samples 2 --workers 6 --out work/refuse_done_heldout/results.jsonl --budget 8.50",
+  "started": "2026-11-06 13:30:04",
+  "ended": "2026-11-06 14:02:32",
+  "scoring_version": "36a93ea5bd69-db31b28ade02",
+  "rows": 30,
+  "balance_start": 10.33,
+  "balance_end": 9.08,
+  "cost": 1.25,
+  "budget": 8.5,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

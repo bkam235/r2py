@@ -1,0 +1,343 @@
+31 states x 2 arms x 4 samples: 248 steps to do
+[1/248] ModelMetrics__rd_example__gini_Rd.R   E  s0 verified             0.506->0.6643 gain 0.1583
+[2/248] ModelMetrics__rd_example__gini_Rd.R   U  s0 verified             0.506->0.8583 gain 0.3523
+[3/248] ModelMetrics__rd_example__mse_Rd.R    E  s0 verified             0.7888->0.625 gain 0.0
+[4/248] ModelMetrics__rd_example__logLoss_Rd  U  s0 verified             0.8375->0.6536 gain 0.0
+[5/248] ModelMetrics__rd_example__logLoss_Rd  E  s0 verified             0.8375->0.6536 gain 0.0
+[6/248] ModelMetrics__rd_example__mse_Rd.R    U  s0 verified             0.7888->0.6175 gain 0.0
+[7/248] ModelMetrics__rd_example__rmse_Rd.R   U  s0 verified             0.875->0.8646 gain 0.0
+[8/248] ModelMetrics__rd_example__rmse_Rd.R   E  s0 verified             0.875->0.9583 gain 0.0833
+[9/248] broom__vignette__broom_chunk6.R       E  s0 verified             0.625->0.7686 gain 0.1436
+[10/248] broom__vignette__broom_chunk6.R       U  s0 verified             0.625->0.7686 gain 0.1436
+[11/248] caret__rd_example__preProcess_Rd.R    U  s0 verified             0.3125->0.5 gain 0.1875
+[12/248] clock__rd_example__posixt-group_Rd.R  U  s0 verified             0.75->0.75 gain 0.0
+[13/248] clock__rd_example__posixt-group_Rd.R  E  s0 verified             0.75->0.0 gain 0.0
+[14/248] clock__rd_example__time-point-roundi  U  s0 verified             0.6875->0.7892 gain 0.1017
+[15/248] clock__rd_example__iso-year-week-day  U  s0 verified             0.7312->0.7188 gain 0.0
+[16/248] clock__rd_example__iso-year-week-day  E  s0 verified             0.7312->0.7188 gain 0.0
+[17/248] clock__rd_example__time-point-roundi  E  s0 verified             0.6875->0.6875 gain 0.0
+[18/248] fansi__vignette__sgr-in-rmd_s6.R      U  s0 verified             0.8->0.8 gain 0.0
+[19/248] caret__rd_example__preProcess_Rd.R    E  s0 verified             0.3125->0.5 gain 0.1875
+[20/248] fansi__vignette__sgr-in-rmd_s6.R      E  s0 verified             0.8->0.8667 gain 0.0667
+[21/248] farver__rd_example__compare_colour_R  U  s0 verified             0.63->0.0 gain 0.0
+[22/248] fansi__rd_example__strwrap_ctl_Rd.R   U  s0 verified             0.7358->0.7358 gain 0.0
+[23/248] fansi__rd_example__strwrap_ctl_Rd.R   E  s0 verified             0.7358->0.7355 gain 0.0
+[24/248] e1071__rd_example__matchClasses_Rd.R  U  s0 verified             0.5828->0.526 gain 0.0
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[25/248] farver__rd_example__compare_colour_R  E  s0 verified             0.63->0.3801 gain 0.0
+[26/248] e1071__rd_example__matchClasses_Rd.R  E  s0 verified             0.5828->0.5214 gain 0.0
+[27/248] farver__rd_example__native_encoding_  E  s0 verified             0.727->0.7027 gain 0.0
+[28/248] gtable__rd_example__gtable_add_grob_  U  s0 verified             0.75->0.75 gain 0.0
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[29/248] gtable__rd_example__bind_Rd.R         U  s0 verified             0.3654->0.3654 gain 0.0
+[30/248] gtable__rd_example__gtable_add_grob_  E  s0 verified             0.75->1.0 gain 0.25
+[31/248] farver__rd_example__native_encoding_  U  s0 no rewrite           0.727->None gain 0.0
+[32/248] gtable__rd_example__bind_Rd.R         E  s0 verified             0.3654->0.0 gain 0.0
+[33/248] openssl__rd_example__keygen_Rd.R      U  s0 verified             0.3333->0.3365 gain 0.0031
+[34/248] gtable__rd_example__gtable_add_paddi  E  s0 verified             0.8125->0.0 gain 0.0
+[35/248] lubridate__rd_example__within-interv  E  s0 verified             0.5823->0.4705 gain 0.0
+[36/248] openssl__rd_example__keygen_Rd.R      E  s0 verified             0.3333->0.3343 gain 0.0009
+[37/248] lubridate__rd_example__within-interv  U  s0 gate rejected        0.5823->None gain 0.0
+[38/248] gtable__rd_example__gtable_add_paddi  U  s0 verified             0.8125->0.0 gain 0.0
+[39/248] pROC__rd_example__aSAH_Rd.R           U  s0 verified             0.9953->0.9953 gain 0.0
+[40/248] pROC__rd_example__aSAH_Rd.R           E  s0 verified             0.9953->0.8 gain 0.0
+[41/248] proxy__rd_example__rowSums_dist_Rd.R  U  s0 gate rejected        0.6109->None gain 0.0
+[42/248] proxy__rd_example__rowSums_dist_Rd.R  E  s0 verified             0.6109->0.6109 gain 0.0
+[43/248] ragg__rd_example__agg_tiff_Rd.R       U  s0 verified             0.8333->0.881 gain 0.0476
+[44/248] ragg__rd_example__agg_ppm_Rd.R        E  s0 verified             0.8333->0.0 gain 0.0
+[45/248] ragg__rd_example__agg_ppm_Rd.R        U  s0 verified             0.8333->0.0 gain 0.0
+[46/248] ragg__rd_example__agg_tiff_Rd.R       E  s0 verified             0.8333->0.8636 gain 0.0
+[47/248] ranger__rd_example__deforest_Rd.R     U  s0 verified             0.7461->0.7461 gain 0.0
+[48/248] prodlim__rd_example__summary_prodlim  E  s0 verified             0.5357->0.0 gain 0.0
+[49/248] ranger__rd_example__hshrink_Rd.R      U  s0 verified             0.6433->0.6433 gain 0.0
+[50/248] ranger__rd_example__deforest_Rd.R     E  s0 verified             0.7461->0.7461 gain 0.0001
+[51/248] ranger__rd_example__hshrink_Rd.R      E  s0 verified             0.6433->0.0 gain 0.0
+[52/248] prodlim__rd_example__summary_prodlim  U  s0 verified             0.5357->0.4542 gain 0.0
+[53/248] sass__rd_example__output_template_Rd  U  s0 verified             0.8581->0.8534 gain 0.0
+[54/248] sass__rd_example__output_template_Rd  E  s0 verified             0.8581->0.8507 gain 0.0
+[55/248] recipes__rd_example__step_filter_mis  E  s0 verified             0.7616->0.7702 gain 0.0086
+[56/248] recipes__rd_example__step_filter_mis  U  s0 verified             0.7616->0.8432 gain 0.0815
+[57/248] recipes__rd_example__step_YeoJohnson  E  s0 verified             0.7315->0.5753 gain 0.0
+[58/248] textshaping__rd_example__plot_shape_  U  s0 verified             0.2858->0.2505 gain 0.0
+[59/248] recipes__rd_example__step_YeoJohnson  U  s0 verified             0.7315->0.4727 gain 0.0
+[60/248] timeDate__rd_example__timeDate-finCe  U  s0 verified             0.85->0.8177 gain 0.0
+[61/248] timeDate__rd_example__timeDate-finCe  E  s0 verified             0.85->0.7702 gain 0.0
+[62/248] textshaping__rd_example__plot_shape_  E  s0 verified             0.2858->0.2505 gain 0.0
+[63/248] ModelMetrics__rd_example__gini_Rd.R   U  s1 verified             0.506->0.6583 gain 0.1523
+[64/248] ModelMetrics__rd_example__gini_Rd.R   E  s1 verified             0.506->0.8643 gain 0.3583
+[65/248] ModelMetrics__rd_example__logLoss_Rd  E  s1 verified             0.8375->0.6536 gain 0.0
+[66/248] ModelMetrics__rd_example__logLoss_Rd  U  s1 verified             0.8375->0.9286 gain 0.0911
+[67/248] ModelMetrics__rd_example__mse_Rd.R    U  s1 verified             0.7888->0.625 gain 0.0
+[68/248] broom__vignette__broom_chunk6.R       E  s1 verified             0.625->0.0 gain 0.0
+[69/248] ModelMetrics__rd_example__rmse_Rd.R   E  s1 verified             0.875->0.9583 gain 0.0833
+[70/248] ModelMetrics__rd_example__rmse_Rd.R   U  s1 verified             0.875->0.9583 gain 0.0833
+[71/248] broom__vignette__broom_chunk6.R       U  s1 verified             0.625->0.7752 gain 0.1502
+[72/248] ModelMetrics__rd_example__mse_Rd.R    E  s1 verified             0.7888->0.7812 gain 0.0
+[73/248] clock__rd_example__posixt-group_Rd.R  E  s1 verified             0.75->0.875 gain 0.125
+[74/248] clock__rd_example__posixt-group_Rd.R  U  s1 verified             0.75->0.75 gain 0.0
+[75/248] caret__rd_example__preProcess_Rd.R    U  s1 verified             0.3125->0.5 gain 0.1875
+[76/248] clock__rd_example__iso-year-week-day  U  s1 verified             0.7312->0.7188 gain 0.0
+[77/248] clock__rd_example__iso-year-week-day  E  s1 verified             0.7312->0.7188 gain 0.0
+[78/248] clock__rd_example__time-point-roundi  U  s1 verified             0.6875->0.6875 gain 0.0
+[79/248] clock__rd_example__time-point-roundi  E  s1 verified             0.6875->0.6875 gain 0.0
+[80/248] fansi__vignette__sgr-in-rmd_s6.R      U  s1 verified             0.8->0.8 gain 0.0
+[81/248] fansi__vignette__sgr-in-rmd_s6.R      E  s1 no rewrite           0.8->None gain 0.0
+[82/248] caret__rd_example__preProcess_Rd.R    E  s1 verified             0.3125->0.5 gain 0.1875
+[83/248] fansi__rd_example__strwrap_ctl_Rd.R   U  s1 gate rejected        0.7358->None gain 0.0
+[84/248] fansi__rd_example__strwrap_ctl_Rd.R   E  s1 verified             0.7358->0.734 gain 0.0
+[85/248] e1071__rd_example__matchClasses_Rd.R  E  s1 verified             0.5828->0.4165 gain 0.0
+[86/248] e1071__rd_example__matchClasses_Rd.R  U  s1 verified             0.5828->0.4732 gain 0.0
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[87/248] farver__rd_example__native_encoding_  U  s1 verified             0.727->0.6667 gain 0.0
+[88/248] farver__rd_example__compare_colour_R  U  s1 verified             0.63->0.38 gain 0.0
+[89/248] farver__rd_example__compare_colour_R  E  s1 verified             0.63->0.3802 gain 0.0
+[90/248] farver__rd_example__native_encoding_  E  s1 verified             0.727->0.727 gain 0.0
+[91/248] gtable__rd_example__bind_Rd.R         U  s1 verified             0.3654->0.3506 gain 0.0
+[92/248] gtable__rd_example__gtable_add_grob_  U  s1 verified             0.75->0.75 gain 0.0
+[93/248] gtable__rd_example__gtable_add_grob_  E  s1 verified             0.75->0.75 gain 0.0
+[94/248] gtable__rd_example__bind_Rd.R         E  s1 verified             0.3654->0.8977 gain 0.0
+[95/248] gtable__rd_example__gtable_add_paddi  U  s1 verified             0.8125->0.7316 gain 0.0
+[96/248] openssl__rd_example__keygen_Rd.R      E  s1 verified             0.3333->0.3365 gain 0.0031
+[97/248] openssl__rd_example__keygen_Rd.R      U  s1 verified             0.3333->0.3366 gain 0.0033
+[98/248] gtable__rd_example__gtable_add_paddi  E  s1 verified             0.8125->0.4375 gain 0.0
+[99/248] lubridate__rd_example__within-interv  U  s1 verified             0.5823->0.0 gain 0.0
+[100/248] pROC__rd_example__aSAH_Rd.R           U  s1 verified             0.9953->0.8 gain 0.0
+[101/248] pROC__rd_example__aSAH_Rd.R           E  s1 verified             0.9953->1.0 gain 0.0047
+[102/248] lubridate__rd_example__within-interv  E  s1 verified             0.5823->0.0 gain 0.0
+[103/248] proxy__rd_example__rowSums_dist_Rd.R  U  s1 verified             0.6109->0.6109 gain 0.0
+[104/248] proxy__rd_example__rowSums_dist_Rd.R  E  s1 verified             0.6109->0.4444 gain 0.0
+[105/248] ragg__rd_example__agg_tiff_Rd.R       U  s1 verified             0.8333->0.8636 gain 0.0
+[106/248] ragg__rd_example__agg_ppm_Rd.R        U  s1 verified             0.8333->0.0 gain 0.0
+[107/248] ragg__rd_example__agg_tiff_Rd.R       E  s1 verified             0.8333->0.881 gain 0.0476
+[108/248] ragg__rd_example__agg_ppm_Rd.R        E  s1 verified             0.8333->0.8889 gain 0.0
+[109/248] prodlim__rd_example__summary_prodlim  U  s1 verified             0.5357->0.0 gain 0.0
+[110/248] ranger__rd_example__hshrink_Rd.R      U  s1 verified             0.6433->0.6433 gain 0.0
+[111/248] ranger__rd_example__hshrink_Rd.R      E  s1 verified             0.6433->0.6433 gain 0.0
+[112/248] prodlim__rd_example__summary_prodlim  E  s1 verified             0.5357->0.5134 gain 0.0
+[113/248] ranger__rd_example__deforest_Rd.R     E  s1 verified             0.7461->0.8289 gain 0.0828
+[114/248] ranger__rd_example__deforest_Rd.R     U  s1 verified             0.7461->0.7461 gain 0.0
+[115/248] recipes__rd_example__step_YeoJohnson  U  s1 verified             0.7315->0.6675 gain 0.0
+[116/248] sass__rd_example__output_template_Rd  U  s1 verified             0.8581->0.8613 gain 0.0032
+[117/248] sass__rd_example__output_template_Rd  E  s1 verified             0.8581->0.8613 gain 0.0032
+[118/248] recipes__rd_example__step_filter_mis  U  s1 verified             0.7616->0.7003 gain 0.0
+[119/248] recipes__rd_example__step_filter_mis  E  s1 verified             0.7616->0.7741 gain 0.0125
+[120/248] recipes__rd_example__step_YeoJohnson  E  s1 verified             0.7315->0.5561 gain 0.0
+[121/248] textshaping__rd_example__plot_shape_  U  s1 verified             0.2858->0.2507 gain 0.0
+[122/248] timeDate__rd_example__timeDate-finCe  U  s1 verified             0.85->0.8177 gain 0.0
+[123/248] timeDate__rd_example__timeDate-finCe  E  s1 verified             0.85->0.8177 gain 0.0
+[124/248] textshaping__rd_example__plot_shape_  E  s1 verified             0.2858->0.2505 gain 0.0
+[125/248] ModelMetrics__rd_example__gini_Rd.R   U  s2 verified             0.506->0.6643 gain 0.1583
+[126/248] ModelMetrics__rd_example__gini_Rd.R   E  s2 verified             0.506->0.6643 gain 0.1583
+[127/248] ModelMetrics__rd_example__mse_Rd.R    U  s2 verified             0.7888->0.5311 gain 0.0
+[128/248] ModelMetrics__rd_example__mse_Rd.R    E  s2 verified             0.7888->0.875 gain 0.0862
+[129/248] ModelMetrics__rd_example__logLoss_Rd  U  s2 verified             0.8375->0.6536 gain 0.0
+[130/248] ModelMetrics__rd_example__logLoss_Rd  E  s2 verified             0.8375->0.6536 gain 0.0
+[131/248] ModelMetrics__rd_example__rmse_Rd.R   U  s2 verified             0.875->0.9583 gain 0.0833
+[132/248] ModelMetrics__rd_example__rmse_Rd.R   E  s2 verified             0.875->0.9583 gain 0.0833
+[133/248] broom__vignette__broom_chunk6.R       E  s2 verified             0.625->0.7752 gain 0.1502
+[134/248] broom__vignette__broom_chunk6.R       U  s2 verified             0.625->0.7752 gain 0.1502
+[135/248] caret__rd_example__preProcess_Rd.R    U  s2 verified             0.3125->0.5 gain 0.1875
+[136/248] caret__rd_example__preProcess_Rd.R    E  s2 verified             0.3125->0.5 gain 0.1875
+[137/248] clock__rd_example__iso-year-week-day  U  s2 verified             0.7312->0.7188 gain 0.0
+[138/248] clock__rd_example__iso-year-week-day  E  s2 verified             0.7312->0.7188 gain 0.0
+[139/248] clock__rd_example__time-point-roundi  U  s2 verified             0.6875->0.6875 gain 0.0
+[140/248] clock__rd_example__posixt-group_Rd.R  U  s2 verified             0.75->0.75 gain 0.0
+[141/248] clock__rd_example__posixt-group_Rd.R  E  s2 verified             0.75->0.875 gain 0.125
+[142/248] clock__rd_example__time-point-roundi  E  s2 verified             0.6875->0.6875 gain 0.0
+[143/248] fansi__vignette__sgr-in-rmd_s6.R      U  s2 verified             0.8->0.8 gain 0.0
+[144/248] fansi__vignette__sgr-in-rmd_s6.R      E  s2 verified             0.8->0.8 gain 0.0
+[145/248] farver__rd_example__compare_colour_R  U  s2 no rewrite           0.63->None gain 0.0
+[146/248] farver__rd_example__native_encoding_  U  s2 no rewrite           0.727->None gain 0.0
+[147/248] farver__rd_example__compare_colour_R  E  s2 verified             0.63->0.0 gain 0.0
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[148/248] e1071__rd_example__matchClasses_Rd.R  E  s2 verified             0.5828->0.5249 gain 0.0
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[149/248] farver__rd_example__native_encoding_  E  s2 verified             0.727->0.5603 gain 0.0
+[150/248] e1071__rd_example__matchClasses_Rd.R  U  s2 verified             0.5828->0.526 gain 0.0
+[151/248] fansi__rd_example__strwrap_ctl_Rd.R   U  s2 verified             0.7358->0.7698 gain 0.034
+[152/248] gtable__rd_example__bind_Rd.R         U  s2 verified             0.3654->0.4967 gain 0.1313
+[153/248] fansi__rd_example__strwrap_ctl_Rd.R   E  s2 verified             0.7358->0.875 gain 0.1392
+[154/248] gtable__rd_example__gtable_add_grob_  U  s2 verified             0.75->0.75 gain 0.0
+[155/248] gtable__rd_example__gtable_add_grob_  E  s2 verified             0.75->1.0 gain 0.25
+[156/248] gtable__rd_example__gtable_add_paddi  U  s2 verified             0.8125->0.4375 gain 0.0
+[157/248] gtable__rd_example__gtable_add_paddi  E  s2 verified             0.8125->0.4375 gain 0.0
+[158/248] gtable__rd_example__bind_Rd.R         E  s2 verified             0.3654->0.8366 gain 0.4713
+[159/248] openssl__rd_example__keygen_Rd.R      U  s2 verified             0.3333->0.3354 gain 0.002
+[160/248] openssl__rd_example__keygen_Rd.R      E  s2 verified             0.3333->0.0 gain 0.0
+[161/248] lubridate__rd_example__within-interv  U  s2 verified             0.5823->0.4853 gain 0.0
+[162/248] pROC__rd_example__aSAH_Rd.R           E  s2 verified             0.9953->0.8 gain 0.0
+[163/248] pROC__rd_example__aSAH_Rd.R           U  s2 verified             0.9953->0.8 gain 0.0
+[164/248] proxy__rd_example__rowSums_dist_Rd.R  U  s2 verified             0.6109->0.6109 gain 0.0
+[r2py] Installing Python package 'gtable' ...
+[r2py] WARNING: 'blackout_vector' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'dates' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'int' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'int2' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'lst' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'int' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'int2' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'dates' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'blackout_vector' is a data entity but Python could not serialize it — excluded from comparison
+[165/248] lubridate__rd_example__within-interv  E  s2 verified             0.5823->0.4793 gain 0.0
+[166/248] proxy__rd_example__rowSums_dist_Rd.R  E  s2 verified             0.6109->0.6109 gain 0.0
+[167/248] ragg__rd_example__agg_ppm_Rd.R        U  s2 verified             0.8333->0.881 gain 0.0476
+[168/248] ragg__rd_example__agg_tiff_Rd.R       U  s2 verified             0.8333->0.881 gain 0.0476
+[169/248] ragg__rd_example__agg_ppm_Rd.R        E  s2 verified             0.8333->0.0 gain 0.0
+[170/248] ragg__rd_example__agg_tiff_Rd.R       E  s2 verified             0.8333->0.881 gain 0.0476
+[171/248] ranger__rd_example__deforest_Rd.R     U  s2 verified             0.7461->0.7461 gain 0.0
+[172/248] prodlim__rd_example__summary_prodlim  U  s2 verified             0.5357->0.0 gain 0.0
+[173/248] ranger__rd_example__deforest_Rd.R     E  s2 verified             0.7461->0.7461 gain 0.0
+[174/248] ranger__rd_example__hshrink_Rd.R      U  s2 verified             0.6433->0.6433 gain 0.0
+[175/248] ranger__rd_example__hshrink_Rd.R      E  s2 verified             0.6433->0.6433 gain 0.0
+[176/248] prodlim__rd_example__summary_prodlim  E  s2 verified             0.5357->0.4736 gain 0.0
+[177/248] sass__rd_example__output_template_Rd  U  s2 verified             0.8632->0.8565 gain 0.0
+[178/248] recipes__rd_example__step_YeoJohnson  E  s2 verified             0.7315->0.5768 gain 0.0
+[179/248] recipes__rd_example__step_filter_mis  U  s2 verified             0.7616->0.8432 gain 0.0816
+[180/248] sass__rd_example__output_template_Rd  E  s2 verified             0.8632->0.8507 gain 0.0
+[181/248] recipes__rd_example__step_YeoJohnson  U  s2 verified             0.7315->0.6416 gain 0.0
+[182/248] textshaping__rd_example__plot_shape_  U  s2 verified             0.2858->0.2504 gain 0.0
+[183/248] recipes__rd_example__step_filter_mis  E  s2 verified             0.7616->0.8564 gain 0.0948
+[184/248] timeDate__rd_example__timeDate-finCe  U  s2 verified             0.85->0.8177 gain 0.0
+[185/248] timeDate__rd_example__timeDate-finCe  E  s2 verified             0.85->0.8177 gain 0.0
+[186/248] textshaping__rd_example__plot_shape_  E  s2 verified             0.2858->0.2505 gain 0.0
+[187/248] ModelMetrics__rd_example__gini_Rd.R   U  s3 verified             0.506->0.6583 gain 0.1523
+[188/248] ModelMetrics__rd_example__gini_Rd.R   E  s3 verified             0.506->0.6583 gain 0.1523
+[189/248] ModelMetrics__rd_example__mse_Rd.R    U  s3 verified             0.7888->0.875 gain 0.0862
+[190/248] ModelMetrics__rd_example__logLoss_Rd  E  s3 verified             0.8375->0.9286 gain 0.0911
+[191/248] ModelMetrics__rd_example__logLoss_Rd  U  s3 verified             0.8375->0.6536 gain 0.0
+[192/248] ModelMetrics__rd_example__rmse_Rd.R   U  s3 verified             0.875->0.9583 gain 0.0833
+[193/248] ModelMetrics__rd_example__rmse_Rd.R   E  s3 verified             0.875->0.9583 gain 0.0833
+[194/248] ModelMetrics__rd_example__mse_Rd.R    E  s3 verified             0.7888->0.7737 gain 0.0
+[195/248] broom__vignette__broom_chunk6.R       U  s3 verified             0.625->0.7752 gain 0.1502
+[196/248] broom__vignette__broom_chunk6.R       E  s3 verified             0.625->0.0 gain 0.0
+[197/248] caret__rd_example__preProcess_Rd.R    U  s3 verified             0.3125->0.7161 gain 0.4036
+[198/248] clock__rd_example__iso-year-week-day  U  s3 verified             0.7312->0.7188 gain 0.0
+[199/248] clock__rd_example__iso-year-week-day  E  s3 verified             0.7312->0.7188 gain 0.0
+[200/248] caret__rd_example__preProcess_Rd.R    E  s3 verified             0.3125->0.5 gain 0.1875
+[201/248] clock__rd_example__posixt-group_Rd.R  U  s3 verified             0.75->0.7046 gain 0.0
+[202/248] clock__rd_example__posixt-group_Rd.R  E  s3 verified             0.75->0.875 gain 0.125
+[203/248] clock__rd_example__time-point-roundi  U  s3 verified             0.6875->0.6875 gain 0.0
+[204/248] clock__rd_example__time-point-roundi  E  s3 verified             0.6875->0.6875 gain 0.0
+[205/248] fansi__vignette__sgr-in-rmd_s6.R      E  s3 no rewrite           0.8->None gain 0.0
+[206/248] fansi__vignette__sgr-in-rmd_s6.R      U  s3 verified             0.8->0.8 gain 0.0
+[207/248] farver__rd_example__compare_colour_R  E  s3 verified             0.63->0.38 gain 0.0
+[208/248] fansi__rd_example__strwrap_ctl_Rd.R   U  s3 verified             0.7358->0.728 gain 0.0
+[209/248] e1071__rd_example__matchClasses_Rd.R  E  s3 verified             0.5828->0.4581 gain 0.0
+[210/248] e1071__rd_example__matchClasses_Rd.R  U  s3 verified             0.5828->0.5249 gain 0.0
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[211/248] fansi__rd_example__strwrap_ctl_Rd.R   E  s3 verified             0.7358->0.6701 gain 0.0
+[212/248] farver__rd_example__compare_colour_R  U  s3 verified             0.63->0.5052 gain 0.0
+[213/248] farver__rd_example__native_encoding_  U  s3 verified             0.727->0.7027 gain 0.0
+[214/248] farver__rd_example__native_encoding_  E  s3 verified             0.727->0.727 gain 0.0
+[215/248] gtable__rd_example__gtable_add_grob_  U  s3 verified             0.75->0.75 gain 0.0
+[216/248] gtable__rd_example__gtable_add_grob_  E  s3 verified             0.75->1.0 gain 0.25
+[217/248] gtable__rd_example__bind_Rd.R         E  s3 verified             0.3654->0.8936 gain 0.5282
+[r2py] WARNING: 'a' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'b' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'c' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'a' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'b' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'c' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'row' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'col' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'mat' is a data entity but Python could not serialize it — excluded from comparison
+[218/248] gtable__rd_example__bind_Rd.R         U  s3 verified             0.3654->0.2115 gain 0.0
+[219/248] gtable__rd_example__gtable_add_paddi  U  s3 verified             0.8125->0.0 gain 0.0
+[220/248] gtable__rd_example__gtable_add_paddi  E  s3 verified             0.8125->0.8125 gain 0.0
+[221/248] openssl__rd_example__keygen_Rd.R      U  s3 verified             0.3333->0.3343 gain 0.0009
+[222/248] pROC__rd_example__aSAH_Rd.R           U  s3 verified             0.9953->0.9953 gain 0.0
+[223/248] openssl__rd_example__keygen_Rd.R      E  s3 verified             0.3333->0.335 gain 0.0017
+[224/248] pROC__rd_example__aSAH_Rd.R           E  s3 verified             0.9953->0.9953 gain 0.0
+[225/248] lubridate__rd_example__within-interv  U  s3 verified             0.5823->0.5185 gain 0.0
+[226/248] proxy__rd_example__rowSums_dist_Rd.R  U  s3 verified             0.6109->0.6109 gain 0.0
+[227/248] proxy__rd_example__rowSums_dist_Rd.R  E  s3 verified             0.6109->0.9554 gain 0.3445
+[r2py] WARNING: 'int' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'int2' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'dates' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'blackout_vector' is a data entity but Python could not serialize it — excluded from comparison
+[228/248] lubridate__rd_example__within-interv  E  s3 verified             0.5823->0.0 gain 0.0
+[229/248] ragg__rd_example__agg_ppm_Rd.R        U  s3 verified             0.8333->0.0 gain 0.0
+[230/248] ragg__rd_example__agg_tiff_Rd.R       U  s3 verified             0.8333->0.8768 gain 0.0435
+[231/248] ragg__rd_example__agg_tiff_Rd.R       E  s3 verified             0.8333->0.881 gain 0.0476
+[232/248] ragg__rd_example__agg_ppm_Rd.R        E  s3 verified             0.8333->0.0 gain 0.0
+[233/248] prodlim__rd_example__summary_prodlim  E  s3 verified             0.5357->0.0 gain 0.0
+[234/248] prodlim__rd_example__summary_prodlim  U  s3 verified             0.5357->0.4695 gain 0.0
+[235/248] ranger__rd_example__deforest_Rd.R     U  s3 verified             0.7461->0.7461 gain 0.0
+[236/248] ranger__rd_example__hshrink_Rd.R      E  s3 verified             0.6433->0.6433 gain 0.0
+[237/248] ranger__rd_example__hshrink_Rd.R      U  s3 verified             0.6433->0.6433 gain 0.0
+[238/248] ranger__rd_example__deforest_Rd.R     E  s3 verified             0.7461->0.7461 gain 0.0001
+[239/248] sass__rd_example__output_template_Rd  E  s3 verified             0.8581->0.8613 gain 0.0032
+[240/248] sass__rd_example__output_template_Rd  U  s3 verified             0.8581->0.8613 gain 0.0032
+[241/248] recipes__rd_example__step_YeoJohnson  U  s3 verified             0.7315->0.6631 gain 0.0
+[242/248] recipes__rd_example__step_filter_mis  U  s3 verified             0.7616->0.7702 gain 0.0086
+[243/248] recipes__rd_example__step_YeoJohnson  E  s3 verified             0.7315->0.5766 gain 0.0
+[244/248] textshaping__rd_example__plot_shape_  E  s3 no rewrite           0.2858->None gain 0.0
+[245/248] recipes__rd_example__step_filter_mis  E  s3 verified             0.7616->0.7003 gain 0.0
+[246/248] textshaping__rd_example__plot_shape_  U  s3 verified             0.2858->0.2504 gain 0.0
+[247/248] timeDate__rd_example__timeDate-finCe  E  s3 verified             0.85->0.7702 gain 0.0
+[248/248] timeDate__rd_example__timeDate-finCe  U  s3 verified             0.85->0.8177 gain 0.0
+[guard] finished; cost $0.35; sleep gaps 0
+Traceback (most recent call last):
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 330, in <module>
+    sys.exit(main())
+             ~~~~^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 323, in main
+    text = summary()
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 286, in summary
+    boots = sorted(st.mean(rng.choice(diff) for _ in diff) for _ in range(5000))
+  File "C:\Users\bened\Desktop\r2py_v0.3\scripts\step_ab.py", line 286, in <genexpr>
+    boots = sorted(st.mean(rng.choice(diff) for _ in diff) for _ in range(5000))
+                   ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\bened\anaconda3\Lib\statistics.py", line 490, in mean
+    raise StatisticsError('mean requires at least one data point')
+statistics.StatisticsError: mean requires at least one data point

@@ -1,0 +1,8 @@
+{"kind": "run_start", "t": 0.0, "script": "caret__vignette__caret_s3.R", "policy": "stall2_ps_dsflash", "sample": "replay_default_e8.0.1"}
+{"kind": "step", "t": 36.01, "outcome": "probe_r:free", "step": 1, "best_score": 0.7419, "best_hash": "d856505c2535", "prompt_hash": "a0faf0225e29", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 15.3}
+{"kind": "step", "t": 36.01, "outcome": "conversation_turn", "step": 1, "best_score": 0.7419, "best_hash": "d856505c2535", "prompt_hash": "a0faf0225e29", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 15.3}
+{"kind": "step", "t": 98.33, "outcome": "probe_r:free", "step": 2, "best_score": 0.7419, "best_hash": "d856505c2535", "prompt_hash": "42bd0e1003db", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 60.5}
+{"kind": "step", "t": 98.33, "outcome": "conversation_turn", "step": 2, "best_score": 0.7419, "best_hash": "d856505c2535", "prompt_hash": "42bd0e1003db", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 60.5}
+{"kind": "step", "t": 146.56, "outcome": "probe_r:free", "step": 3, "best_score": 0.7419, "best_hash": "d856505c2535", "prompt_hash": "2f50c87d025a", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 45.6}
+{"kind": "step", "t": 146.56, "outcome": "conversation_turn", "step": 3, "best_score": 0.7419, "best_hash": "d856505c2535", "prompt_hash": "2f50c87d025a", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 45.6}
+{"kind": "run_end", "t": 148.01, "final_score": 0.7419}

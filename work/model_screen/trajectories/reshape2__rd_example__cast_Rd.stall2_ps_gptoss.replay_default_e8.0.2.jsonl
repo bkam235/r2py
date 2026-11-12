@@ -1,0 +1,3 @@
+{"kind": "run_start", "t": 0.0, "script": "reshape2__rd_example__cast_Rd.R", "policy": "stall2_ps_gptoss", "sample": "replay_default_e8.0.2"}
+{"kind": "done", "t": 19.37, "raw": "ACTION: done", "refused": false, "stall_count": 2, "step": 1, "best_score": 0.722, "best_hash": "28f6f66b2d1e", "prompt_hash": "0e4196fa37d8", "entity_repair": null, "branch": null, "action": "done", "entity": null, "llm_s": 9.6}
+{"kind": "run_end", "t": 19.37, "final_score": 0.722}

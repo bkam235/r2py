@@ -1,0 +1,3 @@
+{"kind": "run_start", "t": 0.0, "script": "broom__rd_example__augment_felm_Rd.R", "policy": "stall2_ps_glmflash", "sample": "replay_default_e8.0.2"}
+{"kind": "step", "t": 1958.82, "outcome": "probe_r:free", "step": 1, "best_score": 0.5596, "best_hash": "27ef54c65770", "prompt_hash": "20c4f1b1ef22", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 1563.6}
+{"kind": "run_end", "t": 1958.82, "final_score": 0.5596}

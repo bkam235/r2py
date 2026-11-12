@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/replay.py --pool training --policies default_2026_11_01_glm53_r8k --samples 1 --workers 1 --only rvest__vignette__rvest_s7 --out work/smoke_glm53_r8k/results.jsonl --budget 1.00",
+  "started": "2026-11-08 14:14:48",
+  "ended": "2026-11-08 14:17:01",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 1,
+  "balance_start": 8.96,
+  "balance_end": 8.93,
+  "cost": 0.03,
+  "budget": 1.0,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

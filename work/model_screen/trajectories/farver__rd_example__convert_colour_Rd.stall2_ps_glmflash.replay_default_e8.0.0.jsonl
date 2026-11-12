@@ -1,0 +1,10 @@
+{"kind": "run_start", "t": 0.0, "script": "farver__rd_example__convert_colour_Rd.R", "policy": "stall2_ps_glmflash", "sample": "replay_default_e8.0.0"}
+{"kind": "step", "t": 80.56, "outcome": "probe_r:free", "step": 1, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "d3fadb3fe445", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 69.2}
+{"kind": "step", "t": 80.56, "outcome": "conversation_turn", "step": 1, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "d3fadb3fe445", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 69.2}
+{"kind": "step", "t": 83.84, "outcome": "probe_r:free", "step": 2, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "3d4f73325238", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 2.9}
+{"kind": "step", "t": 83.84, "outcome": "conversation_turn", "step": 2, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "3d4f73325238", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 2.9}
+{"kind": "step", "t": 246.34, "outcome": "probe_r:free", "step": 3, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "150d901d87f6", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 162.1}
+{"kind": "step", "t": 246.34, "outcome": "conversation_turn", "step": 3, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "150d901d87f6", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 162.1}
+{"kind": "step", "t": 380.31, "outcome": "probe_r:free", "step": 4, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "a891076ce3dc", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 133.6}
+{"kind": "step", "t": 380.31, "outcome": "conversation_turn", "step": 4, "best_score": 0.4429, "best_hash": "e161de645f8a", "prompt_hash": "a891076ce3dc", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 133.6}
+{"kind": "run_end", "t": 686.67, "final_score": 0.4429}

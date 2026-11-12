@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/model_screen.py run --workers 5 --budget 0.5 --reserve 0.1 --limit 2 --out work/model_screen_smoke",
+  "started": "2026-11-08 22:12:44",
+  "ended": "2026-11-08 22:26:40",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 10,
+  "balance_start": 7.54,
+  "balance_end": 7.48,
+  "cost": 0.06,
+  "budget": 0.5,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

@@ -1,0 +1,4 @@
+{"kind": "run_start", "t": 0.0, "script": "recipes__rd_example__step_kpca_Rd.R", "policy": "stall2_ps_gptoss", "sample": "replay_default_e8_s1.0.1"}
+{"kind": "step", "t": 58.8, "outcome": "conversation_turn", "step": 1, "best_score": 0.6193, "best_hash": "edc9a906e94f", "prompt_hash": "c1d3753d0abc", "entity_repair": null, "branch": null}
+{"kind": "step", "t": 68.15, "outcome": "conversation_turn", "step": 2, "best_score": 0.6193, "best_hash": "edc9a906e94f", "prompt_hash": "6d4077d2491c", "entity_repair": null, "branch": null}
+{"kind": "run_end", "t": 2332.72, "final_score": 0.6193}

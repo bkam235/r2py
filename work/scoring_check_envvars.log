@@ -1,0 +1,48 @@
+re-verifying 147 reference programs (epoch 4 scorer 875e4c3daebf-cd4621d951ad -> b663d0aae183-cd4621d951ad)
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.2
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.2.2
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Installing Python package 'ranger' ...
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+# Scorer regression check, 2026-10-28 12:20
+
+- Epoch 4 scorer `875e4c3daebf-cd4621d951ad`; current scorer `b663d0aae183-cd4621d951ad`.
+- Programs: 147; unchanged 132, **changed 7**, small moves within noise 5, flaky within their range 3, errors 0.
+- Mean change over the changed programs -0.0990; up 4, down 3; run/crash flips 1.
+
+| program | before | after | exit | entities that moved (before -> after) |
+|---|---|---|---|---|
+| start:ragg__rd_example__agg_webp_anim_Rd | 0.7000 | 0.0000 | 0->1 | suppressPackageStartupMessages None->0.0; import_ragg 1.0->0.0; file 1.0->0.0; agg_webp_anim None->0.0; plot 0.6->0.0; dev.flush None->0.0 |
+| start:openssl__rd_example__ec_dh_Rd | 0.6739 | 0.6612 | 0->0 | ec_dh 0.772->0.734; ec_dh_1 0.772->0.734 |
+| final_w3:openssl__rd_example__ec_dh_Rd | 0.6755 | 0.6679 | 0->0 | ec_dh 0.777->0.754; ec_dh_1 0.777->0.754 |
+| final_w3:recipes__rd_example__step_kpca_Rd | 0.6823 | 0.6847 | 0->0 | ggplot 0.539->0.572 |
+| final_w3:textshaping__rd_example__lorem_text_Rd | 0.5583 | 0.5639 | 0->0 | lorem_bidi 0.675->0.692 |
+| start:recipes__rd_example__step_kpca_Rd | 0.6098 | 0.6193 | 0->0 | step_YeoJohnson 0.539->0.572; step_normalize 0.539->0.572; ggplot 0.539->0.572; geom_point 0.539->0.572 |
+| final_default:recipes__rd_example__step_kpca_Rd | 0.5835 | 0.5930 | 0->0 | step_YeoJohnson 0.539->0.572; step_normalize 0.539->0.572; ggplot 0.539->0.572; geom_point 0.539->0.572 |
+
+Small moves (aggregate <= 0.005, no entity > 0.02, no run/crash flip; not counted as changes): start:sass__rd_example__as_sass_Rd 0.8669->0.8672, start:textshaping__rd_example__lorem_text_Rd 0.5943->0.5937, final_default:e1071__rd_example__boxplot_bclust_Rd 0.3810->0.3821, final_default:sass__rd_example__as_sass_Rd 0.8675->0.8678, final_w3:sass__rd_example__sass_import_Rd 0.9665->0.9681
+
+report: work\scoring\check_20261028_1220.md

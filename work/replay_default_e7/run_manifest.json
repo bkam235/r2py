@@ -1,0 +1,28 @@
+[
+ {
+  "command": "scripts/replay.py --pool training --policies default_2026_10_20 --samples 1 --workers 6 --out work/replay_default_e7/results.jsonl --budget 5.50 --reserve 0.50",
+  "started": "2026-10-29 15:05:32",
+  "ended": "2026-10-29 16:01:01",
+  "scoring_version": "826cb943a9e2-db31b28ade02",
+  "rows": 49,
+  "balance_start": 9.52,
+  "balance_end": 3.94,
+  "cost": 5.58,
+  "budget": 5.5,
+  "stop_reason": "budget reached: $5.58 of $5.50",
+  "sleep_gaps": []
+ },
+ {
+  "command": "scripts/replay.py --pool training --policies default_2026_10_20 --samples 1 --workers 6 --out work/replay_default_e7/results.jsonl --budget 7.20 --reserve 0.50",
+  "started": "2026-10-30 14:09:47",
+  "ended": "2026-10-30 14:43:06",
+  "scoring_version": "826cb943a9e2-db31b28ade02",
+  "rows": 11,
+  "balance_start": 3.8,
+  "balance_end": 2.45,
+  "cost": 1.35,
+  "budget": 7.2,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

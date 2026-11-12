@@ -1,0 +1,4 @@
+{"kind": "run_start", "t": 0.0, "script": "bslib__rd_example__layout_column_wrap_Rd.R", "policy": "stall2_ps_dsflash", "sample": "replay_default_e8_s1.0.2"}
+{"kind": "step", "t": 71.72, "outcome": "probe_r:free", "step": 1, "best_score": 0.8511, "best_hash": "8ecf53f14f6b", "prompt_hash": "4030ecf7f4da", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 8.4}
+{"kind": "step", "t": 71.72, "outcome": "conversation_turn", "step": 1, "best_score": 0.8511, "best_hash": "8ecf53f14f6b", "prompt_hash": "4030ecf7f4da", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 8.4}
+{"kind": "run_end", "t": 86.99, "final_score": 0.8511}

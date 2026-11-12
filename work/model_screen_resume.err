@@ -1,0 +1,260 @@
+  error: subprocess-exited-with-error
+  
+  × Building wheel for rpy2-rinterface (pyproject.toml) did not run successfully.
+  │ exit code: 1
+  ╰─> [244 lines of output]
+      test_pw_r.c
+      Code wird generiert.
+      Codegenerierung ist abgeschlossen.
+      cffi mode is CFFI_MODE.ANY
+      Looking for R home with: R RHOME
+      R home found: C:\Program Files\R\R-4.5.3
+      R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+      Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --ldflags
+      ['  -LC:/PROGRA~1/R/R-45~1.3/bin/x64 -lR -lm']
+      R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+      Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --cppflags
+      ['-IC:/PROGRA~1/R/R-45~1.3/include -IC:/PROGRA~1/R/R-45~1.3/include/x64']
+      cffi mode is CFFI_MODE.ANY
+      Looking for R home with: R RHOME
+      R home found: C:\Program Files\R\R-4.5.3
+      R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+      Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --ldflags
+      ['  -LC:/PROGRA~1/R/R-45~1.3/bin/x64 -lR -lm']
+      R exec path: C:\Program Files\R\R-4.5.3\bin\x64\R.exe
+      Looking for R CONFIG with: C:\Program Files\R\R-4.5.3\bin\x64\R.exe CMD config --cppflags
+      ['-IC:/PROGRA~1/R/R-45~1.3/include -IC:/PROGRA~1/R/R-45~1.3/include/x64']
+      C:\Users\bened\AppData\Local\Temp\pip-build-env-j8d6jhfh\overlay\Lib\site-packages\setuptools\config\expand.py:128: SetuptoolsWarning: File 'C:\\Users\\bened\\AppData\\Local\\Temp\\pip-install-c_ghj47b\\rpy2-rinterface_695a2b34f73c4b91b778f9ccb19c02c2\\README.md' cannot be found
+        for path in _filter_existing_files(_filepaths)
+      C:\Users\bened\AppData\Local\Temp\pip-build-env-j8d6jhfh\overlay\Lib\site-packages\setuptools\config\_apply_pyprojecttoml.py:82: SetuptoolsDeprecationWarning: `project.license` as a TOML table is deprecated
+      !!
+      
+              ********************************************************************************
+              Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).
+      
+              By 2027-Feb-18, you need to update your project and remove deprecated calls
+              or your builds will no longer be supported.
+      
+              See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.
+              ********************************************************************************
+      
+      !!
+        corresp(dist, value, root_dir)
+      running bdist_wheel
+      running build
+      cffi mode: CFFI_MODE.ANY
+      running build_py
+      file src\_rinterface_cffi_abi.py (for module _rinterface_cffi_abi) not found
+      creating build\lib.win-amd64-cpython-313\rpy2\rinterface
+      copying src\rpy2\rinterface\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface
+      creating build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\bufferprotocol.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\callbacks.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\conversion.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\embedded.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\ffi_proxy.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\memorymanagement.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\na_values.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\openrlib.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\sexp.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\_rinterface_capi.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\_rinterface_cffi_build.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      creating build\lib.win-amd64-cpython-313\rpy2\rlike
+      copying src\rpy2\rlike\container.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+      copying src\rpy2\rlike\functional.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+      copying src\rpy2\rlike\indexing.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+      copying src\rpy2\rlike\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rlike
+      creating build\lib.win-amd64-cpython-313\rpy2\situation
+      copying src\rpy2\situation\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\situation
+      copying src\rpy2\situation\__main__.py -> build\lib.win-amd64-cpython-313\rpy2\situation
+      creating build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_bufferprotocol.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_callbacks.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_conversion.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_embedded_r.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_endr.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_environment.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_externalptr.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_functions.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_memorymanagement.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_na.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_noinitialization.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_openrlib.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_sexp.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_symbol.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_threading.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vectors.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_bool.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_byte.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_complex.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_float.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_int.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_lang.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_list.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_numpy.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_pairlist.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\test_vector_str.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\utils.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      copying src\rpy2\rinterface\tests\__init__.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests
+      creating build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+      copying src\rpy2\rinterface\tests\rlike\test_container.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+      copying src\rpy2\rinterface\tests\rlike\test_functional.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+      copying src\rpy2\rinterface\tests\rlike\test_indexing.py -> build\lib.win-amd64-cpython-313\rpy2\rinterface\tests\rlike
+      running egg_info
+      writing src\rpy2_rinterface.egg-info\PKG-INFO
+      writing dependency_links to src\rpy2_rinterface.egg-info\dependency_links.txt
+      writing requirements to src\rpy2_rinterface.egg-info\requires.txt
+      writing top-level names to src\rpy2_rinterface.egg-info\top_level.txt
+      reading manifest file 'src\rpy2_rinterface.egg-info\SOURCES.txt'
+      writing manifest file 'src\rpy2_rinterface.egg-info\SOURCES.txt'
+      copying src\rpy2\rinterface\py.typed -> build\lib.win-amd64-cpython-313\rpy2\rinterface
+      copying src\rpy2\rinterface_lib\RPY2.h -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\R_API.h -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\R_API_eventloop.c -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\R_API_eventloop.h -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\_bufferprotocol.c -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rinterface_lib\py.typed -> build\lib.win-amd64-cpython-313\rpy2\rinterface_lib
+      copying src\rpy2\rlike\py.typed -> build\lib.win-amd64-cpython-313\rpy2\rlike
+      copying src\rpy2\situation\py.typed -> build\lib.win-amd64-cpython-313\rpy2\situation
+      file src\_rinterface_cffi_abi.py (for module _rinterface_cffi_abi) not found
+      warning: build_py_make_mod: byte-compiling is disabled, skipping.
+      
+      generating cffi module 'build\\lib.win-amd64-cpython-313\\_rinterface_cffi_abi.py'
+      running build_ext
+      generating cffi module 'build\\temp.win-amd64-cpython-313\\Release\\_rinterface_cffi_api.c'
+      creating build\temp.win-amd64-cpython-313\Release
+      building 'rpy2.rinterface_lib._bufferprotocol' extension
+      "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64\cl.exe" /c /nologo /O2 /W3 /GL /DNDEBUG /MD -IC:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\include -IC:\Users\bened\anaconda3\include -IC:\Users\bened\anaconda3\Include "-IC:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\include" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt" /Tcsrc/rpy2/rinterface_lib/_bufferprotocol.c /Fobuild\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.obj
+      _bufferprotocol.c
+      "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64\link.exe" /nologo /INCREMENTAL:NO /LTCG /DLL /MANIFEST:EMBED,ID=2 /MANIFESTUAC:NO /LIBPATH:C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\libs /LIBPATH:C:\Users\bened\anaconda3\libs /LIBPATH:C:\Users\bened\anaconda3 /LIBPATH:C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\PCbuild\amd64 "/LIBPATH:C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\lib\x64" "/LIBPATH:C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\ucrt\x64" "/LIBPATH:C:\Program Files (x86)\Windows Kits\10\lib\10.0.19041.0\um\x64" /EXPORT:PyInit__bufferprotocol build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.obj /OUT:build\lib.win-amd64-cpython-313\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.pyd /IMPLIB:build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.lib
+         Bibliothek "build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.lib" und Objekt "build\temp.win-amd64-cpython-313\Release\src\rpy2\rinterface_lib\_bufferprotocol.cp313-win_amd64.exp" werden erstellt.
+      Code wird generiert.
+      Codegenerierung ist abgeschlossen.
+      building '_rinterface_cffi_api' extension
+      "C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\bin\HostX86\x64\cl.exe" /c /nologo /O2 /W3 /GL /DNDEBUG /MD -DRPY2_RLEN_LONG=True -DOSNAME_NT=True -Isrc/rpy2/rinterface_lib/ -IC:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\include -IC:\Users\bened\anaconda3\include -IC:\Users\bened\anaconda3\Include "-IC:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\14.29.30133\include" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt" "-IC:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt" /Tcbuild\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c /Fobuild\temp.win-amd64-cpython-313\Release\build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.obj -std=c99
+      cl : Befehlszeile warning D9002 : Unbekannte Option "-std=c99" wird ignoriert.
+      _rinterface_cffi_api.c
+      src/rpy2/rinterface_lib/R_API.h(45): error C2146: Syntaxfehler: Fehlendes ";" vor Bezeichner "private_data_c"
+      src/rpy2/rinterface_lib/R_API.h(45): error C2061: Syntaxfehler: Bezeichner "private_data_c"
+      src/rpy2/rinterface_lib/R_API.h(46): error C2059: Syntaxfehler: "}"
+      src/rpy2/rinterface_lib/R_API.h(221): error C2146: Syntaxfehler: Fehlendes ")" vor Bezeichner "c"
+      src/rpy2/rinterface_lib/R_API.h(221): error C2061: Syntaxfehler: Bezeichner "c"
+      src/rpy2/rinterface_lib/R_API.h(221): error C2059: Syntaxfehler: ";"
+      src/rpy2/rinterface_lib/R_API.h(221): error C2059: Syntaxfehler: ")"
+      src/rpy2/rinterface_lib/R_API.h(244): error C2091: Funktionsergebnis ist eine Funktion
+      src/rpy2/rinterface_lib/R_API.h(245): error C2143: Syntaxfehler: Es fehlt "{" vor "*"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(986): warning C4113: "DL_FUNC *" weicht in der Parameterliste von "void *(__cdecl **)(void)" ab
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(998): warning C4113: "DL_FUNC *" weicht in der Parameterliste von "void *(__cdecl **)(void)" ab
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1018): error C2143: Syntaxfehler: Es fehlt ")" vor "*"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1018): error C2143: Syntaxfehler: Es fehlt "{" vor "*"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1018): error C2059: Syntaxfehler: ")"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1019): error C2054: Nach "p" muss "(" folgen
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1026): error C2061: Syntaxfehler: Bezeichner "Rcomplex"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1026): error C2059: Syntaxfehler: "}"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1548): error C2143: Syntaxfehler: Es fehlt "{" vor "*"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1559): error C2065: "result": nichtdeklarierter Bezeichner
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1559): error C2296: "*": UngÃ¼ltig, da der linke Operand vom Typ "int (__cdecl *(__cdecl *)())(SEXP,R_xlen_t)" ist
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1573): error C2065: "result": nichtdeklarierter Bezeichner
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1573): warning C4047: "=": Anzahl der Dereferenzierungen bei "int" und "int *" unterschiedlich
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1578): error C2065: "result": nichtdeklarierter Bezeichner
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1578): warning C4312: "Typumwandlung": Konvertierung von "int" in grÃ¶ÃŸeren Typ "char *"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1586): error C2061: Syntaxfehler: Bezeichner "_cffi_d_COMPLEX_ELT"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1586): error C2059: Syntaxfehler: ";"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1586): error C2059: Syntaxfehler: "<parameter-list>"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1598): error C2146: Syntaxfehler: Fehlendes ";" vor Bezeichner "result"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1598): warning C4550: Ausdruck wird als Funktion ausgewertet, der eine Argumentliste fehlt
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1598): error C2065: "result": nichtdeklarierter Bezeichner
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1621): error C2065: "result": nichtdeklarierter Bezeichner
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1621): warning C4013: "COMPLEX_ELT" undefiniert; Annahme: extern mit RÃ¼ckgabetyp int
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(1626): error C2065: "result": nichtdeklarierter Bezeichner
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2146: Syntaxfehler: Fehlendes ")" vor Bezeichner "x0"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2061: Syntaxfehler: Bezeichner "x0"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2059: Syntaxfehler: ";"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3466): error C2059: Syntaxfehler: ")"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3467): error C2449: "{" auf Dateiebene gefunden - fehlt der Funktionsheader?
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(3469): error C2059: Syntaxfehler: "}"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6823): error C2065: "_cffi_d_COMPLEX_ELT": nichtdeklarierter Bezeichner
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6823): warning C4312: "Typumwandlung": Konvertierung von "int" in grÃ¶ÃŸeren Typ "void *"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): error C2065: "_cffi_f_Rf_ScalarComplex": nichtdeklarierter Bezeichner
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): warning C4312: "Typumwandlung": Konvertierung von "int" in grÃ¶ÃŸeren Typ "void *"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): error C2065: "_cffi_d_Rf_ScalarComplex": nichtdeklarierter Bezeichner
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): warning C4312: "Typumwandlung": Konvertierung von "int" in grÃ¶ÃŸeren Typ "void *"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6823): error C2099: Initialisierung ist keine Konstante
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(6917): error C2099: Initialisierung ist keine Konstante
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7041): error C2059: Syntaxfehler: ")"
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7046): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7049): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7052): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7055): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7058): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7061): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7064): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7067): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7070): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7073): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7076): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7079): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7082): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7085): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7088): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7091): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7094): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7097): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7100): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7103): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7106): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7109): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7112): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7115): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7118): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7121): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7124): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7127): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7130): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7133): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7136): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7139): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7142): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7145): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7148): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7151): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7154): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7157): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7160): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7163): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7166): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7169): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7172): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7175): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7178): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7181): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7184): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7187): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7190): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7193): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7196): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7199): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7202): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7205): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7208): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7211): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7214): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7217): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7220): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7223): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7226): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7229): error C2059: Syntaxfehler: ","
+      build\temp.win-amd64-cpython-313\Release\_rinterface_cffi_api.c(7229): fatal error C1003: Mehr als 100 Fehler gefunden; Kompilierung wird abgebrochen.
+      error: Command '['C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\bin\\HostX86\\x64\\cl.exe', '/c', '/nologo', '/O2', '/W3', '/GL', '/DNDEBUG', '/MD', '-DRPY2_RLEN_LONG=True', '-DOSNAME_NT=True', '-Isrc/rpy2/rinterface_lib/', '-IC:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\include', '-IC:\\Users\\bened\\anaconda3\\include', '-IC:\\Users\\bened\\anaconda3\\Include', '-IC:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\VC\\Tools\\MSVC\\14.29.30133\\include', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\ucrt', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\shared', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\um', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\winrt', '-IC:\\Program Files (x86)\\Windows Kits\\10\\include\\10.0.19041.0\\cppwinrt', '/Tcbuild\\temp.win-amd64-cpython-313\\Release\\_rinterface_cffi_api.c', '/Fobuild\\temp.win-amd64-cpython-313\\Release\\build\\temp.win-amd64-cpython-313\\Release\\_rinterface_cffi_api.obj', '-std=c99']' returned non-zero exit status 2.
+      [end of output]
+  
+  note: This error originates from a subprocess, and is likely not a problem with pip.
+  ERROR: Failed building wheel for rpy2-rinterface
+
+[notice] A new release of pip is available: 25.2 -> 26.3
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+error: failed-wheel-build-for-install
+
+× Failed to build installable wheels for some pyproject.toml based projects
+╰─> rpy2-rinterface

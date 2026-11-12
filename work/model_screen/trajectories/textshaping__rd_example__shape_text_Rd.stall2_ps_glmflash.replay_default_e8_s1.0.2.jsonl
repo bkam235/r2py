@@ -1,0 +1,9 @@
+{"kind": "run_start", "t": 0.0, "script": "textshaping__rd_example__shape_text_Rd.R", "policy": "stall2_ps_glmflash", "sample": "replay_default_e8_s1.0.2"}
+{"kind": "step", "t": 20.01, "outcome": "probe_r:free", "step": 1, "best_score": 0.6782, "best_hash": "7efea3e03779", "prompt_hash": "d34306be27b6", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 11.9}
+{"kind": "step", "t": 20.01, "outcome": "conversation_turn", "step": 1, "best_score": 0.6782, "best_hash": "7efea3e03779", "prompt_hash": "d34306be27b6", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 11.9}
+{"kind": "step", "t": 320.26, "outcome": "probe_r:free", "step": 2, "best_score": 0.6782, "best_hash": "7efea3e03779", "prompt_hash": "17bd4b2a211a", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 299.7}
+{"kind": "step", "t": 320.26, "outcome": "conversation_turn", "step": 2, "best_score": 0.6782, "best_hash": "7efea3e03779", "prompt_hash": "17bd4b2a211a", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 299.7}
+{"kind": "step", "t": 951.46, "outcome": "probe_r:free", "step": 3, "best_score": 0.6782, "best_hash": "7efea3e03779", "prompt_hash": "308be277b9b7", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 630.7}
+{"kind": "step", "t": 951.46, "outcome": "conversation_turn", "step": 3, "best_score": 0.6782, "best_hash": "7efea3e03779", "prompt_hash": "308be277b9b7", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 630.7}
+{"kind": "step", "t": 1481.27, "outcome": "probe_r:free", "step": 4, "best_score": 0.6782, "best_hash": "7efea3e03779", "prompt_hash": "ab4c84dbaa5b", "entity_repair": null, "branch": null, "action": "probe_r", "entity": null, "llm_s": 529.3}
+{"kind": "run_end", "t": 1481.27, "final_score": 0.6782}

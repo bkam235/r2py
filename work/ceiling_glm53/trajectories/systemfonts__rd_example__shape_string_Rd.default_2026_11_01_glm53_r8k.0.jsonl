@@ -1,0 +1,13 @@
+{"kind": "run_start", "t": 0.0, "script": "systemfonts__rd_example__shape_string_Rd.R", "policy": "default_2026_11_01_glm53_r8k", "sample": 0}
+{"kind": "step", "t": 42.89, "outcome": "conversation_turn", "step": 1, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "77700bf87877", "entity_repair": null, "branch": 1, "action": "probe_r", "entity": null, "llm_s": 4.4}
+{"kind": "step", "t": 45.4, "outcome": "conversation_turn", "step": 1, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "77700bf87877", "entity_repair": null, "branch": 2}
+{"kind": "step", "t": 46.56, "outcome": "conversation_turn", "step": 2, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "ec69650216db", "entity_repair": null, "branch": 1, "action": "probe_r", "entity": null, "llm_s": 2.4}
+{"kind": "step", "t": 50.12, "outcome": "conversation_turn", "step": 2, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "8ef60afa2ba5", "entity_repair": null, "branch": 2}
+{"kind": "step", "t": 52.48, "outcome": "conversation_turn", "step": 1, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "77700bf87877", "entity_repair": null, "branch": 0, "action": "probe_r", "entity": null, "llm_s": 14.2}
+{"kind": "step", "t": 55.52, "outcome": "conversation_turn", "step": 2, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "d08288d6d205", "entity_repair": null, "branch": 0, "action": "probe_r", "entity": null, "llm_s": 2.2}
+{"kind": "step", "t": 65.01, "outcome": "conversation_turn", "step": 3, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "2ac691c9840a", "entity_repair": null, "branch": 2}
+{"kind": "step", "t": 70.95, "outcome": "conversation_turn", "step": 4, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "27f73bc42130", "entity_repair": null, "branch": 2}
+{"kind": "step", "t": 96.42, "outcome": "conversation_turn", "step": 5, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "b85b70c68d97", "entity_repair": null, "branch": 2}
+{"kind": "step", "t": 99.51, "outcome": "conversation_turn", "step": 6, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "34a3b251d455", "entity_repair": null, "branch": 2, "action": "probe_r", "entity": null, "llm_s": 2.4}
+{"kind": "step", "t": 102.19, "outcome": "conversation_turn", "step": 7, "best_score": 0.7088, "best_hash": "1186da58e6e9", "prompt_hash": "6e289a5570a9", "entity_repair": null, "branch": 2, "action": "probe_r", "entity": null, "llm_s": 1.7}
+{"kind": "run_end", "t": 105.01, "final_score": 0.7088}

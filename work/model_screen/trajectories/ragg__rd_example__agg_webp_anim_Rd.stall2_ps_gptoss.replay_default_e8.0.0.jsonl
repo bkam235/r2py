@@ -1,0 +1,9 @@
+{"kind": "run_start", "t": 0.0, "script": "ragg__rd_example__agg_webp_anim_Rd.R", "policy": "stall2_ps_gptoss", "sample": "replay_default_e8.0.0"}
+{"kind": "step", "t": 27.51, "outcome": "conversation_turn", "step": 1, "best_score": 0.8667, "best_hash": "3bbade825b06", "prompt_hash": "7c357801fa42", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 18.9}
+{"kind": "step", "t": 44.75, "outcome": "conversation_turn", "step": 2, "best_score": 0.8667, "best_hash": "3bbade825b06", "prompt_hash": "864fac3a2769", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 17.2}
+{"kind": "step", "t": 62.32, "outcome": "conversation_turn", "step": 3, "best_score": 0.8667, "best_hash": "3bbade825b06", "prompt_hash": "95eeb5cfa0d7", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 17.6}
+{"kind": "step", "t": 74.91, "outcome": "conversation_turn", "step": 4, "best_score": 0.8667, "best_hash": "3bbade825b06", "prompt_hash": "690330d82129", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 12.6}
+{"kind": "step", "t": 91.87, "outcome": "conversation_turn", "step": 5, "best_score": 0.8667, "best_hash": "3bbade825b06", "prompt_hash": "2011f718311a", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 17.0}
+{"kind": "step", "t": 118.39, "outcome": "conversation_turn", "step": 6, "best_score": 0.8667, "best_hash": "3bbade825b06", "prompt_hash": "50b0fc4b6b00", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 26.5}
+{"kind": "step", "t": 139.64, "outcome": "conversation_turn", "step": 7, "best_score": 0.8667, "best_hash": "3bbade825b06", "prompt_hash": "2e84bb65456f", "entity_repair": null, "branch": null, "action": "rewrite", "entity": null, "llm_s": 21.2}
+{"kind": "run_end", "t": 153.24, "final_score": 0.8667}

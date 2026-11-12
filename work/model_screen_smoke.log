@@ -1,0 +1,113 @@
+10 continuations to run, 5 workers
+[1/10] broom__rd_example__augment_felm_Rd.R stall2_ps_qwenflash replay_default_e8.0.0: 0.671 -> 0.671, 0 calls
+[2/10] broom__rd_example__augment_felm_Rd.R stall2_ps_glmflash replay_default_e8.0.0: 0.671 -> 0.671, 1 calls
+[3/10] broom__rd_example__augment_felm_Rd.R stall2_ps      replay_default_e8.0.0: 0.671 -> 0.671, 1 calls
+[4/10] broom__rd_example__augment_felm_Rd.R stall2_ps_gptoss replay_default_e8.0.0: 0.671 -> 0.671, 1 calls
+[5/10] broom__rd_example__augment_felm_Rd.R stall2_ps_qwenflash replay_default_e8.0.2: 0.560 -> 0.560, 0 calls
+[6/10] broom__rd_example__augment_felm_Rd.R stall2_ps      replay_default_e8.0.2: 0.560 -> 0.560, 1 calls
+[7/10] broom__rd_example__augment_felm_Rd.R stall2_ps_glmflash replay_default_e8.0.2: 0.560 -> 0.560, 1 calls
+[8/10] broom__rd_example__augment_felm_Rd.R stall2_ps_dsflash replay_default_e8.0.0: 0.671 -> 0.946, 4 calls
+[9/10] broom__rd_example__augment_felm_Rd.R stall2_ps_gptoss replay_default_e8.0.2: 0.560 -> 0.560, 2 calls
+[10/10] broom__rd_example__augment_felm_Rd.R stall2_ps_dsflash replay_default_e8.0.2: 0.560 -> 0.764, 5 calls
+[Agent]   Starting reasoning loop (model=openrouter:qwen/qwen3.7-flash, score=0.671, threshold=0.9, max_steps=8)
+[Agent]   LLM call failed: OpenRouter call failed after 4 attempts: Error code: 404 - {'error': {'message': '0 endpoints out of 1 requested are available matching your guardrail restrictions and data policy. We removed them for the following reasons (an endpoint may have matched multiple reasons):\nZDR violation (account settings): 1 endpoint excluded; configurable at https://openrouter.ai/settings/privacy', 'code': 404, 'metadata': {'input_endpoint_count': 1, 'ineligibility_reasons': [{'reason': 'zdr-violation-by-account', 'endpoint_count': 1, 'configure_url': 'https://openrouter.ai/settings/privacy'}], 'routing_funnel': [{'step': 'Initial Endpoints', 'endpoint_count': 2}, {'step': 'Filter by Regional Surcharge', 'endpoint_count': 1}], 'failed_routing_step': 'Filter by Guardrails'}}}
+[Agent]   No improvement achieved (score=0.671)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.560, threshold=0.9, max_steps=8)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 208 lines
+[Agent]   Rewrite scored: 0.000 (was 0.560), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmptn4735vk\_r2py_script.py", line 658, in <module>
+    print(tidy_est(est1))
+          ~~~~~~~~^^^^^^
+  File "C:\Users\bened\AppData\Local\Temp\tmptn4735vk\_r2py_script.py", line 521, in tidy_e
+[Agent]   Catastrophic rewrite (0.560 -> 0.000) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.560)
+[Agent]   Starting reasoning loop (model=openrouter:z-ai/glm-5.3-flash, score=0.671, threshold=0.9, max_steps=8)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 215 lines
+[Agent]   Rewrite scored: 0.668 (was 0.671), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.671)
+[Agent]   Starting reasoning loop (model=openrouter:z-ai/glm-5.3-flash, score=0.560, threshold=0.9, max_steps=8)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 291 lines
+[Agent]   Rewrite scored: 0.000 (was 0.560), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): Traceback (most recent call last):
+  File "C:\Users\bened\AppData\Local\Temp\tmp6p7i7b1c\_r2py_script.py", line 753, in <module>
+    print_tibble(tidy_est(est0))
+                 ~~~~~~~~^^^^^^
+  File "C:\Users\bened\AppData\Local\Temp\tmp6p7i7b1c\_r2py_script.py", line 
+[Agent]   Catastrophic rewrite (0.560 -> 0.000) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.560)
+[Agent]   Starting reasoning loop (model=openrouter:deepseek/deepseek-v4.1-flash-1017, score=0.671, threshold=0.9, max_steps=8)
+[Agent]   Step 1: probe_r
+[Agent]   Probe result: '=== glance ===\r\n  r.squared adj.r.squared    sigma statistic      p.value  df df.residual nobs\r\n1 0.6368613      0.612182 20.72262  25.80546 4.568813e-20 103         103  111\r\n=== tidy fe ===\r\n     te'
+[Agent]   Step 2: probe_r
+[Agent]   Probe result: 'est0 augment names: .rownames Ozone Temp Wind Solar.R .fitted .resid \r\nest0 fitted: 33.04548 34.99871 24.82281 18.47523 32.26143 -6.949919 \r\nest2 rse: 0.3439944 0.9029918 0.0225714 \r\nest2 rdf: \r\nest2 '
+[Agent]   Step 3: probe_r
+[Agent]   Probe result: 'est1 rse: 0.3439944 0.9029918 0.0225714 \r\nest1 rtval: 5.450993 -3.442689 2.313569 \r\nest1 rpval: 3.444592e-07 0.0008337522 0.02267805 \r\nest1 rdf: \r\nest2 rdf: \r\nest2 rse: 0.3439944 0.9029918 0.0225714 \r'
+[Agent]   Step 4: rewrite
+[Agent]   Rewrite: 308 lines
+[Agent]   3 entity sentinel(s) missing: ['est0', 'est1', 'est2']
+[Agent]   Rewrite scored: 0.946 (was 0.671), exit_code=0
+[Review]  PASSED
+[Agent]   Score 0.946 >= threshold, stopping
+[Agent]   Improved: 0.671 -> 0.946
+[Agent]   Starting reasoning loop (model=openrouter:openai/gpt-oss-120b, score=0.671, threshold=0.9, max_steps=8)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 211 lines
+[Agent]   Rewrite scored: 0.642 (was 0.671), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.671)
+[Agent]   Starting reasoning loop (model=openrouter:openai/gpt-oss-120b, score=0.560, threshold=0.9, max_steps=8)
+[Agent]   Step 1: probe_r
+[Agent]   Probe result: '# A tibble: 8 × 7\r\n  term    estimate std.error statistic     p.value     N  comp\r\n  <chr>      <dbl>     <dbl>     <dbl>       <dbl> <int> <dbl>\r\n1 Temp      1.88      0.341       5.50 0.000000274   '
+[Agent]   Step 2: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 158 lines
+[Agent]   16 entity sentinel(s) missing: ['augment', 'augment_1', 'est0', 'est1', 'est2', 'glance']
+[Agent]   Rewrite scored: 0.000 (was 0.560), exit_code=1
+[Agent]   Crash: Python crashed (exit 1): ...\frame.py", line 4322, in __setitem__
+    self._set_item(key, value)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Lib\site-packages\pandas\core\frame.py", line 4535, in _set_item
+    value, refs = self._sanitize_column(value)
+
+[Agent]   Catastrophic rewrite (0.560 -> 0.000) — discarded, reverted to best
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.560)
+[Agent]   Starting reasoning loop (model=openrouter:google/gemma-4-31b-it, score=0.671, threshold=0.9, max_steps=8)
+[Agent]   Step 1: rewrite
+[Agent]   Rewrite: 217 lines
+[Agent]   Rewrite scored: 0.671 (was 0.671), exit_code=0
+[Agent]   3 consecutive non-improving rewrites, stopping
+[Agent]   No improvement achieved (score=0.671)
+[Agent]   Starting reasoning loop (model=openrouter:qwen/qwen3.7-flash, score=0.560, threshold=0.9, max_steps=8)
+[Agent]   LLM call failed: OpenRouter call failed after 4 attempts: Error code: 404 - {'error': {'message': '0 endpoints out of 1 requested are available matching your guardrail restrictions and data policy. We removed them for the following reasons (an endpoint may have matched multiple reasons):\nZDR violation (account settings): 1 endpoint excluded; configurable at https://openrouter.ai/settings/privacy', 'code': 404, 'metadata': {'input_endpoint_count': 1, 'ineligibility_reasons': [{'reason': 'zdr-violation-by-account', 'endpoint_count': 1, 'configure_url': 'https://openrouter.ai/settings/privacy'}], 'routing_funnel': [{'step': 'Initial Endpoints', 'endpoint_count': 2}, {'step': 'Filter by Regional Surcharge', 'endpoint_count': 1}], 'failed_routing_step': 'Filter by Guardrails'}}}
+[Agent]   No improvement achieved (score=0.560)
+[Agent]   Starting reasoning loop (model=openrouter:deepseek/deepseek-v4.1-flash-1017, score=0.560, threshold=0.9, max_steps=8)
+[Agent]   Step 1: probe_r
+[Agent]   Probe result: 'term     estimate  std.error  statistic      p.value  N comp\r\n1    Temp   1.87511085 0.34072694   5.503266 2.740750e-07 NA   NA\r\n2    Wind  -3.10872012 0.66008636  -4.709566 7.777659e-06 NA   NA\r\n3 So'
+[Agent]   Step 2: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 222 lines
+[Agent]   11 entity sentinel(s) missing: ['est0', 'est1', 'est2', 'tidy_1', 'tidy_2', 'tidy_3']
+[Agent]   Rewrite scored: 0.734 (was 0.560), exit_code=0
+[Review]  PASSED
+[Agent]   Step 3: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 227 lines
+[Agent]   8 entity sentinel(s) missing: ['tidy_1', 'tidy_2', 'tidy_3', 'tidy_4', 'tidy_5', 'tidy_6']
+[Agent]   Rewrite scored: 0.764 (was 0.734), exit_code=0
+[Review]  PASSED
+[Agent]   Step 4: rewrite
+[Agent]   Data shim block was altered; restored the original
+[Agent]   Rewrite: 227 lines
+[Agent]   8 entity sentinel(s) missing: ['tidy_1', 'tidy_2', 'tidy_3', 'tidy_4', 'tidy_5', 'tidy_6']
+[Agent]   Rewrite scored: 0.764 (was 0.764), exit_code=0
+[Agent]   Step 5: done
+[Agent]   Improved: 0.560 -> 0.764
+[guard] finished; cost $0.06; sleep gaps 0
