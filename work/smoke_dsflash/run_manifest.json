@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/replay.py --pool training --policies default_2026_11_01_dsflash --samples 1 --workers 2 --only textshaping__rd_example__shape_text lava__rd_example__csplit --out work/smoke_dsflash/results.jsonl --budget 0.6",
+  "started": "2026-11-12 08:06:05",
+  "ended": "2026-11-12 08:19:40",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 2,
+  "balance_start": 12.14,
+  "balance_end": 12.06,
+  "cost": 0.08,
+  "budget": 0.6,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

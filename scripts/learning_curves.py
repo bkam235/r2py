@@ -9,6 +9,8 @@ training-pool states:
   work/continue_stalled         patience continuations of chains that stalled while crashing (2026-10-18)
   work/replay_crash6p5_b2       crash default: width 6, patience 5, doubled time limit (2026-10-19)
   work/replay_default           the production default with conversation mode (2026-10-20)
+  work/replay_default_e8        the production default of 2026-11-01 (entity feedback), replayed 2026-11-05
+  work/dsflash_default          the production default of 2026-11-12 (agent on DeepSeek V4.1 Flash), run 2026-11-12
 
 Every program the curves use (the starting programs and every program a chain accepted, in all five runs) is
 re-scored with the current scorer, so all lines are in one scoring epoch (r2py.scoring). The scores are cached in
@@ -46,7 +48,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 FIG = ROOT / "experiments/figures"
 CACHE = ROOT / "work/curves/rescored.json"
 INPUTS = ROOT / "work/curves/inputs.json.gz"
-RUNS = ("work/replay_k3", "work/continue_plateau", "work/continue_stalled", "work/replay_crash6p5_b2", "work/replay_default")
+RUNS = ("work/replay_k3", "work/continue_plateau", "work/continue_stalled", "work/replay_crash6p5_b2", "work/replay_default",
+        "work/replay_default_e8", "work/dsflash_default")
 _inputs: dict | None = None
 N_SHOWN = 14          # steps drawn; every curve is flat well before
 N_LONG = 20           # steps followed for the runs with patience 5
@@ -236,6 +239,8 @@ def compute(res: dict) -> dict:
         return out
     crash6 = best_of("work/replay_crash6p5_b2", "rewrite_w3_crash6p5", 6)
     measured = best_of("work/replay_default", "default_2026_10_20", 3)
+    later = {"default 2026-11-01 (measured)": best_of("work/replay_default_e8", "default_2026_11_01", 3),
+             "default 2026-11-12, DeepSeek agent (measured)": best_of("work/dsflash_default", "default_2026_11_01_dsflash", 3)}
 
     def width_curve(s, k):
         subs = list(itertools.combinations(single[s], k))
@@ -254,6 +259,8 @@ def compute(res: dict) -> dict:
                        for i in range(len(next(iter(p.values()))[0]))] for name, p in ext.items()}
         lines = {k: r4(v) for k, v in lines.items()}
         lines["default with conversation (measured)"] = r4(mean_over(measured, [s for s in measured if sel(s)], N_LONG))[:N_SHOWN + 1]
+        for name, m in later.items():
+            lines[name] = r4(mean_over(m, [s for s in m if sel(s)], N_LONG))[:N_SHOWN + 1]
         data["strata"][label] = {"n": len(ss), "lines": lines, "w3_runs_end": round(w3_end, 4), "ext": exts}
     cr = data["strata"]["crashing"]
     cr["lines"].pop("width 6 (estimated)")
@@ -266,7 +273,9 @@ def compute(res: dict) -> dict:
 
 # ---------------------------------------------------------------------------------------------- outputs
 
-STYLE = {"default with conversation (measured)": ("#111827", "-", 2.8), "width 1": ("#8a93a3", "--", 1.8),
+STYLE = {"default 2026-11-12, DeepSeek agent (measured)": ("#be123c", "-", 3.0),
+         "default 2026-11-01 (measured)": ("#475569", "-", 2.6),
+         "default with conversation (measured)": ("#111827", "-", 2.8), "width 1": ("#8a93a3", "--", 1.8),
          "width 3": ("#2f6fd1", "-", 2.2), "width 6 (estimated)": ("#0f766e", ":", 1.6),
          "width 6 + patience 5": ("#0f766e", "-", 2.2), "default without conversation": ("#0f766e", "-", 2.2),
          "3 per step": ("#d9731a", "-", 2.2)}
