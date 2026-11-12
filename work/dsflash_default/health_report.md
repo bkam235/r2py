@@ -34,14 +34,26 @@ States holding the most of the gap: `bslib__rd_example__page_fillable_Rd` 0.013 
 ## Never-improving states (7 of 60)
 
 - `bslib__rd_example__page_fillable_Rd`: start 0.250, start runs, 1 run(s)
+    - `ui` 0.25 (R, Py): [files] missing: ['tempfile:07d40e985ad7c747025dabb9f22142c4.woff2', 'tempfile:1f5e011d6aae0d98fc0518e1a303e99a.woff2', 'tempfile:1Ptug8zYS_SKggPNyC; [html] html_content_compared:1
 - `ggplot2__rd_example__geom_bin_2d_Rd`: start 0.500, start runs, 1 run(s)
+    - `geom_bin_2d` 0.50 (R, Py): [graphics] figure count differs: R=1 Python=0; [warnings] warnings similarity 0.000 < 0.95
+    - `geom_bin_2d_1` 0.50 (R, Py): [graphics] figure count differs: R=1 Python=0; [warnings] warnings similarity 0.000 < 0.95
+    - `geom_bin_2d_2` 0.50 (R, Py): [graphics] figure count differs: R=1 Python=0; [warnings] warnings similarity 0.000 < 0.95
+    - `geom_bin_2d_3` 0.50 (R, Py): [graphics] figure count differs: R=1 Python=0; [warnings] warnings similarity 0.000 < 0.95
 - `openssl__rd_example__aes_cbc_Rd`: start 0.550, start runs, 1 run(s)
+    - `x` 0.25 (R, Py): [data] x: x: 'WAoAAAADAAQGAAADBQAAAAAFVVRGLTgAAAMTAAAABQAAAA4AAACWQBRmZmZmZmZAE5mZmZmZ\nmkASzMzMzMzNQBJmZmZmZmZAFAAAAAAAAEAVmZmZmZmaQBJmZmZmZmZAFAA; [data] iris: infra failure rescued by fallback (score 0.664): iris: column sets differ — only_r=[] only_py=['species'] — R={'Sepal.Length': [5.1, 4
+    - `x2` 0.25 (R, Py): [data] x2: x2: 'WAoAAAADAAQGAAADBQAAAAAFVVRGLTgAAAMTAAAABQAAAA4AAACWQBRmZmZmZmZAE5mZmZmZ\nmkASzMzMzMzNQBJmZmZmZmZAFAAAAAAAAEAVmZmZmZmaQBJmZmZmZmZAF; [data] iris: infra failure rescued by fallback (score 0.664): iris: column sets differ — only_r=[] only_py=['species'] — R={'Sepal.Length': [5.1, 4
+    - `y` 0.25 (R, Py): [data] y: y: type mismatch — R=str '/25ttYzah6bSD/SoRkBBfSSwXJjWpyRak9XbDho6HcphXym6K2eDzZJXFAW0NV7AcBN1NHf7\nqruySiF0RTUdORh2utqWEHVTDDK5Ew9wHrPsm; [data] iris: infra failure rescued by fallback (score 0.664): iris: column sets differ — only_r=[] only_py=['species'] — R={'Sepal.Length': [5.1, 4
 - `prodlim__rd_example__backGround_Rd`: start 0.500, start runs, 1 run(s)
+    - `plot` 0.50 (R, Py): [graphics] plotted content similarity 0.000 < 0.99
+    - `plot_1` 0.50 (R, Py): [graphics] plotted content similarity 0.000 < 0.99
 - `shape__rd_example__filledmultigonal_Rd`: start 0.750, start runs, 1 run(s)
+    - `emptyplot` 0.75 (R, Py): [graphics] plotted content similarity 0.500 < 0.99
 - `shiny__rd_example__updateRadioButtons_Rd`: start 0.250, start runs, 1 run(s)
+    - `ui` 0.25 (R, Py): [html] HTML present on one side only: R=1 Python=0; [data] ui: ui: text forms differ (similarity 0.03) - R '<div class="container-fluid"><p>The first radio button group controls the second' Python "<
 - `systemfonts__rd_example__glyph_raster_Rd`: start 0.786, start runs, 1 run(s)
-
-(`--deep` re-verifies these starts and lists their losing entities.)
+    - `R` 0.25 (R, Py): [data] R: R[0]: length 448 vs 150 — R=[[-603979776, -16777216, -16777216, -16777216, -16777216, -1610612736, 0, 0, -16777216, -16777216, -16777216,
+    - `font` 0.89 (R, Py): [data] font: infra failure rescued by fallback (score 0.858): font: column sets differ — only_r=['lineheight', 'max_advance_height', 'underline_pos
 
 ## Pasting (deterministic check on changed final programs)
 

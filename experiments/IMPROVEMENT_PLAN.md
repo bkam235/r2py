@@ -4566,3 +4566,29 @@ before any data.**
   (`work/dsflash_default`). All starts end at 0.821 and 0.886 (running 0.806 / 0.867, crashing 0.871 / 0.950); the
   curve values sit ~0.005 above the re-verified finals (0.816 / 0.881) because the curves take each chain's best
   accepted score. The new default reaches the old default's plateau by step 2. `experiments/figures/inloop_curves.*`.
+
+### Patience under the DeepSeek default (test `patience-dsflash`, harness track) — registered 2026-11-12
+
+- Why: in the replay of `default_2026_11_12` (`work/dsflash_default`), 19 states end below 0.9 and hold 0.101 of
+  the 0.119 gap. 10 of them still moved in some run and hold 0.045. Under the new agent a rewrite after two
+  failures still improves 19% of the time on running starts (5 of 26) and 45% on crashing starts (14 of 31). Under
+  Gemma that was 5-9%, the basis of lesson 5 (patience adds nothing). In those 10 states 23 chains stopped as
+  stalled and 15 said "done".
+- Question: do the chains that stopped below 0.9 gain more per call from continuing than the same calls spent on
+  more chains?
+- Instrument: `scripts/patience_continue.py`. In the 19 states, each chain whose best is below 0.9 continues from its
+  best program (`dsf_cont`, 66 chains). The continuation is the default loop at width 1 with a fresh conversation
+  and a fresh stall budget. The comparator is 3 more independent chains from the frozen start (`dsf_chain`, 57
+  chains), the same loop. Policies in `scripts/replay.py`.
+- Primary: per state, final(arm) = max(recorded final, the arm's chain finals). Gain per call of patience minus
+  gain per call of width, sums over states, bootstrap over states.
+- Rule (costs calls): patience is a candidate if P(per-call difference > 0) >= 0.9 and P(patience gain on the
+  plateau > 0) >= 0.9; then held-out with the same instrument, and the option it stands for (one restart from the
+  best per chain that stops below 0.9) is built behind a flag. If width wins per call, the next question is width
+  under the DeepSeek agent. If neither arm gains, the 10 moving states are at this agent's ceiling and the
+  remaining gap is capability or measurement.
+- Secondary: each arm's gain on the plateau (sum / 60) with 95% intervals, chains improved and reaching 0.9,
+  "done"s, probes, cost.
+- Caveat: the continuation starts a fresh conversation, so it approximates a restart from the best program, not a
+  higher `max_stalls` inside one conversation. States at or above 0.9 (0.018 of the gap) are left out.
+- Estimate about $2.0 (123 chains, about 8 DeepSeek calls each), budget $4.

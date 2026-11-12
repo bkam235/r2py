@@ -105,6 +105,14 @@ POLICIES = {
                                agent_provider={"only": ["deepinfra/fp8"], "allow_fallbacks": False},
                                agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
                                free_probe=True, probe_state=True, literal_check=True, review_crashing=True),
+    # Test patience-dsflash (2026-11-12): one chain of default_2026_11_12 (width 1 on any start). The arms are the
+    # same loop; they differ only in the program they start from (scripts/patience_continue.py).
+    **{arm: dict(entity_repair=False, escalate_after=None, width=1, crash_stalls=5, converse=True,
+                 entity_feedback=True, agent_model="openrouter:deepseek/deepseek-v4.1-flash-1017",
+                 agent_provider={"only": ["deepinfra/fp8"], "allow_fallbacks": False},
+                 agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
+                 free_probe=True, probe_state=True, literal_check=True, review_crashing=True)
+       for arm in ("dsf_cont", "dsf_chain")},
     # Test model-screen-stall2 (2026-11-08): the same continuations with free probes evaluated in the script's state
     # (probe_state), the agent on Gemma or on a cheap model (pinned provider, reasoning capped as for GLM 5.3); the
     # review stays on Gemma.
