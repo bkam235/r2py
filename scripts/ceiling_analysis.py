@@ -20,7 +20,14 @@ from pathlib import Path
 
 
 def load(p):
-    return {r["stem"]: r for r in map(json.loads, open(p, encoding="utf-8")) if "ents" in r}
+    """One re-verification file, or several joined by commas (2026-11-12): per state, the mean aggregate and the
+    mean entity scores of the states all of them have."""
+    files = [{r["stem"]: r for r in map(json.loads, open(f, encoding="utf-8")) if "ents" in r} for f in p.split(",")]
+    out = {}
+    for s in set.intersection(*(set(f) for f in files)):
+        ents = {e: dict(score=st.mean(f[s]["ents"].get(e, {}).get("score", 0) for f in files)) for e in files[0][s]["ents"]}
+        out[s] = dict(files[0][s], aggregate=st.mean(f[s]["aggregate"] for f in files), ents=ents)
+    return out
 
 
 def ci(xs, n=10000, seed=1):

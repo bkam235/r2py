@@ -4522,3 +4522,16 @@ before any data.**
   bundle's; the model screen suggests most of it is the model and its probing.
 - Decision: **default candidate** by the registered rule. Next: held-out confirmation (ask first: cost, budget);
   flipping the default stays with the person. Analysis: `work/dsflash_default/analysis.txt`.
+
+### DeepSeek Flash default on held-out (test `deepseek-flash-default-heldout`, harness track) — registered 2026-11-12
+
+- Question: does `deepseek-flash-default` (+0.065 on training, P 0.999) hold on the 46 held-out states?
+- Arm: `default_2026_11_01_dsflash`, one sample, 6 workers, as on training.
+- Baseline: no clean held-out replay of the default exists. `refuse_done_heldout` (2 samples, the default plus
+  refuse_done) is read as default runs: each chain counts only up to its first refused "done", where the default
+  would have stopped (33 of 92 runs had one). Its programs are re-verified under epoch 9
+  (`reverify_finals.py <run> default_2026_11_01_rd <out> <sample> cf`), and the per-state mean of the two samples
+  is the baseline (`ceiling_analysis.py` takes comma-joined baselines). Caveat: steps the refused chain ran after
+  its done are dropped, which slightly understates the default's step budget for the other chains.
+- Rule: as on training, P(gain > 0) >= 0.9 passes. Only 4 crashing starts, so the bundle is confirmed, not
+  review_crashing alone. Estimate $2.0, budget $4. Flipping the default stays with the person.

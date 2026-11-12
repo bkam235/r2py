@@ -3,7 +3,10 @@
 Per program: aggregate, exit code, every entity's score and dimensions, and the feedback items. Used for the gap
 table under epoch 9 and as the baseline of the GLM ceiling run (`glm53-ceiling`).
 
-    python scripts/reverify_finals.py <run_dir> <policy> <out.jsonl> [sample]
+    python scripts/reverify_finals.py <run_dir> <policy> <out.jsonl> [sample] [cf]
+
+With `cf` (2026-11-12, `deepseek-flash-default-heldout`), a refuse_done run is read as a default run: each chain
+counts only up to its first refused "done" (the default would have stopped there), as in refuse_done_analysis.py.
 """
 import json
 import pickle
@@ -20,13 +23,24 @@ from r2py.harness.objective import entity_score
 MAPS, SRC = hr.MAPS, hr.SOURCES
 rd, pol, out = ROOT / sys.argv[1], sys.argv[2], open(sys.argv[3], "w", encoding="utf-8")
 sample = sys.argv[4] if len(sys.argv) > 4 else "0"
+cf = len(sys.argv) > 5 and sys.argv[5] == "cf"
+
+
+def _before_refused_done(recs):
+    cut = {}
+    for r in recs:
+        if r["kind"] == "done" and r.get("refused") and r.get("branch") not in cut:
+            cut[r.get("branch")] = r["step"]
+    return [r for r in recs if r.get("branch") not in cut or r.get("step", 0) < cut[r.get("branch")]]
+
+
 stems = sorted({Path(json.loads(l)["script"]).stem for l in open(rd / "results.jsonl", encoding="utf-8")})
 for stem in stems:
     start = (SRC / f"{stem}.py").read_text(encoding="utf-8")
     sm = pickle.loads((MAPS / f"{stem}.pkl").read_bytes())
     tf = rd / "trajectories" / f"{stem}.{pol}.{sample}.jsonl"
     recs = [json.loads(l) for l in open(tf, encoding="utf-8")] if tf.exists() else []
-    src = hr._final_program(recs) or start
+    src = hr._final_program(_before_refused_done(recs) if cf else recs) or start
     try:
         t = _tools(sm, stem); t.note_reference(start)
         rep = t.verify(src)
