@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/replay.py --pool training --policies default_2026_11_01_dsflash --samples 1 --workers 6 --out work/dsflash_default/results.jsonl --budget 6.00",
+  "started": "2026-11-12 08:30:45",
+  "ended": "2026-11-12 10:13:30",
+  "scoring_version": "6a9611f2ee76-db31b28ade02",
+  "rows": 60,
+  "balance_start": 12.04,
+  "balance_end": 9.98,
+  "cost": 2.06,
+  "budget": 6.0,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

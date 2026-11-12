@@ -1,0 +1,26 @@
+states paired: 60 (ceiling rows 60, baseline 60, ceiling finals 60)
+all              n=60  baseline 0.816  ceiling 0.881  diff +0.065 [+0.026, +0.099]  better 32 / worse 3 / tied 25
+running starts   n=46  baseline 0.803  ceiling 0.864  diff +0.061 [+0.013, +0.102]  better 25 / worse 2 / tied 19
+crashing starts  n=14  baseline 0.861  ceiling 0.938  diff +0.077 [+0.027, +0.136]  better 7 / worse 1 / tied 6
+finals >= 0.9: baseline 23, ceiling 41 of 60
+entities the baseline final loses (< 0.9): 173; the ceiling final scores >= 0.9 on 96 (55%)
+calls: {'agent steps': 1024}
+  google/gemma-4-31b-it: calls 559, input 1,887,201, output 101,254 (reasoning 0), cost $0.23
+  deepseek/deepseek-v4.1-flash-1017: calls 1028, input 23,479,411, output 4,752,284 (reasoning 3,379,419), cost $1.82
+largest moves:
+  shiny__rd_example__updateRadioButtons_Rd           0.960 -> 0.250
+  rvest__vignette__rvest_s7                          0.592 -> 1.000
+  rvest__rd_example__html_children_Rd                0.624 -> 1.000
+  broom__rd_example__augment_felm_Rd                 0.674 -> 0.961
+  rvest__rd_example__html_table_Rd                   0.729 -> 1.000
+  pROC__rd_example__coords_Rd                        0.720 -> 0.971
+  shape__rd_example__getellipse_Rd                   0.565 -> 0.815
+  bslib__rd_example__value_box_Rd                    0.678 -> 0.923
+  reshape2__rd_example__cast_Rd                      0.728 -> 0.969
+  bslib__rd_example__layout_column_wrap_Rd           0.780 -> 0.985
+  systemfonts__rd_example__shape_string_Rd           0.709 -> 0.909
+  openssl__rd_example__certificates_Rd               0.741 -> 0.893
+
+bootstrap (10000, seed 0) P(gain > 0) = 0.999
+literal_check rejections: 4 (all passed by the Gemma review); review rejections 29
+free probes 315 (5.3 per run); guard cost $2.06, sleep gaps 0, invalid rows 0

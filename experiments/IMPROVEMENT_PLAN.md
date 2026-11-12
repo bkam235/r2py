@@ -4509,3 +4509,16 @@ before any data.**
 - Smoke (2 states, $0.11): lava csplit (crashing start) 0.000 -> 1.000; textshaping shape_text 0.678 -> 0.971.
   There, literal_check rejected a paste of four glyph metrics that the Gemma review had passed, and the 19 probes
   ran with no errors.
+- **Result (2026-11-12):** all 60 runs valid, guard cost $2.06 (DeepSeek $1.82, Gemma review $0.23), no sleep gaps.
+  Finals re-verified under epoch 9: **0.881 vs 0.816, gain +0.065 [+0.026, +0.099], P(gain > 0) = 0.999**;
+  better 32 / worse 3 / tied 25. Running starts +0.061 [+0.013, +0.102], crashing starts +0.077 [+0.027, +0.136].
+  Finals >= 0.9: 41 vs 23 of 60. That is above the GLM 5.3 ceiling (0.858) at a fraction of its cost.
+- Secondary: 315 free probes (5.3 per run, against Gemma's ~0.04 per chain). literal_check rejected 4 candidates,
+  all of which the Gemma review had passed; the review rejected 29. The largest loss, shiny updateRadioButtons
+  (0.960 -> 0.250), is a chain that stalled at its 0.25 start after three unchanged rewrites, not a regression of
+  a program. The top wins (rvest s7, html_children, html_table, broom augment_felm, pROC coords) were read: they
+  compute their output (printer and serializer emulation), with no pasted values.
+- Caveat: the arm is a bundle (agent model + in-state probes + literal_check + review_crashing), so the gain is the
+  bundle's; the model screen suggests most of it is the model and its probing.
+- Decision: **default candidate** by the registered rule. Next: held-out confirmation (ask first: cost, budget);
+  flipping the default stays with the person. Analysis: `work/dsflash_default/analysis.txt`.
