@@ -58,7 +58,7 @@ def chains() -> dict:
             src, best = states[script]["source"], row["start_score"]
             for r in recs:   # in the order written: the last accepted program is the chain's best
                 if r["kind"] == "accepted" and r.get("branch") == b:
-                    src, best = r.get("source") or src, r["aggregate"]
+                    src, best = trajectory.program(r) or src, r["aggregate"]
             out[(script, b)] = dict(best=best, source=src, hash=trajectory.source_hash(src))
     return out
 

@@ -63,7 +63,7 @@ def chains() -> dict:
                 for s in sorted(ss):
                     if (b, s) in acc:
                         stall = 0
-                        src = acc[(b, s)].get("source") or src
+                        src = trajectory.program(acc[(b, s)]) or src
                         score = acc[(b, s)]["aggregate"]
                         ok = verified[(b, s)]["exit_code"] == 0 if (b, s) in verified else ok
                         best = max(best, score)

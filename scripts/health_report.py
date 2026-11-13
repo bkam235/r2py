@@ -53,7 +53,7 @@ def _final_program(recs: list[dict]) -> "str | None":
         if x["kind"] == "accepted" and x.get("source"):
             key = (x.get("exit_code") == 0, x.get("aggregate", 0.0))
             if best is None or key > best:
-                best, src = key, x["source"]
+                best, src = key, x.get("scored_source") or x["source"]
     return src
 
 

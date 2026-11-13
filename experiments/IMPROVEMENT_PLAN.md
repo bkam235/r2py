@@ -4658,3 +4658,69 @@ before any data.**
   sentinels the candidate itself carries. It is not yet built, and it needs a unit test, `scoring_epoch.py check`
   and the person's acceptance. (1) is a telemetry fix outside the scorer: log the annotated program in `accepted`
   records, and start continuations from it.
+
+### Probing and rewriting by model: does GLM rewrite what it should leave alone? (offline, $0) — 2026-11-12/13
+
+- Question (the person's three hypotheses for why DeepSeek V4.1 Flash beats GLM 5.3 Flash at the stall-2 step):
+  (a) GLM rewrites parts of the program it should leave alone more often; (b) DeepSeek's probes ask better
+  questions; (c) both get equally useful probe results, but GLM draws the wrong conclusions. This entry settles (a);
+  (b) and (c) need the crossover below.
+- Instruments (saved trajectories only): `scripts/rewrite_scope.py` diffs every rewrite against the chain's best
+  program at that step and assigns changed lines to entities by sentinel (verified = 1.0 in the base);
+  `scripts/rewrite_crashes.py` reads the tracebacks of crashing candidates. Tables in
+  `work/analysis/rewrite_scope.txt`, `rewrite_crashes.txt`; hand labels in `crash_classes.tsv`. The verified/failing
+  split covers 26 of 45 states in the paired comparison (frozen starts have no logged per-entity scores); breadth
+  and crash rows cover all 45.
+- **(a) as stated is not supported.** First rewrite of each chain from the same base (model screen, 192 chains,
+  45 states, bootstrap over states):
+
+  | per rewrite | GLM Flash | DeepSeek Flash | difference |
+  |---|---|---|---|
+  | share of verified entities touched | 0.63 | 0.67 | -0.04 [-0.14, +0.06] |
+  | share of changed lines inside verified entities | 0.32 | 0.32 | 0.00 [-0.03, +0.03] |
+  | share of the base's lines changed | 0.57 | 0.52 | +0.04 [+0.01, +0.09] |
+  | candidate crashed | 0.35 | 0.16 | +0.20 [+0.10, +0.29] |
+  | candidate improved | 0.34 | 0.50 | -0.16 [-0.25, -0.07] |
+
+  Both models rewrite broadly (about half the program, two thirds of the verified entities). Among candidates that
+  run, about a third lower a verified entity in both. The full runs (GLM 5.3 vs DeepSeek Flash, 60 states, not
+  paired) show the same scope and a smaller crash gap (0.13 vs 0.07, +0.06 [+0.03, +0.10]).
+- **What differs is crashes in GLM's new code.** In the screen, 73 of 277 GLM candidates crashed vs 34 of 356.
+  51 of the 58 GLM crashes with a script frame are on lines new in that rewrite. Ruled out: dropped definitions
+  (1 of 9 NameErrors names something the base defined), "rest unchanged" placeholders (4% of crashed vs 9% of
+  running candidates), rewrite size (GLM crashes more in every size band: 22/40/29% vs 5/14/13% at 10-30/30-60/
+  60-100% of lines changed), a few hard states (paired first rewrites: GLM alone crashed 50, DeepSeek alone 12,
+  over 30 states), truncated reasoning (GLM 3.1k vs DeepSeek 3.8k reasoning tokens per call, neither near the 8k
+  cap more often), and recovery (after a crash, the next candidate crashes 28% vs 24%, full runs).
+- Hand classification, 20 crashes per model (one per state where possible; categories A-D fixed before reading,
+  E added after; one rater who knew the model, so exploratory):
+
+  | class | GLM Flash | DeepSeek Flash |
+  |---|---|---|
+  | A wrong assumption about the data's shape or type | 3 | 6 |
+  | B wrong library API | 4 | 3 |
+  | C the code contradicts itself | 9 | 2 |
+  | D unclear | 1 | 2 |
+  | E R idiom carried over (R colour names, dotted names, NA past the end) | 3 | 7 |
+
+  C vs the rest: Fisher p = 0.03 (one test, chosen after the counts). GLM's C crashes: a definition rewritten while
+  its callers were not (a class taking `size_attr` called with `size=`, `rainbow` returning RGB lists to a
+  hex-parsing `decode_colour`, a rewritten `Period` class), a wrong name for its own variable (`obj` for `object`),
+  and draft lines left in (a `# placeholder` line redone correctly below it). DeepSeek's crashes are mostly about
+  the outside world: data it misjudged and R habits.
+- Conclusion for (a): GLM does not touch more of what it should leave alone; it loses consistency within its own
+  rewrite more often. A static pre-run check (undefined names, call vs signature) would catch part of class C (3 of
+  GLM's 9 are undefined names), but running the candidate already catches all of them: the cost is a wasted step,
+  not a wrong score. Not pursued.
+- Telemetry added for (b) (harness, 2026-11-13): every probe writes a `probe` record (expression and result, 4,000
+  characters each) to the trajectory; test in `tests/test_free_probe.py`. Until then the trajectories only counted
+  probes, so (b) could not be tested from saved runs.
+- **Telemetry fix (2026-11-13, built; scorer unchanged).** An `accepted` record now also logs `scored_source`, the
+  program with the sentinels it was scored with, which the chain continues from (`r2py/harness/agent.py`).
+  `trajectory.program(rec)` returns it, or the raw `source` in older logs. The continuation instruments
+  (`stall2_continue.py`, hence `model_screen.py`, and `patience_continue.py`) and `health_report._final_program`
+  (used by `reverify_finals.py`) start from it. Test `tests/test_scored_source.py`, which fails on the old agent.
+  Suite: 1,074 passed; `test_stage2` `with_locale_dataframe` fails with or without the change (an R-side shim
+  round trip, not touched here). Still on the raw source: `learning_curves.py` and `scoring_epoch.py` re-score
+  logged programs with the program as its own reference. For logs without `scored_source` they keep that
+  inconsistency, which the attribution fix addresses.

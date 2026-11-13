@@ -440,6 +440,8 @@ def reason(
             except Exception as exc:
                 result = f"ERROR: {exc}"
             print(f"[Agent]   Probe result: {result[:200]!r}")
+            # Telemetry (2026-11-13): what the probe asked and got back; the trajectories only counted probes.
+            _trajectory.log("probe", expression=expression[:4000], result=result[:4000], **_ctx)
             if free_probe and result != "(probe limit reached)":   # HarnessTools.probe_r past its 10 probes
                 _stat("outcome", "probe_r:free")
                 history.append(f"Step {step}: probe_r {expression[:300]!r} ->\n{result[:2000]}")
@@ -712,8 +714,10 @@ def reason(
                     # misleads. Its per-entity scores are in the history entry instead.
                 else:
                     print(f"[Review]  PASSED")
-                    _trajectory.log("accepted", **_ctx)
                     best_source = harness.last_annotated_source or new_source
+                    # scored_source (2026-11-13): the program as it was scored and as the chain continues from it
+                    # (sentinels as attributed); `source` is the raw candidate, which re-verifies differently.
+                    _trajectory.log("accepted", scored_source=best_source, **_ctx)
                     if hasattr(harness, "note_reference"):
                         harness.note_reference(best_source)
                     repair_misses = 0

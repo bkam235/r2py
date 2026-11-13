@@ -34,6 +34,13 @@ def active() -> bool:
     return _state is not None
 
 
+def program(rec: dict) -> "str | None":
+    """The program an ``accepted`` record stands for: ``scored_source`` (logged since 2026-11-13: the program with
+    the sentinels it was scored with, which the chain continues from), else the raw candidate ``source``. A
+    continuation or re-verification should start from this, or attribution can differ (patience-dsflash)."""
+    return rec.get("scored_source") or rec.get("source")
+
+
 def log(kind: str, **fields) -> None:
     if _state is None:
         return
