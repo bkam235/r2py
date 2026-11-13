@@ -4724,3 +4724,25 @@ before any data.**
   round trip, not touched here). Still on the raw source: `learning_curves.py` and `scoring_epoch.py` re-score
   logged programs with the program as its own reference. For logs without `scored_source` they keep that
   inconsistency, which the attribution fix addresses.
+
+### Epoch 10: added sentinels attributed (scorer track, correction) — accepted 2026-11-13
+
+- What changed (`r2py/harness/tools.py`, `HarnessTools._attributable`, commit 224ddeb8): a sentinel that a
+  candidate adds for a script-map entity the reference does not map is now attributed too, in addition to the
+  reference's entities, on both the sentinel-reuse path and the restore path. Before, an entity the seed mapping
+  missed could never score, even when the model marked and computed it (trace above: farver spec_lab 0.25 against
+  1.0). Tests `tests/test_added_sentinels.py` (2 of 4 failed before the fix). Check: `work/scoring/check_20261113_0812.md`;
+  accepted by the person; scorer 06e4778f626b-db31b28ade02; curves rebuilt (`work/scoring/accept_epoch10.log`).
+- Default's finals re-verified under epoch 10 (`reverify_finals.py`, sample 0, no model calls):
+  training (`work/dsflash_default/finals_epoch10.jsonl`) **0.8813 -> 0.8799**; held-out
+  (`work/dsflash_heldout/finals_epoch10.jsonl`) **0.9039 -> 0.9074**. All of it is correction, no gain (same
+  programs). Moved: training lubridate period 0.927 -> 1.000, purrr invoke 0.967 -> 1.000, shape Arrows 0.755 ->
+  0.826, openssl ec_dh 0.670 -> 0.411; held-out clock posixt-group 0.875 -> 1.000, prodlim summary 0.521 -> 0.557.
+  Rebuilt curve for the default on all 60: 0.886 (the curve takes the best re-scored program per run).
+- Correction to the acceptance note: openssl ec_dh moved because of the change, not noise (re-verified 5 times at
+  0.42-0.43; 0.66-0.68 with the old rule patched back in). The model added `alice_pub` / `bob_pub` sentinels; now
+  attributed, each scores 0.25 (type and value 0), as `alice_key` already did. Under the old rule they had no range
+  and scored 1.0. Hypothesis, not tested: R's `pubkey`/`key` values cannot be serialized ("excluded from
+  comparison"), so R's bundle is empty; an entity Python leaves out compares empty with empty (1.0), while one it
+  computes is penalised for producing data. If so, epoch 10 is consistent with how `alice_key` was always scored,
+  and the open question is the comparator's handling of unserializable R values (a candidate scorer question).
