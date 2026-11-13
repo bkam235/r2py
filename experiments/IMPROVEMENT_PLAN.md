@@ -4760,3 +4760,20 @@ before any data.**
 - Rule: descriptive, no decision. One sample per arm: replay noise (about ±0.03 on the 60-state plateau, much more
   per state) is in the gain, so only a large effect would show. Estimate $0.75 (the old replay's cost on these
   12: $0.71), budget $1.50. Instrument `scripts/feedback_e10.py`.
+- Run note: the first invocation passed `--max-start 1.01`, which also changes how `training_states` samples the
+  60-state pool, so it ran only the 5 of the 12 in that pool (`run.log`; same start files, so valid). The other 7
+  ran with the default `--max-start` (`run2.log`). Both guards finished, no sleep gaps, cost $0.34 + $0.27 = $0.61.
+- **Result (2026-11-13, descriptive):** finals re-verified under epoch 10, mean per-state gain **+0.0885
+  [-0.0185, +0.2267], P(> 0) 0.94**; on the 60-state plateau +0.0177 (`work/feedback_e10/analysis.txt`). Better 6,
+  worse 3, tied 3. One state carries most of it: shiny updateRadioButtons 0.25 -> 0.96, where every earlier chain
+  (6 in the old replay, 3 extra in patience-dsflash) stayed at 0.25. Without it +0.032.
+- Read with the old attribution rule patched back in, the new finals separate two kinds of gain: shiny (0.96) and
+  isoband (0.869) score the same under both rules (better programs, which the corrected feedback may or may not have
+  caused); farver (0.703 old rule, 0.890 new) and gtable (0.850, 1.000) gain because the run marked and computed
+  entities the old rule ignored (`spec_lab`, `tab*`), i.e. the feedback rewarded work the old scorer could not see.
+  openssl ec_dh 0.411 -> 0.666: the new run did not add `alice_pub`/`bob_pub` sentinels, which epoch 10 penalises
+  (see epoch 10 above), so the score went back to where it was. Losses: textshaping get_font_features -0.217,
+  lubridate period -0.066 (both above 0.9 before).
+- Reading: consistent with the corrected feedback helping in these states, but one sample per arm and one state
+  dominating; not enough to claim a gain. A clean epoch-10 replay of all 60 (about $2) would give the baseline for
+  the next test.

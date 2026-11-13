@@ -1,0 +1,28 @@
+[
+ {
+  "command": "scripts/replay.py --pool training --policies default_2026_11_01_dsflash --samples 1 --workers 6 --max-start 1.01 --only farver__rd_example__convert_colour_Rd gtable__rd_example__gtable_add_cols_Rd openssl__rd_example__ec_dh_Rd isoband__vignette__isoband3_s2 lubridate__rd_example__period_Rd purrr__rd_example__invoke_Rd rvest__rd_example__html_element_Rd shape__rd_example__Arrows_Rd recipes__rd_example__step_kpca_Rd xml2__rd_example__xml_attr_Rd textshaping__rd_example__get_font_features_Rd shiny__rd_example__updateRadioButtons_Rd --out work/feedback_e10/results.jsonl --budget 1.50",
+  "started": "2026-11-13 10:37:13",
+  "ended": "2026-11-13 10:52:22",
+  "scoring_version": "06e4778f626b-db31b28ade02",
+  "rows": 5,
+  "balance_start": 7.43,
+  "balance_end": 7.09,
+  "cost": 0.34,
+  "budget": 1.5,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ },
+ {
+  "command": "scripts/replay.py --pool training --policies default_2026_11_01_dsflash --samples 1 --workers 6 --only farver__rd_example__convert_colour_Rd gtable__rd_example__gtable_add_cols_Rd openssl__rd_example__ec_dh_Rd isoband__vignette__isoband3_s2 lubridate__rd_example__period_Rd purrr__rd_example__invoke_Rd rvest__rd_example__html_element_Rd shape__rd_example__Arrows_Rd recipes__rd_example__step_kpca_Rd xml2__rd_example__xml_attr_Rd textshaping__rd_example__get_font_features_Rd shiny__rd_example__updateRadioButtons_Rd --out work/feedback_e10/results.jsonl --budget 1.20",
+  "started": "2026-11-13 10:52:37",
+  "ended": "2026-11-13 11:24:42",
+  "scoring_version": "06e4778f626b-db31b28ade02",
+  "rows": 7,
+  "balance_start": 7.09,
+  "balance_end": 6.83,
+  "cost": 0.27,
+  "budget": 1.2,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]
