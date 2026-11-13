@@ -85,7 +85,13 @@ class HarnessTools:
         ranges = ranges_from_sentinels(restore_sentinels(self._reference_source, candidate))
         if not self._mapped_eids <= set(ranges):
             return None
-        return {e: r for e, r in ranges.items() if e in self._mapped_eids}
+        return {e: r for e, r in ranges.items() if e in self._attributable()}
+
+    def _attributable(self) -> set[str]:
+        """The reference's entities plus every script-map entity (2026-11-13): a sentinel the candidate adds for an
+        entity the reference does not map is attributed too. Before, an entity the seed mapping missed could never
+        score, even when the model marked and computed it (farver spec_lab 0.25 against 1.0)."""
+        return self._mapped_eids | set(getattr(getattr(self, "_script_map", None), "entities", None) or {})
 
     def verify(self, python_source: str) -> "ScoreReport":
         """Run Stage 4 verification, return full ScoreReport with comparisons."""
@@ -106,7 +112,7 @@ class HarnessTools:
         if self._mapped_eids and self._mapped_eids <= set(kept):
             # Every entity's sentinel survived: read the mapping off them. Asking a model to re-derive
             # it each time gave the same source aggregates from 0.44 to 0.77 (attribution noise).
-            entity_ranges = {e: r for e, r in kept.items() if e in self._mapped_eids}
+            entity_ranges = {e: r for e, r in kept.items() if e in self._attributable()}
             cache_stats["sentinel_reuse"] += 1
         elif (restored := self._restored_ranges(python_source)) is not None:
             # Some sentinels were dropped: put them back by aligning unchanged lines with the
