@@ -4746,3 +4746,17 @@ before any data.**
   comparison"), so R's bundle is empty; an entity Python leaves out compares empty with empty (1.0), while one it
   computes is penalised for producing data. If so, epoch 10 is consistent with how `alice_key` was always scored,
   and the open question is the comparator's handling of unserializable R values (a candidate scorer question).
+
+### Does the epoch-10 feedback matter? (test `feedback-e10`, descriptive) — registered 2026-11-13
+
+- Question: epoch 10 attributes sentinels the agent adds for entities the start does not map, so in those states
+  the loop's scores and entity feedback change. Does the default reach better programs there?
+- States: the 12 training states whose last default replay (`work/dsflash_default`) added such sentinels for
+  non-import entities (39 of 60 added some, 27 only imports / `suppressPackageStartupMessages`, which score 1.0 when
+  they run). A new run could add sentinels elsewhere; this is the likely set, not all of it.
+- Arm: one replay of `default_2026_11_01_dsflash` on the 12 under epoch 10 (`work/feedback_e10`). Baseline: the old
+  replay's finals re-verified under epoch 10. Both arms are re-verified with `reverify_finals.py`, so only the
+  feedback during the run differs. Primary: mean per-state gain, bootstrap over states, 95% interval, P(> 0).
+- Rule: descriptive, no decision. One sample per arm: replay noise (about ±0.03 on the 60-state plateau, much more
+  per state) is in the gain, so only a large effect would show. Estimate $0.75 (the old replay's cost on these
+  12: $0.71), budget $1.50. Instrument `scripts/feedback_e10.py`.

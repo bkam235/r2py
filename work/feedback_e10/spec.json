@@ -1,0 +1,17 @@
+{
+ "id": "feedback-e10",
+ "question": "Does the epoch-10 attribution fix change what the default reaches, in the states where the loop's feedback changed?",
+ "track": "harness",
+ "instrument": "replay.py, default_2026_11_01_dsflash, one sample, on the 12 training states whose last default replay added sentinels for non-import entities the start does not map; both replays' finals re-verified under epoch 10",
+ "pool": "training (12 of 60)",
+ "arms": ["new replay under epoch 10 (work/feedback_e10)", "last default replay, run under epoch 9 (work/dsflash_default)"],
+ "baseline": "work/dsflash_default finals re-verified under epoch 10 (finals_epoch10.jsonl)",
+ "primary": "mean per-state gain (new - old final), bootstrap over states, 95% interval, P(> 0)",
+ "rule": "descriptive, no decision; one sample per arm, so replay noise is in the gain",
+ "est_cost": 0.75,
+ "plan": "Does the epoch-10 feedback matter? (test `feedback-e10`, descriptive)",
+ "samples": 1,
+ "run_dir": "work/feedback_e10",
+ "analysis": "python scripts/feedback_e10.py",
+ "budget": 1.5
+}
