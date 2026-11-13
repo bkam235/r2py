@@ -4622,3 +4622,39 @@ before any data.**
   was worth running: lesson 5 (patience adds nothing) is now also measured under the DeepSeek agent. Patience gains
   but no more per call than width. More calls on states that end below 0.9 return about 0.001 per call either way.
   The cycle also found the scoring inconsistency above.
+
+### Trace of the start re-scoring found in patience-dsflash (offline, $0) — 2026-11-13
+
+- Question: why does the same program score 0.703 offline and 0.890 at a continuation's start (farver
+  convert_colour), and 0.742 against 0.409 (caret_s3)?
+- Cause, shown offline with a fresh harness per verification (`work/patience_dsflash/trace_reference.py`). Note:
+  an earlier check that "the reference does not matter" reused one harness, whose verify cache returned the first
+  result; it was wrong. The score depends on the **reference program** given to `HarnessTools.note_reference`:
+  `verify` attributes only the entities whose sentinels the reference carries (`_mapped_eids`, `tools.py`), and
+  rebuilds the program's sentinels from that set (`insert_sentinels(clean, entity_ranges)`).
+  - farver b1: the program added a `# r2py:entity:spec_lab` sentinel that the frozen start lacks. With the start as
+    reference spec_lab is unattributed (0.25, aggregate 0.7027); with the program as its own reference spec_lab
+    scores 1.0 (0.8902).
+  - caret_s3 b2: the program kept 1 of the start's 4 sentinels. With the start as reference the dropped ones are
+    model-mapped (0.7419); with the program as reference only `str` is attributed and `data` scores 0 (0.4086).
+- Two faults follow:
+  1. **Instrument (telemetry):** the trajectory's `accepted` record logs the raw candidate. The loop itself
+     continues from `harness.last_annotated_source`, the program with the sentinels it was scored with
+     (`agent.py`, after review). Continuations started from the log (`stall2_continue`, `model_screen`,
+     `patience_continue`) therefore start from a differently attributed program: in patience-dsflash 15 of 66
+     chains. This biases continuation instruments, not production scores.
+  2. **Scorer (attribution):** in the loop, an entity the start's sentinels do not cover can never be attributed,
+     even when the model writes its sentinel and computes it. The loop strips the added sentinel. On the default's
+     training finals (`work/patience_dsflash/trace_unmapped.py`), trusting the program's own sentinels gives:
+     shape Arrows 0.755 -> 0.826 (plot, plot_3, plot_5, x), lubridate period 0.927 -> 1.000 (days, days_1, class,
+     years, c, as.Date), purrr invoke 0.967 -> 1.000 (list_1). farver's final carries no extra sentinel (0.703 on
+     both). gtable add_cols goes the other way (0.915 -> 0.790): its program dropped sentinels, which only the
+     start reference restores, so "trust the program's sentinels" must add to the start's set, never replace it.
+     10 of 60 states score entities outside the start's sentinels; at most 0.0067 of the plateau sits in them, and
+     the three verified cases hold +0.0030.
+- Classification: (2) is a measurement fault that hides real progress from the model. The feedback names entities
+  as failing (lubridate `days` 0.5) that the program computes, so it can send steps after non-problems. It is a
+  scorer question (3a): attribute the union of the reference's entities and the script-map entities whose
+  sentinels the candidate itself carries. It is not yet built, and it needs a unit test, `scoring_epoch.py check`
+  and the person's acceptance. (1) is a telemetry fix outside the scorer: log the annotated program in `accepted`
+  records, and start continuations from it.
