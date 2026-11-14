@@ -51,7 +51,11 @@ its own: about ±0.03 on the 60-state plateau (`width6-running-pool`, 2026-11-06
 about twice the noise floor, gains on this pool can no longer be confirmed by the instrument that measures the
 objective, and the cycle says so before proposing any lever: it states the reachable gap and proposes a new
 objective (a harder or larger pool, the share of finals >= 0.9, cost per verified script, or another the evidence
-supports). Changing the objective or the pools is the person's decision.
+supports). Changing the objective or the pools is the person's decision. States the ledger still has as `unknown`
+are counted both ways, so the reachable gap is a range.
+
+**Stall trigger.** When the latest three cycles together added less than 0.01 of gain (corrections not counted),
+the next cycle opens with bets (step 1) and an objective proposal, not with a lever or a scorer question.
 
 ## Roles
 
@@ -116,7 +120,21 @@ below 0.9: its points of the gap, its class (measurement, out of reach, behaviou
 instead of re-deriving them from the health report, and the headroom check reads the reachable gap from it. A state
 stays `unknown` until a test or a trajectory reading classes it.
 
-A candidate question names the part of the gap it addresses and how many points of it it could reach at most. For a
+The ledger says where the gap is; it is not where questions come from.
+
+**Levers and bets.** A **lever** tunes the loop as it is (an option, a hint, a gate, a scorer fix, patience,
+width); past levers gained 0-0.02. A **bet** changes what the loop is or what it is measured on: the model of a role
+(agent, seeds, review, audit, mapping), a capability the agent lacks (a tool, a way to inspect or run what it cannot
+now), the unit of work or the architecture, the learning track, or the objective and the pool. Every gain above 0.03
+so far was a bet (width +0.144, conversation mode +0.05, the agent's model +0.065). Every proposal has at least one
+bet. A bet is ranked by its **ceiling** (from a ceiling measurement where one exists, else argued from the evidence),
+its cost and its cheapest **kill test** (a few dollars at most, registered first; the full test only if it
+survives), not by a chance taken from past levers. Where no ceiling measurement fits the current default (a much
+stronger agent on the states below 0.9, an oracle hint), proposing one is a bet. A bet may need more than an option
+(a tool, an instrument, a pool); it is built behind an option or policy as usual. Lessons are scoped to the agent
+model they were measured under; one measured under another model is a hypothesis to retest, not a bound on a bet.
+
+A lever names the part of the gap it addresses and how many points of it it could reach at most. For a
 scorer question that is the states it touches times what they lose. A harness lever usually touches many states a
 little: its reach is the share of the gap in the states it touches times a success rate from the nearest past result
 measured under the current default's agent (computed from its replay's trajectories, not carried over from an
