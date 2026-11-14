@@ -148,6 +148,9 @@ A question whose reach on the production default is zero (it explains a policy t
 mechanism no option would change) is an **explanatory** question. It is labelled so, names the decision its answer
 would change, and runs at most once in three cycles.
 
+When a large share of the gap is capability, the proposal lists the learning track's next step (3c: data, audit,
+train) with its status, even if it is not proposed for this cycle.
+
 ### 2. Diagnose
 
 Trace one loss to its cause on a concrete program, and show the cause with an offline test. Then classify it:
