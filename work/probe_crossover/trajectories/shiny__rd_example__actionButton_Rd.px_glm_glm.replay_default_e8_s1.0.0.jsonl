@@ -1,0 +1,3 @@
+{"kind": "run_start", "t": 0.0, "script": "shiny__rd_example__actionButton_Rd.R", "policy": "px_glm_glm", "sample": "replay_default_e8_s1.0.0"}
+{"kind": "route", "t": 175.48, "prober_action": "lookup_docs", "written_by": "glm", "prefill": false, "prober_truncated": false, "step": 1, "best_score": 0.759, "best_hash": "67b3e1969d76", "prompt_hash": "1b9e68bb4920", "entity_repair": null, "branch": null}
+{"kind": "run_end", "t": 188.37, "final_score": 0.759}

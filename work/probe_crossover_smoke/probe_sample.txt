@@ -1,0 +1,383 @@
+
+#### ds 1 broom__rd_example__augment_felm_Rd.R (px_ds_ds)
+--- expression
+print(names(est0)); print(names(est1)); print(names(est2)); cat("----\n"); print(summary(est1))
+--- result
+[1] "inv"             "lhs"             "hasicpt"         "TSS"            
+ [5] "P.TSS"           "numctrl"         "beta"            "coefficients"   
+ [9] "Pp"              "N"               "p"               "residuals"      
+[13] "response"        "c.fitted.values" "fitted.values"   "cfactor"        
+[17] "fe"              "r.residuals"     "terms"           "numrefs"        
+[21] "df"              "df.residual"     "rank"            "exactDOF"       
+[25] "xp"              "na.action"       "nostats"         "STATS"          
+[29] "vcv"             "robustvcv"       "se"              "tval"           
+[33] "pval"            "rse"             "rtval"           "rpval"          
+[37] "model"           "call"            "formula"         "keepX"          
+[41] "keepCX"        
+
+#### ds 2 broom__rd_example__augment_felm_Rd.R (px_ds_glm)
+--- expression
+library(lfe)
+d <- airquality[complete.cases(airquality[,c("Ozone","Temp","Wind","Solar.R","Month")]),]
+X <- as.matrix(d[,c("Temp","Wind","Solar.R")])
+y <- d$Ozone
+Xw <- sweep(X,2,apply(X,2,function(v) ave(v,d$Month)))
+yw <- y - ave(y,d$Month)
+b <- solve(crossprod(Xw), crossprod(Xw,yw))
+r <- as.vector(yw - Xw %*% b)
+sig2 <- sum(r^2)/103
+se <- sqrt(diag(sig2*solve(crossprod(Xw))))
+print(b); print(se)
+fit <- felm(Ozone ~ Temp + Wind + Solar.R | Month, d)
+print(fit$beta); print(sqrt(diag(fit$vcv))); print(head(fit$residuals)); print(head(fit$fitted.values)); print(head(fit$c.fitted.values)); print(head(fit$r.residuals))
+print(unlist(fit[c("TSS","P.TSS","Pp","p","N","numctrl")]))
+print(fit$vcv); print(fit$robustvcv)
+print(getfe(fit, se=TRUE, bN=100))
+--- result
+[,1]
+Temp    -0.16968200
+Wind     0.06909523
+Solar.R  0.06460152
+      Temp       Wind    Solar.R 
+0.10282803 0.06531385 0.03201126 
+              Ozone
+Temp     1.87511085
+Wind    -3.10872012
+Solar.R  0.05222049
+      Temp       Wind    Solar.R 
+0.34072694 0.66008636 0.02366696 
+          Ozone
+[1,]   2.685021
+[2,]  -6.065425
+[3,] -21.134370
+[4,]  -4.616792
+[5,] -13.526326
+[6,]  20.333782
+         Ozone
+[1,] 38.314979
+[2,] 42.065425
+[3,] 33.134370
+[4,] 22.616792
+[5,] 36.526326
+[6,] -1.333782
+          Ozone
+[1,]  14.189979
+[2,]  17.940425
+[3,]   9.009370
+[4,]  -1.508208
+[5,]  12.401326
+[6,] -25.458782
+         Ozone
+[1,] -71.54979
+[2,] -80.30024
+[3,] -95.36918
+[4,] -78.85161
+[5,] -87.76114
+[6,] -53.90103
+  TSS.Ozone P.TSS.Ozone          Pp          
+
+#### ds 3 broom__rd_example__augment_felm_Rd.R (px_ds_ds)
+--- expression
+print(confint(est2)); cat("---\n"); print(summary(est2)$coefficients); cat("---df\n"); print(summary(est1)$df); print(summary(est1)$rdf)
+--- result
+2.5 %   97.5 %
+Temp     1.37077305 2.379449
+Wind    -6.73587321 0.518433
+Solar.R -0.06110202 0.165543
+---
+           Estimate Cluster s.e.   t value     Pr(>|t|)
+Temp     1.87511085   0.18164876 10.322729 0.0004969118
+Wind    -3.10872012   1.30640187 -2.379605 0.0760219425
+Solar.R  0.05222049   0.04081569  1.279422 0.2699220380
+---df
+[1] 103 103
+[1] 103
+
+#### glm 1 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+e1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, airquality)
+e2 <- felm(Ozone ~ Temp + Wind + Solar.R | Month | 0 | Month, airquality)
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+y <- d$Ozone; X <- as.matrix(d[,c('Temp','Wind','Solar.R')]); g <- d$Month; n <- nrow(d); G <- 5
+u <- as.vector(residuals(e1))
+Xw <- X; for (j in 1:3) Xw[,j] <- X[,j] - ave(X[,j],g)
+B <- e1$inv
+sg <- t(rowsum(Xw*u, g)); V <- B%*%(t(sg)%*%sg)%*%B
+for (cc in c(G/(G-1), G/(G-1)*(n-1)/(n-8), G/(G-1)*(n-1)/(n-3), G/(G-1)*(n)/(n-8), (n-1)/(n-3), (n)/(n-8))) print(round(sqrt(diag(V*cc)),7))
+# with intercept column in Xw? cgm uses demeaned within including intercept absorbed:
+Xw1 <- cbind(1, Xw); sg1 <- t(rowsum(Xw1*u, g)); V1 <- B%*% (t(sg1[,2:4])%*%sg1[,2:4])%*%B
+print(round(sqrt(diag(V1*G/(G-1)*(n-1)/(n-8))),7))
+print(confint(e1)); print(confint(e2))
+# c.fitted / fitted
+print(head(e1$c.fitted.values)); print(head(e1$fitted.values)); print(e1$numrefs); print(e1$hasicpt); print(e1$STATS)
+# getfe se via bootstrap? check se factor
+print(attr(e1$fe$Month,'sefactor'))
+--- result
+Error: non-conformable arguments
+
+#### glm 2 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+e0 <- felm(Ozone ~ Temp + Wind + Solar.R, airquality)
+e1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, airquality)
+print(names(e0))
+print(names(e1))
+print(e1$fe)
+print(head(e1$r.residuals))
+print(e1$vcv)
+print(e1$robustvcv)
+print(summary(e1))
+--- result
+[1] "inv"             "lhs"             "hasicpt"         "TSS"            
+ [5] "P.TSS"           "numctrl"         "beta"            "coefficients"   
+ [9] "Pp"              "N"               "p"               "residuals"      
+[13] "response"        "c.fitted.values" "fitted.values"   "cfactor"        
+[17] "fe"              "r.residuals"     "terms"           "numrefs"        
+[21] "df"              "df.residual"     "rank"            "exactDOF"       
+[25] "xp"              "na.action"       "nostats"         "STATS"          
+[29] "vcv"             "robustvcv"       "se"              "tval"           
+[33] "pval"            "rse"             "rtval"           "rpval"          
+[37] "model"           "call"            "formula"         "keepX"          
+[41] "keepCX"        
+
+#### glm 3 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+e0 <- felm(Ozone ~ Temp + Wind + Solar.R, airquality)
+e1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, airquality)
+e2 <- felm(Ozone ~ Temp + Wind + Solar.R | Month | 0 | Month, airquality)
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+y <- d$Ozone; X <- as.matrix(d[,c('Temp','Wind','Solar.R')]); g <- d$Month
+yw <- y - ave(y,g); Xw <- sweep(X, 2, ave(X[,1],g)); Xw <- sweep(X, 2, ave(X[,1],g))
+for (j in 1:3) Xw[,j] <- X[,j] - ave(X[,j],g)
+b <- as.numeric(coef(e1)[c('Temp','Wind','Solar.R')])
+a0 <- tapply(as.vector(y - Xw%*%b), g, mean); print(a0)
+ga <- getfe(e1); print(setNames(ga$effect, ga$idx))
+rr <- e1$r.residuals; al <- ga$effect[as.character(g)]
+print(head(round(rr - (y - al),8)))
+print(head(round(rr - yw,8)))
+D <- model.matrix(~ 0 + factor(g)); Xf <- cbind(X, D)
+bf <- c(b, al[as.character(g)]); u <- as.vector(y - Xf%*%bf)
+breadf <- solve(t(Xf)%*%Xf)
+sg <- t(sapply(unique(g), function(k) colSums(Xf[g==k,,drop=FALSE]*u[g==k])))
+n <- nrow(d); G <- 5; K <- 8
+for (cc in list(G/(G-1), G/(G-1)*(n-1)/(n-K), G/(G-1)*(n-1)/(n-3), 1)) print(round(sqrt(diag(breadf%*%(t(sg)%*%sg)%*%breadf*cc)),6))
+cat('e2se: '); print(e2$se); cat('e2rse: '); print(e2$rse)
+inv <- e1$inv; ue <- as.vector(e1$residuals)
+V <- inv%*%(t(Xw)%*%diag(ue^2)%*%Xw)%*%inv
+print(round(sqrt(diag(V)),6)); print(round(sqrt(diag(V*n/(n-8))),6)); print(round(sqrt(diag(V*(n-1)/(n-8))),6))
+s2 <- sum(ue^2)/(n-8)
+mg <- t(sapply(unique(g), function(k) colM
+--- result
+5        6        7        8        9 
+24.12500 29.44444 59.11538 60.00000 31.44828 
+        5         6         7         8         9 
+-74.23481 -88.99377 -82.98343 -78.43135 -90.20209 
+attr(,"extra")
+attr(,"extra")$obs
+Month.5 Month.6 Month.7 Month.8 Month.9 
+     24       9      26      23      29 
+
+attr(,"extra")$comp
+[1] 1 1 1 1 1
+
+attr(,"extra")$fe
+[1] Month Month Month Month Month
+Levels: Month
+
+attr(,"extra")$idx
+Month1 Month2 Month3 Month4 Month5 
+     5      6      7      8      9 
+Levels: 5 6 7 8 9
+
+     Ozone
+[1,]    NA
+[2,]    NA
+[3,]    NA
+[4,]    NA
+[5,]    NA
+[6,]    NA
+         Ozone
+[1,] -88.42479
+[2,] -92.17524
+[3,] -83.24418
+[4,] -72.72661
+[5,] -86.63614
+[6,] -48.77603
+Error: non-conformable arguments
+
+#### glm 4 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+e1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, airquality)
+print(dim(e1$inv)); print(dim(e1$vcv)); print(confint(e1))
+e2 <- felm(Ozone ~ Temp + Wind + Solar.R | Month | 0 | Month, airquality)
+print(confint(e2))
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+y <- d$Ozone; X <- as.matrix(d[,c('Temp','Wind','Solar.R')]); g <- d$Month; n <- nrow(d); G <- 5
+u <- as.vector(residuals(e1))
+Xw <- X; for (j in 1:3) Xw[,j] <- X[,j] - ave(X[,j],g)
+sg <- t(rowsum(Xw*u, g)); V <- e1$inv%*%(t(sg)%*%sg)%*%e1$inv
+for (cc in c(G/(G-1), G/(G-1)*(n-1)/(n-8), G/(G-1)*(n-1)/(n-3), G/(G-1)*n/(n-8), (n-1)/(n-3), n/(n-8))) print(round(sqrt(diag(V*cc)),7))
+print(head(e1$c.fitted.values)); print(head(e1$fitted.values)); print(e1$numrefs); print(e1$hasicpt); print(e1$STATS)
+--- result
+[1] 3 3
+[1] 3 3
+               2.5 %      97.5 %
+Temp     1.199359337  2.55086237
+Wind    -4.417845735 -1.79959451
+Solar.R  0.005282659  0.09915833
+              2.5 %   97.5 %
+Temp     1.37077305 2.379449
+Wind    -6.73587321 0.518433
+Solar.R -0.06110202 0.165543
+Error: non-conformable arguments
+
+#### glm 5 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+e0 <- felm(Ozone ~ Temp + Wind + Solar.R, airquality)
+e1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, airquality)
+e2 <- felm(Ozone ~ Temp + Wind + Solar.R | Month | 0 | Month, airquality)
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+y <- d$Ozone; X <- as.matrix(d[,c('Temp','Wind','Solar.R')]); g <- d$Month; n <- nrow(d); G <- 5
+print(summary(e1)$coefficients)
+print(summary(e1, robust=TRUE)$coefficients)
+print(summary(e2)$coefficients)
+print(summary(e2, robust=TRUE)$coefficients)
+print(round(e2$vcv,8))
+D <- model.matrix(~0+factor(g)); Xf <- cbind(X,D)
+bf <- solve(t(Xf)%*%Xf, t(Xf)%*%y); u <- as.vector(y - Xf%*%bf)
+B <- solve(t(Xf)%*%Xf)
+sg <- t(rowsum(Xf*u, g))
+for (cc in c(G/(G-1), G/(G-1)*(n-1)/(n-8), G/(G-1)*(n-1)/(n-3), 1)) print(round(sqrt(diag(B%*%(t(sg)%*%sg)%*%B*cc)),6))
+ng <- as.numeric(table(g)); mx <- rowsum(cbind(1,X), g)/ng
+s2 <- sum(u^2)/(n-8); invw <- e1$inv
+print(sqrt(s2*(1/ng + rowSums((mx[,-1]%*%invw)*mx[,-1]))))
+print(c(e1$p, e1$df, e1$df.residual, e1$rank, e0$p, e0$df, e0$df.residual, e0$rank, e2$p, e2$df, e2$df.residual, e2$rank))
+print(head(e1$c.fitted.values)); print(head(e1$fitted.values)); print(e1$numrefs); print(names(e1$STATS)); print(e1$hasicpt)
+--- result
+Estimate Std. Error   t value     Pr(>|t|)
+Temp     1.87511085 0.34072694  5.503266 2.740750e-07
+Wind    -3.10872012 0.66008636 -4.709566 7.777659e-06
+Solar.R  0.05222049 0.02366696  2.206472 2.957179e-02
+           Estimate Robust s.e   t value     Pr(>|t|)
+Temp     1.87511085  0.3439944  5.450993 3.444592e-07
+Wind    -3.10872012  0.9029918 -3.442689 8.337522e-04
+Solar.R  0.05222049  0.0225714  2.313569 2.267805e-02
+           Estimate Cluster s.e.   t value     Pr(>|t|)
+Temp     1.87511085   0.18164876 10.322729 0.0004969118
+Wind    -3.10872012   1.30640187 -2.379605 0.0760219425
+Solar.R  0.05222049   0.04081569  1.279422 0.2699220380
+           Estimate Cluster s.e.   t value     Pr(>|t|)
+Temp     1.87511085   0.18164876 10.322729 0.0004969118
+Wind    -3.10872012   1.30640
+
+#### glm 6 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+e0 <- felm(Ozone ~ Temp + Wind + Solar.R, airquality)
+e1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, airquality)
+e2 <- felm(Ozone ~ Temp + Wind + Solar.R | Month | 0 | Month, airquality)
+print(sqrt(diag(e0$robustvcv))); print(e0$vcv); print(e0$se); print(e0$rse)
+print(sqrt(diag(e1$robustvcv))); print(e1$vcv)
+print(sqrt(diag(e2$robustvcv))); print(e2$se); print(e2$rse); print(e2$df.residual); print(e2$p)
+ag <- tapply(e1$r.residuals - e1$residuals, e1$fe$Month, mean); print(ag)
+print(getfe(e1, se=TRUE, bN=100))
+print(e0$df.residual); print(e0$p); print(e0$Pp); print(e0$hasicpt); print(e1$hasicpt); print(e1$df)
+--- result
+(Intercept)        Temp        Wind     Solar.R 
+21.22864770  0.20248088  0.87494492  0.01911607 
+             (Intercept)         Temp          Wind       Solar.R
+(Intercept) 531.52031474 -5.508715650 -1.045202e+01  0.0267803527
+Temp         -5.50871565  0.064277356  8.046691e-02 -0.0015768865
+Wind        -10.45202254  0.080466910  4.282487e-01 -0.0003482672
+Solar.R       0.02678035 -0.001576887 -3.482672e-04  0.0005376122
+(Intercept)        Temp        Wind     Solar.R 
+23.05472435  0.25352979  0.65440710  0.02318647 
+(Intercept)        Temp        Wind     Solar.R 
+21.22864770  0.20248088  0.87494492  0.01911607 
+     Temp      Wind   Solar.R 
+0.3439944 0.9029918 0.0225714 
+                Temp          Wind       Solar.R
+Temp     0.116094845  0.0941857970 -0.0027385190
+W
+
+#### glm 7 bslib__rd_example__layout_column_wrap_Rd.R (px_glm_glm)
+--- expression
+cat(paste(capture.output(print(layout_column_wrap(width = 1/2, x, x, x))), collapse = "\n"))
+cat("\n=====CARD=====\n")
+cat(paste(capture.output(print(x)), collapse = "\n"))
+--- result
+<div class="container-fluid">
+  <div class="bslib-grid bslib-mb-spacing html-fill-item" data-require-bs-caller="layout_column_wrap()" data-require-bs-version="5" style="grid-template-columns:repeat(2, minmax(0, 1fr));grid-auto-rows:1fr;--bslib-grid-height:auto;--bslib-grid-height-mobile:auto;">
+    <div class="bslib-grid-item bslib-gap-spacing html-fill-container">
+      <div class="card bslib-card bslib-mb-spacing html-fill-item html-fill-container" data-bslib-card-init data-require-bs-caller="card()" data-require-bs-version="5">
+        <div class="card-body bslib-gap-spacing html-fill-item html-fill-container" style="margin-top:auto;margin-bottom:auto;flex:1 1 auto;">A simple card</div>
+        <script data-bslib-card-init>bslib.Card.initializeAllCards();</script>
+      </div>
+  
+
+#### glm 8 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+e1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, airquality)
+e2 <- felm(Ozone ~ Temp + Wind + Solar.R | Month | 0 | Month, airquality)
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+Xr <- as.matrix(d[,c('Temp','Wind','Solar.R')]); yg <- d$Ozone
+for (m in unique(d$Month)) { i <- d$Month==m; Xr[i,] <- sweep(Xr[i,,drop=FALSE],2,colMeans(Xr[i,,drop=FALSE])); yg[i] <- yg[i]-mean(yg[i]) }
+b <- coef(e1); u <- as.vector(residuals(e1)); u0 <- as.vector(yg - Xr%*%b)
+bread <- e1$inv
+VF <- bread%*%(t(Xr)%*%diag(u^2)%*%Xr)%*%bread
+V0 <- bread%*%(t(Xr)%*%diag(u0^2)%*%Xr)%*%bread
+print(sqrt(diag(VF))); print(sqrt(diag(V0)))
+n <- 111; print(c(n/(n-3), n/(n-8)))
+cl <- d$Month; G <- 5
+sgF <- t(sapply(unique(cl), function(g) colSums(Xr[cl==g,]*u[cl==g])))
+sg0 <- t(sapply(unique(cl), function(g) colSums(Xr[cl==g,]*u0[cl==g])))
+for (sg in list(sgF, sg0)) for (cc in list(G/(G-1), (G/(G-1))*((n-1)/(n-8)), (G/(G-1))*((n-1)/(n-3)), 1)) print(sqrt(diag(bread%*%(t(sg)%*%sg)%*%bread*cc)))
+print(sqrt(diag(e2$vcv)))
+print(e2$df.residual); print(e2$df); print(e2$p); print(e2$rank)
+s1 <- summary(e1); print(c(fstat=s1$fstat, pval=s1$pval, r2=s1$r2, r2adj=s1$r2adj, rse=s1$rse, df=s1$df, rdf=s1$rdf))
+print(e0se <- felm(Ozone ~ Temp + Wind + Solar.R, airquality)$df)
+--- result
+[1] 0.33136638 0.86984307 0.02174281
+[1] 0.33136638 0.86984307 0.02174281
+[1] 1.027778 1.077670
+[1] 0.17915461 1.28846415 0.04025526
+[1] 0.18514232 1.33152729 0.04160067
+[1] 0.18080584 1.30033965 0.04062628
+[1] 0.1602408 1.1524374 0.0360054
+[1] 0.17915461 1.28846415 0.04025526
+[1] 0.18514232 1.33152729 0.04160067
+[1] 0.18080584 1.30033965 0.04062628
+[1] 0.1602408 1.1524374 0.0360054
+      Temp       Wind    Solar.R 
+0.34072694 0.66008636 0.02366696 
+[1] 4
+[1] 4
+[1] 8
+[1] 8
+       fstat       pval.p           r2        r2adj          rse          df1 
+2.580546e+01 4.568813e-20 6.368613e-01 6.121820e-01 2.072262e+01 1.030000e+02 
+         df2          rdf 
+1.030000e+02 1.030000e+02 
+[1] 107
+
+#### glm 9 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+e1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, airquality)
+e2 <- felm(Ozone ~ Temp + Wind + Solar.R | Month | 0 | Month, airquality)
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+y <- d$Ozone; X <- as.matrix(d[,c('Temp','Wind','Solar.R')]); g <- d$Month; n <- nrow(d); G <- 5
+u <- as.vector(residuals(e1))
+Xw <- X; for (j in 1:3) Xw[,j] <- X[,j] - ave(X[,j],g)
+B <- e1$inv
+sg <- t(rowsum(Xw*u, g)); V <- B%*%(t(sg)%*%sg)%*%B
+for (cc in c(G/(G-1), G/(G-1)*(n-1)/(n-8), G/(G-1)*(n-1)/(n-3), G/(G-1)*(n)/(n-8), (n-1)/(n-3), n/(n-8))) print(round(sqrt(diag(V*cc)),7))
+print(confint(e1))
+print(confint(e2))
+print(head(e1$c.fitted.values)); print(head(e1$fitted.values)); print(e1$numrefs); print(e1$hasicpt); print(e1$STATS)
+--- result
+Error: non-conformable arguments

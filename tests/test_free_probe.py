@@ -75,6 +75,20 @@ class TestFreeProbe(unittest.TestCase):
         self.assertIn("the script's variables and packages are there", sent[0])
         self.assertIn("[1] 3", sent[1])
 
+    def test_the_trajectory_keeps_the_probe_expression_and_result(self):
+        import json, tempfile
+        from r2py.harness import trajectory
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / "t.jsonl"
+            trajectory.begin(path)
+            try:
+                self.run_loop([LONG] * 2, n_probes=2, free_probe=True)
+            finally:
+                trajectory.end()
+            probes = [r for r in map(json.loads, path.read_text(encoding="utf-8").splitlines()) if r["kind"] == "probe"]
+        self.assertEqual([(p["step"], p["expression"]) for p in probes], [(1, "print(1)"), (2, "print(1)")])
+        self.assertTrue(probes[0]["result"].endswith("END_OF_PROBE"))
+
 
 class TestProbeStateProgram(unittest.TestCase):
 

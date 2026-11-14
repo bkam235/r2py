@@ -1,0 +1,73 @@
+Crashing rewrites, screen: stall2_ps_glmflash vs stall2_ps_dsflash
+
+== stall2_ps_glmflash: 71 of 274 verified candidates crashed (26%)
+  exception       {'AttributeError': 19, 'TypeError': 18, 'ValueError': 13, 'NameError': 8, 'KeyError': 6, 'IndexError': 3, 'UnboundLocalError': 1, 'TimeoutError': 1}
+  crash line      {'new line': 51, 'no script frame': 13, 'old line': 7}
+  innermost frame in a library:  20/ 71 (28%)
+  crash line owner {'entity': 40, 'preamble/helpers': 17, 'unknown': 14}
+  Name/UnboundLocal errors whose name the base defines and the candidate dropped:   1/  9 (11%)
+  elision marker: crashed   3/ 71 (4%)  ran  18/203 (9%)
+  crash rate by share of the base's lines changed:
+    [0.0, 0.1)    1/ 47 (2%)
+    [0.1, 0.3)   15/ 67 (22%)
+    [0.3, 0.6)   32/ 81 (40%)
+    [0.6, 1.0)   23/ 79 (29%)
+  after a crash: next candidate crashes 1/4 (25%)
+  after a run  : next candidate crashes 4/78 (5%)
+    old-line example: TypeError | res_x2 = pd.to_datetime(x) + days(100) - hours(8)
+    old-line example: TypeError | sys.stdout.write("Breaks: " + ", ".join(_fmt_break(b) for b in obj["breaks"]))
+    old-line example: TypeError | idx = bisect_right(breaks, v) - 1
+
+== stall2_ps_dsflash: 34 of 351 verified candidates crashed (10%)
+  exception       {'AttributeError': 9, 'ValueError': 9, 'TypeError': 6, 'KeyError': 3, 'IndexError': 3, 'TimeoutError': 2, 'UnboundLocalError': 1, 'NameError': 1}
+  crash line      {'new line': 19, 'no script frame': 13, 'old line': 2}
+  innermost frame in a library:  17/ 34 (50%)
+  crash line owner {'entity': 17, 'preamble/helpers': 4, 'unknown': 13}
+  Name/UnboundLocal errors whose name the base defines and the candidate dropped:   0/  2 (0%)
+  elision marker: crashed   1/ 34 (3%)  ran  12/317 (4%)
+  crash rate by share of the base's lines changed:
+    [0.0, 0.1)    3/ 65 (5%)
+    [0.1, 0.3)    5/ 93 (5%)
+    [0.3, 0.6)   14/100 (14%)
+    [0.6, 1.0)   12/ 93 (13%)
+  after a crash: next candidate crashes 0/5 (0%)
+  after a run  : next candidate crashes 7/131 (5%)
+    old-line example: TypeError | angle=45, col=shadepalette("red", "blue", n=50))
+    old-line example: AttributeError | app = App(ui, server)
+Crashing rewrites, full: glm53 vs dsflash
+
+== glm53: 93 of 451 verified candidates crashed (21%)
+  exception       {'TypeError': 29, 'ValueError': 20, 'IndexError': 12, 'AttributeError': 11, 'KeyError': 11, 'NameError': 9, 'RecursionError': 1}
+  crash line      {'new line': 70, 'no script frame': 19, 'old line': 4}
+  innermost frame in a library:  29/ 93 (31%)
+  crash line owner {'entity': 58, 'preamble/helpers': 14, 'unknown': 21}
+  Name/UnboundLocal errors whose name the base defines and the candidate dropped:   1/  9 (11%)
+  elision marker: crashed   2/ 93 (2%)  ran   9/358 (3%)
+  crash rate by share of the base's lines changed:
+    [0.0, 0.1)    5/115 (4%)
+    [0.1, 0.3)    5/ 96 (5%)
+    [0.3, 0.6)   14/ 68 (21%)
+    [0.6, 1.0)   69/172 (40%)
+  after a crash: next candidate crashes 24/87 (28%)
+  after a run  : next candidate crashes 10/184 (5%)
+    old-line example: RecursionError | new = Period(n)
+    old-line example: TypeError | return func(*pos_args, **kw_args)
+    old-line example: TypeError | return np.mean(x)
+
+== dsflash: 82 of 630 verified candidates crashed (13%)
+  exception       {'TypeError': 28, 'ValueError': 15, 'AttributeError': 11, 'KeyError': 10, 'NameError': 8, 'IndexError': 8, 'FileNotFoundError': 1, 'ModuleNotFoundError': 1}
+  crash line      {'new line': 51, 'no script frame': 28, 'old line': 3}
+  innermost frame in a library:  32/ 82 (39%)
+  crash line owner {'preamble/helpers': 11, 'unknown': 30, 'entity': 41}
+  Name/UnboundLocal errors whose name the base defines and the candidate dropped:   1/  8 (12%)
+  elision marker: crashed   2/ 82 (2%)  ran  19/548 (3%)
+  crash rate by share of the base's lines changed:
+    [0.0, 0.1)    1/193 (1%)
+    [0.1, 0.3)   17/148 (11%)
+    [0.3, 0.6)   14/101 (14%)
+    [0.6, 1.0)   50/188 (27%)
+  after a crash: next candidate crashes 19/79 (24%)
+  after a run  : next candidate crashes 16/341 (5%)
+    old-line example: AttributeError | pr_DB.delete_entry("test")
+    old-line example: TypeError | vals = [float(t) for t in v]
+    old-line example: TypeError | return f(**kwargs)

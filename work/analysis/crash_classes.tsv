@@ -1,0 +1,41 @@
+model	n	state	class	note
+glm	1	bslib layout_column_wrap	B	plain list passed as htmltools child (needs TagList)
+glm	2	rvest html_table	C	own html_element returns None, fed to own serializer
+glm	3	shape Arrows	E	R colour name green3 passed to matplotlib
+glm	4	broom augment_felm	C	own arrays: per-month means (5) added to per-row fit (111)
+glm	5	purrr invoke	A	x is an ndarray, invoke handles only dict/list, calls mean() with no args
+glm	6	gtable add_cols	C	garbled scratch code: z0 used in its own comprehension
+glm	7	fansi normalize_state	C	dropped its paste() helper, old caller kept
+glm	8	recipes step_kpca	C	leftover 'placeholder' line, rewritten correctly below
+glm	9	xml2 xml_attr	A	namespace prefix b not in ns, raw b:id set
+glm	10	timeDate isBizday	B	Index.isin returns ndarray, .values assumed
+glm	11	caret s3	E	parameter named list (R argument) shadows builtin list()
+glm	12	systemfonts glyph_raster	C	class takes size_attr, its call passes size=
+glm	13	ggplot2 geom_bin_2d	B	plotnine bins given in a form dual_param cannot index
+glm	14	recipes discretize	A	breaks contain None (R NA)
+glm	15	lubridate period	C	rewrote Period class, old Timestamp - Period caller breaks
+glm	16	textshaping shape_text	B	harfbuzz Font.get_extents does not exist
+glm	17	farver convert_colour	C	rainbow now returns RGB lists, own decode_colour expects hex
+glm	18	caret update_train	C	uses obj, parameter is named object
+glm	19	shape getellipse	E	R index past the end gives NA, Python IndexError
+glm	20	reshape2 cast	D	groupby on column daymonth that is missing (no script frame)
+ds	1	shape Arrows	E	R colour name green3 passed to matplotlib
+ds	2	broom augment_felm	E	R dotted name r.residuals written as attribute chain m.r.residuals
+ds	3	lava csplit	E	parameter named list (R argument) shadows builtin list()
+ds	4	xml2 xml_attr	A	namespace prefix b not in ns, raw b:id set
+ds	5	ggplot2 geom_bin_2d	B	plotnine bins given in a form dual_param cannot index
+ds	6	farver encode_colour	C	alpha_list unset when alpha is None
+ds	7	textshaping shape_text	A	numeric column holds strings
+ds	8	shape getellipse	E	R index past the end gives NA, Python IndexError
+ds	9	reshape2 cast	D	KeyError 1 in .loc (no script frame)
+ds	10	shape filledmultigonal	D	single character 'e' passed as a colour (no script frame)
+ds	11	openssl certificates	A	pubkey is a dict from the data shim, not a key object
+ds	12	shiny updateRadioButtons	B	App given an HTML string, needs a Tag
+ds	13	shiny actionButton	C	variable ui shadows the shiny ui module
+ds	14	rvest vignette s7	A	parsed document has no body
+ds	15	openssl ec_dh	B	private_bytes keyword is encryption_algorithm, not encryption
+ds	16	isoband vignette s2	E	R colour name grey50 passed to matplotlib
+ds	17	ranger csrf	E	R dotted name train.idx used as Python attribute
+ds	18	reshape2 cast	A	compares str with int column
+ds	19	broom augment_felm	A	assumes felm's cov.unadjusted structure on a Python object
+ds	20	isoband vignette s2	E	R colour name grey50 passed to matplotlib

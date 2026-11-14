@@ -4777,3 +4777,53 @@ before any data.**
 - Reading: consistent with the corrected feedback helping in these states, but one sample per arm and one state
   dominating; not enough to claim a gain. A clean epoch-10 replay of all 60 (about $2) would give the baseline for
   the next test.
+
+### Probe crossover (test `probe-crossover`, learning track) — registered 2026-11-13
+
+- Question: (b) does DeepSeek V4.1 Flash ask better probe questions than GLM 5.3 Flash, or (c) does it make better
+  use of the same answers? (a) was ruled out offline (entry above).
+- Instrument: `scripts/probe_crossover.py`. The stall-2 chains of model-screen-stall2, one per state (47 states,
+  chosen by seed before any result), continued as the screen's `stall2_ps_<model>` arms (free in-state probes, 8
+  steps). Four arms, prober {GLM, DeepSeek} x rewriter {GLM, DeepSeek}: the prober answers every agent turn
+  (probe, done, or when to rewrite); whenever it emits a rewrite, the same messages go to the rewriter, whose answer
+  replaces it in the conversation. The same-model arms resample the rewrite too, so every arm pays one extra call
+  per rewrite. Each turn logs a `route` record; each probe its expression and result. Routing tested offline with a
+  fake model (probes, done, truncated answers, parse retries, review calls).
+- Rule (descriptive): per-state gain = final - the chain's start score. (b) is supported if the prober effect
+  (DeepSeek minus GLM prober, averaged over rewriters) has P(> 0) >= 0.9; a rewriter effect with P >= 0.9 points
+  to (c). Secondary per prober: probes per chain, share erroring, share naming a failing entity, result length,
+  and 25 probes per prober read by hand. One chain per state (the person's choice): effects below about 0.03 per
+  chain will not resolve. Estimate $1.70, budget $2.50, balance $7.43 before the smoke.
+- Deviation before any result (2026-11-13): the first smoke (8 rows, $0.13) is invalid. Pool workers run several
+  tasks, and the routing wrapper was installed again per task, so wrappers nested and a later task also passed
+  through an earlier task's routing (doubled `route` records; a DeepSeek-prober rewrite re-asked of DeepSeek and
+  then GLM). Fixed: the wrapper is installed once per process and reads the current arm. Tested offline with four
+  arms in a row in one process. The invalid smoke is kept in `work/probe_crossover_smoke_nested`. Cost re-estimated
+  from the screen's own costs on the 47 chains: about $1.60.
+- Second deviation before any result (2026-11-13): in the second smoke (8 rows, $0.12, kept in
+  `work/probe_crossover_smoke_rewriter_probes`) the rewriter, given the prober's conversation, sometimes answered
+  with a probe of its own, which the agent ran (GLM after DeepSeek's probes: 4 of 4 rewriter turns). That breaks
+  the design: probes must be the prober's. Now, if the rewriter's answer is not a rewrite, it is asked once more
+  with a one-off line ("Write your rewrite now ... Do not probe and do not stop.", not kept in the conversation);
+  if it still declines, the prober's own rewrite stands. All arms run the same rule; every case is logged (`route`
+  records: `rewriter_tries`, `rewriter_declined`) and reported per arm. How often a rewriter wants to probe
+  instead is itself a descriptive result.
+- Result (2026-11-13, run `work/probe_crossover`, 188 of 188 rows valid, $1.71, no sleep gaps). Mean gain per
+  chain: GLM x GLM +0.018, GLM probes / DeepSeek rewrites +0.069, DeepSeek probes / GLM rewrites +0.063,
+  DeepSeek x DeepSeek +0.067. Prober effect +0.021 [-0.001, +0.045], P(> 0) 0.97; rewriter effect +0.028
+  [-0.004, +0.060], P 0.96; interaction -0.048 [-0.092, -0.011], P(> 0) 0.00. By the registered rule both (b)
+  and (c) pass, but the main effects come entirely from one cell: with a DeepSeek rewriter the prober does not
+  matter (-0.003), with a DeepSeek prober the rewriter does not matter (+0.004). GLM fails only when it both
+  probes and rewrites. The deficit is broad: GLM x GLM is below the mean of the other arms in 24 states, above in
+  7 (16 ties); it improves 11 chains against 18-24, and has 18 catastrophic rewrites against 3-9.
+- Secondary: GLM probes less (1.32 vs 1.53 per chain), errors more (8% vs 2%), results similar in length. Both
+  name a failing entity of the program they probe about equally often (86% vs 87%; failing entities from an
+  offline re-verification of the 47 start programs, `work/probe_crossover/start_entities.jsonl`; its aggregates
+  differ from the run's start scores on 4 states, the same in every arm). Read by hand (25 each, `probe_sample.txt`):
+  DeepSeek mostly inspects (`str`, `names`, dumps of the R objects to translate); GLM more often reimplements a
+  quantity in R to test a hypothesis (robust SEs by hand, the seed stream), and those probes break more (Python
+  syntax in R, a variable used before it is defined, the same failing probe resent).
+- Reading: neither "DeepSeek asks better questions" (b) nor "GLM misreads good answers" (c) holds alone, since
+  each is undone by swapping the other role. What fails is GLM rewriting on its own probing trail, which fits the
+  self-contradicting rewrites (class C) found offline. One chain per state; the interaction is the one estimate
+  whose interval excludes 0. Descriptive; nothing adopted. The default already runs DeepSeek in both roles.

@@ -1,0 +1,3 @@
+{"kind": "run_start", "t": 0.0, "script": "bslib__rd_example__page_fillable_Rd.R", "policy": "px_ds_glm", "sample": "replay_default_e8.0.1"}
+{"kind": "route", "t": 568.83, "prober_action": "lookup_docs", "written_by": "ds", "prefill": false, "prober_truncated": false, "step": 1, "best_score": 0.25, "best_hash": "7f073efb7743", "prompt_hash": "b8a17f8e580b", "entity_repair": null, "branch": null}
+{"kind": "run_end", "t": 574.53, "final_score": 0.25}

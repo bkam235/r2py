@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/probe_crossover.py run --per-state 1 --limit 2 --workers 6 --budget 0.3 --out work/probe_crossover_smoke",
+  "started": "2026-11-13 14:33:24",
+  "ended": "2026-11-13 15:03:26",
+  "scoring_version": "06e4778f626b-db31b28ade02",
+  "rows": 8,
+  "balance_start": 6.69,
+  "balance_end": 6.56,
+  "cost": 0.12,
+  "budget": 0.3,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

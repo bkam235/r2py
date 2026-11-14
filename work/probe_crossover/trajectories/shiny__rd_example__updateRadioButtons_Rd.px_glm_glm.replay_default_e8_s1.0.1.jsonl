@@ -1,0 +1,3 @@
+{"kind": "run_start", "t": 0.0, "script": "shiny__rd_example__updateRadioButtons_Rd.R", "policy": "px_glm_glm", "sample": "replay_default_e8_s1.0.1"}
+{"kind": "route", "t": 160.92, "prober_action": "lookup_docs", "written_by": "glm", "prefill": false, "prober_truncated": false, "step": 1, "best_score": 0.25, "best_hash": "677712d89d5a", "prompt_hash": "593e14b1f642", "entity_repair": null, "branch": null}
+{"kind": "run_end", "t": 161.5, "final_score": 0.25}

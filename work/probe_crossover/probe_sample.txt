@@ -1,0 +1,1350 @@
+
+#### glm 1 caret__rd_example__update_train_Rd.R (px_glm_ds)
+--- expression
+# Reproduce caret's seed generation with a known set.seed
+set.seed(42)
+print(sample.int(.Machine$integer.max, 1L))
+s1 <- lapply(seq_len(10), function(i) sample.int(.Machine$integer.max, 10L))
+print(s1[[1]][1:3])
+print(getRNG(knnFit1$control$seeds) if FALSE else head(unlist(knnFit1$control$seeds), 3))
+--- result
+Error: <text>:6:37: unexpected 'if'
+5: print(s1[[1]][1:3])
+6: print(getRNG(knnFit1$control$seeds) if
+                                       ^
+
+#### glm 2 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+b <- coef(est1)
+pr <- d$Ozone - as.numeric(X %*% b)  # X may still exist; recompute
+X <- cbind(1, d$Temp, d$Wind, d$Solar.R)
+pr <- d$Ozone - as.numeric(X %*% b)
+raw <- tapply(pr, d$Month, mean); print(raw)
+ef <- lfe::getfe(est1, se=TRUE, bN=100)
+cat('effect minus raw:\n'); print(unclass(ef$effect - raw[as.character(ef$idx)]))
+e <- est1$residuals
+Xc <- cbind(d$Temp, d$Wind, d$Solar.R)
+for (m in unique(d$Month)) { idx <- which(d$Month==m); Xc[idx,] <- sweep(Xc[idx,],2,colMeans(Xc[idx,])) }
+br <- solve(t(Xc) %*% Xc)
+meat <- t(Xc) %*% (Xc * as.numeric(e)^2)
+h0 <- br %*% meat %*% br
+N <- nrow(d); p <- 8
+cat('hc0:', sqrt(diag(h0)), '\n')
+cat('hc0*N/(N-p):', sqrt(diag(h0)*N/(N-p)), '\n')
+cat('hc0*(N-1)/(N-p):', sqrt(diag(h0)*(N-1)/(N-p)), '\n')
+G <- length(unique(d$Month))
+mc <- matrix(0,3,3)
+for (m in unique(d$Month)) { ii <- d$Month==m; s <- colSums(Xc[ii,]*e[ii]); mc <- mc + outer(s,s) }
+v0 <- br %*% mc %*% br
+cat('clu0:', sqrt(diag(v0)), '\n')
+cat('clu*G/(G-1):', sqrt(diag(v0)*G/(G-1)), '\n')
+cat('clu*sm:', sqrt(diag(v0)*(G/(G-1))*((N-1)/(N-p))), '\n')
+--- result
+Error: object 'X' not found
+
+#### glm 3 rvest__rd_example__html_children_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(rvest))
+html <- minimal_html("<ul><li>1<li>2<li>3</ul>")
+ch <- html_children(html_elements(html, "ul"))
+for (n in ch) cat("[", as.character(n), "]\n")
+html2 <- minimal_html("<p>Hello <b>Hadley</b><i>!</i>")
+ch2 <- html_children(html_elements(html2, "p"))
+for (n in ch2) cat("[", as.character(n), "]\n")
+html3 <- minimal_html("<div><span>a</span><em>b</em></div><h1>t</h1>")
+for (n in html_children(html_elements(html3, "div"))) cat("[", as.character(n), "]\n")
+cat("[", as.character(html_elements(html3, "h1")[[1]]), "]\n")
+cat("[", as.character(html_elements(html3, "div")[[1]]), "]\n")
+--- result
+[ <li>1</li>
+ ]
+[ <li>2</li>
+ ]
+[ <li>3</li> ]
+[ <b>Hadley</b> ]
+[ <i>!</i> ]
+[ <span>a</span> ]
+[ <em>b</em> ]
+[ <h1>t</h1> ]
+[ <div>
+<span>a</span><em>b</em>
+</div>
+ ]
+
+#### glm 4 bslib__rd_example__value_box_Rd.R (px_glm_ds)
+--- expression
+cat(as.character(htmltools::save_html(value_box(
+  "KPI Title",
+  h1(HTML("$1 <i>Billion</i> Dollars")),
+  span(
+    bsicons::bs_icon("arrow-up"),
+    " 30% VS PREVIOUS 30 DAYS"
+  ),
+  showcase = bsicons::bs_icon("piggy-bank"),
+  theme = "success"
+), tempfile(fileext = ".html"))))
+--- result
+
+
+#### glm 5 gtable__rd_example__gtable_add_cols_Rd.R (px_glm_glm)
+--- expression
+cat("---rect---\n"); str(rect)
+cat("---tab---\n"); dput(tab)
+cat("---tab2---\n"); dput(tab2)
+cat("---tab3---\n"); dput(tab3)
+cat("---dim---\n"); dput(dim(tab))
+--- result
+---rect---
+List of 10
+ $ x     : 'simpleUnit' num 0.5npc
+  ..- attr(*, "unit")= int 0
+ $ y     : 'simpleUnit' num 0.5npc
+  ..- attr(*, "unit")= int 0
+ $ width : 'simpleUnit' num 1npc
+  ..- attr(*, "unit")= int 0
+ $ height: 'simpleUnit' num 1npc
+  ..- attr(*, "unit")= int 0
+ $ just  : chr "centre"
+ $ hjust : NULL
+ $ vjust : NULL
+ $ name  : chr "GRID.rect.1"
+ $ gp    :List of 1
+  ..$ fill: chr "#00000080"
+  ..- attr(*, "class")= chr "gpar"
+ $ vp    : NULL
+ - attr(*, "class")= chr [1:3] "rect" "grob" "gDesc"
+---tab---
+structure(list(grobs = list(structure(list(x = structure(0.5, unit = 0L, class = c("simpleUnit", 
+"unit", "unit_v2")), y = structure(0.5, unit = 0L, class = c("simpleUnit", 
+"unit", "unit_v2")), width = structure(1, unit = 0L, class = c("simpleUnit", 
+"uni
+
+#### glm 6 systemfonts__rd_example__shape_string_Rd.R (px_glm_ds)
+--- expression
+print(shape_string("Th")$shape)
+print(shape_string("Tav. i")$shape)
+print(shape_string("x", size=24)$shape)
+--- result
+glyph index metric_id string_id x_offset y_offset x_midpoint
+1     T    55         0         1        0        0        3.5
+2     h    75         0         1        7        0        3.5
+  glyph index metric_id string_id x_offset y_offset x_midpoint
+1     T    55         0         1        0        0        3.5
+2     a    68         0         1        6        0        3.5
+3     v    89         0         1       13        0        3.0
+4     .    17         0         1       19        0        1.5
+5           3         0         1       22        0        1.5
+6     i    76         0         1       25        0        1.5
+  glyph index metric_id string_id x_offset y_offset x_midpoint
+1     x    91         0         1        0        0          6
+
+#### glm 7 proxy__rd_example__registry_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(proxy))
+print(as.data.frame(pr_DB)[,1:3])
+cat("===ENTRIES===\n")
+print(pr_DB$get_entries()[1:2])
+cat("===SUMMARY TAIL===\n")
+s <- capture.output(summary(pr_DB, "long"))
+writeLines(s[(length(s)-3):length(s)])
+--- result
+FUN
+Jaccard                                                                                R_bjaccard
+Kulczynski1                                                                        pr_Kulczynski1
+Kulczynski2                                                                        pr_Kulczynski2
+Mountford                                                                            pr_Mountford
+Fager                                                                             pr_fagerMcgowan
+Russel                                                                               pr_RusselRao
+simple matching                                                                 pr_SimpleMatching
+Hamman                                                                                  pr_Hamman
+Fai
+
+#### glm 8 systemfonts__rd_example__shape_string_Rd.R (px_glm_ds)
+--- expression
+f <- match_fonts("")
+print(f)
+print(shape_string("ab\ncd")$shape)
+print(shape_string("ab\ncd")$metrics)
+print(shape_string(c("ab ","cd","ef"), id=c(1,1,1), size=c(12,24,12))$shape)
+print(shape_string(c("ab ","cd","ef"), id=c(1,1,1), size=c(12,24,12))$metrics)
+--- result
+path index features variations
+1 C:\\WINDOWS\\Fonts\\arial.ttf     0                    
+  glyph index metric_id string_id x_offset  y_offset x_midpoint
+1     a    68         0         1        0   0.00000        3.5
+2     b    69         0         1        7   0.00000        3.5
+3    \n     0         0         1       14   0.00000        4.5
+4     c    70         0         1        0 -13.40625        3.0
+5     d    71         0         1        6 -13.40625        3.5
+  string width   height left_bearing right_bearing top_bearing bottom_bearing
+1 ab\ncd    14 37.67188            0             0    1.859375       2.546875
+  left_border top_border pen_x     pen_y
+1           0   10.85938    13 -13.40625
+  glyph index metric_id string_id x_offset y_offset x_midpoint
+1     a    68
+
+#### glm 9 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+X <- cbind(1, d$Temp, d$Wind, d$Solar.R)
+b <- coef(est1)
+pr <- d$Ozone - as.vector(X %*% b)
+raw <- tapply(pr, d$Month, mean); print(raw)
+ef <- lfe::getfe(est1, se=TRUE, bN=100)
+cat('effect minus raw:\n'); print(ef$effect - raw[as.character(ef$idx)])
+e <- est1$residuals
+Xd <- cbind(d$Temp, d$Wind, d$Solar.R)
+for (m in unique(d$Month)) { idx <- which(d$Month==m); Xd[idx,] <- scale(Xd[idx,], center=TRUE, scale=FALSE) }
+bread <- solve(t(Xd) %*% Xd)
+meat <- t(Xd) %*% (Xd * as.numeric(e)^2)
+hc0 <- bread %*% meat %*% bread
+N <- nrow(d); p <- 8
+cat('hc0 se:', sqrt(diag(hc0)), '\n')
+cat('hc1 N/(N-p):', sqrt(diag(hc0)*N/(N-p)), '\n')
+cat('hc1 N/(N-3):', sqrt(diag(hc0)*N/(N-3)), '\n')
+cat('hc0 N-1/(N-3):', sqrt(diag(hc0)*(N-1)/(N-3)), '\n')
+G <- length(unique(d$Month))
+meatc <- matrix(0,3,3)
+for (m in unique(d$Month)) { idx <- d$Month==m; s <- as.vector(t(Xd[idx,]) %*% e[idx]); meatc <- meatc + outer(s,s) }
+v0 <- bread %*% meatc %*% bread
+cat('clu0:', sqrt(diag(v0)), '\n')
+cat('clu G/(G-1):', sqrt(diag(v0)*G/(G-1)), '\n')
+cat('clu sm:', sqrt(diag(v0)*(G/(G-1))*((N-1)/(N-p))), '\n')
+cat('rse^2:', summary(est1)$rse^2, ' inv11:', 0.34072694^2/summary(est1)$rse^2, '\n')
+--- result
+Error: non-conformable arguments
+
+#### glm 10 openssl__rd_example__certificates_Rd.R (px_glm_ds)
+--- expression
+library(openssl)
+chain <- download_ssl_cert("cran.r-project.org", 443)
+c1 <- chain[[1]]
+cat("class:", class(c1), " is.raw:", is.raw(c1), " len:", length(c1), "\n")
+cd <- as.list(c1)
+cat("names:", paste(names(cd), collapse=","), "\n")
+str(cd[c("subject","issuer","algorithm")])
+cat("pubkey class:", class(cd$pubkey), "\n")
+pk <- cd$pubkey
+cat("md5 SPKI:", digest::digest(as.list(pk)$pubkey, "md5", serialize=FALSE), "\n")
+# find which bytes give printed md5/sha256
+der_spki <- write_der(pk)
+cat("md5 der_spki:", as.character(openssl::md5(der_spki)), "\n")
+cat("sha256 der_spki:", as.character(openssl::sha256(der_spki)), "\n")
+# try ssh-style raw key? try md5 of pubkey print? try fingerprint
+cat("fingerprint:", fingerprint(pk), "\n")
+cat("alt_names:\n"); print(cd$alt_names)
+--- result
+class: cert  is.raw: TRUE  len: 1691 
+names: subject,issuer,algorithm,signature,validity,self_signed,alt_names,pubkey 
+List of 3
+ $ subject  : chr "CN=*.r-project.org"
+ $ issuer   : chr "CN=Sectigo Public Server Authentication CA DV R36,O=Sectigo Limited,C=GB"
+ $ algorithm: chr "sha256WithRSAEncryption"
+pubkey class: pubkey rsa 
+Error: Argument object must be of type character or raw vector if serialize is FALSE
+
+#### glm 11 broom__rd_example__augment_felm_Rd.R (px_glm_glm)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+d <- airquality
+est1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, d)
+est2 <- felm(Ozone ~ Temp + Wind + Solar.R | Month | 0 | Month, d)
+s <- summary(est1)
+print(s$coefficients)
+print(s$rse)
+cat("r2:", s$r2, "r2adj:", s$r2adj, "fstat:", s$fstat, "pval:", s$pval, "df:", s$df, "rdf:", s$rdf, "\n")
+cat("est2 vcv diag sqrt:\n"); print(sqrt(diag(est2$vcv)))
+cat("est2 robustvcv diag sqrt:\n"); print(sqrt(diag(est2$robustvcv)))
+cat("est2 se:\n"); print(est2$se)
+cat("est1 inv:\n"); print(est1$inv)
+cat("TSS:", est1$TSS, "P.TSS:", est1$P.TSS, "N:", est1$N, "p:", est1$p, "\n")
+cat("resid head:\n"); print(head(est1$residuals))
+cat("fitted head:\n"); print(head(est1$fitted.values))
+cat("r.residuals head:\n"); print(head(est1$r.residuals))
+cat("c.fitted head:\n"); print(head(est1$c.fitted.values))
+g <- getfe(est1, se=TRUE, bN=100)
+print(g)
+--- result
+Estimate Std. Error   t value     Pr(>|t|)
+Temp     1.87511085 0.34072694  5.503266 2.740750e-07
+Wind    -3.10872012 0.66008636 -4.709566 7.777659e-06
+Solar.R  0.05222049 0.02366696  2.206472 2.957179e-02
+[1] 20.72262
+r2: 0.6368613 r2adj: 0.612182 fstat: 25.80546 pval: 4.568813e-20 df: 103 103 rdf: 103 
+est2 vcv diag sqrt:
+      Temp       Wind    Solar.R 
+0.34072694 0.66008636 0.02366696 
+est2 robustvcv diag sqrt:
+     Temp      Wind   Solar.R 
+0.3439944 0.9029918 0.0225714 
+est2 se:
+      Temp       Wind    Solar.R 
+0.34072694 0.66008636 0.02366696 
+est1 inv:
+              [,1]          [,2]          [,3]
+[1,]  2.703483e-04  2.193290e-04 -6.377147e-06
+[2,]  2.193290e-04  1.014640e-03 -1.850199e-06
+[3,] -6.377147e-06 -1.850199e-06  1.304354e-06
+TSS: 121801.9 P.TSS: 944
+
+#### glm 12 pROC__rd_example__coords_Rd.R (px_glm_ds)
+--- expression
+print(getAnywhere("coords.roc")[1][["coords.roc"]][["body"]][8])
+--- result
+Error: object of type 'closure' is not subsettable
+
+#### glm 13 systemfonts__rd_example__shape_string_Rd.R (px_glm_ds)
+--- expression
+string <- "This is a long string\nLook; It spans multiple lines\nand all"
+shape_string(string)
+--- result
+$shape
+   glyph index metric_id string_id x_offset  y_offset x_midpoint
+1      T    55         0         1        0   0.00000        3.5
+2      h    75         0         1        7   0.00000        3.5
+3      i    76         0         1       14   0.00000        1.5
+4      s    86         0         1       17   0.00000        3.0
+5            3         0         1       23   0.00000        1.5
+6      i    76         0         1       26   0.00000        1.5
+7      s    86         0         1       29   0.00000        3.0
+8            3         0         1       35   0.00000        1.5
+9      a    68         0         1       38   0.00000        3.5
+10           3         0         1       45   0.00000        1.5
+11     l    79         0         1       48   0.00000        1.5
+
+
+#### glm 14 broom__rd_example__augment_felm_Rd.R (px_glm_glm)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+d <- airquality[complete.cases(airquality[,c("Ozone","Solar.R","Wind","Temp","Month")]),]
+est1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, d)
+est2 <- felm(Ozone ~ Temp + Wind + Solar.R | Month | 0 | Month, d)
+y <- d$Ozone; X <- as.matrix(d[,c("Temp","Wind","Solar.R")]); g <- d$Month
+Xd <- as.matrix(cbind(Temp=d$Temp, Wind=d$Wind, Solar.R=d$Solar.R))
+dm <- function(v) as.vector(v - ave(as.vector(v), g))
+Xdm <- apply(X, 2, dm); ydm <- dm(y)
+b <- solve(t(Xdm)%*%Xdm, t(Xdm)%*%ydm)
+r <- as.vector(ydm - Xdm%*%b)
+inv <- solve(t(Xdm)%*%Xdm)
+meat_r <- t(Xdm * r) %*% Xdm
+bread_r <- inv %*% meat_r %*% inv
+cat("cand HC0:\n"); print(bread_r)
+cat("cand HC1 N/(N-3):\n"); print(bread_r*111/108)
+cat("cand HC1 N/(N-k) k=8:\n"); print(bread_r*111/103)
+cat("actual robustvcv:\n"); print(est1$robustvcv)
+meat_c <- matrix(0,3,3)
+for (gg in unique(g)) { i <- which(g==gg); s <- t(Xdm[i,,drop=FALSE]) %*% r[i]; meat_c <- meat_c + s %*% t(s) }
+cat("cand cluster 5/4:\n"); print(inv%*%meat_c%*%inv*5/4)
+cat("cand cluster 5/4 * 110/108:\n"); print(inv%*%meat_c%*%inv*5/4*110/108)
+cat("actual est2 vcv:\n"); print(est2$vcv)
+s1 <- summary(est1)
+for (d1 in 2:9) cat("d1=",d1," p=", pf(s1$fstat, d1, 103, lower.tail=FALSE), "\n")
+cat("d2=107:\n"); for (d1 in 3:5) cat("d1=",d1," p=", pf(s1$fstat, d1, 107, lower.tail=FALSE), "\n")
+cat("getfe run1:\n"); print(getfe(est1, se=TRUE, bN=100))
+cat("getfe run2:\n"); print(getfe(est1, se=TRUE, bN=100))
+cat("est1 rpval check df=1
+--- result
+cand HC0:
+                 Temp         Wind       Solar.R
+Temp     1.104366e-03  0.001189642 -1.745332e-05
+Wind     1.189642e-03  0.008151210 -1.156830e-04
+Solar.R -1.745332e-05 -0.000115683 -3.038156e-06
+cand HC1 N/(N-3):
+                 Temp          Wind       Solar.R
+Temp     1.135043e-03  0.0012226876 -1.793814e-05
+Wind     1.222688e-03  0.0083776324 -1.188964e-04
+Solar.R -1.793814e-05 -0.0001188964 -3.122549e-06
+cand HC1 N/(N-k) k=8:
+                 Temp         Wind       Solar.R
+Temp     1.190142e-03  0.001282041 -1.880892e-05
+Wind     1.282041e-03  0.008784314 -1.246680e-04
+Solar.R -1.880892e-05 -0.000124668 -3.274129e-06
+actual robustvcv:
+                Temp         Wind      Solar.R
+Temp     0.118332122  0.174977841 -0.003802264
+Wind     0.174977841  0.8153
+
+#### glm 15 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+Xc <- cbind(d$Temp, d$Wind, d$Solar.R)
+for (m in unique(d$Month)) { idx <- which(d$Month==m); Xc[idx,] <- sweep(Xc[idx,],2,colMeans(Xc[idx,])) }
+e <- est1$residuals
+V <- solve(t(Xc)%*%Xc); s2 <- summary(est1)$rse^2
+for (m in unique(d$Month)) { ii <- d$Month==m; n <- sum(ii); xb <- colMeans(Xc[ii,])
+  se1 <- sqrt(s2*(1/n + as.numeric(t(xb)%*%V%*%xb)))
+  se2 <- sqrt(s2*(1/n))
+  cat(m, n, se1, se2, '\n') }
+# cluster vcv from full dummy model
+D <- model.matrix(~ factor(d$Month))
+Xf <- cbind(D, d$Temp, d$Wind, d$Solar.R)
+Xf <- Xf[, !duplicated(colnames(Xf))]
+bf <- coef(lm(d$Ozone ~ factor(d$Month) + Temp+Wind+Solar.R, data=d))
+ef <- d$Ozone - as.numeric(cbind(1,d$Temp,d$Wind,d$Solar.R)%*%c(0,coef(est1)))
+G <- 5; N <- nrow(d)
+brf <- solve(t(Xf)%*%Xf)
+mc <- matrix(0,ncol(Xf),ncol(Xf))
+for (m in unique(d$Month)) { ii <- d$Month==m; s <- colSums(Xf[ii,]*ef[ii]); mc <- mc+outer(s,s) }
+v <- brf%*%mc%*%brf
+nm <- colnames(Xf); sel <- nm %in% c('Temp','Wind','Solar.R')
+cat('full-CR0*G/(G-1):', sqrt(diag(v)*G/(G-1))[sel], '\n')
+cat('full-CR0*(G/(G-1))*((N-1)/(N-p)):', sqrt(diag(v)*G/(G-1)*(N-1)/(N-p))[sel], '\n')
+--- result
+5 24 4.229987 4.229987 
+6 9 6.90754 6.90754 
+7 26 4.06404 4.06404 
+8 23 4.320965 4.320965 
+9 29 3.848094 3.848094 
+full-CR0*G/(G-1):  
+Error: object 'p' not found
+
+#### glm 16 isoband__vignette__isoband3_s2.R (px_glm_glm)
+--- expression
+print(head(lines[["95"]]$id, 10)); print(table(lines[["95"]]$id)); print(length(lines[["95"]]$x)); print(lines[["95"]]$x[1:6]); print(lines[["95"]]$y[1:6]); print(head(lines[["100"]]$id)); print(class(g$children)); print(length(g$children)); print(names(g$children))
+--- result
+[1] 1 1 1 1 1 1 1 1 1 1
+
+ 1 
+20 
+[1] 20
+[1] 1.0000000 0.9833333 0.9833333 0.9666667 0.9500000 0.9333333
+[1] 0.06976744 0.05813953 0.05813953 0.05813953 0.05813953 0.05813953
+[1] 1 1 1 1 1 1
+[1] "gList"
+[1] 0
+NULL
+
+#### glm 17 rvest__rd_example__html_table_Rd.R (px_glm_ds)
+--- expression
+cat(deparse(minimal_html("<p>a</p><p>b</p>") |> as.character()), "\n---\n")
+cat(minimal_html("<table>\n  <tr><th>A</th></tr>\n</table>") |> as.character(), "\n---\n")
+cat(class(minimal_html("<p>x</p>")), "\n")
+cat(minimal_html("<table>\n  <tr><td colspan='2'>1</td><td>2</td></tr>\n</table>") |> as.character())
+--- result
+"<!DOCTYPE html>\n<html>\n<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n<meta charset=\"utf-8\">\n<title></title>\n</head>\n<body>\n<p>a</p>\n<p>b</p>\n</body>\n</html>\n" 
+---
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title></title>
+</head>
+<body><table><tr><th>A</th></tr></table></body>
+</html>
+ 
+---
+xml_document xml_node 
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<title></title>
+</head>
+<body><table><tr>
+<td colspan="2">1</td>
+<td>2</td>
+</tr></table></body>
+</html>
+
+#### glm 18 pROC__rd_example__coords_Rd.R (px_glm_glm)
+--- expression
+str(roc.s100b$thresholds); print(roc.s100b$sensitivities); print(roc.s100b$specificities); str(coords(roc.s100b, "all")); print(coords(roc.ndka, "best", ret="all", transpose=FALSE)); print(coords(roc.s100b, 0.55)); print(coords(roc.s100b, 50, "se")); print(coords(smooth(roc.s100b), 90, "specificity"))
+--- result
+num [1:51] -Inf 0.035 0.045 0.055 0.065 ...
+ [1] 100.000000  97.560976  97.560976  97.560976  97.560976  90.243902
+ [7]  87.804878  82.926829  78.048780  75.609756  73.170732  68.292683
+[13]  65.853659  65.853659  63.414634  63.414634  63.414634  63.414634
+[19]  60.975610  58.536585  58.536585  56.097561  53.658537  51.219512
+[25]  51.219512  48.780488  46.341463  43.902439  43.902439  41.463415
+[31]  41.463415  39.024390  39.024390  34.146341  34.146341  34.146341
+[37]  34.146341  31.707317  29.268293  29.268293  26.829268  24.390244
+[43]  21.951220  19.512195  14.634146  12.195122   9.756098   7.317073
+[49]   4.878049   2.439024   0.000000
+ [1]   0.000000   0.000000   6.944444  11.111111  13.888889  22.222222
+ [7]  30.555556  38.888889  48.611111  54.166667  54.166667  58.3333
+
+#### glm 19 broom__rd_example__augment_felm_Rd.R (px_glm_glm)
+--- expression
+suppressPackageStartupMessages(library(lfe))
+d <- airquality[complete.cases(airquality[,c("Ozone","Solar.R","Wind","Temp","Month")]),]
+est1 <- felm(Ozone ~ Temp + Wind + Solar.R | Month, d)
+y <- as.numeric(d$Ozone); g <- d$Month
+X3 <- as.matrix(d[,c("Temp","Wind","Solar.R")])
+Xd <- apply(X3, 2, function(v) as.vector(v - ave(v, g)))
+yd <- as.vector(y - ave(y, g))
+b <- drop(solve(t(Xd)%*%Xd, t(Xd)%*%yd))
+ef2 <- as.vector(y - as.numeric(est1$fitted.values))
+inv <- solve(t(Xd)%*%Xd)
+c1 <- inv %*% (t(Xd*ef2) %*% Xd) %*% inv
+cat("HC0 fullresid:\n"); print(c1)
+cat("HC1 *111/108:\n"); print(c1*111/108)
+cat("HC1 *111/107:\n"); print(c1*111/107)
+cat("actual robustvcv:\n"); print(est1$robustvcv)
+ew <- yd - Xd%*%b
+c2 <- inv %*% (t(Xd*ew) %*% Xd) %*% inv
+cat("HC0 within:\n"); print(c2)
+cat("HC1 within *111/108:\n"); print(c2*111/108)
+cat("HC1 within *111/107:\n"); print(c2*111/107)
+cat("resid sd:", sd(ew), sd(ef2), " est1$rse overall:", est1$rse[1], "\n")
+cat("est1 sigma? summary rse:", summary(est1)$rse, "\n")
+--- result
+HC0 fullresid:
+                 Temp         Wind       Solar.R
+Temp     1.104366e-03  0.001189642 -1.745332e-05
+Wind     1.189642e-03  0.008151210 -1.156830e-04
+Solar.R -1.745332e-05 -0.000115683 -3.038156e-06
+HC1 *111/108:
+                 Temp          Wind       Solar.R
+Temp     1.135043e-03  0.0012226876 -1.793814e-05
+Wind     1.222688e-03  0.0083776324 -1.188964e-04
+Solar.R -1.793814e-05 -0.0001188964 -3.122549e-06
+HC1 *111/107:
+                 Temp          Wind       Solar.R
+Temp     1.145650e-03  0.0012341146 -1.810578e-05
+Wind     1.234115e-03  0.0084559281 -1.200076e-04
+Solar.R -1.810578e-05 -0.0001200076 -3.151732e-06
+actual robustvcv:
+                Temp         Wind      Solar.R
+Temp     0.118332122  0.174977841 -0.003802264
+Wind     0.174977841  0.8153941
+
+#### glm 20 pROC__rd_example__coords_Rd.R (px_glm_glm)
+--- expression
+txt<-deparse(pROC:::coords.roc); cat(paste(txt[128:250], collapse="\n"))
+--- result
+best.method <- match.arg(best.method[1], c("youden", 
+                "closest.topleft", "topleft"))
+            if (best.method == "topleft") {
+                best.method <- "closest.topleft"
+            }
+            optim.crit <- roc_utils_optim_crit(roc$sensitivities, 
+                roc$specificities, ifelse(roc$percent, 100, 1), 
+                best.weights, best.method)
+            if (is.null(roc$auc) || identical(partial.auc, FALSE) || 
+                ignore.partial.auc) {
+                se <- roc$sensitivities[optim.crit == max(optim.crit)]
+                sp <- roc$specificities[optim.crit == max(optim.crit)]
+                thres <- roc$thresholds[optim.crit == max(optim.crit)]
+                optim.crit <- optim.crit[optim.crit == max(optim.crit)]
+          
+
+#### glm 21 ggplot2__rd_example__geom_bin_2d_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(ggplot2))
+dd <- subset(diamonds, x >= 4 & x <= 10 & y >= 4 & y <= 10)
+f <- function(nx, ny) {
+  xr <- range(diamonds$x, na.rm=TRUE); yr <- range(diamonds$y, na.rm=TRUE)
+  xbin <- cut(diamonds$x, seq(xr[1], xr[2], length.out = nx+1), include.lowest=TRUE)
+  ybin <- cut(diamonds$y, seq(yr[1], yr[2], length.out = ny+1), include.lowest=TRUE)
+  tab <- table(xbin, ybin)
+  xm <- (seq(xr[1], xr[2], length.out = nx+1)[-1] + seq(xr[1], xr[2], length.out = nx+1)[- (nx+1)]) / 2
+  ym <- (seq(yr[1], yr[2], length.out = ny+1)[-1] + seq(yr[1], yr[2], length.out = ny+1)[- (ny+1)]) / 2
+  occ <- which(tab > 0, arr.ind=TRUE)
+  sum(xm[occ[,1]] < 4 | xm[occ[,1]] > 10 | ym[occ[,2]] < 4 | ym[occ[,2]] > 10)
+}
+f(30,30); f(30,10)
+# also check how ggplot2 computes default bins
+cat(sum(diamonds$x < 4 | diamonds$x > 10 | diamonds$y < 4 | diamonds$y > 10, na.rm=TRUE), "\n")
+cat(sum(is.na(diamonds$x) | is.na(diamonds$y)), "\n")
+--- result
+[1] 10
+[1] 17
+478 
+0
+
+#### glm 22 broom__rd_example__augment_felm_Rd.R (px_glm_ds)
+--- expression
+d <- na.omit(airquality[,c('Ozone','Temp','Wind','Solar.R','Month')])
+X <- cbind(1, d$Temp, d$Wind, d$Solar.R)
+b <- coef(est1)
+pr <- d$Ozone - as.numeric(X %*% b)
+raw <- tapply(pr, d$Month, mean); print(raw)
+ef <- lfe::getfe(est1, se=TRUE, bN=100)
+cat('effect minus raw:\n'); print(unclass(ef$effect - raw[as.character(ef$idx)]))
+e <- est1$residuals
+Xc <- cbind(d$Temp, d$Wind, d$Solar.R)
+for (m in unique(d$Month)) { idx <- which(d$Month==m); Xc[idx,] <- sweep(Xc[idx,],2,colMeans(Xc[idx,])) }
+br <- solve(t(Xc) %*% Xc)
+meat <- t(Xc) %*% (Xc * as.numeric(e)^2)
+h0 <- br %*% meat %*% br
+N <- nrow(d); p <- 8
+cat('hc0:', sqrt(diag(h0)), '\n')
+cat('hc0*N/(N-p):', sqrt(diag(h0)*N/(N-p)), '\n')
+cat('hc0*(N-1)/(N-p):', sqrt(diag(h0)*(N-1)/(N-p)), '\n')
+G <- length(unique(d$Month))
+mc <- matrix(0,3,3)
+for (m in unique(d$Month)) { ii <- d$Month==m; s <- colSums(Xc[ii,]*e[ii]); mc <- mc + outer(s,s) }
+v0 <- br %*% mc %*% br
+cat('clu0:', sqrt(diag(v0)), '\n')
+cat('clu*G/(G-1):', sqrt(diag(v0)*G/(G-1)), '\n')
+cat('clu*sm:', sqrt(diag(v0)*(G/(G-1))*((N-1)/(N-p))), '\n')
+--- result
+Error: non-conformable arguments
+
+#### glm 23 ggplot2__rd_example__geom_bin_2d_Rd.R (px_glm_ds)
+--- expression
+suppressPackageStartupMessages(library(ggplot2))
+w <- character(0)
+grab <- function(p) {
+  withCallingHandlers(print(p),
+    warning = function(cnd) { w <<- c(w, conditionMessage(cnd)); invokeRestart("muffleWarning") })
+}
+d <- ggplot(diamonds, aes(x, y)) + xlim(4, 10) + ylim(4, 10)
+grab(d + geom_bin_2d())
+grab(d + geom_bin_2d(bins = 10))
+grab(d + geom_bin_2d(bins = list(x = 30, y = 10)))
+grab(d + geom_bin_2d(binwidth = c(0.1, 0.1)))
+cat(length(w), "\n")
+print(w)
+cat(sum(is.na(diamonds$x)), sum(is.na(diamonds$y)), "\n")
+cat(sum(diamonds$x < 4 | diamonds$x > 10 | diamonds$y < 4 | diamonds$y > 10, na.rm=TRUE), "\n")
+--- result
+`stat_bin2d()` using `bins = 30`. Pick better value `binwidth`.
+6 
+[1] "Removed 478 rows containing non-finite outside the scale range\n(`stat_bin2d()`)."            
+[2] "Removed 5 rows containing missing values or values outside the scale range\n(`geom_bin2d()`)."
+[3] "Removed 478 rows containing non-finite outside the scale range\n(`stat_bin2d()`)."            
+[4] "Removed 478 rows containing non-finite outside the scale range\n(`stat_bin2d()`)."            
+[5] "Removed 2 rows containing missing values or values outside the scale range\n(`geom_bin2d()`)."
+[6] "Removed 478 rows containing non-finite outside the scale range\n(`stat_bin2d()`)."            
+0 0 
+478
+
+#### glm 24 pROC__rd_example__coords_Rd.R (px_glm_ds)
+--- expression
+print(getAnywhere("roc.utils.get.best.threshold"))
+--- result
+no object named 'roc.utils.get.best.threshold' was found
+
+#### glm 25 systemfonts__rd_example__shape_string_Rd.R (px_glm_ds)
+--- expression
+print(shape_string("x")$metrics)
+print(shape_string("x\nx")$metrics)
+print(shape_string("x", size=24)$metrics)
+s3 <- shape_string("This is a long string\nLook; It spans multiple lines\nand all")
+print(s3$metrics)
+print(s3$shape[20:35,])
+--- result
+string width   height left_bearing right_bearing top_bearing bottom_bearing
+1      x     6 24.26562            0             0    3.859375       2.546875
+  left_border top_border pen_x pen_y
+1           0   10.85938     6     0
+  string width   height left_bearing right_bearing top_bearing bottom_bearing
+1   x\nx     6 37.67188            0             0    2.859375       2.546875
+  left_border top_border pen_x     pen_y
+1           0   10.85938     6 -13.40625
+  string width  height left_bearing right_bearing top_bearing bottom_bearing
+1      x    12 48.5625            0             0    8.734375        5.09375
+  left_border top_border pen_x pen_y
+1           0   21.73438    12     0
+                                                         string width   height
+1 This is a lo
+
+#### ds 1 proxy__rd_example__registry_Rd.R (px_ds_glm)
+--- expression
+d <- as.data.frame(pr_DB)
+for (i in 1:50) cat(sprintf("%d|%s\n", i, ifelse(is.function(d$FUN[[i]]), "<fn>", d$FUN[[i]])))
+--- result
+1|R_bjaccard
+2|pr_Kulczynski1
+3|pr_Kulczynski2
+4|pr_Mountford
+5|pr_fagerMcgowan
+6|pr_RusselRao
+7|pr_SimpleMatching
+8|pr_Hamman
+9|pr_Faith
+10|pr_RogersTanimoto
+11|pr_Dice
+12|pr_Phi
+13|pr_Stiles
+14|pr_Michael
+15|pr_MozleyMargalef
+16|pr_Yule
+17|pr_Yule2
+18|pr_Ochiai
+19|pr_Simpson
+20|pr_BraunBlanquet
+21|R_cosine
+22|function (x, y) 1 - acos(crossprod(x, y)/sqrt(crossprod(x) * crossprod(y)))/pi
+23|R_ejaccard
+24|R_edice
+25|pr_cor
+26|pr_ChiSquared
+27|pr_PhiSquared
+28|pr_Tschuprow
+29|pr_Cramer
+30|pr_Pearson
+31|pr_Gower
+32|R_euclidean_dist
+33|pr_Mahalanobis
+34|pr_Bhjattacharyya
+35|R_manhattan_dist
+36|R_maximum_dist
+37|R_minkowski_dist
+38|R_canberra_dist
+39|pr_WaveHedges
+40|pr_Divergence
+41|pr_KullbackLeibler
+42|pr_BrayCurtis
+43|pr_Soergel
+44|sdists
+45|pr_P
+
+#### ds 2 systemfonts__rd_example__shape_string_Rd.R (px_ds_glm)
+--- expression
+suppressPackageStartupMessages(library(systemfonts))
+s1 <- "This is a long string\nLook; It spans multiple lines\nand all"
+r1 <- shape_string(s1)
+cat("NAMES:", names(r1), "\n")
+str(r1)
+print(head(r1$shape, 20))
+cat("metrics:\n")
+print(r1$metrics)
+--- result
+NAMES: shape metrics 
+List of 2
+ $ shape  :Classes 'tbl_df', 'tbl' and 'data.frame':	59 obs. of  7 variables:
+  ..$ glyph     : chr [1:59] "T" "h" "i" "s" ...
+  ..$ index     : int [1:59] 55 75 76 86 3 76 86 3 68 3 ...
+  ..$ metric_id : int [1:59] 0 0 0 0 0 0 0 0 0 0 ...
+  ..$ string_id : int [1:59] 1 1 1 1 1 1 1 1 1 1 ...
+  ..$ x_offset  : num [1:59] 0 7 14 17 23 26 29 35 38 45 ...
+  ..$ y_offset  : num [1:59] 0 0 0 0 0 0 0 0 0 0 ...
+  ..$ x_midpoint: num [1:59] 3.5 3.5 1.5 3 1.5 1.5 3 1.5 3.5 1.5 ...
+ $ metrics:Classes 'tbl_df', 'tbl' and 'data.frame':	1 obs. of  11 variables:
+  ..$ string        : chr "This is a long string\nLook; It spans multiple lines\nand all"
+  ..$ width         : num 150
+  ..$ height        : num 51.1
+  ..$ left_bearing  : num 0
+  ..$ right_bearing 
+
+#### ds 3 sass__rd_example__as_sass_Rd.R (px_ds_glm)
+--- expression
+cat(Sys.getenv("TEMP"), "\n")
+cat(Sys.getenv("TMP"), "\n")
+cat(Sys.getenv("TMPDIR"), "\n")
+cat(tempdir(), "\n")
+cat(Sys.getenv("R_SESSION_TMPDIR"), "\n")
+--- result
+C:\Users\bened\AppData\Local\Temp 
+C:\Users\bened\AppData\Local\Temp 
+C:\Users\bened\AppData\Local\Temp\tmpbihx77nx 
+C:\Users\bened\AppData\Local\Temp\tmpbihx77nx\RtmpycWYfI
+
+#### ds 4 proxy__rd_example__registry_Rd.R (px_ds_ds)
+--- expression
+s <- summary(pr_DB, "long")
+n <- length(s)
+cat("N=", n, "\n")
+cat(paste(s[max(1,n-12):n], collapse="\n"), "\n")
+cat("=== DF NAMES ===\n")
+print(names(as.data.frame(pr_DB)))
+--- result
+N= 4 
+list(Jaccard = c("Jaccard", "binary", "Reyssac", "Roux"), Kulczynski1 = "Kulczynski1", Kulczynski2 = "Kulczynski2", Mountford = "Mountford", Fager = c("Fager", "McGowan"), Russel = c("Russel", "Rao"), `simple matching` = c("simple matching", "Sokal/Michener"), Hamman = "Hamman", Faith = "Faith", Tanimoto = c("Tanimoto", "Rogers"), Dice = c("Dice", "Czekanowski", "Sorensen"), Phi = "Phi", Stiles = "Stiles", Michael = "Michael", Mozley = c("Mozley", "Margalef"), Yule = "Yule", Yule2 = "Yule2", Ochiai = "Ochiai", 
+    Simpson = "Simpson", `Braun-Blanquet` = "Braun-Blanquet", cosine = "cosine", angular = "angular", eJaccard = c("eJaccard", "extended_Jaccard"), eDice = c("eDice", "extended_Dice", "eSorensen"), correlation = "correlation", `Chi-squared` = "Chi-squared", `Phi-squared` = "
+
+#### ds 5 caret__vignette__caret_s3.R (px_ds_ds)
+--- expression
+set.seed(107)
+t <- .Random.seed[3]
+s <- as.numeric(107)
+vals <- numeric(60)
+for (k in 1:60) { s <- (69069 * s + 1) %% 2^32; vals[k] <- s }
+cat("v50:", vals[50], " v51:", vals[51], " v52:", vals[52], " target:", t, "\n")
+# Also print full first 5 unif to validate MT tempering
+cat("unif:", sprintf("%.8f", runif(5)), "\n")
+--- result
+v50: 4167399617  v51: 2300870542  v52: 742546103  target: 742546103 
+unif: 0.50658823 0.01432656 0.50442383 0.03026457 0.16360719
+
+#### ds 6 systemfonts__rd_example__shape_string_Rd.R (px_ds_ds)
+--- expression
+options(width=200)
+s <- shape_string("This is a long string\nLook; It spans multiple lines\nand all")
+print(s$shape)
+print(s$metrics)
+--- result
+glyph index metric_id string_id x_offset  y_offset x_midpoint
+1      T    55         0         1        0   0.00000        3.5
+2      h    75         0         1        7   0.00000        3.5
+3      i    76         0         1       14   0.00000        1.5
+4      s    86         0         1       17   0.00000        3.0
+5            3         0         1       23   0.00000        1.5
+6      i    76         0         1       26   0.00000        1.5
+7      s    86         0         1       29   0.00000        3.0
+8            3         0         1       35   0.00000        1.5
+9      a    68         0         1       38   0.00000        3.5
+10           3         0         1       45   0.00000        1.5
+11     l    79         0         1       48   0.00000        1.5
+12     o   
+
+#### ds 7 recipes__rd_example__step_kpca_Rd.R (px_ds_glm)
+--- expression
+library(recipes); library(kernlab)
+d2 <- bake(kpca_estimates$steps[[2]], new_data = bake(kpca_estimates$steps[[1]], new_data = as.data.frame(biomass_tr)))
+m <- as.matrix(as.data.frame(d2)[, c("carbon","hydrogen","oxygen","nitrogen","sulfur")])
+kk <- kpca(m, kernel="rbfdot", kpar=list(sigma=0.2), features=5)
+rv <- rotated(kk)
+K <- kernelMatrix(rbfdot(0.2), m)
+n <- nrow(K)
+Kc <- K - rowMeans(K) - rep(colMeans(K), each=n) + mean(K)
+eg <- eigen(Kc, symmetric=TRUE)
+cat("rv[1,1]:", rv[1,1], "\n")
+cat("eig1:", eg$values[1], "sqrt:", sqrt(eg$values[1]), "\n")
+# test scaling hypotheses
+cat("Kc%*%alpha[1,1]:", (Kc %*% eg$vectors[,1])[1], "\n")
+cat("Kc%*%alpha/sqrt(eig):", (Kc %*% eg$vectors[,1])[1]/sqrt(eg$values[1]), "\n")
+cat("Kc%*%alpha*sqrt(eig):", (Kc %*% eg$vectors[,1])[1]*sqrt(eg$values[1]), "\n")
+# what does kk store
+str(kk@rotated[1:2,1:2])
+--- result
+rv[1,1]: -11.48241 
+eig1: 60.80934 sqrt: 7.798034 
+Kc%*%alpha[1,1]: -4.193104 
+Kc%*%alpha/sqrt(eig): -0.5377129 
+Kc%*%alpha*sqrt(eig): -32.69797 
+ num [1:2, 1:2] -11.48 -13.57 -2.51 1.51
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:2] "1" "2"
+  ..$ : NULL
+
+#### ds 8 recipes__rd_example__discretize_Rd.R (px_ds_ds)
+--- expression
+cat("=== default discretize structure ===\n")
+d <- discretize(biomass_tr$carbon)
+cat("breaks:", d$breaks, "\n")
+cat("bins:", d$bins, "\n")
+cat("prefix:", d$prefix, "\n")
+cat("labels:", d$labels, "\n")
+cat("keep_na:", d$keep_na, "\n")
+cat("=== args of discretize.numeric ===\n")
+print(args(recipes:::discretize.numeric))
+cat("=== cuts=2 ===\n")
+d2 <- discretize(biomass_tr$carbon, cuts = 2)
+cat("breaks:", d2$breaks, "\n")
+cat("bins:", d2$bins, "\n")
+cat("labels:", d2$labels, "\n")
+cat("=== predict.default body ===\n")
+print(recipes:::predict.discretize)
+cat("=== carbon_no_infs predict ===\n")
+cn <- discretize(biomass_tr$carbon, infs = FALSE)
+print(predict(cn, c(50, 100)))
+--- result
+=== default discretize structure ===
+breaks: -Inf 44.715 47.1 49.725 Inf 
+bins: 4 
+prefix: bin 
+labels: _missing 1 2 3 4 
+keep_na: TRUE 
+=== args of discretize.numeric ===
+function (x, cuts = 4, labels = NULL, prefix = "bin", keep_na = TRUE, 
+    infs = TRUE, min_unique = 10, ...) 
+NULL
+=== cuts=2 ===
+breaks: -Inf 47.1 Inf 
+bins: 2 
+labels: _missing 1 2 
+=== predict.default body ===
+function (object, new_data, ...) 
+{
+    if (is.matrix(new_data) | is.data.frame(new_data)) {
+        new_data <- new_data[, 1]
+    }
+    object$labels <- if (is.null(object$prefix)) {
+        object$prefix
+    }
+    else {
+        paste0(object$prefix, object$labels)
+    }
+    if (object$bins >= 1) {
+        labs <- if (object$keep_na) {
+            object$labels[-1]
+        }
+    
+
+#### ds 9 proxy__rd_example__registry_Rd.R (px_ds_glm)
+--- expression
+s <- summary(pr_DB, "long")
+cat("NLINES:", length(s), "\n")
+for (i in 21:length(s)) cat(sprintf("%03d| %s\n", i, s[i]))
+--- result
+NLINES: 4 
+021| NULL
+020| NULL
+019| NULL
+018| NULL
+017| NULL
+016| NULL
+015| NULL
+014| NULL
+013| NULL
+012| NULL
+011| NULL
+010| NULL
+009| NULL
+008| NULL
+007| NULL
+006| NULL
+005| NULL
+004| c(Jaccard = "a / (a + b + c)", Kulczynski1 = "a / (b + c)", Kulczynski2 = "[a / (a + b) + a / (a + c)] / 2", Mountford = "2a / (ab + ac + 2bc)", Fager = "a / sqrt((a + b)(a + c)) - sqrt(a + c) / 2", Russel = "a / n", `simple matching` = "(a + d) / n", Hamman = "([a + d] - [b + c]) / n", Faith = "(a + d/2) / n", Tanimoto = "(a + d) / (a + 2b + 2c + d)", Dice = "2a / (2a + b + c)", Phi = "(ad - bc) / sqrt[(a + b)(c + d)(a + c)(b + d)]", Stiles = "log(n(|ad-bc| - 0.5n)^2 / [(a + b)(c + d)(a + c)(b + d)])", 
+Michael = "4(ad - bc) / [(a + d)^2 + (b + c)^2]", Mozley = "an / (a + b)(a + c)", Yul
+
+#### ds 10 isoband__vignette__isoband3_s2.R (px_ds_ds)
+--- expression
+li <- isolines((0:(ncol(volcano)-1))/(ncol(volcano)-1), ((nrow(volcano)-1):0)/(nrow(volcano)-1), volcano, 95)[[1]]
+cat("n=", length(li$x), "\n")
+print(round(li$x[1:15],4))
+print(round(li$y[1:15],4))
+print(li$id[1:15])
+cat("nseg ids:", unique(li$id), "\n")
+# check grid: y value 0.069767 => row index
+cat("6/86=", 6/86, "\n")
+# print volcano right edge around rows
+print(volcano[78:82, 60:61])
+--- result
+n= 20 
+ [1] 1.0000 0.9833 0.9833 0.9667 0.9500 0.9333 0.9167 0.9000 0.9000 0.8833
+[11] 0.8667 0.8667 0.8500 0.8333 0.8333
+ [1] 0.0698 0.0581 0.0581 0.0581 0.0581 0.0581 0.0581 0.0465 0.0465 0.0465
+[11] 0.0349 0.0349 0.0349 0.0233 0.0233
+ [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1
+nseg ids: 1 
+6/86= 0.06976744 
+     [,1] [,2]
+[1,]   96   96
+[2,]   96   95
+[3,]   95   95
+[4,]   95   95
+[5,]   95   94
+
+#### ds 11 openssl__rd_example__certificates_Rd.R (px_ds_ds)
+--- expression
+print(openssl:::print.pubkey)
+cat("====\n")
+print(openssl:::pubkey_fingerprint)
+--- result
+function (x, ...) 
+{
+    type <- class(x)[2]
+    cat(sprintf("[%d-bit %s public key]\n", pubkey_bitsize(x), 
+        pubkey_type(x)))
+    if (!fips_mode()) {
+        cat(sprintf("md5: %s\n", as.character(fingerprint(x, 
+            md5))))
+    }
+    cat(sprintf("sha256: %s\n", as.character(fingerprint(x))))
+}
+<bytecode: 0x00000206044af1c0>
+<environment: namespace:openssl>
+====
+Error: object 'pubkey_fingerprint' not found
+
+#### ds 12 fansi__rd_example__normalize_state_Rd.R (px_ds_glm)
+--- expression
+cat(paste(deparse(normalize_state("\033[1;4;33;42mX")), collapse=" "), "\n")
+cat(paste(deparse(normalize_state("\033[31\033[32mhello\033[m")), collapse=" "), "\n")
+cat(paste(deparse(normalize_state("he\033[0mllo", carry="\033[41m")), collapse=" "), "\n")
+w <- tryCatch({normalize_state("\033[31\033[32mhello\033[m"); "no warning"}, warning=function(w) conditionMessage(w))
+cat("WARN:", w, "\n")
+--- result
+"\033[1m\033[4m\033[33m\033[42mX" 
+"\033[31\033[32mhello" 
+"he\033[49mllo" 
+WARN: Argument `x` contains a non-SGR CSI or a non-URL OSC sequence with invalid substrings at index [1], see `?unhandled_ctl`; you can use `warn=FALSE` to turn off these warnings.
+
+#### ds 13 recipes__rd_example__step_kpca_Rd.R (px_ds_ds)
+--- expression
+k <- kpca_estimates$steps[[3]]$res
+cat("class:", class(k), "\n")
+print(slotNames(k))
+cat("--- eVal ---\n"); print(k@eVal)
+cat("--- dim rotated ---\n"); print(dim(k@rotated))
+cat("--- head rotated ---\n"); print(head(k@rotated[,1:3]))
+cat("--- dim pcv ---\n"); print(dim(k@pcv))
+cat("--- head pcv ---\n"); print(head(k@pcv[,1:3]))
+cat("--- dim xmatrix ---\n"); print(dim(k@xmatrix))
+cat("--- head xmatrix ---\n"); print(head(k@xmatrix[,1:3]))
+cat("--- kpar ---\n"); print(k@kpar)
+cat("--- kernelf ---\n"); print(k@kernelf)
+--- result
+class: kpca 
+[1] "rotated"  "pcv"      "eig"      "kernelf"  "kpar"     "xmatrix"  "kcall"   
+[8] "terms"    "n.action"
+--- eVal ---
+Error: no slot of name "eVal" for this object of class "kpca"
+
+#### ds 14 systemfonts__rd_example__shape_string_Rd.R (px_ds_ds)
+--- expression
+str(shape_string("Hi"))
+--- result
+List of 2
+ $ shape  :Classes 'tbl_df', 'tbl' and 'data.frame':	2 obs. of  7 variables:
+  ..$ glyph     : chr [1:2] "H" "i"
+  ..$ index     : int [1:2] 43 76
+  ..$ metric_id : int [1:2] 0 0
+  ..$ string_id : int [1:2] 1 1
+  ..$ x_offset  : num [1:2] 0 9
+  ..$ y_offset  : num [1:2] 0 0
+  ..$ x_midpoint: num [1:2] 4.5 1.5
+ $ metrics:Classes 'tbl_df', 'tbl' and 'data.frame':	1 obs. of  11 variables:
+  ..$ string        : chr "Hi"
+  ..$ width         : num 12
+  ..$ height        : num 24.3
+  ..$ left_bearing  : num 0
+  ..$ right_bearing : num 1
+  ..$ top_bearing   : num 1.86
+  ..$ bottom_bearing: num 2.55
+  ..$ left_border   : num 0
+  ..$ top_border    : num 10.9
+  ..$ pen_x         : num 12
+  ..$ pen_y         : num 0
+
+#### ds 15 textshaping__rd_example__shape_text_Rd.R (px_ds_glm)
+--- expression
+str(shape_text(string), max.level=1)
+names(shape_text("abc"))
+head(shape_text("abc")$shape, 20)
+shape_text("abc")$metrics
+--- result
+List of 2
+ $ shape  :Classes 'tbl_df', 'tbl' and 'data.frame':	57 obs. of  12 variables:
+ $ metrics:Classes 'tbl_df', 'tbl' and 'data.frame':	3 obs. of  12 variables:
+[1] "shape"   "metrics"
+  glyph index metric_id string_id  x_offset y_offset
+1     1    68         1         1  0.000000 2.546875
+2     2    69         1         1  6.671875 2.546875
+3     3    70         1         1 13.343750 2.546875
+                      font_path font_index font_size  advance ascender
+1 C:\\WINDOWS\\Fonts\\arial.ttf          0        12 6.671875 10.85938
+2 C:\\WINDOWS\\Fonts\\arial.ttf          0        12 6.671875 10.85938
+3 C:\\WINDOWS\\Fonts\\arial.ttf          0        12 6.000000 10.85938
+  descender
+1 -2.546875
+2 -2.546875
+3 -2.546875
+  string    width   height left_bearing right_bea
+
+#### ds 16 proxy__rd_example__registry_Rd.R (px_ds_ds)
+--- expression
+d <- as.data.frame(pr_DB)
+for (i in seq_len(nrow(d))) cat(rownames(d)[i], "||", d$FUN[i], "\n")
+--- result
+Jaccard || R_bjaccard 
+Kulczynski1 || pr_Kulczynski1 
+Kulczynski2 || pr_Kulczynski2 
+Mountford || pr_Mountford 
+Fager || pr_fagerMcgowan 
+Russel || pr_RusselRao 
+simple matching || pr_SimpleMatching 
+Hamman || pr_Hamman 
+Faith || pr_Faith 
+Tanimoto || pr_RogersTanimoto 
+Dice || pr_Dice 
+Phi || pr_Phi 
+Stiles || pr_Stiles 
+Michael || pr_Michael 
+Mozley || pr_MozleyMargalef 
+Yule || pr_Yule 
+Yule2 || pr_Yule2 
+Ochiai || pr_Ochiai 
+Simpson || pr_Simpson 
+Braun-Blanquet || pr_BraunBlanquet 
+cosine || R_cosine 
+angular || function (x, y) 1 - acos(crossprod(x, y)/sqrt(crossprod(x) * crossprod(y)))/pi 
+eJaccard || R_ejaccard 
+eDice || R_edice 
+correlation || pr_cor 
+Chi-squared || pr_ChiSquared 
+Phi-squared || pr_PhiSquared 
+Tschuprow || pr_Tschuprow 
+Cramer || pr_Cram
+
+#### ds 17 reshape2__rd_example__cast_Rd.R (px_ds_glm)
+--- expression
+cat(paste0("<", capture.output(print(dcast(chick_m, time ~ variable, mean))), ">\n"), sep="")
+cat(paste0("<", capture.output(print(acast(aqm, month ~ variable, mean))), ">\n"), sep="")
+cat(paste0("<", capture.output(print(acast(aqm, day ~ month ~ variable)[1:3,,1])), ">\n"), sep="")
+cat("class month:", class(airquality$month), "\n")
+cat("levels variable:", levels(aqm$variable), "\n")
+cat("levels time:", levels(chick_m$time), "\n")
+cat("levels ff time:", levels(ff_d$time), " subj class:", class(french_fries$subject), "\n")
+--- result
+<   time    weight>
+<1     0  41.06000>
+<2     2  49.22000>
+<3     4  59.95918>
+<4     6  74.30612>
+<5     8  91.24490>
+<6    10 107.83673>
+<7    12 129.24490>
+<8    14 143.81250>
+<9    16 168.08511>
+<10   18 190.19149>
+<11   20 209.71739>
+<12   21 218.68889>
+<     ozone  solar.r      wind     temp>
+<5 23.61538 181.2963 11.622581 65.54839>
+<6 29.44444 190.1667 10.266667 79.10000>
+<7 59.11538 216.4839  8.941935 83.90323>
+<8 59.96154 171.8571  8.793548 83.96774>
+<9 31.44828 167.4333 10.180000 76.90000>
+<   5  6   7  8  9>
+<1 41 NA 135 39 96>
+<2 36 NA  49  9 78>
+<3 12 NA  32 16 73>
+class month: integer 
+levels variable: ozone solar.r wind temp 
+levels time: 
+levels ff time: 1 2 3 4 5 6 7 8 9 10  subj class: factor
+
+#### ds 18 openssl__rd_example__certificates_Rd.R (px_ds_ds)
+--- expression
+str(as.list(chain[[1]]))
+cat("---\n")
+print(names(as.list(chain[[1]])))
+cat("---\n")
+print(chain[[1]]$signature)
+cat("---\n")
+cat(length(chain[[1]]$signature), "\n")
+cat("---chain class---\n")
+print(class(chain[[1]]))
+print(class(chain))
+cat("---raw?---\n")
+print(is.raw(chain[[1]]))
+cat("--- pubkey ---\n")
+print(cert_data$pubkey)
+cat("--- str pubkey ---\n")
+str(cert_data$pubkey)
+--- result
+List of 8
+ $ subject    : chr "CN=*.r-project.org"
+ $ issuer     : chr "CN=Sectigo Public Server Authentication CA DV R36,O=Sectigo Limited,C=GB"
+ $ algorithm  : chr "sha256WithRSAEncryption"
+ $ signature  : raw [1:384] 53 f2 85 6a ...
+ $ validity   : chr [1:2] "Dec 16 00:00:00 2025 GMT" "Jan 16 23:59:59 2027 GMT"
+ $ self_signed: logi FALSE
+ $ alt_names  : chr [1:2] "*.r-project.org" "r-project.org"
+ $ pubkey     :List of 5
+  ..$ type       : chr "rsa"
+  ..$ size       : int 2048
+  ..$ ssh        : chr "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDQ/cx8HyMW9S ..."
+  ..$ fingerprint: 'hash' raw [1:32] a7 68 11 fb ...
+  ..$ data       :List of 2
+  .. ..$ e: 'bignum' raw [1:3] 01 00 01
+  .. ..$ n: 'bignum' raw [1:257] 00 d0 fd cc ...
+---
+[1] "subject"     "issuer"      "algorithm" 
+
+#### ds 19 proxy__rd_example__registry_Rd.R (px_ds_ds)
+--- expression
+cat("=== summary item3 (types) ===\n")
+s <- summary(pr_DB, "long")
+str(s)
+cat("=== DF NAMES ===\n")
+print(names(as.data.frame(pr_DB)))
+cat("=== remaining formulas ===\n")
+print(pr_DB$get_entry("Levenshtein")$formula)
+print(pr_DB$get_entry("Podani")$formula)
+print(pr_DB$get_entry("Chord")$formula)
+print(pr_DB$get_entry("Geodesic")$formula)
+print(pr_DB$get_entry("Whittaker")$formula)
+print(pr_DB$get_entry("Hellinger")$formula)
+print(pr_DB$get_entry("fJaccard")$formula)
+--- result
+=== summary item3 (types) ===
+List of 4
+ $ names   :List of 50
+  ..$ Jaccard        : chr [1:4] "Jaccard" "binary" "Reyssac" "Roux"
+  ..$ Kulczynski1    : chr "Kulczynski1"
+  ..$ Kulczynski2    : chr "Kulczynski2"
+  ..$ Mountford      : chr "Mountford"
+  ..$ Fager          : chr [1:2] "Fager" "McGowan"
+  ..$ Russel         : chr [1:2] "Russel" "Rao"
+  ..$ simple matching: chr [1:2] "simple matching" "Sokal/Michener"
+  ..$ Hamman         : chr "Hamman"
+  ..$ Faith          : chr "Faith"
+  ..$ Tanimoto       : chr [1:2] "Tanimoto" "Rogers"
+  ..$ Dice           : chr [1:3] "Dice" "Czekanowski" "Sorensen"
+  ..$ Phi            : chr "Phi"
+  ..$ Stiles         : chr "Stiles"
+  ..$ Michael        : chr "Michael"
+  ..$ Mozley         : chr [1:2] "Mozley" "Margalef"
+  ..$ Yule    
+
+#### ds 20 caret__rd_example__update_train_Rd.R (px_ds_glm)
+--- expression
+str(knnFit1)
+cat("---results---\n")
+print(knnFit1$results)
+cat("---control---\n")
+str(knnFit1$control)
+--- result
+List of 21
+ $ method      : chr "knn"
+ $ modelInfo   :List of 13
+  ..$ label     : chr "k-Nearest Neighbors"
+  ..$ library   : NULL
+  ..$ loop      : NULL
+  ..$ type      : chr [1:2] "Classification" "Regression"
+  ..$ parameters:'data.frame':	1 obs. of  3 variables:
+  .. ..$ parameter: chr "k"
+  .. ..$ class    : chr "numeric"
+  .. ..$ label    : chr "#Neighbors"
+  ..$ grid      :function (x, y, len = NULL, search = "grid")  
+  ..$ fit       :function (x, y, wts, param, lev, last, classProbs, ...)  
+  ..$ predict   :function (modelFit, newdata, submodels = NULL)  
+  ..$ predictors:function (x, ...)  
+  ..$ tags      : chr "Prototype Models"
+  ..$ prob      :function (modelFit, newdata, submodels = NULL)  
+  ..$ levels    :function (x)  
+  ..$ sort      :function (x)  
+ 
+
+#### ds 21 textshaping__rd_example__shape_text_Rd.R (px_ds_glm)
+--- expression
+options(width=80)
+h1 <- shape_text("a")$metrics$height
+h2 <- shape_text("a", size=24)$metrics$height
+cat("h12=",h1,"h24=",h2,"\n")
+cat("mix1=", shape_text(c("a ","very large"," text"), id=c(1,1,1), size=c(12,24,12))$metrics$height, "\n")
+cat("--- print first 15 lines of shape print ---\n")
+out <- capture.output(shape_text("This is a long string\nLook; It spans multiple lines\nand all"))
+cat(length(out), "lines total\n")
+cat(head(out, 15), sep="\n")
+cat("...\n")
+cat(tail(out, 20), sep="\n")
+--- result
+h12= 13.40625 h24= 26.82812 
+mix1= 26.82812 
+--- print first 15 lines of shape print ---
+184 lines total
+$shape
+   glyph index metric_id string_id   x_offset  y_offset
+1      1    55         1         1   0.000000 29.359375
+2      2    75         1         1   7.328125 29.359375
+3      3    76         1         1  14.000000 29.359375
+4      4    86         1         1  16.671875 29.359375
+5      5     3         1         1  22.671875 29.359375
+6      6    76         1         1  26.000000 29.359375
+7      7    86         1         1  28.671875 29.359375
+8      8     3         1         1  34.671875 29.359375
+9      9    68         1         1  38.000000 29.359375
+10    10     3         1         1  44.671875 29.359375
+11    11    79         1         1  48.000000 29.359375
+
+#### ds 22 pROC__rd_example__coords_Rd.R (px_ds_glm)
+--- expression
+x <- coords(roc.s100b, "all")
+print(names(x))
+cat("youden row:", x$youden[x$threshold==0.205], "\n")
+cat("ct row:", x$closest.topleft[x$threshold==0.205], "\n")
+se<-x$sensitivity/100; sp<-x$specificity/100
+cands <- list(
+ "sum-1"=(se+sp-1)*100,
+ "sum/2"=(se+sp)/2*100,
+ "sum"=se+sp,
+ "sq_uw"=sqrt((1-se)^2+(1-sp)^2)*100,
+ "sq_w"=sqrt((1-se)^2+0.5*(1-sp)^2)*100,
+ "sq_w2"=sqrt(0.5*(1-se)^2+(1-sp)^2)*100,
+ "lin_w"=((1-se)+0.5*(1-sp))*100,
+ "lin_w2"=(0.5*(1-se)+(1-sp))*100
+)
+print(x$youden[x$threshold==0.205])
+print(x$closest.topleft[x$threshold==0.205])
+for(n in names(cands)) cat(n, cands[[n]][x$threshold==0.205], "\n")
+--- result
+[1] "threshold"   "specificity" "sensitivity"
+youden row: 
+ct row: 
+NULL
+NULL
+sum-1  
+sum/2  
+sum  
+sq_uw  
+sq_w  
+sq_w2  
+lin_w  
+lin_w2
+
+#### ds 23 ranger__rd_example__csrf_Rd.R (px_ds_glm)
+--- expression
+cat("===START===\n")
+print(csrf)
+cat("===END===\n")
+nchar(as.character(csrf[1]))
+--- result
+===START===
+function (formula, training_data, test_data, params1 = list(), 
+    params2 = list(), verbose = FALSE) 
+{
+    rf.proximity <- do.call(ranger, c(list(formula = formula, 
+        data = training_data, write.forest = TRUE), params1))
+    terminal.nodeIDs.train <- predict(rf.proximity, training_data, 
+        type = "terminalNodes")$predictions
+    terminal.nodeIDs.test <- predict(rf.proximity, test_data, 
+        type = "terminalNodes")$predictions
+    predictions <- sapply(1:nrow(test_data), function(i) {
+        if (isTRUE(verbose)) {
+            message("Computing case-specific prediction for test observation ", 
+                i, " of ", nrow(test_data), ". (", round(i/nrow(test_data) * 
+                  100, digits = 2), "% complete.)")
+        }
+        num
+
+#### ds 24 recipes__rd_example__step_kpca_Rd.R (px_ds_glm)
+--- expression
+head(kpca_te)
+names(kpca_te)
+dim(kpca_te)
+--- result
+# A tibble: 6 × 6
+    HHV   kPC1    kPC2   kPC3  kPC4    kPC5
+  <dbl>  <dbl>   <dbl>  <dbl> <dbl>   <dbl>
+1  18.3  -1.71  0.178  12.4   -2.75 -4.24  
+2  17.6  12.0   0.851   3.09   2.20 -2.54  
+3  17.2  11.4   0.0917  3.77   1.89 -4.38  
+4  18.9  12.6   1.06    4.05   2.99  7.74  
+5  20.5 -13.0   2.26   -0.805  4.72  1.62  
+6  18.5   3.81 -5.87    7.41  -5.69 -0.0322
+[1] "HHV"  "kPC1" "kPC2" "kPC3" "kPC4" "kPC5"
+[1] 80  6
+
+#### ds 25 pROC__rd_example__coords_Rd.R (px_ds_glm)
+--- expression
+cat("dir:", roc.s100b$direction, "\n")
+cat("n_thresh:", length(roc.s100b$thresholds), "\n")
+cat("n_sens:", length(roc.s100b$sensitivities), "\n")
+print(roc.s100b$thresholds)
+cat("unique_s100b:", length(unique(sort(aSAH$s100b))), "\n")
+print(unique(sort(aSAH$s100b)))
+cat("controls_n:", length(roc.s100b$controls), " cases_n:", length(roc.s100b$cases), "\n")
+print(coords(roc.s100b, "all", ret="threshold"))
+--- result
+dir: < 
+n_thresh: 51 
+n_sens: 51 
+ [1]  -Inf 0.035 0.045 0.055 0.065 0.075 0.085 0.095 0.105 0.115 0.125 0.135
+[13] 0.145 0.155 0.165 0.175 0.185 0.205 0.225 0.235 0.245 0.255 0.265 0.275
+[25] 0.290 0.310 0.325 0.335 0.345 0.365 0.395 0.420 0.435 0.445 0.455 0.465
+[37] 0.475 0.485 0.495 0.510 0.540 0.570 0.640 0.705 0.725 0.755 0.795 0.840
+[49] 0.910 1.515   Inf
+unique_s100b: 50 
+ [1] 0.03 0.04 0.05 0.06 0.07 0.08 0.09 0.10 0.11 0.12 0.13 0.14 0.15 0.16 0.17
+[16] 0.18 0.19 0.22 0.23 0.24 0.25 0.26 0.27 0.28 0.30 0.32 0.33 0.34 0.35 0.38
+[31] 0.41 0.43 0.44 0.45 0.46 0.47 0.48 0.49 0.50 0.52 0.56 0.58 0.70 0.71 0.74
+[46] 0.77 0.82 0.86 0.96 2.07
+controls_n: 72  cases_n: 41 
+   threshold
+1       -Inf
+2      0.035
+3      0.045
+4      0.055
+5      0.065
+6      0.075
+7     
