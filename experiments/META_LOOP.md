@@ -7,8 +7,9 @@ this protocol, one cycle per session.
 
 ## Two loops
 
-- **The ground loop** (r2py, Gemma 4 31B): translates one script, minutes per script. Its behaviour is a set of
-  options with defaults in `r2py/loop.py` (`DEFAULT_*`) and the manifest.
+- **The ground loop** (r2py; agent DeepSeek V4.1 Flash, seeds, review, audit and mapping Gemma 4 31B, as of
+  `default_2026_11_12`): translates one script, minutes per script. Its behaviour is a set of options with defaults
+  in `r2py/loop.py` (`DEFAULT_*`) and the manifest.
 - **The meta-loop** (a person and a strong model, days per cycle): changes the harness. It touches the ground loop
   through three interfaces only:
   - **settings, meta -> ground:** a change is built behind an option that is off by default; adopting it flips the
@@ -20,9 +21,11 @@ this protocol, one cycle per session.
 ## The objective
 
 The meta-loop exists to raise **the plateau of the production default**: the mean final score of the current
-`default_<date>` policy on the 60 training states under the open scoring epoch (0.792 in epoch 6), confirmed on the
-held-out pool. Every cycle says what it does to that number:
-- a **harness change** can raise it; the replay or test measures by how much;
+`default_<date>` policy on the 60 training states under the open scoring epoch (`default_2026_11_12`: 0.880 training,
+0.907 held-out in epoch 10), confirmed on the held-out pool. Every cycle says what it does to that number:
+- a **harness change** can raise it; the replay or test measures by how much. A model choice for one of the loop's
+  roles (agent, seeds, review, audit, mapping) is a harness change: the largest single gain so far (+0.065,
+  2026-11-12) was the agent's model;
 - a **learning change** (the model trained on translations the loop verified) can raise it the same way, through a
   policy with another model; the replay or test measures by how much;
 - a **scorer change that corrects scores** (false losses removed) moves the plateau without any translation changing;
@@ -38,6 +41,17 @@ exists for gains. Measurement hygiene is not an end in itself: a scorer
 question earns a cycle when the fault blocks a gain, by hiding real progress from the model or misleading its
 feedback, and it is ranked by what it unblocks, not by the points it moves. That a scorer check is free is no reason
 to prefer it; harness questions have instruments of $0.30-1.20.
+
+### Headroom
+
+The objective is worth pursuing only while the pool leaves room a test can see. The **reachable gap** is 1 - mean
+final minus the points held by states the gap ledger (step 1) classes as out of reach (measurement faults not yet
+fixable, values no faithful program can match). The **noise floor** is what one replay of the default moves by on
+its own: about ±0.03 on the 60-state plateau (`width6-running-pool`, 2026-11-06). When the reachable gap is below
+about twice the noise floor, gains on this pool can no longer be confirmed by the instrument that measures the
+objective, and the cycle says so before proposing any lever: it states the reachable gap and proposes a new
+objective (a harder or larger pool, the share of finals >= 0.9, cost per verified script, or another the evidence
+supports). Changing the objective or the pools is the person's decision.
 
 ## Roles
 
@@ -96,13 +110,25 @@ tried, its outcome and crash, its stop reason, and whether the next step used th
 behaviour patterns too: candidate crash types, stop reasons, review rejections, step success rates, where the curves
 flatten.
 
+**The gap ledger** (`experiments/gap_ledger.md`, committed) holds one row per training state whose default final is
+below 0.9: its points of the gap, its class (measurement, out of reach, behaviour, capability, unknown), the evidence
+(an offline test, a trajectory, a result) and the cycle that set it. A cycle updates the rows it learns about
+instead of re-deriving them from the health report, and the headroom check reads the reachable gap from it. A state
+stays `unknown` until a test or a trajectory reading classes it.
+
 A candidate question names the part of the gap it addresses and how many points of it it could reach at most. For a
 scorer question that is the states it touches times what they lose. A harness lever usually touches many states a
 little: its reach is the share of the gap in the states it touches times a success rate from the nearest past result
-(one step with feedback improves 27% of the time; a third step after two failures 5-9%). Candidates are ranked by
-**expected gain in the plateau** (reach times the chance it holds) and the cost of finding out. Every proposal has
-at least one harness question, or says why there is none; after two scorer cycles in a row, the best harness
-question goes first unless a scorer fault is shown to block it.
+measured under the current default's agent (computed from its replay's trajectories, not carried over from an
+earlier model: under Gemma a third step after two failures improved 5-9% of the time, under DeepSeek Flash 19% on
+running and 45% on crashing starts). Candidates are ranked by **expected gain in the plateau** (reach times the
+chance it holds) and the cost of finding out. Every proposal has at least one harness question, or says why there is
+none; after two scorer cycles in a row, the best harness question goes first unless a scorer fault is shown to block
+it.
+
+A question whose reach on the production default is zero (it explains a policy that is not the default, or a
+mechanism no option would change) is an **explanatory** question. It is labelled so, names the decision its answer
+would change, and runs at most once in three cycles.
 
 ### 2. Diagnose
 
@@ -167,6 +193,10 @@ Append an entry to `IMPROVEMENT_PLAN.md` (the reasoning) and a record to the exp
 - instrument, pool (training), arms, samples, workers;
 - primary metric, secondary metrics, strata (running and crashing starts apart);
 - decision rule and tier (below), and what each outcome will mean;
+- **power:** the smallest effect the instrument can resolve at the planned samples (from the interval widths of
+  earlier runs of the same instrument), next to the question's maximum reach. If the reach is below it, the test
+  does not run as a decision test: add samples, choose a sharper instrument, or register it as descriptive with the
+  decision its answer informs;
 - cost estimate and the run guard budget;
 - the analysis command.
 
@@ -191,7 +221,7 @@ guard (`--budget USD`, `--reserve` default $0.50). Instruments, cheapest first (
 | `step_ab.py` (one step from frozen states) | does a step do better? | $0.45-0.55 for 240-360 steps |
 | `two_step.py` (two steps, step 1 shared) | does step 2 use step 1's outcome? | about $0.80 per 120 trials |
 | `continue_stalled.py`, `continue_plateau.py` (continue saved chains) | patience, plateaus | $0.30-1.20 |
-| `replay.py --pool training` (the whole loop, frozen starts) | the end-to-end effect | $4.35 for 60 runs of the default |
+| `replay.py --pool training` (the whole loop, frozen starts) | the end-to-end effect | about $2 for 60 runs of the default (November) |
 
 All write the common format that `expkit.py analyze` reads. Before the run ends nothing in `r2py/` changes.
 
@@ -221,6 +251,11 @@ crashing starts, so a crash-specific change cannot be confirmed there; that is s
 
 ### 8. Adopt
 
+Before asking for the sign-off, audit the finals that gained most: read the 10 final programs of the candidate
+policy with the largest gains over the current default for faithfulness (pasted R values, hard-coded results,
+behaviour only the comparison accepts) and show the person what was read. A fault found is a scorer question (3a)
+first, and the flip waits for it.
+
 On the person's sign-off: flip the default in `r2py/loop.py` (and its manifest key; for a tuned model, the model), add a replay policy named
 `default_<date>` for the new production default, add a test that the default is on. Adopted changes stay under
 watch: a later run that contradicts them reverts them by the same rule.
@@ -233,8 +268,9 @@ watch: a later run that contradicts them reverts them by the same rule.
   caveats; corrections of earlier readings where the result changes them; the plateau of the production default
   before and after, split into gain and correction, and why it moved or did not.
 - The run's health report stays in its run directory.
+- The gap ledger rows the cycle learned about are updated.
 - **Replay of the default.** A replay of `default_<date>` on the training pool (`replay.py --pool training`, about
-  $4.35, registered as descriptive) is the only measurement of the objective itself. It makes sense when:
+  $2, registered as descriptive) is the only measurement of the objective itself. It makes sense when:
   - a default changed (the new default's curve is unmeasured), or
   - since the latest replay of the production default, one or more accepted epochs corrected feedback the model sees
     without moving the curves (their effect on translations is unmeasured), or
