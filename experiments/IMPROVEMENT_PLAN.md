@@ -4882,3 +4882,13 @@ before any data.**
   corrected feedback since the latest replay.
 - Decision: adopted (epoch 11). Held-out: not possible as a separate test (a scorer change; held-out finals
   re-verified, unchanged).
+- **Shiny updateRadioButtons under epoch 11 (offline, $0, 2026-11-14, the person's question).** Does the fix let the
+  default's loop reach this state? All 27 rewrites that DeepSeek Flash chains logged on it (default replay, feedback-e10,
+  patience-dsflash, the model screen's DeepSeek arm, probe-crossover px_ds_ds; 18 chains) re-scored under epoch 11
+  against the frozen start (`work/analysis/shiny_e11_rescore.py`, `.txt`): the **first rewrite of 16 of 18 chains
+  scores 0.96**, against 3 of 18 chains at >= 0.9 as logged. The 13 chains that stopped at 0.25 held a correct
+  translation from their first rewrite; the fault, not the model, held the state. The two exceptions: one chain's
+  rewrite still scores 0.25, one crashes (0.0). Reading: with three chains per state, a replay under epoch 11 almost
+  surely reaches 0.96 here (+0.0118 on the plateau, a gain of the loop's finals but caused by a correction).
+  Counterfactual: the scores of logged candidates, not a run, so what a chain does after a 0.96 step is not
+  observed (the threshold 0.9 would stop it there).
