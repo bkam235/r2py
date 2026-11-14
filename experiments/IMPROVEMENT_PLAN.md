@@ -4827,3 +4827,38 @@ before any data.**
   each is undone by swapping the other role. What fails is GLM rewriting on its own probing trail, which fits the
   self-contradicting rewrites (class C) found offline. One chain per state; the interaction is the one estimate
   whose interval excludes 0. Descriptive; nothing adopted. The default already runs DeepSeek in both roles.
+
+### Cycle of 2026-11-14: gap ledger, and an imported module rebound by an entity (test `module-rebind`, scorer track) — registered 2026-11-14
+
+- **Start of the cycle.** Epoch 10 open, tree clean, nothing `registered`. Plateau of `default_2026_11_12`: 0.880
+  training / 0.907 held-out (epoch-10 re-verification of the finals); since its adoption -0.0014, all correction.
+  The gap ledger (`experiments/gap_ledger.md`) was created: gap 0.120, out of reach 0.014 (aes_cbc random IV,
+  glyph_raster and shape_text font metrics), reachable 0.106, above twice the replay noise (0.06). Replay of the
+  default under epoch 10 pointed out (epoch 10 corrected feedback since the latest replay); the person chose not to
+  run it now.
+- **Diagnosis** (default replay `work/dsflash_default`, `work/analysis/beh2.py`, `rev.py`): review rejections
+  (29, 28 of them improving by +0.23 on average) cost the plateau at most 0.0002, the chains got there anyway. The
+  never-improving states stop after 1-2 rewrites per chain, nearly all `unchanged`. The state holding the most of
+  the gap, shiny updateRadioButtons (0.0125), scored 0.25 on all four rewrites with `ui` HTML 0.99 similar to R's,
+  the same as the 0.96 program of feedback-e10. Offline (`work/analysis/shiny_trace.py`): the only difference is
+  `from shiny import ui` then `ui = ui.page_fluid(...)`; with the module import renamed, the same program scores
+  0.96. With the rebinding, `ui` scores 0 on data, value and type while its feedback shows the 0.99-similar HTML.
+  bslib page_fillable has the same rebinding: 0.25 -> 0.382 renamed (`unshadow.py`).
+- **Cause** (`r2py/stage4/verifier.py`, `_inject_py_checkpoints`): the baseline line before the first entity keeps
+  the ids of the names bound so far, so that a later entity rebinding one of them records it once
+  (`_r2py_base_ids`, 2026-10-16). Modules (and callables) are left out of that table, so a rebound module looks
+  like an old name and is skipped at every checkpoint. The end-of-run data capture sees the new value, so the
+  feedback message and the entity's score disagree. Classification: measurement, which misleads the feedback (the
+  model is told the HTML matches while the entity scores 0, and no step can act on it).
+- **Census** (`work/analysis/module_rebind_census.py`): of 265 start programs, 2 import a name above the first
+  sentinel and rebind it in an entity (bslib page_fillable, shiny actionButton); no held-out final, and among the
+  default's training finals the same 2. The shiny updateRadioButtons rewrites do it too (its final is its start).
+- **Change (proposed):** the baseline also keeps the ids of modules, so a rebound module is recorded at the entity
+  that rebinds it, once, as any other pre-bound name. Callables stay out (no fault shown for them). Test
+  `tests/test_module_rebind.py` (2 of 3 fail before).
+- **Expected:** on the reference set, only programs that rebind an imported module may move, upwards. On the
+  default's training finals, shiny updateRadioButtons (if its final rebinds; its final is the start, which does
+  not), bslib page_fillable 0.25 -> about 0.38; shiny actionButton unchanged or up. A correction (same programs);
+  its gain, through feedback that no longer contradicts the score, is unmeasured until a replay.
+- **Rule:** the person's acceptance of the check report; only entities of programs that rebind an imported module
+  may move. Cost $0.
