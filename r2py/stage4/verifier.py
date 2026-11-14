@@ -766,12 +766,13 @@ def _inject_py_checkpoints(
     # Baseline the namespace right before the first entity so that imports
     # and the data shim (which run earlier in the file) are excluded from
     # the first entity's checkpoint delta.
+    # Modules get an id too (2026-11-14): `from shiny import ui` then `ui = ui.page_fluid(...)` was never recorded at
+    # the entity that rebinds it. A module R records nowhere is not a shim input, so _r2py_r_record_at never lists it.
     first_start = sorted_pairs[0][1][0] if sorted_pairs else None
     if first_start is not None:
         baseline_line = ("_r2py_prev_ns = set(k for k in globals() if not k.startswith('_r2py')); "
                          "_r2py_base_ids = {k: _r2py_builtins.id(v) for k, v in globals().items() "
-                         "if not k.startswith('_r2py') and not _r2py_builtins.callable(v) "
-                         "and _r2py_builtins.type(v).__name__ != 'module'}\n")
+                         "if not k.startswith('_r2py') and not _r2py_builtins.callable(v)}\n")
         baseline_idx = min(first_start - 1, len(lines))  # 1-based → 0-based insert
         # The naive index can land inside an open expression (e.g. a chained
         # `result = (\n df\n .assign(...)\n)` pipeline, where the first entity
