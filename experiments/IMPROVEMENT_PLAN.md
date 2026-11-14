@@ -4862,3 +4862,23 @@ before any data.**
   its gain, through feedback that no longer contradicts the score, is unmeasured until a replay.
 - **Rule:** the person's acceptance of the check report; only entities of programs that rebind an imported module
   may move. Cost $0.
+- **Result (2026-11-14, accepted by the person; epoch 11, scorer d5609fe186a0-db31b28ade02).** Check
+  (`work/scoring/check_20261114_1412.md`): 135 of 147 unchanged; bslib page_fillable start 0.250 -> 0.368 (the
+  intended effect); openssl ec_dh start 0.670 -> 0.684 and final 0.667 -> 0.675 are noise (4 repeats under the fix:
+  0.662-0.673 and 0.653-0.683, around the baseline's 0.667-0.670; ec_dh rebinds no module); the one error,
+  lubridate period, is a SandboxEscape false positive in the epoch-10 baseline's run 0 (another process wrote
+  `.claude.json`), 0.8903 in both (`work/analysis/module_rebind_followup.py`). Curves rebuilt
+  (`work/scoring/accept_epoch11.log`): start 0.508 -> 0.5095, the default's measured curve 0.886 -> 0.887.
+- Default's finals re-verified under epoch 11 (`reverify_finals.py`): training **0.8799 -> 0.8806**
+  (`work/dsflash_default/finals_epoch11.jsonl`; bslib page_fillable 0.250 -> 0.287, which varies 0.29-0.37 between
+  repeats, its tempfile font files; ec_dh 0.411 -> 0.418, noise); held-out **0.9074 -> 0.9074**. The shiny
+  updateRadioButtons rewrites that scored 0.25 score 0.96 under epoch 11, but its recorded final is its start (which
+  never assigns `ui`, 0.25), so the plateau does not show it.
+- **Plateau of the production default:** 0.880 -> 0.881 training, 0.907 held-out; +0.0007, all correction, no gain
+  (same programs). Why the cycle was worth running: the fault misled the feedback where it struck (the model was
+  told the HTML matched while the entity scored 0), in the state holding the most of the gap; in the replay all four
+  shiny rewrites were correct translations scored 0.25, so the chains stopped there. What the cleaner feedback does
+  to translations is unmeasured until a replay of the default (step 9): two accepted epochs (10 and 11) have now
+  corrected feedback since the latest replay.
+- Decision: adopted (epoch 11). Held-out: not possible as a separate test (a scorer change; held-out finals
+  re-verified, unchanged).

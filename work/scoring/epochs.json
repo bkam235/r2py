@@ -233,5 +233,30 @@
   ],
   "model_mappings": 5,
   "note": "Added sentinels attributed (trace of patience-dsflash, 2026-11-13): a sentinel a candidate carries for a script-map entity the reference does not map is attributed too, in addition to the reference's entities (HarnessTools._attributable). Before, an entity the seed mapping missed could never score in the loop. Check: 138 of 147 unchanged, only openssl ec_dh (noise) and textshaping lorem_text moved; 2 errors from SandboxEscape false positives in the epoch-9 baseline. Effect on the default's training finals scored as the loop does: shape Arrows 0.755->0.826, lubridate period 0.927->1.000, purrr invoke 0.967->1.000 (+0.0030 on the plateau, correction); gtable add_cols restore unchanged."
+ },
+ {
+  "epoch": 11,
+  "scoring_version": "d5609fe186a0-db31b28ade02",
+  "r_capture": "7e6e74c773b0",
+  "date": "2026-11-14 14:29",
+  "programs": 147,
+  "flaky": [
+   "final_default:e1071__rd_example__boxplot_bclust_Rd",
+   "final_default:openssl__rd_example__ec_dh_Rd",
+   "final_default:proxy__rd_example__registry_Rd",
+   "final_default:sass__rd_example__as_sass_Rd",
+   "final_default:sass__rd_example__sass_import_Rd",
+   "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+   "final_w3:openssl__rd_example__ec_dh_Rd",
+   "final_w3:sass__rd_example__sass_import_Rd",
+   "final_w3:textshaping__rd_example__lorem_text_Rd",
+   "start:bslib__rd_example__page_fillable_Rd",
+   "start:openssl__rd_example__ec_dh_Rd",
+   "start:sass__rd_example__as_sass_Rd",
+   "start:textshaping__rd_example__lorem_text_Rd"
+  ],
+  "errors": [],
+  "model_mappings": 5,
+  "note": "Module rebound by an entity recorded (module-rebind, 2026-11-14): the checkpoint baseline now keeps the ids of modules imported above the first entity, so 'from shiny import ui' then 'ui = ui.page_fluid(...)' is recorded at entity ui (before: never, the entity scored 0 while its feedback showed the matching HTML). Check: 135 of 147 unchanged; bslib page_fillable start 0.25->0.368 (intended); openssl ec_dh start/final within its repeat range (noise); lubridate period error from a baseline SandboxEscape false positive (0.8903 both). Test tests/test_module_rebind.py."
  }
 ]
