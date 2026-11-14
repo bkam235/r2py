@@ -4892,3 +4892,29 @@ before any data.**
   surely reaches 0.96 here (+0.0118 on the plateau, a gain of the loop's finals but caused by a correction).
   Counterfactual: the scores of logged candidates, not a run, so what a chain does after a 0.96 step is not
   observed (the threshold 0.9 would stop it there).
+
+### Cycle of 2026-11-14 (2): the objective becomes the share of finals >= 0.95 with a cheap agent
+
+- **Start of the cycle.** Epoch 11 open, scorer `same`, tree clean, nothing `registered`. Plateau of
+  `default_2026_11_12`: 0.881 training / 0.907 held-out; since its adoption -0.0007, all correction. The latest three
+  cycles (feedback-e10, probe-crossover, module-rebind) added no gain: the stall trigger held. Reachable gap 0.064 to
+  0.105 against twice the replay noise (0.06). A replay of the default under epoch 11 was pointed out (epochs 10 and
+  11 corrected feedback since the latest replay); the person chose not to run it now, nor a stronger-agent ceiling
+  ("we just adopted DeepSeek").
+- **Decision of the person (objective):** the target is good translations with a cheap model. The primary metric is
+  now the share of finals >= 0.95 (the plateau is secondary), the agent's model stays in DeepSeek V4.1 Flash's cost
+  class (a stronger model is explanatory), and the loop's stop threshold is to move from 0.9 to 0.95.
+  `META_LOOP.md` ("The objective", "Headroom", "Levers and bets", the gap ledger) and `gap_ledger.md` (cut at 0.95,
+  8 rows added) updated.
+- **Baseline** (finals re-verified under epoch 11): share >= 0.95 **0.550** training (33 of 60), **0.652** held-out
+  (30 of 46); >= 0.9: 0.683 / 0.761.
+- **Noise floor of the share** (offline, $0): the two replays of `default_2026_11_01` on the 46 running starts
+  (`work/replay_default_e8`, `_s1`, same scorer): share >= 0.95 0.261 vs 0.174, +0.087 [+0.022, +0.174], 4 states
+  flipped, all one way; >= 0.9 +0.043 [-0.043, +0.130]. Gemma era, threshold 0.9; one pair, so about ±0.09 is a
+  rough floor. Reachable room 0.117 to 0.400 (17 unknown states counted both ways; out of reach 3).
+- **Where the stop threshold acts.** On the training pool a threshold of 0.95 can change only states whose best
+  chain ends in [0.9, 0.95): a state below 0.9 has no chain that reached 0.9, a state >= 0.95 is there already. In
+  the default's replay those are 8 states (0.903-0.947, 0.011 of the plateau, up to 8 of 60 = 0.133 of the share);
+  16 of their 24 chains stopped by the threshold. Elsewhere: `r2py/cli.py` and `scripts/translate_batch.py`
+  default to 0.85, `r2py/heldout.py`'s protocol (which replay uses) to 0.9; the training pool was drawn from starts
+  below 0.9 (`max_start`), so starts at 0.90-0.95 are not in it (changing the pool is the person's decision).

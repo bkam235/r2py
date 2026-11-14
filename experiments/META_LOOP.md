@@ -20,12 +20,20 @@ this protocol, one cycle per session.
 
 ## The objective
 
-The meta-loop exists to raise **the plateau of the production default**: the mean final score of the current
-`default_<date>` policy on the 60 training states under the open scoring epoch (`default_2026_11_12`: 0.880 training,
-0.907 held-out in epoch 10), confirmed on the held-out pool. Every cycle says what it does to that number:
-- a **harness change** can raise it; the replay or test measures by how much. A model choice for one of the loop's
-  roles (agent, seeds, review, audit, mapping) is a harness change: the largest single gain so far (+0.065,
-  2026-11-12) was the agent's model;
+The meta-loop exists to get good translations from a cheap agent model (the person's decision, 2026-11-14). Its
+primary metric is **the share of finals >= 0.95 of the production default**: the share of the 60 training states
+whose final score under the open scoring epoch is at least 0.95, confirmed on the held-out pool. The mean final
+score, **the plateau**, is the secondary metric and is reported next to it. `default_2026_11_12` under epoch 11:
+share >= 0.95 0.550 training (33 of 60), 0.652 held-out (30 of 46); plateau 0.881 training, 0.907 held-out.
+
+**The cost class.** The agent's model stays in the cost class of DeepSeek V4.1 Flash: about its cost per translated
+script or less (the default's training replay: $2.06 for 60 runs, about $0.035 per script). A result with a model
+outside the class is explanatory: it shows how much of the gap is the model's, and it cannot become the default.
+
+"Gain" and "correction" below apply to both metrics. Every cycle says what it does to them:
+- a **harness change** can raise them; the replay or test measures by how much. A model choice for one of the
+  loop's roles (agent, seeds, review, audit, mapping) inside the cost class is a harness change: the largest single
+  gain so far (+0.065 on the plateau, 2026-11-12) was the agent's model;
 - a **learning change** (the model trained on translations the loop verified) can raise it the same way, through a
   policy with another model; the replay or test measures by how much;
 - a **scorer change that corrects scores** (false losses removed) moves the plateau without any translation changing;
@@ -44,17 +52,21 @@ to prefer it; harness questions have instruments of $0.30-1.20.
 
 ### Headroom
 
-The objective is worth pursuing only while the pool leaves room a test can see. The **reachable gap** is 1 - mean
-final minus the points held by states the gap ledger (step 1) classes as out of reach (measurement faults not yet
-fixable, values no faithful program can match). The **noise floor** is what one replay of the default moves by on
-its own: about ±0.03 on the 60-state plateau (`width6-running-pool`, 2026-11-06). When the reachable gap is below
-about twice the noise floor, gains on this pool can no longer be confirmed by the instrument that measures the
+The objective is worth pursuing only while the pool leaves room a test can see. The **reachable room** is 1 - the
+share >= 0.95 minus the share of states the gap ledger (step 1) classes as out of reach (measurement faults not yet
+fixable, values no faithful program can match); the **reachable gap** of the plateau is 1 - mean final minus the
+points those states hold. The **noise floor** is what one replay of the default moves by on its own: about ±0.03 on
+the 60-state plateau (`width6-running-pool`, 2026-11-06) and about ±0.09 on the share >= 0.95 (the same two
+replays, 46 running starts: 0.261 vs 0.174, 4 states flipped; under Gemma with the stop threshold at 0.9). The
+share moves in steps of one state (1/60 = 0.017), so a test of it needs several states to flip the same way. When
+the reachable room is below about twice its noise floor, gains on this pool can no longer be confirmed by the instrument that measures the
 objective, and the cycle says so before proposing any lever: it states the reachable gap and proposes a new
 objective (a harder or larger pool, the share of finals >= 0.9, cost per verified script, or another the evidence
 supports). Changing the objective or the pools is the person's decision. States the ledger still has as `unknown`
 are counted both ways, so the reachable gap is a range.
 
-**Stall trigger.** When the latest three cycles together added less than 0.01 of gain (corrections not counted),
+**Stall trigger.** When the latest three cycles together added no state to the share >= 0.95 and less than 0.01
+to the plateau (corrections not counted),
 the next cycle opens with bets (step 1) and an objective proposal, not with a lever or a scorer question.
 
 ## Roles
@@ -115,7 +127,7 @@ behaviour patterns too: candidate crash types, stop reasons, review rejections, 
 flatten.
 
 **The gap ledger** (`experiments/gap_ledger.md`, committed) holds one row per training state whose default final is
-below 0.9: its points of the gap, its class (measurement, out of reach, behaviour, capability, unknown), the evidence
+below 0.95: its points of the gap, its class (measurement, out of reach, behaviour, capability, unknown), the evidence
 (an offline test, a trajectory, a result) and the cycle that set it. A cycle updates the rows it learns about
 instead of re-deriving them from the health report, and the headroom check reads the reachable gap from it. A state
 stays `unknown` until a test or a trajectory reading classes it.
@@ -125,12 +137,13 @@ The ledger says where the gap is; it is not where questions come from.
 **Levers and bets.** A **lever** tunes the loop as it is (an option, a hint, a gate, a scorer fix, patience,
 width); past levers gained 0-0.02. A **bet** changes what the loop is or what it is measured on: the model of a role
 (agent, seeds, review, audit, mapping), a capability the agent lacks (a tool, a way to inspect or run what it cannot
-now), the unit of work or the architecture, the learning track, or the objective and the pool. Every gain above 0.03
+now), the unit of work or the architecture, the learning track, or the objective and the pool (a role's model only inside the cost class). Every gain above 0.03
 so far was a bet (width +0.144, conversation mode +0.05, the agent's model +0.065). Every proposal has at least one
 bet. A bet is ranked by its **ceiling** (from a ceiling measurement where one exists, else argued from the evidence),
 its cost and its cheapest **kill test** (a few dollars at most, registered first; the full test only if it
-survives), not by a chance taken from past levers. Where no ceiling measurement fits the current default (a much
-stronger agent on the states below 0.9, an oracle hint), proposing one is a bet. A bet may need more than an option
+survives), not by a chance taken from past levers. Where no ceiling measurement fits the current default (an
+oracle hint, a tool the cheap agent lacks), proposing one is a bet; a much stronger agent is explanatory (outside the
+cost class). A bet may need more than an option
 (a tool, an instrument, a pool); it is built behind an option or policy as usual. Lessons are scoped to the agent
 model they were measured under; one measured under another model is a hypothesis to retest, not a bound on a bet.
 
