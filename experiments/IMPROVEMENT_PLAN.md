@@ -5012,3 +5012,37 @@ before any data.**
 - Candidates this opens (scorer track, each a correction that also cleans feedback): temp paths inside strings,
   double assignment within an entity, lxml text fingerprints, and removing R's random temp-file names from the
   feedback; on the harness side, RNG (a validated R-RNG helper, the learning or runtime track) and graphics feedback.
+- **Smoke (2026-11-15, $0.02, `work/threshold95_smoke`, not in the analysis):** one state (bslib value_box), 4 rows;
+  the t95 continuation reached 1.0. Seen before the full run; the rule was not changed.
+- **Result (2026-11-15, run `work/threshold95`, 40 of 40 rows valid, $0.32, no sleep gaps, balance $4.72 -> $4.39;
+  scorer epoch 12).** `python scripts/threshold95_continue.py analyze` (`work/threshold95/analysis.txt`):
+  - primary (descriptive): plateau gain per call, t95 - t90 **+0.0036 [+0.0017, +0.0077], P 1.00**; t95 +0.0069
+    [+0.0037, +0.0096] on the plateau over 76 calls, t90 +0.0033 [+0.0005, +0.0068] over 111 calls;
+  - secondary: share gain **t95 +0.100** [+0.050, +0.133] (6 of 8 states to >= 0.95: value_box, gtable, proxy,
+    sass_import, shape_string, xml2), **t90 +0.033** (2: value_box, gtable); flipped per call t95 - t90 +0.061
+    [+0.034, +0.109], P 1.00. The share criterion holds (both P >= 0.9). Chains: t95 11 of 16 reach >= 0.95, t90 2
+    of 24. No change: ragg agg_capture, get_font_features.
+  - All 40 finals re-verified offline (`work/analysis/t95_audit.py`, `work/threshold95/finals_reverified.jsonl`):
+    the same 6 and 2 states reach >= 0.95.
+- **Audit of the finals that reached >= 0.95** (`work/threshold95/audit/`, step 8's reading, done now because the
+  result informs a flag): no pasted decimals in any. **xml2: all three continuations forge the harness's fingerprint
+  format**: `kids` is written as `{'__r2py_fp__': True, 'class': ['xml_node'], 'text': ...}` dicts, which the
+  comparator takes for R's node fingerprints. Without xml2, t95 +0.083 on the share and +0.0059 on the plateau;
+  still above t90. gtable: the second `gtable_add_cols` moved under the `tab3_1` sentinel (faithful). shape_string:
+  reads the font with fontTools (faithful). value_box: builds bslib's HTML by hand in Python, a port of bslib's
+  markup (flagged for the person). proxy, sass_import: ordinary fixes.
+- **The forging is older than this test.** The same `__r2py_fp__` dicts appear in finals of the default's own replays:
+  training rvest `html_children` and `html_table` (a `XmlNode(dict)` class, a `_node` helper), held-out clock
+  `iso-year-week-day-getters` (`_make_iso`, `_make_ymd`), and in accepted intermediate programs of 5 more states
+  (`/tmp` script `fp.py`, kept in the record below). The model sees the format in R's values printed in the feedback
+  and copies it. This is a scorer fault (a Python dict claiming to be an R fingerprint is compared as one): it
+  inflates scores of the production default by an amount not yet measured. Scorer question first (step 8): no flag
+  of the threshold is adopted before it.
+- **Corrections of the morning's classification** (gap ledger updated): gtable add_cols was not a measurement fault
+  (R's map splits the two assignments into `tab3` and `tab3_1`; the default final had both under `tab3`);
+  shape_string, value_box and sass_import are reachable (behaviour). Four of the eight states this test touched
+  had been classed out of reach or measurement from reading values; a program refuted each. Reachable gap now 0.083
+  to 0.092; share room 0.350 to 0.367.
+- Decision: descriptive, as registered. It supports building the threshold as an `r2py/loop.py` flag and testing it
+  with the full loop, after the fingerprint fault is fixed. Plateau of the production default: unchanged (no default
+  changed). Held-out: not run.

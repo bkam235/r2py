@@ -15,25 +15,25 @@ sample 0, finals re-verified under epoch 11, scorer d5609fe186a0-db31b28ade02; e
 ## Summary (epoch 11 finals; epoch 12 gives the same scores)
 
 Classified on 2026-11-15 (16 of the 17 `unknown` rows, offline: `work/analysis/tempfile_names.py`,
-`entity_zero.py`, `fb_full.py`, and the replay's trajectories). Several classes are hypotheses; the row says which.
+`entity_zero.py`, `fb_full.py`, and the replay's trajectories). Several classes are hypotheses; the row says which. Corrected the same day by threshold-095, whose continuations reached >= 0.95 in four states classed out of reach or measurement from reading values (gtable, shape_string, value_box, sass_import): a class read off values is weak until a program tests it.
 
 | plateau (primary) | states | points |
 |---|---|---|
 | gap (1 - mean final 0.8806) | 60 | 0.1194 |
 | held by the states with final >= 0.95 (not listed) | 33 | 0.0048 |
-| behaviour | 9 | 0.0334 |
-| measurement (a scorer fix moves it as a correction) | 6 | 0.0287 (shiny 0.0125, fixed in epoch 11, closes in the next replay; shown offline 0.0049: sass as_sass, gtable add_cols, xml2 xml_attr; hypotheses 0.0113: ec_dh, sass_import) |
+| behaviour | 13 | 0.0392 |
+| measurement (a scorer fix moves it as a correction) | 4 | 0.0257 (shiny 0.0125, fixed in epoch 11, closes in the next replay; shown offline 0.0035: sass as_sass, xml2 xml_attr; hypothesis 0.0097: ec_dh) |
 | capability | 4 | 0.0137 (all R's RNG stream under the harness's `set.seed(42)`: caret_s3, update_train, Arrows, boxplot_bclust) |
-| out of reach | 7 | 0.0306 (aes_cbc, glyph_raster, shape_text, shape_string, ragg agg_capture; bslib page_fillable and value_box pending the py-shiny markup decision, 0.0132) |
+| out of reach | 5 | 0.0278 (aes_cbc, glyph_raster, shape_text, ragg agg_capture; bslib page_fillable pending the py-shiny markup decision, 0.0119) |
 | unknown | 1 | 0.0083 (prodlim backGround) |
-| **reachable gap** (1 - mean final - out of reach) | | **0.081 to 0.089** (unknown counted both ways; noise floor about ±0.03, twice it 0.06) |
+| **reachable gap** (1 - mean final - out of reach) | | **0.083 to 0.092** (unknown counted both ways; noise floor about ±0.03, twice it 0.06) |
 
 | share >= 0.95 (secondary) | states | share |
 |---|---|---|
 | room (1 - share 0.550; held-out 0.652) | 27 | 0.450 |
-| out of reach | 7 | 0.117 |
+| out of reach | 5 | 0.083 |
 | unknown | 1 | 0.017 |
-| **reachable room** | | **0.317 to 0.333** (noise floor of a replay about ±0.09) |
+| **reachable room** | | **0.350 to 0.367** (noise floor of a replay about ±0.09) |
 
 The 8 states at 0.90-0.95 were added on 2026-11-14 with the cut. In each, at least one of the 3 chains stopped
 because its best reached the loop's stop threshold 0.9 (16 threshold stops of 24 chains; the replay's `stop`
@@ -64,9 +64,9 @@ counts), so the threshold, not the model, ended them below 0.95.
 | openssl certificates | 0.893 | 0.0018 | behaviour | `chain` 0.25: the final binds `chain` under the `print` entity; at `chain` it only defines `download_ssl_cert`, so nothing is recorded there. (Network value: R's capture holds the CRAN certificate valid 2025-12-16 to 2027-01-16.) | 2026-11-15 |
 | textshaping get_font_features | 0.903 | 0.0016 | behaviour (hypothesis) | Only `sys_fonts` loses (0.71): R lists 406 fonts, Python 405 and in another order (`Barrio` first). October: Python can read the same font files. In feedback-e10 a new run on it ended 0.217 lower. | 2026-11-15 |
 | ragg agg_capture | 0.905 | 0.0016 | out of reach (hypothesis) | `raster`/`raster_n` are pixel arrays of R's AGG device (480 vs 432 rows); exact pixels need R's renderer. Stopped at the threshold: 1 of 3 chains. | 2026-11-15 |
-| sass sass_import | 0.906 | 0.0016 | measurement (hypothesis, as as_sass) | `sass_file` 0.675, `sass` 0.893 on side effects: their printed output holds the @import of R's temp path. FILES key `tempfile:file522c7cde307a.scss` reaches no score (removed: 0.9065 -> 0.9059). Stops: threshold 3. | 2026-11-15 |
-| systemfonts shape_string | 0.909 | 0.0015 | out of reach | Font metrics, as shape_text: chains' 0.91-0.92 programs were rejected by literal_check and the review (pasted metrics); `shape_string_1` 0.758. | 2026-11-15 |
-| gtable gtable_add_cols | 0.915 | 0.0014 | measurement (shown offline) | `tab3` 0.25: the entity assigns `tab3` twice (`gtable_add_cols(tab, ...)`, then `gtable_add_cols(tab3, ..., 0)`). R's checkpoint holds the first value (4 widths, layout l 1,1,3), Python's the last (5 widths, l 2,2,5, which is R's own final `tab3`). A faithful program cannot match both. Stops: threshold 3. | 2026-11-15 |
-| xml2 xml_attr | 0.921 | 0.0013 | measurement (shown offline) + library text form | `kids` 0.25: R's nodes are fingerprinted with their text (`<child id="a"/>`), Python's lxml elements only with `sourceline`, no text, so no lxml program can match. `doc` 0.14: lxml serializes in-scope `xmlns:` declarations, xml2 does not (similarity 0.61). Stops: threshold 3. | 2026-11-15 |
-| bslib value_box | 0.923 | 0.0013 | out of reach (pending a scoring decision) | `value_box` 0.923 on printed HTML: py-shiny vs R bslib markup, as page_fillable. The 151 `tempfile:*.woff2` keys reach no score (removed: 0.9229 both). | 2026-11-15 |
+| sass sass_import | 0.906 | 0.0016 | behaviour (corrected) | Corrected after threshold-095: two continuations reached 0.977, so the printed temp path does not block it. FILES key `tempfile:file522c7cde307a.scss` reaches no score (removed: 0.9065 -> 0.9059). | 2026-11-15 |
+| systemfonts shape_string | 0.909 | 0.0015 | behaviour (corrected) | Corrected after threshold-095: a continuation reached 0.981 by reading the font file with fontTools (`shape_string`, 289 lines, no pasted decimals; literal_check and review passed). Not out of reach; the default's chains had pasted metrics instead. | 2026-11-15 |
+| gtable gtable_add_cols | 0.915 | 0.0014 | behaviour (sentinel placement; corrected) | Corrected after threshold-095: R's map has two entities, `tab3` (first `gtable_add_cols`) and `tab3_1` (the second); the default final put both assignments under `tab3`, so it recorded the last value there. A continuation that moved the second assignment under `tab3_1` scores 1.0 (`work/threshold95/audit/`). The morning's "measurement" was wrong: the scorer is right. | 2026-11-15 |
+| xml2 xml_attr | 0.921 | 0.0013 | measurement (shown offline) + library text form | `kids` 0.25: R's nodes are fingerprinted with their text (`<child id="a"/>`), Python's lxml elements only with `sourceline`, no text, so no lxml program can match. `doc` 0.14: lxml serializes in-scope `xmlns:` declarations, xml2 does not (similarity 0.61). Stops: threshold 3. threshold-095: all three continuations that reached >= 0.95 wrote `kids` as dicts in the harness's fingerprint format (`{'__r2py_fp__': True, 'class': ['xml_node'], 'text': ...}`), which the scorer accepts: a forged match, not a translation. | 2026-11-15 |
+| bslib value_box | 0.923 | 0.0013 | behaviour (corrected; faithfulness flagged) | Corrected after threshold-095: a continuation reached 0.9999 by building bslib's value_box HTML in Python (`_value_box_html`, about 110 lines). A port of bslib's markup rather than py-shiny; whether that is a faithful translation is for the person (flagged in the audit). The 151 `tempfile:*.woff2` keys reach no score. | 2026-11-15 |
 | proxy registry | 0.947 | 0.0009 | behaviour | `as.data.frame` 0.69 and `get_entries_1` 0.89 on printed output; all 3 chains still improving when the 0.9 threshold stopped them (0.92-0.95). | 2026-11-15 |

@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/threshold95_continue.py run --workers 6 --budget 1",
+  "started": "2026-11-15 13:50:25",
+  "ended": "2026-11-15 14:15:06",
+  "scoring_version": "009374b6c852-db31b28ade02",
+  "rows": 40,
+  "balance_start": 4.72,
+  "balance_end": 4.39,
+  "cost": 0.32,
+  "budget": 1.0,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]
