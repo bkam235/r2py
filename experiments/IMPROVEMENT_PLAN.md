@@ -5034,7 +5034,7 @@ before any data.**
 - **The forging is older than this test.** The same `__r2py_fp__` dicts appear in finals of the default's own replays:
   training rvest `html_children` and `html_table` (a `XmlNode(dict)` class, a `_node` helper), held-out clock
   `iso-year-week-day-getters` (`_make_iso`, `_make_ymd`), and in accepted intermediate programs of 5 more states
-  (`/tmp` script `fp.py`, kept in the record below). The model sees the format in R's values printed in the feedback
+  (`work/analysis/fingerprint_forging.py`). The model sees the format in R's values printed in the feedback
   and copies it. This is a scorer fault (a Python dict claiming to be an R fingerprint is compared as one): it
   inflates scores of the production default by an amount not yet measured. Scorer question first (step 8): no flag
   of the threshold is adopted before it.
