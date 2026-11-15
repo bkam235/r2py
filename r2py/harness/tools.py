@@ -11,6 +11,8 @@ from collections import Counter
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from ..stage0.sandbox.isolation import without_secrets
+
 if TYPE_CHECKING:
     from ..library import PatternLibrary
     from ..library.pattern import Pattern
@@ -286,6 +288,7 @@ class HarnessTools:
             r = subprocess.run(
                 [sys.executable, "-m", "pydoc", q],
                 capture_output=True, text=True, timeout=15,
+                env=without_secrets(),
             )
             return (r.stdout or r.stderr or "(no output)").strip()
 
@@ -304,6 +307,7 @@ class HarnessTools:
             r = subprocess.run(
                 [sys.executable, "-c", code],
                 capture_output=True, text=True, timeout=10,
+                env=without_secrets(),
             )
             return r.stdout.strip() if r.returncode == 0 else ""
 

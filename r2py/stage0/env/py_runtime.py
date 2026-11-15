@@ -8,6 +8,8 @@ import subprocess
 import sys
 from pathlib import Path
 
+from ..sandbox.isolation import without_secrets
+
 _ROOT = Path(__file__).resolve().parents[3]
 
 
@@ -46,7 +48,7 @@ def _version_of(python: str) -> tuple[int, int, int]:
     if Path(python) == Path(sys.executable):
         return tuple(sys.version_info[:3])  # type: ignore[return-value]
     out = subprocess.run([python, "-c", "import sys;print(*sys.version_info[:3])"],
-                         capture_output=True, text=True, timeout=30).stdout.split()
+                         capture_output=True, text=True, timeout=30, env=without_secrets()).stdout.split()
     return tuple(int(x) for x in out)  # type: ignore[return-value]
 
 
@@ -76,5 +78,5 @@ def syntax_error_in_sandbox_python(source: str) -> dict | None:
             return {"lineno": e.lineno, "msg": e.msg, "text": e.text, "offset": e.offset}
         return None
     r = subprocess.run([str(python), "-c", _PARSE], input=source, capture_output=True, text=True,
-                       timeout=30, encoding="utf-8")
+                       timeout=30, encoding="utf-8", env=without_secrets())
     return json.loads(r.stdout) if r.stdout.strip() else None

@@ -414,16 +414,19 @@ def reset_library(library=None, keep_seeds: bool = True) -> int:
 def _commit_library(library, pattern_ids: list[str], script_stem: str) -> None:
     """Git-add and commit any new/changed library files."""
     import subprocess
+    from .stage0.sandbox.isolation import without_secrets
     lib_dir = str(library._dir)
     try:
         subprocess.run(
             ["git", "add", lib_dir],
             capture_output=True, check=True,
+            env=without_secrets(),
         )
         msg = f"library: seed {len(pattern_ids)} patterns from {script_stem}"
         subprocess.run(
             ["git", "commit", "-m", msg, "--", lib_dir],
             capture_output=True, check=True,
+            env=without_secrets(),
         )
     except (subprocess.CalledProcessError, FileNotFoundError):
         pass

@@ -17,6 +17,7 @@ import subprocess
 from pathlib import Path
 
 from .py_runtime import find_python
+from ..sandbox.isolation import without_secrets
 
 _CACHE = Path(__file__).resolve().parents[3] / "work" / "pypi_names.json"
 _PROBE = """
@@ -99,7 +100,7 @@ def missing_import_names(source: str) -> list[tuple[str, str, list[str]]]:
     if pairs:
         try:
             r = subprocess.run([str(find_python()), "-c", _NAMES_PROBE], input=json.dumps(pairs), capture_output=True,
-                               text=True, timeout=90, encoding="utf-8")
+                               text=True, timeout=90, encoding="utf-8", env=without_secrets())
             bad = {(m, n): near for m, n, near in json.loads(r.stdout)}
         except (subprocess.TimeoutExpired, OSError, ValueError):
             return []                           # cannot tell: do not block
@@ -128,7 +129,7 @@ def _not_importable(names: list[str]) -> list[str]:
     if not names:
         return []
     r = subprocess.run([str(find_python()), "-c", _PROBE], input=json.dumps(sorted(names)),
-                       capture_output=True, text=True, timeout=60, encoding="utf-8")
+                       capture_output=True, text=True, timeout=60, encoding="utf-8", env=without_secrets())
     try:
         return json.loads(r.stdout)
     except ValueError:
@@ -149,7 +150,7 @@ def _on_pypi(name: str) -> bool | None:
         return cache[name]
     try:
         r = subprocess.run([str(find_python()), "-m", "pip", "index", "versions", name],
-                           capture_output=True, text=True, timeout=30)
+                           capture_output=True, text=True, timeout=30, env=without_secrets())
     except (subprocess.TimeoutExpired, OSError):
         return None
     out = (r.stdout + r.stderr).lower()

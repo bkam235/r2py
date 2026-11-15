@@ -6,6 +6,7 @@ import subprocess
 from pathlib import Path
 
 from .r_runtime import find_rscript, find_r_library
+from ..sandbox.isolation import without_secrets
 
 
 def find_r_package_source(package: str) -> Path | None:
@@ -20,6 +21,7 @@ def find_r_package_source(package: str) -> Path | None:
         [str(rscript), "-e",
          f"{lib_setup}cat(tryCatch(find.package('{package}'), error=function(e) ''))"],
         capture_output=True, text=True, encoding="utf-8", timeout=10,
+        env=without_secrets(),
     )
     path_str = result.stdout.strip()
     if path_str:

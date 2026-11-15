@@ -12,6 +12,7 @@ from concurrent.futures import ThreadPoolExecutor
 from typing import TYPE_CHECKING
 
 from ..stage0.env.module_check import unavailable_imports
+from ..stage0.sandbox.isolation import without_secrets
 from ..stage2.argorder import repair_argument_order
 from ..stage2.sentinel_mapper import ranges_from_sentinels
 from . import objective as _obj
@@ -1297,6 +1298,7 @@ def _search_module_names(module: str, query: str) -> str:
         r = subprocess.run(
             [sys.executable, "-c", code],
             capture_output=True, text=True, timeout=15,
+            env=without_secrets(),
         )
     except subprocess.TimeoutExpired:
         return ""
@@ -1453,6 +1455,7 @@ def _check_all_import_names(crash_msg: str, module: str, py_source: str = "") ->
         r = subprocess.run(
             [sys.executable, "-c", code],
             capture_output=True, text=True, timeout=20,
+            env=without_secrets(),
         )
         if r.returncode != 0:
             return ""

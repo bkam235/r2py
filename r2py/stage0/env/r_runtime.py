@@ -6,6 +6,8 @@ import shutil
 import subprocess
 from pathlib import Path
 
+from ..sandbox.isolation import without_secrets
+
 # Bundled R environment shipped with r2py.
 _R_ENV_DIR = Path(__file__).parent.parent / "r_env"
 
@@ -86,6 +88,7 @@ def r_version() -> str:
         text=True,
         encoding="utf-8",
         timeout=10,
+        env=without_secrets(),
     )
     # R prints version to stderr: "R scripting front-end version 4.3.1 (2023-06-16)"
     output = result.stdout + result.stderr

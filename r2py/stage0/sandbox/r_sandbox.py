@@ -20,7 +20,7 @@ from ..effects import stdout as _stdout_effects
 from ..effects import warnings as _warnings_effects
 from ..env.r_runtime import find_r, find_rscript, _R_ENV_DIR
 from .base import ReplayLog, SandboxEscape
-from .isolation import TempWorkdir, check_escape, scrub_env, snapshot_home
+from .isolation import TempWorkdir, check_escape, scrub_env, snapshot_home, without_secrets
 
 # Project library — the only library the R sandbox is allowed to use.
 _R_PROJECT_LIB = _R_ENV_DIR / "library"
@@ -120,6 +120,7 @@ def _run_with_tree_kill(
             subprocess.run(
                 ["taskkill", "/F", "/T", "/PID", str(proc.pid)],
                 capture_output=True,
+                env=without_secrets(),
             )
         else:
             proc.kill()

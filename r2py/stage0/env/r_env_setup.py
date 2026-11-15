@@ -6,11 +6,11 @@ Usage:
 """
 from __future__ import annotations
 
-import os
 import subprocess
 from pathlib import Path
 
 from .r_runtime import find_rscript, _R_ENV_DIR
+from ..sandbox.isolation import without_secrets
 
 _LIBRARY = _R_ENV_DIR / "library"
 _LOCKFILE = _R_ENV_DIR / "renv.lock"
@@ -18,7 +18,7 @@ _LOCKFILE = _R_ENV_DIR / "renv.lock"
 
 def _clean_env() -> dict[str, str]:
     """Minimal environment for R install subprocess: no stray lib-path overrides."""
-    env = dict(os.environ)
+    env = without_secrets()
     env["LANGUAGE"] = "en"
     for var in ("R_LIBS", "R_LIBS_USER", "R_LIBS_SITE"):
         env.pop(var, None)

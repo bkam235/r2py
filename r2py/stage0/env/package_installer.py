@@ -9,6 +9,7 @@ from pathlib import Path
 from .r_runtime import find_rscript, _R_ENV_DIR
 from .py_runtime import find_python
 from .r_env_setup import _clean_env
+from ..sandbox.isolation import without_secrets
 
 _R_PROJECT_LIB = _R_ENV_DIR / "library"
 
@@ -47,6 +48,7 @@ def get_r_package_version(package: str) -> str | None:
         [str(rscript), "-e",
          f"cat(tryCatch(as.character(packageVersion('{package}')), error=function(e) 'NOT_INSTALLED'))"],
         capture_output=True, text=True, encoding="utf-8", timeout=15,
+        env=without_secrets(),
     )
     v = result.stdout.strip()
     return None if v == "NOT_INSTALLED" or not v else v
@@ -59,6 +61,7 @@ def get_py_package_version(package: str) -> str | None:
         [str(python), "-c",
          f"import importlib.metadata; print(importlib.metadata.version('{package}'))"],
         capture_output=True, text=True, encoding="utf-8", timeout=10,
+        env=without_secrets(),
     )
     if result.returncode == 0:
         return result.stdout.strip()
@@ -120,6 +123,7 @@ def install(
         subprocess.run(
             [str(python), "-m", "pip", "install", pkg],
             check=True, timeout=300,
+            env=without_secrets(),
         )
         version = get_py_package_version(bare_py) or "unknown"
         py_lock[pkg] = version

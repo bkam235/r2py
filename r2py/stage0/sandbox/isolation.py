@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import os
+import re
 import tempfile
 from pathlib import Path
 from types import TracebackType
@@ -39,6 +40,19 @@ def scrub_env(base_env: dict[str, str] | None = None) -> dict[str, str]:
     env = {k: v for k, v in src.items() if k in _ALLOWED_ENV_VARS}
     env["PYTHONIOENCODING"] = "utf-8"
     return env
+
+
+# Names of env vars that may hold a credential (API keys, tokens).
+_SECRET_NAME_RE = re.compile(r"API_?KEY|_KEY$|TOKEN|SECRET|PASSW(OR)?D|CREDENTIAL|AUTH", re.IGNORECASE)
+
+
+def without_secrets(base_env: dict[str, str] | None = None) -> dict[str, str]:
+    """The env minus anything that may hold a credential, for subprocesses that need the rest (pip, R installs).
+
+    Installs, import probes and docs lookups run code the model chose (a package it named); they must not see the
+    harness's API keys (security audit, 2026-11-14)."""
+    src = base_env if base_env is not None else dict(os.environ)
+    return {k: v for k, v in src.items() if not _SECRET_NAME_RE.search(k)}
 
 
 def _file_hash(path: Path) -> str:

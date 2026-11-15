@@ -4,6 +4,7 @@ from __future__ import annotations
 from pathlib import Path
 
 from .entities import SourceLocation
+from ..stage0.sandbox.isolation import without_secrets
 
 # Simple cache so repeated calls for the same (package, symbol) don't re-scan disk.
 _source_cache: dict[tuple[str, str], str | None] = {}
@@ -266,6 +267,7 @@ def _find_s3_methods_via_r(package: str, generic_name: str) -> list[str]:
         result = subprocess.run(
             [str(rscript), "--vanilla", "-e", r_code],
             capture_output=True, text=True, encoding="utf-8", timeout=30,
+            env=without_secrets(),
         )
     except Exception:
         return []
@@ -331,6 +333,7 @@ def _try_r_deparse(package: str, symbol: str, max_lines: int) -> str | None:
         result = subprocess.run(
             [str(rscript), "--vanilla", "-e", r_code],
             capture_output=True, text=True, encoding="utf-8", timeout=30,
+            env=without_secrets(),
         )
     except Exception:
         return None
