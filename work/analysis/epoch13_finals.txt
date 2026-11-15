@@ -1,0 +1,8 @@
+work/dsflash_default: n 60 errors []  plateau 0.8806 -> 0.8654 (-0.0152)  share>=0.95 0.550 -> 0.517
+   bslib__rd_example__page_fillable_Rd                        0.286 -> 0.344
+   openssl__rd_example__ec_dh_Rd                              0.418 -> 0.425
+   rvest__rd_example__html_children_Rd                        1.000 -> 0.550
+   rvest__rd_example__html_table_Rd                           1.000 -> 0.472
+work/dsflash_heldout: n 46 errors []  plateau 0.9074 -> 0.8853 (-0.0221)  share>=0.95 0.652 -> 0.630
+   clock__rd_example__iso-year-week-day-getters_Rd            1.000 -> 0.982
+   sparsevctrs__rd_example__sparse_logical_Rd                 1.000 -> 0.000

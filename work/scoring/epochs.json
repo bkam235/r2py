@@ -281,5 +281,28 @@
   "errors": [],
   "model_mappings": 5,
   "note": "Subprocesses never inherit API keys (security commit 9a791100, 2026-11-15): without_secrets() env for installs, import probes, docs lookups, R --version and the taskkill on R timeouts. Check (work/scoring/check_20261115_1006.md): 135 of 147 unchanged, 0 errors; openssl ec_dh final 0.672->0.682 within its repeat range (0.653-0.683); 7 small moves, 4 flaky. The R-capture flag is the taskkill line in r_sandbox.py; the R run's env is unchanged, so the maps were not re-captured (the person's acceptance). No score change intended."
+ },
+ {
+  "epoch": 13,
+  "scoring_version": "c6cd624ffde5-db31b28ade02",
+  "r_capture": "6ed33ea33dd5",
+  "date": "2026-11-15 17:19",
+  "programs": 147,
+  "flaky": [
+   "final_default:e1071__rd_example__boxplot_bclust_Rd",
+   "final_default:openssl__rd_example__ec_dh_Rd",
+   "final_default:proxy__rd_example__registry_Rd",
+   "final_default:sass__rd_example__sass_import_Rd",
+   "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+   "final_w3:openssl__rd_example__ec_dh_Rd",
+   "final_w3:sass__rd_example__as_sass_Rd",
+   "final_w3:sass__rd_example__sass_import_Rd",
+   "start:bslib__rd_example__page_fillable_Rd",
+   "start:openssl__rd_example__ec_dh_Rd",
+   "start:sass__rd_example__as_sass_Rd"
+  ],
+  "errors": [],
+  "model_mappings": 5,
+  "note": "epoch 13: the Python capture refuses forged fingerprints (a __r2py_fp__ marker in a JSON-representable value is the program's, renamed); check 20261115_1632: 2 forged rvest finals down, 2 noise; R capture flag is the shared data.py file, Python capture only changed"
  }
 ]

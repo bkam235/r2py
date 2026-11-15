@@ -10,30 +10,30 @@ a test or a trajectory reading classes it. The headroom check (META_LOOP.md, "He
 
 Created 2026-11-14 (cycle of 2026-11-14). Source: `work/dsflash_default/finals_epoch11.jsonl` (default_2026_11_12,
 sample 0, finals re-verified under epoch 11, scorer d5609fe186a0-db31b28ade02; epoch 10 in
-`finals_epoch10.jsonl`).
+`finals_epoch10.jsonl`). From epoch 13 (2026-11-15, forged fingerprints refused): `finals_epoch13.jsonl`.
 
-## Summary (epoch 11 finals; epoch 12 gives the same scores)
+## Summary (epoch 13 finals)
 
 Classified on 2026-11-15 (16 of the 17 `unknown` rows, offline: `work/analysis/tempfile_names.py`,
-`entity_zero.py`, `fb_full.py`, and the replay's trajectories). Several classes are hypotheses; the row says which. Corrected the same day by threshold-095, whose continuations reached >= 0.95 in four states classed out of reach or measurement from reading values (gtable, shape_string, value_box, sass_import): a class read off values is weak until a program tests it.
+`entity_zero.py`, `fb_full.py`, and the replay's trajectories). Several classes are hypotheses; the row says which. Corrected the same day by threshold-095, whose continuations reached >= 0.95 in four states classed out of reach or measurement from reading values (gtable, shape_string, value_box, sass_import): a class read off values is weak until a program tests it. Epoch 13 (forged fingerprints refused) took rvest html_children and html_table from 1.0 to 0.550 and 0.472: they enter the ledger as unknown.
 
 | plateau (primary) | states | points |
 |---|---|---|
-| gap (1 - mean final 0.8806) | 60 | 0.1194 |
-| held by the states with final >= 0.95 (not listed) | 33 | 0.0048 |
+| gap (1 - mean final 0.8654; 0.8806 before epoch 13) | 60 | 0.1346 |
+| held by the states with final >= 0.95 (not listed) | 31 | 0.0048 |
 | behaviour | 13 | 0.0392 |
-| measurement (a scorer fix moves it as a correction) | 4 | 0.0257 (shiny 0.0125, fixed in epoch 11, closes in the next replay; shown offline 0.0035: sass as_sass, xml2 xml_attr; hypothesis 0.0097: ec_dh) |
+| measurement (a scorer fix moves it as a correction) | 4 | 0.0256 (shiny 0.0125, fixed in epoch 11, closes in the next replay; shown offline 0.0035: sass as_sass, xml2 xml_attr; hypothesis 0.0096: ec_dh) |
 | capability | 4 | 0.0137 (all R's RNG stream under the harness's `set.seed(42)`: caret_s3, update_train, Arrows, boxplot_bclust) |
-| out of reach | 5 | 0.0278 (aes_cbc, glyph_raster, shape_text, ragg agg_capture; bslib page_fillable pending the py-shiny markup decision, 0.0119) |
-| unknown | 1 | 0.0083 (prodlim backGround) |
-| **reachable gap** (1 - mean final - out of reach) | | **0.083 to 0.092** (unknown counted both ways; noise floor about ±0.03, twice it 0.06) |
+| out of reach | 5 | 0.0268 (aes_cbc, glyph_raster, shape_text, ragg agg_capture; bslib page_fillable pending the py-shiny markup decision, 0.0109) |
+| unknown | 3 | 0.0246 (prodlim backGround 0.0083; rvest html_table 0.0088, html_children 0.0075, since epoch 13) |
+| **reachable gap** (1 - mean final - out of reach) | | **0.083 to 0.108** (unknown counted both ways; noise floor about ±0.03, twice it 0.06) |
 
 | share >= 0.95 (secondary) | states | share |
 |---|---|---|
-| room (1 - share 0.550; held-out 0.652) | 27 | 0.450 |
+| room (1 - share 0.517; held-out 0.652; 0.550 before epoch 13) | 29 | 0.483 |
 | out of reach | 5 | 0.083 |
-| unknown | 1 | 0.017 |
-| **reachable room** | | **0.350 to 0.367** (noise floor of a replay about ±0.09) |
+| unknown | 3 | 0.050 |
+| **reachable room** | | **0.350 to 0.400** (noise floor of a replay about ±0.09) |
 
 The 8 states at 0.90-0.95 were added on 2026-11-14 with the cut. In each, at least one of the 3 chains stopped
 because its best reached the loop's stop threshold 0.9 (16 threshold stops of 24 chains; the replay's `stop`
@@ -44,10 +44,12 @@ counts), so the threshold, not the model, ended them below 0.95.
 | state | final | points | class | evidence | set |
 |---|---|---|---|---|---|
 | shiny updateRadioButtons | 0.250 | 0.0125 | measurement, fixed in epoch 11 (expected to close in the next replay) | Epoch 11 (module-rebind): all 27 rewrites DeepSeek Flash chains logged on this state, re-scored offline (`work/analysis/shiny_e11_rescore.txt`): the first rewrite of 16 of 18 chains scores 0.96 (logged: 3 of 18 >= 0.9). The recorded final is the start, which never assigns `ui` (0.25, scored right). Counterfactual, not a run. Before: all 4 rewrites of the default replay scored 0.25 with the same `ui` HTML (similarity 0.99) as the 0.96 program of feedback-e10. The only difference: `from shiny import ui` then `ui = ui.page_fluid(...)` rebinds the module name. Renaming the module import alone (offline, same program otherwise) gives `ui` 0.96, aggregate 0.96. With the rebinding, `ui` scores 0 on data, value and type while its feedback shows the 0.99-similar HTML: the feedback misleads. Cause: the checkpoint baseline kept no id for modules. (`work/analysis/shiny_trace.py`, `unshadow.py`) | 2026-11-14 |
-| bslib page_fillable | 0.287 | 0.0119 | out of reach (pending a scoring decision) | Epoch 12, offline (`work/analysis/tempfile_names.py`): the 151 `tempfile:*.woff2` keys (fonts bslib caches) reach no score (removed: 0.324 -> 0.368, inside its repeat range 0.29-0.37); they only fill the feedback. What loses is `ui` data 0.157: R's bslib renders `<body class="bslib-page-fill ...` and py-shiny `<html><head></head><body ...` (text similarity 0.63). Two libraries' markup; whether py-shiny's markup should count is the open "py-shiny vs R shiny markup" scoring decision (October). | 2026-11-15 |
-| openssl ec_dh | 0.418 | 0.0097 | measurement (hypothesis) | Epoch 10: `alice_pub`/`bob_pub` sentinels now attributed score 0.25; R's key objects cannot be serialized, so R's bundle is empty and an entity Python computes is penalised. Hypothesis, not tested (IMPROVEMENT_PLAN, epoch 10). | 2026-11-14 |
+| bslib page_fillable | 0.344 | 0.0109 | out of reach (pending a scoring decision) | Epoch 12, offline (`work/analysis/tempfile_names.py`): the 151 `tempfile:*.woff2` keys (fonts bslib caches) reach no score (removed: 0.324 -> 0.368, inside its repeat range 0.29-0.37); they only fill the feedback. What loses is `ui` data 0.157: R's bslib renders `<body class="bslib-page-fill ...` and py-shiny `<html><head></head><body ...` (text similarity 0.63). Two libraries' markup; whether py-shiny's markup should count is the open "py-shiny vs R shiny markup" scoring decision (October). | 2026-11-15 |
+| openssl ec_dh | 0.425 | 0.0096 | measurement (hypothesis) | Epoch 10: `alice_pub`/`bob_pub` sentinels now attributed score 0.25; R's key objects cannot be serialized, so R's bundle is empty and an entity Python computes is penalised. Hypothesis, not tested (IMPROVEMENT_PLAN, epoch 10). | 2026-11-14 |
 | ggplot2 geom_bin_2d | 0.500 | 0.0083 | behaviour | Never improved in the replay (4 catastrophic crashing rewrites of 9); patience-dsflash reached +0.178 on it. | 2026-11-14 |
 | prodlim backGround | 0.500 | 0.0083 | unknown | 9 rewrites, all `unchanged`; `plot(0,0)` scores plotted similarity exactly 0.000 and R records no figure at the `backGround` calls (draws on the open plot). The feedback gives a similarity, not the difference. Suspected measurement (exact 0 on a one-point plot), not shown. | 2026-11-15 |
+| rvest html_table | 0.472 | 0.0088 | unknown (suspected measurement, in part) | Epoch 13: the default final wrote `sample1..3` as forged fingerprint dicts (an `XmlNode(dict)` class); refused, they score 0.25 ("Python has no text form") and `html_element*` 0.167. `html_table*` 1.0. Whether a real lxml/bs4 document reaches R's text form is not tested; lists of lxml nodes get no text form (as xml2 `kids`). | 2026-11-15 |
+| rvest html_children | 0.550 | 0.0075 | unknown (suspected measurement, in part) | Epoch 13: `html`, `ul`, `p` written as forged fingerprint dicts (a `_node` helper); refused, 0.25 each ("Python has no text form"; `ul[0]`, `p[0]`: lists of nodes). `html_children*` 1.0. As html_table. | 2026-11-15 |
 | openssl aes_cbc | 0.550 | 0.0075 | out of reach | `aes_cbc_encrypt` defaults to `iv = rand_bytes(16)`; R's `serialize` bytes (cycle of 2026-10-17). | 2026-11-14 |
 | farver convert_colour | 0.703 | 0.0050 | behaviour | feedback-e10 reached 0.890 (marked `spec_lab`); some chains pasted `convert_colour` outputs (model-screen audit). | 2026-11-14 |
 | recipes step_kpca | 0.725 | 0.0046 | behaviour (hypothesis) | Feedback names a missing figure (R=1, Python=0: the ggplot) and kPCA values (`kpca_te` 0.25, `kpca_estimates` 0.35); chains went 0.56-0.73 with 21 probes, none adding the figure. kernlab's kPCA numerics not checked. | 2026-11-15 |

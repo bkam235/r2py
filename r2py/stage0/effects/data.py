@@ -584,6 +584,9 @@ def _r2py_try_serialize(name, obj):
 def _r2py_try_serialize_quiet(name, obj):
     try:
         raw = _r2py_json.dumps(obj, cls=_R2PyEncoder, allow_nan=True)
+        # A value JSON can represent holds no fingerprint of the capture's: a marker in it was written by the
+        # program (forging R's node fingerprints, 2026-11-15), so it is renamed and the dict compared as a dict.
+        raw = raw.replace('"__r2py_fp__":', '"__r2py_fp_written_by_program__":')
         return _r2py_sanitize(_r2py_json.loads(raw, parse_constant=lambda c: {
             'NaN': None, 'Infinity': 'Inf', '-Infinity': '-Inf',
         }.get(c))), True

@@ -5046,3 +5046,34 @@ before any data.**
 - Decision: descriptive, as registered. It supports building the threshold as an `r2py/loop.py` flag and testing it
   with the full loop, after the fingerprint fault is fixed. Plateau of the production default: unchanged (no default
   changed). Held-out: not run.
+
+### 2026-11-15: epoch 13, forged fingerprints refused (scorer track, correction)
+
+- **Question:** the fault threshold-095 found: a program that writes Python dicts in the harness's fingerprint format
+  (`{'__r2py_fp__': True, 'class': [...], 'text': ...}`) had them compared as R's fingerprints. How much does it
+  inflate the default, and does refusing it hurt anything faithful?
+- **Fix** (`r2py/stage0/effects/data.py`, `_r2py_try_serialize_quiet`): the capture makes a fingerprint only for an
+  object JSON cannot represent, so a marker in a value that JSON can represent was written by the program; it is
+  renamed (`__r2py_fp_written_by_program__`) and the dict compared as a dict. Python capture only; the R serialiser
+  is unchanged (the check's "R capture code changed" flag is the file hash: `data.py` holds both preambles).
+  Tests: `tests/test_forged_fingerprint.py` (a forged dict and a dict subclass score 0, was 1.0; a real lxml node
+  still 1.0). Suite 1088 passed; `test_with_locale_dataframe_date_column_round_trip` fails before and after.
+- **Check** (`work/scoring/check_20261115_1632.md`): 147 programs, 135 unchanged, 4 changed, all down. Real: the
+  default's forged rvest finals, `rvest_s7` 1.000 -> 0.472, `html_children` 0.906 -> 0.546. Noise (no marker in
+  either; 4 reruns each, `work/analysis/epoch13_noise.txt`): ec_dh 0.660-0.676 (was 0.671), lorem_text 0.557-0.564
+  (was 0.564). Accepted by the person; curves rebuilt (`work/scoring/accept_epoch13.log`): start 0.5103 -> 0.5106, the DeepSeek default's measured curve 0.8879 -> 0.8831.
+- **The default's finals re-verified** (`reverify_finals.py`, `finals_epoch13.jsonl`, `work/analysis/epoch13_finals.txt`):
+  training **0.8806 -> 0.8654** (-0.0152), share >= 0.95 0.550 -> 0.517: rvest html_children 1.000 -> 0.550,
+  html_table 1.000 -> 0.472 (-0.0163); page_fillable +0.058 and ec_dh +0.007 are their known noise. Held-out
+  measured 0.9074 -> 0.8853, of which sparsevctrs sparse_logical 1.0 -> 0.0 is one Python crash of that re-score
+  (its final is its start, no marker; 1.0 in 4 of 4 reruns, `work/analysis/epoch13_sparse.py`); without it
+  **0.9074 -> 0.9070** (clock iso-year-week-day-getters 1.000 -> 0.982), share 0.652 unchanged.
+- **Plateau of the production default:** 0.881 -> 0.865 training, 0.907 -> 0.907 held-out; all correction, no gain
+  (same programs). The 0.881 was inflated by forged matches in two states.
+- Gap ledger: the two rvest states enter as unknown (they now lose on "Python has no text form"; lists of lxml nodes
+  get no text form, as xml2 `kids`, suspected in part, not shown). Reachable gap 0.083 to 0.108; share room 0.350 to
+  0.400. threshold-095 without xml2 (forged): t95 still above t90 (+0.083 share, +0.0059 plateau).
+- **Feedback:** the model is not told the format is refused; a forged dict now fails as an ordinary dict ("Python has
+  no text form"). Whether the forging continues in new runs is visible in the next replay's finals.
+- Next: the threshold as an `r2py/loop.py` flag (full loop, training then held-out); the lxml node-list text form
+  (scorer, correction; touches xml2 kids and possibly both rvest states); bet: an R RNG helper (capability, 0.014).
