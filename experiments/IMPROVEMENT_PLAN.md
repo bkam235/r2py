@@ -4972,3 +4972,43 @@ before any data.**
 - Plateau of the production default: unchanged (no score change intended; finals not re-verified, the curve moves are
   the known noise). Neither a gain nor a correction. Feedback the model sees is unchanged. `threshold-095` can now run
   under epoch 12 once its spend is approved.
+
+### Classifying the unknown rows of the gap ledger (2026-11-15, offline, $0)
+
+- Why: under the plateau objective the reachable gap was 0.053 to 0.105, its low end below twice the replay noise
+  (0.06), because 17 states were `unknown`. The person chose to classify them before deciding on a larger pool.
+- How (no model calls): each default final re-verified with its losing entities' R and Python values side by side
+  (`work/analysis/entity_zero.py`, `fb_full.py`), a counterfactual without R's random temp-file names
+  (`tempfile_names.py`, `.txt`), and the replay's chain-by-chain outcomes.
+- **R's temp-file names reach no score** (bslib page_fillable 151 `tempfile:*.woff2` keys, value_box the same,
+  sass as_sass and sass_import one each): removing them moves the finals by <= 0.0006 (page_fillable 0.324 -> 0.368,
+  inside its repeat range). They come from the whole-script bundle copied to every entity and only fill the
+  feedback (the first item of every entity is "missing: tempfile:<R's random name>", which no program can act on).
+  This answers Q3 (October): a feedback fault, not a score fault.
+- **Three measurement faults shown on concrete programs** (0.0049 of the plateau):
+  - *temp path inside a string* (sass as_sass `input`): R's Sass text holds `@import "<R's temp path>"`, Python's
+    the same text with its own temp path; the temp-path rule (2026-10-18) covers whole-string paths only. sass
+    sass_import likely the same through printed output (hypothesis);
+  - *an entity that assigns a name twice* (gtable `tab3 <- gtable_add_cols(tab, ...)`, then
+    `tab3 <- gtable_add_cols(tab3, ..., 0)`): R's checkpoint holds the first value (4 widths), Python's the last (5
+    widths, R's own final value);
+  - *lxml nodes have no text fingerprint* (xml2 `kids`): R's xml_node fingerprints carry the node's text, Python's
+    lxml elements only a `sourceline`, so no lxml program can match. (`doc`: lxml writes in-scope `xmlns:`
+    declarations, xml2 does not.)
+- **Out of reach** +0.0163: shape_string (font metrics, pastes rejected), ragg agg_capture (R's device pixels,
+  hypothesis), and bslib page_fillable / value_box (py-shiny's markup against R bslib's: the open October scoring
+  decision; if the person rules that markup should count, 0.0132 moves back).
+- **Capability: R's RNG stream** (the harness seeds R with `set.seed(42)`): update_train, Arrows, boxplot_bclust,
+  with caret_s3 0.0137 in all. Matching needs R's Mersenne Twister and sampling algorithms in Python (one chain did
+  it once on caret_s3).
+- **Behaviour** 0.0334 in 9 states, among them: openssl certificates binds `chain` under the `print` entity;
+  getellipse loses only on plotted similarity, with no difference named (the graphics-visibility bet); proxy
+  registry was still improving when the threshold stopped it.
+- Still `unknown`: prodlim backGround (0.0083; `plot(0,0)` scores plotted similarity exactly 0, suspected
+  measurement).
+- **Headroom:** reachable gap **0.081 to 0.089** (was 0.053 to 0.105), above twice the noise floor; the share's
+  reachable room 0.317 to 0.333. The pool still has room a replay can see; a larger pool would still narrow the
+  noise (about ±0.022 at 112 states) but is not forced by the headroom rule.
+- Candidates this opens (scorer track, each a correction that also cleans feedback): temp paths inside strings,
+  double assignment within an entity, lxml text fingerprints, and removing R's random temp-file names from the
+  feedback; on the harness side, RNG (a validated R-RNG helper, the learning or runtime track) and graphics feedback.
