@@ -258,5 +258,28 @@
   "errors": [],
   "model_mappings": 5,
   "note": "Module rebound by an entity recorded (module-rebind, 2026-11-14): the checkpoint baseline now keeps the ids of modules imported above the first entity, so 'from shiny import ui' then 'ui = ui.page_fluid(...)' is recorded at entity ui (before: never, the entity scored 0 while its feedback showed the matching HTML). Check: 135 of 147 unchanged; bslib page_fillable start 0.25->0.368 (intended); openssl ec_dh start/final within its repeat range (noise); lubridate period error from a baseline SandboxEscape false positive (0.8903 both). Test tests/test_module_rebind.py."
+ },
+ {
+  "epoch": 12,
+  "scoring_version": "009374b6c852-db31b28ade02",
+  "r_capture": "8f37016a5915",
+  "date": "2026-11-15 11:54",
+  "programs": 147,
+  "flaky": [
+   "final_default:e1071__rd_example__boxplot_bclust_Rd",
+   "final_default:openssl__rd_example__ec_dh_Rd",
+   "final_default:proxy__rd_example__registry_Rd",
+   "final_default:sass__rd_example__as_sass_Rd",
+   "final_default:sass__rd_example__sass_import_Rd",
+   "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+   "final_w3:openssl__rd_example__ec_dh_Rd",
+   "final_w3:textshaping__rd_example__lorem_text_Rd",
+   "start:bslib__rd_example__page_fillable_Rd",
+   "start:openssl__rd_example__ec_dh_Rd",
+   "start:textshaping__rd_example__lorem_text_Rd"
+  ],
+  "errors": [],
+  "model_mappings": 5,
+  "note": "Subprocesses never inherit API keys (security commit 9a791100, 2026-11-15): without_secrets() env for installs, import probes, docs lookups, R --version and the taskkill on R timeouts. Check (work/scoring/check_20261115_1006.md): 135 of 147 unchanged, 0 errors; openssl ec_dh final 0.672->0.682 within its repeat range (0.653-0.683); 7 small moves, 4 flaky. The R-capture flag is the taskkill line in r_sandbox.py; the R run's env is unchanged, so the maps were not re-captured (the person's acceptance). No score change intended."
  }
 ]

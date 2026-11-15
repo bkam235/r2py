@@ -4955,3 +4955,20 @@ before any data.**
 - Headroom under the corrected objective: with the 8 states at 0.90-0.95 added as `unknown`, the plateau's
   reachable gap is 0.053 to 0.105; its low end is below twice the noise floor (0.06). Classing those 8 (this test
   does it in part) decides which side of the line the pool is on.
+
+### Epoch 12 (2026-11-15): subprocesses never inherit API keys (security commit 9a791100), scorer track
+
+- Change (another session's security audit): installs, import probes, docs lookups, `Rscript --version` and the
+  taskkill on R timeouts run with `without_secrets()` (the env minus names that may hold a credential). The R script
+  run that captures the ground truth takes its env from its caller, unchanged.
+- Check (`work/scoring/check_20261115_1006.md`): 135 of 147 unchanged, 0 errors, no run/crash flips; openssl ec_dh
+  final 0.672 -> 0.682, within its repeat range (0.653-0.683, epoch-11 check); 7 small moves, 4 flaky. The check's
+  "R capture code changed" flag is the taskkill line in `r2py/stage0/sandbox/r_sandbox.py`; read on the diff, no
+  stored R value can change, so the maps were not re-captured. Accepted by the person.
+- Curves rebuilt (`work/scoring/accept_epoch12.log`): start 0.5095 -> 0.5103, the default's measured curve 0.887 ->
+  0.888. Of 2,123 curve programs 37 moved by more than 0.005, all in the states with known re-scoring variance
+  (openssl ec_dh 15, lava csplit 11, bslib page_fillable 4 (tempfile fonts), ranger csrf 4, textshaping lorem_text 2,
+  caret update_train 1).
+- Plateau of the production default: unchanged (no score change intended; finals not re-verified, the curve moves are
+  the known noise). Neither a gain nor a correction. Feedback the model sees is unchanged. `threshold-095` can now run
+  under epoch 12 once its spend is approved.
