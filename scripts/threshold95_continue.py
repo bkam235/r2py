@@ -10,8 +10,9 @@ feedback, DeepSeek agent, in-state free probes, review + literal_check):
 - `t90_chain` (sampling, the comparator): 3 more independent chains per state from the frozen start at 0.9.
 
 Analysis: per state, final(arm) = max(recorded final, the arm's chain finals); flipped = final(arm) >= 0.95 and the
-recorded final < 0.95 (all of these states). Primary: share gain of each arm (flipped / 60) and states flipped per
-call, t95 minus t90, bootstrap over states, P(> 0). Secondary: gain on the plateau (sum / 60), calls, cost, "done"s.
+recorded final < 0.95 (all of these states). Primary (descriptive): gain on the plateau (sum / 60) of each arm and
+plateau gain per call, t95 minus t90, bootstrap over states, P(> 0). Secondary: share gain (flipped / 60) and states
+flipped per call, t95 minus t90; calls, cost, "done"s.
 
     python scripts/threshold95_continue.py chains
     python scripts/threshold95_continue.py run --workers 6 --budget 1 [--limit 1 --out work/x]
@@ -150,14 +151,16 @@ def analyze(out_dir=OUT) -> None:
         f = {a: sum(flip[a][s] for s in smp) for a in ARMS}
         n = {a: sum(calls[a][s] for s in smp) for a in ARMS}
         pc = {a: f[a] / n[a] if n[a] else 0.0 for a in ARMS}
-        return (f["t95_cont"] / 60, f["t90_chain"] / 60, pc["t95_cont"] - pc["t90_chain"],
-                sum(gain["t95_cont"][s] for s in smp) / 60, sum(gain["t90_chain"][s] for s in smp) / 60)
+        g = {a: sum(gain[a][s] for s in smp) for a in ARMS}
+        gc = {a: g[a] / n[a] if n[a] else 0.0 for a in ARMS}
+        return (g["t95_cont"] / 60, g["t90_chain"] / 60, gc["t95_cont"] - gc["t90_chain"],
+                f["t95_cont"] / 60, f["t90_chain"] / 60, pc["t95_cont"] - pc["t90_chain"])
 
     point = stats(states)
     rng = random.Random(0)
     boots = [stats([rng.choice(states) for _ in states]) for _ in range(10000)]
-    for i, name in enumerate(("t95: share gain", "t90: share gain", "flipped per call, t95 - t90",
-                              "t95: gain on the plateau", "t90: gain on the plateau")):
+    for i, name in enumerate(("t95: gain on the plateau", "t90: gain on the plateau", "plateau gain per call, t95 - t90",
+                              "t95: share gain", "t90: share gain", "flipped per call, t95 - t90")):
         c = sorted(b[i] for b in boots)
         print(f"{name:30s} {point[i]:+.5f} [{c[250]:+.5f}, {c[9749]:+.5f}]  P(> 0) {sum(x > 0 for x in c) / len(c):.3f}")
     for s in states:

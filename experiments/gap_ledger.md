@@ -1,8 +1,8 @@
 # Gap ledger
 
 One row per training state whose final under the production default is below 0.95 (below 0.9 until 2026-11-14, when
-the objective became the share of finals >= 0.95; META_LOOP.md, "The objective"). Points = (1 - final) / 60, so the
-rows add up to the part of the gap (1 - mean final) held below 0.9. Classes: **measurement** (a faithful program is
+the share of finals >= 0.95 became the secondary metric; META_LOOP.md, "The objective"). Points = (1 - final) / 60, so the
+rows add up to the part of the gap (1 - mean final) held below 0.95. Classes: **measurement** (a faithful program is
 scored wrong, shown offline), **out of reach** (no faithful program can match the value, or a measurement fault not
 yet fixable), **behaviour** (scorer right, the loop fails to fix it), **capability** (scorer right, feedback names the
 difference, the model rarely proposes a correct program), **unknown** (not yet classed). A state stays `unknown` until
@@ -14,16 +14,7 @@ sample 0, finals re-verified under epoch 11, scorer d5609fe186a0-db31b28ade02; e
 
 ## Summary (epoch 11)
 
-Share of finals >= 0.95 (the primary metric): 33 of 60 = **0.550** (held-out 30 of 46 = 0.652).
-
-| share >= 0.95 | states | share |
-|---|---|---|
-| room (1 - share) | 27 | 0.450 |
-| out of reach (aes_cbc, glyph_raster, shape_text) | 3 | 0.050 |
-| unknown (counted both ways) | 17 | 0.283 |
-| **reachable room** | | **0.117 to 0.400** (noise floor of a replay about ±0.09; twice it 0.18) |
-
-| plateau (secondary) | points |
+| plateau (primary) | points |
 |---|---|
 | gap (1 - mean final 0.8806) | 0.1194 |
 | held by the 33 states with final >= 0.95 (not listed) | 0.0048 |
@@ -31,6 +22,15 @@ Share of finals >= 0.95 (the primary metric): 33 of 60 = **0.550** (held-out 30 
 | out of reach | 0.0143 |
 | **reachable gap** | **0.053 to 0.105** (unknown 0.0525 counted both ways; noise floor about ±0.03) |
 | measurement (hypothesised; a scorer fix would move it as a correction) | 0.0097 (ec_dh); the 0.0140 shown offline on 2026-11-14 was fixed in epoch 11 |
+
+Share of finals >= 0.95 (the secondary metric): 33 of 60 = **0.550** (held-out 30 of 46 = 0.652).
+
+| share >= 0.95 (secondary) | states | share |
+|---|---|---|
+| room (1 - share) | 27 | 0.450 |
+| out of reach (aes_cbc, glyph_raster, shape_text) | 3 | 0.050 |
+| unknown (counted both ways) | 17 | 0.283 |
+| **reachable room** | | **0.117 to 0.400** (noise floor of a replay about ±0.09; twice it 0.18) |
 
 The 8 states at 0.90-0.95 were added on 2026-11-14 with the cut. In each, at least one of the 3 chains stopped
 because its best reached the loop's stop threshold 0.9 (16 threshold stops of 24 chains; the replay's `stop`

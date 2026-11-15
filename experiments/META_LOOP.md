@@ -21,10 +21,10 @@ this protocol, one cycle per session.
 ## The objective
 
 The meta-loop exists to get good translations from a cheap agent model (the person's decision, 2026-11-14). Its
-primary metric is **the share of finals >= 0.95 of the production default**: the share of the 60 training states
-whose final score under the open scoring epoch is at least 0.95, confirmed on the held-out pool. The mean final
-score, **the plateau**, is the secondary metric and is reported next to it. `default_2026_11_12` under epoch 11:
-share >= 0.95 0.550 training (33 of 60), 0.652 held-out (30 of 46); plateau 0.881 training, 0.907 held-out.
+primary metric is **the plateau of the production default**: the mean final score of the current `default_<date>`
+policy on the 60 training states under the open scoring epoch, confirmed on the held-out pool. The secondary metric
+is **the share of finals >= 0.95**, reported next to it. `default_2026_11_12` under epoch 11: plateau 0.881
+training, 0.907 held-out; share >= 0.95 0.550 training (33 of 60), 0.652 held-out (30 of 46).
 
 **The cost class.** The agent's model stays in the cost class of DeepSeek V4.1 Flash: about its cost per translated
 script or less (the default's training replay: $2.06 for 60 runs, about $0.035 per script). A result with a model
@@ -52,21 +52,20 @@ to prefer it; harness questions have instruments of $0.30-1.20.
 
 ### Headroom
 
-The objective is worth pursuing only while the pool leaves room a test can see. The **reachable room** is 1 - the
-share >= 0.95 minus the share of states the gap ledger (step 1) classes as out of reach (measurement faults not yet
-fixable, values no faithful program can match); the **reachable gap** of the plateau is 1 - mean final minus the
-points those states hold. The **noise floor** is what one replay of the default moves by on its own: about ±0.03 on
-the 60-state plateau (`width6-running-pool`, 2026-11-06) and about ±0.09 on the share >= 0.95 (the same two
-replays, 46 running starts: 0.261 vs 0.174, 4 states flipped; under Gemma with the stop threshold at 0.9). The
-share moves in steps of one state (1/60 = 0.017), so a test of it needs several states to flip the same way. When
-the reachable room is below about twice its noise floor, gains on this pool can no longer be confirmed by the instrument that measures the
+The objective is worth pursuing only while the pool leaves room a test can see. The **reachable gap** is 1 - mean
+final minus the points held by states the gap ledger (step 1) classes as out of reach (measurement faults not yet
+fixable, values no faithful program can match). The **noise floor** is what one replay of the default moves by on
+its own: about ±0.03 on the 60-state plateau (`width6-running-pool`, 2026-11-06); on the share >= 0.95 about ±0.09
+(the same two replays, 46 running starts: 0.261 vs 0.174, 4 states flipped; under Gemma with the stop threshold at
+0.9), since the share moves in steps of one state (1/60 = 0.017). When the reachable gap is below about twice the
+noise floor, gains on this pool can no longer be confirmed by the instrument that measures the
 objective, and the cycle says so before proposing any lever: it states the reachable gap and proposes a new
-objective (a harder or larger pool, the share of finals >= 0.9, cost per verified script, or another the evidence
+objective (a harder or larger pool, the share of finals >= 0.95 as primary, cost per verified script, or another the evidence
 supports). Changing the objective or the pools is the person's decision. States the ledger still has as `unknown`
 are counted both ways, so the reachable gap is a range.
 
-**Stall trigger.** When the latest three cycles together added no state to the share >= 0.95 and less than 0.01
-to the plateau (corrections not counted),
+**Stall trigger.** When the latest three cycles together added less than 0.01 of gain to the plateau (corrections
+not counted),
 the next cycle opens with bets (step 1) and an objective proposal, not with a lever or a scorer question.
 
 ## Roles

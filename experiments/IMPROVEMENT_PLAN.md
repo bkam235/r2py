@@ -4943,3 +4943,15 @@ before any data.**
   is `same` again: at registration another session's uncommitted edits to `r2py/` (sandbox, env) make
   `scoring_epoch.py status` say CHANGED.
 - Analysis: `python scripts/threshold95_continue.py analyze`.
+- **Amendment before any data (2026-11-15), the person's correction of the objective:** the plateau (mean final)
+  stays the primary metric; the share of finals >= 0.95 is the secondary metric (META_LOOP.md and the gap ledger
+  corrected; the cycle entry above read the person's decision the wrong way round). For this test the primary is now
+  the plateau gain per call, t95 minus t90 (and each arm's plateau gain), with the share as secondary. Its reach on
+  the plateau is at most +0.011 (all 8 states to 1.0; to 0.95 about +0.005), at or below what 8 states resolve, so by
+  step 4 the test is **descriptive**: it informs whether to build the threshold as a flag in `r2py/loop.py` and test
+  it with the full loop. The share criterion (P >= 0.9 on flipped per call and on the t95 share gain) is reported
+  as before. Registry record amended (`primary`, `rule`, `question`, `note`); analysis script reordered, checked
+  offline on fake rows.
+- Headroom under the corrected objective: with the 8 states at 0.90-0.95 added as `unknown`, the plateau's
+  reachable gap is 0.053 to 0.105; its low end is below twice the noise floor (0.06). Classing those 8 (this test
+  does it in part) decides which side of the line the pool is on.
