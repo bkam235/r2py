@@ -113,6 +113,15 @@ POLICIES = {
                  agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
                  free_probe=True, probe_state=True, literal_check=True, review_crashing=True)
        for arm in ("dsf_cont", "dsf_chain")},
+    # Test threshold-095 (2026-11-15): one chain of default_2026_11_12 with the stop threshold at 0.95 (t95_cont,
+    # continuing from a chain's best) or at the protocol's 0.9 (t90_chain, from the frozen start; the comparator).
+    **{arm: dict(entity_repair=False, escalate_after=None, width=1, crash_stalls=5, converse=True,
+                 entity_feedback=True, agent_model="openrouter:deepseek/deepseek-v4.1-flash-1017",
+                 agent_provider={"only": ["deepinfra/fp8"], "allow_fallbacks": False},
+                 agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
+                 free_probe=True, probe_state=True, literal_check=True, review_crashing=True,
+                 score_threshold=threshold)
+       for arm, threshold in (("t95_cont", 0.95), ("t90_chain", 0.9))},
     # Test model-screen-stall2 (2026-11-08): the same continuations with free probes evaluated in the script's state
     # (probe_state), the agent on Gemma or on a cheap model (pinned provider, reasoning capped as for GLM 5.3); the
     # review stays on Gemma.
@@ -331,13 +340,14 @@ def run_one(task: dict) -> dict:
                     from r2py.loop import DEFAULT_CRASH_BUDGET_FACTOR
                     task = {**task, "budget_s": task["budget_s"] * DEFAULT_CRASH_BUDGET_FACTOR}   # as run_loop does
                 max_steps = policy.pop("max_steps", cfg["max_iters"])   # continuation tests stop early (2026-10-18)
+                score_threshold = policy.pop("score_threshold", cfg["score_threshold"])   # threshold-095 (2026-11-15)
                 beam_cfg = policy.pop("beam", None)
                 harnesses = [harness] + [new_harness() for _ in range(width - 1)]
                 if agent_model:
                     policy["review_model"] = cfg["model"]
                 common = dict(current_source=task["source"], score_report=start_report, script_map=sm,
                               model=agent_model or cfg["model"],
-                              score_threshold=cfg["score_threshold"], max_stalls=cfg["max_stalls"],
+                              score_threshold=score_threshold, max_stalls=cfg["max_stalls"],
                               budget_s=task["budget_s"], audit_feedback=audit, replace_entity=False, **policy)
                 if beam_cfg:
                     result = reason_beam(harnesses, max_steps=beam_cfg["steps"], max_rounds=beam_cfg["rounds"], **common)

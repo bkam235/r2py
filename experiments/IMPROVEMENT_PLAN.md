@@ -4918,3 +4918,28 @@ before any data.**
   16 of their 24 chains stopped by the threshold. Elsewhere: `r2py/cli.py` and `scripts/translate_batch.py`
   default to 0.85, `r2py/heldout.py`'s protocol (which replay uses) to 0.9; the training pool was drawn from starts
   below 0.9 (`max_start`), so starts at 0.90-0.95 are not in it (changing the pool is the person's decision).
+
+### Stop threshold 0.95 (test `threshold-095`, harness track) — registered 2026-11-15
+
+- Question: with the objective at the share of finals >= 0.95, does raising the loop's stop threshold from 0.9 to
+  0.95 turn more states into >= 0.95 than the same calls spent on sampling more chains at 0.9?
+- States: the 8 training states whose default final (epoch 11) is in [0.9, 0.95); on this pool the threshold can
+  change nothing else (entry above). Option: a policy key `score_threshold` in `scripts/replay.py` (the protocol's
+  0.9 when absent); production (`r2py/`) unchanged.
+- Arms (`scripts/threshold95_continue.py`, one chain of the default loop each, DeepSeek agent): `t95_cont`, the 16
+  chains whose best is in [0.9, 0.95) (all stopped at the threshold) continued from their best at threshold 0.95,
+  fresh conversation and stall budget; `t90_chain`, 3 new chains per state from the frozen start at 0.9 (the
+  comparator, as in patience-dsflash). Per state, final(arm) = max(recorded final, the arm's chain finals).
+- Primary: share gain (states reaching >= 0.95, / 60) and states flipped per call, t95 minus t90, bootstrap over
+  the 8 states. Secondary: plateau gain, calls, cost, "done"s, finals re-verified under the open epoch.
+- Rule (costs calls): candidate if P(flipped per call, t95 - t90 > 0) >= 0.9 and P(t95 share gain > 0) >= 0.9; then
+  held-out (the 46 held-out states' chains at [0.9, 0.95)) and the threshold built as an `r2py/loop.py` default
+  behind a flag; flipping it is the person's decision.
+- Power: at most 8 states can flip (share +0.133, plateau at most +0.011). With 8 states the bootstrap resolves
+  about 2-3 flips more in t95 than t90, i.e. +0.03 to +0.05 on the share; a smaller effect is reported as such.
+- Caveat: production would continue in the same conversation; the continuation starts a fresh one (as
+  patience-dsflash). Chains' bests are their in-loop scores (epoch 9); the states are chosen by the epoch-11 finals.
+- Cost estimate $0.40 (about 215 calls at patience-dsflash's $0.0018 per call), budget $1. No run until the scorer
+  is `same` again: at registration another session's uncommitted edits to `r2py/` (sandbox, env) make
+  `scoring_epoch.py status` say CHANGED.
+- Analysis: `python scripts/threshold95_continue.py analyze`.
