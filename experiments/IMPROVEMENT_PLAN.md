@@ -23,6 +23,7 @@ page.
 | + crashing starts: width 6, patience 5, twice the time limit | 0.741 | 2026-10-18/19 |
 | + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
 | + entity-addressed feedback | **0.809** (measured, epoch 8) | 2026-11-01: each losing entity is shown the comparison that scores it, shared feedback once; paired +0.034 [+0.001, +0.072] against the previous default's replay re-scored (0.775) |
+| + DeepSeek V4.1 Flash agent, in-state probes, literal check (`default_2026_11_12`) | **0.909** (measured, epoch 16) | 2026-11-12 adoption (0.881 measured under epoch 9); replay 2026-11-16 under the feedback corrections of epochs 10-16: +0.043 [+0.010, +0.082] against the epoch-9 replay re-scored (0.866) |
 
 A second sample of `default_2026_11_01` on the 46 running starts (2026-11-06, test `width6-running-pool`) ended 0.024 lower than the first on the same states: one replay sample moves by about ±0.03, and the two-sample plateau of the default is 0.800. In the same test, 6 chains on running starts beat 3 by +0.019 [+0.007, +0.038] (not adopted: the registered bar was a 95% lower bound of +0.010).
 
@@ -5254,3 +5255,35 @@ before any data.**
   work/replay_default_e16/finals_epoch16.jsonl`, then `python scripts/ceiling_analysis.py
   work/replay_default_e16/results.jsonl work/dsflash_default/finals_epoch16.jsonl
   work/replay_default_e16/finals_epoch16.jsonl`; `python scripts/health_report.py work/replay_default_e16 --deep`.
+- **Result (2026-11-16, run `work/replay_default_e16`, 60 of 60 rows, $1.99, balance $4.39 -> $2.40, no sleep gaps,
+  scorer epoch 16 throughout).** Analysis as registered (`analysis.txt`, `secondary.txt`, `audit.txt`,
+  `health_report.md`):
+  - primary (descriptive): mean final **0.909** against the epoch-9 replay re-scored **0.866**, paired **+0.043
+    [+0.010, +0.082]**; better 21 / worse 14 / tied 25. Running starts +0.056 [+0.015, +0.106] (0.835 -> 0.891),
+    crashing starts -0.000 [-0.014, +0.018] (0.967 -> 0.966).
+  - share >= 0.95: **0.550 -> 0.567** (+0.017 [-0.083, +0.117]; 5 states up, 4 down); finals >= 0.9: 39 -> 45.
+  - largest moves: shiny updateRadioButtons 0.250 -> 0.960 (epoch 11's fix, as predicted), rvest html_table 0.472 ->
+    1.000 and html_children 0.550 -> 0.905 (real lxml nodes, no forging), backGround 0.625 -> 0.900, filledmultigonal
+    0.759 -> 1.000, farver 0.703 -> 0.890, shape_text 0.807 -> 0.912, isoband 0.767 -> 0.869, gtable 0.915 -> 1.000;
+    down: bslib value_box 0.923 -> 0.678, broom augment_felm 0.961 -> 0.935.
+  - forging: `__r2py_fp__` in 2 states: broom augment_felm's final (3 dicts, refused since epoch 13; the state fell),
+    pROC coords' accepted intermediates only. The model still copies the format from the feedback; it no longer pays.
+  - audit of the 12 largest movers (`work/analysis/e16_replay_audit.py`): no new 4-digit literal except farver's 8,
+    which are colour-science constants (D65 / D50 white points, CIE kappa 24389), not R outputs. shape_text reached
+    0.912 with none: its "out of reach" class is in doubt.
+  - stops: threshold 146, stalled 44, done 29; 40 review rejections; 16.5 calls per run; DeepSeek $1.76, Gemma $0.23.
+    11 states end in [0.90, 0.95).
+- **Reading.** Descriptive, one sample, not concurrent: the +0.043 is the combined effect of the feedback corrections
+  of epochs 10-16 on what the default writes, plus one replay's noise (about ±0.03); it cannot be attributed to one
+  epoch. shiny alone is +0.012 of it, and the rvest pair +0.016 (both states where the epoch-9 programs were scored
+  wrong and the feedback now points at reachable differences). Unlike the epoch-7 replay (corrections showed no gain,
+  -0.013), this one is above the noise in the interval.
+- **Plateau of the production default:** **0.909 training (measured, epoch 16)**, from 0.866 (the epoch-9 replay
+  re-scored). Held-out not replayed: 0.907 is its epoch-9 replay re-scored. Since the 2026-11-12 adoption (0.881 under
+  epoch 9): the measurement corrections -0.016, and +0.043 that the default writes differently under the corrected
+  feedback (a gain of the harness, measured descriptively, no policy changed).
+- **Headroom (the gap ledger now reads this replay):** gap 0.091; out of reach 0.028; **reachable gap 0.059 to
+  0.063, at twice the noise floor (0.06)**. By the protocol's headroom rule, a further gain on this pool can no longer
+  be confirmed by one replay; the next cycle states this and proposes an objective (a larger or harder pool, the share
+  as primary, cost per verified script). The share's reachable room 0.283 to 0.350 is still above twice its noise
+  floor (0.18).

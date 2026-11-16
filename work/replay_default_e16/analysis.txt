@@ -1,0 +1,22 @@
+states paired: 60 (ceiling rows 60, baseline 60, ceiling finals 60)
+all              n=60  baseline 0.866  ceiling 0.909  diff +0.043 [+0.010, +0.082]  better 21 / worse 14 / tied 25
+running starts   n=46  baseline 0.835  ceiling 0.891  diff +0.056 [+0.015, +0.106]  better 19 / worse 8 / tied 19
+crashing starts  n=14  baseline 0.967  ceiling 0.966  diff -0.000 [-0.014, +0.018]  better 2 / worse 6 / tied 6
+finals >= 0.9: baseline 39, ceiling 45 of 60
+entities the baseline final loses (< 0.9): 80; the ceiling final scores >= 0.9 on 22 (28%)
+calls: {'agent steps': 992}
+  google/gemma-4-31b-it: calls 567, input 1,823,619, output 97,947 (reasoning 0), cost $0.23
+  deepseek/deepseek-v4.1-flash-1017: calls 997, input 22,374,699, output 4,587,432 (reasoning 3,342,523), cost $1.76
+largest moves:
+  shiny__rd_example__updateRadioButtons_Rd           0.250 -> 0.960
+  rvest__rd_example__html_table_Rd                   0.472 -> 1.000
+  rvest__rd_example__html_children_Rd                0.550 -> 0.905
+  prodlim__rd_example__backGround_Rd                 0.625 -> 0.900
+  openssl__rd_example__ec_dh_Rd                      0.409 -> 0.660
+  bslib__rd_example__value_box_Rd                    0.923 -> 0.678
+  shape__rd_example__filledmultigonal_Rd             0.759 -> 1.000
+  ragg__rd_example__agg_capture_Rd                   0.500 -> 0.700
+  farver__rd_example__convert_colour_Rd              0.703 -> 0.890
+  textshaping__rd_example__shape_text_Rd             0.807 -> 0.912
+  isoband__vignette__isoband3_s2                     0.767 -> 0.869
+  gtable__rd_example__gtable_add_cols_Rd             0.915 -> 1.000
