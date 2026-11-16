@@ -5132,3 +5132,19 @@ before any data.**
   `ul`, `p` 1.0); reachable gap 0.090 to 0.107, share room 0.350 to 0.383.
 - Remaining asymmetry, not changed: R takes text only from classes with a real `as.character` method; Python takes
   `str()` of any object without a memory address in it.
+
+### 2026-11-16: curve rebuilds re-score only the production default's line (the person's decision)
+
+- Before: a new epoch re-scored all 2125 programs of the 7 curve runs (since the measured defaults were added on
+  2026-11-12; about 1,400 before), about 25 minutes inside `accept`. The person needs only the DeepSeek default's line
+  going forward.
+- Change (`scripts/learning_curves.py`, `experiments/figures/inloop_curves_template.html`): a new epoch re-scores the
+  60 start programs and the programs of `work/dsflash_default` (`LIVE_RUNS`), 426 programs, about 5 minutes; every
+  other line keeps its programs' epoch-14 scores (`frozen_version` in `work/curves/rescored.json`), is drawn fainter
+  and labelled ", epoch 14"; `--all` re-scores everything. The HTML text is filled from the data (it still said
+  "the scorer of epoch 9" and "all lines are in one scoring epoch").
+- Check: without re-scoring the new code writes the same curves; a live-only re-score under the unchanged epoch-14
+  scorer (296 s, `work/curves_live_rescore.log`) moves every line by at most 0.0003 (start-program noise; 2100 of 2125
+  cached scores bit-identical). The DeepSeek default's curve ends at 0.8832.
+- Consequence: the frozen lines share the re-scored starts, so a future scorer change moves their step 0 but not
+  their later steps; a comparison between a frozen line and the DeepSeek line across epochs is not like for like.

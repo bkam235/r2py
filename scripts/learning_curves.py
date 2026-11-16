@@ -12,14 +12,17 @@ training-pool states:
   work/replay_default_e8        the production default of 2026-11-01 (entity feedback), replayed 2026-11-05
   work/dsflash_default          the production default of 2026-11-12 (agent on DeepSeek V4.1 Flash), run 2026-11-12
 
-Every program the curves use (the starting programs and every program a chain accepted, in all five runs) is
-re-scored with the current scorer, so all lines are in one scoring epoch (r2py.scoring). The scores are cached in
-work/curves/rescored.json together with the scorer version; when the scorer has changed, the next call re-scores
-everything (about 1,400 verifications, no model calls). `scripts/scoring_epoch.py accept` calls this script, so a
-new epoch rebuilds the curves by default. A state's stratum is its re-scored start: running or crashing.
+The scores of the programs the curves use (the starting programs and every program a chain accepted) are cached in
+work/curves/rescored.json with the scorer version. When the scorer has changed, the next call re-scores only the live
+programs: the 60 starting programs and those of the production default's replay (LIVE_RUNS; the person's decision of
+2026-11-16, before which all ~2,100 were re-scored). Every other line keeps its programs' scores from the epoch in which
+they were last re-scored (`frozen_version` in the cache, epoch 14) and is labelled so; `--all` re-scores everything
+again. `scripts/scoring_epoch.py accept` calls this script, so a new epoch rebuilds the curves by default. A state's
+stratum is its re-scored start: running or crashing.
 
-    python scripts/learning_curves.py             # data, PNG and HTML (re-scores first if the scorer changed)
-    python scripts/learning_curves.py --rescore   # re-score even if the scorer is unchanged
+    python scripts/learning_curves.py             # data, PNG and HTML (re-scores the live programs if the scorer changed)
+    python scripts/learning_curves.py --rescore   # re-score the live programs even if the scorer is unchanged
+    python scripts/learning_curves.py --all       # re-score every program (all lines in one epoch again)
     python scripts/learning_curves.py --extract   # refresh work/curves/inputs.json.gz from the full run logs
 
 The full trajectories (~48 MB) are not in the repository. What the curves need from them (per step: kind, chain,
@@ -50,6 +53,8 @@ CACHE = ROOT / "work/curves/rescored.json"
 INPUTS = ROOT / "work/curves/inputs.json.gz"
 RUNS = ("work/replay_k3", "work/continue_plateau", "work/continue_stalled", "work/replay_crash6p5_b2", "work/replay_default",
         "work/replay_default_e8", "work/dsflash_default")
+LIVE_RUNS = ("work/dsflash_default",)                     # re-scored in every new epoch; the others are frozen
+LIVE_LINES = ("default 2026-11-12, DeepSeek agent (measured)",)
 _inputs: dict | None = None
 N_SHOWN = 14          # steps drawn; every curve is flat well before
 N_LONG = 20           # steps followed for the runs with patience 5
@@ -121,13 +126,13 @@ def logs_available() -> bool:
     return all((ROOT / run / "trajectories").is_dir() for run in RUNS)
 
 
-def all_programs() -> dict:
-    """script -> {hash: source}: every program the curves use (starting programs and accepted programs of all runs)."""
+def all_programs(runs=RUNS) -> dict:
+    """script -> {hash: source}: the starting programs and the accepted programs of *runs*."""
     import replay
     progs = defaultdict(dict)
     for name, st_ in replay.training_states().items():
         progs[name][H(st_["source"])] = st_["source"]
-    for run in RUNS:
+    for run in runs:
         for f in (ROOT / run / "trajectories").glob("*.jsonl"):
             name = f.name.split(".")[0] + ".R"
             for line in f.open(encoding="utf-8"):
@@ -156,13 +161,19 @@ def _rescore_one(item):
     return name, out
 
 
-def rescore() -> dict:
+def rescore(old: dict, everything: bool) -> dict:
+    """Re-score the live programs (or all), keeping the cached scores of the others; returns the new cache."""
     from r2py.scoring import scoring_version
-    progs = all_programs()
-    print(f"re-scoring {sum(len(v) for v in progs.values())} programs of {len(progs)} states with the current scorer", flush=True)
+    progs = all_programs(RUNS if everything else LIVE_RUNS)
+    print(f"re-scoring {sum(len(v) for v in progs.values())} programs of {len(progs)} states with the current scorer"
+          + ("" if everything else " (live lines only)"), flush=True)
     with ProcessPoolExecutor(8) as ex:
-        res = dict(ex.map(_rescore_one, sorted(progs.items())))
-    cache = {"scoring_version": scoring_version(), "values": res}
+        new = dict(ex.map(_rescore_one, sorted(progs.items())))
+    res = {} if everything else {s: dict(v) for s, v in old.get("values", {}).items()}
+    for s, v in new.items():
+        res.setdefault(s, {}).update(v)
+    frozen = None if everything else old.get("frozen_version") or old.get("scoring_version")
+    cache = {"scoring_version": scoring_version(), "frozen_version": frozen, "values": res}
     CACHE.parent.mkdir(parents=True, exist_ok=True)
     CACHE.write_text(json.dumps(cache), encoding="utf-8")
     return cache
@@ -282,6 +293,14 @@ STYLE = {"default 2026-11-12, DeepSeek agent (measured)": ("#be123c", "-", 3.0),
 EXT_STYLE = {"restart": "#7c3aed", "accept equal": "#c026d3", "patience 5": "#b91c1c"}
 
 
+def _epoch_of(version) -> str:
+    """'epoch N (date)' of a scorer version, from work/scoring/epochs.json."""
+    for e in json.loads((ROOT / "work/scoring/epochs.json").read_text(encoding="utf-8")):
+        if version and e.get("scoring_version") == version:
+            return f"epoch {e['epoch']} ({str(e.get('date', ''))[:10]})"
+    return f"scorer {version}"
+
+
 def plot(data: dict, path: Path) -> None:
     import matplotlib
     matplotlib.use("Agg")
@@ -293,7 +312,9 @@ def plot(data: dict, path: Path) -> None:
         ax.axvspan(last + 0.3, last + 3.6, color="#eef1f5", zorder=0)
         for name, ys in st_["lines"].items():
             c, ls, lw = STYLE.get(name, ("#555555", "-", 2))
-            ax.plot(data["steps"], ys, ls, color=c, lw=lw, label=name)
+            frozen = data.get("frozen_version") and name not in LIVE_LINES
+            ax.plot(data["steps"], ys, ls, color=c, lw=lw, alpha=0.55 if frozen else 1.0,
+                    label=f"{name}, {_epoch_of(data['frozen_version']).split(' (')[0]}" if frozen else name)
         for name, ys in st_["ext"].items():
             ax.plot([last + i for i in range(len(ys))], ys, "--", color=EXT_STYLE[name], lw=1.8, label=f"then {name}")
         ax.set_title(f"{titles[k]} ({st_['n']} states)")
@@ -308,14 +329,16 @@ def plot(data: dict, path: Path) -> None:
             if lab not in labels:
                 handles.append(h); labels.append(lab)
     fig.legend(handles, labels, loc="lower center", ncol=5, frameon=False, fontsize=9)
-    fig.suptitle("In-loop score curves: mean best score after each agent step, same 60 training states")
+    fig.suptitle("In-loop score curves: mean best score after each agent step, same 60 training states; "
+                 + data.get("scoring_note", ""), fontsize=10)
     fig.tight_layout(rect=(0, 0.1, 1, 0.95))
     fig.savefig(path, dpi=130)
 
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--rescore", action="store_true", help="re-score every program even if the scorer is unchanged")
+    ap.add_argument("--rescore", action="store_true", help="re-score the live programs even if the scorer is unchanged")
+    ap.add_argument("--all", action="store_true", help="re-score every program, the frozen lines too")
     ap.add_argument("--extract", action="store_true", help="refresh work/curves/inputs.json.gz from the full run logs")
     a = ap.parse_args()
     if a.extract:
@@ -323,18 +346,30 @@ def main() -> None:
     from r2py.scoring import scoring_version
     cache = json.loads(CACHE.read_text(encoding="utf-8")) if CACHE.exists() else {}
     current = scoring_version()
-    if a.rescore or cache.get("scoring_version") != current:
+    if a.rescore or a.all or cache.get("scoring_version") != current:
         if logs_available():
-            cache = rescore()
+            cache = rescore(cache, a.all)
         else:
             print(f"WARNING: the curves were scored with {cache.get('scoring_version', 'an older scorer')}; the current "
                   f"scorer is {current}, and re-scoring needs the full run logs in work/")
     data = compute(cache.get("values", {}))
     data["scoring_version"] = cache.get("scoring_version")
+    data["frozen_version"] = cache.get("frozen_version")
+    live, frozen = _epoch_of(data["scoring_version"]), _epoch_of(data["frozen_version"])
+    if data["frozen_version"]:
+        data["scoring_note"] = (f"the starting programs and the DeepSeek default re-scored with the scorer of {live}; "
+                                f"the other lines frozen at {frozen}")
+        rescored = (f"the starting programs and every program of the DeepSeek default with the scorer of {live}; the "
+                    f"other lines keep their scores from {frozen}, when they were last re-scored (from 2026-11-16 a new "
+                    f"epoch re-scores only the production default's line).")
+    else:
+        data["scoring_note"] = f"re-scored with the scorer of {live}"
+        rescored = f"all of them with the scorer of {live}, so all lines are in one scoring epoch."
     FIG.mkdir(parents=True, exist_ok=True)
     (FIG / "inloop_curves.json").write_text(json.dumps(data, indent=1), encoding="utf-8")
     plot(data, FIG / "inloop_curves.png")
     tpl = (FIG / "inloop_curves_template.html").read_text(encoding="utf-8")
+    tpl = tpl.replace("__SCORING__", data["scoring_note"]).replace("__RESCORED__", rescored)
     (FIG / "inloop_curves.html").write_text(tpl.replace("__DATA__", json.dumps(data, separators=(",", ":"))), encoding="utf-8")
     for k, s in data["strata"].items():
         print(k, s["n"], {n: (v[0], v[-1]) for n, v in s["lines"].items()})

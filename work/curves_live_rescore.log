@@ -1,0 +1,49 @@
+re-scoring 426 programs of 60 states with the current scorer (live lines only)
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.3
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.3
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[r2py] Installing Python package 'ranger' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+all 60 {'width 1': (0.5147, 0.7072), 'width 3': (0.5147, 0.7622), 'width 6 (estimated)': (0.5147, 0.7878), '3 per step': (0.5147, 0.7383), 'default with conversation (measured)': (0.5147, 0.815), 'default 2026-11-01 (measured)': (0.5147, 0.8286), 'default 2026-11-12, DeepSeek agent (measured)': (0.5147, 0.8832), 'default without conversation': (0.5147, 0.771)}
+running 46 {'width 1': (0.6713, 0.7367), 'width 3': (0.6713, 0.7636), 'width 6 (estimated)': (0.6713, 0.773), '3 per step': (0.6713, 0.7525), 'default with conversation (measured)': (0.6713, 0.8031), 'default 2026-11-01 (measured)': (0.6713, 0.8158), 'default 2026-11-12, DeepSeek agent (measured)': (0.6713, 0.8629)}
+crashing 14 {'width 1': (0.0, 0.6103), 'width 3': (0.0, 0.7574), '3 per step': (0.0, 0.6917), 'default with conversation (measured)': (0.0, 0.8543), 'default 2026-11-01 (measured)': (0.0, 0.871), 'default 2026-11-12, DeepSeek agent (measured)': (0.0, 0.9499), 'width 6 + patience 5': (0.0, 0.7954)}
