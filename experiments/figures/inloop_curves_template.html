@@ -6,18 +6,18 @@
 :root {
   --bg: #f6f7f9; --panel: #ffffff; --fg: #1b2230; --muted: #5d6676; --grid: #e2e6ec; --axis: #9aa3b2; --band: #eef1f5;
   --w1: #8a93a3; --w3: #2f6fd1; --w6: #0f766e; --k3: #d9731a;
-  --cv: #be123c; --d1: #475569; --nd: #111827; --e1: #7c3aed; --e2: #c026d3; --e3: #b91c1c;
+  --cv: #be123c; --c6: #ca8a04; --d1: #475569; --nd: #111827; --e1: #7c3aed; --e2: #c026d3; --e3: #b91c1c;
   --sans: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #12161d; --panel: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --grid: #2a323e; --axis: #5d6676; --band: #20262f;
   --w1: #9aa3b2; --w3: #6ea0ff; --w6: #2fc2b2; --k3: #f39a4a;
-  --cv: #fb7185; --d1: #cbd5e1; --nd: #f9fafb; --e1: #a78bfa; --e2: #e879f9; --e3: #f87171; color-scheme: dark } }
+  --cv: #fb7185; --c6: #facc15; --d1: #cbd5e1; --nd: #f9fafb; --e1: #a78bfa; --e2: #e879f9; --e3: #f87171; color-scheme: dark } }
 :root[data-theme="dark"] {
   --bg: #12161d; --panel: #1a2029; --fg: #e6e9ef; --muted: #9aa3b2; --grid: #2a323e; --axis: #5d6676; --band: #20262f;
   --w1: #9aa3b2; --w3: #6ea0ff; --w6: #2fc2b2; --k3: #f39a4a;
-  --cv: #fb7185; --d1: #cbd5e1; --nd: #f9fafb; --e1: #a78bfa; --e2: #e879f9; --e3: #f87171; color-scheme: dark }
+  --cv: #fb7185; --c6: #facc15; --d1: #cbd5e1; --nd: #f9fafb; --e1: #a78bfa; --e2: #e879f9; --e3: #f87171; color-scheme: dark }
 body { background: var(--bg); color: var(--fg); font-family: var(--sans); font-size: 15px; line-height: 1.5;
   padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-block: 28px 48px; }
 .wrap { max-width: 960px; margin: 0 auto; display: grid; gap: 20px; }
@@ -76,9 +76,9 @@ svg text { font-family: var(--mono); font-size: 11px; fill: var(--muted); }
 <script>
 const DATA = __DATA__;
 const SERIES_BY = {
-  base: [["default 2026-11-12, DeepSeek agent (measured)","--cv","current default: the agent on DeepSeek V4.1 Flash, in-state probes, both hardcoding gates"],["default 2026-11-01 (measured)","--d1","entity-addressed feedback added"],["default with conversation (measured)","--nd","width 3; crashing starts: width 6 + patience 5; conversation from step 2"],["width 1","--w1","1 call per step"],["width 3","--w3","3 calls per step"],["width 6 (estimated)","--w6","best of the 6 single chains per state; not run"],["3 per step","--k3","3 calls per step"]],
-  all: [["default 2026-11-12, DeepSeek agent (measured)","--cv","current default: the agent on DeepSeek V4.1 Flash, in-state probes, both hardcoding gates"],["default 2026-11-01 (measured)","--d1","entity-addressed feedback added"],["default with conversation (measured)","--nd","width 3; crashing starts: width 6 + patience 5; conversation from step 2"],["width 1","--w1","1 call per step"],["width 3","--w3","3 calls per step"],["default without conversation","--w6","width 3, and width 6 + patience 5 on crashing starts"],["width 6 (estimated)","--w6","best of the 6 single chains per state; not run"],["3 per step","--k3","3 calls per step"]],
-  crashing: [["default 2026-11-12, DeepSeek agent (measured)","--cv","current default: the agent on DeepSeek V4.1 Flash, in-state probes, both hardcoding gates"],["default 2026-11-01 (measured)","--d1","entity-addressed feedback added"],["default with conversation (measured)","--nd","width 3; crashing starts: width 6 + patience 5; conversation from step 2"],["width 1","--w1","1 call per step"],["width 3","--w3","3 calls per step"],["width 6 + patience 5","--w6","new default, measured: 1 run per state, 6 calls per step"],["3 per step","--k3","3 calls per step"]]};
+  base: [["default 2026-11-12, replayed 2026-11-16 (measured)","--c6","the current default replayed under epoch 16, after the feedback corrections of epochs 10-16"],["default 2026-11-12, DeepSeek agent (measured)","--cv","current default, first run 2026-11-12: the agent on DeepSeek V4.1 Flash, in-state probes, both hardcoding gates"],["default 2026-11-01 (measured)","--d1","entity-addressed feedback added"],["default with conversation (measured)","--nd","width 3; crashing starts: width 6 + patience 5; conversation from step 2"],["width 1","--w1","1 call per step"],["width 3","--w3","3 calls per step"],["width 6 (estimated)","--w6","best of the 6 single chains per state; not run"],["3 per step","--k3","3 calls per step"]],
+  all: [["default 2026-11-12, replayed 2026-11-16 (measured)","--c6","the current default replayed under epoch 16, after the feedback corrections of epochs 10-16"],["default 2026-11-12, DeepSeek agent (measured)","--cv","current default, first run 2026-11-12: the agent on DeepSeek V4.1 Flash, in-state probes, both hardcoding gates"],["default 2026-11-01 (measured)","--d1","entity-addressed feedback added"],["default with conversation (measured)","--nd","width 3; crashing starts: width 6 + patience 5; conversation from step 2"],["width 1","--w1","1 call per step"],["width 3","--w3","3 calls per step"],["default without conversation","--w6","width 3, and width 6 + patience 5 on crashing starts"],["width 6 (estimated)","--w6","best of the 6 single chains per state; not run"],["3 per step","--k3","3 calls per step"]],
+  crashing: [["default 2026-11-12, replayed 2026-11-16 (measured)","--c6","the current default replayed under epoch 16, after the feedback corrections of epochs 10-16"],["default 2026-11-12, DeepSeek agent (measured)","--cv","current default, first run 2026-11-12: the agent on DeepSeek V4.1 Flash, in-state probes, both hardcoding gates"],["default 2026-11-01 (measured)","--d1","entity-addressed feedback added"],["default with conversation (measured)","--nd","width 3; crashing starts: width 6 + patience 5; conversation from step 2"],["width 1","--w1","1 call per step"],["width 3","--w3","3 calls per step"],["width 6 + patience 5","--w6","new default, measured: 1 run per state, 6 calls per step"],["3 per step","--k3","3 calls per step"]]};
 const EXT = [["restart","--e1","width 3, then 3 restart steps","6 3"],["accept equal","--e2","width 3, then 3 accept-equal steps","2 3"],["patience 5","--e3","width 3, then 2 steps more patience","8 3 2 3"]];
 const W = 900, H = 440, M = {l: 52, r: 20, t: 16, b: 48};
 const LAST = 14, EXTRA = 3, XMAX = LAST + EXTRA + 0.6;

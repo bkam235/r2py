@@ -1,0 +1,11 @@
+46 frozen states: ModelMetrics__rd_e(0.31), ModelMetrics__rd_e(0.56), ModelMetrics__rd_e(0.54), ModelMetrics__rd_e(0.53), broom__rd_example_(0.00), broom__vignette__b(0.62), caret__rd_example_(0.52), caret__rd_example_(0.31), clock__rd_example_(0.73), clock__rd_example_(0.75), clock__rd_example_(0.39), dplyr__vignette__p(0.00), e1071__rd_example_(0.58), fansi__rd_example_(0.90), fansi__rd_example_(0.76), fansi__vignette__s(0.80), farver__rd_example(0.63), farver__rd_example(0.73), ggplot2__rd_exampl(0.00), ggplot2__vignette_(0.50), gtable__rd_example(0.37), gtable__rd_example(0.75), gtable__rd_example(0.81), htmltools__rd_exam(0.51), lava__rd_example__(0.00), lubridate__rd_exam(0.58), openssl__rd_exampl(0.33), pROC__rd_example__(0.80), prodlim__rd_exampl(0.54), proxy__rd_example_(0.61), purrr__rd_example_(0.67), ragg__rd_example__(0.58), ragg__rd_example__(0.58), ranger__rd_example(0.75), ranger__rd_example(0.64), recipes__rd_exampl(0.58), recipes__rd_exampl(0.48), rmarkdown__rd_exam(0.75), sass__rd_example__(0.85), sparsevctrs__rd_ex(0.72), sparsevctrs__rd_ex(0.00), textshaping__rd_ex(0.29), tidyr__rd_example_(0.83), tidyr__vignette__p(0.50), timeDate__rd_examp(0.85), timechange__rd_exa(0.00)
+46 runs to do (0 already finished), 6 workers
+[1/46] ModelMetrics__rd_example__rmse_Rd.R  default_2026_11_12 s0: 0.88 -> 0.96 (4 min)
+[2/46] ModelMetrics__rd_example__logLoss_Rd default_2026_11_12 s0: 0.84 -> 0.93 (4 min)
+[3/46] ModelMetrics__rd_example__mse_Rd.R   default_2026_11_12 s0: 0.79 -> 1.00 (5 min)
+[4/46] ModelMetrics__rd_example__gini_Rd.R  default_2026_11_12 s0: 0.51 -> 1.00 (5 min)
+[5/46] clock__rd_example__iso-year-week-day default_2026_11_12 s0: 0.82 -> 1.00 (3 min)
+[6/46] broom__vignette__broom_chunk6.R      default_2026_11_12 s0: 0.62 -> 0.94 (9 min)
+[7/46] clock__rd_example__posixt-group_Rd.R default_2026_11_12 s0: 0.75 -> 1.00 (4 min)
+[8/46] caret__rd_example__preProcess_Rd.R   default_2026_11_12 s0: 0.31 -> 1.00 (9 min)
+[9/46] clock__rd_example__time-point-roundi default_2026_11_12 s0: 0.69 -> 0.87 (6 min)

@@ -1,0 +1,45 @@
+re-verifying 147 reference programs (epoch 15 scorer f1b406c16c7e-db31b28ade02 -> 6419ff591842-db31b28ade02)
+ERROR: Could not find a version that satisfies the requirement googleapiclient (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.3
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for googleapiclient
+ERROR: Could not find a version that satisfies the requirement pkg_resources (from versions: none)
+
+[notice] A new release of pip is available: 25.2 -> 26.3
+[notice] To update, run: C:\Users\bened\Desktop\r2py_v0.3\.venv-sandbox\Scripts\python.exe -m pip install --upgrade pip
+ERROR: No matching distribution found for pkg_resources
+[r2py] Installing Python package 'googleapiclient' ...
+[r2py] Warning: failed to install 'googleapiclient': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'googleapiclient']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_64034dd3bb.py
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'tmp_scss_file' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'funs' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] WARNING: 'df' is a data entity but Python could not serialize it — excluded from comparison
+[r2py] Installing Python package 'ranger' ...
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_a8d002ef84.py
+[r2py] Installing Python package 'pkg_resources' ...
+[r2py] Warning: failed to install 'pkg_resources': Command '['C:\\Users\\bened\\Desktop\\r2py_v0.3\\.venv-sandbox\\Scripts\\python.exe', '-m', 'pip', 'install', 'pkg_resources']' returned non-zero exit status 1.
+[Verify]  runtime SyntaxError; assembled source saved to C:\Users\bened\AppData\Local\Temp\r2py_syntax_37ea0fe20f.py
+# Scorer regression check, 2026-11-16 16:57
+
+- Epoch 15 scorer `f1b406c16c7e-db31b28ade02`; current scorer `6419ff591842-db31b28ade02`.
+- Programs: 147; unchanged 133, **changed 3**, small moves within noise 2, flaky within their range 9, errors 0.
+- **The R capture code changed since the epoch began.** The stored script maps may be stale: re-capture them (`scripts/refresh_entity_bundles.py`) and check again before accepting.
+- Mean change over the changed programs +0.0286; up 2, down 1; run/crash flips 0.
+
+| program | before | after | exit | entities that moved (before -> after) |
+|---|---|---|---|---|
+| start:bslib__rd_example__page_fillable_Rd | 0.3677 | 0.3526 | 0->0 | ui 0.368->0.353 |
+| final_default:openssl__rd_example__ec_dh_Rd | 0.6629 | 0.6747 | 0->0 | ec_dh 0.739->0.774; ec_dh_1 0.739->0.774 |
+| final_w3:shape__rd_example__getellipse_Rd | 0.6592 | 0.7482 | 0->0 | emptyplot 0.637->0.993 |
+
+Small moves (aggregate <= 0.005, no entity > 0.02, no run/crash flip; not counted as changes): final_default:sass__rd_example__as_sass_Rd 0.8675->0.8678, final_w3:textshaping__rd_example__lorem_text_Rd 0.5567->0.5570
+
+report: work\scoring\check_20261116_1657.md

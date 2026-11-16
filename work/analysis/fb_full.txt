@@ -1,0 +1,14 @@
+input {'variable_output': 0.0, 'control_flow_match': 1.0, 'type_match': 0.0, 'data_output': 0.0}
+sass_file {'side_effects': 0.672}
+sass {'side_effects': 0.893}
+as.data.frame {'side_effects': 0.693}
+pr_DB$get_entries_1 {'side_effects': 0.885}
+chain {'type_match': 0.0, 'data_output': 0.0, 'variable_output': 0.0, 'control_flow_match': 1.0}
+--- tab3_1 EffectClass.DATA 0.000
+tab3: tab3.layout.l[0]: 2 != 3 (outside tolerance)
+tab3 {'type_match': 0.0, 'data_output': 0.0, 'variable_output': 0.0, 'control_flow_match': 1.0}
+tab3_1 {'control_flow_match': 1.0}
+--- doc EffectClass.DATA 0.138
+doc: doc: text forms differ (similarity 0.61) - R '<doc b:id="one" f:id="two" id="three"/>' Python '<doc xmlns:b="http://bar.com" xmlns:f="http://foo.com" b:id="one" f:id="two" id='
+kids {'variable_output': 0.0, 'data_output': 0.0, 'type_match': 0.0, 'control_flow_match': 1.0}
+doc {'variable_output': 0.138, 'data_output': 0.138, 'type_match': 0.138, 'control_flow_match': 1.0}
