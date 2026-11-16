@@ -364,5 +364,30 @@
   "errors": [],
   "model_mappings": 5,
   "note": "epoch 15: graphics pages attributed as R's - a Python figure belongs to the entity that creates it, with everything later entities draw on it (no close at each checkpoint; a new figure ends the older ones; current figure and size untouched); R's unboxed one-element fingerprint series are lists; a bare-number axis label is an R default. check 20261116_1614: 12 moved, all explained (shape Arrows/getellipse/filledmultigonal, prodlim backGround up; ragg agg_capture and the Oct-20 getellipse final down: figures created where R starts no page; ec_dh, page_fillable noise)"
+ },
+ {
+  "epoch": 16,
+  "scoring_version": "6419ff591842-db31b28ade02",
+  "r_capture": "26c0ba78c78a",
+  "date": "2026-11-16 17:01",
+  "programs": 147,
+  "flaky": [
+   "final_default:e1071__rd_example__boxplot_bclust_Rd",
+   "final_default:openssl__rd_example__ec_dh_Rd",
+   "final_default:recipes__rd_example__step_kpca_Rd",
+   "final_default:sass__rd_example__sass_import_Rd",
+   "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+   "final_w3:openssl__rd_example__ec_dh_Rd",
+   "final_w3:recipes__rd_example__step_kpca_Rd",
+   "final_w3:sass__rd_example__sass_import_Rd",
+   "final_w3:textshaping__rd_example__lorem_text_Rd",
+   "start:bslib__rd_example__page_fillable_Rd",
+   "start:openssl__rd_example__ec_dh_Rd",
+   "start:recipes__rd_example__step_kpca_Rd",
+   "start:sass__rd_example__as_sass_Rd"
+  ],
+  "errors": [],
+  "model_mappings": 5,
+  "note": "epoch 16: the Python graphics fingerprint keeps every point, as R's (it kept the first 5000 per series, per collection and per page). check 20261116_1657: 3 moved - shape getellipse w3 emptyplot 0.637->0.993 (intended); ec_dh, page_fillable noise; R preamble unchanged (file hash flag only)"
  }
 ]

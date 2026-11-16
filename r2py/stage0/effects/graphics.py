@@ -207,7 +207,7 @@ def _r2py_fp_num(seq):
         a = _np.asarray(seq, dtype=float).ravel()
     except Exception:
         return []
-    return [float(v) for v in a[_np.isfinite(a)]][:5000]
+    return [float(v) for v in a[_np.isfinite(a)]]   # no cap: R's fingerprint keeps every point (epoch 16)
 
 def _r2py_fp_fig(fig):
     # Content fingerprint of one matplotlib figure (see r2py.stage0.effects.graphics).
@@ -240,8 +240,8 @@ def _r2py_fp_fig(fig):
                 if isinstance(c, _PC):
                     off = _np.asarray(c.get_offsets(), dtype=float).reshape(-1, 2)
                     off = off[_np.isfinite(off).all(axis=1)]
-                    fp['px'] += [float(v) for v in off[:, 0]][:5000]
-                    fp['py'] += [float(v) for v in off[:, 1]][:5000]
+                    fp['px'] += [float(v) for v in off[:, 0]]
+                    fp['py'] += [float(v) for v in off[:, 1]]
                     fp['seg'].append(len(off))
                 else:
                     fp['n_polys'] += len(c.get_paths())
@@ -255,7 +255,6 @@ def _r2py_fp_fig(fig):
             leg = ax.get_legend()
             if leg is not None:
                 fp['texts'] += [t.get_text() for t in leg.get_texts() if t.get_text()]
-        fp['px'] = fp['px'][:5000]; fp['py'] = fp['py'][:5000]
         return fp
     except Exception:
         return None

@@ -73,5 +73,13 @@ class TestCaptureEndToEnd(unittest.TestCase):
         self.assertEqual(empty.score, 0.0)
 
 
+    def test_python_keeps_every_point_as_r_does(self):
+        # Epoch 16 (2026-11-16): the Python fingerprint kept the first 5000 points, R's all of them (shape
+        # getellipse: 91 series of 630 points, R 57,330 points, Python 5000).
+        rb, pb, res = self._run("plot(1:6000)", "plt.figure();plt.plot(range(1, 6001), 'o')")
+        self.assertEqual((len(rb.graphics_meta[0]["px"]), len(pb.graphics_meta[0]["px"])), (6000, 6000))
+        self.assertEqual(res.score, 1.0, res.explanation)
+
+
 if __name__ == "__main__":
     unittest.main()

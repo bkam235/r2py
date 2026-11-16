@@ -5210,3 +5210,47 @@ before any data.**
   $4); the 5000-point cap (scorer, correction, getellipse 0.0015 and wherever else a page has more points); the graphics
   difference feedback, now that the comparison it would describe is right (bet; its ceiling shrank to about 0.015
   in-reach graphics points); the R RNG helper (bet, 0.013); the stop threshold as a loop flag (lever).
+
+### 2026-11-16: epoch 16, the Python graphics fingerprint keeps every point (scorer track, correction)
+
+- **Question:** the remainder of getellipse found under epoch 15: the Python fingerprint kept the first 5000 points
+  (per series, per scatter collection, per page; `r2py/stage0/effects/graphics.py`), R's keeps all of them, so a page
+  with more points compared different sets (getellipse `emptyplot`: 91 series of 630 points, R 57,330, Python 5000,
+  y range 0.229-0.771 against 0-1).
+- **Fix:** the three Python caps removed (Python preamble only; the check's "R capture code changed" flag is the file
+  hash, the R preamble is unchanged, no re-capture). Test: `tests/test_graphics_content.py`
+  `test_python_keeps_every_point_as_r_does` (R `plot(1:6000)`: Python had 5000 points, now 6000, score 1.0). Suite 1101
+  passed, the known `test_with_locale_dataframe_date_column_round_trip` fails.
+- **Check** (`work/scoring/check_20261116_1657.md`): 3 of 147 moved: getellipse w3 `emptyplot` 0.637 -> 0.993 (intended);
+  ec_dh, page_fillable noise. The person asked for the fix; I first ran `accept` on that request and the permission
+  gate stopped it; accepted by the person after the report. Curves rebuilt (`work/scoring/accept_epoch16.log`): start
+  0.5140 -> 0.5135, the DeepSeek default's measured curve 0.8831 -> 0.8843.
+- **The default's finals** (`finals_epoch16.jsonl`, `work/analysis/epoch16_finals.py`, `.txt`): training **0.8637 ->
+  0.8656** (+0.0019), share >= 0.95 0.533 -> **0.550** (getellipse 0.909 -> 1.000; page_fillable, ec_dh noise); held-out
+  0.9071 -> 0.9070, share 0.652. All correction, no gain. Since the 2026-11-12 adoption: gain 0, correction -0.0157.
+- Gap ledger: getellipse leaves; reachable gap 0.092 to 0.101; share room 0.350 to 0.367.
+
+### 2026-11-16: replay of the production default under epoch 16 (registered `default-e16-replay`, descriptive)
+
+- **Why now** (step 9; the person's request, ahead of changes to the meta-harness): epochs 10-16 changed the feedback
+  the model sees since the latest replay of `default_2026_11_12` (2026-11-12, epoch 9): sentinel attribution (10),
+  module rebinding (11, shiny), forged fingerprints refused (13), Python capture as R's (14), graphics pages (15),
+  every point (16). The plateau quoted since then (0.8656) is the epoch-9 replay's programs re-scored; how the
+  default translates under the current feedback is unmeasured. The run also gives fresh trajectories for the gap
+  ledger and a same-epoch baseline for the next tests.
+- **Instrument:** `replay.py --pool training --policies default_2026_11_12 --samples 1 --workers 6`, run guard
+  `--budget 4`, `--reserve` default; run dir `work/replay_default_e16`. Same 60 frozen starts.
+- **Baseline:** the epoch-9 replay of the same policy (`work/dsflash_default`, sample 0), its finals re-verified under
+  epoch 16 (`finals_epoch16.jsonl`, 0.8656, share 0.550); not concurrent.
+- **Primary:** mean final, replay minus baseline, paired by state, 95% bootstrap over states. **Secondary:** share of
+  finals >= 0.95; by start stratum (running 46, crashing 14); states better / worse / tied; whether shiny
+  updateRadioButtons closes (expected under epoch 11); `__r2py_fp__` forging in the finals
+  (`work/analysis/fingerprint_forging.py`); stop reasons.
+- **Rule: descriptive.** One sample per state against a non-concurrent baseline: a replay moves about ±0.03 on the
+  plateau and ±0.09 on the share by itself, so the replay cannot attribute any difference to one epoch or resolve an
+  effect below about 0.03. It informs the meta-harness changes and is the new reference plateau for the default.
+- **Cost:** about $2.06 (the 2026-11-12 run of this policy); budget $4.
+- **Analysis:** `python scripts/reverify_finals.py work/replay_default_e16 default_2026_11_12
+  work/replay_default_e16/finals_epoch16.jsonl`, then `python scripts/ceiling_analysis.py
+  work/replay_default_e16/results.jsonl work/dsflash_default/finals_epoch16.jsonl
+  work/replay_default_e16/finals_epoch16.jsonl`; `python scripts/health_report.py work/replay_default_e16 --deep`.

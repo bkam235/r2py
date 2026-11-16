@@ -1,0 +1,5 @@
+work/dsflash_default: n 60 errors []  plateau 0.8637 -> 0.8656 (+0.0019)  share>=0.95 0.533 -> 0.550
+   bslib__rd_example__page_fillable_Rd                        0.324 -> 0.352
+   openssl__rd_example__ec_dh_Rd                              0.415 -> 0.409
+   shape__rd_example__getellipse_Rd                           0.909 -> 1.000
+work/dsflash_heldout: n 46 errors []  plateau 0.9071 -> 0.9070 (-0.0001)  share>=0.95 0.652 -> 0.652

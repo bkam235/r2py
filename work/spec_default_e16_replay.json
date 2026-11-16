@@ -1,0 +1,25 @@
+{
+ "id": "default-e16-replay",
+ "question": "Measured plateau of the production default default_2026_11_12 under epoch 16, after the feedback corrections of epochs 10-16.",
+ "track": "harness",
+ "instrument": "replay.py --pool training --policies default_2026_11_12 --samples 1 --workers 6",
+ "pool": "training (60 frozen starts)",
+ "arms": [
+  "default_2026_11_12"
+ ],
+ "baseline": "the epoch-9 replay of the same policy (work/dsflash_default, sample 0), finals re-verified under epoch 16 (0.8656); not concurrent",
+ "primary": "mean final, replay minus baseline, paired by state, 95% bootstrap over states",
+ "rule": "descriptive (one sample per state, non-concurrent baseline; replay noise about +-0.03 plateau, +-0.09 share)",
+ "est_cost": 2.06,
+ "plan": "Replay of the production default under epoch 16",
+ "option": "policy default_2026_11_12",
+ "samples": 1,
+ "strata": [
+  "running starts",
+  "crashing starts"
+ ],
+ "run_dir": "work/replay_default_e16",
+ "budget": 4.0,
+ "analysis": "python scripts/reverify_finals.py work/replay_default_e16 default_2026_11_12 work/replay_default_e16/finals_epoch16.jsonl; python scripts/ceiling_analysis.py work/replay_default_e16/results.jsonl work/dsflash_default/finals_epoch16.jsonl work/replay_default_e16/finals_epoch16.jsonl; python scripts/health_report.py work/replay_default_e16 --deep",
+ "note": "secondary: share >= 0.95, strata, better/worse/tied, shiny updateRadioButtons, fingerprint forging, stop reasons; requested by the person ahead of meta-harness changes"
+}
