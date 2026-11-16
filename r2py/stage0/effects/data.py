@@ -449,7 +449,21 @@ class _R2PyEncoder(_r2py_json.JSONEncoder):
         if isinstance(obj, (bytes, bytearray)):  # jsonlite emits raw() as base64
             import base64 as _b64
             return _b64.b64encode(bytes(obj)).decode('ascii')
+        # Any other object is fingerprinted where it stands, as R serializes a list element by element (an xml2
+        # nodeset is a list of node fingerprints, 2026-11-16). Under a key the program cannot know, so that a marker
+        # the program wrote can be told apart (_r2py_try_serialize_quiet); a few per value, else the whole value is.
+        if self._r2py_inline < 50:
+            self._r2py_inline += 1
+            fp = _r2py_fingerprint(obj)
+            if fp:
+                fp = {(_R2PY_FP_KEY if k == '__r2py_fp__' else k): v for k, v in fp.items()}
+                return fp
         return super().default(obj)
+
+    _r2py_inline = 0
+
+
+_R2PY_FP_KEY = '__r2py_fp_' + __import__('secrets').token_hex(8) + '__'
 
 
 def _r2py_fingerprint(obj):
@@ -559,9 +573,19 @@ def _r2py_fingerprint(obj):
 
 
 def _r2py_xml_text(obj):
+    \"\"\"An XML node's text as xml2's ``as.character``: the node alone, without the text after it (its tail).\"\"\"
     from lxml import etree as _etree
     if isinstance(obj, (_etree._Element, _etree._ElementTree)):
-        return _etree.tostring(obj, encoding='unicode')
+        return _etree.tostring(obj, encoding='unicode', with_tail=False)
+    import xml.etree.ElementTree as _ET
+    if isinstance(obj, _ET.Element):
+        _tail = obj.tail
+        try:
+            obj.tail = None
+            _s = _ET.tostring(obj, encoding='unicode')
+        finally:
+            obj.tail = _tail
+        return _etree.tostring(_etree.fromstring(_s), encoding='unicode')   # lxml's form, as xml2's: <a k="1"/>
     return None
 
 
@@ -584,9 +608,10 @@ def _r2py_try_serialize(name, obj):
 def _r2py_try_serialize_quiet(name, obj):
     try:
         raw = _r2py_json.dumps(obj, cls=_R2PyEncoder, allow_nan=True)
-        # A value JSON can represent holds no fingerprint of the capture's: a marker in it was written by the
-        # program (forging R's node fingerprints, 2026-11-15), so it is renamed and the dict compared as a dict.
+        # The capture's own fingerprints carry _R2PY_FP_KEY; a `__r2py_fp__` marker was written by the program
+        # (forging R's node fingerprints, 2026-11-15), so it is renamed and the dict compared as a dict.
         raw = raw.replace('"__r2py_fp__":', '"__r2py_fp_written_by_program__":')
+        raw = raw.replace('"' + _R2PY_FP_KEY + '":', '"__r2py_fp__":')
         return _r2py_sanitize(_r2py_json.loads(raw, parse_constant=lambda c: {
             'NaN': None, 'Infinity': 'Inf', '-Infinity': '-Inf',
         }.get(c))), True

@@ -5102,3 +5102,33 @@ before any data.**
   warning for `df`, `funs`, `tmp_scss_file`).
 - Before any held-out run of the threshold: decide whether the stop threshold and the learning path's
   `entity_score_threshold` (both `cfg["score_threshold"]` in `r2py/heldout.py`) stay one setting.
+
+### 2026-11-16: epoch 14, the Python capture serializes as the R capture does (scorer track, correction)
+
+- **Question** (the person's framing): the R and the Python capture need the same serialization capabilities for
+  the verifier to work as intended. Gaps found: R serializes a list element by element (an xml2 nodeset is a list of
+  node fingerprints, each with `as.character(node)`); Python fingerprinted only a whole value, so a list of lxml nodes
+  was one fingerprint with no text (xml2 `kids` 0.25 for every program). A stdlib `xml.etree` element had no text
+  form, became uncapturable and was excluded from comparison (threshold-095 xml2 b1). lxml's text kept the node's tail;
+  xml2's does not (checked in R 4.5.3: `<a k="1"/>`, lxml default `<a k="1"/>tail`).
+- **Change** (`r2py/stage0/effects/data.py`, Python preamble only): `_R2PyEncoder.default` fingerprints an object JSON
+  cannot represent where it stands (at most 50 per value, then the whole value as before), under a key drawn per run
+  (`_R2PY_FP_KEY`), so a program's own `__r2py_fp__` marker is still renamed (epoch 13) and the capture's restored;
+  `_r2py_xml_text` gives `xml.etree` elements lxml's form and drops the tail (`with_tail=False`). Tests:
+  `tests/test_python_capture_parity.py` (6, from xml2's stored values and xml2's output). Suite 1094 passed.
+  The cap of 50 is a guard of this change, not R's.
+- **Check** (`work/scoring/check_20261116_0930.md`): 13 of 147 changed, 9 up, 4 down, no run/crash flip. Intended:
+  xml2 kids 0.25 -> 1.0 (default final 0.920 -> 0.962, w3 0.902 -> 0.943), rvest html_children `ul`/`p` 0.25 -> 1.0
+  (start 0.605 -> 0.905, w3 0.579 -> 0.879). Explained (`work/analysis/epoch14_moves.txt`): purrr attr_getter `x`
+  0.25 -> 1.0 (two objects whose text is R's `"obj"`); openssl certificates `cert_data` 0.25 -> 0.33 and caret
+  update_train `knnFit1` 0.108 -> 0.24 (a dict holding objects is now compared as a dict, as R's list, not as one
+  fingerprint); recipes step_kpca down 0.007 (`kpca_estimates` 0.361 -> 0.304: compared as a dict against R's recipe,
+  less credit than the old match on numbers in any layout). Noise: ec_dh, lorem_text. Accepted by the person; curves rebuilt (`work/scoring/accept_epoch14.log`): start 0.5106 -> 0.5148, the DeepSeek default's measured curve 0.8831 -> 0.8833.
+- **The default's finals** (`finals_epoch14.jsonl`, `work/analysis/epoch14_finals.txt`): training **0.8654 -> 0.8668**
+  (+0.0014; xml2 0.921 -> 0.962, caret update_train 0.843 -> 0.863, page_fillable noise), share 0.517 -> 0.533;
+  held-out **0.9070 -> 0.9071** (the measured +0.022 is sparse_logical's one-off epoch-13 crash scoring normally),
+  share 0.652. All correction, no gain. The rvest finals do not move (their values are plain dicts).
+- Gap ledger: xml2 xml_attr leaves (>= 0.95); rvest html_children is behaviour (its start with real nodes now scores
+  `ul`, `p` 1.0); reachable gap 0.090 to 0.107, share room 0.350 to 0.383.
+- Remaining asymmetry, not changed: R takes text only from classes with a real `as.character` method; Python takes
+  `str()` of any object without a memory address in it.

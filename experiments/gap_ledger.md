@@ -10,30 +10,30 @@ a test or a trajectory reading classes it. The headroom check (META_LOOP.md, "He
 
 Created 2026-11-14 (cycle of 2026-11-14). Source: `work/dsflash_default/finals_epoch11.jsonl` (default_2026_11_12,
 sample 0, finals re-verified under epoch 11, scorer d5609fe186a0-db31b28ade02; epoch 10 in
-`finals_epoch10.jsonl`). From epoch 13 (2026-11-15, forged fingerprints refused): `finals_epoch13.jsonl`.
+`finals_epoch10.jsonl`). From epoch 13 (2026-11-15, forged fingerprints refused): `finals_epoch13.jsonl`; from epoch 14 (2026-11-16, Python capture as R's): `finals_epoch14.jsonl`.
 
-## Summary (epoch 13 finals)
+## Summary (epoch 14 finals)
 
 Classified on 2026-11-15 (16 of the 17 `unknown` rows, offline: `work/analysis/tempfile_names.py`,
-`entity_zero.py`, `fb_full.py`, and the replay's trajectories). Several classes are hypotheses; the row says which. Corrected the same day by threshold-095, whose continuations reached >= 0.95 in four states classed out of reach or measurement from reading values (gtable, shape_string, value_box, sass_import): a class read off values is weak until a program tests it. Epoch 13 (forged fingerprints refused) took rvest html_children and html_table from 1.0 to 0.550 and 0.472: they enter the ledger as unknown.
+`entity_zero.py`, `fb_full.py`, and the replay's trajectories). Several classes are hypotheses; the row says which. Corrected the same day by threshold-095, whose continuations reached >= 0.95 in four states classed out of reach or measurement from reading values (gtable, shape_string, value_box, sass_import): a class read off values is weak until a program tests it. Epoch 13 (forged fingerprints refused) took rvest html_children and html_table from 1.0 to 0.550 and 0.472: they enter the ledger as unknown. Epoch 14 (the Python capture fingerprints element by element, as R; xml.etree text; no tail) took xml2 xml_attr to 0.962 (`kids` 0.25 -> 1.0), out of the ledger; caret update_train 0.843 -> 0.863.
 
 | plateau (primary) | states | points |
 |---|---|---|
-| gap (1 - mean final 0.8654; 0.8806 before epoch 13) | 60 | 0.1346 |
-| held by the states with final >= 0.95 (not listed) | 31 | 0.0048 |
-| behaviour | 13 | 0.0392 |
-| measurement (a scorer fix moves it as a correction) | 4 | 0.0256 (shiny 0.0125, fixed in epoch 11, closes in the next replay; shown offline 0.0035: sass as_sass, xml2 xml_attr; hypothesis 0.0096: ec_dh) |
-| capability | 4 | 0.0137 (all R's RNG stream under the harness's `set.seed(42)`: caret_s3, update_train, Arrows, boxplot_bclust) |
-| out of reach | 5 | 0.0268 (aes_cbc, glyph_raster, shape_text, ragg agg_capture; bslib page_fillable pending the py-shiny markup decision, 0.0109) |
-| unknown | 3 | 0.0246 (prodlim backGround 0.0083; rvest html_table 0.0088, html_children 0.0075, since epoch 13) |
-| **reachable gap** (1 - mean final - out of reach) | | **0.083 to 0.108** (unknown counted both ways; noise floor about ±0.03, twice it 0.06) |
+| gap (1 - mean final 0.8668; 0.8654 in epoch 13, 0.8806 before) | 60 | 0.1332 |
+| held by the states with final >= 0.95 (not listed) | 32 | 0.0054 |
+| behaviour | 14 | 0.0467 (rvest html_children 0.0075 since epoch 14) |
+| measurement (a scorer fix moves it as a correction) | 3 | 0.0243 (shiny 0.0125, fixed in epoch 11, closes in the next replay; shown offline 0.0022: sass as_sass; hypothesis 0.0096: ec_dh) |
+| capability | 4 | 0.0134 (all R's RNG stream under the harness's `set.seed(42)`: caret_s3, update_train, Arrows, boxplot_bclust) |
+| out of reach | 5 | 0.0264 (aes_cbc, glyph_raster, shape_text, ragg agg_capture; bslib page_fillable pending the py-shiny markup decision, 0.0105) |
+| unknown | 2 | 0.0171 (prodlim backGround 0.0083; rvest html_table 0.0088, since epoch 13) |
+| **reachable gap** (1 - mean final - out of reach) | | **0.090 to 0.107** (unknown counted both ways; noise floor about ±0.03, twice it 0.06) |
 
 | share >= 0.95 (secondary) | states | share |
 |---|---|---|
-| room (1 - share 0.517; held-out 0.652; 0.550 before epoch 13) | 29 | 0.483 |
+| room (1 - share 0.533; held-out 0.652; 0.517 in epoch 13, 0.550 before) | 28 | 0.467 |
 | out of reach | 5 | 0.083 |
-| unknown | 3 | 0.050 |
-| **reachable room** | | **0.350 to 0.400** (noise floor of a replay about ±0.09) |
+| unknown | 2 | 0.033 |
+| **reachable room** | | **0.350 to 0.383** (noise floor of a replay about ±0.09) |
 
 The 8 states at 0.90-0.95 were added on 2026-11-14 with the cut. In each, at least one of the 3 chains stopped
 because its best reached the loop's stop threshold 0.9 (16 threshold stops of 24 chains; the replay's `stop`
@@ -44,12 +44,12 @@ counts), so the threshold, not the model, ended them below 0.95.
 | state | final | points | class | evidence | set |
 |---|---|---|---|---|---|
 | shiny updateRadioButtons | 0.250 | 0.0125 | measurement, fixed in epoch 11 (expected to close in the next replay) | Epoch 11 (module-rebind): all 27 rewrites DeepSeek Flash chains logged on this state, re-scored offline (`work/analysis/shiny_e11_rescore.txt`): the first rewrite of 16 of 18 chains scores 0.96 (logged: 3 of 18 >= 0.9). The recorded final is the start, which never assigns `ui` (0.25, scored right). Counterfactual, not a run. Before: all 4 rewrites of the default replay scored 0.25 with the same `ui` HTML (similarity 0.99) as the 0.96 program of feedback-e10. The only difference: `from shiny import ui` then `ui = ui.page_fluid(...)` rebinds the module name. Renaming the module import alone (offline, same program otherwise) gives `ui` 0.96, aggregate 0.96. With the rebinding, `ui` scores 0 on data, value and type while its feedback shows the 0.99-similar HTML: the feedback misleads. Cause: the checkpoint baseline kept no id for modules. (`work/analysis/shiny_trace.py`, `unshadow.py`) | 2026-11-14 |
-| bslib page_fillable | 0.344 | 0.0109 | out of reach (pending a scoring decision) | Epoch 12, offline (`work/analysis/tempfile_names.py`): the 151 `tempfile:*.woff2` keys (fonts bslib caches) reach no score (removed: 0.324 -> 0.368, inside its repeat range 0.29-0.37); they only fill the feedback. What loses is `ui` data 0.157: R's bslib renders `<body class="bslib-page-fill ...` and py-shiny `<html><head></head><body ...` (text similarity 0.63). Two libraries' markup; whether py-shiny's markup should count is the open "py-shiny vs R shiny markup" scoring decision (October). | 2026-11-15 |
+| bslib page_fillable | 0.367 | 0.0105 | out of reach (pending a scoring decision) | Epoch 12, offline (`work/analysis/tempfile_names.py`): the 151 `tempfile:*.woff2` keys (fonts bslib caches) reach no score (removed: 0.324 -> 0.368, inside its repeat range 0.29-0.37); they only fill the feedback. What loses is `ui` data 0.157: R's bslib renders `<body class="bslib-page-fill ...` and py-shiny `<html><head></head><body ...` (text similarity 0.63). Two libraries' markup; whether py-shiny's markup should count is the open "py-shiny vs R shiny markup" scoring decision (October). | 2026-11-15 |
 | openssl ec_dh | 0.425 | 0.0096 | measurement (hypothesis) | Epoch 10: `alice_pub`/`bob_pub` sentinels now attributed score 0.25; R's key objects cannot be serialized, so R's bundle is empty and an entity Python computes is penalised. Hypothesis, not tested (IMPROVEMENT_PLAN, epoch 10). | 2026-11-14 |
 | ggplot2 geom_bin_2d | 0.500 | 0.0083 | behaviour | Never improved in the replay (4 catastrophic crashing rewrites of 9); patience-dsflash reached +0.178 on it. | 2026-11-14 |
 | prodlim backGround | 0.500 | 0.0083 | unknown | 9 rewrites, all `unchanged`; `plot(0,0)` scores plotted similarity exactly 0.000 and R records no figure at the `backGround` calls (draws on the open plot). The feedback gives a similarity, not the difference. Suspected measurement (exact 0 on a one-point plot), not shown. | 2026-11-15 |
-| rvest html_table | 0.472 | 0.0088 | unknown (suspected measurement, in part) | Epoch 13: the default final wrote `sample1..3` as forged fingerprint dicts (an `XmlNode(dict)` class); refused, they score 0.25 ("Python has no text form") and `html_element*` 0.167. `html_table*` 1.0. Whether a real lxml/bs4 document reaches R's text form is not tested; lists of lxml nodes get no text form (as xml2 `kids`). | 2026-11-15 |
-| rvest html_children | 0.550 | 0.0075 | unknown (suspected measurement, in part) | Epoch 13: `html`, `ul`, `p` written as forged fingerprint dicts (a `_node` helper); refused, 0.25 each ("Python has no text form"; `ul[0]`, `p[0]`: lists of nodes). `html_children*` 1.0. As html_table. | 2026-11-15 |
+| rvest html_table | 0.472 | 0.0088 | unknown (suspected measurement, in part) | Epoch 13: the default final wrote `sample1..3` as forged fingerprint dicts (an `XmlNode(dict)` class); refused, they score 0.25 ("Python has no text form") and `html_element*` 0.167. `html_table*` 1.0. Whether a real lxml/bs4 document reaches R's text form is not tested; lists of lxml nodes get no text form (as xml2 `kids`). Epoch 14 gives lists of lxml nodes their per-node text form; the final is unchanged (its values are plain dicts). | 2026-11-15 |
+| rvest html_children | 0.550 | 0.0075 | behaviour (since epoch 14) | Epoch 13: `html`, `ul`, `p` written as forged fingerprint dicts (a `_node` helper); refused, 0.25 each ("Python has no text form"; `ul[0]`, `p[0]`: lists of nodes). `html_children*` 1.0. As html_table. Epoch 14: the start program, with real lxml nodes, scores `ul` and `p` 1.0 (start 0.605 -> 0.905, check 20261116_0930), so the state is reachable; the default final forged instead. | 2026-11-15 |
 | openssl aes_cbc | 0.550 | 0.0075 | out of reach | `aes_cbc_encrypt` defaults to `iv = rand_bytes(16)`; R's `serialize` bytes (cycle of 2026-10-17). | 2026-11-14 |
 | farver convert_colour | 0.703 | 0.0050 | behaviour | feedback-e10 reached 0.890 (marked `spec_lab`); some chains pasted `convert_colour` outputs (model-screen audit). | 2026-11-14 |
 | recipes step_kpca | 0.725 | 0.0046 | behaviour (hypothesis) | Feedback names a missing figure (R=1, Python=0: the ggplot) and kPCA values (`kpca_te` 0.25, `kpca_estimates` 0.35); chains went 0.56-0.73 with 21 probes, none adding the figure. kernlab's kPCA numerics not checked. | 2026-11-15 |
@@ -61,7 +61,7 @@ counts), so the threshold, not the model, ended them below 0.95.
 | textshaping shape_text | 0.807 | 0.0032 | out of reach | Font metrics, as glyph_raster; 3 literal-check rejections in the replay. | 2026-11-14 |
 | shape getellipse | 0.815 | 0.0031 | behaviour (graphics feedback) | Data entities all 1.0; only `plot` 0.27 and `emptyplot` 0.25 on plotted similarity. 29 rewrites over 6 chains; the feedback is a similarity number, not what differs, so no step can aim (the graphics-visibility bet). | 2026-11-15 |
 | shape Arrows | 0.826 | 0.0029 | capability (R's RNG stream) | `x0 <- runif(100, ...)` etc. under the harness's `set.seed(42)`: `x0`, `y0` 0.25 and the arrow plots depend on R's draws. The rest (curve, xd) is graphics feedback as getellipse. | 2026-11-15 |
-| caret update_train | 0.843 | 0.0026 | capability (R's RNG stream) | `train(..., trControl = trainControl(method = "cv"))`: `knnFit1` results (Accuracy, Kappa) and seeds come from R's fold draws; 0/13 numeric fields found. As caret_s3. | 2026-11-15 |
+| caret update_train | 0.863 | 0.0023 | capability (R's RNG stream) | `train(..., trControl = trainControl(method = "cv"))`: `knnFit1` results (Accuracy, Kappa) and seeds come from R's fold draws; 0/13 numeric fields found. As caret_s3. | 2026-11-15 |
 | sass as_sass | 0.867 | 0.0022 | measurement (shown offline) | `input` 0.25: R's value is the Sass text with `@import "...RtmpCgcbhs/variables5e00e5c1d6a"` (R's temp path), Python's the same text with its own temp path (`...Rtmpd5KSNZ/variablesdcbf739e872b`). The temp-path rule (2026-10-18) treats whole-string paths only; a temp path inside a string scores 0. The FILES key `tempfile:variables5e00e5c1d6a` (R's random name) reaches no score (removed: 0.8674 -> 0.8676) but tops every entity's feedback. (`work/analysis/entity_zero.py`, `tempfile_names.py`) | 2026-11-15 |
 | openssl certificates | 0.893 | 0.0018 | behaviour | `chain` 0.25: the final binds `chain` under the `print` entity; at `chain` it only defines `download_ssl_cert`, so nothing is recorded there. (Network value: R's capture holds the CRAN certificate valid 2025-12-16 to 2027-01-16.) | 2026-11-15 |
 | textshaping get_font_features | 0.903 | 0.0016 | behaviour (hypothesis) | Only `sys_fonts` loses (0.71): R lists 406 fonts, Python 405 and in another order (`Barrio` first). October: Python can read the same font files. In feedback-e10 a new run on it ended 0.217 lower. | 2026-11-15 |
@@ -69,6 +69,5 @@ counts), so the threshold, not the model, ended them below 0.95.
 | sass sass_import | 0.906 | 0.0016 | behaviour (corrected) | Corrected after threshold-095: two continuations reached 0.977, so the printed temp path does not block it. FILES key `tempfile:file522c7cde307a.scss` reaches no score (removed: 0.9065 -> 0.9059). | 2026-11-15 |
 | systemfonts shape_string | 0.909 | 0.0015 | behaviour (corrected) | Corrected after threshold-095: a continuation reached 0.981 by reading the font file with fontTools (`shape_string`, 289 lines, no pasted decimals; literal_check and review passed). Not out of reach; the default's chains had pasted metrics instead. | 2026-11-15 |
 | gtable gtable_add_cols | 0.915 | 0.0014 | behaviour (sentinel placement; corrected) | Corrected after threshold-095: R's map has two entities, `tab3` (first `gtable_add_cols`) and `tab3_1` (the second); the default final put both assignments under `tab3`, so it recorded the last value there. A continuation that moved the second assignment under `tab3_1` scores 1.0 (`work/threshold95/audit/`). The morning's "measurement" was wrong: the scorer is right. | 2026-11-15 |
-| xml2 xml_attr | 0.921 | 0.0013 | measurement (shown offline) + library text form | `kids` 0.25: R's nodes are fingerprinted with their text (`<child id="a"/>`), Python's lxml elements only with `sourceline`, no text, so no lxml program can match. `doc` 0.14: lxml serializes in-scope `xmlns:` declarations, xml2 does not (similarity 0.61). Stops: threshold 3. threshold-095: all three continuations that reached >= 0.95 wrote `kids` as dicts in the harness's fingerprint format (`{'__r2py_fp__': True, 'class': ['xml_node'], 'text': ...}`), which the scorer accepts: a forged match, not a translation. Corrected 2026-11-16: two of the three forged (b0, b2; 0.92 under epoch 13); b1 reaches 0.953 under epoch 13 without forging, by making `doc` a stdlib `xml.etree` element the capture cannot serialize, which the comparator excludes (`doc` 0.353 -> 0.91): a second measurement fault, open. | 2026-11-15 |
 | bslib value_box | 0.923 | 0.0013 | behaviour (corrected; faithfulness flagged) | Corrected after threshold-095: a continuation reached 0.9999 by building bslib's value_box HTML in Python (`_value_box_html`, about 110 lines). A port of bslib's markup rather than py-shiny; whether that is a faithful translation is for the person (flagged in the audit). The 151 `tempfile:*.woff2` keys reach no score. | 2026-11-15 |
 | proxy registry | 0.947 | 0.0009 | behaviour | `as.data.frame` 0.69 and `get_entries_1` 0.89 on printed output; all 3 chains still improving when the 0.9 threshold stopped them (0.92-0.95). | 2026-11-15 |

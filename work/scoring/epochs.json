@@ -304,5 +304,39 @@
   "errors": [],
   "model_mappings": 5,
   "note": "epoch 13: the Python capture refuses forged fingerprints (a __r2py_fp__ marker in a JSON-representable value is the program's, renamed); check 20261115_1632: 2 forged rvest finals down, 2 noise; R capture flag is the shared data.py file, Python capture only changed"
+ },
+ {
+  "epoch": 14,
+  "scoring_version": "77cbd182282d-db31b28ade02",
+  "r_capture": "d470ae3ba504",
+  "date": "2026-11-16 10:05",
+  "programs": 147,
+  "flaky": [
+   "final_default:broom__rd_example__augment_felm_Rd",
+   "final_default:caret__rd_example__update_train_Rd",
+   "final_default:e1071__rd_example__boxplot_bclust_Rd",
+   "final_default:farver__rd_example__as_white_ref_Rd",
+   "final_default:farver__rd_example__encode_colour_Rd",
+   "final_default:googledrive__rd_example__drive_cp_Rd",
+   "final_default:htmltools__rd_example__builder_Rd",
+   "final_default:htmltools__rd_example__tagAppendAttributes_Rd",
+   "final_default:isoband__vignette__isoband3_s2",
+   "final_default:lava__rd_example__csplit_Rd",
+   "final_default:lubridate__rd_example__period_Rd",
+   "final_default:openssl__rd_example__ec_dh_Rd",
+   "final_default:proxy__rd_example__registry_Rd",
+   "final_default:recipes__rd_example__step_kpca_Rd",
+   "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+   "final_w3:openssl__rd_example__ec_dh_Rd",
+   "final_w3:recipes__rd_example__step_kpca_Rd",
+   "final_w3:textshaping__rd_example__lorem_text_Rd",
+   "start:bslib__rd_example__page_fillable_Rd",
+   "start:openssl__rd_example__ec_dh_Rd",
+   "start:recipes__rd_example__step_kpca_Rd",
+   "start:textshaping__rd_example__lorem_text_Rd"
+  ],
+  "errors": [],
+  "model_mappings": 5,
+  "note": "epoch 14: Python capture as R's - objects JSON cannot represent are fingerprinted element by element (capture key per run, program markers still refused), xml.etree elements get xml2's text form, node text without tail as xml2 as.character; check 20261116_0930: 13 moved, all explained; R capture part of data.py unchanged"
  }
 ]

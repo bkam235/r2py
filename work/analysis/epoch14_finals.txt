@@ -1,0 +1,6 @@
+work/dsflash_default: n 60 errors []  plateau 0.8654 -> 0.8668 (+0.0014)  share>=0.95 0.517 -> 0.533
+   bslib__rd_example__page_fillable_Rd                        0.344 -> 0.367
+   caret__rd_example__update_train_Rd                         0.843 -> 0.863
+   xml2__rd_example__xml_attr_Rd                              0.921 -> 0.962
+work/dsflash_heldout: n 46 errors []  plateau 0.8853 -> 0.9071 (+0.0218)  share>=0.95 0.630 -> 0.652
+   sparsevctrs__rd_example__sparse_logical_Rd                 0.000 -> 1.000
