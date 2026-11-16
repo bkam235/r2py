@@ -5077,3 +5077,28 @@ before any data.**
   no text form"). Whether the forging continues in new runs is visible in the next replay's finals.
 - Next: the threshold as an `r2py/loop.py` flag (full loop, training then held-out); the lxml node-list text form
   (scorer, correction; touches xml2 kids and possibly both rvest states); bet: an R RNG helper (capability, 0.014).
+
+### 2026-11-16: threshold-095 re-read under epoch 13 (offline, no model calls)
+
+- All 40 chain finals re-verified under epoch 13 against the default's finals under epoch 13
+  (`work/analysis/t95_epoch13.py`, `work/threshold95/finals_epoch13.jsonl`, `analysis_epoch13.txt`). A chain with no
+  accepted program is scored from its start, re-verified.
+- **All 8 states:** plateau gain per call t95 - t90 **+0.0032 [+0.0014, +0.0075]**, P 1.00 (t95 +0.0065, t90 +0.0035);
+  share t95 +0.100, t90 +0.033. xml2 still counts as flipped: of its three continuations, b0 0.962 -> 0.921 and b2
+  0.976 -> 0.917 (the forged ones), but **b1 stays 0.953 and does not forge**. Correction of the 2026-11-15 audit,
+  which said all three forged: b1 has no `__r2py_fp__`.
+- **b1 gains by a second measurement fault** (`work/analysis/t95_xml2_b1.py`): it rebuilds `doc` as a stdlib
+  `xml.etree` element, which the Python capture cannot serialize (no JSON form, no text form: `str()` is
+  `<Element ... at 0x...>`). The data comparator excludes a variable Python could not serialize
+  (`r2py/stage4/comparators/data.py`, the "excluded from comparison" branch), so `doc` scores on the entity's other
+  variables: 0.353 -> 0.91, aggregate 0.921 -> 0.953. An R value Python leaves uncapturable costs nothing; a value
+  that is captured and wrong costs. The program's comment says it meant to match xml2's printing, so this need not
+  be gaming, but the score is not a match.
+- **Without xml2** (`analysis_epoch13_without_xml2.txt`): plateau gain per call t95 - t90 **+0.0033 [+0.0013,
+  +0.0082]**, P 1.00 (t95 +0.0059, t90 +0.0035); share t95 +0.083 (5 of 60), t90 +0.033, P 1.00 and 0.91. The
+  threshold's advantage holds with both faults set aside; still descriptive, training only.
+- Open (scorer track): whether a variable R has a value for and Python cannot capture should fail instead of being
+  excluded. Correction; it would also show where else exclusion lifts scores (the check's reference set logs the
+  warning for `df`, `funs`, `tmp_scss_file`).
+- Before any held-out run of the threshold: decide whether the stop threshold and the learning path's
+  `entity_score_threshold` (both `cfg["score_threshold"]` in `r2py/heldout.py`) stay one setting.

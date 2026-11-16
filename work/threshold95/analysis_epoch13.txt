@@ -1,0 +1,56 @@
+bslib__rd_example__value_box_Rd              t90_chain c0 in-loop 0.678 epoch 13 0.678
+bslib__rd_example__value_box_Rd              t95_cont  b2 in-loop 1.000 epoch 13 1.000
+bslib__rd_example__value_box_Rd              t90_chain c1 in-loop 0.914 epoch 13 0.914
+gtable__rd_example__gtable_add_cols_Rd       t95_cont  b0 in-loop 1.000 epoch 13 1.000
+gtable__rd_example__gtable_add_cols_Rd       t95_cont  b1 in-loop 0.803 epoch 13 0.925
+gtable__rd_example__gtable_add_cols_Rd       t90_chain c2 in-loop 0.912 epoch 13 0.912
+bslib__rd_example__value_box_Rd              t90_chain c2 in-loop 0.999 epoch 13 0.999
+gtable__rd_example__gtable_add_cols_Rd       t95_cont  b2 in-loop 1.000 epoch 13 1.000
+gtable__rd_example__gtable_add_cols_Rd       t90_chain c1 in-loop 1.000 epoch 13 1.000
+gtable__rd_example__gtable_add_cols_Rd       t90_chain c0 in-loop 0.925 epoch 13 0.925
+proxy__rd_example__registry_Rd               t95_cont  b1 in-loop 0.923 epoch 13 0.923
+proxy__rd_example__registry_Rd               t95_cont  b0 in-loop 0.958 epoch 13 0.958
+proxy__rd_example__registry_Rd               t90_chain c0 in-loop 0.931 epoch 13 0.931
+proxy__rd_example__registry_Rd               t95_cont  b2 in-loop 0.997 epoch 13 0.997
+proxy__rd_example__registry_Rd               t90_chain c1 in-loop 0.944 epoch 13 0.944
+ragg__rd_example__agg_capture_Rd             t95_cont  b2 in-loop 0.905 epoch 13 0.905
+ragg__rd_example__agg_capture_Rd             t90_chain c0 in-loop 0.700 epoch 13 0.700
+proxy__rd_example__registry_Rd               t90_chain c2 in-loop 0.940 epoch 13 0.940
+sass__rd_example__sass_import_Rd             t95_cont  b0 in-loop 0.978 epoch 13 0.975
+sass__rd_example__sass_import_Rd             t95_cont  b1 in-loop 0.903 epoch 13 0.902
+sass__rd_example__sass_import_Rd             t90_chain c1 in-loop 0.902 epoch 13 0.902
+sass__rd_example__sass_import_Rd             t90_chain c0 in-loop 0.906 epoch 13 0.905
+sass__rd_example__sass_import_Rd             t95_cont  b2 in-loop 0.976 epoch 13 0.976
+sass__rd_example__sass_import_Rd             t90_chain c2 in-loop 0.918 epoch 13 0.918
+ragg__rd_example__agg_capture_Rd             t90_chain c1 in-loop 0.889 epoch 13 0.889
+ragg__rd_example__agg_capture_Rd             t90_chain c2 in-loop 0.700 epoch 13 0.700
+systemfonts__rd_example__shape_string_Rd     t90_chain c0 in-loop 0.908 epoch 13 0.908
+systemfonts__rd_example__shape_string_Rd     t90_chain c1 in-loop 0.728 epoch 13 0.728
+textshaping__rd_example__get_font_features_R t95_cont  b2 in-loop 0.903 epoch 13 0.903
+textshaping__rd_example__get_font_features_R t90_chain c2 in-loop 0.687 epoch 13 0.687
+systemfonts__rd_example__shape_string_Rd     t90_chain c2 in-loop 0.914 epoch 13 0.914
+textshaping__rd_example__get_font_features_R t90_chain c0 in-loop 0.866 epoch 13 0.866
+xml2__rd_example__xml_attr_Rd                t95_cont  b0 in-loop 0.962 epoch 13 0.921
+textshaping__rd_example__get_font_features_R t90_chain c1 in-loop 0.921 epoch 13 0.933
+xml2__rd_example__xml_attr_Rd                t90_chain c0 in-loop 0.920 epoch 13 0.920
+xml2__rd_example__xml_attr_Rd                t90_chain c2 in-loop 0.900 epoch 13 0.900
+systemfonts__rd_example__shape_string_Rd     t95_cont  b2 in-loop 0.981 epoch 13 0.981
+xml2__rd_example__xml_attr_Rd                t90_chain c1 in-loop 0.901 epoch 13 0.901
+[r2py] WARNING: 'doc' is a data entity but Python could not serialize it — excluded from comparison
+xml2__rd_example__xml_attr_Rd                t95_cont  b1 in-loop 0.953 epoch 13 0.953
+xml2__rd_example__xml_attr_Rd                t95_cont  b2 in-loop 0.976 epoch 13 0.917
+states 8; baseline: the default's finals under epoch 13
+t95: gain on the plateau           +0.00645 [+0.00333, +0.00930]  P(> 0) 1.000
+t90: gain on the plateau           +0.00348 [+0.00066, +0.00688]  P(> 0) 1.000
+plateau gain per call, t95 - t90   +0.00321 [+0.00142, +0.00748]  P(> 0) 1.000
+t95: share gain                    +0.10000 [+0.05000, +0.13333]  P(> 0) 1.000
+t90: share gain                    +0.03333 [+0.00000, +0.08333]  P(> 0) 0.900
+flipped per call, t95 - t90        +0.06093 [+0.03369, +0.10853]  P(> 0) 1.000
+  bslib__rd_example__value_box_Rd.R              0.923  t95 +0.077 (5 calls)  t90 +0.076 (15 calls)
+  gtable__rd_example__gtable_add_cols_Rd.R       0.915  t95 +0.085 (4 calls)  t90 +0.085 (9 calls)
+  proxy__rd_example__registry_Rd.R               0.947  t95 +0.049 (34 calls)  t90 +0.000 (26 calls)
+  ragg__rd_example__agg_capture_Rd.R             0.905  t95 +0.000 (3 calls)  t90 +0.000 (17 calls)
+  sass__rd_example__sass_import_Rd.R             0.905  t95 +0.071 (7 calls)  t90 +0.013 (5 calls)
+  systemfonts__rd_example__shape_string_Rd.R     0.909  t95 +0.072 (10 calls)  t90 +0.005 (15 calls)
+  textshaping__rd_example__get_font_features_Rd. 0.903  t95 +0.000 (4 calls)  t90 +0.030 (18 calls)
+  xml2__rd_example__xml_attr_Rd.R                0.921  t95 +0.033 (9 calls)  t90 +0.000 (6 calls)

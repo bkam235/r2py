@@ -1,0 +1,14 @@
+states 7; baseline: the default's finals under epoch 13
+t95: gain on the plateau           +0.00591 [+0.00285, +0.00866]  P(> 0) 1.000
+t90: gain on the plateau           +0.00348 [+0.00074, +0.00659]  P(> 0) 1.000
+plateau gain per call, t95 - t90   +0.00330 [+0.00126, +0.00824]  P(> 0) 1.000
+t95: share gain                    +0.08333 [+0.05000, +0.11667]  P(> 0) 1.000
+t90: share gain                    +0.03333 [+0.00000, +0.06667]  P(> 0) 0.907
+flipped per call, t95 - t90        +0.05558 [+0.02974, +0.11266]  P(> 0) 1.000
+  bslib__rd_example__value_box_Rd.R              0.923  t95 +0.077 (5 calls)  t90 +0.076 (15 calls)
+  gtable__rd_example__gtable_add_cols_Rd.R       0.915  t95 +0.085 (4 calls)  t90 +0.085 (9 calls)
+  proxy__rd_example__registry_Rd.R               0.947  t95 +0.049 (34 calls)  t90 +0.000 (26 calls)
+  ragg__rd_example__agg_capture_Rd.R             0.905  t95 +0.000 (3 calls)  t90 +0.000 (17 calls)
+  sass__rd_example__sass_import_Rd.R             0.905  t95 +0.071 (7 calls)  t90 +0.013 (5 calls)
+  systemfonts__rd_example__shape_string_Rd.R     0.909  t95 +0.072 (10 calls)  t90 +0.005 (15 calls)
+  textshaping__rd_example__get_font_features_Rd. 0.903  t95 +0.000 (4 calls)  t90 +0.030 (18 calls)
