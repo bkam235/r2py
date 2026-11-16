@@ -1,0 +1,11 @@
+=== final_default:ragg__rd_example__agg_capture_Rd 0.594
+-- cap entity 1.000 graphics 0.000 figure count differs: R=0 Python=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 1}
+-- plot entity 0.500 graphics 0.000 figure count differs: R=1 Python=0
+   R  p0: None
+-- plot_1 entity 0.500 graphics 0.000 figure count differs: R=1 Python=0
+   R  p0: None
+=== start:shape__rd_example__filledmultigonal_Rd 0.759
+-- emptyplot entity 0.759 graphics 0.517 plotted content similarity 0.517 < 0.99
+   R  p0: {'src': 'base', 'title': 'filledmultigonal', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 458, 'n_segs': 0, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': 'filledmultigonal', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 16, 'n_segs': 0, 'n_img': 0}

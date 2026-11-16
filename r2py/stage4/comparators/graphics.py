@@ -98,7 +98,8 @@ def _norm(s: str) -> str:
 
 # R fills in axis labels and titles from the deparsed call ("c(1, 2)", "1:10", "Histogram of x")
 # or a stock word; a translation would not reproduce those, so they are not counted as content.
-_DEFAULT_LABEL = re.compile(r"[()\[\]$:^]|^histogram of |^(index|x|y|frequency|density|count)$", re.I)
+# A bare number is a deparsed numeric argument too (`plot(0, 0)` labels both axes "0"; epoch 15).
+_DEFAULT_LABEL = re.compile(r"[()\[\]$:^]|^histogram of |^(index|x|y|frequency|density|count)$|^-?[\d.]+$", re.I)
 
 
 def _texts(fp: dict, drop_defaults: bool = False) -> set[str]:
@@ -142,6 +143,15 @@ def _page_score(r: dict, p: dict) -> float:
     return sum(w * s for w, s in parts) / sum(w for w, _ in parts)
 
 
+def _listed(fp: dict | None) -> dict | None:
+    """R writes its fingerprints with ``auto_unbox``: a one-element series arrives as a scalar (``plot(0, 0)``:
+    ``py`` 0, read as nothing plotted). Make the list fields lists again (epoch 15, 2026-11-16)."""
+    if not isinstance(fp, dict):
+        return fp
+    return {k: ([v] if k in ("px", "py", "seg", "bars", "texts") and not isinstance(v, list) and v is not None
+                else v) for k, v in fp.items()}
+
+
 class GraphicsComparator:
     effect_class = EffectClass.GRAPHICS
 
@@ -156,6 +166,7 @@ class GraphicsComparator:
 
         scores: list[float] = []
         if r_meta and py_meta:
+            r_meta, py_meta = [_listed(f) for f in r_meta], [_listed(f) for f in py_meta]
             # Pair pages in order; a page with no fingerprint on either side cannot be
             # judged and is left out rather than guessed at.
             for i in range(max(n_r, n_p)):

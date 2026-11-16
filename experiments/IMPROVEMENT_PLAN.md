@@ -5148,3 +5148,65 @@ before any data.**
   cached scores bit-identical). The DeepSeek default's curve ends at 0.8832.
 - Consequence: the frozen lines share the re-scored starts, so a future scorer change moves their step 0 but not
   their later steps; a comparison between a frozen line and the DeepSeek line across epochs is not like for like.
+
+### 2026-11-16: epoch 15, graphics pages attributed as R's (scorer track, correction; from the graphics-difference bet)
+
+- **Cycle start.** Epoch 14, nothing registered. The latest replay of the default was under epoch 9 (2026-11-12),
+  with epochs 10-14 accepted since. Plateau since that adoption: 0.8813 -> 0.8668, **gain 0, correction -0.0145**.
+  Headroom: reachable gap 0.090 to 0.107, above twice the noise floor (0.06). **Stall trigger held** (no gain in
+  threshold-095, epoch 13, epoch 14), so the cycle opened with bets and an objective proposal: (1) graphics
+  difference feedback, (2) an R RNG helper, (3) a larger training pool (objective). The person chose (1). The replay
+  of the default was proposed and not answered; not run.
+- **The bet.** Split of the epoch-14 gap by the feedback class of each final's losses: data 0.057, graphics 0.032,
+  files 0.012, html 0.012, none 0.012, warnings 0.006, rng 0.002. About 0.026 of the in-reach gap sat in 7 states losing on
+  plots, whose feedback is a single number ("plotted content similarity 0.269 < 0.99"). Ceiling about +0.026.
+- **Kill test (free, offline; `work/analysis/graphics_meta_dump.py`, `.txt`).** The R and Python page fingerprints of the
+  default's finals in those states. In 5 of 7 the loss was not one a program could close: R gives a page, with
+  everything later entities draw on it, to the entity that started it (`stage1/runner.py`, `.r2py_gfx_flush`); the
+  Python checkpoint snapshotted and **closed** every figure at each checkpoint, so the opener entity held only its own
+  drawing and each addition became a page of its own (filledmultigonal `emptyplot` R 458 polygons, Python 0;
+  getellipse `emptyplot` R 57,330 points, Python none; Arrows `plot` R 100 polygons, Python 0; backGround; isoband).
+  And R writes its fingerprints with `auto_unbox`, so a one-point series arrived as a scalar the comparator read as
+  "nothing plotted" (backGround `plot(0, 0)`: `py` 0). The bet died as a feedback question: it was blocked by a
+  measurement fault, so the scorer question went first (a third scorer cycle, allowed because the fault blocks the gain).
+- **Fix** (`r2py/stage4/verifier.py`, the checkpoint preamble; `r2py/stage4/comparators/graphics.py`): a figure belongs
+  to the entity at whose checkpoint it first appears (creating a figure is Python's `plot.new`; an empty
+  `plt.figure()` is a page, as `plot.new()` is), and its snapshot is rewritten at later checkpoints while it changes;
+  a new figure ends the older ones (written to the run-wide record, closed), as a new page does on R's device; the
+  checkpoint no longer closes the program's figures, nor changes its current figure or figure size. The comparator
+  makes R's unboxed list fields lists again, and a bare-number axis label counts as R's deparsed default
+  (`plot(0, 0)` labels both axes "0"). Tests: `tests/test_graphics_page_owner.py` (6; 3 failed before: a faithful
+  `plot` + `lines` scored 0.5 per entity, now 1.0). Suite 1100 passed, the known
+  `test_with_locale_dataframe_date_column_round_trip` fails.
+- **A wrong turn, corrected before acceptance:** the second version owned a figure where it first had content
+  (so getellipse's `plt.subplots()` under its import entity would not own the page). Its check
+  (`check_20261116_1608`) took systemfonts glyph_raster's faithful `plt.figure()` for `plot.new()` from 1.0 to 0.5 at
+  `plot.new`; the creating entity is the analogue of R's page start, and the third version went back to it.
+- **Check** (`work/scoring/check_20261116_1614.md`; explanations `work/analysis/epoch15_moves.py`, `.txt`): 12 of 147
+  changed, 8 up, 3 down, no run/crash flip. Intended: Arrows final_default 0.773 -> 0.849 (later `Arrows` on the
+  `plot` pages), final_w3 plot 0.27 -> 0.45 (still crashes); getellipse w3 0.565 -> 0.659; backGround start and w3
+  0.50 -> 0.625; filledmultigonal start +0.009 (now 16 polygons on `emptyplot`; R's 458 are 50 shades per shape).
+  Down, explained: getellipse final_default 0.565 -> 0.500 (its `plt.subplots()` sits under the import entity; R's
+  page starts at `plot`); ragg agg_capture start 0.694 -> 0.493 and final_default 0.701 -> 0.594 (the program's
+  `agg_capture` creates its figure under `cap`, where R only opens a device). Noise: ec_dh, page_fillable. Accepted by
+  the person; curves rebuilt (`work/scoring/accept_epoch15.log`): start 0.5148 -> 0.5140, the DeepSeek default's
+  measured curve 0.8832 -> 0.8831.
+- **The default's finals** (`finals_epoch15.jsonl`, `work/analysis/epoch15_finals.py`, `.txt`): training **0.8668 ->
+  0.8637** (-0.0031), share >= 0.95 0.533 unchanged: getellipse 0.815 -> 0.909, backGround 0.500 -> 0.625, Arrows
+  0.826 -> 0.870, filledmultigonal 0.750 -> 0.759; **ragg agg_capture 0.905 -> 0.500**: the old capture closed the
+  program's `cap.fig` after `cap`, so its `cap()` rasterised a blank canvas that matched R's mostly white raster
+  (`raster` 0.78); the program now runs as it does on its own and reads back its plot (0.25). page_fillable and ec_dh
+  -0.053 together, their known noise. Held-out **0.9071 -> 0.9071**, share 0.652.
+- **Plateau of the production default:** 0.8668 -> 0.8637 training, 0.9071 held-out; all correction, no gain (same
+  programs). Since the 2026-11-12 adoption: gain 0, correction -0.0176.
+- **What it changes for the model:** in the graphics states the feedback now names pages and contents R and Python
+  both draw at the same entity, instead of differences no program could close. Unmeasured until the default is replayed.
+- Gap ledger: backGround leaves `unknown` (behaviour: the final draws its background on a new figure); getellipse's
+  remainder is **measurement, shown on the fingerprint**: the Python fingerprint keeps the first 5000 points
+  (`fp['px'][:5000]`), R's all 57,330, so `emptyplot` compares different sets (0.637); ragg stays out of reach at
+  0.500. Reachable gap 0.094 to 0.102; share room 0.367 to 0.383.
+- Cost: $0 (no model calls).
+- Next: the replay of the default (epochs 10-15 changed the feedback since the epoch-9 replay; about $2.06, budget
+  $4); the 5000-point cap (scorer, correction, getellipse 0.0015 and wherever else a page has more points); the graphics
+  difference feedback, now that the comparison it would describe is right (bet; its ceiling shrank to about 0.015
+  in-reach graphics points); the R RNG helper (bet, 0.013); the stop threshold as a loop flag (lever).

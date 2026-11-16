@@ -1,0 +1,86 @@
+=== prodlim__rd_example__backGround_Rd aggregate 0.500
+-- plot entity 0.500 graphics 0.000: plotted content similarity 0.000 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': '', 'xlab': '0', 'ylab': '0', 'texts': [], 'px': 0, 'py': 0, 'seg': 1, 'bars': 2.16, 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': 'n=1 [0,0]', 'py': 'n=1 [0,0]', 'seg': 'n=1 [1,1]', 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- backGround entity 1.000 graphics 0.000: figure count differs: R=0 Python=2  pages R=0 Py=2
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': 'n=1 [1,1]', 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+   Py p1: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- plot_1 entity 0.500 graphics 0.000: plotted content similarity 0.000 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': '', 'xlab': '0', 'ylab': '0', 'texts': [], 'px': 0, 'py': 0, 'seg': 1, 'bars': [], 'n_polys': 23, 'n_segs': 0, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': 'n=1 [0,0]', 'py': 'n=1 [0,0]', 'seg': 'n=1 [1,1]', 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- backGround_1 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': 'n=11 [0.1,1]', 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- backGround_2 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': 'n=10 [0.1,0.1]', 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+=== recipes__rd_example__step_kpca_Rd aggregate 0.725
+=== shape__rd_example__filledmultigonal_Rd aggregate 0.750
+-- emptyplot entity 0.750 graphics 0.500: plotted content similarity 0.500 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': 'filledmultigonal', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 458, 'n_segs': 0, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': 'filledmultigonal', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_1 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_2 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_3 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_4 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_5 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_6 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_7 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_8 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_9 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_10 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_11 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_12 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_13 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_14 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+-- filledmultigonal_15 entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 1, 'n_segs': 0, 'n_img': 0}
+=== shape__rd_example__getellipse_Rd aggregate 0.815
+-- plot entity 0.635 graphics 0.269: plotted content similarity 0.269 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': 'getellipse', 'xlab': 'getellipse(1, from = 0, to = pi/2)[,1]', 'ylab': 'getellipse(1, from = 0, to = pi/2)[,2]', 'texts': [], 'px': 'n=2367 [0,1]', 'py': 'n=2367 [0,1]', 'seg': 'n=6 [159,630]', 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': 'getellipse', 'xlab': '', 'ylab': '', 'texts': [], 'px': 'n=159 [1.62e-15,1]', 'py': 'n=159 [0,1]', 'seg': 'n=1 [159,159]', 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- emptyplot entity 0.625 graphics 0.250: plotted content similarity 0.250 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': 'getellipse', 'xlab': '', 'ylab': '', 'texts': [], 'px': 'n=57330 [0,1]', 'py': 'n=57330 [-3.4e-33,1]', 'seg': 'n=91 [630,630]', 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': 'getellipse', 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+=== isoband__vignette__isoband3_s2 aggregate 0.767
+-- grid.newpage entity 0.500 graphics 0.000: figure count differs: R=1 Python=0  pages R=1 Py=0
+   R  p0: None
+-- grid.draw entity 1.000 graphics 0.000: figure count differs: R=0 Python=1  pages R=0 Py=1
+   Py p0: {'src': 'mpl', 'title': '', 'xlab': '', 'ylab': '', 'texts': [], 'px': 'n=721 [0,1]', 'py': 'n=721 [0,0.979]', 'seg': 'n=9 [8,215]', 'bars': 'n=1 [1,1]', 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+=== shape__rd_example__Arrows_Rd aggregate 0.826
+-- plot entity 0.600 graphics 0.200: plotted content similarity 0.200 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': "Arrows,  type = 'curved'", 'xlab': 'Index', 'ylab': '0', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 100, 'n_segs': 100, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': "Arrows,  type = 'curved'", 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- plot_1 entity 0.600 graphics 0.200: plotted content similarity 0.200 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': "Arrows,  type = 'circle'", 'xlab': 'Index', 'ylab': '0', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 200, 'n_segs': 100, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': "Arrows,  type = 'circle'", 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- plot_2 entity 0.600 graphics 0.200: plotted content similarity 0.200 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': "Arrows,  type = 'ellipse'", 'xlab': 'Index', 'ylab': '0', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 200, 'n_segs': 100, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': "Arrows,  type = 'ellipse'", 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- curve entity 0.900 graphics 0.800: plotted content similarity 0.800 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': 'Arrows', 'xlab': 'x', 'ylab': 'sin(x)', 'texts': [], 'px': 'n=101 [0,6.53]', 'py': 'n=101 [-1,1]', 'seg': 101, 'bars': [], 'n_polys': 10, 'n_segs': 0, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': 'Arrows', 'xlab': 'x', 'ylab': 'sin(x)', 'texts': [], 'px': 'n=101 [0,6.53]', 'py': 'n=101 [-1,1]', 'seg': 'n=1 [101,101]', 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- plot_3 entity 0.900 graphics 0.800: plotted content similarity 0.800 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': "Arrows,  type = 'curved'", 'xlab': '', 'ylab': '', 'texts': [], 'px': 'n=1000 [-29.9,26.7]', 'py': 'n=1000 [-28.3,31.4]', 'seg': 1000, 'bars': [], 'n_polys': 20, 'n_segs': 0, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': "Arrows,  type = 'curved'", 'xlab': '', 'ylab': '', 'texts': [], 'px': 'n=1000 [-29.9,26.7]', 'py': 'n=1000 [-28.3,31.4]', 'seg': 'n=1 [1e+03,1e+03]', 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+-- plot_5 entity 0.600 graphics 0.200: plotted content similarity 0.200 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': "Arrows,  type = 'curved'", 'xlab': 'Index', 'ylab': '0', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 100, 'n_segs': 100, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': "Arrows,  type = 'curved'", 'xlab': '', 'ylab': '', 'texts': [], 'px': [], 'py': [], 'seg': [], 'bars': [], 'n_polys': 0, 'n_segs': 0, 'n_img': 0}
+=== e1071__rd_example__boxplot_bclust_Rd aggregate 0.765
+-- boxplot entity 0.670 graphics 0.340: plotted content similarity 0.340 < 0.99  pages R=1 Py=1
+   R  p0: {'src': 'base', 'title': 'Cluster 3: 9 centers, 24 data points', 'xlab': '', 'ylab': '', 'texts': ['Sepal.Length   ', 'Sepal.Width   ', 'Petal.Length   ', 'Petal.Width   ', 'Sepal.Length   ', 'Sepal.Width   ', 'Petal.Length   ', 'Petal.Width   '], 'px': 'n=25 [1,4]', 'py': 'n=25 [0.256,6.52]', 'seg': 'n=16 [1,4]', 'bars': [], 'n_polys': 24, 'n_segs': 64, 'n_img': 0}
+   Py p0: {'src': 'mpl', 'title': 'Cluster 1: 12 centers, 50 data points', 'xlab': '', 'ylab': '', 'texts': ['Sepal.Length  ', 'Sepal.Width  ', 'Petal.Length  ', 'Petal.Width  ', 'Sepal.Length  ', 'Sepal.Width  ', 'Petal.Length  ', 'Petal.Width  '], 'px': 'n=143 [0.775,4.22]', 'py': 'n=143 [0.194,7.71]', 'seg': 'n=75 [0,4]', 'bars': [], 'n_polys': 12, 'n_segs': 0, 'n_img': 0}

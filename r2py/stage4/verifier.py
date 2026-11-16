@@ -527,6 +527,49 @@ _r2py_sys.stdout = type('_Tee', (), {
 })()
 _r2py_prev_stdout_pos = 0
 _r2py_prev_fig_count = 0
+_r2py_fig_owner: dict = {}    # figure number -> entity that started it
+_r2py_owner_fps: dict = {}    # entity -> {figure number: last fingerprint}
+
+def _r2py_fig(n):
+    # Figure n without making it the current figure (plt.figure(n) would redirect the program's next plt.plot).
+    from matplotlib._pylab_helpers import Gcf as _Gcf
+    return _Gcf.get_fig_manager(n).canvas.figure
+
+def _r2py_snapshot_fig(n):
+    # Write figure n's current content as its owner's snapshot, if it changed since the last one.
+    import json as _json
+    owner = _r2py_fig_owner[n]
+    fig = _r2py_fig(n)
+    fp = _r2py_fp_fig(fig)
+    fps = _r2py_owner_fps.setdefault(owner, {})
+    if n in fps and fps[n] == fp:
+        return
+    fps[n] = fp
+    k = list(fps).index(n) + 1
+    size = fig.get_size_inches()   # the figure stays open: the program's own savefig keeps its size
+    try:
+        fig.set_size_inches(8, 6)
+        fig.savefig(f'_r2py_cp_plot_{owner}__{k:03d}.png', dpi=100)
+    except Exception:
+        pass
+    fig.set_size_inches(size)
+    with open(f'_r2py_cp_gfx_{owner}.json', 'w', encoding='utf-8') as _f:
+        _json.dump(list(fps.values()), _f)
+
+def _r2py_flush_one(n):
+    # Add figure n to the run-wide record before it is closed (as _r2py_flush_figs does for all open figures).
+    global _r2py_fig_seq
+    import json as _json
+    fig = _r2py_fig(n)
+    fig.set_size_inches(8, 6)
+    _r2py_fig_seq += 1
+    _r2py_gfx_all.append(_r2py_fp_fig(fig))
+    try:
+        fig.savefig(f'_r2py_plot_{_r2py_fig_seq:04d}.png', dpi=100)
+    except Exception:
+        pass
+    with open('_r2py_gfx_meta.json', 'w', encoding='utf-8') as _f:
+        _json.dump(_r2py_gfx_all, _f)
 
 def _r2py_checkpoint(eid):
     global _r2py_prev_ns, _r2py_prev_stdout_pos, _r2py_prev_fig_count
@@ -536,28 +579,31 @@ def _r2py_checkpoint(eid):
     except Exception:
         _plt = None
         cur_fig_count = 0
-    # Debounce to {0,1}: matches the R side, which clamps to handle layout-using
-    # plotters that fire plot.new multiple times per semantic figure.
-    graphics_delta = 1 if cur_fig_count > _r2py_prev_fig_count else 0
-
     safe_eid = ''.join('_' if c in '/:"*?<>|' or c == chr(92) else c for c in eid)   # as stage1.runner._cp_file_id
 
-    # Save every new figure (PNG + content fingerprint) as this entity's snapshot and into
-    # the run-wide record; the epilogue only sees figures still open at the end.
-    if graphics_delta == 1 and _plt is not None:
-        try:
-            _r2py_flush_figs(safe_eid)
-        except Exception:
-            pass
-
-    # Close all figures after snapshotting so the next entity starts with a
-    # clean matplotlib state. Without this, plt.imshow() / plt.plot() in a
-    # later entity draws into the previous entity's still-open figure, producing
-    # composite images and misleading SSIM scores.
+    # A figure belongs to the entity at whose checkpoint it first appears, with everything later entities draw on
+    # it, as R's checkpoints give a page to the entity that started it (epoch 15, 2026-11-16). A new figure ends the
+    # older ones, as a new page does on R's device. Debounced to {0,1} as on the R side.
+    graphics_delta = 0
     if _plt is not None:
         try:
-            _plt.close('all')
-            cur_fig_count = 0
+            _open = list(_plt.get_fignums())
+            # Creating a figure is Python's plot.new: an empty `plt.figure()` is a page, as R's `plot.new()` is
+            # (systemfonts glyph_raster), and a figure created under another entity is that entity's page.
+            _new = [n for n in _open if n not in _r2py_fig_owner]
+            for n in _new:
+                _r2py_fig_owner[n] = safe_eid
+            graphics_delta = 1 if _new else 0
+            if _new:
+                for n in _open:
+                    if n not in _new and n in _r2py_fig_owner:
+                        _r2py_snapshot_fig(n)
+                        _r2py_flush_one(n)
+                        _plt.close(n)
+            for n in _plt.get_fignums():
+                if n in _r2py_fig_owner:
+                    _r2py_snapshot_fig(n)
+            cur_fig_count = len(_plt.get_fignums())
         except Exception:
             pass
 

@@ -1,0 +1,9 @@
+work/dsflash_default: n 60 errors []  plateau 0.8668 -> 0.8637 (-0.0031)  share>=0.95 0.533 -> 0.533
+   bslib__rd_example__page_fillable_Rd                        0.367 -> 0.324
+   openssl__rd_example__ec_dh_Rd                              0.425 -> 0.415
+   prodlim__rd_example__backGround_Rd                         0.500 -> 0.625
+   ragg__rd_example__agg_capture_Rd                           0.905 -> 0.500
+   shape__rd_example__Arrows_Rd                               0.826 -> 0.870
+   shape__rd_example__filledmultigonal_Rd                     0.750 -> 0.759
+   shape__rd_example__getellipse_Rd                           0.815 -> 0.909
+work/dsflash_heldout: n 46 errors []  plateau 0.9071 -> 0.9071 (+0.0000)  share>=0.95 0.652 -> 0.652
