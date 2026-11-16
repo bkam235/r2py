@@ -1,0 +1,25 @@
+{
+ "id": "default-e16-replay-heldout",
+ "question": "Measured plateau of default_2026_11_12 on the held-out pool under epoch 16, after the feedback corrections of epochs 10-16.",
+ "track": "harness",
+ "instrument": "replay.py --pool heldout --policies default_2026_11_12 --samples 1 --workers 6",
+ "pool": "heldout (46 frozen starts)",
+ "arms": [
+  "default_2026_11_12"
+ ],
+ "baseline": "the epoch-9 held-out replay (work/dsflash_heldout, sample 0), finals re-verified under epoch 16 (0.9070); not concurrent",
+ "primary": "mean final, replay minus baseline, paired by state, 95% bootstrap over states",
+ "rule": "descriptive (one sample per state, non-concurrent baseline)",
+ "est_cost": 1.14,
+ "plan": "Replay of the production default on the held-out pool under epoch 16",
+ "option": "policy default_2026_11_12",
+ "samples": 1,
+ "strata": [
+  "running starts",
+  "crashing starts"
+ ],
+ "run_dir": "work/replay_default_e16_heldout",
+ "budget": 1.9,
+ "analysis": "python scripts/reverify_finals.py work/replay_default_e16_heldout default_2026_11_12 work/replay_default_e16_heldout/finals_epoch16.jsonl; python scripts/ceiling_analysis.py work/replay_default_e16_heldout/results.jsonl work/dsflash_heldout/finals_epoch16.jsonl work/replay_default_e16_heldout/finals_epoch16.jsonl",
+ "note": "requested by the person after default-e16-replay; balance $2.40 at registration"
+}

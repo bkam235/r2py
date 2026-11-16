@@ -5287,3 +5287,23 @@ before any data.**
   be confirmed by one replay; the next cycle states this and proposes an objective (a larger or harder pool, the share
   as primary, cost per verified script). The share's reachable room 0.283 to 0.350 is still above twice its noise
   floor (0.18).
+
+### 2026-11-16: replay of the production default on the held-out pool under epoch 16 (registered `default-e16-replay-heldout`, descriptive)
+
+- **Why:** the person's request after `default-e16-replay` (training 0.909, +0.043 [+0.010, +0.082] against the
+  epoch-9 replay re-scored): the same measurement on the 46 held-out states, an independent pool. Held-out's 0.907 is
+  still the epoch-9 held-out replay re-scored under epoch 16.
+- **Instrument:** `replay.py --pool heldout --policies default_2026_11_12 --samples 1 --workers 6`, run guard
+  `--budget 1.90` (balance $2.40, reserve $0.50); run dir `work/replay_default_e16_heldout`.
+- **Baseline:** the epoch-9 held-out replay (`work/dsflash_heldout`, sample 0), finals re-verified under epoch 16
+  (`finals_epoch16.jsonl`, 0.9070, share 0.652); not concurrent.
+- **Primary:** mean final, replay minus baseline, paired by state, 95% bootstrap over states. **Secondary:** share
+  >= 0.95; strata (held-out has 6 crashing starts); better / worse / tied; forging; the 12 largest movers' new
+  4-digit literals.
+- **Rule: descriptive** (one sample, non-concurrent baseline). Held-out was at 0.907 already, so its room is smaller
+  than training's; a null here is not evidence against the training reading.
+- **Cost:** about $1.14 (the 2026-11-12 held-out run of this policy).
+- **Analysis:** `python scripts/reverify_finals.py work/replay_default_e16_heldout default_2026_11_12
+  work/replay_default_e16_heldout/finals_epoch16.jsonl`, then `python scripts/ceiling_analysis.py
+  work/replay_default_e16_heldout/results.jsonl work/dsflash_heldout/finals_epoch16.jsonl
+  work/replay_default_e16_heldout/finals_epoch16.jsonl`; `health_report.py work/replay_default_e16_heldout --deep`.
