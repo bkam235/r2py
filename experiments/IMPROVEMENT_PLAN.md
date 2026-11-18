@@ -5307,3 +5307,30 @@ before any data.**
   work/replay_default_e16_heldout/finals_epoch16.jsonl`, then `python scripts/ceiling_analysis.py
   work/replay_default_e16_heldout/results.jsonl work/dsflash_heldout/finals_epoch16.jsonl
   work/replay_default_e16_heldout/finals_epoch16.jsonl`; `health_report.py work/replay_default_e16_heldout --deep`.
+- **Result (2026-11-16, run `work/replay_default_e16_heldout`, 46 of 46 rows, $1.07, balance $2.40 -> $1.33, no sleep
+  gaps, epoch 16 throughout).** `analysis.txt`, `secondary.txt`, `audit.txt`:
+  - primary (descriptive): mean final **0.902** against the epoch-9 held-out replay re-scored **0.907**, paired
+    **-0.005 [-0.021, +0.010]**; better 6 / worse 8 / tied 32. Running starts (42) -0.011 [-0.027, +0.001], crashing (4)
+    +0.053 [+0.000, +0.152].
+  - share >= 0.95: **0.652 -> 0.565** (-0.087 [-0.174, -0.022] over states; a replay's own noise on the share is about
+    ±0.09); finals >= 0.9: 35 -> 33. Largest falls: farver native_encoding 1.000 -> 0.750, recipes step_YeoJohnson
+    0.932 -> 0.795, ModelMetrics logLoss 1.000 -> 0.929, rmarkdown includes 0.975 -> 0.923.
+  - forging: `__r2py_fp__` in 3 states (clock time-point-rounding's final, 1 dict; broom augment_survreg and prodlim
+    summary_prodlim in accepted intermediates only); refused since epoch 13.
+  - audit of the 12 largest gains (`work/analysis/e16_replay_heldout_audit.py`): two new 4-digit literals, both
+    constants (2147483648 = 2^31; 1.959963984540054 = the normal 0.975 quantile), no R outputs.
+- **Post hoc split of the training result (not registered; `work/replay_default_e16/epoch_touched_split.txt`):** the 9
+  training states in which epochs 10-16 fixed a fault (shiny updateRadioButtons, rvest html_table and html_children,
+  backGround, filledmultigonal, getellipse, Arrows, xml2 xml_attr, ragg agg_capture) gained +0.252 [+0.102, +0.412] per
+  state, +0.038 of the +0.043; the other 51 states +0.006 [-0.011, +0.024].
+- **Reading.** The two replays agree once split: the corrections of epochs 10-16 let the default finish states it had
+  been mismeasured on (all found on the training pool, which the meta-loop reads), and they changed nothing else
+  measurable, on training (+0.006 on the untouched 51) or held-out (-0.005). The held-out pool had few such faults
+  (sparsevctrs, clock forging), so it gains nothing. The training plateau 0.909 is therefore partly a property of
+  which states were studied: **the held-out pool is the fairer measure of the default (0.902)**. Measurement fixes
+  found on training should be checked for the same fault on held-out before a plateau is quoted from training alone.
+- Held-out plateau of the production default: **0.902 (measured, epoch 16)**, share 0.565.
+- Curves (`scripts/learning_curves.py`, template): a line "default 2026-11-12, replayed 2026-11-16 (measured)"; both
+  measured runs of the production default are live lines (re-scored in every epoch; 789 programs); the page text
+  gives both replays and the split. Ends at step 14: 0.908 against 0.884 for the first run (best re-scored program
+  per run; running 0.889 vs 0.858, crashing 0.970 vs 0.967).

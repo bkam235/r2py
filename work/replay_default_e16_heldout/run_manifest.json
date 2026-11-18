@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/replay.py --pool heldout --policies default_2026_11_12 --samples 1 --workers 6 --out work/replay_default_e16_heldout/results.jsonl --budget 1.90",
+  "started": "2026-11-16 18:27:19",
+  "ended": "2026-11-16 19:14:16",
+  "scoring_version": "6419ff591842-db31b28ade02",
+  "rows": 46,
+  "balance_start": 2.4,
+  "balance_end": 1.33,
+  "cost": 1.07,
+  "budget": 1.9,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

@@ -1,0 +1,22 @@
+states paired: 46 (ceiling rows 46, baseline 46, ceiling finals 46)
+all              n=46  baseline 0.907  ceiling 0.902  diff -0.005 [-0.021, +0.010]  better 6 / worse 8 / tied 32
+running starts   n=42  baseline 0.912  ceiling 0.901  diff -0.011 [-0.027, +0.001]  better 4 / worse 8 / tied 30
+crashing starts  n= 4  baseline 0.858  ceiling 0.911  diff +0.053 [+0.000, +0.152]  better 2 / worse 0 / tied 2
+finals >= 0.9: baseline 35, ceiling 33 of 46
+entities the baseline final loses (< 0.9): 60; the ceiling final scores >= 0.9 on 4 (7%)
+calls: {'agent steps': 578}
+  google/gemma-4-31b-it: calls 324, input 885,915, output 28,580 (reasoning 0), cost $0.10
+  deepseek/deepseek-v4.1-flash-1017: calls 580, input 10,507,696, output 2,605,943 (reasoning 1,871,260), cost $0.97
+largest moves:
+  farver__rd_example__native_encoding_Rd             1.000 -> 0.750
+  ggplot2__rd_example__stat_summary_2d_Rd            0.500 -> 0.702
+  recipes__rd_example__step_YeoJohnson_Rd            0.932 -> 0.795
+  ModelMetrics__rd_example__logLoss_Rd               1.000 -> 0.929
+  rmarkdown__rd_example__includes_Rd                 0.975 -> 0.923
+  ModelMetrics__rd_example__mse_Rd                   0.961 -> 1.000
+  clock__rd_example__time-point-rounding_Rd          0.833 -> 0.871
+  gtable__rd_example__gtable_add_padding_Rd          0.910 -> 0.947
+  gtable__rd_example__bind_Rd                        0.991 -> 0.958
+  broom__vignette__broom_chunk6                      0.962 -> 0.938
+  caret__rd_example__modelLookup_Rd                  0.883 -> 0.863
+  clock__rd_example__iso-year-week-day-getters_Rd    0.982 -> 1.000
