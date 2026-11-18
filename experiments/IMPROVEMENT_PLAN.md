@@ -23,7 +23,7 @@ page.
 | + crashing starts: width 6, patience 5, twice the time limit | 0.741 | 2026-10-18/19 |
 | + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
 | + entity-addressed feedback | **0.809** (measured, epoch 8) | 2026-11-01: each losing entity is shown the comparison that scores it, shared feedback once; paired +0.034 [+0.001, +0.072] against the previous default's replay re-scored (0.775) |
-| + DeepSeek V4.1 Flash agent, in-state probes, literal check (`default_2026_11_12`) | **0.909** (measured, epoch 16) | 2026-11-12 adoption (0.881 measured under epoch 9); replay 2026-11-16 under the feedback corrections of epochs 10-16: +0.043 [+0.010, +0.082] against the epoch-9 replay re-scored (0.866) |
+| + DeepSeek V4.1 Flash agent, in-state probes, literal check (`default_2026_11_12`) | **0.909** (measured, epoch 16) | 2026-11-12 adoption (0.881 measured under epoch 9); replay 2026-11-16 under the feedback corrections of epochs 10-16: +0.043 [+0.010, +0.082] against the epoch-9 replay re-scored (0.866), all of it in the 9 states whose faults epochs 10-16 fixed; held-out 0.902 (-0.005 [-0.021, +0.010]) |
 
 A second sample of `default_2026_11_01` on the 46 running starts (2026-11-06, test `width6-running-pool`) ended 0.024 lower than the first on the same states: one replay sample moves by about ±0.03, and the two-sample plateau of the default is 0.800. In the same test, 6 chains on running starts beat 3 by +0.019 [+0.007, +0.038] (not adopted: the registered bar was a 95% lower bound of +0.010).
 
