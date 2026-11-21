@@ -389,5 +389,34 @@
   "errors": [],
   "model_mappings": 5,
   "note": "epoch 16: the Python graphics fingerprint keeps every point, as R's (it kept the first 5000 per series, per collection and per page). check 20261116_1657: 3 moved - shape getellipse w3 emptyplot 0.637->0.993 (intended); ec_dh, page_fillable noise; R preamble unchanged (file hash flag only)"
+ },
+ {
+  "epoch": 17,
+  "scoring_version": "70026960c9df-45536fee3686",
+  "r_capture": "26c0ba78c78a",
+  "date": "2026-11-21 17:17",
+  "programs": 147,
+  "flaky": [
+   "final_default:e1071__rd_example__boxplot_bclust_Rd",
+   "final_default:openssl__rd_example__ec_dh_Rd",
+   "final_default:proxy__rd_example__registry_Rd",
+   "final_default:recipes__rd_example__step_kpca_Rd",
+   "final_default:sass__rd_example__as_sass_Rd",
+   "final_default:sass__rd_example__sass_import_Rd",
+   "final_w3:e1071__rd_example__boxplot_bclust_Rd",
+   "final_w3:openssl__rd_example__ec_dh_Rd",
+   "final_w3:recipes__rd_example__step_kpca_Rd",
+   "final_w3:sass__rd_example__as_sass_Rd",
+   "final_w3:sass__rd_example__sass_import_Rd",
+   "final_w3:textshaping__rd_example__lorem_text_Rd",
+   "start:bslib__rd_example__page_fillable_Rd",
+   "start:openssl__rd_example__ec_dh_Rd",
+   "start:recipes__rd_example__step_kpca_Rd",
+   "start:sass__rd_example__as_sass_Rd",
+   "start:textshaping__rd_example__lorem_text_Rd"
+  ],
+  "errors": [],
+  "model_mappings": 5,
+  "note": "epoch 17: the data shim gives inherited data frames their R row names (mtcars' car names, aSAH's row numbers), probed in stage 1 and set as the DataFrame index; 15 maps re-captured. check 20261121_1709: purrr attr_getter get_rownames_1 0.556->1.0 (intended); page_fillable, lorem_text, ec_dh noise"
  }
 ]

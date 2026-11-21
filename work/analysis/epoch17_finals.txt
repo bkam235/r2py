@@ -1,0 +1,5 @@
+work/replay_default_e16: 60 finals, mean 0.9086 -> 0.9101, >=0.95 34 -> 35
+   openssl__rd_example__ec_dh_Rd                      0.660 -> 0.675
+   purrr__rd_example__attr_getter_Rd                  0.926 -> 1.000
+work/replay_default_e16_heldout: 46 finals, mean 0.9017 -> 0.9016, >=0.95 26 -> 26
+   openssl__rd_example__keygen_Rd                     0.409 -> 0.404

@@ -23,7 +23,7 @@ page.
 | + crashing starts: width 6, patience 5, twice the time limit | 0.741 | 2026-10-18/19 |
 | + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
 | + entity-addressed feedback | **0.809** (measured, epoch 8) | 2026-11-01: each losing entity is shown the comparison that scores it, shared feedback once; paired +0.034 [+0.001, +0.072] against the previous default's replay re-scored (0.775) |
-| + DeepSeek V4.1 Flash agent, in-state probes, literal check (`default_2026_11_12`) | **0.909** (measured, epoch 16) | 2026-11-12 adoption (0.881 measured under epoch 9); replay 2026-11-16 under the feedback corrections of epochs 10-16: +0.043 [+0.010, +0.082] against the epoch-9 replay re-scored (0.866), all of it in the 9 states whose faults epochs 10-16 fixed; held-out 0.902 (-0.005 [-0.021, +0.010]) |
+| + DeepSeek V4.1 Flash agent, in-state probes, literal check (`default_2026_11_12`) | **0.910** (measured, epoch 17; 0.909 under epoch 16) | 2026-11-12 adoption (0.881 measured under epoch 9); replay 2026-11-16 under the feedback corrections of epochs 10-16: +0.043 [+0.010, +0.082] against the epoch-9 replay re-scored (0.866), all of it in the 9 states whose faults epochs 10-16 fixed; held-out 0.902 (-0.005 [-0.021, +0.010]) |
 
 A second sample of `default_2026_11_01` on the 46 running starts (2026-11-06, test `width6-running-pool`) ended 0.024 lower than the first on the same states: one replay sample moves by about ±0.03, and the two-sample plateau of the default is 0.800. In the same test, 6 chains on running starts beat 3 by +0.019 [+0.007, +0.038] (not adopted: the registered bar was a 95% lower bound of +0.010).
 
@@ -5432,3 +5432,32 @@ before any data.**
 - Plateau of the production default: unchanged (no default changed): 0.909 training, 0.902 held-out. The test's
   estimate of the gain if adopted: about +0.008 on both pools (t95's plateau gain; under the replay noise, so the
   step-9 replay can confirm only that it does not fall), share about +0.13.
+
+### 2026-11-21: epoch 17, the data shim gives inherited data frames their R row names (scorer track, correction)
+
+- **Question:** the fault the `threshold-095-e16` audit found. purrr attr_getter's finals (the default's and t95's)
+  hard-code mtcars' 32 car names. Shown offline: R's data capture keeps a data frame's columns only (the Python side
+  keeps a DataFrame's columns only too, so comparisons were symmetric), so the shim's sidecar held `mtcars` without
+  row names and no program could read R's `row.names` from its input. Pasting was the only route to `get_rownames`.
+- **Fix** (commit 92647e10): stage 1 probes the row names of inherited data frames (`probe_row_names`; kept only
+  when neither automatic nor `1..nrow`) into `ScriptMap.data_row_names`, outside the compared data; the sidecar
+  carries them under `__r2py_row_names__` and the shim's binding line sets them as the DataFrame's index (appended to
+  the line, so a block of any age keeps its line count). No comparison changes. Test
+  `tests/test_stage2.py::test_shim_sets_r_row_names_as_index` (fails before, passes after; the current and the
+  oldest shim forms). Suite 1106 passed, the known date round-trip test fails. Stored maps: 15 of 249 gain row names
+  (`scripts/refresh_row_names.py`): mtcars 9, aSAH 5 (row numbers 29, 30, ...), french_fries 1.
+- **Check** (`work/scoring/check_20261121_1709.md`): 6 of 147 moved, no run/crash flip. purrr attr_getter start and
+  both finals `get_rownames_1` 0.556 -> 1.0 (intended: the start program's own `x.index.tolist()` now returns R's
+  names). bslib page_fillable start `ui` 0.365 -> 0.344 (its program never reads row names; the same move in earlier
+  checks), lorem_text, ec_dh: noise. Accepted by the person; curves rebuilt (`work/scoring/accept_epoch17.log`): the
+  e16 replay's line 0.9092, the first DeepSeek run 0.8847.
+- **The default's finals** (`finals_epoch17.jsonl`, `work/analysis/epoch17_finals.txt`): training **0.9086 ->
+  0.9101** (purrr attr_getter 0.926 -> 1.000, +0.0012; ec_dh +0.0003, its noise), share 0.567 -> **0.583**; held-out
+  **0.9017 -> 0.9016** (openssl keygen -0.005, noise), share 0.565. The other states that gained row names (pROC
+  coords and print, broom_chunk6, dplyr programming_chunk10) did not move: their finals read no row names.
+- **Plateau of the production default:** 0.910 training, 0.902 held-out; all correction (+0.0015 training), no gain.
+  What it changes for the model: mtcars and aSAH arrive with R's row names, so a printed `head(mtcars)` or a row-name
+  lookup matches without pasting. Unmeasured until a replay.
+- Gap ledger: purrr attr_getter leaves; reachable gap 0.061 to 0.063; share room 0.317 to 0.350.
+- The fault found in the threshold audit is fixed, so the flip of `DEFAULT_SCORE_THRESHOLD` to 0.95 goes to the
+  person (step 8).
