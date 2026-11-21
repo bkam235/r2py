@@ -5482,3 +5482,27 @@ before any data.**
   cannot confirm it; on the share (±0.09 per replay) the predicted +0.13 is about at the limit of what it resolves.
   It also gives the curves a line for the new default and the gap ledger a source under the new threshold. Cost
   about $2.10 training and $1.15 held-out (the 11-16 replays plus the extra calls); the person decides.
+
+### Replay of the new default `default_2026_11_21` (tests `default-2026-11-21-replay`, `-heldout`, descriptive) — registered 2026-11-21
+
+- **Why** (step 9, the person's request): the default changed (stop threshold 0.95); its plateau is unmeasured.
+- **Instrument:** `replay.py --pool training --policies default_2026_11_21 --samples 1 --workers 6`, run guard
+  `--budget 4`, run dir `work/replay_default_e17`; then `--pool heldout`, `--budget 2`, `work/replay_default_e17_heldout`.
+  Same frozen starts as every replay of the default.
+- **Baseline:** the 11-16 replays of `default_2026_11_12` (`work/replay_default_e16`, `_heldout`), finals re-verified
+  under epoch 17 (`finals_epoch17.jsonl`: 0.9101 training, share 0.583; 0.9016 held-out, share 0.565). Not
+  concurrent.
+- **Primary:** mean final, new minus baseline, paired by state, 95% bootstrap over states. **Secondary:** share of
+  finals >= 0.95; strata; better / worse / tied; the states in [0.9, 0.95) of the baseline (11 training, 7 held-out)
+  apart from the rest; calls and cost per run (the threshold's extra calls); stop reasons; forging; the 12 largest
+  movers' new 4-digit literals.
+- **Rule: descriptive.** One sample per state, non-concurrent baseline: the plateau moves about ±0.03 per replay, the
+  share about ±0.09. The tests predict about +0.008 on the plateau (unresolvable here) and +0.13 on the share (at
+  the limit). The replay says whether the default holds its plateau under the new threshold, and becomes the
+  reference plateau and the gap ledger's source.
+- **Cost:** about $2.10 training, $1.15 held-out.
+- **Analysis:** `python scripts/reverify_finals.py work/replay_default_e17 default_2026_11_21
+  work/replay_default_e17/finals_epoch17.jsonl`, then `python scripts/ceiling_analysis.py
+  work/replay_default_e17/results.jsonl work/replay_default_e16/finals_epoch17.jsonl
+  work/replay_default_e17/finals_epoch17.jsonl`; `health_report.py work/replay_default_e17 --deep`; the same for
+  `_heldout` against `work/replay_default_e16_heldout/finals_epoch17.jsonl`.
