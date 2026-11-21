@@ -310,6 +310,48 @@ class TestDataLoadingShim(unittest.TestCase):
             out = json.loads(r.stdout.strip())
             self.assertEqual(out, {"iris_loaded": [[1, 2], [3, 4]]})
 
+    def test_shim_sets_r_row_names_as_index(self):
+        """A data frame's R row names (mtcars' car names) reach the program as the DataFrame's index, in a shim
+        built now and in the one-line binding an older block is refreshed to; same line count (2026-11-21:
+        purrr attr_getter could only paste mtcars' row names)."""
+        import json
+        import subprocess
+        import sys
+        import tempfile
+        from pathlib import Path
+        from r2py.stage2.stitch import (DATA_SHIM_BEGIN, DATA_SHIM_END, _OLD_SHIM_ASSIGN, build_data_shim,
+                                        shim_row_names)
+        from r2py.stage4.verifier import _activate_data_shim
+
+        sm = type("SM", (), {"data_row_names": {"mtcars": ["Mazda RX4", "Datsun 710"], "other": ["a"]}})()
+        self.assertEqual(shim_row_names(sm, {"mtcars", "iris"}), {"mtcars": ["Mazda RX4", "Datsun 710"]})
+        self.assertEqual(shim_row_names(object(), {"mtcars"}), {})
+        payload = {"mtcars": {"mpg": [21.0, 22.8]}, "iris": {"x": [1, 2]},
+                   "__r2py_row_names__": shim_row_names(sm, {"mtcars", "iris"})}
+        new = build_data_shim(["iris", "mtcars"], "data.r2py_data.json")
+        old = "\n".join([   # a block written before 2026-10-01: the binding line loads dicts
+            DATA_SHIM_BEGIN,
+            "# import json as _r2py_shim_json",
+            "# from pathlib import Path as _r2py_shim_Path",
+            "# _r2py_shim_data = _r2py_shim_json.loads((_r2py_shim_Path(__file__).parent / "
+            "'data.r2py_data.json').read_text(encoding='utf-8'))",
+            "# for _r2py_shim_n in ['iris', 'mtcars']:",
+            "#     if _r2py_shim_n in _r2py_shim_data:",
+            _OLD_SHIM_ASSIGN,
+            DATA_SHIM_END])
+        for shim in (new, old):
+            src = shim + "\nprint(list(mtcars.index), list(iris.index), mtcars['mpg'].tolist())\n"
+            activated, _ = _activate_data_shim(src)
+            self.assertEqual(len(activated.splitlines()), len(src.splitlines()))
+            with tempfile.TemporaryDirectory() as wd:
+                wd = Path(wd)
+                (wd / "data.r2py_data.json").write_text(json.dumps(payload), encoding="utf-8")
+                (wd / "script.py").write_text(activated, encoding="utf-8")
+                r = subprocess.run([sys.executable, str(wd / "script.py")], capture_output=True, text=True,
+                                   timeout=60)
+                self.assertEqual(r.returncode, 0, f"stderr: {r.stderr}")
+                self.assertEqual(r.stdout.strip(), "['Mazda RX4', 'Datsun 710'] [0, 1] [21.0, 22.8]")
+
     def test_collect_shim_needed_names_handles_rng_entity_at_row_zero(self):
         """Regression: collect_shim_needed_names must use 0-based SourceLocation
         rows (matching prompt._entity_source). The previous 1-based slice

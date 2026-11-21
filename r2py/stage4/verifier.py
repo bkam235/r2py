@@ -495,12 +495,15 @@ def _build_sidecar_payload(script_map) -> str:
     (input datasets like ``storms``, ``mtcars``) are kept even if they share
     a name with an entity.
     """
-    from ..stage2.stitch import collect_shim_needed_names
+    from ..stage2.stitch import ROW_NAMES_KEY, collect_shim_needed_names, shim_row_names
     data = getattr(get_r_bundle(script_map), "data", {}) or {}
     entity_names = set(getattr(script_map, "entities", {}) or {})
     shim_names = set(collect_shim_needed_names(script_map))
     filtered = {k: v for k, v in data.items()
                 if k not in entity_names or k in shim_names}
+    row_names = shim_row_names(script_map, filtered)   # R row names, the shim's DataFrame index (2026-11-21)
+    if row_names:
+        filtered[ROW_NAMES_KEY] = row_names
     return serialize_bundle_data(filtered)
 
 

@@ -527,13 +527,16 @@ def _write_data_sidecar(py_path: "Path", script_map: object) -> None:
     data = getattr(bundle, "data", {}) or {}
     if not data:
         return
-    from .stage2.stitch import collect_shim_needed_names
+    from .stage2.stitch import ROW_NAMES_KEY, collect_shim_needed_names, shim_row_names
     entity_names = set(getattr(script_map, "entities", {}) or {})
     shim_names = set(collect_shim_needed_names(script_map))
     filtered = {k: v for k, v in data.items()
                 if k not in entity_names or k in shim_names}
     if not filtered:
         return
+    row_names = shim_row_names(script_map, filtered)
+    if row_names:
+        filtered[ROW_NAMES_KEY] = row_names
     sidecar = py_path.with_name(f"{py_path.stem}.r2py_data.json")
     try:
         sidecar.write_text(

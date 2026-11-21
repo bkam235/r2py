@@ -144,7 +144,7 @@ def build_data_shim(
         "len({len(_c) for _c in _r2py_shim_v.values()}) == 1):",
         "            import pandas as _r2py_shim_pd",
         "            _r2py_shim_v = _r2py_shim_pd.DataFrame(_r2py_shim_v)",
-        "        globals()[_r2py_shim_n] = _r2py_shim_v",
+        "        globals()[_r2py_shim_n] = _r2py_shim_v" + _ROW_NAMES_SUFFIX,
     ])
     return (
         DATA_SHIM_BEGIN
@@ -153,6 +153,22 @@ def build_data_shim(
         + "\n"
         + DATA_SHIM_END
     )
+
+
+# R row names of a data frame (mtcars' car names; R's data capture keeps only the columns) come in the sidecar under
+# ROW_NAMES_KEY, name -> row names, and become the DataFrame's index. Appended to the binding line, so a block of any
+# age keeps its line count (2026-11-21: purrr attr_getter could only paste mtcars' row names).
+ROW_NAMES_KEY = "__r2py_row_names__"
+_ROW_NAMES_SUFFIX = (
+    f"; _r2py_shim_rn = _r2py_shim_data.get({ROW_NAMES_KEY!r}, {{}}).get(_r2py_shim_n); "
+    "globals()[_r2py_shim_n] = globals()[_r2py_shim_n].set_axis(_r2py_shim_rn) if (_r2py_shim_rn is not None and "
+    "hasattr(globals()[_r2py_shim_n], 'set_axis') and len(globals()[_r2py_shim_n]) == len(_r2py_shim_rn)) "
+    "else globals()[_r2py_shim_n]")
+
+
+def shim_row_names(script_map, names) -> dict:
+    """The R row names stage 1 recorded (``data_row_names``) of the data frames among *names*, for the sidecar."""
+    return {n: rn for n, rn in (getattr(script_map, "data_row_names", None) or {}).items() if n in names}
 
 
 _OLD_SHIM_ASSIGN = "#         globals()[_r2py_shim_n] = _r2py_shim_data[_r2py_shim_n]"
@@ -174,9 +190,16 @@ def refresh_data_shim(source: str) -> str:
     """
     def _sub(m: "re.Match[str]") -> str:
         block = m.group(0)
-        if "_r2py_shim_pd" in block or block.count(_OLD_SHIM_ASSIGN) != 1:
+        if "_r2py_shim_pd" not in block and block.count(_OLD_SHIM_ASSIGN) == 1:
+            block = block.replace(_OLD_SHIM_ASSIGN, _NEW_SHIM_ASSIGN)
+        if ROW_NAMES_KEY in block:
             return block
-        return block.replace(_OLD_SHIM_ASSIGN, _NEW_SHIM_ASSIGN)
+        lines = block.split("\n")   # the binding line also sets R's row names (2026-11-21)
+        binds = [i for i, line in enumerate(lines) if line.startswith("# ") and "globals()[_r2py_shim_n] =" in line]
+        if len(binds) != 1:
+            return block
+        lines[binds[0]] += _ROW_NAMES_SUFFIX
+        return "\n".join(lines)
 
     return DATA_SHIM_RE.sub(_sub, source)
 

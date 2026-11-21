@@ -65,6 +65,7 @@ def analyze(
     for _e in entities.values():
         _all_free_refs.update(_e.free_variable_refs)
     _uncaptured = _all_free_refs - set(main_bundle.data.keys())
+    data_row_names: dict = {}
     if _uncaptured:
         _imported_pkgs = [
             _e.package for _e in entities.values()
@@ -72,6 +73,8 @@ def analyze(
         ]
         _extra = _probe_inherited_vars(_uncaptured, timeout_s, packages=_imported_pkgs)
         main_bundle.data.update(_extra)
+        # their R row names, which the data capture drops, for the data shim (2026-11-21)
+        data_row_names = probe_row_names(set(_extra), timeout_s, packages=_imported_pkgs)
 
     # ── Step 4 + 6: branch extraction loop ──────────────────────────────────
     branches: dict[str, BranchAnalysis] = {}
@@ -113,6 +116,7 @@ def analyze(
         coverage=tracker.report(),
         entity_bundles=entity_bundles,
         entity_types=entity_types,
+        data_row_names=data_row_names,
     )
 
 
@@ -369,6 +373,42 @@ def _probe_inherited_vars(
         return bundle.data
     except Exception:
         return {}
+
+
+def probe_row_names(
+    names: set[str], timeout_s: float, *, packages: list[str] | None = None,
+) -> dict:
+    """R row names of the data frames among *names* found on the search path (built-in and package datasets).
+
+    R's data capture keeps a data frame's columns only (as the Python side keeps a DataFrame's columns), so
+    mtcars' car names never reached the data shim and a translation could only paste them (2026-11-21, purrr
+    attr_getter). Only row names that carry something are kept: not automatic and not ``1..nrow``. Returns
+    name -> list of row names (strings, or integers as R stores them); the sidecar hands them to the shim.
+    """
+    if not names:
+        return {}
+    lib_lines = "".join(f"suppressPackageStartupMessages(library({pkg}))\n" for pkg in (packages or []))
+    r_names = "c(" + ", ".join(f'"{n}"' for n in sorted(names)) + ")"
+    probe_source = f"""\
+{lib_lines}r2py_row_names <- list()
+for (.r2py_v in {r_names}) {{
+  if (exists(.r2py_v, inherits = TRUE)) {{
+    .r2py_obj <- get(.r2py_v, inherits = TRUE)
+    if (is.data.frame(.r2py_obj) && .row_names_info(.r2py_obj) > 0) {{
+      .r2py_rn <- attr(.r2py_obj, "row.names")
+      if (!identical(as.character(.r2py_rn), as.character(seq_len(nrow(.r2py_obj))))) {{
+        r2py_row_names[[.r2py_v]] <- as.list(.r2py_rn)
+      }}
+    }}
+  }}
+}}
+"""
+    try:
+        bundle = run_slice(probe_source, capture=frozenset({EffectClass.DATA}), timeout_s=timeout_s)
+    except Exception:
+        return {}
+    out = (bundle.data or {}).get("r2py_row_names")
+    return {k: v for k, v in out.items() if isinstance(v, list)} if isinstance(out, dict) else {}
 
 
 def _resolve_arg_bindings(

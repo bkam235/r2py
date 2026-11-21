@@ -40,6 +40,9 @@ class ScriptMap(_BaseScriptMap):
     entity_bundles:   dict[EntityId, EffectBundle]       = field(default_factory=dict)
     # Per-entity R type info: entity_id → {var_name: {"class": "...", "typeof": "..."}}.
     entity_types:     dict[EntityId, dict]               = field(default_factory=dict)
+    # R row names of inherited data frames (mtcars' car names) that the data capture drops: name -> row names.
+    # The data shim sets them as the DataFrame's index. Maps pickled before 2026-11-21 lack it (getattr).
+    data_row_names:   dict[str, list]                    = field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
