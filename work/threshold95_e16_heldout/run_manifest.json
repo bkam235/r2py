@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/threshold95_continue.py run --source e16-heldout --workers 6 --budget 0.75",
+  "started": "2026-11-21 15:48:34",
+  "ended": "2026-11-21 16:22:32",
+  "scoring_version": "6419ff591842-db31b28ade02",
+  "rows": 38,
+  "balance_start": 10.51,
+  "balance_end": 10.17,
+  "cost": 0.34,
+  "budget": 0.75,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

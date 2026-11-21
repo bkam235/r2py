@@ -5390,3 +5390,45 @@ before any data.**
   chains), budget $0.75.
 - Analysis: `python scripts/threshold95_continue.py analyze --source e16-training` (resp. `e16-heldout`). The
   script's `e11` source reproduces `threshold-095` exactly (checked 2026-11-21).
+- **Result, training (2026-11-21, `work/threshold95_e16`, 60 of 60 chains, $0.70, balance $11.21 -> $10.51, no sleep
+  gaps, epoch 16 throughout).** `analysis.txt` (the registered command), `analysis_11states.txt`:
+  - The registered command counted 10 of 11 states: its validity filter (a row is valid only if the agent model was
+    called) dropped rvest html_children's three t90 chains, which start at 0.905 >= 0.9 and so stop before any call
+    (real rows: 0 calls, no gain). Fixed in `_valid` (that case only; the `e11` source still reproduces
+    `threshold-095`), and both readings are reported; the rule passes in both.
+  - 10 states: plateau gain per call t95 - t90 **+0.0012 [-0.0003, +0.0029], P 0.945**.
+  - 11 states (as registered): **+0.0015 [+0.0000, +0.0031], P 0.977** -> **passes** (P >= 0.9). t95 +0.0079
+    [+0.0047, +0.0111] on the plateau over 151 calls, t90 +0.0055 [+0.0025, +0.0085] over 194; share t95 +0.133 (8 of
+    11 to >= 0.95), t90 +0.083 (5); flipped per call +0.027 [+0.000, +0.055], P 0.976.
+  - By state: t95 gained most on rvest html_children (+0.095, 3 of 3 chains to 1.0), purrr attr_getter (+0.074; t90 the
+    same), shape_string (+0.058), shape_text (+0.058, to 0.970), get_font_features (+0.056), broom augment_felm
+    (+0.049), pROC coords (+0.047); no gain on certificates (t90 +0.074 in 25 calls), backGround, agg_webp_anim.
+- **Result, held-out (`work/threshold95_e16_heldout`, 38 of 38, $0.34, balance -> $10.17, no sleep gaps).**
+  `analysis.txt`: 7 of 7 states; plateau gain per call t95 - t90 **+0.0048 [+0.0020, +0.0090], P 1.000 -> passes**.
+  t95 +0.0077 [+0.0046, +0.0103] over 63 calls, t90 +0.0023 [+0.0001, +0.0054] over 133; share t95 +0.130 (6 of 7 to
+  >= 0.95), t90 +0.043 (2). t95 gained on all 7, t90 on 3 (broom_chunk6, farver compare_colour, rmarkdown includes,
+  recipes step_filter_missing: t95 only).
+- Total cost $1.04 (estimate $0.82). Extra calls in production: about 151 / 60 = 2.5 per script on training, 63 / 46
+  = 1.4 on held-out (the default's 16.5 per run), about $0.004 per script: inside the cost class.
+- **Faithfulness audit (step 8; `work/analysis/t95_e16_audit.py`, `.txt`, programs in
+  `work/analysis/t95_e16_finals/`, diffs `t95_e16_audit_diffs.txt`):** the 10 t95 finals with the largest gains, both
+  pools; new 4-digit literals, the forging marker, and each diff against the program the chain continued from, read.
+  - 8 faithful: rvest html_children (renders xml2's document header around lxml's body; nodes real), recipes
+    step_filter_missing (column widths computed instead of hard-coded; its `step_id = 'filter_missing_OTBgW'`, R's
+    random id, is in the start program already), farver compare_colour, ModelMetrics logLoss, broom_chunk6 (R's
+    number and tibble print rules), shape_text and get_font_features (no new literal), shape_string (reads the font's
+    `hmtx` table itself; 2048 / 1854 / 434 / 1024 are Arial's metrics used only if loading the font fails).
+  - broom augment_felm: three `__r2py_fp__` dicts, the same as in the default's own final (refused since epoch 13;
+    not introduced by the threshold).
+  - **purrr attr_getter: a fault.** The final hard-codes mtcars' 32 car names and returns them for any data frame of
+    32 rows with an `mpg` column. Shown offline: the data shim's sidecar
+    (`work/heldout/train_outputs/purrr__rd_example__attr_getter_Rd.r2py_data.json`) holds `mtcars` as a dict of its
+    11 columns without row names, so no program can read R's `row.names` from the input; pasting them is the only way
+    to match. A shim fault (scorer track, 3a) first. It does not drive the result: t90 reached the same +0.074 on
+    purrr in 3 calls.
+- **Decision:** both pools pass the registered rule. Adoption (flip `DEFAULT_SCORE_THRESHOLD` to 0.95 and a policy
+  `default_<date>`) waits, by step 8, for the shim fault (data frames' row names in the sidecar), then the person's
+  sign-off; then the new default is replayed (step 9). Registry records stay open until the person decides.
+- Plateau of the production default: unchanged (no default changed): 0.909 training, 0.902 held-out. The test's
+  estimate of the gain if adopted: about +0.008 on both pools (t95's plateau gain; under the replay noise, so the
+  step-9 replay can confirm only that it does not fall), share about +0.13.

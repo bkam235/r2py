@@ -1,0 +1,15 @@
+[
+ {
+  "command": "scripts/threshold95_continue.py run --source e16-training --workers 6 --budget 1",
+  "started": "2026-11-21 14:58:05",
+  "ended": "2026-11-21 15:47:22",
+  "scoring_version": "6419ff591842-db31b28ade02",
+  "rows": 60,
+  "balance_start": 11.21,
+  "balance_end": 10.51,
+  "cost": 0.7,
+  "budget": 1.0,
+  "stop_reason": "finished",
+  "sleep_gaps": []
+ }
+]

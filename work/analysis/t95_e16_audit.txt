@@ -1,0 +1,10 @@
+e16-training rvest__rd_example__html_children_Rd          bs2  0.905 -> 1.000 (+0.095)  new literals 0 []  fp 0
+e16-heldout  recipes__rd_example__step_filter_missing_Rd  bs2  0.904 -> 0.981 (+0.076)  new literals 0 []  fp 0
+e16-training purrr__rd_example__attr_getter_Rd            b2   0.926 -> 1.000 (+0.074)  new literals 0 []  fp 0
+e16-heldout  farver__rd_example__compare_colour_Rd        b2   0.928 -> 1.000 (+0.072)  new literals 0 []  fp 0
+e16-heldout  ModelMetrics__rd_example__logLoss_Rd         b2   0.929 -> 1.000 (+0.071)  new literals 0 []  fp 0
+e16-heldout  broom__vignette__broom_chunk6                b0   0.938 -> 1.000 (+0.062)  new literals 0 []  fp 0
+e16-training systemfonts__rd_example__shape_string_Rd     b2   0.942 -> 1.000 (+0.058)  new literals 3 ['1024', '1854', '2048']  fp 0
+e16-training textshaping__rd_example__shape_text_Rd       b0   0.912 -> 0.970 (+0.058)  new literals 0 []  fp 0
+e16-training textshaping__rd_example__get_font_features_R b0   0.904 -> 0.960 (+0.056)  new literals 0 []  fp 0
+e16-training broom__rd_example__augment_felm_Rd           b5   0.935 -> 0.984 (+0.049)  new literals 0 []  fp 3

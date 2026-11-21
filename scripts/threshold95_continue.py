@@ -135,6 +135,9 @@ def run(workers: int, budget: float, reserve: float, out_dir=OUT, limit=None) ->
 def _valid(r: dict) -> bool:
     if "final_score" not in r or r.get("invalid"):
         return False
+    # a t90 chain whose start already meets 0.9 stops before any call: a real row (0 calls, no gain)
+    if r["policy"] == "t90_chain" and r["llm_steps"] == 0 and r["start_score"] >= LOW:
+        return True
     # an agent model that was never called (blocked, failing) leaves an ordinary-looking row: not valid
     return r["agent_model"].removeprefix("openrouter:") in (r.get("usage") or {})
 

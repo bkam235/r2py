@@ -21,19 +21,19 @@ Classified on 2026-11-15 (16 of the 17 `unknown` rows, offline: `work/analysis/t
 |---|---|---|
 | gap (1 - mean final 0.9086; the epoch-9 replay re-scored under epoch 16: 0.8656) | 60 | 0.0914 |
 | held by the states with final >= 0.95 (not listed) | 34 | 0.0058 |
-| behaviour | 11 | 0.0309 |
-| measurement (a scorer fix moves it as a correction) | 2 | 0.0079 (shown offline 0.0022: sass as_sass; hypothesis 0.0057: ec_dh) |
+| behaviour | 13 | 0.0337 |
+| measurement (a scorer fix moves it as a correction) | 3 | 0.0091 (shown offline 0.0034: sass as_sass, purrr attr_getter (the shim drops row names); hypothesis 0.0057: ec_dh) |
 | capability | 4 | 0.0140 (all R's RNG stream under the harness's `set.seed(42)`: caret_s3, update_train, Arrows, boxplot_bclust) |
-| out of reach | 5 | 0.0281 (aes_cbc, glyph_raster, shape_text (in doubt), ragg agg_capture; bslib page_fillable pending the py-shiny markup decision, 0.0105) |
-| unknown | 4 | 0.0047 (pROC coords, purrr attr_getter, ragg agg_webp_anim, broom augment_felm) |
-| **reachable gap** (1 - mean final - out of reach) | | **0.059 to 0.063** (unknown counted both ways; noise floor about ±0.03, twice it 0.06: **at the headroom limit**) |
+| out of reach | 4 | 0.0266 (aes_cbc, glyph_raster, ragg agg_capture; bslib page_fillable pending the py-shiny markup decision, 0.0105; shape_text left on 2026-11-21) |
+| unknown | 2 | 0.0022 (ragg agg_webp_anim, broom augment_felm) |
+| **reachable gap** (1 - mean final - out of reach) | | **0.063 to 0.065** (unknown counted both ways; noise floor about ±0.03, twice it 0.06: **at the headroom limit**; 2026-11-21, threshold-095-e16) |
 
 | share >= 0.95 (secondary) | states | share |
 |---|---|---|
 | room (1 - share 0.567; the epoch-9 replay re-scored 0.550; held-out 0.652) | 26 | 0.433 |
-| out of reach | 5 | 0.083 |
-| unknown | 4 | 0.067 |
-| **reachable room** | | **0.283 to 0.350** (noise floor of a replay about ±0.09, twice it 0.18) |
+| out of reach | 4 | 0.067 |
+| unknown | 2 | 0.033 |
+| **reachable room** | | **0.333 to 0.367** (noise floor of a replay about ±0.09, twice it 0.18; 2026-11-21) |
 
 The 8 states at 0.90-0.95 were added on 2026-11-14 with the cut. In each, at least one of the 3 chains stopped
 because its best reached the loop's stop threshold 0.9 (16 threshold stops of 24 chains; the replay's `stop`
@@ -59,13 +59,13 @@ counts), so the threshold, not the model, ended them below 0.95.
 | isoband isoband3_s2 | 0.869 | 0.0022 | behaviour | feedback-e10 reached 0.869 (same score under the old rule: a better program). Epoch 15: R's page starts at `grid.newpage` (grid.draw draws on it); the final creates its figure at `grid.draw`, so `grid.newpage` scores R=1 Python=0. A translation that opens its figure at `grid.newpage` matches the attribution. | 2026-11-16 |
 | farver convert_colour | 0.890 | 0.0018 | behaviour | feedback-e10 reached 0.890 (marked `spec_lab`); some chains pasted `convert_colour` outputs (model-screen audit). default-e16-replay: 0.890; its 8 new literals are colour-science constants (D65/D50 white points, CIE kappa 24389), not R outputs. | 2026-11-14 |
 | prodlim backGround | 0.900 | 0.0017 | behaviour (measurement part fixed in epoch 15) | 9 rewrites, all `unchanged`; `plot(0,0)` scores plotted similarity exactly 0.000 and R records no figure at the `backGround` calls (draws on the open plot). The feedback gives a similarity, not the difference. Suspected measurement (exact 0 on a one-point plot), not shown. Epoch 15 (`work/analysis/graphics_meta_dump_epoch15.txt`): two faults were measurement: the Python capture closed figures at each checkpoint, so `backGround`'s drawing became a page of its own while R draws it on `plot`'s page; and R's one-point series arrived unboxed (`py` 0, read as nothing plotted). Fixed: `plot` 0.5 -> 0.75. What is left is the program: the final draws the background (23 bars) on a new figure at `backGround`, R on the open page. default-e16-replay: 0.900. | 2026-11-16 |
-| textshaping get_font_features | 0.904 | 0.0016 | behaviour (hypothesis) | Only `sys_fonts` loses (0.71): R lists 406 fonts, Python 405 and in another order (`Barrio` first). October: Python can read the same font files. In feedback-e10 a new run on it ended 0.217 lower. | 2026-11-15 |
+| textshaping get_font_features | 0.904 | 0.0016 | behaviour (hypothesis) | Only `sys_fonts` loses (0.71): R lists 406 fonts, Python 405 and in another order (`Barrio` first). October: Python can read the same font files. In feedback-e10 a new run on it ended 0.217 lower. threshold-095-e16 (2026-11-21): a chain continued at 0.95 reached 0.960, no new literal. | 2026-11-21 |
 | rvest html_children | 0.905 | 0.0016 | behaviour (since epoch 14) | Epoch 13: `html`, `ul`, `p` written as forged fingerprint dicts (a `_node` helper); refused, 0.25 each ("Python has no text form"; `ul[0]`, `p[0]`: lists of nodes). `html_children*` 1.0. As html_table. Epoch 14: the start program, with real lxml nodes, scores `ul` and `p` 1.0 (start 0.605 -> 0.905, check 20261116_0930), so the state is reachable; the default final forged instead. default-e16-replay: 0.905, real lxml nodes, no forging. | 2026-11-15 |
-| textshaping shape_text | 0.912 | 0.0015 | out of reach | Font metrics, as glyph_raster; 3 literal-check rejections in the replay. default-e16-replay: 0.912 with no new 4-digit literal (`work/replay_default_e16/audit.txt`): the class is in doubt. | 2026-11-14 |
+| textshaping shape_text | 0.912 | 0.0015 | behaviour (the stop threshold) | Font metrics, as glyph_raster; 3 literal-check rejections in the replay. default-e16-replay: 0.912 with no new 4-digit literal (`work/replay_default_e16/audit.txt`): the class is in doubt. threshold-095-e16 (2026-11-21): a chain continued at 0.95 reached 0.970 with no new 4-digit literal (audit read); not out of reach. | 2026-11-21 |
 | sass sass_import | 0.917 | 0.0014 | behaviour (corrected) | Corrected after threshold-095: two continuations reached 0.977, so the printed temp path does not block it. FILES key `tempfile:file522c7cde307a.scss` reaches no score (removed: 0.9065 -> 0.9059). | 2026-11-15 |
-| pROC coords | 0.921 | 0.0013 | unknown | Enters with default-e16-replay (0.921); two accepted intermediate programs wrote `__r2py_fp__` dicts (refused since epoch 13), the final does not. Not read. | 2026-11-16 |
+| pROC coords | 0.921 | 0.0013 | behaviour (the stop threshold) | Enters with default-e16-replay (0.921); two accepted intermediate programs wrote `__r2py_fp__` dicts (refused since epoch 13), the final does not. threshold-095-e16 (2026-11-21): a chain continued at threshold 0.95 reached 0.968 (t90 chains +0.019). | 2026-11-21 |
 | openssl certificates | 0.926 | 0.0012 | behaviour | `chain` 0.25: the final binds `chain` under the `print` entity; at `chain` it only defines `download_ssl_cert`, so nothing is recorded there. (Network value: R's capture holds the CRAN certificate valid 2025-12-16 to 2027-01-16.) | 2026-11-15 |
-| purrr attr_getter | 0.926 | 0.0012 | unknown | Enters with default-e16-replay (0.926). Not read. | 2026-11-16 |
-| ragg agg_webp_anim | 0.933 | 0.0011 | unknown | Enters with default-e16-replay (0.933). Not read. | 2026-11-16 |
+| purrr attr_getter | 0.926 | 0.0012 | measurement (shown offline: the data shim) | Enters with default-e16-replay (0.926). threshold-095-e16 (2026-11-21): t95 and t90 reached 1.0 by hard-coding mtcars' 32 car names; the shim's sidecar holds `mtcars` as a dict of 11 columns without row names, so no program can read R's `row.names` from the input. A shim fix (data frames' row names) moves it as a correction and removes the reason to paste. | 2026-11-21 |
+| ragg agg_webp_anim | 0.933 | 0.0011 | unknown | Enters with default-e16-replay (0.933). threshold-095-e16 (2026-11-21): no gain in 17 calls at 0.95 nor in 10 at 0.9. Not read. | 2026-11-21 |
 | broom augment_felm | 0.935 | 0.0011 | unknown | Enters with default-e16-replay (0.935, 0.961 in the epoch-9 replay); the final writes three `__r2py_fp__` dicts, refused since epoch 13, so the forging costs it. Not read further. | 2026-11-16 |
 | systemfonts shape_string | 0.942 | 0.0010 | behaviour (corrected) | Corrected after threshold-095: a continuation reached 0.981 by reading the font file with fontTools (`shape_string`, 289 lines, no pasted decimals; literal_check and review passed). Not out of reach; the default's chains had pasted metrics instead. | 2026-11-15 |

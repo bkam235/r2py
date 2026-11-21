@@ -1,0 +1,16 @@
+states 7 of 7 complete
+  t95_cont  chains  17  improved  15  reach >= 0.95  14  calls   63  done   1  probes  35  cost $0.13
+  t90_chain chains  21  improved  14  reach >= 0.95   3  calls  133  done   2  probes  59  cost $0.21
+t95: gain on the plateau       +0.00767 [+0.00460, +0.01030]  P(> 0) 1.000
+t90: gain on the plateau       +0.00227 [+0.00007, +0.00537]  P(> 0) 0.980
+plateau gain per call, t95 - t90 +0.00482 [+0.00200, +0.00903]  P(> 0) 1.000
+t95: share gain                +0.13043 [+0.08696, +0.15217]  P(> 0) 1.000
+t90: share gain                +0.04348 [+0.00000, +0.08696]  P(> 0) 0.907
+flipped per call, t95 - t90    +0.08020 [+0.03796, +0.13533]  P(> 0) 1.000
+  ModelMetrics__rd_example__logLoss_Rd.R         0.929  t95 +0.071 (3 calls)  t90 +0.071 (3 calls)
+  broom__rd_example__augment_survreg_Rd.R        0.943  t95 +0.028 (14 calls)  t90 +0.030 (19 calls)
+  broom__vignette__broom_chunk6.R                0.938  t95 +0.062 (9 calls)  t90 +0.000 (40 calls)
+  farver__rd_example__compare_colour_Rd.R        0.928  t95 +0.072 (14 calls)  t90 +0.000 (36 calls)
+  gtable__rd_example__gtable_add_padding_Rd.R    0.947  t95 +0.003 (10 calls)  t90 +0.003 (15 calls)
+  recipes__rd_example__step_filter_missing_Rd.R  0.904  t95 +0.076 (3 calls)  t90 +0.000 (0 calls)
+  rmarkdown__rd_example__includes_Rd.R           0.923  t95 +0.041 (10 calls)  t90 +0.000 (20 calls)

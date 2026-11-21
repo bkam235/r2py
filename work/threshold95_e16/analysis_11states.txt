@@ -1,0 +1,20 @@
+states 11 of 11 complete
+  t95_cont  chains  27  improved  20  reach >= 0.95  19  calls  151  done   0  probes  91  cost $0.29
+  t90_chain chains  33  improved  24  reach >= 0.95   7  calls  194  done   1  probes  98  cost $0.41
+t95: gain on the plateau       +0.00794 [+0.00465, +0.01111]  P(> 0) 1.000
+t90: gain on the plateau       +0.00545 [+0.00248, +0.00854]  P(> 0) 1.000
+plateau gain per call, t95 - t90 +0.00147 [+0.00003, +0.00307]  P(> 0) 0.977
+t95: share gain                +0.13333 [+0.08333, +0.18333]  P(> 0) 1.000
+t90: share gain                +0.08333 [+0.03333, +0.13333]  P(> 0) 0.999
+flipped per call, t95 - t90    +0.02721 [+0.00042, +0.05500]  P(> 0) 0.976
+  broom__rd_example__augment_felm_Rd.R           0.935  t95 +0.049 (19 calls)  t90 +0.038 (18 calls)
+  openssl__rd_example__certificates_Rd.R         0.926  t95 +0.000 (4 calls)  t90 +0.074 (25 calls)
+  pROC__rd_example__coords_Rd.R                  0.921  t95 +0.047 (28 calls)  t90 +0.019 (29 calls)
+  prodlim__rd_example__backGround_Rd.R           0.900  t95 +0.000 (16 calls)  t90 +0.000 (19 calls)
+  purrr__rd_example__attr_getter_Rd.R            0.926  t95 +0.074 (5 calls)  t90 +0.074 (3 calls)
+  ragg__rd_example__agg_webp_anim_Rd.R           0.933  t95 +0.000 (17 calls)  t90 +0.000 (10 calls)
+  rvest__rd_example__html_children_Rd.R          0.905  t95 +0.095 (17 calls)  t90 +0.000 (0 calls)
+  sass__rd_example__sass_import_Rd.R             0.917  t95 +0.040 (6 calls)  t90 +0.055 (4 calls)
+  systemfonts__rd_example__shape_string_Rd.R     0.942  t95 +0.058 (19 calls)  t90 +0.035 (23 calls)
+  textshaping__rd_example__get_font_features_Rd. 0.904  t95 +0.056 (5 calls)  t90 +0.000 (16 calls)
+  textshaping__rd_example__shape_text_Rd.R       0.912  t95 +0.058 (15 calls)  t90 +0.033 (47 calls)

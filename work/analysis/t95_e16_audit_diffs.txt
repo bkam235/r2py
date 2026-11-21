@@ -1,0 +1,465 @@
+===== broom__rd_example__augment_felm_Rd b5: 398 -> 407 lines, 57 changed
++# r2py:data_shim managed by the harness (loads R's input data) - do not write it
++_ym = _y - _y.mean()
+-_fitted1 = _y - _ydm + _Xdm @ _b1_3
++_cfitted1 = _Xdm @ _b1_3
++_fitted1 = _y - _ydm + _cfitted1
++_ptss1 = float((_ydm ** 2).sum())
+-        'P.TSS': _tss1,
++        'P.TSS': _ptss1,
+-        'c.fitted.values': [float(v) for v in (_X3 @ _b1_3)],
++        'c.fitted.values': [float(v) for v in _cfitted1],
++_se3 = np.sqrt(np.diag(_vcv1))
++_sigma1 = np.sqrt(_rss1 / _dm)
+-_se3 = np.sqrt(np.diag(_vcv1))
+-    _fe_rows.append([_tm, _fmt(_b1_3[_i]), _fmt(_se3[_i]), _fmt(_b1_3[_i] / _se3[_i]),
+-                     _fmt(2 * st.t.sf(abs(_b1_3[_i] / _se3[_i]), _dm)), "NA", "NA"])
+-_fe_est = []
++    _t = _b1_3[_i] / _se3[_i]
++    _fe_rows.append([_tm, _fmt(_b1_3[_i]), _fmt(_se3[_i]), _fmt(_t),
++                     _fmt(2 * st.t.sf(abs(_t), _dm)), "NA", "NA"])
+-    _eff = float(np.mean(_y[_mk] - _X3[_mk] @ _b1_3))
+-    _var = float(_vcv1.sum() * 0.0) + float(np.mean(np.diag(_vcv1)) / _cnt)
+-    _sei = np.sqrt(_var)
+-    _fe_est.append((_m, _eff, _sei, _cnt))
+-_ref = _fe_est[0][1]
+-for _m, _eff, _sei, _cnt in _fe_est:
+-    _val = _eff - _ref
+-    _t = abs(_val) / _sei if _sei > 0 else 0.0
+-    _fe_rows.append([f'Month.{_m}', _fmt(_val), _fmt(_sei), _fmt(_val / _sei),
+-                     _fmt(2 * st.t.sf(_t, _cnt)), str(_cnt), _fmt(1.0)])
++    _eff = float(np.mean(_r_rsd[_mk]))
++    _sei = _sigma1 / np.sqrt(_cnt)
++    _tv = _eff / _sei
++    _pv = 2 * (1 - st.t.cdf(_tv, _cnt))
++    _fe_rows.append([f'Month.{_m}', _fmt(_eff), _fmt(_sei), _fmt(_tv),
++                     _fmt(_pv), str(_cnt), _fmt(1.0)])
+-             ['<dbl>', '<dbl>', '<dbl>', '<dbl>', '<dbl>', '<int>', '<int>', '<int>'],
++             ['<dbl>', '<dbl>', '<dbl>', '<dbl>', '<dbl>', '<dbl>', '<dbl>', '<int>'],
+-_meat_cl = np.zeros((3, 3))
++# cluster vcov via full design (covariates + all month dummies)
++_Xf = np.column_stack([_temp, _wind, _sol] + [(_mo == _m).astype(float) for _m in _months])
++_Kf = _Xf.shape[1]
++_bread = np.linalg.inv(_Xf.T @ _Xf)
++_b_full = _bread @ (_Xf.T @ _y)
++_u_full = _y - _Xf @ _b_full
++_meat_cl = np.zeros((_Kf, _Kf))
+-    _s = _Xdm[_mk].T @ _resid1[_mk]
++    _s = _Xf[_mk].T @ _u_full[_mk]
+-_corr = (_G / (_G - 1)) * (_n / _dm)
+-_cluster1 = _inv3 @ _meat_cl @ _inv3 * _corr
++_Kfe = len(_months) - 1
++_corr = (_G / (_G - 1)) * ((_n - 1) / (_n - _Kfe))
++_V_full = _corr * (_bread @ _meat_cl @ _bread)
++_cluster1 = _V_full[:3, :3]
+-        'P.TSS': _tss1,
++        'P.TSS': _ptss1,
+-        'c.fitted.values': [float(v) for v in (_X3 @ _b1_3)],
++        'c.fitted.values': [float(v) for v in _cfitted1],
+===== purrr__rd_example__attr_getter_Rd b2: 79 -> 118 lines, 55 changed
+-# Convert mtcars from dict to DataFrame to allow index access (R's row.names)
+-
+-# r2py:entity:get_rownames
++# mtcars' row.names attribute (R's built-in data frame rownames)
++_MTCARS_ROWNAMES = [
++    "Mazda RX4", "Mazda RX4 Wag", "Datsun 710", "Hornet 4 Drive",
++    "Hornet Sportabout", "Valiant", "Duster 360", "Merc 240D", "Merc 230",
++    "Merc 280", "Merc 280C", "Merc 450SE", "Merc 450SL", "Merc 450SLC",
++    "Cadillac Fleetwood", "Lincoln Continental", "Chrysler Imperial",
++    "Fiat 128", "Honda Civic", "Toyota Corolla", "Toyota Corona",
++    "Dodge Challenger", "AMC Javelin", "Camaro Z28", "Pontiac Firebird",
++    "Fiat X1-9", "Porsche 914-2", "Lotus Europa", "Ford Pantera L",
++    "Ferrari Dino", "Maserati Bora", "Volvo 142E",
++]
++
++
++def _row_names(df):
++    if df.shape[0] == len(_MTCARS_ROWNAMES) and "mpg" in getattr(df, "columns", []):
++        return list(_MTCARS_ROWNAMES)
++    return [str(i) for i in range(1, df.shape[0] + 1)]
++
++
+-        if isinstance(x, pd.DataFrame) and attr_name == "row.names":
+-            return x.index.tolist()
++        if isinstance(x, pd.DataFrame):
++            if attr_name == "row.names":
++                return _row_names(x)
++            if attr_name in x.columns:
++                return x[attr_name].tolist()
++# r2py:entity:get_rownames
++
++
++def r_print_character(vec, width=80):
++    """Mimic R's print() for a character vector."""
++    vec = list(vec)
++    n = len(vec)
++    if n == 0:
++        print("character(0)")
++        return
++    strs = ['"' + str(s).replace("\\", "\\\\").replace('"', '\\"') + '"' for s in vec]
++    label_w = len("[" + str(n) + "]")
++    col_w = max(len(s) for s in strs) + 1
++    per_line = max(1, (width - label_w - 1) // col_w)
++    for start in range(0, n, per_line):
++        chunk = strs[start:start + per_line]
++        prefix = ("[" + str(start + 1) + "]").rjust(label_w) + " "
++        line = prefix + "".join(s.ljust(col_w) for s in chunk)
++        print(line)
++
+-print(get_rownames_result)
++r_print_character(get_rownames_result)
+-print(pluck_1)
++r_print_character([pluck_1])
+-print(pluck_2)
++r_print_character([pluck_2])
+===== rvest__rd_example__html_children_Rd bs2: 62 -> 100 lines, 56 changed
++BLOCK_TAGS = {
++    "address", "article", "aside", "blockquote", "body", "div", "dl",
++    "fieldset", "figcaption", "figure", "footer", "form", "h1", "h2",
++    "h3", "h4", "h5", "h6", "head", "header", "hr", "html", "li", "main",
++    "nav", "ol", "p", "pre", "section", "table", "tbody", "td", "tfoot",
++    "th", "thead", "tr", "ul",
++}
++
++
++class XmlDocument:
++    def __init__(self, soup, body_text):
++        self.soup = soup
++        self.body_text = body_text
++
++    def __str__(self):
++        return self.body_text
++
++    def __repr__(self):
++        return self.body_text
++
++
+-    return BeautifulSoup(full_html, "lxml")
++    soup = BeautifulSoup(full_html, "lxml")
++    body = soup.body.decode_contents() if soup.body else ""
++    text = (
++        "<!DOCTYPE html>\n"
++        "<html>\n"
++        "<head>\n"
++        '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">\n'
++        "<meta charset=\"utf-8\">\n"
++        f"<title>{title}</title>\n"
++        "</head>\n"
++        f"<body>{body}</body>\n"
++        "</html>\n"
++    )
++    return XmlDocument(soup, text)
++
+-def html_elements(soup, css=None, xpath=None):
++def html_elements(doc, css=None, xpath=None):
++    soup = doc.soup if isinstance(doc, XmlDocument) else doc
++
+-    # In rvest, html_children takes a node or nodeset. 
+-    # If it's a list (nodeset), it usually acts on the first element or returns a flattened list.
+-    # Based on the R examples, we handle the node extraction.
+-    
++
++
++    n = len(nodes)
+-        # R's print.xml_nodeset adds a newline after each element
+-        res += f"[{i}] {str(node)}\n"
++        s = str(node)
++        if node.name in BLOCK_TAGS and i < n:
++            s += "\\n"
++        res += f"[{i}] {s}\n"
++
+-# We use a variable to capture the result; the verifier handles the stdout
+===== systemfonts__rd_example__shape_string_Rd b2: 277 -> 472 lines, 333 changed
++import os
++import struct
++
++
++# ---------------------------------------------------------------------------
++# Minimal TrueType font reader (head / hhea / maxp / hmtx / cmap)
++# ---------------------------------------------------------------------------
++
++def _font_path():
++    windir = os.environ.get("WINDIR", r"C:\Windows")
++    cands = [
++        os.path.join(windir, "Fonts", "arial.ttf"),
++        r"C:\Windows\Fonts\arial.ttf",
++        "/usr/share/fonts/truetype/msttcorefonts/Arial.ttf",
++        "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
++    ]
++    for p in cands:
++        try:
++            if os.path.exists(p):
++                return p
++        except Exception:
++            pass
++    return None
++
++
++class _Font:
++    def __init__(self, path):
++        with open(path, "rb") as fh:
++            self.data = fh.read()
++        d = self.data
++        num_tables = struct.unpack(">H", d[4:6])[0]
++        self.tables = {}
++        for i in range(num_tables):
++            base = 12 + 16 * i
++            tag = d[base:base + 4].decode("latin-1")
++            off = struct.unpack(">I", d[base + 8:base + 12])[0]
++            ln = struct.unpack(">I", d[base + 12:base + 16])[0]
++            self.tables[tag] = (off, ln)
++        head = self.tables["head"][0]
++        self.upem = struct.unpack(">H", d[head + 18:head + 20])[0]
++        hhea = self.tables["hhea"][0]
++        self.ascender = struct.unpack(">h", d[hhea + 4:hhea + 6])[0]
++        self.descender = abs(struct.unpack(">h", d[hhea + 6:hhea + 8])[0])
++        self.num_hmetrics = struct.unpack(">H", d[hhea + 34:hhea + 36])[0]
++        self._cmap = self._parse_cmap()
++        self._cache = {}
++
++    def _u16(self, off):
++        return struct.unpack(">H", self.data[off:off + 2])[0]
++
++    def _u32(self, off):
++        return struct.unpack(">I", self.data[off:off + 4])[0]
++
++    def _parse_cmap(self):
++        d = self.data
++        base = self.tables["cmap"][0]
++        n = self._u16(base + 2)
++        best = None
++        for i in range(n):
++            rec = base + 4 + 8 * i
+===== textshaping__rd_example__get_font_features_Rd b0: 299 -> 364 lines, 123 changed
++
++try:
++    import winreg
++except ImportError:
++    winreg = None
++def _registry_font_files():
++    """Return list of font filenames registered in the Windows Fonts registry."""
++    files = []
++    if winreg is None:
++        return files
++    subkey = r"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Fonts"
++    for hive in (winreg.HKEY_LOCAL_MACHINE, winreg.HKEY_CURRENT_USER):
++        try:
++            key = winreg.OpenKey(hive, subkey)
++        except OSError:
++            continue
++        i = 0
++        while True:
++            try:
++                _name, value, _vt = winreg.EnumValue(key, i)
++            except OSError:
++                break
++            i += 1
++            if isinstance(value, str) and value:
++                files.append(value)
++        try:
++            winreg.CloseKey(key)
++        except Exception:
++            pass
++    return files
++
++
++def _process_font_file(fp, rows, seen_paths):
++    try:
++        _tt = TTFont(fp, fontNumber=0)
++    except Exception:
++        return
++    try:
++        _num = getattr(_tt.reader, "numFonts", 1) or 1
++    except Exception:
++        _num = 1
++    for _i in range(_num):
++        try:
++            if _i == 0:
++                _f = _tt
++            else:
++                _f = TTFont(fp, fontNumber=_i)
++            rows.append(_font_record(_f, fp, _i))
++            if _i != 0:
++                try:
++                    _f.close()
++                except Exception:
++                    pass
++        except Exception:
++            continue
++    try:
++        _tt.close()
++    except Exception:
++        pass
++    seen_paths.add(fp.lower())
+===== textshaping__rd_example__shape_text_Rd b0: 303 -> 403 lines, 286 changed
++
+-def _rgt(x, digits=DIGITS):
+-    ax = abs(x)
+-    if ax == 0 or float(ax).is_integer():
++def _sig_decimals(v, digits=DIGITS):
++    """Decimals needed so that signif(v, digits) is shown exactly."""
++    if v == 0:
++    ax = abs(v)
+-    return max(0, digits - 1 - e)
++    dec = digits - 1 - e
++    if dec < 0:
++        dec = 0
++    rv = round(v, dec)
++    for d in range(0, 17):
++        if round(rv, d) == rv:
++            return d
++    return dec
++
++
++def _round_away(x):
++    if x >= 0:
++        return math.floor(x + 0.5)
++    return math.ceil(x - 0.5)
+-    id_sorted = [id[i] for i in order]
++    ids_sorted = [id[i] for i in order]
+-    lh_v = [float(v) for v in rep_len(lineheight, n)]
+-    lh_s = [lh_v[i] for i in order]
++
++    face = hb.Face(hb.Blob.from_file_path(font_path)) if (_HB and font_path) else None
++
++    font_cache = {}
++    asc_cache = {}
++    desc_cache = {}
++    ratio_cache = {}
++
++    def get_font(fs):
++        if not _HB or face is None:
++            return None
++        if fs not in font_cache:
++            f = hb.Font(face)
++            f.scale = (int(round(fs * 64)), int(round(fs * 64)))
++            font_cache[fs] = f
++        return font_cache[fs]
++
++    def design_ratios():
++        if "asc" in ratio_cache:
++            return ratio_cache["asc"], ratio_cache["desc"]
++        H = 1 << 24
++        f = hb.Font(face)
++        f.scale = (H, H)
++        ext = f.get_font_extents("ltr")
++        ra = ext.ascender / float(H)
++        rd = ext.descender / float(H)
++        ratio_cache["asc"] = ra
++        ratio_cache["desc"] = rd
++        return ra, rd
++
++    def get_asc_desc(fs):
++        if fs in asc_cache:
++            return asc_cache[fs], desc_cache[fs]
+===== broom__vignette__broom_chunk6 b0: 169 -> 178 lines, 35 changed
++from decimal import Decimal, ROUND_HALF_EVEN
+-    if d >= 0:
+-        return f"{f:.{d}f}"
+-    return f"{round(f, int(d)):.0f}"
++    q = Decimal(1).scaleb(-d)
++    val = Decimal(repr(f)).quantize(q, rounding=ROUND_HALF_EVEN)
++    return format(val, 'f')
++    ncol = len(names)
++    show = n
++    if n > 10:
++        show = 10 if ncol >= 5 else min(n, 20)
++    footer = show < n
+-            for i in range(n):
++            for i in range(show):
+-            for i in range(n):
++            for i in range(show):
+-            raw = [df.iloc[i, j] for i in range(n)]
++            raw = [df.iloc[i, j] for i in range(show)]
++    tmap = {'chr': '<chr>', 'dbl': '<dbl>', 'int': '<int>'}
+-        w = len(c)
++        w = max(len(c), 5)
+-    rw = len(str(n))
+-    tmap = {'chr': '<chr>', 'dbl': '<dbl>', 'int': '<int>'}
+-    print("# A tibble: %d \u00d7 %d" % (n, len(names)))
++    rw = len(str(min(n, show)))
++    print("# A tibble: %d \u00d7 %d" % (n, ncol))
+-    for j in range(len(names)):
++    for j in range(ncol):
+-    for i in range(n):
++    for i in range(show):
+-        for j in range(len(names)):
++        for j in range(ncol):
++    if footer:
++        print("# \u2139 %d more rows" % (n - show))
++        print("# \u2139 Use `print(n = ...)` to see more rows")
+===== farver__rd_example__compare_colour_Rd b2: 238 -> 235 lines, 11 changed
+-    nz = col[np.abs(col) > 1e-10]
+-    if nz.size == 0:
+-        return ["0"] * len(col)
+-    for v in nz:
+-        dd = digits - 1 - int(np.floor(np.log10(abs(v))))
++    for v in col:
++        s = f"{v:.{digits}g}"
++        mant = s.split('e')[0].split('E')[0]
++        dd = len(mant.split('.')[1]) if '.' in mant else 0
+-    if d < 0:
+-        d = 0
+===== ModelMetrics__rd_example__logLoss_Rd b2: 44 -> 55 lines, 23 changed
+-# r2py:data_shim managed by the harness (loads R's input data) - do not write it
++# r2py:data_shim managed by the harness (loads R's input data) - do not write it
++
++
++def _r_print_scalar(v):
++    # Mimic R's default print for a length-1 numeric: 7 significant digits
++    print("[1] " + format(float(v), ".7g"))
++
+-ml_log_loss = lambda actual, predicted: _logLoss(actual, np.maximum(np.minimum(predicted, 1 - 1e-15), 1e-15))
++
++
++def ml_log_loss(actual, predicted):
++    predicted = np.maximum(np.minimum(predicted, 1 - 1e-15), 1e-15)
++    return _logLoss(actual, predicted)
++
+-logLoss_val = ml_log_loss(testDF['y'], Preds)
+-print(logLoss_val)
++logLoss_val = ml_log_loss(testDF['y'].to_numpy(), Preds)
++_r_print_scalar(logLoss_val)
+-logLoss_glm_val = ml_log_loss(y, glmModel.mu)
+-print(logLoss_glm_val)
++logLoss_glm_val = ml_log_loss(y.to_numpy(), glmModel.mu)
++_r_print_scalar(logLoss_glm_val)
+===== recipes__rd_example__step_filter_missing_Rd bs2: 109 -> 119 lines, 38 changed
+-step_id = 'filter_missing_OTBgW' 
++step_id = 'filter_missing_OTBgW'
+-            'id': step_id, 
++            'id': step_id,
+-    'template': credit_data_df
++    'term_info': {
++        'variable': predictors + [target],
++        'role': ['predictor'] * len(predictors) + ['outcome'],
++        'source': ['original'] * (len(predictors) + 1),
++        'type': ['numeric' if credit_data_df[c].dtype != 'object' else 'factor' for c in predictors + [target]]
++    },
++    'template': credit_data_df,
++    'levels': {},
++    'retained': False,
++    'strings_as_factors': True
+-            'id': step_id, 
++            'id': step_id,
++_w_rec = max(len('terms'), len('all_predictors()')) + 1
++print("# A tibble: 1 × 2")
++print("  " + "terms".ljust(_w_rec) + "id")
++print("  " + "<chr>".ljust(_w_rec) + "<chr>")
++print("1 " + "all_predictors()".ljust(_w_rec) + step_id)
++
+-# R's tidy() outputs are printed as tibbles
+-print("# A tibble: 1 × 2")
+-print("  terms            id                  ")
+-print("  <chr>            <chr>               ")
+-print(f"1 all_predictors() {step_id}")
+-
+-print("# A tibble: 6 × 2")
+-print("  terms   id                  ")
+-print("  <chr>   <chr>               ")
++_w_fo = max([len('terms')] + [len(t) for t in removed_cols]) + 1
++print(f"# A tibble: {len(removed_cols)} × 2")
++print("  " + "terms".ljust(_w_fo) + "id")
++print("  " + "<chr>".ljust(_w_fo) + "<chr>")
+-    print(f"{i+1} {row['terms']:<8} {row['id']}")
++    print(f"{i+1} " + row['terms'].ljust(_w_fo) + row['id'])
