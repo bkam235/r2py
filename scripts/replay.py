@@ -105,6 +105,15 @@ POLICIES = {
                                agent_provider={"only": ["deepinfra/fp8"], "allow_fallbacks": False},
                                agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
                                free_probe=True, probe_state=True, literal_check=True, review_crashing=True),
+    # The production default as of 2026-11-21: the above with the stop threshold at 0.95 (tests threshold-095-e16 and
+    # threshold-095-e16-heldout; the person's flip). DEFAULT_SCORE_THRESHOLD in r2py/loop.py.
+    "default_2026_11_21": dict(entity_repair=False, escalate_after=None, width=3, crash_width=6, crash_stalls=5,
+                               converse=True, entity_feedback=True,
+                               agent_model="openrouter:deepseek/deepseek-v4.1-flash-1017",
+                               agent_provider={"only": ["deepinfra/fp8"], "allow_fallbacks": False},
+                               agent_reasoning={"max_tokens": 8000}, agent_max_tokens=36000,
+                               free_probe=True, probe_state=True, literal_check=True, review_crashing=True,
+                               score_threshold=0.95),
     # Test patience-dsflash (2026-11-12): one chain of default_2026_11_12 (width 1 on any start). The arms are the
     # same loop; they differ only in the program they start from (scripts/patience_continue.py).
     **{arm: dict(entity_repair=False, escalate_after=None, width=1, crash_stalls=5, converse=True,

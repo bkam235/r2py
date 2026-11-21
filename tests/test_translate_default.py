@@ -76,6 +76,19 @@ class TestTranslateDefault(unittest.TestCase):
             self.assertIsNone(kw[key], key)
         self.assertEqual(kw["max_iters"], 20)
 
+    def test_default_2026_11_21_stops_at_095(self):
+        """The person's flip after threshold-095-e16 passed both pools: stop threshold 0.95, in translate() and in the
+        replay policy of the production default, which is default_2026_11_12 otherwise."""
+        import sys
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "scripts"))
+        import replay
+        self.assertEqual(loop.DEFAULT_SCORE_THRESHOLD, 0.95)
+        self.assertEqual(self._run()["loop"]["score_threshold"], 0.95)
+        new, old = replay.POLICIES["default_2026_11_21"], replay.POLICIES["default_2026_11_12"]
+        self.assertEqual(new["score_threshold"], loop.DEFAULT_SCORE_THRESHOLD)
+        self.assertEqual({k: v for k, v in new.items() if k != "score_threshold"}, old)
+        self.assertEqual(new["agent_model"], loop.DEFAULT_AGENT_MODEL)
+
 
 if __name__ == "__main__":
     unittest.main()

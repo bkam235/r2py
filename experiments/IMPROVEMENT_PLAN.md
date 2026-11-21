@@ -24,6 +24,7 @@ page.
 | + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
 | + entity-addressed feedback | **0.809** (measured, epoch 8) | 2026-11-01: each losing entity is shown the comparison that scores it, shared feedback once; paired +0.034 [+0.001, +0.072] against the previous default's replay re-scored (0.775) |
 | + DeepSeek V4.1 Flash agent, in-state probes, literal check (`default_2026_11_12`) | **0.910** (measured, epoch 17; 0.909 under epoch 16) | 2026-11-12 adoption (0.881 measured under epoch 9); replay 2026-11-16 under the feedback corrections of epochs 10-16: +0.043 [+0.010, +0.082] against the epoch-9 replay re-scored (0.866), all of it in the 9 states whose faults epochs 10-16 fixed; held-out 0.902 (-0.005 [-0.021, +0.010]) |
+| + stop threshold 0.95 (`default_2026_11_21`) | not yet measured (estimate about +0.008) | 2026-11-21: continuing chains at 0.95 beat more chains at 0.9 per call on both pools (threshold-095-e16, -heldout); share about +0.13 |
 
 A second sample of `default_2026_11_01` on the 46 running starts (2026-11-06, test `width6-running-pool`) ended 0.024 lower than the first on the same states: one replay sample moves by about ±0.03, and the two-sample plateau of the default is 0.800. In the same test, 6 chains on running starts beat 3 by +0.019 [+0.007, +0.038] (not adopted: the registered bar was a 95% lower bound of +0.010).
 
@@ -5461,3 +5462,23 @@ before any data.**
 - Gap ledger: purrr attr_getter leaves; reachable gap 0.061 to 0.063; share room 0.317 to 0.350.
 - The fault found in the threshold audit is fixed, so the flip of `DEFAULT_SCORE_THRESHOLD` to 0.95 goes to the
   person (step 8).
+
+### 2026-11-21: default flipped to `default_2026_11_21` (stop threshold 0.95; the person's sign-off)
+
+- Adopted after `threshold-095-e16` (training, P 0.977) and `threshold-095-e16-heldout` (P 1.000) passed the
+  registered rule, the step-8 audit's one fault (the shim's missing row names) was fixed in epoch 17, and the person
+  signed off.
+- `r2py/loop.py` `DEFAULT_SCORE_THRESHOLD` 0.9 -> **0.95** (what `r2py.translate()` and `r2py translate` run);
+  replay policy `default_2026_11_21` = `default_2026_11_12` with `score_threshold=0.95` (`scripts/replay.py`). The
+  manifest's `score_threshold` stays 0.9: it also sets `heldout.py`'s `entity_score_threshold`, and replays take the
+  stop threshold from the policy. Test `tests/test_translate_default.py::test_default_2026_11_21_stops_at_095`.
+  Suite 1107 passed; scorer `same` (epoch 17).
+- Registry: both records `adopted`, held-out `passed`.
+- **Plateau of the production default: unmeasured.** `default_2026_11_12` measured 0.910 training / 0.902 held-out
+  (epoch 17). The tests' estimate for the new default: about +0.008 on the plateau on both pools and +0.13 on the
+  share, at about 1.4-2.5 more calls per script (about $0.004). A gain, not a correction.
+- **Step 9: a replay of the new default makes sense** (a default changed; its curve is unmeasured). What it can
+  tell: one replay resolves about ±0.03 on the plateau, so it can show the +0.008 does not reverse into a loss but
+  cannot confirm it; on the share (±0.09 per replay) the predicted +0.13 is about at the limit of what it resolves.
+  It also gives the curves a line for the new default and the gap ledger a source under the new threshold. Cost
+  about $2.10 training and $1.15 held-out (the 11-16 replays plus the extra calls); the person decides.

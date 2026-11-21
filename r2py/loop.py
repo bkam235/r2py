@@ -47,10 +47,13 @@ DEFAULT_PROBE_STATE = True
 DEFAULT_LITERAL_CHECK = True
 DEFAULT_REVIEW_CRASHING = True
 # The rest of the production default as its replays measured it (experiments/dev_run/manifest.json): seeds, review,
-# audit and mapping on Gemma 4 31B (provider unpinned), 2 bare + 2 structured seeds, stop threshold 0.9, 3 failed
-# steps in a row, 1200 s agent budget. r2py.translate() runs with these; experiments set their own from a manifest.
+# audit and mapping on Gemma 4 31B (provider unpinned), 2 bare + 2 structured seeds, 3 failed steps in a row, 1200 s
+# agent budget. r2py.translate() runs with these; experiments set their own from a manifest.
 DEFAULT_SEED_MODEL = "openrouter:google/gemma-4-31b-it"
-DEFAULT_SCORE_THRESHOLD = 0.9
+# Stop threshold 0.95 since default_2026_11_21 (tests threshold-095-e16 and -heldout: continuing at 0.95 beat more
+# chains at 0.9 per call on both pools; the person's flip). Was 0.9. The manifest's score_threshold stays 0.9: it
+# also sets heldout.py's entity_score_threshold; replays take the stop threshold from the policy.
+DEFAULT_SCORE_THRESHOLD = 0.95
 DEFAULT_BARE_SEEDS = 2
 DEFAULT_STRUCTURED_SEEDS = 2
 DEFAULT_MAX_STALLS = 3
