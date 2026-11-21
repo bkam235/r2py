@@ -24,7 +24,7 @@ page.
 | + conversation mode | **0.791** (measured) | 2026-10-20: each step continues the previous step's conversation and is told what its answer did |
 | + entity-addressed feedback | **0.809** (measured, epoch 8) | 2026-11-01: each losing entity is shown the comparison that scores it, shared feedback once; paired +0.034 [+0.001, +0.072] against the previous default's replay re-scored (0.775) |
 | + DeepSeek V4.1 Flash agent, in-state probes, literal check (`default_2026_11_12`) | **0.910** (measured, epoch 17; 0.909 under epoch 16) | 2026-11-12 adoption (0.881 measured under epoch 9); replay 2026-11-16 under the feedback corrections of epochs 10-16: +0.043 [+0.010, +0.082] against the epoch-9 replay re-scored (0.866), all of it in the 9 states whose faults epochs 10-16 fixed; held-out 0.902 (-0.005 [-0.021, +0.010]) |
-| + stop threshold 0.95 (`default_2026_11_21`) | not yet measured (estimate about +0.008) | 2026-11-21: continuing chains at 0.95 beat more chains at 0.9 per call on both pools (threshold-095-e16, -heldout); share about +0.13 |
+| + stop threshold 0.95 (`default_2026_11_21`) | **0.921** (measured, epoch 17) | 2026-11-21: continuing chains at 0.95 beat more chains at 0.9 per call on both pools (threshold-095-e16, -heldout); replay +0.011 [-0.006, +0.030] against the 11-16 replay (0.910), share 0.583 -> 0.717; held-out 0.915 (+0.013 [-0.002, +0.029]), share 0.565 -> 0.696 |
 
 A second sample of `default_2026_11_01` on the 46 running starts (2026-11-06, test `width6-running-pool`) ended 0.024 lower than the first on the same states: one replay sample moves by about ±0.03, and the two-sample plateau of the default is 0.800. In the same test, 6 chains on running starts beat 3 by +0.019 [+0.007, +0.038] (not adopted: the registered bar was a 95% lower bound of +0.010).
 
@@ -5506,3 +5506,42 @@ before any data.**
   work/replay_default_e17/results.jsonl work/replay_default_e16/finals_epoch17.jsonl
   work/replay_default_e17/finals_epoch17.jsonl`; `health_report.py work/replay_default_e17 --deep`; the same for
   `_heldout` against `work/replay_default_e16_heldout/finals_epoch17.jsonl`.
+- **Result (2026-11-21, runs `work/replay_default_e17` and `_heldout`; 60 of 60 and 46 of 46 rows; $2.35 and $1.24,
+  balance $10.17 -> $6.57; no sleep gaps; epoch 17 throughout).** Analysis as registered (`ceiling_e17.txt`,
+  `health_deep.txt` in each run dir; secondary readings `work/analysis/e17_replay_audit.py` / `.txt`):
+  - primary (descriptive): training **0.9101 -> 0.9213**, paired **+0.011 [-0.006, +0.030]**, better 15 / worse 11 /
+    tied 34; running starts +0.012 [-0.008, +0.036], crashing +0.008 [-0.019, +0.036]. Held-out **0.9016 -> 0.9149**,
+    **+0.013 [-0.002, +0.030]**, better 12 / worse 2 / tied 32.
+  - share >= 0.95: training **0.583 -> 0.717** (+0.133 [+0.050, +0.217]); held-out **0.565 -> 0.696** (+0.130 [+0.043,
+    +0.239]). Finals >= 0.9: 45 -> 46, 33 -> 35.
+  - the baseline's [0.9, 0.95) band (10 training states under epoch 17, not the 11 registered: purrr attr_getter left
+    it in epoch 17; 7 held-out): +0.013 and +0.023, 6 of 10 and 5 of 7 now >= 0.95. The rest: +0.011 and +0.012.
+  - calls per run 26.1 -> 31.0 training, 19.7 -> 22.8 held-out (+16-19%); cost per run $0.033 -> $0.039 and $0.023 ->
+    $0.027. Stops: threshold 140 / stalled 45 / done 28 (training), 93 / 36 / 19 (held-out).
+  - largest moves: bslib value_box 0.678 -> 0.997, openssl aes_cbc 0.550 -> 0.850 (classed out of reach), shape
+    Arrows 0.829 -> 0.971, farver native_encoding 1.000 again (held-out); falls: textshaping get_font_features 0.904 ->
+    0.746, isoband3_s2 0.869 -> 0.746, shape_text 0.912 -> 0.802, rmarkdown includes 0.923 -> 0.750 (held-out).
+  - literals (12 largest gains per pool): new 4-digit literals in 3 finals. bslib value_box 53, all in the SVG path
+    data of a Bootstrap icon (`bs_icon`), a static asset of the bsicons package, not a value R computed;
+    farver compare_colour 17, sRGB / CIE constants (0.0031308, 0.04045, ...); aes_cbc and clock time-point-rounding
+    one each, 2147483648 = 2^31. The deterministic paste check (`literal_check_offline.py flags`) flags 0 of the 463
+    accepted training programs; it read no held-out programs (it reads training starts only), so held-out is
+    covered by the literal reading alone.
+  - forging: `__r2py_fp__` in two finals, pROC coords (2 dicts) and clock time-point-rounding (1, as in the 11-16
+    replay), both refused since epoch 13; in accepted intermediates of 10 other states. The model still copies the
+    format from the feedback; it does not pay.
+- **Reading.** Descriptive, one sample per state, not concurrent. Both pools moved the way the threshold tests
+  predicted (plateau +0.008, share +0.13): the plateau by +0.011 and +0.013, inside one replay's noise (±0.03), and
+  the share by +0.13 on both pools, with bootstrap intervals over states above zero. That interval does not hold the
+  replay-to-replay noise (about ±0.09 on the share), so the share gain is about at the limit of what one replay
+  resolves; that both pools agree is the stronger sign. Nothing reversed: the new default holds its plateau and costs
+  16-19% more calls.
+- **Plateau of the production default: 0.921 training, 0.915 held-out (both measured, epoch 17)**; share 0.717 /
+  0.696.
+- **Headroom (the gap ledger now reads this replay):** gap 0.079; out of reach 0.023; **reachable gap 0.054 to
+  0.055, below twice the noise floor (0.06)**. By the headroom rule a further gain on the plateau of this pool can no
+  longer be confirmed by one replay. The share's reachable room is 0.200 to 0.217, still above twice its noise floor
+  (0.18), but only just. 8 states left the ledger (value_box, Arrows, backGround, html_children, sass_import, pROC
+  coords, augment_felm, shape_string) and none entered. The class of aes_cbc (out of reach, 0.850 now) is in doubt.
+- Curves: a line "default 2026-11-21, threshold 0.95 (measured)", live (re-scored in every epoch); the page text
+  gives the replay.

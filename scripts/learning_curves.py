@@ -13,6 +13,8 @@ training-pool states:
   work/dsflash_default          the production default of 2026-11-12 (agent on DeepSeek V4.1 Flash), run 2026-11-12
   work/replay_default_e16       the same default replayed 2026-11-16 under epoch 16 (after the feedback corrections of
                                 epochs 10-16; test default-e16-replay)
+  work/replay_default_e17       the production default of 2026-11-21 (stop threshold 0.95), run 2026-11-21 under
+                                epoch 17 (test default-2026-11-21-replay)
 
 The scores of the programs the curves use (the starting programs and every program a chain accepted) are cached in
 work/curves/rescored.json with the scorer version. When the scorer has changed, the next call re-scores only the live
@@ -54,10 +56,11 @@ FIG = ROOT / "experiments/figures"
 CACHE = ROOT / "work/curves/rescored.json"
 INPUTS = ROOT / "work/curves/inputs.json.gz"
 RUNS = ("work/replay_k3", "work/continue_plateau", "work/continue_stalled", "work/replay_crash6p5_b2", "work/replay_default",
-        "work/replay_default_e8", "work/dsflash_default", "work/replay_default_e16")
+        "work/replay_default_e8", "work/dsflash_default", "work/replay_default_e16", "work/replay_default_e17")
 # re-scored in every new epoch (both measured runs of the production default); the others are frozen
-LIVE_RUNS = ("work/dsflash_default", "work/replay_default_e16")
-LIVE_LINES = ("default 2026-11-12, DeepSeek agent (measured)", "default 2026-11-12, replayed 2026-11-16 (measured)")
+LIVE_RUNS = ("work/dsflash_default", "work/replay_default_e16", "work/replay_default_e17")
+LIVE_LINES = ("default 2026-11-12, DeepSeek agent (measured)", "default 2026-11-12, replayed 2026-11-16 (measured)",
+              "default 2026-11-21, threshold 0.95 (measured)")
 _inputs: dict | None = None
 N_SHOWN = 14          # steps drawn; every curve is flat well before
 N_LONG = 20           # steps followed for the runs with patience 5
@@ -255,7 +258,8 @@ def compute(res: dict) -> dict:
     measured = best_of("work/replay_default", "default_2026_10_20", 3)
     later = {"default 2026-11-01 (measured)": best_of("work/replay_default_e8", "default_2026_11_01", 3),
              "default 2026-11-12, DeepSeek agent (measured)": best_of("work/dsflash_default", "default_2026_11_01_dsflash", 3),
-             "default 2026-11-12, replayed 2026-11-16 (measured)": best_of("work/replay_default_e16", "default_2026_11_12", 3)}
+             "default 2026-11-12, replayed 2026-11-16 (measured)": best_of("work/replay_default_e16", "default_2026_11_12", 3),
+             "default 2026-11-21, threshold 0.95 (measured)": best_of("work/replay_default_e17", "default_2026_11_21", 3)}
 
     def width_curve(s, k):
         subs = list(itertools.combinations(single[s], k))
@@ -288,7 +292,8 @@ def compute(res: dict) -> dict:
 
 # ---------------------------------------------------------------------------------------------- outputs
 
-STYLE = {"default 2026-11-12, replayed 2026-11-16 (measured)": ("#ca8a04", "-", 3.0),
+STYLE = {"default 2026-11-21, threshold 0.95 (measured)": ("#15803d", "-", 3.2),
+         "default 2026-11-12, replayed 2026-11-16 (measured)": ("#ca8a04", "-", 3.0),
          "default 2026-11-12, DeepSeek agent (measured)": ("#be123c", "-", 3.0),
          "default 2026-11-01 (measured)": ("#475569", "-", 2.6),
          "default with conversation (measured)": ("#111827", "-", 2.8), "width 1": ("#8a93a3", "--", 1.8),

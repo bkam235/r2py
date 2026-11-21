@@ -1,0 +1,22 @@
+states paired: 46 (ceiling rows 46, baseline 46, ceiling finals 46)
+all              n=46  baseline 0.902  ceiling 0.915  diff +0.013 [-0.002, +0.030]  better 12 / worse 2 / tied 32
+running starts   n=42  baseline 0.901  ceiling 0.914  diff +0.013 [-0.004, +0.031]  better 10 / worse 2 / tied 30
+crashing starts  n= 4  baseline 0.911  ceiling 0.923  diff +0.011 [+0.000, +0.025]  better 2 / worse 0 / tied 2
+finals >= 0.9: baseline 33, ceiling 35 of 46
+entities the baseline final loses (< 0.9): 66; the ceiling final scores >= 0.9 on 14 (21%)
+calls: {'agent steps': 671}
+  google/gemma-4-31b-it: calls 379, input 1,029,887, output 30,299 (reasoning 0), cost $0.13
+  deepseek/deepseek-v4.1-flash-1017: calls 672, input 14,777,835, output 2,821,933 (reasoning 1,961,187), cost $1.09
+largest moves:
+  farver__rd_example__native_encoding_Rd             0.750 -> 1.000
+  rmarkdown__rd_example__includes_Rd                 0.923 -> 0.750
+  recipes__rd_example__step_YeoJohnson_Rd            0.795 -> 0.923
+  recipes__rd_example__step_filter_missing_Rd        0.904 -> 0.996
+  caret__rd_example__modelLookup_Rd                  0.863 -> 0.776
+  clock__rd_example__time-point-rounding_Rd          0.871 -> 0.948
+  farver__rd_example__compare_colour_Rd              0.928 -> 1.000
+  ModelMetrics__rd_example__logLoss_Rd               0.929 -> 1.000
+  broom__vignette__broom_chunk6                      0.938 -> 1.000
+  gtable__rd_example__bind_Rd                        0.958 -> 0.999
+  broom__rd_example__augment_survreg_Rd              0.943 -> 0.977
+  prodlim__rd_example__summary_prodlim_Rd            0.558 -> 0.575
