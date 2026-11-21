@@ -2,11 +2,11 @@
 
 These tests require:
   R2PY_E2E=1          — opt-in gate so CI never picks them up
-  ANTHROPIC_API_KEY   — live LLM calls
+  OPENROUTER_API_KEY  — live LLM calls (the production default's models are on OpenRouter)
   Rscript             — sandbox execution
 
 Run manually:
-  R2PY_E2E=1 ANTHROPIC_API_KEY=sk-... python -m pytest tests/test_e2e.py -v
+  R2PY_E2E=1 OPENROUTER_API_KEY=sk-or-... python -m pytest tests/test_e2e.py -v
 """
 from __future__ import annotations
 
@@ -17,8 +17,8 @@ import tempfile
 import unittest
 
 _E2E = bool(os.environ.get("R2PY_E2E"))
-_HAS_KEY = bool(os.environ.get("ANTHROPIC_API_KEY"))
-_SKIP_REASON = "set R2PY_E2E=1 and ANTHROPIC_API_KEY to run end-to-end tests"
+_HAS_KEY = bool(os.environ.get("OPENROUTER_API_KEY"))
+_SKIP_REASON = "set R2PY_E2E=1 and OPENROUTER_API_KEY to run end-to-end tests"
 
 FIXTURE_R = pathlib.Path("tests/fixtures/simple.R")
 

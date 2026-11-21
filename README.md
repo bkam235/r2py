@@ -108,17 +108,14 @@ This takes 10–20 minutes on a fresh install. Packages are pinned via `renv.loc
 
 ### Configure an LLM
 
-Create a `.env` file in the project root with your API key:
-
-```
-ANTHROPIC_API_KEY=sk-ant-...
-```
-
-Or use a model via OpenRouter:
+Create a `.env` file in the project root with your OpenRouter key. The default runs the seeds and the review on
+Gemma 4 31B and the reasoning agent on DeepSeek V4.1 Flash, both via OpenRouter (`DEFAULT_*` in `r2py/loop.py`):
 
 ```
 OPENROUTER_API_KEY=sk-or-v1-...
 ```
+
+Anthropic models work too (`--model` / `--agent-model claude-...`, with `ANTHROPIC_API_KEY`).
 
 ### Translate
 
@@ -138,14 +135,15 @@ Score: 0.920  Iterations: 4
 # Analyze an R script (writes .map.json and .annotated.R)
 r2py analyze script.R
 
-# Translate with options
+# Translate with the production default (no options needed)
+r2py translate input.R output.py
+
+# Other models or limits
 r2py translate input.R output.py \
   --model claude-sonnet-4-6 \
+  --agent-model claude-sonnet-4-6 \
   --max-iters 12 \
-  --score-threshold 0.90
-
-# Use a model via OpenRouter
-r2py translate input.R output.py --model openrouter:google/gemma-4-31b-it
+  --score-threshold 0.95
 
 # Browse the Pattern Library
 r2py library list
@@ -161,12 +159,7 @@ r2py harvest ggplot2
 ```python
 from r2py import translate, analyze
 
-result = translate(
-    "analysis.R", "analysis.py",
-    model="claude-sonnet-4-6",
-    max_iters=12,
-    score_threshold=0.85,
-)
+result = translate("analysis.R", "analysis.py")   # the production default
 print(f"Score: {result.final_score:.3f}")
 print(f"Iterations: {result.iterations}")
 

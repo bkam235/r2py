@@ -46,6 +46,15 @@ DEFAULT_FREE_PROBE = True
 DEFAULT_PROBE_STATE = True
 DEFAULT_LITERAL_CHECK = True
 DEFAULT_REVIEW_CRASHING = True
+# The rest of the production default as its replays measured it (experiments/dev_run/manifest.json): seeds, review,
+# audit and mapping on Gemma 4 31B (provider unpinned), 2 bare + 2 structured seeds, stop threshold 0.9, 3 failed
+# steps in a row, 1200 s agent budget. r2py.translate() runs with these; experiments set their own from a manifest.
+DEFAULT_SEED_MODEL = "openrouter:google/gemma-4-31b-it"
+DEFAULT_SCORE_THRESHOLD = 0.9
+DEFAULT_BARE_SEEDS = 2
+DEFAULT_STRUCTURED_SEEDS = 2
+DEFAULT_MAX_STALLS = 3
+DEFAULT_AGENT_BUDGET_S = 1200.0
 
 if TYPE_CHECKING:
     from .types import ScriptMap

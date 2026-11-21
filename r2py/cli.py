@@ -34,6 +34,7 @@ def cmd_translate(args: argparse.Namespace) -> int:
         r_path=args.input,
         py_path=args.output,
         model=args.model,
+        escalation_model=args.agent_model,
         max_iters=args.max_iters,
         score_threshold=args.score_threshold,
         use_judge=args.use_judge,
@@ -119,8 +120,7 @@ def cmd_ablation(args: argparse.Namespace) -> int:
 
 
 def main() -> None:
-    from r2py.stage2.llm import _DEFAULT_MODEL
-    parser = argparse.ArgumentParser(prog="r2py", description="R-to-Python translator")
+    parser =argparse.ArgumentParser(prog="r2py", description="R-to-Python translator")
     parser.add_argument("--quiet", action="store_true")
     sub = parser.add_subparsers(dest="command", required=True)
 
@@ -132,18 +132,23 @@ def main() -> None:
     p_translate = sub.add_parser("translate", help="Translate an R file to Python (full pipeline)")
     p_translate.add_argument("input", help="Input .R file")
     p_translate.add_argument("output", help="Output .py file")
-    p_translate.add_argument("--model", default=_DEFAULT_MODEL,
-                             help="Model to use: Anthropic model ID or 'openrouter:<model>' for OpenRouter")
-    p_translate.add_argument("--max-iters", type=int, default=8, dest="max_iters")
-    p_translate.add_argument("--score-threshold", type=float, default=0.85, dest="score_threshold")
+    p_translate.add_argument("--model", default=None,
+                             help="Seed/review model: Anthropic model ID or 'openrouter:<model>' "
+                                  "(default: the production default's, r2py/loop.py DEFAULT_SEED_MODEL)")
+    p_translate.add_argument("--agent-model", default=None, dest="agent_model",
+                             help="Reasoning agent's model (default: DEFAULT_AGENT_MODEL)")
+    p_translate.add_argument("--max-iters", type=int, default=20, dest="max_iters")
+    p_translate.add_argument("--score-threshold", type=float, default=None, dest="score_threshold",
+                             help="Stop threshold (default: DEFAULT_SCORE_THRESHOLD)")
     p_translate.add_argument("--use-judge", action="store_true", dest="use_judge",
                              help="Enable LLM judge fallback (D4; off by default)")
     p_translate.add_argument("--data-compare", default="auto", dest="data_compare",
                              choices=["auto", "exact", "embedding"])
     p_translate.add_argument("--no-seeds", action="store_true", dest="no_seeds",
                              help="Ignore seed:true patterns (transfer experiment §6.7)")
-    p_translate.add_argument("--max-stalls", type=int, default=3, dest="max_stalls",
-                             help="Consecutive non-improving agent rewrites before stopping (default: 3)")
+    p_translate.add_argument("--max-stalls", type=int, default=None, dest="max_stalls",
+                             help="Consecutive non-improving agent rewrites before stopping "
+                                  "(default: DEFAULT_MAX_STALLS)")
 
     # library
     p_lib = sub.add_parser("library", help="Pattern Library operations")

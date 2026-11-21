@@ -15,30 +15,39 @@ def translate(
     py_path: "str | Path",
     *,
     library=None,                    # inject a PatternLibrary (or _FrozenLibrary); None → get_library()
-    model: "str | None" = None,      # cheap model for seed translation; None → _DEFAULT_MODEL
-    escalation_model: "str | None" = None,  # stronger model for reasoning agent; None → model
+    model: "str | None" = None,      # seeds, review, audit, mapping; None → loop.DEFAULT_SEED_MODEL
+    escalation_model: "str | None" = None,  # the reasoning agent; None → loop.DEFAULT_AGENT_MODEL
     max_iters: int = 20,
-    score_threshold: float = 0.85,
+    score_threshold: "float | None" = None,  # None → loop.DEFAULT_SCORE_THRESHOLD
     use_judge: bool = False,         # D4: LLM judge off by default
     data_compare: str = "auto",      # "auto" | "exact" | "embedding"
     no_seeds: bool = False,          # ignore seed:true patterns (§6.7 transfer experiment)
-    n_bare_seeds: int = 3,           # bare seeds (minimal prompt, no pattern library)
-    n_structured_seeds: int = 3,     # structured seeds (full prompt with patterns + metadata)
+    n_bare_seeds: "int | None" = None,        # bare seeds (minimal prompt); None → loop.DEFAULT_BARE_SEEDS
+    n_structured_seeds: "int | None" = None,  # structured seeds (full prompt); None → loop.DEFAULT_STRUCTURED_SEEDS
     output_dir: "str | Path | None" = None,  # if set, write edits.log.jsonl + library_diff.json
     progress=None,                   # callable(ProgressEvent) for progress reporting; None = silent
     resume: bool = False,            # if True and py_path exists, continue improving it; if False and py_path exists, warn
     timeout_s: float = 60,           # per-execution timeout in seconds for sandbox runs
-    max_stalls: int = 3,             # consecutive non-improving agent rewrites before stopping
+    max_stalls: "int | None" = None,  # failed agent steps in a row before a chain stops; None → loop.DEFAULT_MAX_STALLS
+    agent_budget_s: "float | None" = None,  # agent wall clock; None → loop.DEFAULT_AGENT_BUDGET_S
 ) -> "TranslateResult":
-    """Translate an R script to Python via cheap path + reasoning agent escalation."""
+    """Translate an R script to Python via cheap path + reasoning agent escalation.
+
+    With no options this runs the production default (r2py/loop.py: DEFAULT_*), including the agent's provider
+    pin and reasoning cap that its replays ran with."""
     import sys
     from pathlib import Path
     from .stage1 import analyze as _analyze
     from .library import get_library
+    from . import loop as _loop
     from .loop import run_loop, _emit
-    from .stage2.llm import _DEFAULT_MODEL
-    if model is None:
-        model = _DEFAULT_MODEL
+    model = model or _loop.DEFAULT_SEED_MODEL
+    escalation_model = escalation_model or _loop.DEFAULT_AGENT_MODEL
+    score_threshold = _loop.DEFAULT_SCORE_THRESHOLD if score_threshold is None else score_threshold
+    n_bare_seeds = _loop.DEFAULT_BARE_SEEDS if n_bare_seeds is None else n_bare_seeds
+    n_structured_seeds = _loop.DEFAULT_STRUCTURED_SEEDS if n_structured_seeds is None else n_structured_seeds
+    max_stalls = _loop.DEFAULT_MAX_STALLS if max_stalls is None else max_stalls
+    agent_budget_s = _loop.DEFAULT_AGENT_BUDGET_S if agent_budget_s is None else agent_budget_s
 
     if library is None:
         library = get_library()
@@ -58,28 +67,31 @@ def translate(
     _emit(progress, kind="analysis_done",
           entity_count=len(getattr(script_map, "entities", None) or {}))
 
-    result = run_loop(
-        script_map,
-        library,
-        max_iters=max_iters,
-        score_threshold=score_threshold,
-        use_judge=use_judge,
-        data_compare=data_compare,
-        no_seeds=no_seeds,
-        n_bare_seeds=n_bare_seeds,
-        n_structured_seeds=n_structured_seeds,
-        output_dir=Path(output_dir) if output_dir is not None else None,
-        checkpoint_path=Path(py_path),
-        model=model,
-        escalation_model=escalation_model or model,
-        progress=progress,
-        seed_translation=seed_translation,
-        timeout_s=timeout_s,
-        max_stalls=max_stalls,
-    )
+    with _llm_pin(model, escalation_model):
+        result = run_loop(
+            script_map,
+            library,
+            max_iters=max_iters,
+            score_threshold=score_threshold,
+            use_judge=use_judge,
+            data_compare=data_compare,
+            no_seeds=no_seeds,
+            n_bare_seeds=n_bare_seeds,
+            n_structured_seeds=n_structured_seeds,
+            output_dir=Path(output_dir) if output_dir is not None else None,
+            checkpoint_path=Path(py_path),
+            model=model,
+            escalation_model=escalation_model,
+            progress=progress,
+            seed_translation=seed_translation,
+            timeout_s=timeout_s,
+            max_stalls=max_stalls,
+            agent_budget_s=agent_budget_s,
+            agent_max_tokens=_loop.DEFAULT_AGENT_MAX_TOKENS,
+        )
     Path(py_path).write_text(result.python_source, encoding="utf-8")
     _write_translation_log(Path(py_path), script_map, result)
-    _append_run_record(Path(r_path), result, model, escalation_model or model)
+    _append_run_record(Path(r_path), result, model, escalation_model)
     # No script-level gate: seed_from_translation already keeps only entities
     # scoring at or above entity_score_threshold, so a run that failed overall still
     # contributes the statements that did verify.
@@ -103,6 +115,24 @@ def translate(
             file=sys.stderr,
         )
     return result
+
+
+def _llm_pin(model: str, escalation_model: str):
+    """The OpenRouter request settings the production default's replays ran with: temperature, timeouts, usage
+    accounting, the seed model unpinned, and the default agent pinned to its provider with its reasoning cap.
+    Another agent model gets no pin (its providers are unknown); no OpenRouter model, nothing to pin."""
+    from contextlib import nullcontext
+    from .heldout import LLM_SETTINGS, pinned_llm
+    from .loop import DEFAULT_AGENT_MODEL, DEFAULT_AGENT_PROVIDER, DEFAULT_AGENT_REASONING
+    routed = [m for m in (model, escalation_model) if m.startswith("openrouter:")]
+    if not routed:
+        return nullcontext()
+    settings = {**LLM_SETTINGS, "provider": None}
+    if escalation_model == DEFAULT_AGENT_MODEL:
+        name = DEFAULT_AGENT_MODEL.removeprefix("openrouter:")
+        settings["provider_by_model"] = {name: DEFAULT_AGENT_PROVIDER}
+        settings["extra_by_model"] = {name: {"reasoning": DEFAULT_AGENT_REASONING}}
+    return pinned_llm(routed[0], settings)
 
 
 def analyze(r_path: "str | Path") -> "ScriptMap":
