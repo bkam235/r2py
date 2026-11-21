@@ -5334,3 +5334,59 @@ before any data.**
   measured runs of the production default are live lines (re-scored in every epoch; 789 programs); the page text
   gives both replays and the split. Ends at step 14: 0.908 against 0.884 for the first run (best re-scored program
   per run; running 0.889 vs 0.858, crashing 0.970 vs 0.967).
+
+### 2026-11-21: cycle start; the headroom rule holds, the person keeps the objective
+
+- Step 0: epoch 16 open, scorer `same`, no run in progress, nothing `registered`. Uncommitted: the complete log of
+  `default-e16-replay-heldout` (the committed copy was cut mid-run), one `run_history` row from the `r2py translate`
+  smoke on dplyr join_by (commit 543314b4, which changes only what `translate()` defaults to; replays set their own
+  options from the manifest), two leftover logs of the e16 cycle. Committed with this entry.
+- Plateau of `default_2026_11_12`: 0.909 training, 0.902 held-out (both measured, epoch 16); share >= 0.95 0.567 /
+  0.565. Since the 2026-11-12 adoption: correction -0.016, gain +0.043 on training (+0.038 of it in the 9 states
+  epochs 10-16 fixed; the other 51 +0.006; held-out -0.005).
+- Headroom: training's reachable gap 0.059 to 0.063 against a noise floor of ±0.03: **the headroom rule holds** (a
+  gain on the plateau of this pool can no longer be confirmed by one replay). Stall trigger: not by the letter (the
+  replay's +0.043 counts as gain), in substance yes (no option changed since 2026-11-12). The share's room 0.283 to
+  0.350 is above twice its noise (0.18).
+- No replay of the default is due (no default changed, no epoch since the latest replay, the gap table is current).
+- Proposed: the share as primary, a larger fresh pool (bet); the stop threshold 0.95 (lever); a Python port of R's
+  RNG stream (bet). **The person's decision: the objective does not change** (the plateau stays primary, the share
+  secondary); the cycle's question is the stop threshold 0.95, as a decision test.
+
+### Stop threshold 0.95 under epoch 16 (tests `threshold-095-e16`, `threshold-095-e16-heldout`, harness track) — registered 2026-11-21
+
+- Question: does raising the loop's stop threshold from 0.9 to 0.95 raise the plateau of the default more per call
+  than the same calls spent on more chains at 0.9? `threshold-095` (2026-11-15, descriptive, epoch-9 chains, 8
+  states) said yes: plateau gain per call t95 - t90 +0.0036 [+0.0017, +0.0077], 6 of 8 states to >= 0.95 against 2.
+  This test repeats it as a decision test on the current replays, on both pools.
+- States: those whose default final (`finals_epoch16.jsonl`) is in [0.9, 0.95): 11 of 60 training
+  (`work/replay_default_e16`), 7 of 46 held-out (`work/replay_default_e16_heldout`). Below 0.9 no chain reached the
+  threshold, at >= 0.95 the state is there already, so the threshold changes nothing else on the plateau.
+- Option: the replay policy key `score_threshold` (`scripts/replay.py`, arms `t95_cont`, `t90_chain`; one chain of
+  `default_2026_11_12` each); production (`r2py/loop.py` `DEFAULT_SCORE_THRESHOLD = 0.9`) unchanged until adoption.
+- Arms (`scripts/threshold95_continue.py --source e16-training | e16-heldout`): `t95_cont`, every chain whose best
+  is in [0.9, 0.95) (stopped at the threshold) continued from its best at 0.95, fresh conversation and stall budget;
+  for a state whose start is already in [0.9, 0.95) the default ran no step (rvest html_children, recipes
+  step_filter_missing), so 3 chains from the start at 0.95, what the default at 0.95 would run. `t90_chain`, 3 new
+  chains per state from the frozen start at 0.9 (the comparator: the same calls on sampling). Training 27 + 33
+  chains, held-out 17 + 21. Per state, final(arm) = max(recorded final, the arm's chain finals).
+- Primary: plateau gain per call, t95 minus t90, bootstrap over the states (10,000), P(> 0). Secondary: each arm's
+  plateau gain (sum / pool size); share gain (states to >= 0.95 / pool size) and flipped per call; calls, cost,
+  "done"s; the extra calls per script in production (t95 calls / pool size).
+- **Rule (costs extra calls; META_LOOP step 6):** training passes if P(plateau gain per call t95 - t90 > 0) >= 0.9.
+  Then held-out, same instrument and rule (its own record, run only if training passes). Both pass: the faithfulness
+  audit of the finals that gained most (step 8), then the person decides the flip (`DEFAULT_SCORE_THRESHOLD = 0.95`
+  and a policy `default_<date>`), and the new default is replayed (step 9). Training fails: the threshold stays,
+  held-out does not run.
+- Power: the bootstrap over 8 states gave the per-call difference an interval of about ±0.003 around +0.0036 and
+  t95's plateau gain ±0.003; 11 and 7 states resolve about the same, so the test resolves a plateau gain of about
+  +0.004, under the reach (all band states to 1.0: training +0.0147, held-out +0.0106; to 0.95 about half). It does
+  not run as a replay, so the replay noise floor (±0.03) does not bound it: the same states and recorded finals are
+  compared, and each arm only adds chains.
+- Caveats: production would continue in the same conversation, the continuation starts a fresh one (as before). The
+  arms' finals are in-loop scores, the recorded finals re-verified; both epoch 16. The rule passes a threshold that
+  wins per call; whether its cost stays in the cost class is the secondary count, about $0.002 per call.
+- Cost estimate: training $0.50 (60 chains; `threshold-095` was $0.32 for 40), budget $1; held-out $0.32 (38
+  chains), budget $0.75.
+- Analysis: `python scripts/threshold95_continue.py analyze --source e16-training` (resp. `e16-heldout`). The
+  script's `e11` source reproduces `threshold-095` exactly (checked 2026-11-21).

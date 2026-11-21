@@ -17,6 +17,11 @@ flipped per call, t95 minus t90; calls, cost, "done"s.
     python scripts/threshold95_continue.py chains
     python scripts/threshold95_continue.py run --workers 6 --budget 1 [--limit 1 --out work/x]
     python scripts/threshold95_continue.py analyze
+
+`--source` picks the replay the chains come from (default `e11`, the test above). Test `threshold-095-e16`
+(registered 2026-11-21): `e16-training` (`work/replay_default_e16`) and `e16-heldout`
+(`work/replay_default_e16_heldout`), the replays of `default_2026_11_12` under epoch 16, finals
+`finals_epoch16.jsonl`; same arms and analysis, the plateau and share divided by the pool's size (60 or 46).
 """
 from __future__ import annotations
 
@@ -37,12 +42,20 @@ OUT = ROOT / "work/threshold95"
 LOW, HIGH = 0.9, 0.95
 EXTRA_CHAINS = 3
 ARMS = ("t95_cont", "t90_chain")
+POOL, FINALS = "training", "finals_epoch11.jsonl"
+SOURCES = {   # name -> (replay dir, policy, finals file, pool, default out dir)
+    "e11": (SRC, POLICY, FINALS, POOL, OUT),
+    "e16-training": (ROOT / "work/replay_default_e16", "default_2026_11_12", "finals_epoch16.jsonl", "training",
+                     ROOT / "work/threshold95_e16"),
+    "e16-heldout": (ROOT / "work/replay_default_e16_heldout", "default_2026_11_12", "finals_epoch16.jsonl", "heldout",
+                    ROOT / "work/threshold95_e16_heldout"),
+}
 
 
 def finals() -> dict:
     """script -> the default's final re-verified under epoch 11."""
     return {f"{r['stem']}.R": r["aggregate"]
-            for r in map(json.loads, (SRC / "finals_epoch11.jsonl").open(encoding="utf-8"))}
+            for r in map(json.loads, (SRC / FINALS).open(encoding="utf-8"))}
 
 
 def recorded() -> dict:
@@ -53,7 +66,7 @@ def chains() -> dict:
     """(script, branch) -> {best, source, hash} of every chain of the states whose final is in [LOW, HIGH)."""
     import replay
     from r2py.harness import trajectory
-    states = replay.training_states()
+    states = replay.pool_states(POOL)
     fin, rec = finals(), recorded()
     out = {}
     for script, row in rec.items():
@@ -68,12 +81,16 @@ def chains() -> dict:
                 if r["kind"] == "accepted" and r.get("branch") == b:
                     src, best = trajectory.program(r) or src, r["aggregate"]
             out[(script, b)] = dict(best=best, source=src, hash=trajectory.source_hash(src))
+        if not branches:   # the start was already >= LOW, so the default ran no step; at HIGH it would run its chains
+            for k in range(EXTRA_CHAINS):
+                out[(script, f"s{k}")] = dict(best=row["start_score"], source=states[script]["source"],
+                                              hash=states[script]["hash"])
     return out
 
 
 def tasks(limit=None) -> list:
     import replay
-    states = replay.training_states()
+    states = replay.pool_states(POOL)
     common = dict(manifest=str(ROOT / "experiments/dev_run/manifest.json"), label="threshold95",
                   library=str(ROOT / "work/dev_run/checkpoints/empty"), runtime_dir=None,
                   cache=str(replay.TRAIN_MAPS), budget_s=1200)
@@ -153,8 +170,9 @@ def analyze(out_dir=OUT) -> None:
         pc = {a: f[a] / n[a] if n[a] else 0.0 for a in ARMS}
         g = {a: sum(gain[a][s] for s in smp) for a in ARMS}
         gc = {a: g[a] / n[a] if n[a] else 0.0 for a in ARMS}
-        return (g["t95_cont"] / 60, g["t90_chain"] / 60, gc["t95_cont"] - gc["t90_chain"],
-                f["t95_cont"] / 60, f["t90_chain"] / 60, pc["t95_cont"] - pc["t90_chain"])
+        n_pool = len(fin)
+        return (g["t95_cont"] / n_pool, g["t90_chain"] / n_pool, gc["t95_cont"] - gc["t90_chain"],
+                f["t95_cont"] / n_pool, f["t90_chain"] / n_pool, pc["t95_cont"] - pc["t90_chain"])
 
     point = stats(states)
     rng = random.Random(0)
@@ -175,8 +193,11 @@ if __name__ == "__main__":
     ap.add_argument("--budget", type=float, default=1.0)
     ap.add_argument("--reserve", type=float, default=0.5)
     ap.add_argument("--limit", type=int, default=None)
-    ap.add_argument("--out", default=str(OUT))
+    ap.add_argument("--source", choices=sorted(SOURCES), default="e11")
+    ap.add_argument("--out", default=None)
     a = ap.parse_args()
+    SRC, POLICY, FINALS, POOL, OUT = SOURCES[a.source]
+    a.out = a.out or str(OUT)
     if a.cmd == "chains":
         t = tasks()
         for x in t:
